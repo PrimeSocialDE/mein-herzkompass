@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     if (orderErr || !order) {
       throw new Error(`Order nicht gefunden: ${orderErr?.message || "keine Daten"}`);
     }
-    console.log("STAGE 2: order geladen", order.email);
+    console.log("STAGE 2: order geladen", (order as any).email);
 
     // --- Blocks bauen ---
     const blocks =
@@ -44,29 +44,29 @@ export async function POST(req: NextRequest) {
     console.log("STAGE 3: blocks gebaut", !!blocks);
 
     // --- PDF erzeugen ---
-const pdfBytes = await makeAnalysisPdf({
-    orderId,
-    name: (order as any).name ?? "",
-    email: (order as any).email ?? "",
-    blocks,
-  });
-  console.log("STAGE 4: pdf bytes", pdfBytes?.length);
-  
-  // SAFEGUARD
-  if (!(pdfBytes instanceof Uint8Array) || pdfBytes.length === 0) {
-    throw new Error("Ungültige PDF-Bytes aus makeAnalysisPdf");
-  }
-  
-  // --- Upload ---
-  const fileName = `${orderId}.pdf`;
-  const nodeBuffer = Buffer.isBuffer(pdfBytes) ? pdfBytes : Buffer.from(pdfBytes);
-  const { error: upErr } = await supabase.storage
-    .from("analysen")
-    .upload(fileName, nodeBuffer, {
-      contentType: "application/pdf",
-      upsert: true,
+    const pdfBytes = await makeAnalysisPdf({
+      orderId,
+      name: (order as any).name ?? "",
+      email: (order as any).email ?? "",
+      blocks,
     });
-  if (upErr) throw new Error(`Upload fehlgeschlagen: ${upErr.message}`);
+    console.log("STAGE 4: pdf bytes", (pdfBytes as any)?.length);
+
+    if (!(pdfBytes instanceof Uint8Array) || pdfBytes.length === 0) {
+      throw new Error("Ungültige PDF-Bytes aus makeAnalysisPdf");
+    }
+
+    // --- Upload in Storage ---
+    const fileName = `${orderId}.pdf`;
+    const nodeBuffer = Buffer.isBuffer(pdfBytes) ? pdfBytes : Buffer.from(pdfBytes);
+    const { error: upErr } = await supabase.storage
+      .from("analysen")
+      .upload(fileName, nodeBuffer, {
+        contentType: "application/pdf",
+        upsert: true,
+      });
+    if (upErr) throw new Error(`Upload fehlgeschlagen: ${upErr.message}`);
+    console.log("STAGE 5: upload ok", fileName);
 
     // --- Order aktualisieren ---
     const { error: updErr } = await supabase
@@ -76,13 +76,30 @@ const pdfBytes = await makeAnalysisPdf({
     if (updErr) throw new Error(`Order-Update fehlgeschlagen: ${updErr.message}`);
     console.log("STAGE 6: order updated");
 
+    // --- Optional: signed URL für Download (24h) ---
+    let signedUrl: string | undefined = undefined;
+    try {
+      const { data: signed, error: signedErr } = await supabase.storage
+        .from("analysen")
+        .createSignedUrl(fileName, 60 * 60 * 24);
+      if (signedErr) {
+        console.error("SIGNED_URL_ERROR:", signedErr.message);
+      } else {
+        signedUrl = signed?.signedUrl;
+      }
+    } catch (e) {
+      console.error("SIGNED_URL_CATCH:", (e as any)?.message || e);
+    }
+
     // --- Mail (Fehler hier nicht fatal) ---
     try {
-      await sendAnalysisMail({
-        to: (order as any).email,
-        name: (order as any).name,
+      // Erwartete Signatur: sendAnalysisMail(to, name, orderId, downloadUrl?)
+      await sendAnalysisMail(
+        (order as any).email,
+        (order as any).name ?? "Du",
         orderId,
-      });
+        signedUrl
+      );
       console.log("STAGE 7: mail ok");
     } catch (mailErr: any) {
       console.error("MAIL_ERROR:", mailErr?.message || mailErr);
