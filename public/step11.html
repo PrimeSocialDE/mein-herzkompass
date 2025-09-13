@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dating-Analyse - Beziehungsmuster</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .main-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .countdown-box {
+            background: white;
+            border: 1px solid #764ba2;
+            border-radius: 15px;
+            padding: 6px 12px;
+            margin-bottom: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: inline-block;
+            margin-left: 50%;
+            transform: translateX(-50%);
+            visibility: hidden;
+        }
+
+        .countdown-time {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            min-width: 35px;
+            display: inline-block;
+        }
+
+        .progress-container {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            width: 33%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #764ba2;
+        }
+
+        .clara-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 80%;
+            margin: 0 auto 20px auto;
+            border: 2px solid #f8f9fa;
+            box-shadow: 0 2px 8px rgba(118, 75, 162, 0.2);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clara-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .clara-intro {
+            font-size: 16px;
+            color: #764ba2;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .stats-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 40px 0;
+        }
+
+        .bar-chart {
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 30px;
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            opacity: 0;
+        }
+
+        .bar-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            width: 140px;
+            text-align: left;
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 25px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 0 10px;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 12px;
+            width: 0%;
+            transition: width 1.5s ease-in-out;
+        }
+
+        .bar-percentage {
+            font-size: 12px;
+            font-weight: 700;
+            color: #764ba2;
+            min-width: 35px;
+        }
+
+        .main-stat {
+            font-size: 48px;
+            font-weight: 800;
+            color: #764ba2;
+            margin: 30px 0 20px 0;
+            opacity: 0;
+            animation: fadeInStat 0.8s ease-in-out 2.5s forwards;
+        }
+
+        .stat-text {
+            font-size: 20px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeInText 0.8s ease-in-out 3s forwards;
+        }
+
+        .insight-text {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInInsight 0.8s ease-in-out 3.5s forwards;
+        }
+
+        .continue-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInButton 0.8s ease-in-out 4s forwards;
+        }
+
+        .continue-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .security-note {
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        @keyframes fadeInStat {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeInText {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInInsight {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInButton {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInBar {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .main-stat {
+                font-size: 40px;
+            }
+            
+            .stat-text {
+                font-size: 18px;
+            }
+            
+            .insight-text {
+                font-size: 15px;
+            }
+            
+            .bar-label {
+                font-size: 12px;
+                width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- COUNTDOWN -->
+        <div class="countdown-box" id="countdown-box">
+            <span class="countdown-time" id="countdown"></span>
+        </div>
+
+        <!-- PROGRESS BAR -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+        
+        <!-- MAIN CONTENT -->
+        <div class="container">
+            <!-- Clara Photo -->
+            <div class="clara-photo">
+                <img src="ClaraPB.png" alt="Clara - Dating-Expertin">
+            </div>
+            <div class="clara-intro">Clara, deine Expertin</div>
+            
+            <div class="stats-container">
+                <div class="bar-chart">
+                    <div class="bar-item" id="bar1">
+                        <div class="bar-label">Aufmerksamkeit</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" data-width="68"></div>
+                        </div>
+                        <div class="bar-percentage">68%</div>
+                    </div>
+                    
+                    <div class="bar-item" id="bar2">
+                        <div class="bar-label">Erwartungen</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" data-width="64"></div>
+                        </div>
+                        <div class="bar-percentage">64%</div>
+                    </div>
+                    
+                    <div class="bar-item" id="bar3">
+                        <div class="bar-label">Vertrauen</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" data-width="61"></div>
+                        </div>
+                        <div class="bar-percentage">61%</div>
+                    </div>
+                </div>
+                
+                <div class="main-stat">60%</div>
+                
+                <div class="stat-text">
+                    aller Beziehungen scheitern an diesen drei Faktoren
+                </div>
+                
+                <div class="insight-text">
+                    Studien zeigen, dass über 60% aller Beziehungen genau an diesen drei Faktoren scheitern.<br><br>
+                    
+                    <strong style="color: #764ba2;">✓ Ich helfe dir, unpassende Menschen frühzeitig zu erkennen</strong><br><br>
+                    
+                    <strong style="color: #764ba2;">✓ Du lernst, Vertrauen aufzubauen und Erwartungen zu kommunizieren</strong><br><br>
+                    
+                    <strong style="color: #764ba2;">✓ Ich zeige dir deine Muster auf und wie du sie durchbrichst</strong>
+                </div>
+                
+                <button class="continue-button" onclick="nextStep()">
+                    Weiter zur nächsten Frage
+                </button>
+            </div>
+            
+            <div class="security-note">
+                🔒 Deine Daten sind sicher und werden vertraulich behandelt
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize countdown immediately when script loads
+        (function() {
+            const countdownElement = document.getElementById('countdown');
+            const countdownBox = document.getElementById('countdown-box');
+            
+            let startTime = localStorage.getItem('countdownStart');
+            
+            if (!startTime) {
+                startTime = Date.now();
+                localStorage.setItem('countdownStart', startTime.toString());
+            }
+            
+            // Calculate current time immediately
+            const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
+            const totalTime = 25 * 60;
+            let timeLeft = Math.max(0, totalTime - elapsed);
+            
+            // Set the correct time immediately
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Make countdown visible now that it has correct content
+            countdownBox.style.visibility = 'visible';
+            
+            // Set color
+            if (timeLeft < 5 * 60 && timeLeft > 0) {
+                countdownElement.style.color = '#ff4757';
+            } else {
+                countdownElement.style.color = '#333';
+            }
+            
+            // Continue countdown
+            function updateTime() {
+                timeLeft--;
+                
+                if (timeLeft < 0) return;
+                
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft < 5 * 60 && timeLeft > 0) {
+                    countdownElement.style.color = '#ff4757';
+                    countdownElement.style.animation = 'pulse 1s infinite';
+                } else if (timeLeft === 0) {
+                    countdownElement.textContent = "0:00";
+                    countdownElement.style.color = '#ff4757';
+                    return;
+                } else {
+                    countdownElement.style.color = '#333';
+                    countdownElement.style.animation = 'none';
+                }
+                
+                setTimeout(updateTime, 1000);
+            }
+            
+            setTimeout(updateTime, 1000);
+        })();
+
+        // Animate the bar chart
+        function animateBars() {
+            const bars = document.querySelectorAll('.bar-item');
+            
+            bars.forEach((bar, index) => {
+                setTimeout(() => {
+                    // Fade in the bar
+                    bar.style.animation = `fadeInBar 0.6s ease-out forwards`;
+                    bar.style.opacity = '1';
+                    
+                    // Animate the bar fill
+                    setTimeout(() => {
+                        const fill = bar.querySelector('.bar-fill');
+                        const width = fill.getAttribute('data-width');
+                        fill.style.width = width + '%';
+                    }, 200);
+                }, index * 400);
+            });
+        }
+
+        function nextStep() {
+            window.location.href = '/step12.html';
+        }
+
+        window.addEventListener('load', function() {
+            // Start bar animation
+            setTimeout(animateBars, 500);
+            
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(30px)';
+            container.style.transition = 'all 0.6s ease';
+            
+            setTimeout(() => {
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

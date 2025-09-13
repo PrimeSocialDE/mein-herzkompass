@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datenschutzerklärung - Clara's Herzkompass</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(103, 126, 234, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            margin: 0 auto;
+            margin-top: 10px;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            opacity: 0.8;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .datenschutz-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            margin-top: 35px;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            margin-top: 25px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .highlight-box {
+            background: #22C55E;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+
+        .highlight-box h3 {
+            color: white;
+            margin-top: 0;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            margin: 25px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+
+        .warning-box h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+
+        .warning-box p {
+            color: #856404;
+        }
+
+        .danger-box {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+
+        .danger-box h3 {
+            color: #721c24;
+            margin-top: 0;
+        }
+
+        .danger-box p {
+            color: #721c24;
+        }
+
+        .contact-section {
+            background: #667eea;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .contact-section h3 {
+            color: white;
+            margin-top: 0;
+        }
+
+        .contact-section a {
+            color: white;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .footer-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        .service-box {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+
+        .service-box h3 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+
+        .service-box p {
+            color: #1976d2;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                margin-top: 0;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-container {
+                position: relative;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .datenschutz-card {
+                padding: 25px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">Clara's Herzkompass</a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="/landing.html">Startseite</a></li>
+                <li><a href="/datenschutz.html">Datenschutz</a></li>
+                <li><a href="/impressum.html">Impressum</a></li>
+                <li><a href="/agb.html">AGB</a></li>
+                <li><a href="/geld-zurueck.html" style="color: #22C55E; font-weight: 600;">14 Tage Geld-zurück</a></li>
+            </ul>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="datenschutz-card">
+            <h1>Datenschutzerklärung</h1>
+
+            <div class="info-box">
+                <p><strong>Stand:</strong> September 2025<br>
+                <strong>Ihre Daten sind bei uns sicher</strong> - Wir verarbeiten personenbezogene Daten ausschließlich im Rahmen der gesetzlichen Bestimmungen der DSGVO und des BDSG.</p>
+            </div>
+
+            <h2>1. Verantwortlicher</h2>
+            <div class="info-box">
+                <p><strong>GreenVisionSocial</strong><br>
+                Inhaber: Maximilian Debkowski<br>
+                Rosenbohmsweg 28a<br>
+                26135 Oldenburg<br>
+                Deutschland<br>
+                Tel.: 0178 5772525<br>
+                E-Mail: kontakt@primesocial.de</p>
+                <p><strong>Datenschutzbeauftragter:</strong> Ein Datenschutzbeauftragter ist nicht benannt, da hierfür keine gesetzliche Verpflichtung besteht.</p>
+            </div>
+
+            <h2>2. Zwecke der Datenverarbeitung</h2>
+            <p>Die Datenverarbeitung erfolgt zu folgenden Zwecken:</p>
+            <ul>
+                <li>Durchführung des Fragebogens (31 Fragen zu Liebe, Beziehung und Vergangenheit)</li>
+                <li>Erstellung einer KI-basierten Analyse und einer KI-basierten Motivationsaudio</li>
+                <li>Bestellabwicklung und Zahlungsabwicklung über Stripe</li>
+                <li>Kommunikation per E-Mail (z. B. Zusendung der Ergebnisse)</li>
+                <li>Marketing und Tracking (z. B. Meta Pixel, Google Analytics, Clarity, TikTok Pixel)</li>
+                <li>Einhaltung gesetzlicher Aufbewahrungsfristen (z. B. steuerliche Nachweise)</li>
+            </ul>
+
+            <h2>3. Erhobene Datenarten</h2>
+            <div class="service-box">
+                <h3>Welche Daten wir sammeln</h3>
+                <ul>
+                    <li><strong>Im Fragebogen:</strong> persönliche Angaben, Beziehungs- und Vergangenheitsinformationen (freiwillige Eingaben)</li>
+                    <li><strong>Bei Bestellung/Checkout:</strong> Name, Vorname, E-Mail-Adresse, ggf. Rechnungsadresse, Zahlungsinformationen</li>
+                    <li><strong>Technische Daten:</strong> IP-Adresse, Browsertyp, Endgerätedaten, Zeitstempel, Cookies</li>
+                    <li><strong>Kommunikationsdaten:</strong> E-Mail-Verlauf mit uns</li>
+                </ul>
+            </div>
+
+            <h2>4. Verarbeitung durch KI-Dienstleister</h2>
+            <p>Zur Erstellung der Inhalte nutzen wir KI-Systeme. Hierbei können die von Ihnen eingegebenen Daten verarbeitet werden.</p>
+            
+            <div class="service-box">
+                <h3>Unsere KI-Partner</h3>
+                <ul>
+                    <li><strong>ChatGPT (OpenAI, USA):</strong> Generierung der individuellen Textanalyse</li>
+                    <li><strong>ElevenLabs (UK/USA):</strong> Generierung der Motivationsaudio</li>
+                    <li><strong>Brevo (Deutschland/Frankreich):</strong> Versand von E-Mails</li>
+                </ul>
+                <p>Wir übermitteln dabei nur die Daten, die zur Erbringung der Leistung erforderlich sind. Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).</p>
+            </div>
+
+            <h2>5. Zahlungsabwicklung über Stripe</h2>
+            <p>Für die Zahlungsabwicklung setzen wir <strong>Stripe Payments Europe Ltd., 1 Grand Canal Street Lower, Grand Canal Dock, Dublin 2, Irland</strong> ein.</p>
+            <p>Stripe verarbeitet u. a. Kreditkarten- und Kontodaten eigenverantwortlich. Weitere Informationen finden Sie in der Datenschutzerklärung von Stripe: <a href="https://stripe.com/de/privacy" target="_blank" style="color: #667eea;">https://stripe.com/de/privacy</a></p>
+
+            <h2>6. Cookies und Tracking</h2>
+            <p>Wir verwenden Cookies und vergleichbare Technologien, um die Website bereitzustellen, Nutzerverhalten zu analysieren und Werbung zu optimieren.</p>
+            
+            <div class="warning-box">
+                <h3>Cookie-Arten</h3>
+                <ul>
+                    <li><strong>Technisch notwendige Cookies:</strong> für den Betrieb der Website</li>
+                    <li><strong>Analyse-Cookies:</strong> z. B. Google Analytics, Microsoft Clarity</li>
+                    <li><strong>Marketing-Cookies / Pixel:</strong> Meta Pixel (Facebook/Instagram), TikTok Pixel, Google Ads Conversion Tracking</li>
+                </ul>
+                <p>Rechtsgrundlage ist Ihre Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO (über das Cookie-Banner). Diese können Sie jederzeit widerrufen.</p>
+            </div>
+
+            <h2>7. Speicherdauer</h2>
+            <ul>
+                <li><strong>Fragebogendaten:</strong> werden gespeichert, um die Analyse und Audio bereitzustellen; Aufbewahrung bis zur Löschung auf Anfrage oder regelmäßiger Datenlöschung</li>
+                <li><strong>Kundendaten (Name, E-Mail, Rechnungsdaten):</strong> Aufbewahrung nach steuer- und handelsrechtlichen Vorschriften bis zu 10 Jahre</li>
+                <li><strong>E-Mails:</strong> Aufbewahrung entsprechend gesetzlicher Nachweisfristen</li>
+                <li><strong>Tracking-Daten:</strong> entsprechend den Einstellungen der jeweiligen Dienste oder bis zum Widerruf Ihrer Einwilligung</li>
+            </ul>
+
+            <h2>8. Rechtsgrundlagen</h2>
+            <div class="info-box">
+                <ul>
+                    <li><strong>Art. 6 Abs. 1 lit. b DSGVO – Vertragserfüllung:</strong> Fragebogen, Analyse, Audio, Bestellung, Bezahlung</li>
+                    <li><strong>Art. 6 Abs. 1 lit. a DSGVO – Einwilligung:</strong> Cookies, Marketing, KI-Nutzung</li>
+                    <li><strong>Art. 6 Abs. 1 lit. c DSGVO – rechtliche Verpflichtungen:</strong> z. B. Aufbewahrungspflichten</li>
+                    <li><strong>Art. 6 Abs. 1 lit. f DSGVO – berechtigtes Interesse:</strong> Sicherheit, Betrugsprävention, Optimierung des Angebots</li>
+                </ul>
+            </div>
+
+            <h2>9. Ihre Rechte</h2>
+            <div class="highlight-box">
+                <h3>Diese Rechte haben Sie</h3>
+                <ul>
+                    <li><strong>Auskunft</strong> über die gespeicherten Daten (Art. 15 DSGVO)</li>
+                    <li><strong>Berichtigung</strong> falscher Daten (Art. 16 DSGVO)</li>
+                    <li><strong>Löschung</strong> Ihrer Daten (Art. 17 DSGVO)</li>
+                    <li><strong>Einschränkung</strong> der Verarbeitung (Art. 18 DSGVO)</li>
+                    <li><strong>Datenübertragbarkeit</strong> (Art. 20 DSGVO)</li>
+                    <li><strong>Widerspruch</strong> gegen bestimmte Verarbeitungen (Art. 21 DSGVO)</li>
+                    <li><strong>Widerruf</strong> erteilter Einwilligungen (Art. 7 DSGVO)</li>
+                </ul>
+                <p><strong>Zur Ausübung Ihrer Rechte wenden Sie sich bitte an:</strong> kontakt@primesocial.de</p>
+            </div>
+
+            <h2>10. Datensicherheit</h2>
+            <p>Wir setzen technische und organisatorische Maßnahmen ein, um Ihre Daten gegen Manipulation, Verlust, Zerstörung oder unbefugten Zugriff zu schützen.</p>
+
+            <h2>11. Internationale Datenübermittlung</h2>
+            <div class="warning-box">
+                <h3>Übermittlung in Drittländer</h3>
+                <p>Da einige unserer Dienstleister ihren Sitz außerhalb der EU haben (z. B. OpenAI, ElevenLabs), kann es zu einer Übermittlung in Drittländer, insbesondere die USA, kommen.</p>
+                <p>Diese erfolgt auf Basis von Standardvertragsklauseln (SCC) der EU-Kommission oder Angemessenheitsbeschlüssen nach Art. 45 DSGVO.</p>
+            </div>
+
+            <h2>12. Aktualität</h2>
+            <p>Diese Datenschutzerklärung ist aktuell gültig und hat den <strong>Stand: September 2025</strong>.</p>
+            <p>Wir behalten uns vor, sie an technische Entwicklungen oder geänderte Rechtslagen anzupassen.</p>
+
+            <div class="contact-section">
+                <h3>Fragen zum Datenschutz?</h3>
+                <p>Kontaktieren Sie uns gerne:</p>
+                <p><a href="mailto:kontakt@primesocial.de">kontakt@primesocial.de</a><br>
+                Tel: 0178 5772525</p>
+            </div>
+
+            <div class="footer-link">
+                <a href="/landing.html">← Zurück zur Startseite</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
+        navMenu.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                navMenu.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!mobileMenuToggle.contains(e.target) && !navMenu.contains(e.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

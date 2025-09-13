@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14 Tage Geld-zurück-Garantie - Clara's Herzkompass</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(103, 126, 234, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            opacity: 0.8;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .guarantee-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #22C55E;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .guarantee-icon {
+            text-align: center;
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .main-message {
+            background: #22C55E;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .main-message h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .main-message p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .email-highlight {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .email-highlight a {
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+            text-decoration: underline;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .warning-box h3 {
+            color: #856404;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .warning-box p {
+            color: #856404;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .warning-box strong {
+            font-weight: 700;
+        }
+
+        .process-steps {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border-left: 5px solid #22C55E;
+        }
+
+        .process-steps h3 {
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .step-number {
+            background: #22C55E;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content strong {
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .contact-info {
+            background: #667eea;
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .contact-info h3 {
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .contact-info a {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .footer-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Conversion Section */
+        .conversion-section {
+            margin-top: 50px;
+            background: #2c3e50;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(44, 62, 80, 0.3);
+        }
+
+        .conversion-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .conversion-header h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .conversion-header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .conversion-body {
+            padding: 40px;
+            background: #2c3e50;
+            color: white;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .benefit-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .benefit-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .benefit-item h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #ecf0f1;
+        }
+
+        .benefit-item p {
+            font-size: 14px;
+            color: #bdc3c7;
+        }
+
+        .pricing-highlight {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .price-comparison {
+            margin-bottom: 20px;
+        }
+
+        .old-price {
+            font-size: 20px;
+            text-decoration: line-through;
+            color: #95a5a6;
+            margin-right: 15px;
+        }
+
+        .new-price {
+            font-size: 36px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .cta-button-main {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            margin: 20px 0;
+        }
+
+        .cta-button-main:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .trust-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .trust-item {
+            font-size: 14px;
+            color: #bdc3c7;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-container {
+                position: relative;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .guarantee-card {
+                padding: 25px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .main-message h2 {
+                font-size: 24px;
+            }
+
+            .step {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .step-number {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .conversion-header h2 {
+                font-size: 26px;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trust-indicators {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/landing.html" class="logo">Clara's Herzkompass</a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="/landing.html">Startseite</a></li>
+                <li><a href="/datenschutz.html">Datenschutz</a></li>
+                <li><a href="/impressum.html">Impressum</a></li>
+                <li><a href="/agb.html">AGB</a></li>
+                <li><a href="/geld-zurueck.html" style="color: #22C55E; font-weight: 600;">14 Tage Geld-zurück</a></li>
+            </ul>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="guarantee-card">
+            <div class="guarantee-icon">✅</div>
+            <h1>14 Tage Geld-zurück-Garantie</h1>
+
+            <div class="main-message">
+                <h2>Einfache Stornierung - Nur eine E-Mail!</h2>
+                <p>Sie sind mit Ihrer Analyse nicht zufrieden? Kein Problem!</p>
+                <p>Senden Sie uns einfach eine E-Mail mit dem Betreff "Stornierung" und Sie erhalten Ihr Geld direkt zurück.</p>
+                
+                <div class="email-highlight">
+                    <strong>E-Mail an:</strong><br>
+                    <a href="mailto:kontakt@primesocial.de">kontakt@primesocial.de</a>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ Wichtiger Hinweis</h3>
+                <p><strong>Bitte kontaktieren Sie NICHT PayPal oder Ihre Bank!</strong></p>
+                <p>Eine einfache E-Mail an uns reicht völlig aus. Wir bearbeiten Ihre Stornierung schnell und unkompliziert. PayPal-Disputes oder Bankrückbuchungen sind nicht notwendig und verzögern nur den Prozess.</p>
+                <p><strong>Wichtig:</strong> Bei PayPal-Disputes oder Bankrückbuchungen können zusätzliche Gebühren für Sie entstehen. Vermeiden Sie diese unnötigen Kosten durch eine einfache E-Mail an uns!</p>
+            </div>
+
+            <div class="process-steps">
+                <h3>So einfach funktioniert die Stornierung:</h3>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <strong>E-Mail senden</strong>
+                        Schreiben Sie eine E-Mail an kontakt@primesocial.de mit dem Betreff "Stornierung"
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <strong>Bestätigung erhalten</strong>
+                        Wir bestätigen Ihre Stornierung innerhalb von 24 Stunden
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <strong>Geld zurück</strong>
+                        Sie erhalten Ihr Geld innerhalb von 2-5 Werktagen zurück
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-info">
+                <h3>Haben Sie Fragen?</h3>
+                <p>Kontaktieren Sie uns jederzeit:</p>
+                <a href="mailto:kontakt@primesocial.de">kontakt@primesocial.de</a><br>
+                <span style="margin-top: 10px; display: inline-block;">Tel: 0178 5772525</span>
+            </div>
+
+            <div class="footer-link">
+                <a href="/landing.html">← Zurück zur Startseite</a>
+            </div>
+        </div>
+
+        <!-- Conversion Section -->
+        <div class="conversion-section">
+            <div class="conversion-header">
+                <h2>Wo ist das Risiko? Es gibt keins!</h2>
+                <p>Über 4.000 Menschen haben bereits ihre perfekte Beziehung gefunden - komplett risikofrei</p>
+            </div>
+            
+            <div class="conversion-body">
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">⚡</div>
+                        <h4>Schnelle Lieferung</h4>
+                        <p>Ihre Analyse in nur 10 Stunden</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🎯</div>
+                        <h4>100% Personalisiert</h4>
+                        <p>Maßgeschneidert für Ihren Typ</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🔒</div>
+                        <h4>Risikofrei</h4>
+                        <p>14 Tage Geld-zurück-Garantie</p>
+                    </div>
+                </div>
+
+                <div class="pricing-highlight">
+                    <div class="price-comparison">
+                        <span class="old-price">89,00€</span>
+                        <span class="new-price">Nur 39,99€</span>
+                    </div>
+                    
+                    <a href="/" class="cta-button-main">Jetzt Clara's Analyse starten</a>
+                    
+                    <div class="trust-indicators">
+                        <div class="trust-item">🔒 Sichere Zahlung</div>
+                        <div class="trust-item">🇩🇪 Made in Germany</div>
+                        <div class="trust-item">❌ Keine Abos</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
+        navMenu.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                navMenu.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!mobileMenuToggle.contains(e.target) && !navMenu.contains(e.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

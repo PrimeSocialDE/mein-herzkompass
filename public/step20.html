@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dating-Analyse - Deine Ängste verstehen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .main-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .countdown-box {
+            background: white;
+            border: 1px solid #764ba2;
+            border-radius: 15px;
+            padding: 6px 12px;
+            margin-bottom: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: inline-block;
+            margin-left: 50%;
+            transform: translateX(-50%);
+            visibility: hidden;
+        }
+
+        .countdown-time {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            min-width: 35px;
+            display: inline-block;
+        }
+
+        .progress-container {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            width: 62.7%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #764ba2;
+        }
+
+        .heart-section {
+            margin: 40px 0;
+        }
+
+        .heart-animation-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .heart-main {
+            font-size: 100px;
+            color: #e0e0e0;
+            display: block;
+            line-height: 1;
+            transition: color 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .heart-main.purple {
+            color: #764ba2;
+            animation: smooth-heartbeat 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .percentage-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+            opacity: 0;
+            transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .percentage-text.show {
+            opacity: 1;
+        }
+
+        .main-description {
+            font-size: 20px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .insight-text {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .continue-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .continue-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .security-note {
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        @keyframes smooth-heartbeat {
+            0%, 100% { 
+                transform: scale(1);
+            }
+            50% { 
+                transform: scale(1.04);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .heart-main {
+                font-size: 80px;
+            }
+            
+            .percentage-text {
+                font-size: 18px;
+            }
+            
+            .main-description {
+                font-size: 18px;
+            }
+            
+            .insight-text {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- COUNTDOWN -->
+        <div class="countdown-box" id="countdown-box">
+            <span class="countdown-time" id="countdown"></span>
+        </div>
+
+        <!-- PROGRESS BAR -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+        
+        <!-- MAIN CONTENT -->
+        <div class="container">
+            <div class="heart-section">
+                <div class="heart-animation-wrapper">
+                    <div class="heart-main" id="heartEmoji">💜</div>
+                    <div class="percentage-text" id="percentText">74%</div>
+                </div>
+                
+                <div class="main-description" id="mainDescription">
+                    der Menschen haben oft Angst, für immer allein zu bleiben
+                </div>
+                
+                <div class="insight-text" id="insightText">
+                    Du bist nicht allein mit dieser Angst - fast drei Viertel aller Menschen kennen dieses intensive Gefühl.<br><br>
+                    
+                    <strong style="color: #764ba2;">✓ Diese starke Angst kann dich daran hindern, authentisch zu sein</strong><br><br>
+                    
+                    <strong style="color: #764ba2;">✓ Du lernst, wie du aus der Angst heraus in die Selbstliebe findest</strong><br><br>
+                    
+                    <strong style="color: #764ba2;">✓ Du erkennst, dass Alleinsein und Einsamkeit zwei verschiedene Dinge sind</strong>
+                </div>
+                
+                <button class="continue-button" onclick="nextStep()">
+                    Weiter zur nächsten Frage
+                </button>
+            </div>
+            
+            <div class="security-note">
+                🔒 Deine Daten sind sicher und werden vertraulich behandelt
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Die 3 Antwortmöglichkeiten von Step 19
+        const step19Responses = {
+            "ja_oft": {
+                percentage: "74%",
+                description: "der Menschen haben oft Angst, für immer allein zu bleiben",
+                intro: "Du bist nicht allein mit dieser Angst - fast drei Viertel aller Menschen kennen dieses intensive Gefühl.",
+                points: [
+                    "Diese starke Angst kann dich daran hindern, authentisch zu sein",
+                    "Du lernst, wie du aus der Angst heraus in die Selbstliebe findest",
+                    "Du erkennst, dass Alleinsein und Einsamkeit zwei verschiedene Dinge sind"
+                ]
+            },
+            "manchmal": {
+                percentage: "68%",
+                description: "der Menschen haben manchmal Angst vor dem Alleinsein",
+                intro: "Diese gelegentlichen Zweifel sind völlig normal und zeigen, dass du dir eine Partnerschaft wünschst.",
+                points: [
+                    "Deine gelegentlichen Ängste sind ein Zeichen für dein offenes Herz",
+                    "Du lernst, zwischen gesunder Sehnsucht und schädlicher Angst zu unterscheiden",
+                    "Du entwickelst Vertrauen in deine Fähigkeit, Liebe anzuziehen"
+                ]
+            },
+            "nein_vertrauen": {
+                percentage: "45%",
+                description: "der Menschen haben volles Vertrauen ins Leben und die Liebe",
+                intro: "Dein Vertrauen ins Leben ist eine seltene und wertvolle Eigenschaft - bewahre sie dir!",
+                points: [
+                    "Dein Vertrauen macht dich magnetisch für die richtige Person",
+                    "Du lernst, wie du diese positive Energie noch bewusster einsetzt",
+                    "Du erkennst, dass Geduld und Vertrauen die stärksten Dating-Tools sind"
+                ]
+            }
+        };
+
+        let currentResponse = 'ja_oft';
+
+        // Content basierend auf Step 19 Antwort aktualisieren
+        function updateContent() {
+            const response = step19Responses[currentResponse];
+            
+            document.getElementById('percentText').textContent = response.percentage;
+            document.getElementById('mainDescription').textContent = response.description;
+            
+            const insightText = document.getElementById('insightText');
+            insightText.innerHTML = `
+                ${response.intro}<br><br>
+                
+                <strong style="color: #764ba2;">✓ ${response.points[0]}</strong><br><br>
+                
+                <strong style="color: #764ba2;">✓ ${response.points[1]}</strong><br><br>
+                
+                <strong style="color: #764ba2;">✓ ${response.points[2]}</strong>
+            `;
+        }
+
+        // Initialize countdown
+        (function() {
+            const countdownElement = document.getElementById('countdown');
+            const countdownBox = document.getElementById('countdown-box');
+            
+            let startTime = localStorage.getItem('countdownStart');
+            
+            if (!startTime) {
+                startTime = Date.now();
+                localStorage.setItem('countdownStart', startTime.toString());
+            }
+            
+            const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
+            const totalTime = 25 * 60;
+            let timeLeft = Math.max(0, totalTime - elapsed);
+            
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            countdownBox.style.visibility = 'visible';
+            
+            if (timeLeft < 5 * 60 && timeLeft > 0) {
+                countdownElement.style.color = '#ff4757';
+            } else {
+                countdownElement.style.color = '#333';
+            }
+            
+            function updateTime() {
+                timeLeft--;
+                
+                if (timeLeft < 0) return;
+                
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft < 5 * 60 && timeLeft > 0) {
+                    countdownElement.style.color = '#ff4757';
+                    countdownElement.style.animation = 'pulse 1s infinite';
+                } else if (timeLeft === 0) {
+                    countdownElement.textContent = "0:00";
+                    countdownElement.style.color = '#ff4757';
+                    return;
+                } else {
+                    countdownElement.style.color = '#333';
+                    countdownElement.style.animation = 'none';
+                }
+                
+                setTimeout(updateTime, 1000);
+            }
+            
+            setTimeout(updateTime, 1000);
+        })();
+
+        // Heart animation
+        function startHeartSequence() {
+            const heart = document.getElementById('heartEmoji');
+            const percent = document.getElementById('percentText');
+            
+            setTimeout(() => {
+                heart.classList.add('purple');
+            }, 1200);
+            
+            setTimeout(() => {
+                percent.classList.add('show');
+            }, 2200);
+        }
+
+        function nextStep() {
+            // Zu Step 21 weiterleiten
+            window.location.href = '/step21.html';
+        }
+
+        // Page load - HIER IST DIE PERSONALISIERUNG
+        window.addEventListener('load', function() {
+            // Step 19 Antwort laden und personalisieren
+            const step19Answer = localStorage.getItem('step19_answer');
+            if (step19Answer) {
+                currentResponse = step19Answer;
+            }
+            
+            // Content basierend auf Antwort laden
+            updateContent();
+            
+            // Animationen starten
+            startHeartSequence();
+            
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(30px)';
+            container.style.transition = 'all 0.6s ease';
+            
+            setTimeout(() => {
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

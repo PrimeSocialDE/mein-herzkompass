@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Widerrufsrecht - Clara's Herzkompass</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(103, 126, 234, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            opacity: 0.8;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .widerruf-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            margin-top: 35px;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            margin-top: 25px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .highlight-box {
+            background: #22C55E;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .highlight-box h3 {
+            color: white;
+            margin-bottom: 15px;
+            margin-top: 0;
+        }
+
+        .highlight-box a {
+            color: white;
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            margin: 25px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+
+        .warning-box h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+
+        .warning-box p {
+            color: #856404;
+        }
+
+        .contact-section {
+            background: #667eea;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .contact-section h3 {
+            color: white;
+            margin-top: 0;
+        }
+
+        .contact-section a {
+            color: white;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .form-section h3 {
+            margin-top: 0;
+        }
+
+        .form-field {
+            margin-bottom: 20px;
+        }
+
+        .form-field label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .form-field input,
+        .form-field textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .form-field input:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-field textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .footer-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-container {
+                position: relative;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .widerruf-card {
+                padding: 25px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">Clara's Herzkompass</a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="/landing.html">Startseite</a></li>
+                <li><a href="/datenschutz.html">Datenschutz</a></li>
+                <li><a href="/impressum.html">Impressum</a></li>
+                <li><a href="/agb.html">AGB</a></li>
+                <li><a href="/geld-zurueck.html" style="color: #22C55E; font-weight: 600;">14 Tage Geld-zurück</a></li>
+            </ul>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="widerruf-card">
+            <h1>Widerrufsrecht</h1>
+
+            <div class="highlight-box">
+                <h3>Einfache Stornierung</h3>
+                <p>Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
+                <p><strong>E-Mail genügt:</strong> <a href="mailto:kontakt@primesocial.de">kontakt@primesocial.de</a></p>
+            </div>
+
+            <h2>Widerrufsbelehrung</h2>
+
+            <h3>Widerrufsrecht</h3>
+            <p>Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
+            
+            <p>Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag des Vertragsabschlusses.</p>
+
+            <h3>Ausübung des Widerrufsrechts</h3>
+            <p>Um Ihr Widerrufsrecht auszuüben, müssen Sie uns</p>
+
+            <div class="info-box">
+                <strong>GreenVisionSocial<br>
+                Maximilian Debowski<br>
+                Rosenbohmsweg 28a<br>
+                26135 Oldenburg<br>
+                Deutschland<br>
+                E-Mail: kontakt@primesocial.de<br>
+                Tel.: 0178 5772525</strong>
+            </div>
+
+            <p>mittels einer eindeutigen Erklärung (z.B. ein mit der Post versandter Brief, Telefax oder E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.</p>
+
+            <div class="form-section">
+                <h3>Muster-Widerrufsformular</h3>
+                <p>Sie können das untenstehende Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben ist:</p>
+                
+                <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #ddd;">
+                    <p><strong>An:</strong><br>
+                    GreenVisionSocial, Maximilian Debowski<br>
+                    Rosenbohmsweg 28a, 26135 Oldenburg<br>
+                    E-Mail: kontakt@primesocial.de</p>
+
+                    <p style="margin: 20px 0;">
+                        Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*) abgeschlossenen Vertrag über den Kauf der folgenden Waren (*)/die Erbringung der folgenden Dienstleistung (*)
+                    </p>
+
+                    <p>Bestellt am (*)/erhalten am (*): _______________</p>
+                    <p>Name des/der Verbraucher(s): _______________</p>
+                    <p>Anschrift des/der Verbraucher(s): _______________</p>
+                    <p>Unterschrift des/der Verbraucher(s) (nur bei Mitteilung auf Papier): _______________</p>
+                    <p>Datum: _______________</p>
+
+                    <p style="font-size: 14px; color: #666; margin-top: 15px;">(*) Unzutreffendes streichen.</p>
+                </div>
+            </div>
+
+            <h3>Widerrufsfrist</h3>
+            <p>Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.</p>
+
+            <h3>Folgen des Widerrufs</h3>
+            <p>Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von Ihnen erhalten haben, einschließlich der Lieferkosten (mit Ausnahme der zusätzlichen Kosten, die sich daraus ergeben, dass Sie eine andere Art der Lieferung als die von uns angebotene, günstigste Standardlieferung gewählt haben), unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses Vertrags bei uns eingegangen ist.</p>
+
+            <p>Für diese Rückzahlung verwenden wir dasselbe Zahlungsmittel, das Sie bei der ursprünglichen Transaktion eingesetzt haben, es sei denn, mit Ihnen wurde ausdrücklich etwas anderes vereinbart; in keinem Fall werden Ihnen wegen dieser Rückzahlung Entgelte berechnet.</p>
+
+            <div class="warning-box">
+                <h3>Besonderheit bei digitalen Inhalten</h3>
+                <p><strong>Wichtiger Hinweis:</strong> Haben Sie ausdrücklich zugestimmt, dass wir mit der Ausführung der Dienstleistung vor Ablauf der Widerrufsfrist beginnen, und haben Sie zur Kenntnis genommen, dass Sie durch Ihre Zustimmung mit Beginn der Ausführung der Dienstleistung Ihr Widerrufsrecht verlieren, erlischt Ihr Widerrufsrecht mit vollständiger Erbringung der Dienstleistung durch uns.</p>
+            </div>
+
+            <h2>Freiwillige Rückgabe</h2>
+            <p>Über das gesetzliche Widerrufsrecht hinaus bieten wir Ihnen eine <strong>14 Tage Geld-zurück-Garantie</strong> an. Details finden Sie auf unserer <a href="/geld-zurueck.html" style="color: #22C55E; font-weight: 600;">Garantie-Seite</a>.</p>
+
+            <div class="contact-section">
+                <h3>Fragen zum Widerrufsrecht?</h3>
+                <p>Kontaktieren Sie uns gerne:</p>
+                <p><a href="mailto:kontakt@primesocial.de">kontakt@primesocial.de</a><br>
+                Tel: 0178 5772525</p>
+            </div>
+
+            <div class="footer-link">
+                <a href="/landing.html">← Zurück zur Startseite</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
+        navMenu.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                navMenu.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!mobileMenuToggle.contains(e.target) && !navMenu.contains(e.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

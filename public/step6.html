@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dating-Analyse - Deine Statistiken</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .main-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .countdown-box {
+            background: white;
+            border: 1px solid #764ba2;
+            border-radius: 15px;
+            padding: 6px 12px;
+            margin-bottom: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: inline-block;
+            margin-left: 50%;
+            transform: translateX(-50%);
+            visibility: hidden;
+        }
+
+        .countdown-time {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            min-width: 35px;
+            display: inline-block;
+        }
+
+        .progress-container {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            width: 16.5%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #764ba2;
+        }
+
+        .clara-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 80%;
+            margin: 0 auto 20px auto;
+            border: 2px solid #f8f9fa;
+            box-shadow: 0 2px 8px rgba(118, 75, 162, 0.2);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clara-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .clara-intro {
+            font-size: 16px;
+            color: #764ba2;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 40px 0;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 30px;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .chart-circle-bg {
+            fill: none;
+            stroke: #f0f0f0;
+            stroke-width: 12;
+        }
+
+        .chart-circle {
+            fill: none;
+            stroke: url(#gradient);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 0 628;
+            transition: stroke-dasharray 2s ease-in-out;
+        }
+
+        .chart-percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .stat-text {
+            font-size: 24px;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .insight-text {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .continue-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .continue-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .security-note {
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .chart-wrapper {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .chart-percentage {
+                font-size: 28px;
+            }
+            
+            .stat-text {
+                font-size: 20px;
+            }
+            
+            .insight-text {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- COUNTDOWN -->
+        <div class="countdown-box" id="countdown-box">
+            <span class="countdown-time" id="countdown"></span>
+        </div>
+
+        <!-- PROGRESS BAR -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+        
+        <!-- MAIN CONTENT -->
+        <div class="container">
+            <!-- Clara Photo -->
+            <div class="clara-photo">
+                <img src="ClaraPB.png" alt="Clara - Dating-Expertin">
+            </div>
+            <div class="clara-intro">Clara, deine Expertin</div>
+            
+            <div class="chart-container">
+                <div class="chart-wrapper">
+                    <svg class="chart-svg" viewBox="0 0 200 200">
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <circle class="chart-circle-bg" cx="100" cy="100" r="90"></circle>
+                        <circle class="chart-circle" cx="100" cy="100" r="90" id="chart-circle"></circle>
+                    </svg>
+                    <div class="chart-percentage">87%</div>
+                </div>
+                
+                <div class="stat-text">
+                    <span>Glück in einer Beziehung ist der wichtigste Faktor für ein erfülltes Leben</span>
+                    <span class="heart">💜</span>
+                </div>
+                
+                <div class="insight-text">
+                    Aus über 4000 erfolgreichen Analysen habe ich gelernt, dass viele immer wieder an denselben Mustern scheitern: falsche Erwartungen, Missverständnisse oder die Angst nicht genug zu sein.<br><br>
+                    
+                    Genau hier setze ich an. Mit meinen Analysen decke ich diese Muster auf und zeige dir, wie du sie durchbrechen kannst.
+                </div>
+                
+                <button class="continue-button" onclick="nextStep()">
+                    Weiter zur nächsten Frage
+                </button>
+            </div>
+            
+            <div class="security-note">
+                🔒 Deine Daten sind sicher und werden vertraulich behandelt
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize countdown immediately when script loads
+        (function() {
+            const countdownElement = document.getElementById('countdown');
+            const countdownBox = document.getElementById('countdown-box');
+            
+            let startTime = localStorage.getItem('countdownStart');
+            
+            if (!startTime) {
+                startTime = Date.now();
+                localStorage.setItem('countdownStart', startTime.toString());
+            }
+            
+            // Calculate current time immediately
+            const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
+            const totalTime = 25 * 60;
+            let timeLeft = Math.max(0, totalTime - elapsed);
+            
+            // Set the correct time immediately
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Make countdown visible now that it has correct content
+            countdownBox.style.visibility = 'visible';
+            
+            // Set color
+            if (timeLeft < 5 * 60 && timeLeft > 0) {
+                countdownElement.style.color = '#ff4757';
+            } else {
+                countdownElement.style.color = '#333';
+            }
+            
+            // Continue countdown
+            function updateTime() {
+                timeLeft--;
+                
+                if (timeLeft < 0) return;
+                
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft < 5 * 60 && timeLeft > 0) {
+                    countdownElement.style.color = '#ff4757';
+                    countdownElement.style.animation = 'pulse 1s infinite';
+                } else if (timeLeft === 0) {
+                    countdownElement.textContent = "0:00";
+                    countdownElement.style.color = '#ff4757';
+                    return;
+                } else {
+                    countdownElement.style.color = '#333';
+                    countdownElement.style.animation = 'none';
+                }
+                
+                setTimeout(updateTime, 1000);
+            }
+            
+            setTimeout(updateTime, 1000);
+        })();
+
+        // Animate the chart
+        function animateChart() {
+            const circle = document.getElementById('chart-circle');
+            const circumference = 2 * Math.PI * 90; // radius = 90
+            const percentage = 87;
+            const strokeDasharray = (percentage / 100) * circumference;
+            
+            setTimeout(() => {
+                circle.style.strokeDasharray = `${strokeDasharray} ${circumference}`;
+            }, 500);
+        }
+
+        function nextStep() {
+            window.location.href = '/step7.html';
+        }
+
+        window.addEventListener('load', function() {
+            // Start chart animation
+            animateChart();
+            
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(30px)';
+            container.style.transition = 'all 0.6s ease';
+            
+            setTimeout(() => {
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

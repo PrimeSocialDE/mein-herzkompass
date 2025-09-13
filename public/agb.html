@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allgemeine Geschäftsbedingungen - Clara's Herzkompass</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(103, 126, 234, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            margin: 0 auto;
+            margin-top: 10px;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            opacity: 0.8;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .agb-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            margin-top: 35px;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            margin-top: 25px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .highlight-box {
+            background: #22C55E;
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+
+        .highlight-box h3 {
+            color: white;
+            margin-top: 0;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            margin: 25px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+
+        .warning-box h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+
+        .warning-box p {
+            color: #856404;
+        }
+
+        .danger-box {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+
+        .danger-box h3 {
+            color: #721c24;
+            margin-top: 0;
+        }
+
+        .danger-box p {
+            color: #721c24;
+        }
+
+        .contact-section {
+            background: #667eea;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .contact-section h3 {
+            color: white;
+            margin-top: 0;
+        }
+
+        .contact-section a {
+            color: white;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .footer-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                margin-top: 0;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-container {
+                position: relative;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .agb-card {
+                padding: 25px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">Clara's Herzkompass</a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="/landing.html">Startseite</a></li>
+                <li><a href="/datenschutz.html">Datenschutz</a></li>
+                <li><a href="/impressum.html">Impressum</a></li>
+                <li><a href="/agb.html">AGB</a></li>
+                <li><a href="/geld-zurueck.html" style="color: #22C55E; font-weight: 600;">14 Tage Geld-zurück</a></li>
+            </ul>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="agb-card">
+            <h1>Allgemeine Geschäftsbedingungen</h1>
+
+            <div class="info-box">
+                <p><strong>Stand:</strong> September 2025<br>
+                <strong>Gültig für:</strong> GreenVisionSocial, Maximilian Debowski</p>
+            </div>
+
+            <h2>Teil 1. Anbieter und Geltungsbereich</h2>
+
+            <h3>§ 1 Anbieter</h3>
+            <div class="info-box">
+                <p><strong>GreenVisionSocial</strong><br>
+                Inhaber: Maximilian Debowski<br>
+                Rosenbohmsweg 28a<br>
+                26135 Oldenburg<br>
+                Deutschland<br>
+                Tel.: 0178 5772525<br>
+                E-Mail: kontakt@primesocial.de</p>
+                <p><strong>Umsatzsteuerbefreit</strong> gemäß § 19 UStG Kleinunternehmerregelung</p>
+            </div>
+
+            <h3>§ 2 Geltungsbereich</h3>
+            <p>Diese AGB gelten für alle Verträge zwischen dem Anbieter und Kunden über die auf unseren Webseiten oder verlinkten Zahlungsseiten angebotenen Leistungen. Maßgeblich ist die zum Zeitpunkt des Vertragsschlusses veröffentlichte Fassung dieser AGB.</p>
+
+            <h3>§ 3 Begriffe</h3>
+            <p><strong>Verbraucher</strong> ist jede natürliche Person, die ein Rechtsgeschäft zu Zwecken abschließt, die überwiegend weder ihrer gewerblichen noch ihrer selbstständigen beruflichen Tätigkeit zugerechnet werden können.</p>
+            <p><strong>Unternehmer</strong> ist eine natürliche oder juristische Person oder eine rechtsfähige Personengesellschaft, die bei Abschluss eines Rechtsgeschäfts in Ausübung ihrer gewerblichen oder selbstständigen beruflichen Tätigkeit handelt.</p>
+
+            <div class="warning-box">
+                <h3>§ 4 Mindestalter und Geschäftsfähigkeit</h3>
+                <p>Unsere Leistungen richten sich ausschließlich an volljährige Personen. Mit der Bestellung bestätigt der Kunde, dass er das 18. Lebensjahr vollendet hat und voll geschäftsfähig ist. Erlangen wir Kenntnis von einer Minderjährigkeit, können wir den Vertrag kündigen und bereits erhaltene Zahlungen erstatten.</p>
+            </div>
+
+            <h3>§ 5 Abweichende Bedingungen</h3>
+            <p>Abweichende Geschäftsbedingungen des Kunden werden nicht Vertragsbestandteil. Etwas anderes gilt nur, wenn wir deren Geltung ausdrücklich schriftlich zustimmen.</p>
+
+            <h2>Teil 2. Vertragsgegenstand und Vertragsschluss</h2>
+
+            <h3>§ 6 Vertragsgegenstand</h3>
+            
+            <div class="highlight-box">
+                <h3>Das bieten wir</h3>
+                <ul>
+                    <li><strong>KI-generierte personalisierte Dating-Analyse</strong> auf Grundlage eines Fragebogens mit 31 Fragen zu Liebe, Beziehung und Vergangenheit</li>
+                    <li><strong>Individuelles Motivationsaudio</strong> mit personalisierenden Aussagen basierend auf Ihren Angaben</li>
+                    <li><strong>Hinweise zur Selbstreflexion</strong> und Stärkung des Selbstbewusstseins</li>
+                    <li><strong>Empfehlungen für die künftige Partnersuche</strong></li>
+                    <li><strong>Schnelle digitale Lieferung</strong> (innerhalb 24 Stunden)</li>
+                    <li><strong>14-Tage-Geld-zurück-Garantie</strong></li>
+                </ul>
+            </div>
+
+            <div class="danger-box">
+                <h3>Das ist es NICHT</h3>
+                <ul>
+                    <li><strong>Keine menschliche Beratung:</strong> Die Inhalte werden vollständig automatisiert erstellt</li>
+                    <li><strong>Keine echte psychologische Beratung oder Therapie</strong></li>
+                    <li><strong>Keine medizinische oder therapeutische Hilfe</strong></li>
+                    <li><strong>Keine wissenschaftlichen Vorhersagen</strong></li>
+                    <li><strong>"Clara" ist eine fiktive Marketingfigur</strong> ohne realen Personenbezug</li>
+                    <li><strong>Kein Ersatz für professionelle Beratung</strong></li>
+                    <li><strong>Kein Anspruch auf das Eintreten bestimmter Erfolge</strong></li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <h3>Wichtiger Hinweis</h3>
+                <p>Die Leistungen dienen der Unterhaltung und allgemeinen Selbstreflexion. Entscheidungen von erheblicher Tragweite dürfen nicht auf die Inhalte gestützt werden.</p>
+            </div>
+
+            <h3>§ 7 Vertragsschluss</h3>
+            <ol>
+                <li>Die Darstellung unserer Leistungen ist eine unverbindliche Aufforderung zur Abgabe einer Bestellung.</li>
+                <li>Der Kunde führt den Fragebogen aus, wählt sein Paket und gibt durch Klicken auf eine entsprechend bezeichnete Schaltfläche eine verbindliche Bestellung ab.</li>
+                <li>Die Zahlung erfolgt über den Zahlungsdienstleister Stripe. Mit erfolgreichem Zahlungseingang kommt der Vertrag zustande.</li>
+                <li>Der Vertragstext wird gespeichert. Die Vertragsbestimmungen einschließlich dieser AGB werden dem Kunden per E-Mail übermittelt.</li>
+            </ol>
+
+            <h3>§ 8 Korrektur und technische Voraussetzungen</h3>
+            <p>Vor Absenden der Bestellung kann der Kunde seine Eingaben jederzeit prüfen und ändern. Für den Vertragsschluss und die Leistungserbringung sind erforderlich: eine gültige E-Mail-Adresse, die Möglichkeit PDF- und Audiodateien zu empfangen, Internetzugang sowie ein von Stripe akzeptiertes Zahlungsmittel. Der Kunde stellt sicher, dass E-Mails des Anbieters nicht durch Spamfilter blockiert werden.</p>
+
+            <h2>Teil 3. Preise, Zahlung, Lieferung, Widerruf</h2>
+
+            <h3>§ 9 Preise und Zahlung</h3>
+            <ol>
+                <li>Es gelten die im Bestellzeitpunkt angezeigten Endpreise. Der Anbieter nimmt die Kleinunternehmerregelung nach § 19 UStG in Anspruch. Eine Umsatzsteuer wird nicht ausgewiesen.</li>
+                <li>Die Zahlung erfolgt ausschließlich über Stripe. Zahlungsdaten werden auf Systemen von Stripe verarbeitet.</li>
+                <li>Der Kaufpreis ist sofort fällig. Die Leistungserbringung beginnt erst nach erfolgreichem Zahlungseingang.</li>
+                <li>Bei fehlgeschlagener Zahlung oder unberechtigtem Chargeback sind wir berechtigt, die Leistung zu verweigern, vom Vertrag zurückzutreten und entstandene Mehrkosten zu berechnen.</li>
+            </ol>
+
+            <div class="info-box">
+                <h3>Akzeptierte Zahlungsmittel (über Stripe)</h3>
+                <ul>
+                    <li>Kreditkarte (Visa, Mastercard)</li>
+                    <li>PayPal</li>
+                    <li>SEPA-Lastschrift</li>
+                </ul>
+            </div>
+
+            <h3>§ 10 Lieferung und Leistungserbringung</h3>
+            <ol>
+                <li>Die Bereitstellung erfolgt ausschließlich digital per E-Mail. Der Kunde erhält die Analyse als PDF und die Motivationsaudio als Audiodatei oder als Downloadlink.</li>
+                <li><strong>Standardlieferung innerhalb von 24 Stunden</strong> nach Zahlungseingang. Expressoptionen können gesondert angeboten werden.</li>
+                <li>Mit dem Versand an die angegebene E-Mail-Adresse gilt die Leistung als vollständig erbracht. Der Anbieter dokumentiert den Versand technisch.</li>
+                <li>Erhält der Kunde keine E-Mail, prüft er Spamordner, Filtereinstellungen und die Richtigkeit seiner Adresse und kontaktiert den Support. Bei nachgewiesener Nichtzustellung erfolgt ein erneuter Versand.</li>
+                <li>Ereignisse höherer Gewalt und vergleichbare Störungen befreien uns für deren Dauer von der Leistungspflicht.</li>
+            </ol>
+
+            <h3>§ 11 Widerrufsrecht und freiwillige Geld-zurück-Garantie</h3>
+
+            <h4>Widerrufsbelehrung für Verbraucher</h4>
+            <div class="info-box">
+                <p><strong>Widerrufsrecht:</strong> Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
+                <p><strong>Widerrufsfrist:</strong> Die Frist beginnt mit Vertragsschluss.</p>
+                <p><strong>Widerrufsform:</strong> Zur Ausübung genügt eine eindeutige Erklärung per E-Mail an kontakt@primesocial.de</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>Vorzeitiges Erlöschen des Widerrufsrechts</h3>
+                <p>Das Widerrufsrecht erlischt bei einem Vertrag über die Lieferung digitaler Inhalte, die nicht auf einem körperlichen Datenträger geliefert werden, wenn wir mit der Ausführung begonnen haben, nachdem der Verbraucher ausdrücklich zugestimmt hat, dass wir vor Ablauf der Widerrufsfrist mit der Ausführung beginnen und er seine Kenntnis vom Verlust des Widerrufsrechts bestätigt hat.</p>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Freiwillige 14-Tage-Geld-zurück-Garantie</h3>
+                <p>Unabhängig von gesetzlichen Rechten gewähren wir innerhalb von 14 Tagen nach Bereitstellung der Inhalte eine kulante Erstattung des Kaufpreises. Zur Inanspruchnahme genügt eine E-Mail mit Bestellnummer. Die Erstattung erfolgt in der Regel binnen fünf bis sieben Werktagen.</p>
+                <p><strong>Hinweis:</strong> Diese Garantie ist freiwillig, kann missbrauchsvermeidend eingeschränkt oder beendet werden und lässt gesetzliche Rechte unberührt.</p>
+            </div>
+
+            <h2>Teil 4. Rechte an Inhalten und Nutzung</h2>
+
+            <h3>§ 12 Rechte an den Inhalten</h3>
+            <ol>
+                <li>Alle im Rahmen der Leistung erstellten Inhalte einschließlich Auswahl, Zusammenstellung, Layout und finaler Ausgestaltung stehen im geistigen Eigentum des Anbieters.</li>
+                <li>Der Kunde erhält ein einfaches, nicht ausschließliches, nicht übertragbares, zeitlich unbeschränktes Nutzungsrecht zur privaten Nutzung der Analyse und der Motivationsaudio.</li>
+                <li><strong>Nicht gestattet sind:</strong> kommerzielle Nutzung, Verkauf, Weiterlizenzierung, öffentliche Zugänglichmachung zu Erwerbszwecken, Upload auf Plattformen zur Verwertung von Inhalten, Anmeldung von Schutzrechten sowie die Behauptung eigener Urheberschaft.</li>
+                <li>KI-Systeme können ähnliche Ergebnisse erzeugen. Einzigartigkeit wird nicht garantiert.</li>
+                <li>Dateien können digitale Wasserzeichen enthalten. Deren Entfernung ist unzulässig. Bei rechtswidriger Nutzung können Nutzungsrechte widerrufen werden.</li>
+            </ol>
+
+            <h2>Teil 5. Pflichten, Haftung, Datenschutz</h2>
+
+            <h3>§ 13 Pflichten des Kunden</h3>
+            <p>Der Kunde macht wahrheitsgemäße Angaben, hält seine E-Mail-Adresse aktuell, nutzt die Inhalte verantwortungsvoll ausschließlich zu Zwecken der Unterhaltung und Selbstreflexion und unternimmt keine missbräuchliche Inanspruchnahme der Geld-zurück-Garantie.</p>
+
+            <h3>§ 14 Haftung</h3>
+            
+            <div class="danger-box">
+                <h3>Haftungsausschluss</h3>
+                <p>Es wird keine Haftung für das Eintreten, die Richtigkeit, die Vollständigkeit oder die Verwendbarkeit der Inhalte übernommen. Keine Haftung für Fehlinterpretationen, emotionale Reaktionen oder entscheidungsbedingte Schäden.</p>
+            </div>
+
+            <ol>
+                <li><strong>Unbeschränkte Haftung:</strong> Wir haften unbeschränkt bei Vorsatz, grober Fahrlässigkeit, Verletzung von Leben, Körper oder Gesundheit, nach dem Produkthaftungsgesetz sowie bei übernommener Garantie.</li>
+                <li><strong>Beschränkte Haftung:</strong> Bei einfacher Fahrlässigkeit haften wir nur bei Verletzung wesentlicher Vertragspflichten, beschränkt auf den vertragstypischen, vorhersehbaren Schaden.</li>
+                <li><strong>Ausgeschlossen:</strong> Haftung für Störungen bei Zahlungsdienstleistern, E-Mail-Providern, Internet-Diensten sowie bei höherer Gewalt.</li>
+                <li><strong>Verjährung:</strong> Vertragliche Schadensersatzansprüche verjähren innerhalb eines Jahres ab gesetzlichem Verjährungsbeginn, soweit kein Vorsatz vorliegt und keine zwingenden längeren Fristen gelten.</li>
+            </ol>
+
+            <h3>§ 15 Datenschutz</h3>
+            <ol>
+                <li>Personenbezogene Daten werden gemäß DSGVO und BDSG verarbeitet. Einzelheiten ergeben sich aus der Datenschutzerklärung auf der Bestellseite.</li>
+                <li>Verarbeitet werden insbesondere Fragebogenangaben, Transaktionsdaten über Stripe sowie technische Nutzungsdaten. Soweit möglich erfolgt eine pseudonyme Verarbeitung.</li>
+                <li>Der Kunde hat Rechte auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit, Widerspruch sowie Widerruf von Einwilligungen mit Wirkung für die Zukunft.</li>
+                <li><strong>Datenschutzkontakt:</strong> kontakt@primesocial.de</li>
+            </ol>
+
+            <h2>Teil 6. Besondere Hinweise, Streitbeilegung, Schluss</h2>
+
+            <div class="danger-box">
+                <h3>§ 16 Medizinischer und psychologischer Hinweis</h3>
+                <p>Die Leistungen stellen keine medizinische oder psychologische Beratung, keine Diagnose und keine Therapie dar.</p>
+                <p><strong>In Notfällen:</strong> Rettungsdienst unter 112<br>
+                <strong>Bei psychischen Krisen:</strong> Telefonseelsorge unter 0800 1110111 oder 0800 1110222</p>
+            </div>
+
+            <h3>§ 17 Jugendschutz</h3>
+            <p>Das Angebot richtet sich ausschließlich an Personen ab 18 Jahren. Wir behalten uns Stichprobenprüfungen vor.</p>
+
+            <h3>§ 18 Streitbeilegung</h3>
+            <p>Verbraucher können die OS-Plattform der EU nutzen: <a href="https://ec.europa.eu/odr" target="_blank" style="color: #667eea;">https://ec.europa.eu/odr</a></p>
+            <p>Wir sind zur Teilnahme an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle weder verpflichtet noch bereit. Wir bevorzugen die direkte Klärung über den Kundenservice.</p>
+
+            <h3>§ 19 Anwendbares Recht, Sprache, Änderungen</h3>
+            <p>Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts. Vertragssprache ist Deutsch. Änderungen dieser AGB können erfolgen. Für bereits geschlossene Verträge gelten die bei Vertragsschluss maßgeblichen AGB.</p>
+
+            <h3>§ 20 Salvatorische Klausel, Übertragung</h3>
+            <p>Sollten einzelne Bestimmungen unwirksam sein, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt. Der Kunde darf Rechte und Pflichten aus diesem Vertrag nicht ohne unsere Zustimmung übertragen.</p>
+
+            <div class="contact-section">
+                <h3>Fragen zu den AGB?</h3>
+                <p>Kontaktieren Sie uns gerne:</p>
+                <p><a href="mailto:kontakt@primesocial.de">kontakt@primesocial.de</a><br>
+                Tel: 0178 5772525</p>
+            </div>
+
+            <div class="footer-link">
+                <a href="/landing.html">← Zurück zur Startseite</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
+        navMenu.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                navMenu.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!mobileMenuToggle.contains(e.target) && !navMenu.contains(e.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

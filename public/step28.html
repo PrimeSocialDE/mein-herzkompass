@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dating-Analyse - Schritt 28</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .main-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .countdown-box {
+            background: white;
+            border: 1px solid #764ba2;
+            border-radius: 15px;
+            padding: 6px 12px;
+            margin-bottom: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: inline-block;
+            margin-left: 50%;
+            transform: translateX(-50%);
+            visibility: visible;
+        }
+
+        .countdown-time {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            min-width: 35px;
+            display: inline-block;
+        }
+
+        .progress-container {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            width: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #764ba2;
+        }
+
+        .question-section {
+            margin: 20px 0;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+
+        .name-input-container {
+            margin-bottom: 30px;
+        }
+
+        .name-input {
+            width: 100%;
+            padding: 20px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            background: white;
+            color: #333;
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .name-input:focus {
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+        }
+
+        .name-input::placeholder {
+            color: #999;
+            font-weight: 400;
+        }
+
+        .name-hint {
+            font-size: 14px;
+            color: #888;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .birthday-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .birthday-title {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .birthday-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .birthday-inputs {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .birthday-input {
+            width: 80px;
+            padding: 15px 10px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            color: #333;
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: inherit;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .birthday-input-year {
+            width: 100px;
+            padding: 15px 10px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            color: #333;
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: inherit;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .birthday-input:focus, .birthday-input-year:focus {
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+        }
+
+        .birthday-input::placeholder, .birthday-input-year::placeholder {
+            color: #999;
+            font-weight: 400;
+        }
+
+        .birthday-separator {
+            font-size: 20px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .birthday-labels {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .birthday-label {
+            width: 80px;
+            text-align: center;
+        }
+
+        .birthday-label-year {
+            width: 100px;
+            text-align: center;
+        }
+
+        .continue-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 18px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            pointer-events: none;
+            margin-top: 20px;
+        }
+
+        .continue-button.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .continue-button.active:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(118, 75, 162, 0.2);
+        }
+
+        .security-note {
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .name-input {
+                padding: 18px 15px;
+                font-size: 16px;
+            }
+            
+            .birthday-input {
+                width: 65px;
+                padding: 12px 8px;
+                font-size: 16px;
+            }
+
+            .birthday-input-year {
+                width: 85px;
+                padding: 12px 8px;
+                font-size: 16px;
+            }
+            
+            .birthday-label {
+                width: 65px;
+            }
+
+            .birthday-label-year {
+                width: 85px;
+            }
+            
+            .continue-button {
+                padding: 16px 30px;
+                font-size: 15px;
+            }
+
+            .birthday-section {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- COUNTDOWN -->
+        <div class="countdown-box" id="countdown-box">
+            <span class="countdown-time" id="countdown">25:00</span>
+        </div>
+
+        <!-- PROGRESS BAR -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+        
+        <!-- MAIN CONTENT -->
+        <div class="container">
+            <div class="question-section">
+                <h1>Wie darf ich dich ansprechen?</h1>
+                <p class="subtitle">Damit deine Analyse persönlich wird</p>
+                
+                <div class="name-input-container">
+                    <input 
+                        type="text" 
+                        class="name-input" 
+                        id="nameInput"
+                        placeholder="Dein Vorname..."
+                        maxlength="30"
+                        oninput="checkInputs()"
+                    >
+                    <div class="name-hint">Nur dein Vorname reicht völlig aus</div>
+                </div>
+
+                <div class="birthday-section">
+                    <div class="birthday-title">Wann hast du Geburtstag?</div>
+                    <div class="birthday-subtitle">Damit ich dein passendes Sternzeichen bestimmen kann</div>
+                    
+                    <div class="birthday-inputs">
+                        <input 
+                            type="text" 
+                            class="birthday-input" 
+                            id="dayInput"
+                            placeholder="TT"
+                            maxlength="2"
+                            oninput="handleBirthdayInput(this, 'day')"
+                        >
+                        <span class="birthday-separator">/</span>
+                        <input 
+                            type="text" 
+                            class="birthday-input" 
+                            id="monthInput"
+                            placeholder="MM"
+                            maxlength="2"
+                            oninput="handleBirthdayInput(this, 'month')"
+                        >
+                        <span class="birthday-separator">/</span>
+                        <input 
+                            type="text" 
+                            class="birthday-input-year" 
+                            id="yearInput"
+                            placeholder="JJJJ"
+                            maxlength="4"
+                            oninput="handleBirthdayInput(this, 'year')"
+                        >
+                    </div>
+                    
+                    <div class="birthday-labels">
+                        <div class="birthday-label">Tag</div>
+                        <div style="width: 32px;"></div>
+                        <div class="birthday-label">Monat</div>
+                        <div style="width: 32px;"></div>
+                        <div class="birthday-label-year">Jahr</div>
+                    </div>
+                    
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
+                
+                <button class="continue-button" id="continueBtn" onclick="saveDataAndContinue()">
+                    Analyse starten
+                </button>
+            </div>
+            
+            <div class="security-note">
+                🔒 Deine Daten werden vertraulich behandelt
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let userName = '';
+        let birthDay = '';
+        let birthMonth = '';
+        let birthYear = '';
+
+        // Geburtstag-Eingabe verarbeiten
+        function handleBirthdayInput(input, type) {
+            let value = input.value.replace(/[^0-9]/g, '');
+            
+            if (type === 'day') {
+                if (value.length === 1 && parseInt(value) > 3) {
+                    value = '0' + value;
+                }
+                if (value.length === 2) {
+                    const day = parseInt(value);
+                    if (day >= 1 && day <= 31) {
+                        document.getElementById('monthInput').focus();
+                    } else if (day > 31) {
+                        value = value.slice(0, 1);
+                    }
+                }
+                birthDay = value;
+                
+            } else if (type === 'month') {
+                if (value.length === 1 && parseInt(value) > 1) {
+                    value = '0' + value;
+                }
+                if (value.length === 2) {
+                    const month = parseInt(value);
+                    if (month >= 1 && month <= 12) {
+                        document.getElementById('yearInput').focus();
+                    } else if (month > 12) {
+                        value = value.slice(0, 1);
+                    }
+                }
+                birthMonth = value;
+                
+            } else if (type === 'year') {
+                if (value.length === 4) {
+                    const year = parseInt(value);
+                    const currentYear = new Date().getFullYear();
+                    
+                    if (year < currentYear - 100 || year > currentYear - 18) {
+                        // Jahr außerhalb des gültigen Bereichs
+                        if (year > currentYear) {
+                            value = value.slice(0, 3);
+                        }
+                    }
+                }
+                birthYear = value;
+            }
+            
+            input.value = value;
+            checkInputs();
+        }
+
+        // Alle Eingaben prüfen
+        function checkInputs() {
+            const nameInput = document.getElementById('nameInput');
+            const continueBtn = document.getElementById('continueBtn');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            userName = nameInput.value.trim();
+            
+            const nameValid = userName.length >= 2;
+            
+            let birthdayValid = false;
+            
+            if (birthDay.length === 2 && birthMonth.length === 2 && birthYear.length === 4) {
+                const day = parseInt(birthDay);
+                const month = parseInt(birthMonth);
+                const year = parseInt(birthYear);
+                
+                const birthDate = new Date(year, month - 1, day);
+                const today = new Date();
+                const age = today.getFullYear() - year;
+                
+                if (birthDate.getDate() === day && birthDate.getMonth() === month - 1) {
+                    if (age >= 18 && age <= 100) {
+                        birthdayValid = true;
+                        errorMsg.style.display = 'none';
+                    } else {
+                        errorMsg.textContent = 'Du musst zwischen 18 und 100 Jahre alt sein';
+                        errorMsg.style.display = 'block';
+                    }
+                } else {
+                    errorMsg.textContent = 'Ungültiges Datum';
+                    errorMsg.style.display = 'block';
+                }
+            } else {
+                errorMsg.style.display = 'none';
+            }
+            
+            if (nameValid && birthdayValid) {
+                continueBtn.classList.add('active');
+            } else {
+                continueBtn.classList.remove('active');
+            }
+        }
+
+        // Daten speichern und weiterleiten
+        function saveDataAndContinue() {
+            if (!document.getElementById('continueBtn').classList.contains('active')) {
+                return;
+            }
+            
+            localStorage.setItem('user_name', userName);
+            
+            const fullYear = parseInt(birthYear);
+            const birthdayShort = `${birthDay}/${birthMonth}/${birthYear}`;
+            const birthdayFull = `${birthDay}.${birthMonth}.${fullYear}`;
+            
+            localStorage.setItem('user_birthday', birthdayShort);
+            localStorage.setItem('user_birthday_full', birthdayFull);
+            localStorage.setItem('user_birth_year', fullYear.toString());
+            
+            console.log('Gespeicherte Daten:');
+            console.log('Name:', userName);
+            console.log('Geburtstag kurz:', birthdayShort);
+            console.log('Geburtstag vollständig:', birthdayFull);
+            console.log('Geburtsjahr:', fullYear);
+            
+            const continueBtn = document.getElementById('continueBtn');
+            continueBtn.textContent = 'Wird geladen...';
+            continueBtn.style.opacity = '0.7';
+            
+            setTimeout(() => {
+                window.location.href = 'analyse.html';
+            }, 800);
+        }
+
+        // Enter-Taste Support
+        document.getElementById('nameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && userName.length >= 2) {
+                document.getElementById('dayInput').focus();
+            }
+        });
+
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                saveDataAndContinue();
+            }
+        });
+
+        // TIMER - läuft normal weiter wie in allen anderen Steps
+        function initializeTimer() {
+            const countdownElement = document.getElementById('countdown');
+            const countdownBox = document.getElementById('countdown-box');
+            
+            if (!countdownElement) {
+                console.error('Timer Element nicht gefunden');
+                return;
+            }
+            
+            console.log('=== TIMER INITIALISIERUNG ===');
+            
+            // Timer-Konfiguration
+            const TOTAL_MINUTES = 25;
+            const TOTAL_SECONDS = TOTAL_MINUTES * 60;
+            
+            // Startzeit aus localStorage holen oder neue erstellen
+            let startTime = localStorage.getItem('countdownStart');
+            
+            if (!startTime) {
+                startTime = Date.now();
+                localStorage.setItem('countdownStart', startTime.toString());
+                console.log('Neuer Timer gestartet um:', new Date(startTime));
+            } else {
+                console.log('Bestehender Timer gefunden, gestartet um:', new Date(parseInt(startTime)));
+            }
+            
+            function updateTimer() {
+                const now = Date.now();
+                const elapsed = Math.floor((now - parseInt(startTime)) / 1000);
+                const remaining = Math.max(0, TOTAL_SECONDS - elapsed);
+                
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                countdownElement.textContent = display;
+                
+                // Farbe je nach verbleibender Zeit
+                if (remaining <= 0) {
+                    countdownElement.style.color = '#ff3742';
+                    console.log('Timer abgelaufen!');
+                } else if (remaining <= 300) { // 5 Minuten
+                    countdownElement.style.color = '#ff4757';
+                } else {
+                    countdownElement.style.color = '#333';
+                }
+                
+                // Debug alle 30 Sekunden
+                if (remaining > 0 && elapsed % 30 === 0) {
+                    console.log(`Timer: ${minutes}:${seconds.toString().padStart(2, '0')} verbleibend`);
+                }
+                
+                // Nächstes Update planen
+                if (remaining > 0) {
+                    setTimeout(updateTimer, 1000);
+                }
+            }
+            
+            // Timer sichtbar machen und ersten Update starten
+            countdownBox.style.visibility = 'visible';
+            updateTimer();
+        }
+
+        // Seiten-Initialisierung
+        window.addEventListener('load', function() {
+            console.log('=== SEITE GELADEN ===');
+            
+            // Timer initialisieren
+            initializeTimer();
+            
+            // Seiten-Animation
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            container.style.transition = 'all 0.5s ease';
+            
+            setTimeout(() => {
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+                document.getElementById('nameInput').focus();
+            }, 100);
+        });
+    </script>
+</body>
+</html>
