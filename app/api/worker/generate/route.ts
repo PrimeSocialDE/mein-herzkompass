@@ -93,17 +93,17 @@ export async function POST(req: NextRequest) {
 
     // --- Mail (Fehler hier nicht fatal) ---
     try {
-      // Erwartete Signatur: sendAnalysisMail(to, name, orderId, downloadUrl?)
-      await sendAnalysisMail(
-        (order as any).email,
-        (order as any).name ?? "Du",
-        orderId,
-        signedUrl
-      );
-      console.log("STAGE 7: mail ok");
-    } catch (mailErr: any) {
-      console.error("MAIL_ERROR:", mailErr?.message || mailErr);
-    }
+        // Erwartete Signatur: sendAnalysisMail(to, name, orderId, pdfBytes?)
+        await sendAnalysisMail(
+          (order as any).email,
+          (order as any).name ?? "Du",
+          orderId,
+          pdfBytes // <— hier statt signedUrl
+        );
+        console.log("STAGE 7: mail ok");
+      } catch (mailErr: any) {
+        console.error("MAIL_ERROR:", mailErr?.message || mailErr);
+      }
 
     return NextResponse.json({ ok: true, orderId, file: fileName });
   } catch (err: any) {
