@@ -17,13 +17,13 @@ export async function POST(req: NextRequest) {
   const sig = req.headers.get("stripe-signature") || "";
 
   let event: Stripe.Event;
-  try {
-    const stripe = new Stripe(stripeSecret, { apiVersion: "2024-06-20" });
-    event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
-  } catch (err: any) {
-    console.error("WEBHOOK_VERIFY_ERROR:", err?.message);
-    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
-  }
+try {
+  const stripe = new Stripe(stripeSecret);
+  event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
+} catch (err: any) {
+  console.error("WEBHOOK_VERIFY_ERROR:", err?.message);
+  return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+}
 
   try {
     if (event.type === "checkout.session.completed") {
