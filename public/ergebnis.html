@@ -260,8 +260,8 @@
 
         .blur-overlay {
             position: relative;
-            margin-top: 30px;
-            padding: 20px;
+            margin-top: 15px;
+            padding: 12px;
             background: #f8f9fa;
             border-radius: 12px;
         }
@@ -271,23 +271,29 @@
             pointer-events: none;
         }
 
+        .blur-text {
+            font-size: 13px;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
         .blur-chart {
-            margin: 15px 0;
+            margin: 8px 0;
             text-align: center;
         }
 
         .chart-title {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .compatibility-chart {
             position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 10px;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 6px;
             background: conic-gradient(from 0deg, #e74c3c 0%, #f39c12 30%, #27ae60 70%, #2ecc71 100%);
             border-radius: 50%;
             display: flex;
@@ -296,8 +302,8 @@
         }
 
         .chart-overlay {
-            width: 75px;
-            height: 75px;
+            width: 50px;
+            height: 50px;
             background: white;
             border-radius: 50%;
             display: flex;
@@ -306,7 +312,7 @@
         }
 
         .chart-score {
-            font-size: 16px;
+            font-size: 12px;
             font-weight: 700;
             color: #2c3e50;
         }
@@ -314,47 +320,47 @@
         .chart-labels-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 9px;
+            margin-bottom: 6px;
+            font-size: 7px;
             color: #666;
         }
 
         .compatibility-factors {
             text-align: left;
-            max-width: 220px;
+            max-width: 180px;
             margin: 0 auto;
         }
 
         .factor-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 6px;
-            padding: 4px 8px;
+            margin-bottom: 3px;
+            padding: 2px 4px;
             background: rgba(255, 255, 255, 0.7);
-            border-radius: 4px;
+            border-radius: 3px;
         }
 
         .factor-title {
-            font-size: 11px;
+            font-size: 9px;
             color: #333;
             font-weight: 500;
         }
 
         .factor-score {
-            font-size: 11px;
+            font-size: 9px;
             color: #27ae60;
             font-weight: 600;
         }
 
         .unlock-banner {
             position: absolute;
-            top: 30%;
+            top: 20%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(103, 126, 234, 0.95);
             color: white;
-            padding: 20px 25px;
-            border-radius: 12px;
+            padding: 12px 18px;
+            border-radius: 10px;
             text-align: center;
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
@@ -364,25 +370,25 @@
         }
 
         .unlock-text {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .unlock-subtext {
-            font-size: 12px;
+            font-size: 11px;
             opacity: 0.9;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .unlock-button {
             background: white;
             color: #667eea;
             border: none;
-            padding: 12px 24px;
-            font-size: 14px;
+            padding: 10px 20px;
+            font-size: 13px;
             font-weight: 600;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s ease;
             filter: none !important;
@@ -848,6 +854,7 @@
             .main-title {
                 font-size: 32px;
                 padding: 0 10px;
+                line-height: 1.2;
             }
             
             .timer-container {
@@ -876,6 +883,124 @@
             .trust-badge {
                 padding: 20px 15px;
                 font-size: 13px;
+            }
+            
+            /* Mobile-spezifische Anpassungen für alle Titel */
+            h1, h2, h3, h4, h5, h6 {
+                line-height: 1.2 !important;
+            }
+            
+            .pricing-title,
+            .testimonials-title,
+            .pain-points-title {
+                font-size: 28px !important;
+                line-height: 1.2 !important;
+            }
+            
+            .preview-title,
+            .life-change-title {
+                font-size: 20px !important;
+                line-height: 1.2 !important;
+            }
+            
+            .bar-title {
+                font-size: 18px !important;
+                line-height: 1.2 !important;
+            }
+            
+            .pain-point-title {
+                font-size: 18px !important;
+                line-height: 1.2 !important;
+            }
+            
+            .testimonial-info h4 {
+                font-size: 15px !important;
+                line-height: 1.2 !important;
+            }
+            
+            .footer-section h4 {
+                font-size: 16px !important;
+                line-height: 1.2 !important;
+            }
+            
+            /* Verbesserte Lesbarkeit für Einschätzungstexte auf Mobil */
+            .preview-item {
+                flex-direction: column;
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            
+            .preview-icon {
+                margin-right: 0;
+                margin-bottom: 10px;
+                align-self: flex-start;
+                min-width: auto;
+                margin-top: 0;
+            }
+            
+            .preview-text {
+                font-size: 15px !important;
+                line-height: 1.6 !important;
+                text-align: left;
+                width: 100%;
+            }
+            
+            .preview-content {
+                padding: 30px 15px;
+            }
+            
+            .bars-section {
+                padding: 0 15px;
+            }
+            
+            .bar-item {
+                padding: 20px 15px;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+
+            /* Kleineres verschwommenes Element auf Mobil */
+            .blur-overlay {
+                margin-top: 10px;
+                padding: 8px;
+            }
+
+            .compatibility-chart {
+                width: 60px;
+                height: 60px;
+            }
+
+            .chart-overlay {
+                width: 40px;
+                height: 40px;
+            }
+
+            .chart-score {
+                font-size: 10px;
+            }
+
+            .compatibility-factors {
+                max-width: 150px;
+            }
+
+            .unlock-banner {
+                top: 15%;
+                padding: 8px 12px;
+            }
+
+            .unlock-text {
+                font-size: 12px;
+            }
+
+            .unlock-subtext {
+                font-size: 10px;
+            }
+
+            .unlock-button {
+                padding: 8px 16px;
+                font-size: 11px;
             }
         }
     </style>
@@ -957,7 +1082,7 @@
                 <div class="blur-overlay">
                     <div class="blur-content">
                         <div class="blur-text">
-                            Claras vollständige persönliche Analyse für dich deckt auf, warum deine bisherigen Dating-Versuche nicht zum gewünschten Erfolg geführt haben. Sie zeigt dir deine unbewussten Verhaltensmuster in romantischen Situationen und entwickelt eine maßgeschneiderte Strategie, wie du diese verändern kannst. Clara gibt dir konkrete Handlungsschritte, welche Art von Partner optimal zu deiner Persönlichkeit passt und wie du diese Menschen gezielt findest. Zusätzlich erhältst du von Clara personalisierte Gesprächsstarter, Date-Ideen und Textnachrichten-Vorlagen, die perfekt zu deinem Typ passen. Clara analysiert auch deine Dating-App-Profile und gibt dir Optimierungsvorschläge, damit du die richtigen Matches bekommst.
+                            Claras vollständige persönliche Analyse für dich deckt auf, warum deine bisherigen Dating-Versuche nicht zum gewünschten Erfolg geführt haben. Sie zeigt dir deine unbewussten Verhaltensmuster in romantischen Situationen und entwickelt eine maßgeschneiderte Strategie, wie du diese verändern kannst.
                         </div>
                         
                         <div class="blur-chart">
@@ -1166,7 +1291,7 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h4>Clara Dating-Analyse</h4>
-                    <p>Wissenschaftlich fundierte Persönlichkeitsanalyse für erfolgreiches Dating</p>
+                    <p>Individuelle Persönlichkeitsanalyse – fundiert durch moderne Methoden und echte Erfahrung im Dating-Alltag.</p>
                 </div>
                 
                 <div class="footer-section">
@@ -1196,7 +1321,7 @@
                             🇩🇪 Made in Germany
                         </div>
                         <div class="security-badge">
-                            ✅ DSGVO-konform
+                            ✓ DSGVO-konform
                         </div>
                     </div>
                 </div>
