@@ -1,13 +1,3 @@
 import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
-  async rewrites() {
-    return [
-      // Root "/" zeigt auf deine statische Landing im public/
-      { source: '/', destination: '/index.html' }
-    ];
-  },
-  trailingSlash: false
-};
-
+const nextConfig: NextConfig = {};
 export default nextConfig;
