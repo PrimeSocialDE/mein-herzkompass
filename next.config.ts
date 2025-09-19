@@ -1,7 +1,13 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async rewrites() {
+    return [
+      // Root "/" zeigt auf deine statische Landing im public/
+      { source: '/', destination: '/index.html' }
+    ];
+  },
+  trailingSlash: false
 };
 
 export default nextConfig;
