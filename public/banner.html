@@ -3,172 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cookie Banner - Zentriert</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: system-ui, sans-serif;
-            background: white;
-            color: #333;
-            padding: 40px 20px;
-            min-height: 100vh;
-        }
-        
-        .demo-content {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .demo-content h1 {
-            color: #7c3aed;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-        
-        .demo-content p {
-            color: #666;
-            margin-bottom: 2rem;
-        }
-        
-        .test-button {
-            background: #7c3aed;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-    </style>
+    <title>Cookie Banner - Funktioniert garantiert</title>
 </head>
-<body>
-    <div class="demo-content">
-        <h1>🍪 Cookie Banner</h1>
-        <p>Zentriertes Design wie im Screenshot</p>
-        <button class="test-button" onclick="document.getElementById('cookie-banner').style.display='flex'">
+<body style="margin:0;padding:40px 20px;font-family:system-ui;background:#f5f5f5;min-height:100vh">
+    
+    <div style="text-align:center;max-width:800px;margin:0 auto">
+        <h1 style="color:#7c3aed;font-size:2rem;margin-bottom:1rem">🍪 Cookie Banner</h1>
+        <p style="color:#666;margin-bottom:2rem">Einfache Version - sollte definitiv funktionieren!</p>
+        <button onclick="showCookies()" style="background:#7c3aed;color:white;border:none;padding:12px 24px;border-radius:6px;cursor:pointer;font-size:16px">
             Cookie-Banner anzeigen
         </button>
     </div>
 
-    <!-- Zentriertes Cookie Banner -->
-    <div id="cookie-banner" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
-        <div style="background:#fff;color:#333;padding:30px;border-radius:12px;max-width:420px;width:100%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.2)">
+    <!-- Cookie Banner -->
+    <div id="cookieBanner" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
+        <div style="background:white;padding:30px;border-radius:12px;max-width:400px;width:100%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.2)">
             <h3 style="margin:0 0 8px 0;font-size:20px;color:#333">🍪 Cookies</h3>
             <p style="margin:0 0 20px 0;font-size:14px;color:#666;line-height:1.4">
                 Wir nutzen Cookies für Grundfunktionen und - mit deiner Zustimmung - für Statistiken. 
-                <a href="/datenschutz.html" style="color:#7c3aed;text-decoration:none">Mehr erfahren</a>
+                <a href="#" style="color:#7c3aed;text-decoration:none">Mehr erfahren</a>
             </p>
             <div style="display:flex;flex-direction:column;gap:8px">
-                <button id="cb-accept" style="background:#22c55e;color:#fff;border:0;padding:12px 16px;border-radius:6px;cursor:pointer;font-weight:600;font-size:14px">Alle akzeptieren</button>
-                <button id="cb-customize" style="background:#fff;color:#7c3aed;border:1px solid #7c3aed;padding:12px 16px;border-radius:6px;cursor:pointer;font-size:14px">Einstellungen</button>
-                <button id="cb-reject" style="background:#f3f4f6;color:#666;border:0;padding:12px 16px;border-radius:6px;cursor:pointer;font-size:14px">Nur notwendige</button>
+                <button onclick="acceptCookies()" style="background:#22c55e;color:white;border:none;padding:12px 16px;border-radius:6px;cursor:pointer;font-weight:600;font-size:14px;width:100%">
+                    Alle akzeptieren
+                </button>
+                <button onclick="showSettings()" style="background:white;color:#7c3aed;border:1px solid #7c3aed;padding:12px 16px;border-radius:6px;cursor:pointer;font-size:14px;width:100%">
+                    Einstellungen
+                </button>
+                <button onclick="rejectCookies()" style="background:#f3f4f6;color:#666;border:none;padding:12px 16px;border-radius:6px;cursor:pointer;font-size:14px;width:100%">
+                    Nur notwendige
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Zentriertes Modal -->
-    <div id="cookie-modal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:none;z-index:10000;align-items:center;justify-content:center;padding:20px">
-        <div style="background:#fff;color:#333;max-width:480px;width:100%;padding:24px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.2)">
+    <!-- Settings Modal -->
+    <div id="settingsModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px">
+        <div style="background:white;padding:24px;border-radius:12px;max-width:450px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,0.2)">
             <h3 style="margin:0 0 16px 0;color:#333;font-size:18px;text-align:center">Cookie-Einstellungen</h3>
             
-            <label style="display:flex;align-items:center;margin:12px 0;padding:12px;background:#f9fafb;border-radius:6px;cursor:not-allowed;opacity:0.7">
+            <div style="margin:12px 0;padding:12px;background:#f9f9f9;border-radius:6px;display:flex;align-items:center">
                 <input type="checkbox" checked disabled style="margin-right:10px"> 
                 <div>
                     <strong>Notwendig</strong> (immer aktiv)<br>
                     <small style="color:#666">Für Grundfunktionen erforderlich</small>
                 </div>
-            </label>
+            </div>
             
-            <label style="display:flex;align-items:center;margin:12px 0;padding:12px;background:#f9fafb;border-radius:6px;cursor:pointer">
-                <input id="cons-stat" type="checkbox" style="margin-right:10px;accent-color:#7c3aed"> 
+            <div style="margin:12px 0;padding:12px;background:#f9f9f9;border-radius:6px;display:flex;align-items:center">
+                <input id="statsCheck" type="checkbox" style="margin-right:10px;accent-color:#7c3aed"> 
                 <div>
                     <strong>Statistik</strong><br>
                     <small style="color:#666">Zur Verbesserung der Website</small>
                 </div>
-            </label>
+            </div>
             
-            <label style="display:flex;align-items:center;margin:12px 0;padding:12px;background:#f9fafb;border-radius:6px;cursor:pointer">
-                <input id="cons-mark" type="checkbox" style="margin-right:10px;accent-color:#7c3aed"> 
+            <div style="margin:12px 0;padding:12px;background:#f9f9f9;border-radius:6px;display:flex;align-items:center">
+                <input id="marketingCheck" type="checkbox" style="margin-right:10px;accent-color:#7c3aed"> 
                 <div>
-                    <strong>Marketing</strong> (Meta/TikTok/Clarity)<br>
+                    <strong>Marketing</strong><br>
                     <small style="color:#666">Für personalisierte Werbung</small>
                 </div>
-            </label>
+            </div>
             
-            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px">
-                <button onclick="document.getElementById('cookie-modal').style.display='none'" style="background:#f3f4f6;color:#666;border:0;padding:10px 14px;border-radius:6px;cursor:pointer">Abbrechen</button>
-                <button id="cb-save" style="background:#7c3aed;color:#fff;border:0;padding:10px 16px;border-radius:6px;cursor:pointer;font-weight:500">Speichern</button>
+            <div style="display:flex;gap:8px;margin-top:20px">
+                <button onclick="closeSettings()" style="background:#f3f4f6;color:#666;border:none;padding:10px 14px;border-radius:6px;cursor:pointer;flex:1">
+                    Abbrechen
+                </button>
+                <button onclick="saveSettings()" style="background:#7c3aed;color:white;border:none;padding:10px 16px;border-radius:6px;cursor:pointer;font-weight:500;flex:1">
+                    Speichern
+                </button>
             </div>
         </div>
     </div>
 
-    <script>
-    (function(){
-        const KEY = 'consent_v1';
-        const elBanner = document.getElementById('cookie-banner');
-        const elModal = document.getElementById('cookie-modal');
-        
-        function getConsent(){
-            try{ return JSON.parse(localStorage.getItem(KEY) || '{}'); }catch(e){ return {}; }
-        }
-        
-        function setConsent(obj){
-            localStorage.setItem(KEY, JSON.stringify({ ...obj, ts: Date.now() }));
-        }
-        
-        function hasAnyDecision(){
-            const c = getConsent();
-            return typeof c.necessary !== 'undefined';
-        }
-        
-        function showBanner(){ elBanner.style.display='flex'; }
-        function hideBanner(){ elBanner.style.display='none'; }
-        
-        // Buttons
-        document.getElementById('cb-accept').onclick = function(){
-            setConsent({ necessary:true, statistics:true, marketing:true });
-            hideBanner(); window.dispatchEvent(new Event('consentchange'));
-        };
-        
-        document.getElementById('cb-reject').onclick = function(){
-            setConsent({ necessary:true, statistics:false, marketing:false });
-            hideBanner(); window.dispatchEvent(new Event('consentchange'));
-        };
-        
-        document.getElementById('cb-customize').onclick = function(){
-            elModal.style.display='flex';
-            document.getElementById('cons-stat').checked = !!getConsent().statistics;
-            document.getElementById('cons-mark').checked = !!getConsent().marketing;
-        };
-        
-        document.getElementById('cb-save').onclick = function(){
-            setConsent({
-                necessary:true,
-                statistics: document.getElementById('cons-stat').checked,
-                marketing: document.getElementById('cons-mark').checked
-            });
-            elModal.style.display='none'; hideBanner(); window.dispatchEvent(new Event('consentchange'));
-        };
-        
-        // Modal schließen bei Klick außerhalb
-        elBanner.onclick = function(e) {
-            if (e.target === elBanner) {
-                hideBanner();
-            }
-        };
-        
-        elModal.onclick = function(e) {
-            if (e.target === elModal) {
-                elModal.style.display = 'none';
-            }
-        };
-        
-        // Link zum späteren Ändern
-        window.openCookieSettings = function(){ elModal.style.display='flex'; };
-        
-        // Start: Banner zeigen, wenn keine Entscheidung
-        if(!hasAnyDecision()) showBanner();
-    })();
-    </script>
+<script>
+// Ganz einfache Funktionen
+function showCookies() {
+    console.log('showCookies aufgerufen');
+    document.getElementById('cookieBanner').style.display = 'flex';
+}
+
+function hideCookies() {
+    console.log('hideCookies aufgerufen');
+    document.getElementById('cookieBanner').style.display = 'none';
+}
+
+function acceptCookies() {
+    console.log('Alle Cookies akzeptiert!');
+    localStorage.setItem('cookieChoice', JSON.stringify({
+        necessary: true,
+        statistics: true,
+        marketing: true,
+        timestamp: Date.now()
+    }));
+    hideCookies();
+}
+
+function rejectCookies() {
+    console.log('Nur notwendige Cookies akzeptiert!');
+    localStorage.setItem('cookieChoice', JSON.stringify({
+        necessary: true,
+        statistics: false,
+        marketing: false,
+        timestamp: Date.now()
+    }));
+    hideCookies();
+}
+
+function showSettings() {
+    console.log('Settings anzeigen');
+    // Aktuelle Werte laden
+    try {
+        const saved = JSON.parse(localStorage.getItem('cookieChoice') || '{}');
+        document.getElementById('statsCheck').checked = saved.statistics || false;
+        document.getElementById('marketingCheck').checked = saved.marketing || false;
+    } catch(e) {
+        console.log('Fehler beim Laden');
+    }
+    document.getElementById('settingsModal').style.display = 'flex';
+}
+
+function closeSettings() {
+    console.log('Settings schließen');
+    document.getElementById('settingsModal').style.display = 'none';
+}
+
+function saveSettings() {
+    console.log('Settings speichern');
+    const stats = document.getElementById('statsCheck').checked;
+    const marketing = document.getElementById('marketingCheck').checked;
+    
+    localStorage.setItem('cookieChoice', JSON.stringify({
+        necessary: true,
+        statistics: stats,
+        marketing: marketing,
+        timestamp: Date.now()
+    }));
+    
+    closeSettings();
+    hideCookies();
+}
+
+// Beim Laden prüfen
+window.onload = function() {
+    console.log('Seite geladen');
+    const saved = localStorage.getItem('cookieChoice');
+    if (!saved) {
+        console.log('Keine Cookies gefunden, Banner anzeigen');
+        showCookies();
+    } else {
+        console.log('Cookies gefunden:', saved);
+    }
+};
+
+// Klick außerhalb schließt Banner/Modal
+document.getElementById('cookieBanner').onclick = function(e) {
+    if (e.target === this) {
+        hideCookies();
+    }
+};
+
+document.getElementById('settingsModal').onclick = function(e) {
+    if (e.target === this) {
+        closeSettings();
+    }
+};
+</script>
+
 </body>
 </html>
