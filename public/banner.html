@@ -1,530 +1,207 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <title>Cookie-Banner ohne Zoom</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        html, body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            background: #ffffff;
-            color: #333;
-            font-size: 16px;
-            line-height: 1.4;
-            -webkit-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-            height: 100%;
-            overflow-x: hidden;
-        }
-        
-        .page-content {
-            padding: 40px 20px;
-            text-align: center;
-            min-height: 100vh;
-        }
-        
-        .page-content h1 {
-            font-size: 28px;
-            margin-bottom: 20px;
-            color: #2563eb;
-        }
-        
-        .page-content p {
-            font-size: 16px;
-            color: #666;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        /* Cookie Banner Overlay */
-        #cookie-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            animation: overlayFadeIn 0.3s ease-out;
-        }
-        
-        @keyframes overlayFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .cookie-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 480px;
-            width: 100%;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            animation: cardSlideIn 0.3s ease-out;
-        }
-        
-        @keyframes cardSlideIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95) translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-        
-        .cookie-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-        
-        .cookie-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 16px;
-        }
-        
-        .cookie-text {
-            font-size: 16px;
-            color: #6b7280;
-            margin-bottom: 24px;
-            line-height: 1.5;
-        }
-        
-        .cookie-link {
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .cookie-link:hover {
-            text-decoration: underline;
-        }
-        
-        .cookie-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        .cookie-btn {
-            padding: 16px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            min-height: 52px;
-            touch-action: manipulation;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            outline: none;
-        }
-        
-        .btn-accept {
-            background: #16a34a;
-            color: white;
-        }
-        
-        .btn-accept:hover, .btn-accept:active {
-            background: #15803d;
-            transform: translateY(-1px);
-        }
-        
-        .btn-customize {
-            background: #ffffff;
-            color: #2563eb;
-            border: 2px solid #2563eb;
-        }
-        
-        .btn-customize:hover, .btn-customize:active {
-            background: #f0f9ff;
-        }
-        
-        .btn-reject {
-            background: #f3f4f6;
-            color: #6b7280;
-            border: 1px solid #d1d5db;
-        }
-        
-        .btn-reject:hover, .btn-reject:active {
-            background: #e5e7eb;
-            color: #374151;
-        }
-        
-        /* Cookie Settings Modal */
-        #cookie-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 1000000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .modal-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 520px;
-            width: 100%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-        }
-        
-        .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 24px;
-            text-align: center;
-        }
-        
-        .settings-group {
-            margin-bottom: 24px;
-        }
-        
-        .setting-item {
-            display: flex;
-            align-items: flex-start;
-            padding: 16px;
-            margin: 12px 0;
-            background: #f9fafb;
-            border-radius: 12px;
-            border: 1px solid #e5e7eb;
-        }
-        
-        .setting-checkbox {
-            width: 20px;
-            height: 20px;
-            margin-right: 16px;
-            margin-top: 2px;
-            accent-color: #2563eb;
-            cursor: pointer;
-        }
-        
-        .setting-checkbox:disabled {
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        
-        .setting-info {
-            flex: 1;
-        }
-        
-        .setting-name {
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 4px;
-            font-size: 16px;
-        }
-        
-        .setting-desc {
-            font-size: 14px;
-            color: #6b7280;
-            line-height: 1.4;
-        }
-        
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-        }
-        
-        .modal-btn {
-            flex: 1;
-            padding: 16px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            min-height: 52px;
-            touch-action: manipulation;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        }
-        
-        .btn-modal-cancel {
-            background: #f3f4f6;
-            color: #6b7280;
-        }
-        
-        .btn-modal-save {
-            background: #2563eb;
-            color: white;
-        }
-        
-        /* Mobile specific fixes */
-        @media (max-width: 640px) {
-            .cookie-card {
-                padding: 24px 20px;
-                margin: 20px;
-            }
-            
-            .modal-card {
-                padding: 24px 20px;
-                margin: 20px;
-            }
-            
-            .modal-actions {
-                flex-direction: column;
-            }
-            
-            .cookie-actions {
-                gap: 16px;
-            }
-            
-            .cookie-btn, .modal-btn {
-                min-height: 56px;
-                font-size: 16px;
-            }
-        }
-        
-        /* Prevent zoom on form elements */
-        input, button, select, textarea {
-            font-size: 16px !important;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <title>Cookie-Banner ohne Zoom</title>
+  <style>
+    /* ... dein gesamtes CSS aus der Vorlage unverändert ... */
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#fff;color:#333;font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;height:100%;overflow-x:hidden}
+    .page-content{padding:40px 20px;text-align:center;min-height:100vh}
+    .page-content h1{font-size:28px;margin-bottom:20px;color:#2563eb}
+    .page-content p{font-size:16px;color:#666;max-width:600px;margin:0 auto}
+    #cookie-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;animation:overlayFadeIn .3s ease-out}
+    @keyframes overlayFadeIn{from{opacity:0}to{opacity:1}}
+    .cookie-card{background:#fff;border-radius:16px;padding:32px;max-width:480px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,.1);text-align:center;animation:cardSlideIn .3s ease-out}
+    @keyframes cardSlideIn{from{opacity:0;transform:scale(.95) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .cookie-icon{font-size:48px;margin-bottom:16px}
+    .cookie-title{font-size:20px;font-weight:600;color:#1f2937;margin-bottom:16px}
+    .cookie-text{font-size:16px;color:#6b7280;margin-bottom:24px;line-height:1.5}
+    .cookie-link{color:#2563eb;text-decoration:none;font-weight:500}
+    .cookie-link:hover{text-decoration:underline}
+    .cookie-actions{display:flex;flex-direction:column;gap:12px}
+    .cookie-btn{padding:16px 24px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s ease;width:100%;min-height:52px;touch-action:manipulation;appearance:none;outline:none}
+    .btn-accept{background:#16a34a;color:#fff}
+    .btn-accept:hover,.btn-accept:active{background:#15803d;transform:translateY(-1px)}
+    .btn-customize{background:#fff;color:#2563eb;border:2px solid #2563eb}
+    .btn-customize:hover,.btn-customize:active{background:#f0f9ff}
+    .btn-reject{background:#f3f4f6;color:#6b7280;border:1px solid #d1d5db}
+    .btn-reject:hover,.btn-reject:active{background:#e5e7eb;color:#374151}
+    #cookie-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:1000000;display:none;align-items:center;justify-content:center;padding:20px}
+    .modal-card{background:#fff;border-radius:16px;padding:32px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,.25)}
+    .modal-title{font-size:20px;font-weight:600;color:#1f2937;margin-bottom:24px;text-align:center}
+    .settings-group{margin-bottom:24px}
+    .setting-item{display:flex;align-items:flex-start;padding:16px;margin:12px 0;background:#f9fafb;border-radius:12px;border:1px solid #e5e7eb}
+    .setting-checkbox{width:20px;height:20px;margin-right:16px;margin-top:2px;accent-color:#2563eb;cursor:pointer}
+    .setting-checkbox:disabled{cursor:not-allowed;opacity:.6}
+    .setting-info{flex:1}
+    .setting-name{font-weight:600;color:#1f2937;margin-bottom:4px;font-size:16px}
+    .setting-desc{font-size:14px;color:#6b7280;line-height:1.4}
+    .modal-actions{display:flex;gap:12px;margin-top:24px}
+    .modal-btn{flex:1;padding:16px 24px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;min-height:52px;touch-action:manipulation;appearance:none}
+    .btn-modal-cancel{background:#f3f4f6;color:#6b7280}
+    .btn-modal-save{background:#2563eb;color:#fff}
+    @media (max-width:640px){.cookie-card{padding:24px 20px;margin:20px}.modal-card{padding:24px 20px;margin:20px}.modal-actions{flex-direction:column}.cookie-actions{gap:16px}.cookie-btn,.modal-btn{min-height:56px;font-size:16px}}
+    input,button,select,textarea{font-size:16px!important;appearance:none}
+  </style>
 </head>
 <body>
-    <div class="page-content">
-        <h1>🍪 Cookie-Banner Demo</h1>
-        <p>
-            Dies ist eine Demo-Seite für das Cookie-Banner. 
-            Das Banner erscheint als Overlay und sollte auf mobilen Geräten 
-            keine Zoom-Probleme verursachen.
-        </p>
-    </div>
+  <div class="page-content">
+    <h1>🍪 Cookie-Banner Demo</h1>
+    <p>Dies ist eine Demo-Seite für das Cookie-Banner. Das Banner erscheint als Overlay und sollte auf mobilen Geräten keine Zoom-Probleme verursachen.</p>
+  </div>
 
-    <!-- Cookie Banner Overlay -->
-    <div id="cookie-overlay">
-        <div class="cookie-card">
-            <div class="cookie-icon">🍪</div>
-            <div class="cookie-title">Cookies & Datenschutz</div>
-            <div class="cookie-text">
-                Wir verwenden Cookies für die Grundfunktionen der Website. 
-                Mit deiner Zustimmung nutzen wir sie auch für Statistiken und Marketing.
-                <br><br>
-                <a href="/datenschutz.html" class="cookie-link">Mehr Details in der Datenschutzerklärung</a>
-            </div>
-            <div class="cookie-actions">
-                <button id="accept-all" class="cookie-btn btn-accept">
-                    ✓ Alle Cookies akzeptieren
-                </button>
-                <button id="customize" class="cookie-btn btn-customize">
-                    ⚙️ Einstellungen anpassen
-                </button>
-                <button id="reject-all" class="cookie-btn btn-reject">
-                    Nur notwendige Cookies
-                </button>
-            </div>
+  <!-- Cookie Banner Overlay -->
+  <div id="cookie-overlay" style="display:none">
+    <div class="cookie-card" role="dialog" aria-modal="true" aria-labelledby="cookie-title" onclick="event.stopPropagation()">
+      <div class="cookie-icon">🍪</div>
+      <div id="cookie-title" class="cookie-title">Cookies & Datenschutz</div>
+      <div class="cookie-text">
+        Wir verwenden Cookies für die Grundfunktionen der Website. Mit deiner Zustimmung nutzen wir sie auch für Statistiken und Marketing.
+        <br><br>
+        <a href="/datenschutz.html" class="cookie-link">Mehr Details in der Datenschutzerklärung</a>
+      </div>
+      <div class="cookie-actions">
+        <button id="accept-all" type="button" class="cookie-btn btn-accept">✓ Alle Cookies akzeptieren</button>
+        <button id="customize"  type="button" class="cookie-btn btn-customize">⚙️ Einstellungen anpassen</button>
+        <button id="reject-all" type="button" class="cookie-btn btn-reject">Nur notwendige Cookies</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cookie Settings Modal -->
+  <div id="cookie-modal">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="cookie-settings-title" onclick="event.stopPropagation()">
+      <div id="cookie-settings-title" class="modal-title">🍪 Cookie-Einstellungen</div>
+
+      <div class="settings-group">
+        <div class="setting-item">
+          <input type="checkbox" id="necessary" class="setting-checkbox" checked disabled>
+          <div class="setting-info">
+            <div class="setting-name">Notwendige Cookies</div>
+            <div class="setting-desc">Diese Cookies sind für die Grundfunktionen der Website erforderlich und können nicht deaktiviert werden.</div>
+          </div>
         </div>
-    </div>
 
-    <!-- Cookie Settings Modal -->
-    <div id="cookie-modal">
-        <div class="modal-card">
-            <div class="modal-title">🍪 Cookie-Einstellungen</div>
-            
-            <div class="settings-group">
-                <div class="setting-item">
-                    <input type="checkbox" id="necessary" class="setting-checkbox" checked disabled>
-                    <div class="setting-info">
-                        <div class="setting-name">Notwendige Cookies</div>
-                        <div class="setting-desc">
-                            Diese Cookies sind für die Grundfunktionen der Website erforderlich und können nicht deaktiviert werden.
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="setting-item">
-                    <input type="checkbox" id="statistics" class="setting-checkbox">
-                    <div class="setting-info">
-                        <div class="setting-name">Statistik-Cookies</div>
-                        <div class="setting-desc">
-                            Helfen uns dabei, die Website zu verbessern, indem sie anonyme Nutzungsdaten sammeln.
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="setting-item">
-                    <input type="checkbox" id="marketing" class="setting-checkbox">
-                    <div class="setting-info">
-                        <div class="setting-name">Marketing-Cookies</div>
-                        <div class="setting-desc">
-                            Ermöglichen personalisierte Werbung und Tracking durch Meta, TikTok, Microsoft Clarity und andere Dienste.
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="modal-actions">
-                <button id="modal-cancel" class="modal-btn btn-modal-cancel">
-                    Abbrechen
-                </button>
-                <button id="modal-save" class="modal-btn btn-modal-save">
-                    Einstellungen speichern
-                </button>
-            </div>
+        <div class="setting-item">
+          <input type="checkbox" id="statistics" class="setting-checkbox">
+          <div class="setting-info">
+            <div class="setting-name">Statistik-Cookies</div>
+            <div class="setting-desc">Helfen uns dabei, die Website zu verbessern, indem sie anonyme Nutzungsdaten sammeln.</div>
+          </div>
         </div>
-    </div>
 
-    <script>
-    (function() {
-        'use strict';
-        
-        const STORAGE_KEY = 'cookie_consent_v2';
-        
-        // Elements
+        <div class="setting-item">
+          <input type="checkbox" id="marketing" class="setting-checkbox">
+          <div class="setting-info">
+            <div class="setting-name">Marketing-Cookies</div>
+            <div class="setting-desc">Ermöglichen personalisierte Werbung und Tracking durch Meta, TikTok, Microsoft Clarity u. a.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="modal-cancel" type="button" class="modal-btn btn-modal-cancel">Abbrechen</button>
+        <button id="modal-save"   type="button" class="modal-btn btn-modal-save">Einstellungen speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'cookie_consent_v2';
+
+      function getConsent() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+        catch { return {}; }
+      }
+      function setConsent(consent) {
+        const data = { ...consent, timestamp: Date.now(), version: 2 };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        window.dispatchEvent(new CustomEvent('cookieConsentChange', { detail: data }));
+      }
+
+      function hasConsent() { return Object.prototype.hasOwnProperty.call(getConsent(), 'necessary'); }
+
+      function showOverlay() {
         const overlay = document.getElementById('cookie-overlay');
+        if (overlay) {
+          overlay.style.display = 'flex';
+          document.body.style.overflow = 'hidden';
+        }
+      }
+      function hideOverlay() {
+        const overlay = document.getElementById('cookie-overlay');
+        if (overlay) {
+          overlay.style.display = 'none';
+          document.body.style.overflow = '';
+        }
+      }
+      function showModal() {
         const modal = document.getElementById('cookie-modal');
-        const acceptBtn = document.getElementById('accept-all');
-        const rejectBtn = document.getElementById('reject-all');
-        const customizeBtn = document.getElementById('customize');
-        const modalCancelBtn = document.getElementById('modal-cancel');
-        const modalSaveBtn = document.getElementById('modal-save');
-        const statsCheckbox = document.getElementById('statistics');
-        const marketingCheckbox = document.getElementById('marketing');
-        
-        // Storage functions
-        function getConsent() {
-            try {
-                return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-            } catch (e) {
-                return {};
-            }
+        if (modal) {
+          const c = getConsent();
+          const stats = document.getElementById('statistics');
+          const marketing = document.getElementById('marketing');
+          if (stats) stats.checked = !!c.statistics;
+          if (marketing) marketing.checked = !!c.marketing;
+          modal.style.display = 'flex';
         }
-        
-        function setConsent(consent) {
-            const data = {
-                ...consent,
-                timestamp: Date.now(),
-                version: 2
-            };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      }
+      function hideModal() {
+        const modal = document.getElementById('cookie-modal');
+        if (modal) modal.style.display = 'none';
+      }
+
+      // Exporte auch global bereitstellen (falls du später inline-Handler nutzen willst)
+      window.CookieConsent = {
+        open: () => { showOverlay(); },
+        openSettings: () => { showOverlay(); showModal(); },
+        accept: () => { setConsent({ necessary: true, statistics: true, marketing: true }); hideModal(); hideOverlay(); },
+        reject: () => { setConsent({ necessary: true, statistics: false, marketing: false }); hideModal(); hideOverlay(); },
+        save: () => {
+          const stats = document.getElementById('statistics')?.checked || false;
+          const marketing = document.getElementById('marketing')?.checked || false;
+          setConsent({ necessary: true, statistics: stats, marketing: marketing });
+          hideModal(); hideOverlay();
         }
-        
-        function hasConsent() {
-            const consent = getConsent();
-            return consent.hasOwnProperty('necessary');
-        }
-        
-        // UI functions
-        function hideOverlay() {
-            overlay.style.display = 'none';
-            document.body.style.overflow = '';
-        }
-        
-        function showModal() {
-            modal.style.display = 'flex';
-            const consent = getConsent();
-            statsCheckbox.checked = !!consent.statistics;
-            marketingCheckbox.checked = !!consent.marketing;
-        }
-        
-        function hideModal() {
-            modal.style.display = 'none';
-        }
-        
-        function dispatchConsentChange() {
-            window.dispatchEvent(new CustomEvent('cookieConsentChange', {
-                detail: getConsent()
-            }));
-        }
-        
-        // Event handlers
-        acceptBtn.addEventListener('click', function() {
-            setConsent({
-                necessary: true,
-                statistics: true,
-                marketing: true
-            });
-            hideOverlay();
-            dispatchConsentChange();
+      };
+
+      // Nach DOM fertig: Buttons binden (robust gegen Null)
+      document.addEventListener('DOMContentLoaded', function () {
+        const acceptBtn   = document.getElementById('accept-all');
+        const rejectBtn   = document.getElementById('reject-all');
+        const customizeBtn= document.getElementById('customize');
+        const modalCancel = document.getElementById('modal-cancel');
+        const modalSave   = document.getElementById('modal-save');
+        const overlay     = document.getElementById('cookie-overlay');
+        const modal       = document.getElementById('cookie-modal');
+
+        acceptBtn  && acceptBtn.addEventListener('click', () => window.CookieConsent.accept());
+        rejectBtn  && rejectBtn.addEventListener('click', () => window.CookieConsent.reject());
+        customizeBtn&&customizeBtn.addEventListener('click', () => showModal());
+        modalCancel&&modalCancel.addEventListener('click', () => hideModal());
+        modalSave  && modalSave.addEventListener('click', () => window.CookieConsent.save());
+
+        // Outside-Klick schließt
+        overlay && overlay.addEventListener('click', (e) => { if (e.target === overlay) hideOverlay(); });
+        modal   && modal.addEventListener('click',   (e) => { if (e.target === modal)   hideModal();   });
+
+        // ESC schließt Modal/Overlay
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') { hideModal(); hideOverlay(); }
         });
-        
-        rejectBtn.addEventListener('click', function() {
-            setConsent({
-                necessary: true,
-                statistics: false,
-                marketing: false
-            });
-            hideOverlay();
-            dispatchConsentChange();
-        });
-        
-        customizeBtn.addEventListener('click', function() {
-            showModal();
-        });
-        
-        modalCancelBtn.addEventListener('click', function() {
-            hideModal();
-        });
-        
-        modalSaveBtn.addEventListener('click', function() {
-            setConsent({
-                necessary: true,
-                statistics: statsCheckbox.checked,
-                marketing: marketingCheckbox.checked
-            });
-            hideModal();
-            hideOverlay();
-            dispatchConsentChange();
-        });
-        
-        // Close modal when clicking outside
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                hideModal();
-            }
-        });
-        
-        // Global function to reopen settings
-        window.openCookieSettings = function() {
-            overlay.style.display = 'flex';
-            showModal();
-        };
-        
-        // Initialize
-        if (!hasConsent()) {
-            overlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        } else {
-            hideOverlay();
-        }
-        
-        // Prevent zoom on iOS
-        document.addEventListener('touchstart', function() {}, { passive: true });
-        
+
+        // Start: nur zeigen, wenn keine Entscheidung
+        if (!hasConsent()) showOverlay();
+      });
+
+      // iOS Touch (Zoom-Fix beibehalten)
+      document.addEventListener('touchstart', function(){}, { passive: true });
     })();
-    </script>
+  </script>
 </body>
 </html>
