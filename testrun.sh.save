@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ====== KONFIG ======
+export SUPABASE_URL="https://YOUR-PROJECT.supabase.co"
+export SUPABASE_SERVICE_ROLE="eyJhbGciOi..."      # Server/Service-Role Key (nicht im Frontend!)
+TABLE="orders"
+
+# Eindeutiger Schlüssel deiner Bestellung:
+SESSION_ID="cs_test_123456789"                    # checkout_session_id
+EMAIL="niklas@example.com"                        # optional, falls du per Mail matchen willst
+
+# Antworten aus deinem Funnel (JSONB)
+read -r -d '' ANSWERS_JSON <<'JSON'
+{
+  "user_name": "Niklas",
+  "homeWelcome": "ehrliches-gespräch",
+  "whatForLove": "kämpfen",
+  "feelingLoved": "kleine-gesten",
+  "giveVsReceive": "sehr-oft",
+  "missingInLife": "nähe",
+  "step19_answer": "manchmal",
+  "step21_answer": "fehlende_wertschaetzung",
+  "step22_answer": "angst_allein",
+  "step23_answer": "tiefe_gespraeche",
+  "step24_answer": "leidenschaft_abenteuer",
+  "step25_answer": "bitte_enttaeusch_nicht",
+  "step26_answer": "dass_sie_ehrlich_ist",
+  "step27_answer": "ja_unbedingt",
+  "whatHurtsMost": "lügen",
+  "deepestLonging": "leidenschaft-abenteuer",
+  "conflictBehavior": "frieden-machen",
+  "genderPreference": "frauen",
+  "wrongPartnerPattern": "manchmal",
+  "relationshipHappiness": "leidenschaft",
+  "partnerDistanceReaction": "ansprechen",
+  "dailyClosenessImportance": "weniger-wichtig",
+  "missingInLastRelationship": "beständigkeit",
+  "relationshipFailureReason": "unterschiedliche-erwartungen"
+}
+JSON
+
+# ====== UPSERT (POST mit Prefer: resolution=merge-duplicates) ======
+# Erfordert: UNIQUE INDEX zb. auf checkout_session_id
+#   CREATE UNIQUE INDEX orders_checkout_session_id_uidx ON public.orders(checkout_session_id);
+#
+# Semantik: Wenn Row mit gleicher checkout_session_id existiert -> aktualisieren,
+# sonst neue Row erstellen.
+
+curl -sS -X POST "$SUPABASE_URL/rest/v1/$TABLE" \
+  -H "apikey: $SUPABASE_SERVICE_ROLE" \
+  -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE" \
+  -H "Content-Type: application/json" \
+  -H "Prefer: resolution=merge-duplicates,return=representation" \
+  -d @<(jq -n --arg cs "$SESSION_ID" --arg email "$EMAIL" --argjson answers "$ANSWERS_JSON" '{
+        checkout_session_id: $cs,
+        email: $email,
+        status: "paid",
+        answers: $answers
+      }') \
+  | jq .chmod +x testrun.sh
+./testrun.sh
+
