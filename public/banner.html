@@ -3,393 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cookie Banner</title>
+    <title>Cookie Banner - Dezent schicker</title>
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: system-ui, sans-serif;
             background: white;
             color: #333;
+            padding: 40px 20px;
+            min-height: 100vh;
         }
         
-        .content {
-            padding: 50px 20px;
+        .demo-content {
             text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
         }
         
-        .content h1 {
+        .demo-content h1 {
             color: #7c3aed;
-            margin-bottom: 20px;
+            font-size: 2rem;
+            margin-bottom: 1rem;
         }
         
-        .test-btn {
+        .demo-content p {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .test-button {
             background: #7c3aed;
             color: white;
             border: none;
             padding: 12px 24px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 16px;
-        }
-        
-        /* Cookie Banner */
-        .cookie-banner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-        
-        .cookie-card {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        
-        .cookie-card h3 {
-            margin: 0 0 15px 0;
-            color: #333;
-            font-size: 18px;
-        }
-        
-        .cookie-card p {
-            margin: 0 0 20px 0;
-            color: #666;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-        
-        .cookie-card a {
-            color: #7c3aed;
-            text-decoration: none;
-        }
-        
-        .cookie-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .cookie-btn {
-            padding: 12px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            width: 100%;
-        }
-        
-        .btn-accept {
-            background: #22c55e;
-            color: white;
-        }
-        
-        .btn-settings {
-            background: white;
-            color: #7c3aed;
-            border: 1px solid #7c3aed;
-        }
-        
-        .btn-reject {
-            background: #f3f4f6;
-            color: #666;
-        }
-        
-        /* Modal */
-        .cookie-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-        }
-        
-        .modal-card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            max-width: 450px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .modal-card h3 {
-            margin: 0 0 20px 0;
-            text-align: center;
-            color: #333;
-        }
-        
-        .setting {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            margin: 8px 0;
-            background: #f9f9f9;
-            border-radius: 6px;
-        }
-        
-        .setting input {
-            margin-right: 10px;
-        }
-        
-        .setting-info {
-            flex: 1;
-            font-size: 14px;
-        }
-        
-        .setting-info strong {
-            display: block;
-            margin-bottom: 2px;
-        }
-        
-        .setting-info small {
-            color: #666;
-            font-size: 12px;
-        }
-        
-        .modal-buttons {
-            display: flex;
-            gap: 8px;
-            margin-top: 20px;
-        }
-        
-        .modal-btn {
-            flex: 1;
-            padding: 12px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        .btn-cancel {
-            background: #f3f4f6;
-            color: #666;
-        }
-        
-        .btn-save {
-            background: #7c3aed;
-            color: white;
-        }
-        
-        /* Mobile */
-        @media (max-width: 640px) {
-            .cookie-card {
-                padding: 20px;
-                margin: 15px;
-            }
-            
-            .cookie-card h3 {
-                font-size: 16px;
-            }
-            
-            .cookie-card p {
-                font-size: 13px;
-            }
-            
-            .cookie-btn {
-                padding: 10px 14px;
-                font-size: 13px;
-            }
-            
-            .modal-card {
-                padding: 20px;
-                margin: 15px;
-            }
-            
-            .modal-buttons {
-                flex-direction: column;
-            }
-        }
-        
-        .hide {
-            display: none !important;
         }
     </style>
 </head>
 <body>
-    <div class="content">
-        <h1>🍪 Cookie Banner Test</h1>
-        <p>Einfache Version die definitiv funktioniert!</p>
-        <button class="test-btn" onclick="showBanner()">Banner anzeigen</button>
+    <div class="demo-content">
+        <h1>🍪 Cookie Banner</h1>
+        <p>Dein ursprünglicher Code, nur etwas hübscher gemacht.</p>
+        <button class="test-button" onclick="document.getElementById('cookie-banner').style.display='block'">
+            Cookie-Banner anzeigen
+        </button>
     </div>
 
-    <!-- Cookie Banner -->
-    <div id="banner" class="cookie-banner">
-        <div class="cookie-card">
-            <h3>🍪 Cookies</h3>
-            <p>
-                Wir nutzen Cookies für Grundfunktionen und - mit deiner Zustimmung - für Statistiken.
-                <a href="#">Mehr erfahren</a>
-            </p>
-            <div class="cookie-buttons">
-                <button class="cookie-btn btn-accept" onclick="accept()">
-                    Alle akzeptieren
-                </button>
-                <button class="cookie-btn btn-settings" onclick="settings()">
-                    Einstellungen
-                </button>
-                <button class="cookie-btn btn-reject" onclick="reject()">
-                    Nur notwendige
-                </button>
+    <!-- Cookie Banner - nur dezent verbessert -->
+    <div id="cookie-banner" style="position:fixed;inset:auto 0 0 0;background:#1f2937;color:#fff;padding:20px;z-index:9999;font:15px/1.4 system-ui;display:none;box-shadow:0 -4px 20px rgba(0,0,0,0.15)">
+        <div style="max-width:900px;margin:0 auto;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+            <div style="flex:1">
+                <strong style="display:block;margin-bottom:4px">🍪 Cookie-Einstellungen</strong>
+                Wir verwenden Cookies für grundlegende Funktionen und – nur mit deiner Zustimmung – für Statistik & Marketing.
+                <a href="/datenschutz.html" style="color:#a78bfa;text-decoration:underline">Mehr erfahren</a>
             </div>
+            <button id="cb-reject" style="background:#4b5563;color:#fff;border:0;padding:12px 16px;border-radius:6px;cursor:pointer;font-size:14px">Nur notwendig</button>
+            <button id="cb-customize" style="background:#6b7280;color:#fff;border:0;padding:12px 16px;border-radius:6px;cursor:pointer;font-size:14px">Einstellungen</button>
+            <button id="cb-accept" style="background:#7c3aed;color:#fff;border:0;padding:12px 18px;border-radius:6px;font-weight:600;cursor:pointer;font-size:14px">Alle akzeptieren</button>
         </div>
     </div>
 
-    <!-- Modal -->
-    <div id="modal" class="cookie-modal">
-        <div class="modal-card">
-            <h3>Cookie-Einstellungen</h3>
+    <!-- Modal - auch nur dezent verbessert -->
+    <div id="cookie-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;z-index:10000">
+        <div style="background:#fff;color:#111;max-width:520px;margin:10vh auto;padding:24px;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,0.2)">
+            <h3 style="margin:0 0 16px 0;color:#1f2937;font-size:18px">Cookie-Einstellungen</h3>
             
-            <div class="setting">
-                <input type="checkbox" id="necessary" checked disabled>
-                <div class="setting-info">
-                    <strong>Notwendig</strong>
-                    <small>Für Grundfunktionen erforderlich</small>
-                </div>
-            </div>
+            <label style="display:block;margin:12px 0;padding:12px;background:#f9fafb;border-radius:6px;cursor:not-allowed;opacity:0.7">
+                <input type="checkbox" checked disabled style="margin-right:8px"> 
+                <strong>Notwendig</strong> (immer aktiv)
+                <br><small style="color:#6b7280">Für Grundfunktionen erforderlich</small>
+            </label>
             
-            <div class="setting">
-                <input type="checkbox" id="stats">
-                <div class="setting-info">
-                    <strong>Statistik</strong>
-                    <small>Zur Verbesserung der Website</small>
-                </div>
-            </div>
+            <label style="display:block;margin:12px 0;padding:12px;background:#f9fafb;border-radius:6px;cursor:pointer">
+                <input id="cons-stat" type="checkbox" style="margin-right:8px;accent-color:#7c3aed"> 
+                <strong>Statistik</strong>
+                <br><small style="color:#6b7280">Zur Verbesserung der Website</small>
+            </label>
             
-            <div class="setting">
-                <input type="checkbox" id="marketing">
-                <div class="setting-info">
-                    <strong>Marketing</strong>
-                    <small>Für personalisierte Werbung</small>
-                </div>
-            </div>
+            <label style="display:block;margin:12px 0;padding:12px;background:#f9fafb;border-radius:6px;cursor:pointer">
+                <input id="cons-mark" type="checkbox" style="margin-right:8px;accent-color:#7c3aed"> 
+                <strong>Marketing</strong> (Meta/TikTok/Clarity)
+                <br><small style="color:#6b7280">Für personalisierte Werbung</small>
+            </label>
             
-            <div class="modal-buttons">
-                <button class="modal-btn btn-cancel" onclick="closeModal()">
-                    Abbrechen
-                </button>
-                <button class="modal-btn btn-save" onclick="save()">
-                    Speichern
-                </button>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px">
+                <button onclick="document.getElementById('cookie-modal').style.display='none'" style="background:#f3f4f6;color:#6b7280;border:0;padding:10px 14px;border-radius:6px;cursor:pointer">Abbrechen</button>
+                <button id="cb-save" style="background:#7c3aed;color:#fff;border:0;padding:10px 16px;border-radius:6px;cursor:pointer;font-weight:500">Speichern</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Einfache globale Funktionen
-        function showBanner() {
-            console.log('Banner anzeigen');
-            document.getElementById('banner').classList.remove('hide');
+    (function(){
+        const KEY = 'consent_v1';
+        const elBanner = document.getElementById('cookie-banner');
+        const elModal = document.getElementById('cookie-modal');
+        
+        function getConsent(){
+            try{ return JSON.parse(localStorage.getItem(KEY) || '{}'); }catch(e){ return {}; }
         }
         
-        function hideBanner() {
-            console.log('Banner verstecken');
-            document.getElementById('banner').classList.add('hide');
+        function setConsent(obj){
+            localStorage.setItem(KEY, JSON.stringify({ ...obj, ts: Date.now() }));
         }
         
-        function accept() {
-            console.log('Alle akzeptiert');
-            localStorage.setItem('cookies', JSON.stringify({
-                necessary: true,
-                stats: true,
-                marketing: true,
-                date: new Date().toISOString()
-            }));
-            hideBanner();
+        function hasAnyDecision(){
+            const c = getConsent();
+            return typeof c.necessary !== 'undefined';
         }
         
-        function reject() {
-            console.log('Nur notwendige akzeptiert');
-            localStorage.setItem('cookies', JSON.stringify({
-                necessary: true,
-                stats: false,
-                marketing: false,
-                date: new Date().toISOString()
-            }));
-            hideBanner();
-        }
+        function showBanner(){ elBanner.style.display='block'; }
+        function hideBanner(){ elBanner.style.display='none'; }
         
-        function settings() {
-            console.log('Einstellungen öffnen');
-            // Aktuelle Werte laden
-            try {
-                const saved = JSON.parse(localStorage.getItem('cookies') || '{}');
-                document.getElementById('stats').checked = saved.stats || false;
-                document.getElementById('marketing').checked = saved.marketing || false;
-            } catch(e) {
-                console.log('Fehler beim Laden der Einstellungen');
-            }
-            document.getElementById('modal').style.display = 'flex';
-        }
+        // Buttons
+        document.getElementById('cb-accept').onclick = function(){
+            setConsent({ necessary:true, statistics:true, marketing:true });
+            hideBanner(); window.dispatchEvent(new Event('consentchange'));
+        };
         
-        function closeModal() {
-            console.log('Modal schließen');
-            document.getElementById('modal').style.display = 'none';
-        }
+        document.getElementById('cb-reject').onclick = function(){
+            setConsent({ necessary:true, statistics:false, marketing:false });
+            hideBanner(); window.dispatchEvent(new Event('consentchange'));
+        };
         
-        function save() {
-            console.log('Einstellungen speichern');
-            const stats = document.getElementById('stats').checked;
-            const marketing = document.getElementById('marketing').checked;
-            
-            localStorage.setItem('cookies', JSON.stringify({
-                necessary: true,
-                stats: stats,
-                marketing: marketing,
-                date: new Date().toISOString()
-            }));
-            
-            closeModal();
-            hideBanner();
-        }
+        document.getElementById('cb-customize').onclick = function(){
+            elModal.style.display='block';
+            document.getElementById('cons-stat').checked = !!getConsent().statistics;
+            document.getElementById('cons-mark').checked = !!getConsent().marketing;
+        };
+        
+        document.getElementById('cb-save').onclick = function(){
+            setConsent({
+                necessary:true,
+                statistics: document.getElementById('cons-stat').checked,
+                marketing: document.getElementById('cons-mark').checked
+            });
+            elModal.style.display='none'; hideBanner(); window.dispatchEvent(new Event('consentchange'));
+        };
         
         // Modal schließen bei Klick außerhalb
-        document.getElementById('modal').onclick = function(e) {
-            if (e.target === this) {
-                closeModal();
+        elModal.onclick = function(e) {
+            if (e.target === elModal) {
+                elModal.style.display = 'none';
             }
         };
         
-        // Beim Laden prüfen
-        window.onload = function() {
-            try {
-                const saved = localStorage.getItem('cookies');
-                if (!saved) {
-                    console.log('Keine Cookies gefunden, Banner anzeigen');
-                    showBanner();
-                } else {
-                    console.log('Cookies gefunden, Banner verstecken');
-                    hideBanner();
-                }
-            } catch(e) {
-                console.log('Fehler beim Prüfen der Cookies');
-                showBanner();
-            }
-        };
+        // Link zum späteren Ändern
+        window.openCookieSettings = function(){ elModal.style.display='block'; };
         
-        // Globale Funktion für späteren Aufruf
-        window.openCookieSettings = function() {
-            showBanner();
-            settings();
-        };
+        // Start: Banner zeigen, wenn keine Entscheidung
+        if(!hasAnyDecision()) showBanner();
+    })();
     </script>
 </body>
 </html>
