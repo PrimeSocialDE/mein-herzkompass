@@ -403,126 +403,156 @@
         
         const STORAGE_KEY = 'cookie_consent_v2';
         
-        // Elements
-        const overlay = document.getElementById('cookie-overlay');
-        const modal = document.getElementById('cookie-modal');
-        const acceptBtn = document.getElementById('accept-all');
-        const rejectBtn = document.getElementById('reject-all');
-        const customizeBtn = document.getElementById('customize');
-        const modalCancelBtn = document.getElementById('modal-cancel');
-        const modalSaveBtn = document.getElementById('modal-save');
-        const statsCheckbox = document.getElementById('statistics');
-        const marketingCheckbox = document.getElementById('marketing');
-        
-        // Storage functions
-        function getConsent() {
-            try {
-                return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-            } catch (e) {
-                return {};
+        // Wait for DOM to be ready
+        function initializeCookieBanner() {
+            // Elements
+            const overlay = document.getElementById('cookie-overlay');
+            const modal = document.getElementById('cookie-modal');
+            const acceptBtn = document.getElementById('accept-all');
+            const rejectBtn = document.getElementById('reject-all');
+            const customizeBtn = document.getElementById('customize');
+            const modalCancelBtn = document.getElementById('modal-cancel');
+            const modalSaveBtn = document.getElementById('modal-save');
+            const statsCheckbox = document.getElementById('statistics');
+            const marketingCheckbox = document.getElementById('marketing');
+            
+            // Check if elements exist
+            if (!overlay || !modal || !acceptBtn || !rejectBtn || !customizeBtn) {
+                console.error('Cookie banner elements not found');
+                return;
             }
-        }
-        
-        function setConsent(consent) {
-            const data = {
-                ...consent,
-                timestamp: Date.now(),
-                version: 2
+            
+            console.log('Cookie banner initialized');
+            
+            // Storage functions
+            function getConsent() {
+                try {
+                    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+                } catch (e) {
+                    return {};
+                }
+            }
+            
+            function setConsent(consent) {
+                const data = {
+                    ...consent,
+                    timestamp: Date.now(),
+                    version: 2
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                console.log('Consent saved:', data);
+            }
+            
+            function hasConsent() {
+                const consent = getConsent();
+                return consent.hasOwnProperty('necessary');
+            }
+            
+            // UI functions
+            function hideOverlay() {
+                console.log('Hiding overlay');
+                overlay.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+            
+            function showModal() {
+                console.log('Showing modal');
+                modal.style.display = 'flex';
+                const consent = getConsent();
+                if (statsCheckbox) statsCheckbox.checked = !!consent.statistics;
+                if (marketingCheckbox) marketingCheckbox.checked = !!consent.marketing;
+            }
+            
+            function hideModal() {
+                console.log('Hiding modal');
+                modal.style.display = 'none';
+            }
+            
+            function dispatchConsentChange() {
+                window.dispatchEvent(new CustomEvent('cookieConsentChange', {
+                    detail: getConsent()
+                }));
+            }
+            
+            // Event handlers with console logs for debugging
+            acceptBtn.onclick = function() {
+                console.log('Accept all clicked');
+                setConsent({
+                    necessary: true,
+                    statistics: true,
+                    marketing: true
+                });
+                hideOverlay();
+                dispatchConsentChange();
             };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        }
-        
-        function hasConsent() {
-            const consent = getConsent();
-            return consent.hasOwnProperty('necessary');
-        }
-        
-        // UI functions
-        function hideOverlay() {
-            overlay.style.display = 'none';
-            document.body.style.overflow = '';
-        }
-        
-        function showModal() {
-            modal.style.display = 'flex';
-            const consent = getConsent();
-            statsCheckbox.checked = !!consent.statistics;
-            marketingCheckbox.checked = !!consent.marketing;
-        }
-        
-        function hideModal() {
-            modal.style.display = 'none';
-        }
-        
-        function dispatchConsentChange() {
-            window.dispatchEvent(new CustomEvent('cookieConsentChange', {
-                detail: getConsent()
-            }));
-        }
-        
-        // Event handlers
-        acceptBtn.addEventListener('click', function() {
-            setConsent({
-                necessary: true,
-                statistics: true,
-                marketing: true
-            });
-            hideOverlay();
-            dispatchConsentChange();
-        });
-        
-        rejectBtn.addEventListener('click', function() {
-            setConsent({
-                necessary: true,
-                statistics: false,
-                marketing: false
-            });
-            hideOverlay();
-            dispatchConsentChange();
-        });
-        
-        customizeBtn.addEventListener('click', function() {
-            showModal();
-        });
-        
-        modalCancelBtn.addEventListener('click', function() {
-            hideModal();
-        });
-        
-        modalSaveBtn.addEventListener('click', function() {
-            setConsent({
-                necessary: true,
-                statistics: statsCheckbox.checked,
-                marketing: marketingCheckbox.checked
-            });
-            hideModal();
-            hideOverlay();
-            dispatchConsentChange();
-        });
-        
-        // Close modal when clicking outside
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                hideModal();
+            
+            rejectBtn.onclick = function() {
+                console.log('Reject all clicked');
+                setConsent({
+                    necessary: true,
+                    statistics: false,
+                    marketing: false
+                });
+                hideOverlay();
+                dispatchConsentChange();
+            };
+            
+            customizeBtn.onclick = function() {
+                console.log('Customize clicked');
+                showModal();
+            };
+            
+            if (modalCancelBtn) {
+                modalCancelBtn.onclick = function() {
+                    console.log('Modal cancel clicked');
+                    hideModal();
+                };
             }
-        });
-        
-        // Global function to reopen settings
-        window.openCookieSettings = function() {
-            overlay.style.display = 'flex';
-            showModal();
-        };
-        
-        // Initialize
-        if (!hasConsent()) {
-            overlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        } else {
-            hideOverlay();
+            
+            if (modalSaveBtn) {
+                modalSaveBtn.onclick = function() {
+                    console.log('Modal save clicked');
+                    setConsent({
+                        necessary: true,
+                        statistics: statsCheckbox ? statsCheckbox.checked : false,
+                        marketing: marketingCheckbox ? marketingCheckbox.checked : false
+                    });
+                    hideModal();
+                    hideOverlay();
+                    dispatchConsentChange();
+                };
+            }
+            
+            // Close modal when clicking outside
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    hideModal();
+                }
+            };
+            
+            // Global function to reopen settings
+            window.openCookieSettings = function() {
+                overlay.style.display = 'flex';
+                showModal();
+            };
+            
+            // Initialize display
+            if (!hasConsent()) {
+                console.log('No consent found, showing banner');
+                overlay.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            } else {
+                console.log('Consent found, hiding banner');
+                hideOverlay();
+            }
         }
         
-        // Prevent zoom on iOS
-        document.addEventListener('touchstart', function() {}, { passive: true });
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeCookieBanner);
+        } else {
+            initializeCookieBanner();
+        }
         
     })();
     </script>
