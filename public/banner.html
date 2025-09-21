@@ -403,99 +403,104 @@
         
           const STORAGE_KEY = 'cookie_consent_v2';
         
+          // Helpers
+          const $ = (id) => document.getElementById(id);
+          const overlay = $('cookie-overlay');
+          const modal   = $('cookie-modal');
+        
           function getConsent() {
-            try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+            catch { return {}; }
           }
           function setConsent(consent) {
             const data = { ...consent, timestamp: Date.now(), version: 2 };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            // Event für andere Skripte
             window.dispatchEvent(new CustomEvent('cookieConsentChange', { detail: data }));
           }
-          function hasConsent() { return Object.prototype.hasOwnProperty.call(getConsent(), 'necessary'); }
+          function hasConsent() {
+            return Object.prototype.hasOwnProperty.call(getConsent(), 'necessary');
+          }
         
           function showOverlay() {
-            const overlay = document.getElementById('cookie-overlay');
-            if (overlay) { overlay.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+            if (overlay) {
+              overlay.style.display = 'flex';
+              document.body.style.overflow = 'hidden';
+            }
           }
           function hideOverlay() {
-            const overlay = document.getElementById('cookie-overlay');
-            if (overlay) { overlay.style.display = 'none'; document.body.style.overflow = ''; }
+            if (overlay) {
+              overlay.style.display = 'none';
+              document.body.style.overflow = '';
+            }
           }
           function showModal() {
-            const modal = document.getElementById('cookie-modal');
             if (modal) {
               const c = getConsent();
-              const stats = document.getElementById('statistics');
-              const marketing = document.getElementById('marketing');
-              if (stats) stats.checked = !!c.statistics;
+              const stats = $('statistics');
+              const marketing = $('marketing');
+              if (stats)     stats.checked = !!c.statistics;
               if (marketing) marketing.checked = !!c.marketing;
               modal.style.display = 'flex';
             }
           }
           function hideModal() {
-            const modal = document.getElementById('cookie-modal');
             if (modal) modal.style.display = 'none';
           }
         
-          // >>> WICHTIG: Event-Listener erst NACH DOM bereit <<<
-          document.addEventListener('DOMContentLoaded', function () {
-            const acceptBtn    = document.getElementById('accept-all');
-            const rejectBtn    = document.getElementById('reject-all');
-            const customizeBtn = document.getElementById('customize');
-            const modalCancel  = document.getElementById('modal-cancel');
-            const modalSave    = document.getElementById('modal-save');
-            const overlayEl    = document.getElementById('cookie-overlay');
-            const modalEl      = document.getElementById('cookie-modal');
+          // ✅ EIN Listener für ALLE Klicks – funktioniert auch, wenn Elemente mal noch nicht gebunden waren
+          document.addEventListener('click', function (e) {
+            const t = e.target;
         
-            acceptBtn   && acceptBtn.addEventListener('click', function () {
+            // Buttons im Banner
+            if (t.id === 'accept-all') {
               setConsent({ necessary: true, statistics: true, marketing: true });
               hideModal(); hideOverlay();
-            });
-        
-            rejectBtn   && rejectBtn.addEventListener('click', function () {
+              return;
+            }
+            if (t.id === 'reject-all') {
               setConsent({ necessary: true, statistics: false, marketing: false });
               hideModal(); hideOverlay();
-            });
-        
-            customizeBtn&& customizeBtn.addEventListener('click', function () {
+              return;
+            }
+            if (t.id === 'customize') {
               showModal();
-            });
+              return;
+            }
         
-            modalCancel && modalCancel.addEventListener('click', function () {
+            // Modal-Buttons
+            if (t.id === 'modal-cancel') {
               hideModal();
-            });
-        
-            modalSave   && modalSave.addEventListener('click', function () {
-              const stats = document.getElementById('statistics')?.checked || false;
-              const marketing = document.getElementById('marketing')?.checked || false;
-              setConsent({ necessary: true, statistics: stats, marketing: marketing });
+              return;
+            }
+            if (t.id === 'modal-save') {
+              const stats = $('statistics') && $('statistics').checked;
+              const marketing = $('marketing') && $('marketing').checked;
+              setConsent({ necessary: true, statistics: !!stats, marketing: !!marketing });
               hideModal(); hideOverlay();
-            });
+              return;
+            }
         
-            // Outside-Klick schließt
-            overlayEl && overlayEl.addEventListener('click', function (e) {
-              if (e.target === overlayEl) hideOverlay();
-            });
-            modalEl   && modalEl.addEventListener('click', function (e) {
-              if (e.target === modalEl) hideModal();
-            });
-        
-            // ESC schließt
-            document.addEventListener('keydown', function (e) {
-              if (e.key === 'Escape') { hideModal(); hideOverlay(); }
-            });
-        
-            // Startzustand
-            if (!hasConsent()) showOverlay();
+            // Outside Clicks: Overlay/Modal schließen bei Klick außerhalb
+            if (t === overlay) { hideOverlay(); return; }
+            if (t === modal)   { hideModal();   return; }
           });
         
-          // iOS Touch (Zoom-Fix)
+          // ESC schließt
+          document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') { hideModal(); hideOverlay(); }
+          });
+        
+          // Initial anzeigen, wenn noch keine Entscheidung getroffen wurde
+          document.addEventListener('DOMContentLoaded', function () {
+            if (!hasConsent()) showOverlay();
+            else hideOverlay(); // falls du es mit bereits gesetztem Consent öffnest
+          });
+        
+          // iOS Touch (Zoom-Fix beibehalten)
           document.addEventListener('touchstart', function(){}, { passive: true });
         
-          // Optional global verfügbar machen (falls du später brauchst)
+          // Optional global
           window.openCookieSettings = function () { showOverlay(); showModal(); };
-        
         })();
         </script>
 </body>
