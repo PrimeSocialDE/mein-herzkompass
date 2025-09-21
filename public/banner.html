@@ -1,0 +1,74 @@
+<div id="cookie-banner" style="position:fixed;inset:auto 0 0 0;background:#111;color:#fff;padding:16px;z-index:9999;font:14px/1.4 system-ui;display:none">
+    <div style="max-width:900px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <div style="flex:1">
+        Wir verwenden Cookies für grundlegende Funktionen und – nur mit deiner Zustimmung – für Statistik & Marketing.
+        <a href="/datenschutz.html" style="color:#9cf;text-decoration:underline">Mehr erfahren</a>
+      </div>
+      <button id="cb-reject" style="background:#444;color:#fff;border:0;padding:10px 14px;border-radius:8px;cursor:pointer">Nur notwendig</button>
+      <button id="cb-customize" style="background:#666;color:#fff;border:0;padding:10px 14px;border-radius:8px;cursor:pointer">Einstellungen</button>
+      <button id="cb-accept" style="background:#22c55e;color:#071;border:0;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer">Alle akzeptieren</button>
+    </div>
+  </div>
+  
+  <!-- simples Modal für granular (optional, quick&dirty) -->
+  <div id="cookie-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:10000">
+    <div style="background:#fff;color:#111;max-width:520px;margin:10vh auto;padding:20px;border-radius:12px">
+      <h3 style="margin-bottom:8px">Cookie-Einstellungen</h3>
+      <label style="display:block;margin:8px 0"><input type="checkbox" checked disabled> Notwendig (immer aktiv)</label>
+      <label style="display:block;margin:8px 0"><input id="cons-stat" type="checkbox"> Statistik</label>
+      <label style="display:block;margin:8px 0"><input id="cons-mark" type="checkbox"> Marketing (Meta/TikTok/Clarity)</label>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button id="cb-save" style="background:#111;color:#fff;border:0;padding:10px 14px;border-radius:8px;cursor:pointer">Speichern</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  (function(){
+    const KEY = 'consent_v1'; // bumpen bei Änderungen
+    const elBanner = document.getElementById('cookie-banner');
+    const elModal  = document.getElementById('cookie-modal');
+  
+    function getConsent(){
+      try{ return JSON.parse(localStorage.getItem(KEY) || '{}'); }catch(e){ return {}; }
+    }
+    function setConsent(obj){
+      localStorage.setItem(KEY, JSON.stringify({ ...obj, ts: Date.now() }));
+    }
+    function hasAnyDecision(){
+      const c = getConsent();
+      return typeof c.necessary !== 'undefined';
+    }
+    function showBanner(){ elBanner.style.display='block'; }
+    function hideBanner(){ elBanner.style.display='none'; }
+  
+    // Buttons
+    document.getElementById('cb-accept').onclick = function(){
+      setConsent({ necessary:true, statistics:true, marketing:true });
+      hideBanner(); window.dispatchEvent(new Event('consentchange'));
+    };
+    document.getElementById('cb-reject').onclick = function(){
+      setConsent({ necessary:true, statistics:false, marketing:false });
+      hideBanner(); window.dispatchEvent(new Event('consentchange'));
+    };
+    document.getElementById('cb-customize').onclick = function(){
+      elModal.style.display='block';
+      document.getElementById('cons-stat').checked = !!getConsent().statistics;
+      document.getElementById('cons-mark').checked = !!getConsent().marketing;
+    };
+    document.getElementById('cb-save').onclick = function(){
+      setConsent({
+        necessary:true,
+        statistics: document.getElementById('cons-stat').checked,
+        marketing:  document.getElementById('cons-mark').checked
+      });
+      elModal.style.display='none'; hideBanner(); window.dispatchEvent(new Event('consentchange'));
+    };
+  
+    // Link zum späteren Ändern (z. B. Footer)
+    window.openCookieSettings = function(){ elModal.style.display='block'; };
+  
+    // Start: Banner zeigen, wenn keine Entscheidung
+    if(!hasAnyDecision()) showBanner();
+  })();
+  </script>
