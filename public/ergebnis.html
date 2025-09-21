@@ -1008,6 +1008,7 @@
         }
     </style>
   <script src="/tracking.js" defer></script>
+  <script src="/utm-make.js" defer></script>
 </head>
 <body>
     <div class="urgency-banner">
@@ -1127,7 +1128,14 @@
                     <div class="unlock-banner">
                         <div class="unlock-text">Jetzt Claras vollständige Lösung erhalten</div>
                         <div class="unlock-subtext">Persönlich für dich erstellt</div>
-                        <button class="unlock-button" onclick="startCheckout()">Jetzt freischalten</button>
+                        <button
+  class="unlock-button"
+  data-checkout
+  data-price="39.99"
+  onclick="startCheckout(event)"
+>
+  Jetzt freischalten
+</button>
                     </div>
                 </div>
             </div>
@@ -1173,9 +1181,14 @@
                     <div class="benefit-item">14-Tage Geld-zurück-Garantie</div>
                 </div>
                 
-                <button class="cta-button" onclick="startCheckout()">
-                    Jetzt vollständige Analyse erhalten
-                </button>
+                <button
+  class="cta-button"
+  data-checkout
+  data-price="39.99"
+  onclick="startCheckout(event)"
+>
+  Jetzt vollständige Analyse erhalten
+</button>
 
                 <div class="trust-badges">
                     <div class="trust-badge">
@@ -1284,9 +1297,14 @@
                 </div>
             </div>
             
-            <button class="final-cta" onclick="startCheckout()">
-                Jetzt Analyse sichern - nur 39,99€
-            </button>
+            <button
+  class="final-cta"
+  data-checkout
+  data-price="39.99"
+  onclick="startCheckout(event)"
+>
+  Jetzt Analyse sichern - nur 39,99€
+</button>
         </div>
     </div>
 
