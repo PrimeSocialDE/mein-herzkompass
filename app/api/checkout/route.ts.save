@@ -1,99 +1,189 @@
-// /app/api/checkout/route.ts
+// /app/api/stripe/webhook/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
 import Stripe from "stripe";
 
 export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
 
-// Stripe initialisieren (nur wenn Secret gesetzt ist)
 const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY!)
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2024-10-28.acacia",
+    })
   : null;
 
-// helpers
-function isPlainObject(x: unknown): x is Record<string, unknown> {
-  return !!x && typeof x === "object" && !Array.isArray(x);
-}
-function isoIn(hours: number) {
-  return new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
-}
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(req: NextRequest) {
+  if (!stripe || !endpointSecret) {
+    console.error("Stripe oder Webhook-Secret fehlt");
+    return NextResponse.json({ error: "Stripe nicht konfiguriert" }, { status: 400 });
+  }
+
   try {
-    const body = await req.json().catch(() => ({} as Record<string, unknown>));
+    const body = await req.text();
+    const signature = req.headers.get("stripe-signature");
 
-    // Eingaben
-    const email = String(body.email ?? "").trim();
-    const name = String(body.name ?? "").trim();
-    const answers = isPlainObject(body.answers) ? body.answers : {};
-    const answers_raw = isPlainObject(body.answers_raw) ? body.answers_raw : {};
-
-    if (!email) {
-      return NextResponse.json({ error: "E-Mail fehlt" }, { status: 400 });
+    if (!signature) {
+      console.error("Keine Stripe-Signatur gefunden");
+      return NextResponse.json({ error: "Keine Signatur" }, { status: 400 });
     }
 
-    // 1) Order in Supabase anlegen
-    const { data: order, error: insErr } = await supabase
-      .from("orders")
-      .insert({
-        email,
-        name: name || null,
-        status: "queued",
-        answers,
-        answers_raw,
-        due_at: isoIn(10), // Lieferung in 10h
-      })
-      .select("id")
-      .single();
-
-    if (insErr) throw insErr;
-    const orderId = order.id as string;
-
-    // 2) Stripe-Checkout-Session erstellen (nur wenn ENV vollständig)
-    const hasStripeEnv =
-      !!stripe &&
-      !!process.env.STRIPE_PRICE_ID &&
-      !!process.env.STRIPE_SUCCESS_URL &&
-      !!process.env.STRIPE_CANCEL_URL;
-
-    let checkoutUrl: string | null = null;
-
-    if (hasStripeEnv) {
-      const session = await stripe!.checkout.sessions.create({
-        mode: "payment",
-        line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
-
-        // E-Mail an Stripe geben, damit sie im Webhook ankommt
-        customer_email: email,
-
-        // Zuordnung im Webhook
-        client_reference_id: orderId,
-        metadata: { order_id: orderId, email, name: name || "" },
-
-        // Für PI-Events (z. B. PayPal async) ebenfalls die order_id mitgeben
-        payment_intent_data: { metadata: { order_id: orderId } },
-
-        success_url: `${process.env.STRIPE_SUCCESS_URL}?orderId=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: process.env.STRIPE_CANCEL_URL!,
-      });
-
-      checkoutUrl = session.url ?? null;
-
-      // Session-ID speichern + Status "pending"
-      await supabase
-        .from("orders")
-        .update({ stripe_session_id: session.id, status: "pending" })
-        .eq("id", orderId);
+    // Event verifizieren
+    let event: Stripe.Event;
+    try {
+      event = stripe.webhooks.constructEvent(body, signature, endpointSecret);
+    } catch (err: any) {
+      console.error("Webhook-Signatur-Verifikation fehlgeschlagen:", err.message);
+      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
-    // 3) Response
-    return NextResponse.json({ ok: true, orderId, url: checkoutUrl }, { status: 200 });
+    console.log("Stripe Webhook Event:", event.type);
+
+    // Event-Handler
+    switch (event.type) {
+      case "checkout.session.completed":
+        await handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
+        break;
+
+      case "payment_intent.succeeded":
+        await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
+        break;
+
+      case "payment_intent.payment_failed":
+        await handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
+        break;
+
+      default:
+        console.log(`Unbehandelter Event-Typ: ${event.type}`);
+    }
+
+    return NextResponse.json({ received: true });
   } catch (err: any) {
-    console.error("CHECKOUT_ERROR:", err);
-    return NextResponse.json(
-      { error: err?.message || "Fehler beim Checkout" },
-      { status: 500 }
-    );
+    console.error("Webhook-Fehler:", err);
+    return NextResponse.json({ error: "Webhook-Verarbeitung fehlgeschlagen" }, { status: 500 });
+  }
+}
+
+// Event-Handler Funktionen
+async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
+  console.log("Checkout Session abgeschlossen:", session.id);
+
+  const orderId = session.client_reference_id || session.metadata?.order_id;
+  const customerEmail = session.customer_email || session.customer_details?.email;
+
+  if (!orderId) {
+    console.error("Keine Order-ID in Session gefunden");
+    return;
+  }
+
+  try {
+    const { error } = await supabase
+      .from("orders")
+      .update({
+        status: "paid",
+        stripe_payment_intent_id: session.payment_intent as string,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", orderId);
+
+    if (error) {
+      console.error("Fehler beim Aktualisieren der Order:", error);
+    } else {
+      console.log(`Order ${orderId} erfolgreich als bezahlt markiert`);
+    }
+  } catch (err) {
+    console.error("Supabase-Fehler:", err);
+  }
+}
+
+async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
+  console.log("Payment Intent erfolgreich:", paymentIntent.id);
+
+  const orderId = paymentIntent.metadata?.order_id;
+  if (!orderId) {
+    console.error("Keine Order-ID in PaymentIntent-Metadaten gefunden");
+    return;
+  }
+
+  try {
+    // Zusätzliche Informationen aus PaymentIntent extrahieren
+    let email: string | null = null;
+    let name: string | null = null;
+
+    // Versuche Email aus verschiedenen Quellen zu extrahieren
+    if (paymentIntent.receipt_email) {
+      email = paymentIntent.receipt_email;
+    }
+
+    // Für weitere Details müssen wir die Charges separat abrufen
+    if (stripe) {
+      try {
+        const charges = await stripe.charges.list({
+          payment_intent: paymentIntent.id,
+          limit: 1,
+        });
+
+        if (charges.data.length > 0) {
+          const charge = charges.data[0];
+          if (charge.billing_details) {
+            email = email || charge.billing_details.email;
+            name = charge.billing_details.name;
+          }
+        }
+      } catch (chargeErr) {
+        console.log("Konnte Charge-Details nicht abrufen:", chargeErr);
+      }
+    }
+
+    const updateData: any = {
+      status: "paid",
+      stripe_payment_intent_id: paymentIntent.id,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (email) updateData.email = email;
+    if (name) updateData.name = name;
+
+    const { error } = await supabase
+      .from("orders")
+      .update(updateData)
+      .eq("id", orderId);
+
+    if (error) {
+      console.error("Fehler beim Aktualisieren der Order:", error);
+    } else {
+      console.log(`Order ${orderId} erfolgreich über PaymentIntent aktualisiert`);
+    }
+  } catch (err) {
+    console.error("Fehler bei PaymentIntent-Verarbeitung:", err);
+  }
+}
+
+async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
+  console.log("Payment Intent fehlgeschlagen:", paymentIntent.id);
+
+  const orderId = paymentIntent.metadata?.order_id;
+  if (!orderId) {
+    console.error("Keine Order-ID in PaymentIntent-Metadaten gefunden");
+    return;
+  }
+
+  try {
+    const { error } = await supabase
+      .from("orders")
+      .update({
+        status: "failed",
+        stripe_payment_intent_id: paymentIntent.id,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", orderId);
+
+    if (error) {
+      console.error("Fehler beim Aktualisieren der fehlgeschlagenen Order:", error);
+    } else {
+      console.log(`Order ${orderId} als fehlgeschlagen markiert`);
+    }
+  } catch (err) {
+    console.error("Fehler bei fehlgeschlagener PaymentIntent-Verarbeitung:", err);
   }
 }
