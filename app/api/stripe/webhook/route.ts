@@ -52,6 +52,11 @@ export async function POST(req: NextRequest) {
         await handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
         break;
 
+      case "charge.succeeded":
+        // Speziell für PayPal - hier kommen oft die E-Mail-Details an
+        await handleChargeSucceeded(event.data.object as Stripe.Charge);
+        break;
+
       case "invoice.payment_succeeded":
         console.log("Invoice payment succeeded - no action needed");
         break;
@@ -80,11 +85,42 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   console.log(`Checkout Session abgeschlossen: ${session.id}`);
 
   const orderId = session.client_reference_id || session.metadata?.order_id;
-  const customerEmail = session.customer_email || session.customer_details?.email;
+  let customerEmail = session.customer_email || session.customer_details?.email;
+  let customerName = session.customer_details?.name;
 
   if (!orderId) {
     console.error("Keine Order-ID in Session gefunden");
     return;
+  }
+
+  // Versuche zusätzliche Details aus der Session zu extrahieren
+  if (!customerEmail && session.payment_intent && stripe) {
+    try {
+      const paymentIntent = await stripe.paymentIntents.retrieve(
+        session.payment_intent as string,
+        { expand: ['latest_charge'] }
+      );
+      
+      if (paymentIntent.receipt_email) {
+        customerEmail = paymentIntent.receipt_email;
+      }
+
+      // Charge-Details prüfen
+      const charge = paymentIntent.latest_charge as Stripe.Charge;
+      if (charge && charge.billing_details) {
+        customerEmail = customerEmail || charge.billing_details.email;
+        customerName = customerName || charge.billing_details.name;
+      }
+
+      // PayPal-spezifische Details
+      if (charge && charge.payment_method_details?.paypal) {
+        customerEmail = customerEmail || charge.payment_method_details.paypal.payer_email;
+        customerName = customerName || 
+          `${charge.payment_method_details.paypal.payer_name?.given_name || ''} ${charge.payment_method_details.paypal.payer_name?.surname || ''}`.trim();
+      }
+    } catch (err) {
+      console.log("Konnte PaymentIntent nicht erweitern:", err);
+    }
   }
 
   try {
@@ -99,6 +135,12 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 
     if (customerEmail) {
       updateData.customer_email = customerEmail;
+      console.log(`✅ E-Mail gefunden in Session: ${customerEmail}`);
+    }
+
+    if (customerName) {
+      updateData.customer_name = customerName;
+      console.log(`✅ Name gefunden in Session: ${customerName}`);
     }
 
     const { error } = await supabase
@@ -145,9 +187,20 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
 
         if (charges.data.length > 0) {
           const charge = charges.data[0];
+          
           if (charge.billing_details) {
             customerEmail = customerEmail || charge.billing_details.email;
             customerName = charge.billing_details.name;
+          }
+
+          // PayPal-spezifische Details extrahieren
+          if (charge.payment_method_details?.paypal) {
+            customerEmail = customerEmail || charge.payment_method_details.paypal.payer_email;
+            const paypalName = charge.payment_method_details.paypal.payer_name;
+            if (paypalName) {
+              customerName = customerName || `${paypalName.given_name || ''} ${paypalName.surname || ''}`.trim();
+            }
+            console.log(`PayPal Details gefunden - Email: ${charge.payment_method_details.paypal.payer_email}, Name: ${customerName}`);
           }
         }
       } catch (chargeError) {
@@ -161,8 +214,15 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
       updated_at: new Date().toISOString(),
     };
 
-    if (customerEmail) updateData.customer_email = customerEmail;
-    if (customerName) updateData.customer_name = customerName;
+    if (customerEmail) {
+      updateData.customer_email = customerEmail;
+      console.log(`✅ E-Mail aus PaymentIntent: ${customerEmail}`);
+    }
+    
+    if (customerName) {
+      updateData.customer_name = customerName;
+      console.log(`✅ Name aus PaymentIntent: ${customerName}`);
+    }
 
     const { error } = await supabase
       .from("orders")
@@ -176,6 +236,73 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
     }
   } catch (err) {
     console.error("Fehler bei PaymentIntent-Verarbeitung:", err);
+  }
+}
+
+// Neuer Handler speziell für Charge Events (wichtig für PayPal)
+async function handleChargeSucceeded(charge: Stripe.Charge) {
+  console.log(`Charge erfolgreich: ${charge.id}`);
+
+  // Order-ID aus PaymentIntent-Metadaten oder Charge-Metadaten
+  let orderId = charge.metadata?.order_id;
+  
+  if (!orderId && charge.payment_intent && stripe) {
+    try {
+      const paymentIntent = await stripe.paymentIntents.retrieve(charge.payment_intent as string);
+      orderId = paymentIntent.metadata?.order_id;
+    } catch (err) {
+      console.log("Konnte PaymentIntent für Charge nicht abrufen:", err);
+    }
+  }
+
+  if (!orderId) {
+    console.log("Keine Order-ID für Charge gefunden - überspringen");
+    return;
+  }
+
+  let customerEmail: string | null = null;
+  let customerName: string | null = null;
+
+  // E-Mail und Name aus Charge extrahieren
+  if (charge.billing_details) {
+    customerEmail = charge.billing_details.email;
+    customerName = charge.billing_details.name;
+  }
+
+  // PayPal-spezifische Details
+  if (charge.payment_method_details?.paypal) {
+    customerEmail = customerEmail || charge.payment_method_details.paypal.payer_email;
+    const paypalName = charge.payment_method_details.paypal.payer_name;
+    if (paypalName) {
+      customerName = customerName || `${paypalName.given_name || ''} ${paypalName.surname || ''}`.trim();
+    }
+    console.log(`📧 PayPal Charge - Email: ${customerEmail}, Name: ${customerName}`);
+  }
+
+  // Nur aktualisieren wenn wir neue Informationen haben
+  if (customerEmail || customerName) {
+    try {
+      const updateData: any = {
+        status: "paid", // WICHTIG: Status auf paid setzen!
+        updated_at: new Date().toISOString(),
+      };
+
+      if (customerEmail) updateData.customer_email = customerEmail;
+      if (customerName) updateData.customer_name = customerName;
+
+      const { error } = await supabase
+        .from("orders")
+        .update(updateData)
+        .eq("id", orderId);
+
+      if (error) {
+        console.error("Fehler beim Aktualisieren der Order via Charge:", error);
+      } else {
+        console.log(`✅ Order ${orderId} mit Charge-Details aktualisiert`);
+      }
+    } catch (err) {
+      console.error("Fehler bei Charge-Verarbeitung:", err);
+    }
   }
 }
 
