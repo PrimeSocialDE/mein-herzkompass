@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 // Stripe initialisieren (nur wenn Secret gesetzt ist)
 const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY!)
+  ? new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2025-08-27.basil' as any })
   : null;
 
 // helpers
