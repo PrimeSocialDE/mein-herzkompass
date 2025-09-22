@@ -26,14 +26,15 @@ export async function POST(req: NextRequest) {
     const answers = isPlainObject(body.answers) ? body.answers : {};
     const answers_raw = isPlainObject(body.answers_raw) ? body.answers_raw : {};
 
-    if (!email) {
-      return NextResponse.json({ error: "E-Mail fehlt" }, { status: 400 });
+    if (!process.env.STRIPE_PRICE_ID || !process.env.STRIPE_SUCCESS_URL || !process.env.STRIPE_CANCEL_URL) {
+      throw new Error("Stripe-ENV unvollständig");
     }
 
+    // Order anlegen (queued)
     const { data: order, error: insertError } = await supabase
       .from("orders")
       .insert({
-        email,
+        email: email || null,
         name: name || null,
         status: "queued",
         answers,
@@ -42,32 +43,36 @@ export async function POST(req: NextRequest) {
       })
       .select("id")
       .single();
-
     if (insertError) throw insertError;
-    const orderId = order.id as string;
 
-    const hasStripeEnv =
-      !!stripe &&
-      !!process.env.STRIPE_PRICE_ID &&
-      !!process.env.STRIPE_SUCCESS_URL &&
-      !!process.env.STRIPE_CANCEL_URL;
+    const orderId = order.id as string;
 
     let checkoutUrl: string | null = null;
 
-    if (hasStripeEnv) {
-      const session = await stripe!.checkout.sessions.create({
+    if (stripe) {
+      // --- HIER: Session-Params aufbauen
+      const params: Stripe.Checkout.SessionCreateParams = {
         mode: "payment",
         line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
-        customer_email: email,
         client_reference_id: orderId,
-        metadata: { order_id: orderId, email, name: name || "" },
+        metadata: { order_id: orderId, name: name || "" },
         payment_intent_data: { metadata: { order_id: orderId } },
         success_url: `${process.env.STRIPE_SUCCESS_URL}?orderId=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: process.env.STRIPE_CANCEL_URL!,
-      });
+        customer_creation: "always",
+      };
 
-      checkoutUrl = session.url;
+      // Nur echte E-Mails vorbefüllen – sonst Stripe eintippen lassen
+      const isRealEmail =
+        !!email && email !== "kunde@test.de" && /.+@.+\..+/.test(email);
+      if (isRealEmail) {
+        params.customer_email = email;
+      }
 
+      const session = await stripe.checkout.sessions.create(params);
+      checkoutUrl = session.url ?? null;
+
+      // Session-ID + pending speichern
       await supabase
         .from("orders")
         .update({ stripe_session_id: session.id, status: "pending" })
@@ -77,9 +82,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, orderId, url: checkoutUrl }, { status: 200 });
   } catch (err: any) {
     console.error("CHECKOUT_ERROR:", err);
-    return NextResponse.json(
-      { error: err?.message || "Fehler beim Checkout" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: err?.message || "Fehler beim Checkout" }, { status: 500 });
   }
 }
