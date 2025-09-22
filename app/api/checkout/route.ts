@@ -1,4 +1,3 @@
-// /app/api/checkout/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
 import Stripe from "stripe";
@@ -6,12 +5,10 @@ import Stripe from "stripe";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// Stripe initialisieren - OHNE API-Version
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null;
 
-// Helper functions
 function isPlainObject(x: unknown): x is Record<string, unknown> {
   return !!x && typeof x === "object" && !Array.isArray(x);
 }
