@@ -7,8 +7,8 @@ export const runtime = "nodejs";
 
 // Stripe initialisieren (nur wenn Secret gesetzt ist)
 const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY)   // ← apiVersion entfernt
-  : null;
+new Stripe(process.env.STRIPE_SECRET_KEY)      // ohne { apiVersion: ... }
+new Stripe(stripeSecret)                        // dito
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
