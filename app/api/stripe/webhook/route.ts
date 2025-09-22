@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
   let event: Stripe.Event;
   try {
-    const stripe = new Stripe(stripeSecret, { apiVersion: "2024-06-20" });
+    const stripe = new Stripe(stripeSecret);
     event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
   } catch (err: any) {
     console.error("WEBHOOK_VERIFY_ERROR:", err?.message);
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const stripe = new Stripe(stripeSecret, { apiVersion: "2024-06-20" });
+    const stripe = new Stripe(stripeSecret);
     const type = event.type;
 
     // Helper: zentrale Paid-Aktualisierung

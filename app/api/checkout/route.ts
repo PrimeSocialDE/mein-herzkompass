@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 
 // Stripe initialisieren (nur wenn Secret gesetzt ist)
 const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" })
+  ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null;
 
 // helpers
