@@ -44,6 +44,11 @@ export async function POST(req: NextRequest) {
         await handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
         break;
 
+      case "checkout.session.async_payment_succeeded":
+        // Wichtig für PayPal/Klarna - asynchrone Zahlungen
+        await handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
+        break;
+
       case "payment_intent.succeeded":
         await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
         break;
@@ -115,8 +120,10 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       // PayPal-spezifische Details
       if (charge && charge.payment_method_details?.paypal) {
         customerEmail = customerEmail || charge.payment_method_details.paypal.payer_email;
-        customerName = customerName || 
-          `${charge.payment_method_details.paypal.payer_name?.given_name || ''} ${charge.payment_method_details.paypal.payer_name?.surname || ''}`.trim();
+        const paypalName = charge.payment_method_details.paypal.payer_name;
+        if (paypalName && !customerName) {
+          customerName = `${paypalName.given_name || ''} ${paypalName.surname || ''}`.trim();
+        }
       }
     } catch (err) {
       console.log("Konnte PaymentIntent nicht erweitern:", err);
@@ -126,21 +133,23 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   try {
     const updateData: any = {
       status: "paid",
-      updated_at: new Date().toISOString(),
+      paid_at: new Date().toISOString(),
     };
 
     if (session.payment_intent) {
-      updateData.stripe_payment_intent_id = session.payment_intent as string;
+      updateData.stripe_payment_intent = session.payment_intent as string;
     }
 
+    // E-Mail nur aktualisieren wenn eine gefunden wurde
     if (customerEmail) {
-      updateData.customer_email = customerEmail;
-      console.log(`✅ E-Mail gefunden in Session: ${customerEmail}`);
+      updateData.email = customerEmail;
+      console.log(`E-Mail gefunden in Session: ${customerEmail}`);
     }
 
+    // Name nur aktualisieren wenn einer gefunden wurde
     if (customerName) {
-      updateData.customer_name = customerName;
-      console.log(`✅ Name gefunden in Session: ${customerName}`);
+      updateData.name = customerName;
+      console.log(`Name gefunden in Session: ${customerName}`);
     }
 
     const { error } = await supabase
@@ -151,7 +160,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
     if (error) {
       console.error("Fehler beim Aktualisieren der Order:", error);
     } else {
-      console.log(`✅ Order ${orderId} erfolgreich als bezahlt markiert`);
+      console.log(`Order ${orderId} erfolgreich als bezahlt markiert`);
     }
   } catch (err) {
     console.error("Supabase-Fehler bei Checkout Session:", err);
@@ -197,8 +206,8 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
           if (charge.payment_method_details?.paypal) {
             customerEmail = customerEmail || charge.payment_method_details.paypal.payer_email;
             const paypalName = charge.payment_method_details.paypal.payer_name;
-            if (paypalName) {
-              customerName = customerName || `${paypalName.given_name || ''} ${paypalName.surname || ''}`.trim();
+            if (paypalName && !customerName) {
+              customerName = `${paypalName.given_name || ''} ${paypalName.surname || ''}`.trim();
             }
             console.log(`PayPal Details gefunden - Email: ${charge.payment_method_details.paypal.payer_email}, Name: ${customerName}`);
           }
@@ -210,18 +219,18 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
 
     const updateData: any = {
       status: "paid",
-      stripe_payment_intent_id: paymentIntent.id,
-      updated_at: new Date().toISOString(),
+      stripe_payment_intent: paymentIntent.id,
+      paid_at: new Date().toISOString(),
     };
 
     if (customerEmail) {
-      updateData.customer_email = customerEmail;
-      console.log(`✅ E-Mail aus PaymentIntent: ${customerEmail}`);
+      updateData.email = customerEmail;
+      console.log(`E-Mail aus PaymentIntent: ${customerEmail}`);
     }
     
     if (customerName) {
-      updateData.customer_name = customerName;
-      console.log(`✅ Name aus PaymentIntent: ${customerName}`);
+      updateData.name = customerName;
+      console.log(`Name aus PaymentIntent: ${customerName}`);
     }
 
     const { error } = await supabase
@@ -232,7 +241,7 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
     if (error) {
       console.error("Fehler beim Aktualisieren der Order via PaymentIntent:", error);
     } else {
-      console.log(`✅ Order ${orderId} erfolgreich über PaymentIntent aktualisiert`);
+      console.log(`Order ${orderId} erfolgreich über PaymentIntent aktualisiert`);
     }
   } catch (err) {
     console.error("Fehler bei PaymentIntent-Verarbeitung:", err);
@@ -273,36 +282,34 @@ async function handleChargeSucceeded(charge: Stripe.Charge) {
   if (charge.payment_method_details?.paypal) {
     customerEmail = customerEmail || charge.payment_method_details.paypal.payer_email;
     const paypalName = charge.payment_method_details.paypal.payer_name;
-    if (paypalName) {
-      customerName = customerName || `${paypalName.given_name || ''} ${paypalName.surname || ''}`.trim();
+    if (paypalName && !customerName) {
+      customerName = `${paypalName.given_name || ''} ${paypalName.surname || ''}`.trim();
     }
-    console.log(`📧 PayPal Charge - Email: ${customerEmail}, Name: ${customerName}`);
+    console.log(`PayPal Charge - Email: ${customerEmail}, Name: ${customerName}`);
   }
 
-  // Nur aktualisieren wenn wir neue Informationen haben
-  if (customerEmail || customerName) {
-    try {
-      const updateData: any = {
-        status: "paid", // WICHTIG: Status auf paid setzen!
-        updated_at: new Date().toISOString(),
-      };
+  // Order auf paid setzen und Details aktualisieren
+  try {
+    const updateData: any = {
+      status: "paid",
+      paid_at: new Date().toISOString(),
+    };
 
-      if (customerEmail) updateData.customer_email = customerEmail;
-      if (customerName) updateData.customer_name = customerName;
+    if (customerEmail) updateData.email = customerEmail;
+    if (customerName) updateData.name = customerName;
 
-      const { error } = await supabase
-        .from("orders")
-        .update(updateData)
-        .eq("id", orderId);
+    const { error } = await supabase
+      .from("orders")
+      .update(updateData)
+      .eq("id", orderId);
 
-      if (error) {
-        console.error("Fehler beim Aktualisieren der Order via Charge:", error);
-      } else {
-        console.log(`✅ Order ${orderId} mit Charge-Details aktualisiert`);
-      }
-    } catch (err) {
-      console.error("Fehler bei Charge-Verarbeitung:", err);
+    if (error) {
+      console.error("Fehler beim Aktualisieren der Order via Charge:", error);
+    } else {
+      console.log(`Order ${orderId} mit Charge-Details aktualisiert`);
     }
+  } catch (err) {
+    console.error("Fehler bei Charge-Verarbeitung:", err);
   }
 }
 
@@ -321,15 +328,14 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
       .from("orders")
       .update({
         status: "failed",
-        stripe_payment_intent_id: paymentIntent.id,
-        updated_at: new Date().toISOString(),
+        stripe_payment_intent: paymentIntent.id,
       })
       .eq("id", orderId);
 
     if (error) {
       console.error("Fehler beim Markieren der fehlgeschlagenen Order:", error);
     } else {
-      console.log(`❌ Order ${orderId} als fehlgeschlagen markiert`);
+      console.log(`Order ${orderId} als fehlgeschlagen markiert`);
     }
   } catch (err) {
     console.error("Fehler bei fehlgeschlagener PaymentIntent-Verarbeitung:", err);
