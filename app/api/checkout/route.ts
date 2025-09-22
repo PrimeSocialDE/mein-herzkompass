@@ -3,7 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
 import Stripe from "stripe";
 
+// Stripe initialisieren (nur wenn Secret gesetzt ist)
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY!)
+  : null;
+
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 // Stripe initialisieren (nur wenn Secret gesetzt ist)
 const stripe =
