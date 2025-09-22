@@ -3,22 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
 import Stripe from "stripe";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 // Stripe initialisieren (nur wenn Secret gesetzt ist)
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY!)
   : null;
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
-// Stripe initialisieren (nur wenn Secret gesetzt ist)
-const stripe =
-  process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY!)
-    : null;                        // dito
-
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
 // helpers
 function isPlainObject(x: unknown): x is Record<string, unknown> {
   return !!x && typeof x === "object" && !Array.isArray(x);
@@ -35,6 +27,7 @@ export async function POST(req: NextRequest) {
     const email = String(body.email ?? "").trim();
     const name = String(body.name ?? "").trim();
     const answers = isPlainObject(body.answers) ? body.answers : {};
+    const answers_raw = isPlainObject(body.answers_raw) ? body.answers_raw : {};
 
     if (!email) {
       return NextResponse.json({ error: "E-Mail fehlt" }, { status: 400 });
@@ -48,6 +41,7 @@ export async function POST(req: NextRequest) {
         name: name || null,
         status: "queued",
         answers,
+        answers_raw,
         due_at: isoIn(10), // Lieferung in 10h
       })
       .select("id")
@@ -68,28 +62,17 @@ export async function POST(req: NextRequest) {
     if (hasStripeEnv) {
       const session = await stripe!.checkout.sessions.create({
         mode: "payment",
-        line_items: [
-          {
-            price: process.env.STRIPE_PRICE_ID!, // z. B. price_123
-            quantity: 1,
-          },
-        ],
+        line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
 
-        // 🔑 E-Mail an Stripe geben, damit sie sicher im Webhook ankommt
+        // E-Mail an Stripe geben, damit sie im Webhook ankommt
         customer_email: email,
 
-        // 🔑 Eindeutige Zuordnung im Webhook
+        // Zuordnung im Webhook
         client_reference_id: orderId,
-        metadata: {
-          order_id: orderId,
-          email,
-          name: name || "",
-        },
+        metadata: { order_id: orderId, email, name: name || "" },
 
-        // 🔑 Für PI-Events (z. B. PayPal async) ebenfalls die order_id mitgeben
-        payment_intent_data: {
-          metadata: { order_id: orderId },
-        },
+        // Für PI-Events (z. B. PayPal async) ebenfalls die order_id mitgeben
+        payment_intent_data: { metadata: { order_id: orderId } },
 
         success_url: `${process.env.STRIPE_SUCCESS_URL}?orderId=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: process.env.STRIPE_CANCEL_URL!,
@@ -97,21 +80,15 @@ export async function POST(req: NextRequest) {
 
       checkoutUrl = session.url ?? null;
 
-      // 3) Session-ID speichern + Status "pending"
+      // Session-ID speichern + Status "pending"
       await supabase
         .from("orders")
         .update({ stripe_session_id: session.id, status: "pending" })
         .eq("id", orderId);
-    } else {
-      // Stripe nicht konfiguriert: Order existiert, aber keine Session
-      // -> checkoutUrl bleibt null
     }
 
-    // 4) Response für Frontend
-    return NextResponse.json(
-      { ok: true, orderId, url: checkoutUrl },
-      { status: 200 }
-    );
+    // 3) Response
+    return NextResponse.json({ ok: true, orderId, url: checkoutUrl }, { status: 200 });
   } catch (err: any) {
     console.error("CHECKOUT_ERROR:", err);
     return NextResponse.json(
