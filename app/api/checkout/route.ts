@@ -5,17 +5,15 @@ import Stripe from "stripe";
 
 export const runtime = "nodejs";
 
-// --- Stripe optional initialisieren (falls Keys gesetzt sind) ---
-const stripe =
-  process.env.STRIPE_SECRET_KEY
-    ? new Stripe(process.env.STRIPE_SECRET_KEY!)
-    : null;
+// Stripe initialisieren (nur wenn Secret gesetzt ist)
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" })
+  : null;
 
-// kleine Helper
+// helpers
 function isPlainObject(x: unknown): x is Record<string, unknown> {
   return !!x && typeof x === "object" && !Array.isArray(x);
 }
-
 function isoIn(hours: number) {
   return new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
 }
@@ -24,32 +22,24 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({} as Record<string, unknown>));
 
-    // --- Eingaben lesen & sanitisieren ---
+    // Eingaben
     const email = String(body.email ?? "").trim();
     const name = String(body.name ?? "").trim();
-
-    // saubere/umbenannte Antworten (siehe Frontend-Mapping)
     const answers = isPlainObject(body.answers) ? body.answers : {};
-    // optional: Rohdaten (nur zu Debug-Zwecken)
-    const answers_raw = isPlainObject(body.answers_raw) ? body.answers_raw : {};
 
-    if (!email) throw new Error("E-Mail fehlt");
-    // name ist optional – wenn du willst, erzwingen:
-    // if (!name) throw new Error("Name fehlt");
+    if (!email) {
+      return NextResponse.json({ error: "E-Mail fehlt" }, { status: 400 });
+    }
 
-    // --- Order in Supabase anlegen ---
-    // Spalten: email (text), name (text), status (text),
-    // answers (jsonb), answers_raw (jsonb, optional),
-    // due_at (timestamptz), stripe_session_id (text, optional)
+    // 1) Order in Supabase anlegen
     const { data: order, error: insErr } = await supabase
       .from("orders")
       .insert({
         email,
-        name,
-        status: "queued",                // initialer Status
-        answers,                         // <- „schöne“ Keys
-        answers_raw,                     // <- optional
-        due_at: isoIn(10),               // Lieferung in 10h
+        name: name || null,
+        status: "queued",
+        answers,
+        due_at: isoIn(10), // Lieferung in 10h
       })
       .select("id")
       .single();
@@ -57,49 +47,62 @@ export async function POST(req: NextRequest) {
     if (insErr) throw insErr;
     const orderId = order.id as string;
 
-    // --- Optional: Stripe-Checkout erstellen ---
+    // 2) Stripe-Checkout-Session erstellen (nur wenn ENV vollständig)
+    const hasStripeEnv =
+      !!stripe &&
+      !!process.env.STRIPE_PRICE_ID &&
+      !!process.env.STRIPE_SUCCESS_URL &&
+      !!process.env.STRIPE_CANCEL_URL;
+
     let checkoutUrl: string | null = null;
 
-    if (
-      stripe &&
-      process.env.STRIPE_PRICE_ID &&
-      process.env.STRIPE_SUCCESS_URL &&
-      process.env.STRIPE_CANCEL_URL
-    ) {
-      const session = await stripe.checkout.sessions.create({
+    if (hasStripeEnv) {
+      const session = await stripe!.checkout.sessions.create({
         mode: "payment",
         line_items: [
           {
-            price: process.env.STRIPE_PRICE_ID,
+            price: process.env.STRIPE_PRICE_ID!, // z. B. price_123
             quantity: 1,
           },
         ],
-        success_url: `${process.env.STRIPE_SUCCESS_URL}?orderId=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: process.env.STRIPE_CANCEL_URL,
+
+        // 🔑 E-Mail an Stripe geben, damit sie sicher im Webhook ankommt
+        customer_email: email,
+
+        // 🔑 Eindeutige Zuordnung im Webhook
+        client_reference_id: orderId,
         metadata: {
           order_id: orderId,
           email,
-          name,
+          name: name || "",
         },
+
+        // 🔑 Für PI-Events (z. B. PayPal async) ebenfalls die order_id mitgeben
+        payment_intent_data: {
+          metadata: { order_id: orderId },
+        },
+
+        success_url: `${process.env.STRIPE_SUCCESS_URL}?orderId=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: process.env.STRIPE_CANCEL_URL!,
       });
 
       checkoutUrl = session.url ?? null;
 
-      // Session-ID in der Order speichern (optional, aber praktisch)
+      // 3) Session-ID speichern + Status "pending"
       await supabase
         .from("orders")
         .update({ stripe_session_id: session.id, status: "pending" })
         .eq("id", orderId);
     } else {
-      // Stripe ist nicht konfiguriert → nur Order anlegen und zurückgeben
-      // (du könntest hier z.B. „Testmodus: direkt bezahlt“ simulieren)
+      // Stripe nicht konfiguriert: Order existiert, aber keine Session
+      // -> checkoutUrl bleibt null
     }
 
-    return NextResponse.json({
-      ok: true,
-      orderId,
-      url: checkoutUrl, // fürs Frontend (redirect)
-    });
+    // 4) Response für Frontend
+    return NextResponse.json(
+      { ok: true, orderId, url: checkoutUrl },
+      { status: 200 }
+    );
   } catch (err: any) {
     console.error("CHECKOUT_ERROR:", err);
     return NextResponse.json(
