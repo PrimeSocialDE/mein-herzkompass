@@ -7,9 +7,11 @@ export const runtime = "nodejs";
 
 // Stripe initialisieren (nur wenn Secret gesetzt ist)
 const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY)
+  ? new Stripe(process.env.STRIPE_SECRET_KEY)   // ← apiVersion entfernt
   : null;
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 // helpers
 function isPlainObject(x: unknown): x is Record<string, unknown> {
   return !!x && typeof x === "object" && !Array.isArray(x);
