@@ -1,9 +1,46 @@
 // /app/api/stripe/webhook/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse }
+
+// Handler für fehlgeschlagene Checkout-Session (PayPal/Klarna abgebrochen)
+async function handleCheckoutSessionFailed(session: Stripe.Checkout.Session) {
+  console.log(`Checkout Session fehlgeschlagen: ${session.id}`);
+
+  const orderId = session.client_reference_id || session.metadata?.order_id;
+
+  if (!orderId) {
+    console.error("Keine Order-ID in Session gefunden");
+    return;
+  }
+
+  try {
+    const updateData: any = {
+      status: "failed",
+      stripe_session_id: session.id,
+    };
+
+    if (session.payment_intent) {
+      updateData.stripe_payment_intent = session.payment_intent as string;
+    }
+
+    const { error } = await supabase
+      .from("orders")
+      .update(updateData)
+      .eq("id", orderId);
+
+    if (error) {
+      console.error("Fehler beim Markieren der fehlgeschlagenen Session:", error);
+    } else {
+      console.log(`Order ${orderId} als fehlgeschlagen markiert (async payment failed)`);
+    }
+  } catch (err) {
+    console.error("Supabase-Fehler bei fehlgeschlagener Checkout Session:", err);
+  }
+} from "next/server";
 import { supabase } from "@/lib/db";
 import Stripe from "stripe";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 // Stripe initialisieren - ohne explizite API-Version
 const stripe = process.env.STRIPE_SECRET_KEY
@@ -47,6 +84,11 @@ export async function POST(req: NextRequest) {
       case "checkout.session.async_payment_succeeded":
         // Wichtig für PayPal/Klarna - asynchrone Zahlungen
         await handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
+        break;
+
+      case "checkout.session.async_payment_failed":
+        // Asynchrone Zahlungen fehlgeschlagen (PayPal/Klarna abgebrochen)
+        await handleCheckoutSessionFailed(event.data.object as Stripe.Checkout.Session);
         break;
 
       case "payment_intent.succeeded":
@@ -134,6 +176,8 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
     const updateData: any = {
       status: "paid",
       paid_at: new Date().toISOString(),
+      due_at: new Date(Date.now() + 10 * 60 * 60 * 1000).toISOString(), // +10h Lieferzeit
+      stripe_session_id: session.id,
     };
 
     if (session.payment_intent) {
