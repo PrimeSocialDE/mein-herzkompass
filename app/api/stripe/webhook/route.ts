@@ -8,6 +8,23 @@ export const dynamic = "force-dynamic";
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+// ▼▼▼ NEU: Helper, benachrichtigt Make nur wenn URL gesetzt ist
+async function notifyMake(orderId: string, payload: Record<string, any>) {
+  const url = process.env.MAKE_WEBHOOK_URL;
+  if (!url) return; // still bleiben, wenn nicht konfiguriert
+  try {
+    await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId, ...payload }),
+    });
+    console.log("→ Make benachrichtigt");
+  } catch (e) {
+    console.error("Make-Webhook Fehler:", e);
+  }
+}
+// ▲▲▲ ENDE Helper
+
 export async function POST(req: NextRequest) {
   if (!stripe || !endpointSecret) {
     console.error("Stripe oder Webhook-Secret fehlt");
@@ -133,6 +150,15 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
       console.error("Fehler beim Aktualisieren der Order:", error);
     } else {
       console.log(`Order ${orderId} erfolgreich als bezahlt markiert`);
+      // ▼▼▼ NEU: Make informieren
+      await notifyMake(orderId, {
+        source: "checkout.session",
+        email: updateData.email ?? null,
+        name: updateData.name ?? null,
+        stripe_session_id: session.id,
+        stripe_payment_intent: updateData.stripe_payment_intent ?? null,
+      });
+      // ▲▲▲
     }
   } catch (err) {
     console.error("Supabase-Fehler bei Checkout Session:", err);
@@ -222,6 +248,14 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
       console.error("Fehler beim Aktualisieren der Order via PaymentIntent:", error);
     } else {
       console.log(`Order ${orderId} via PaymentIntent aktualisiert`);
+      // ▼▼▼ NEU
+      await notifyMake(orderId, {
+        source: "payment_intent",
+        email: updateData.email ?? null,
+        name: updateData.name ?? null,
+        stripe_payment_intent: paymentIntent.id,
+      });
+      // ▲▲▲
     }
   } catch (err) {
     console.error("Fehler bei PaymentIntent-Verarbeitung:", err);
@@ -275,6 +309,14 @@ async function handleChargeSuccess(charge: Stripe.Charge) {
       console.error("Fehler beim Aktualisieren der Order via Charge:", error);
     } else {
       console.log(`Order ${orderId} via Charge aktualisiert`);
+      // ▼▼▼ NEU
+      await notifyMake(orderId, {
+        source: "charge",
+        email: updateData.email ?? null,
+        name: updateData.name ?? null,
+        charge_id: charge.id,
+      });
+      // ▲▲▲
     }
   } catch (err) {
     console.error("Fehler bei Charge-Verarbeitung:", err);
