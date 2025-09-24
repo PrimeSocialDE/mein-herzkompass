@@ -466,6 +466,49 @@
             margin-right: auto;
         }
 
+        /* NEUE PERSÖNLICHE SEKTION VON CLARA */
+        .clara-personal-section {
+            max-width: 800px;
+            margin: 0 auto 50px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 2px solid #e9ecef;
+        }
+
+        .clara-photo {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .clara-message {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .clara-message-text {
+            font-size: 18px;
+            color: #2c3e50;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .clara-signature {
+            text-align: right;
+            margin-right: 20px;
+        }
+
+        .clara-signature-image {
+            max-width: 200px;
+            height: auto;
+            filter: grayscale(0.3);
+            opacity: 0.8;
+        }
+
         .pricing-card {
             max-width: 500px;
             margin: 0 auto;
@@ -610,6 +653,104 @@
         .badge-text {
             font-weight: 600;
             line-height: 1.2;
+        }
+
+        /* NEUE MEHRWERT-SEKTION STYLES */
+        .value-addition-section {
+            max-width: 800px;
+            margin: 40px auto 0;
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid #e9ecef;
+        }
+
+        .value-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .value-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .value-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e0e0e0;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .value-icon {
+            font-size: 32px;
+            min-width: 40px;
+            text-align: center;
+            margin: 0 auto 10px;
+        }
+
+        .value-content h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .value-content p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .value-guarantee {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .value-guarantee p {
+            font-size: 15px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .value-guarantee strong {
+            font-weight: 700;
+        }
+
+        /* ANALYSE-FOTO PLATZHALTER */
+        .analysis-preview {
+            margin: 30px 0;
+        }
+
+        .analysis-photo-placeholder {
+            width: 100%;
+            height: 300px;
+            background: #e9ecef;
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
         }
 
         .testimonials-section {
@@ -1005,6 +1146,78 @@
                 padding: 8px 16px;
                 font-size: 11px;
             }
+
+            /* Mobile Anpassungen für Clara Personal Section */
+            .clara-photo {
+                height: 200px;
+            }
+
+            .clara-message {
+                padding: 25px 15px;
+            }
+
+            .clara-message-text {
+                font-size: 16px;
+                margin-bottom: 20px;
+            }
+
+            .clara-signature {
+                margin-right: 10px;
+            }
+
+            .clara-signature-image {
+                max-width: 150px;
+            }
+
+            /* Mobile Anpassungen für Mehrwert-Sektion */
+            .value-addition-section {
+                margin-top: 30px;
+                padding: 25px 15px;
+            }
+
+            .value-title {
+                font-size: 20px !important;
+            }
+
+            .value-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .value-item {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+            }
+
+            .value-icon {
+                margin-bottom: 10px;
+                margin-top: 0;
+            }
+
+            .value-content h4 {
+                font-size: 15px !important;
+                margin-bottom: 6px;
+            }
+
+            .value-content p {
+                font-size: 13px;
+            }
+
+            .value-guarantee {
+                padding: 15px;
+            }
+
+            .value-guarantee p {
+                font-size: 14px;
+            }
+
+            /* Mobile Anpassung für Analyse-Foto */
+            .analysis-photo-placeholder {
+                height: 200px;
+                font-size: 14px;
+                padding: 20px;
+            }
         }
     </style>
   <script src="/tracking.js" defer></script>
@@ -1031,7 +1244,7 @@
 
     <div class="bars-section">
         <div class="bar-item current">
-            <div class="bar-title">So bereit bist du gerade, den Richtigen / die Richtige zu finden (laut den Antworten der Analyse)</div>
+            <div class="bar-title">So nah bist du bereits an deiner wahren Liebe (laut deiner Antworten)</div>
             <div class="progress-wrapper">
                 <div class="progress-track">
                     <div class="progress-bar current-bar" id="currentBar">
@@ -1043,7 +1256,7 @@
         </div>
 
         <div class="bar-item clara">
-            <div class="bar-title">Mit Claras persönlichen Analyse erkennst du endlich, worauf es ankommt, um den/die Richtige/n zu finden</div>
+            <div class="bar-title">Mit Claras Lösungsweg findest du den Menschen, der dich wirklich versteht und liebt</div>
             <div class="progress-wrapper">
                 <div class="progress-track">
                     <div class="progress-bar clara-bar" id="claraBar">
@@ -1160,8 +1373,23 @@
 
     <div class="pricing-section" id="pricing">
         <div class="container">
-            <h2 class="pricing-title">Sichere dir jetzt Claras persönliche Lösung</h2>
+            <h2 class="pricing-title">So findest du endlich die wahre Liebe</h2>
             <p class="pricing-subtitle">🇩🇪 Made in Germany • 🔒 100% verschlüsselt • 🎯 Individuell für dich erstellt</p>
+            
+            <!-- NEUE PERSÖNLICHE SEKTION VON CLARA -->
+            <div class="clara-personal-section">
+                <img src="ClaraArbeitNeu.jpg" alt="Clara bei der Arbeit" class="clara-photo">
+                
+                <div class="clara-message">
+                    <p class="clara-message-text">
+                        "Ich setze mich persönlich an deine Antworten und schicke dir eine individuelle Botschaft per E-Mail. Jede Analyse erstelle ich mit Herz und basierend auf meiner langjährigen Erfahrung als Beziehungsexpertin."
+                    </p>
+                    
+                    <div class="clara-signature">
+                        <img src="https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=386&q=80" alt="Clara Unterschrift" class="clara-signature-image">
+                    </div>
+                </div>
+            </div>
             
             <div class="pricing-card">
                 <div class="popular-badge">Beliebteste Wahl</div>
@@ -1187,7 +1415,7 @@
   data-price="39.99"
   onclick="startCheckout(event)"
 >
-  Jetzt vollständige Analyse erhalten
+  Jetzt den Weg zur wahren Liebe finden
 </button>
 
                 <div class="trust-badges">
@@ -1203,6 +1431,46 @@
                         <div class="badge-icon"><img src="Stern.png" alt="Stern" style="width: 20px; height: 20px;"></div>
                         <div class="badge-text">4,8 von 5<br>Verifizierter Shop</div>
                     </div>
+                </div>
+            </div>
+
+            <!-- NEUE MEHRWERT-SEKTION -->
+            <div class="value-addition-section">
+                <h3 class="value-title">Das bekommst du konkret:</h3>
+                
+                <div class="value-grid">
+                    <div class="value-item">
+                        <div class="value-icon">🎧</div>
+                        <div class="value-content">
+                            <h4>Persönliche Audio-Botschaft</h4>
+                            <p>Clara erstellt dir eine individuelle Audio-Analyse deines Dating-Typs mit persönlichen Einschätzungen.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="value-item">
+                        <div class="value-icon">📋</div>
+                        <div class="value-content">
+                            <h4>Vollständige Persönlichkeits-Analyse</h4>
+                            <p>Verstehe deine Dating-Persönlichkeit im Detail und erhalte Klarheit über deinen idealen Partner-Typ.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="value-item">
+                        <div class="value-icon">💡</div>
+                        <div class="value-content">
+                            <h4>Konkrete Dating-Empfehlungen</h4>
+                            <p>Erkenne deine bisherigen Muster und erhalte klare Hinweise für dein nächstes Date.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PLATZ FÜR ANALYSE-FOTO -->
+                <div class="analysis-preview">
+                    <img src="IPadd.jpg" alt="Beispiel einer persönlichen Dating-Analyse" style="width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                </div>
+                
+                <div class="value-guarantee">
+                    <p><strong>Der Unterschied:</strong> Während andere dir nur oberflächliche Dating-Tipps geben, erhältst du eine tiefgreifende Analyse deiner Persönlichkeit und einen maßgeschneiderten Plan, um genau den Menschen zu finden, der wirklich zu dir passt.</p>
                 </div>
             </div>
         </div>
@@ -1303,7 +1571,7 @@
   data-price="39.99"
   onclick="startCheckout(event)"
 >
-  Jetzt Analyse sichern - nur 39,99€
+  Jetzt den Weg zur wahren Liebe finden - nur 39,99€
 </button>
         </div>
     </div>
@@ -1466,9 +1734,9 @@
                     if (btn.classList.contains('unlock-button')) {
                         btn.textContent = 'Jetzt freischalten';
                     } else if (btn.classList.contains('final-cta')) {
-                        btn.textContent = 'Jetzt Analyse sichern - nur 39,99€';
+                        btn.textContent = 'Jetzt den Weg zur wahren Liebe finden - nur 39,99€';
                     } else {
-                        btn.textContent = 'Jetzt vollständige Analyse erhalten';
+                        btn.textContent = 'Jetzt den Weg zur wahren Liebe finden';
                     }
                 });
             }
