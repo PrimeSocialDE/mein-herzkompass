@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dating-Analyse - Schritt 6</title>
+    <title>Body-Typing Analyse - Foto Upload</title>
     <style>
         * {
             margin: 0;
@@ -19,30 +19,8 @@
         }
 
         .main-container {
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
-        }
-
-        .countdown-box {
-            background: white;
-            border: 1px solid #764ba2;
-            border-radius: 15px;
-            padding: 6px 12px;
-            margin-bottom: 15px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: inline-block;
-            margin-left: 50%;
-            transform: translateX(-50%);
-            visibility: hidden;
-        }
-
-        .countdown-time {
-            font-size: 12px;
-            font-weight: 600;
-            color: #333;
-            min-width: 35px;
-            display: inline-block;
         }
 
         .progress-container {
@@ -51,6 +29,15 @@
             margin-bottom: 30px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
         }
 
         .progress-bar {
@@ -63,7 +50,7 @@
         .progress-fill {
             background: linear-gradient(90deg, #667eea, #764ba2);
             height: 100%;
-            width: 19.8%;
+            width: 85.8%;
             border-radius: 4px;
             transition: width 0.3s ease;
         }
@@ -80,47 +67,191 @@
         h1 {
             font-size: 28px;
             color: #333;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             font-weight: 600;
         }
 
-        .option-container {
-            display: flex;
-            flex-direction: column;
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #e8ebff;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .photo-guidelines {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .photo-guidelines h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .photo-guidelines ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .photo-guidelines li {
+            padding: 8px 0;
+            color: #666;
+            font-size: 15px;
+        }
+
+        .photo-guidelines li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .photo-examples {
+            margin-bottom: 30px;
+        }
+
+        .example-section {
+            margin-bottom: 30px;
+        }
+
+        .example-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .example-photo {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+            aspect-ratio: 3/4;
+        }
+
+        @media (max-width: 480px) {
+            .example-grid {
+                grid-template-columns: 1fr;
+            }
+
+        .example-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .uploaded-photos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 15px;
             margin-bottom: 30px;
         }
 
-        .option-button {
-            background: white;
+        .photo-preview {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            aspect-ratio: 1;
             border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            padding: 20px;
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-photo {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
             cursor: pointer;
-            transition: all 0.3s ease;
             font-size: 16px;
-            font-weight: 500;
-            color: #333;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
         }
 
-        .option-button:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
-        }
-
-        .option-button.selected {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .continue-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);
+            width: 100%;
         }
 
-        .option-icon {
-            font-size: 24px;
+        .continue-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.45);
+        }
+
+        .continue-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .security-note {
@@ -133,12 +264,6 @@
             gap: 8px;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
         @media (max-width: 480px) {
             .container {
                 padding: 30px 20px;
@@ -148,24 +273,22 @@
                 font-size: 24px;
             }
             
-            .option-button {
-                padding: 15px;
-                font-size: 15px;
+            .upload-area {
+                padding: 30px 15px;
             }
         }
     </style>
-  <script src="/tracking.js" defer></script>
-  <script src="/utm-make.js" defer></script>
+    <script src="/tracking.js" defer></script>
+    <script src="/utm-make.js" defer></script>
 </head>
 <body>
     <div class="main-container">
-        <!-- COUNTDOWN -->
-        <div class="countdown-box" id="countdown-box">
-            <span class="countdown-time" id="countdown"></span>
-        </div>
-
         <!-- PROGRESS BAR -->
         <div class="progress-container">
+            <div class="progress-label">
+                <span>Frage 6 von 7</span>
+                <span>86%</span>
+            </div>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
@@ -173,106 +296,140 @@
         
         <!-- MAIN CONTENT -->
         <div class="container">
-            <h1>Wie reagierst du, wenn dein Partner distanziert wirkt?</h1>
+            <h1>Lade deine Fotos hoch</h1>
+            <p class="subtitle">Damit Clara deine Silhouette optimal analysieren kann, benötigen wir 2-3 Fotos von dir.</p>
             
-            <div class="option-container">
-                <div class="option-button" data-value="zurückziehen" onclick="selectOption(this, 'zurückziehen')">
-                    <span class="option-icon">😔</span>
-                    <span>Ich ziehe mich zurück</span>
+            <div class="photo-examples">
+                <div class="example-section">
+                    <h3 style="color: #22C55E; margin-bottom: 10px; font-size: 20px;">Beispiele für Fotos, die funktionieren:</h3>
+                    <p style="color: #EF4444; font-size: 14px; margin-bottom: 15px; line-height: 1.6;">Natürliches Licht ist am besten! Vermeide Fotos gegen das Fenster. Sende gerne mehrere Fotos, damit ich dich optimal einschätzen kann.</p>
+                    <div class="example-grid">
+                        <div class="example-photo">
+                            <img src="/Foto-Gut-1.jpg" alt="Gutes Foto-Beispiel 1">
+                        </div>
+                        <div class="example-photo">
+                            <img src="/Foto-Gut-2.jpg" alt="Gutes Foto-Beispiel 2">
+                        </div>
+                        <div class="example-photo">
+                            <img src="/Foto-Gut-3.jpg" alt="Gutes Foto-Beispiel 3">
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="option-button" data-value="ansprechen" onclick="selectOption(this, 'ansprechen')">
-                    <span class="option-icon">💬</span>
-                    <span>Ich spreche es sofort an</span>
-                </div>
-                
-                <div class="option-button" data-value="hoffen" onclick="selectOption(this, 'hoffen')">
-                    <span class="option-icon">🤞</span>
-                    <span>Ich hoffe, es geht vorbei</span>
+                <div class="example-section">
+                    <h3 style="color: #EF4444; margin-bottom: 10px; font-size: 20px;">Beispiele für Fotos, die NICHT funktionieren:</h3>
+                    <p style="color: #EF4444; font-size: 14px; margin-bottom: 15px; line-height: 1.6;">Direktes Sonnenlicht, Blitzlicht, schlechte Beleuchtung, Vintage-Fotos und Filter sind nicht geeignet für die Analyse.</p>
+                    <div class="example-grid">
+                        <div class="example-photo">
+                            <img src="/Foto-Schlecht-1.jpg" alt="Schlechtes Foto-Beispiel 1">
+                        </div>
+                        <div class="example-photo">
+                            <img src="/Foto-Schlecht-2.jpg" alt="Schlechtes Foto-Beispiel 2">
+                        </div>
+                        <div class="example-photo">
+                            <img src="/Foto-Schlecht-3.jpg" alt="Schlechtes Foto-Beispiel 3">
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📸</div>
+                <div class="upload-text">Fotos hochladen</div>
+                <div class="upload-subtext">Klicke hier oder ziehe Fotos hierher</div>
+            </div>
+
+            <input type="file" id="fileInput" class="file-input" accept="image/*" multiple onchange="handleFiles(this.files)">
+
+            <div class="uploaded-photos" id="uploadedPhotos"></div>
+
+            <button class="continue-button" id="continueBtn" disabled onclick="submitPhotos()">
+                Weiter zur letzten Frage
+            </button>
             
             <div class="security-note">
-                🔒 Deine Daten sind sicher und werden vertraulich behandelt
+                🔒 Deine Fotos werden vertraulich behandelt und nur für die Analyse verwendet
             </div>
         </div>
     </div>
 
     <script>
-        // Initialize countdown immediately when script loads
-        (function() {
-            const countdownElement = document.getElementById('countdown');
-            const countdownBox = document.getElementById('countdown-box');
-            
-            let startTime = localStorage.getItem('countdownStart');
-            
-            if (!startTime) {
-                startTime = Date.now();
-                localStorage.setItem('countdownStart', startTime.toString());
-            }
-            
-            // Calculate current time immediately
-            const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
-            const totalTime = 25 * 60;
-            let timeLeft = Math.max(0, totalTime - elapsed);
-            
-            // Set the correct time immediately
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            
-            // Make countdown visible now that it has correct content
-            countdownBox.style.visibility = 'visible';
-            
-            // Set color
-            if (timeLeft < 5 * 60 && timeLeft > 0) {
-                countdownElement.style.color = '#ff4757';
-            } else {
-                countdownElement.style.color = '#333';
-            }
-            
-            // Continue countdown
-            function updateTime() {
-                timeLeft--;
-                
-                if (timeLeft < 0) return;
-                
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                if (timeLeft < 5 * 60 && timeLeft > 0) {
-                    countdownElement.style.color = '#ff4757';
-                    countdownElement.style.animation = 'pulse 1s infinite';
-                } else if (timeLeft === 0) {
-                    countdownElement.textContent = "0:00";
-                    countdownElement.style.color = '#ff4757';
-                    return;
-                } else {
-                    countdownElement.style.color = '#333';
-                    countdownElement.style.animation = 'none';
-                }
-                
-                setTimeout(updateTime, 1000);
-            }
-            
-            setTimeout(updateTime, 1000);
-        })();
+        let uploadedFiles = [];
 
-        function selectOption(element, value) {
-            document.querySelectorAll('.option-button').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            
-            element.classList.add('selected');
-            
-            if (typeof(Storage) !== "undefined") {
-                localStorage.setItem('partnerDistanceReaction', value);
+        // Drag & Drop
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            for (let file of files) {
+                if (file.type.startsWith('image/')) {
+                    uploadedFiles.push(file);
+                    displayPhoto(file);
+                }
             }
+            updateContinueButton();
+        }
+
+        function displayPhoto(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const photoContainer = document.createElement('div');
+                photoContainer.className = 'photo-preview';
+                photoContainer.innerHTML = `
+                    <img src="${e.target.result}" alt="Uploaded photo">
+                    <button class="remove-photo" onclick="removePhoto('${file.name}')">×</button>
+                `;
+                document.getElementById('uploadedPhotos').appendChild(photoContainer);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removePhoto(filename) {
+            uploadedFiles = uploadedFiles.filter(f => f.name !== filename);
+            // Rebuild photo display
+            const container = document.getElementById('uploadedPhotos');
+            container.innerHTML = '';
+            uploadedFiles.forEach(file => displayPhoto(file));
+            updateContinueButton();
+        }
+
+        function updateContinueButton() {
+            const btn = document.getElementById('continueBtn');
+            btn.disabled = uploadedFiles.length === 0;
+        }
+
+        function submitPhotos() {
+            // Save info that photos were uploaded
+            if (typeof(Storage) !== "undefined") {
+                localStorage.setItem('photosUploaded', 'true');
+                localStorage.setItem('photoCount', uploadedFiles.length.toString());
+                
+                let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
+                allAnswers['photosUploaded'] = true;
+                allAnswers['photoCount'] = uploadedFiles.length;
+                localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
+                
+                console.log('Fotos gespeichert:', uploadedFiles.length, 'Dateien');
+            }
+
+            // In production: Upload files to server here
+            // For now, just store that files were selected
             
-            setTimeout(() => {
-                window.location.href = '/step8.html';
-            }, 500);
+            window.location.href = '/step8.html';
         }
 
         window.addEventListener('load', function() {
