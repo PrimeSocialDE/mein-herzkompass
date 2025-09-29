@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dating-Analyse - Schritt 1</title>
+    <title>Body-Typing Analyse - Frage 1</title>
     <style>
         * {
             margin: 0;
@@ -19,30 +19,8 @@
         }
 
         .main-container {
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
-        }
-
-        .countdown-box {
-            background: white;
-            border: 1px solid #764ba2;
-            border-radius: 15px;
-            padding: 6px 12px;
-            margin-bottom: 15px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: inline-block;
-            margin-left: 50%;
-            transform: translateX(-50%);
-            visibility: hidden;
-        }
-
-        .countdown-time {
-            font-size: 12px;
-            font-weight: 600;
-            color: #333;
-            min-width: 35px;
-            display: inline-block;
         }
 
         .progress-container {
@@ -51,6 +29,15 @@
             margin-bottom: 30px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
         }
 
         .progress-bar {
@@ -63,7 +50,7 @@
         .progress-fill {
             background: linear-gradient(90deg, #667eea, #764ba2);
             height: 100%;
-            width: 3.3%;
+            width: 14.3%;
             border-radius: 4px;
             transition: width 0.3s ease;
         }
@@ -75,6 +62,21 @@
             text-align: center;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             border: 1px solid #764ba2;
+        }
+
+        .example-image {
+            width: 100%;
+            max-width: 400px;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            border-radius: 15px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         h1 {
@@ -101,10 +103,7 @@
             font-size: 16px;
             font-weight: 500;
             color: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
+            text-align: left;
         }
 
         .option-button:hover {
@@ -119,10 +118,6 @@
             color: white;
         }
 
-        .option-icon {
-            font-size: 24px;
-        }
-
         .security-note {
             margin-top: 30px;
             color: #666;
@@ -131,12 +126,6 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
         }
 
         @media (max-width: 480px) {
@@ -152,20 +141,23 @@
                 padding: 15px;
                 font-size: 15px;
             }
+
+            .example-image {
+                height: 150px;
+            }
         }
     </style>
-  <script src="/tracking.js" defer></script>
-  <script src="/utm-make.js" defer></script>
+    <script src="/tracking.js" defer></script>
+    <script src="/utm-make.js" defer></script>
 </head>
 <body>
     <div class="main-container">
-        <!-- COUNTDOWN -->
-        <div class="countdown-box" id="countdown-box">
-            <span class="countdown-time" id="countdown"></span>
-        </div>
-
         <!-- PROGRESS BAR -->
         <div class="progress-container">
+            <div class="progress-label">
+                <span>Frage 1 von 7</span>
+                <span>14%</span>
+            </div>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
@@ -173,22 +165,31 @@
         
         <!-- MAIN CONTENT -->
         <div class="container">
-            <h1>Wen wünschst du dir an deiner Seite?</h1>
+            <div class="example-image">
+                <img src="/Formen.png" alt="Körperformen" style="width: 100%; height: 100%; object-fit: contain; border-radius: 15px;">
+            </div>
+            
+            <h1>Welche Beschreibung passt am besten zu deiner Figur?</h1>
             
             <div class="option-container">
-                <div class="option-button" data-value="männer" onclick="selectOption(this, 'männer')">
-                    <span class="option-icon">👨</span>
-                    <span>Ich interessiere mich für Männer</span>
+                <div class="option-button" data-value="schultern-breit" onclick="selectOption(this, 'schultern-breit')">
+                    Breite Schultern, schmale Hüften (V-Form)
                 </div>
                 
-                <div class="option-button" data-value="frauen" onclick="selectOption(this, 'frauen')">
-                    <span class="option-icon">👩</span>
-                    <span>Ich interessiere mich für Frauen</span>
+                <div class="option-button" data-value="ausgeglichen" onclick="selectOption(this, 'ausgeglichen')">
+                    Schultern und Hüften etwa gleich breit (X-Form)
                 </div>
                 
-                <div class="option-button" data-value="beide" onclick="selectOption(this, 'beide')">
-                    <span class="option-icon">❤️</span>
-                    <span>Beide Geschlechter</span>
+                <div class="option-button" data-value="hueften-breit" onclick="selectOption(this, 'hueften-breit')">
+                    Schmale Schultern, breitere Hüften (A-Form)
+                </div>
+                
+                <div class="option-button" data-value="rundlich" onclick="selectOption(this, 'rundlich')">
+                    Rundliche, gleichmäßige Proportionen (O-Form)
+                </div>
+                
+                <div class="option-button" data-value="gerade" onclick="selectOption(this, 'gerade')">
+                    Sehr schmal/gerade Silhouette (I-Form)
                 </div>
             </div>
             
@@ -199,52 +200,20 @@
     </div>
 
     <script>
-        // REPARIERTER TIMER für Step 2 (Quiz-Start)
-        (function() {
-            const countdownElement = document.getElementById('countdown');
-            const countdownBox = document.getElementById('countdown-box');
-            
-            if (!countdownElement) return;
-            
-            // WICHTIG: Step 2 ist Quiz-Start, also Timer komplett neu starten
-            const startTime = Date.now();
-            localStorage.setItem('countdownStart', startTime.toString());
-            
-            console.log('Timer gestartet in Step 2:', new Date(startTime));
-            
-            function updateTimer() {
-                const now = Date.now();
-                const elapsed = Math.floor((now - parseInt(startTime)) / 1000);
-                const totalTime = 25 * 60; // 25 Minuten
-                const timeLeft = Math.max(0, totalTime - elapsed);
+        // Tracking-Funktion für Antworten
+        function saveAnswer(question, answer) {
+            if (typeof(Storage) !== "undefined") {
+                // Speichere einzelne Antwort
+                localStorage.setItem(question, answer);
                 
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                // Speichere auch in einem Gesamt-Objekt für späteres Versenden
+                let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
+                allAnswers[question] = answer;
+                localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
                 
-                // Timer sichtbar machen
-                countdownBox.style.visibility = 'visible';
-                
-                // Farbe setzen
-                if (timeLeft < 5 * 60 && timeLeft > 0) {
-                    countdownElement.style.color = '#ff4757';
-                    countdownElement.style.animation = 'pulse 1s infinite';
-                } else if (timeLeft === 0) {
-                    countdownElement.textContent = "0:00";
-                    countdownElement.style.color = '#ff4757';
-                    return;
-                } else {
-                    countdownElement.style.color = '#333';
-                    countdownElement.style.animation = 'none';
-                }
-                
-                // Nächstes Update
-                setTimeout(updateTimer, 1000);
+                console.log('Gespeichert:', question, '=', answer);
             }
-            
-            // Sofort starten
-            updateTimer();
-        })();
+        }
 
         function selectOption(element, value) {
             document.querySelectorAll('.option-button').forEach(btn => {
@@ -253,9 +222,8 @@
             
             element.classList.add('selected');
             
-            if (typeof(Storage) !== "undefined") {
-                localStorage.setItem('genderPreference', value);
-            }
+            // Speichere Antwort mit Tracking
+            saveAnswer('bodyShape', value);
             
             setTimeout(() => {
                 window.location.href = '/step3.html';
@@ -272,6 +240,13 @@
                 container.style.opacity = '1';
                 container.style.transform = 'translateY(0)';
             }, 100);
+            
+            // Lade vorherige Auswahl wenn vorhanden
+            const savedValue = localStorage.getItem('bodyShape');
+            if (savedValue) {
+                const button = document.querySelector(`[data-value="${savedValue}"]`);
+                if (button) button.classList.add('selected');
+            }
         });
     </script>
 </body>
