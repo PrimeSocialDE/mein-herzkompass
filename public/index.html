@@ -4,8 +4,8 @@
     <script src="/cookie-banner.js" defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dating Persönlichkeitstest – Finde heraus, wer wirklich zu dir passt</title>
-    <meta name="description" content="Mach den Dating Persönlichkeitstest und erhalte eine kostenfreie Ersteinschätzung. Finde heraus, wer wirklich zu dir passt und wie du endlich den richtigen Partner anziehst.">
+    <title>Body Typing: Entdecke deine Silhouette – Personalisierte Styling-Analyse</title>
+    <meta name="description" content="Erhalte deine personalisierte Body-Typing-Analyse und entdecke, welche Kleidungslinien deine Figur am besten zur Geltung bringen. Mit individuellem PDF-Report.">
     <link rel="icon" href="/favicon.png" type="image/png">
     <style>
         * {
@@ -18,8 +18,6 @@
             width: 100vw;
             overflow-x: hidden;
             scroll-behavior: smooth;
-            margin: 0;
-            padding: 0;
         }
 
         body {
@@ -27,6 +25,7 @@
             line-height: 1.6;
             color: #2D3748;
             background-color: #FFFFFF;
+            padding-top: 48px;
         }
 
         .container {
@@ -35,100 +34,114 @@
             padding: 0 1rem;
         }
 
-        /* BANNER MIT BUTTON-FARBE */
+        /* TOP BANNER */
         .top-banner {
-            background-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             text-align: center;
             padding: 12px 16px;
             font-size: 14px;
             font-weight: 600;
-            width: 100%;
-            position: relative;
-        }
-
-        .banner-content {
-            position: relative;
-            height: 20px;
-            overflow: hidden;
-        }
-
-        .banner-slide {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            white-space: nowrap;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .banner-slide.active {
-            opacity: 1;
+        .banner-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .banner-text {
+            display: inline-block;
+            animation: fadeSlide 12s infinite;
+        }
+
+        @keyframes fadeSlide {
+            0%, 30% { opacity: 1; }
+            33%, 100% { opacity: 0; }
         }
 
         /* HERO SECTION */
         .hero {
-            background-color: #ffffff;
-            padding: 32px 0 64px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+            padding: 48px 0 64px;
             text-align: center;
-            width: 100%;
         }
 
         .hero h1 {
-            font-size: 40px;
-            font-weight: 700;
-            margin-bottom: 24px;
-            color: #2D3748;
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: #1a202c;
+            line-height: 1.2;
         }
 
         .hero-subtitle {
-            font-size: 16px;
-            color: #718096;
+            font-size: 18px;
+            color: #4a5568;
             margin-bottom: 32px;
-            line-height: 1.4;
+            line-height: 1.5;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .hero-img {
             width: 100%;
             max-width: 600px;
-            height: auto;
+            height: 400px;
             border-radius: 20px;
             margin: 32px auto;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            object-fit: cover;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
             display: block;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #667eea;
+            font-weight: 600;
         }
 
         .cta-button {
             display: inline-block;
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            padding: 16px 32px;
+            padding: 18px 40px;
             border: none;
             border-radius: 50px;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
             text-decoration: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);
+            margin-bottom: 16px;
         }
 
         .cta-button:hover {
-            background: #764ba2;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.45);
+        }
+
+        .trust-line {
+            font-size: 14px;
+            color: #718096;
+            margin-top: 12px;
         }
 
         .trust-elements {
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 16px;
             flex-wrap: wrap;
-            margin-top: 48px;
-            max-width: 500px;
+            margin-top: 32px;
+            max-width: 700px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -136,149 +149,130 @@
         .trust-item {
             display: flex;
             align-items: center;
-            gap: 4px;
-            background: #667eea;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 15px;
-            box-shadow: 0 1px 8px rgba(102, 126, 234, 0.15);
-            flex: 1;
+            gap: 8px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #4a5568;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .trust-item img {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* CLARA INTRO */
+        .clara-intro {
+            padding: 64px 0;
+            background: white;
+        }
+
+        .clara-intro-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .clara-image {
+            width: 100%;
+            max-width: 300px;
+            height: 300px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            display: flex;
+            align-items: center;
             justify-content: center;
-            min-width: 100px;
-            font-size: 11px;
+            margin: 0 auto;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .clara-text h2 {
+            font-size: 32px;
             font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 16px;
+        }
+
+        .clara-text p {
+            font-size: 18px;
+            color: #4a5568;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        .clara-highlight {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+            margin-top: 24px;
         }
 
         /* BENEFITS SECTION */
         .benefits {
             padding: 64px 0;
-            background: #ffffff;
-            width: 100%;
+            background: #f8f9ff;
         }
 
         .benefits h2 {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 48px;
             font-size: 32px;
             font-weight: 700;
-            color: #2D3748;
+            color: #1a202c;
         }
 
         .benefits-grid {
             display: grid;
-            gap: 32px;
+            gap: 24px;
             grid-template-columns: 1fr;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         .benefit-card {
             background: white;
             padding: 32px;
             border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            border: 1px solid #F7FAFC;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid #f7fafc;
+            transition: all 0.3s ease;
         }
 
         .benefit-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .benefit-card h3 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #2D3748;
-            margin-bottom: 16px;
-        }
-
-        .benefit-card p {
-            font-size: 18px;
-            color: #718096;
-            line-height: 1.6;
-        }
-
-        /* PERSONALITY IMPACT */
-        .personality-impact {
-            padding: 64px 0;
-            background: #ffffff;
-            text-align: center;
-            width: 100%;
-        }
-
-        .section-title {
-            font-size: 32px;
-            margin-bottom: 16px;
-            color: #2D3748;
-            font-weight: 700;
-        }
-
-        .section-subtitle {
-            font-size: 18px;
-            color: #718096;
-            margin-bottom: 48px;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .card-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 32px;
-            margin-bottom: 48px;
-        }
-
-        .card {
-            background: white;
-            border: 1px solid #e9ecef;
-            border-radius: 20px;
-            padding: 40px;
-            text-align: left;
-            color: #2D3748;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
             border-color: #667eea;
         }
 
-        .card-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin-bottom: 24px;
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .card h3 {
-            font-size: 22px;
+        .benefit-icon {
+            font-size: 48px;
             margin-bottom: 16px;
-            color: #2D3748;
-            font-weight: 700;
-            line-height: 1.3;
         }
 
-        .card p {
-            font-size: 18px;
+        .benefit-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 12px;
+        }
+
+        .benefit-card p {
+            font-size: 16px;
+            color: #4a5568;
             line-height: 1.6;
-            color: #718096;
-            margin-bottom: 0;
         }
 
         /* HOW IT WORKS */
         .how-it-works {
             padding: 64px 0;
-            background: #F7FAFC;
-            width: 100%;
+            background: white;
         }
 
         .how-it-works h2 {
@@ -286,85 +280,91 @@
             margin-bottom: 48px;
             font-size: 32px;
             font-weight: 700;
-            color: #2D3748;
+            color: #1a202c;
         }
 
         .steps {
             display: grid;
-            gap: 48px;
+            gap: 32px;
             grid-template-columns: 1fr;
-            max-width: 600px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
         .step {
             display: flex;
-            align-items: flex-start;
-            gap: 24px;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
             background: white;
             padding: 32px;
             border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid #f7fafc;
         }
 
-        .step-icon {
-            background: #667eea;
-            color: white;
-            width: 60px;
-            height: 60px;
+        .step-image {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
             border-radius: 15px;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            flex-shrink: 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            color: #667eea;
+            font-weight: 600;
+            font-size: 14px;
         }
 
         .step-number {
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            width: 30px;
-            height: 30px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            font-size: 14px;
-            position: absolute;
-            top: -10px;
-            right: -10px;
+            font-weight: 700;
+            font-size: 22px;
+            margin-bottom: 16px;
         }
 
         .step h3 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
-            color: #2D3748;
+            color: #1a202c;
             margin-bottom: 8px;
         }
 
         .step p {
             font-size: 16px;
-            color: #718096;
+            color: #4a5568;
             line-height: 1.6;
         }
 
         /* SOCIAL PROOF */
         .social-proof {
             padding: 64px 0;
-            background: #ffffff;
+            background: #f8f9ff;
             text-align: center;
-            width: 100%;
+        }
+
+        .social-proof h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 16px;
         }
 
         .social-rating {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 16px;
-            margin-bottom: 16px;
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
         .rating-stars {
@@ -373,21 +373,14 @@
         }
 
         .social-stats {
-            font-size: 18px;
+            font-size: 16px;
             color: #718096;
             margin-bottom: 48px;
         }
 
-        .social-proof h2 {
-            font-size: 32px;
-            font-weight: 700;
-            color: #2D3748;
-            margin-bottom: 24px;
-        }
-
         .testimonials {
             display: flex;
-            gap: 32px;
+            gap: 24px;
             overflow-x: auto;
             padding-bottom: 16px;
             scrollbar-width: none;
@@ -400,436 +393,199 @@
 
         .testimonial {
             background: white;
-            padding: 32px;
+            padding: 28px;
             border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             text-align: left;
             min-width: 280px;
-            max-width: 280px;
+            max-width: 300px;
             flex-shrink: 0;
+            border: 2px solid #f7fafc;
         }
 
         .testimonial-header {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
             margin-bottom: 16px;
         }
 
         .testimonial-info h4 {
             margin: 0;
             font-size: 16px;
-            color: #2D3748;
+            color: #1a202c;
             font-weight: 600;
         }
 
         .testimonial-stars {
             color: #FFD700;
             font-size: 14px;
-            margin: 0;
         }
 
         .testimonial-text {
             font-style: italic;
-            color: #718096;
-            font-size: 16px;
+            color: #4a5568;
+            font-size: 15px;
             line-height: 1.6;
-            margin-bottom: 16px;
         }
 
-        .testimonial-verification {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            margin-top: 20px;
-            padding-top: 16px;
-            border-top: 1px solid #f1f5f9;
-            flex-wrap: wrap;
-        }
-
-        .verification-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 600;
-            font-size: 11px;
-            padding: 6px 12px;
-            border: 1.5px solid #10b981;
-            border-radius: 20px;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.03));
-            color: #059669;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .verification-badge::before {
-            content: "✓";
-            color: #10b981;
-            font-weight: 700;
-            font-size: 13px;
-        }
-
-        .review-date {
-            font-size: 11px;
-            color: #8b5cf6;
-            font-weight: 600;
-            padding: 6px 10px;
-            border: 1.5px solid #8b5cf6;
-            border-radius: 16px;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(139, 92, 246, 0.03));
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        /* PROOF GALLERY */
-        .proof-gallery {
-            padding: 64px 0;
-            background: #F7FAFC;
-            width: 100%;
-        }
-
-        .proof-gallery h2 {
-            text-align: center;
-            margin-bottom: 48px;
-            font-size: 32px;
-            font-weight: 700;
-            color: #2D3748;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .gallery-item {
-            aspect-ratio: 1;
-            background: #E2E8F0;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            border: 2px dashed #ccc;
-            font-size: 14px;
-            text-align: center;
-            padding: 16px;
-        }
-
-        /* GUARANTEE */
-        .guarantee {
-            padding: 64px 0;
-            background: #22C55E;
-            text-align: center;
-            color: white;
-            width: 100%;
-        }
-
-        .guarantee h2 {
-            color: white;
-            font-size: 32px;
-            margin-bottom: 16px;
-            font-weight: 700;
-        }
-
-        .guarantee p {
-            color: white;
-            font-size: 20px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* FAQ */
-        .faq {
-            padding: 64px 0;
-            background: #F7FAFC;
-            width: 100%;
-        }
-
-        .faq h2 {
-            text-align: center;
-            margin-bottom: 48px;
-            font-size: 32px;
-            font-weight: 700;
-            color: #2D3748;
-        }
-
-        .faq-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .faq-item {
-            background: white;
-            border-radius: 15px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .faq-question {
-            padding: 24px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            color: #2D3748;
-        }
-
-        .faq-question:hover {
-            background: #F7FAFC;
-        }
-
-        .faq-toggle {
-            font-size: 20px;
-            color: #667eea;
-        }
-
-        .faq-answer {
-            padding: 0 24px 24px;
-            color: #718096;
-            display: none;
-        }
-
-        .faq-item.active .faq-answer {
-            display: block;
-        }
-
-        .faq-item.active .faq-toggle {
-            transform: rotate(45deg);
-        }
-
-        /* SECOND CTA */
-        .second-cta {
-            padding: 64px 0;
+        /* FINAL CTA */
+        .final-cta {
+            padding: 80px 0;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             text-align: center;
-            width: 100%;
         }
 
-        .second-cta h2 {
+        .final-cta h2 {
             color: white;
-            margin-bottom: 32px;
-            font-size: 32px;
+            margin-bottom: 24px;
+            font-size: 36px;
             font-weight: 700;
         }
 
-        .second-cta .cta-button {
+        .final-cta .cta-button {
             background: white;
             color: #667eea;
-            margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         }
 
-        .disclaimer {
-            font-size: 14px;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
+        .final-cta .cta-button:hover {
+            background: #f7fafc;
         }
 
         /* FOOTER */
         .footer {
             background: #2c3e50;
             color: white;
-            padding: 60px 0 20px;
-            width: 100%;
+            padding: 40px 0 20px;
         }
 
         .footer-content {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            margin-bottom: 32px;
         }
 
         .footer-section h4 {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             color: #ecf0f1;
-        }
-
-        .footer-section p {
-            color: #bdc3c7;
-            line-height: 1.6;
-            margin-bottom: 15px;
         }
 
         .footer-section ul {
             list-style: none;
-            padding: 0;
         }
 
         .footer-section ul li {
-            margin-bottom: 12px;
-            padding-left: 0;
+            margin-bottom: 8px;
         }
 
         .footer-section ul li a {
             color: #bdc3c7;
             text-decoration: none;
             transition: color 0.3s ease;
-            display: block;
-            padding: 5px 0;
         }
 
         .footer-section ul li a:hover {
             color: #667eea;
         }
 
-        .footer-section ul li a[href="#guarantee"] {
-            color: #22C55E;
-            font-weight: 600;
-        }
-
-        .footer-section ul li a[href="#guarantee"]:hover {
-            color: #16A085;
-        }
-
-        .security-badges {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .security-badge {
-            background: rgba(102, 126, 234, 0.1);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            color: #ecf0f1;
-            text-align: center;
-        }
-
         .footer-bottom {
             border-top: 1px solid #34495e;
-            padding-top: 30px;
+            padding-top: 20px;
             text-align: center;
-        }
-
-        .footer-bottom p {
-            color: #95a5a6;
-            margin-bottom: 10px;
             font-size: 14px;
+            color: #95a5a6;
         }
 
-        .footer-bottom .disclaimer {
-            font-size: 12px !important;
-            color: #7f8c8d !important;
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.5;
-        }
-
-        /* MEDIA QUERIES */
+        /* MOBILE OPTIMIZATIONS */
         @media (min-width: 768px) {
             .hero h1 { font-size: 48px; }
-            .hero-subtitle { font-size: 24px; }
+            .hero-subtitle { font-size: 20px; }
             .benefits-grid { grid-template-columns: repeat(3, 1fr); }
-            .card-grid { grid-template-columns: 1fr 1fr; }
+            .clara-intro-content {
+                grid-template-columns: 300px 1fr;
+            }
         }
 
         @media (max-width: 767px) {
-            .hero { padding: 24px 0 48px; }
-            .hero h1 { 
-                font-size: 32px;
-                line-height: 1.2;
+            .hero { padding: 32px 0 48px; }
+            .hero h1 { font-size: 28px; }
+            .hero-subtitle { font-size: 16px; }
+            .hero-img { height: 300px; }
+            .cta-button { padding: 16px 32px; font-size: 16px; }
+            .benefits h2, .how-it-works h2, .social-proof h2, .final-cta h2, .clara-text h2 {
+                font-size: 26px;
             }
-            .hero-img { 
-                width: 100%; 
-                max-width: 400px;
-                height: auto; 
+            .trust-elements { gap: 8px; }
+            .trust-item {
+                font-size: 12px;
+                padding: 8px 12px;
             }
-            .testimonials {
-                justify-content: flex-start;
-            }
-            .testimonial {
-                padding: 24px;
-            }
-            .testimonial-verification {
-                flex-direction: column;
-                gap: 8px;
-                align-items: flex-start;
-            }
-            
-            /* Mobile-spezifische Anpassungen für alle h-Titel */
-            h1, h2, h3, h4, h5, h6 {
-                line-height: 1.2 !important;
-            }
-            
-            .benefits h2,
-            .social-proof h2,
-            .proof-gallery h2,
-            .guarantee h2,
-            .faq h2,
-            .second-cta h2,
-            .how-it-works h2,
-            .section-title {
-                font-size: 28px !important;
-                line-height: 1.2 !important;
-            }
-            
-            .benefit-card h3,
-            .card h3,
-            .step h3 {
-                font-size: 18px !important;
-                line-height: 1.2 !important;
-            }
-            
-            .testimonial-info h4 {
-                font-size: 15px !important;
-                line-height: 1.2 !important;
-            }
-            
-            .footer-section h4 {
-                font-size: 16px !important;
-                line-height: 1.2 !important;
+            .trust-item img {
+                width: 20px;
+                height: 20px;
             }
         }
     </style>
-  <script src="/tracking.js" defer></script>
-  <script src="/utm-make.js" defer></script>
+    <script src="/tracking.js" defer></script>
+    <script src="/utm-make.js" defer></script>
 </head>
 <body>
     <div class="top-banner">
         <div class="banner-content">
-            <div class="banner-slide active">Über 4.000 erfolgreiche Analysen</div>
-            <div class="banner-slide">Lieferung innerhalb von 10 Stunden</div>
-            <div class="banner-slide">Indviduell auf dich zugeschnitten</div>
+            <span id="banner-text"></span>
         </div>
     </div>
 
     <section class="hero">
         <div class="container">
-            <div class="hero-content">
-                <h1>Finde heraus, wer wirklich zu dir passt</h1>
-<p class="hero-subtitle">
-  Schluss mit falschen Partnern. Entdecke deinen Dating-Typ und erkenne endlich, welche Persönlichkeit perfekt zu dir passt.
-</p>
-<p class="hero-subtitle">
-  <strong>Das in nur 3 Minuten!</strong>
-</p>
+            <h1>Entdecke deinen Körpertyp & Farbtyp</h1>
+            <p class="hero-subtitle">
+                In nur 3 Minuten erfährst du, welche Schnitte und Farben deine Figur perfekt zur Geltung bringen – mit personalisierter Analyse.
+            </p>
+            
+            <div class="hero-img">[Hero-Bild: Clara zeigt verschiedene Körpertypen]</div>
+            
+            <a href="#quiz-start" class="cta-button">Jetzt Body-Typing starten</a>
+            <p class="trust-line">Personalisiertes PDF mit Do's & Don'ts für deinen Typ</p>
+            
+            <p style="font-size: 16px; font-weight: 600; color: #667eea; margin-top: 20px; margin-bottom: 20px;">
+                Dauert nur 3 Minuten
+            </p>
+            
+            <div class="trust-elements">
+                <div class="trust-item">
+                    <img src="stern.png" alt="">
+                    <span>4.9/5 Sterne</span>
+                </div>
+                <div class="trust-item">
+                    <img src="check.png" alt="">
+                    <span>1.300+ Bewertungen</span>
+                </div>
+                <div class="trust-item">
+                    <img src="download.png" alt="">
+                    <span>Individuelle Analyse</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                
-                <img src="/main-landing-hero-1.png" alt="Hero Bild" class="hero-img">
-                
-                <a href="/step2.html" class="cta-button">Kostenfreien Test starten</a>
-                
-                <div class="trust-elements">
-                    <div class="trust-item">
-                        <span>11.841 Analysen durchgeführt</span>
-                    </div>
-                    <div class="trust-item">
-                        <span>Direkte Antwort</span>
-                    </div>
-                    <div class="trust-item">
-                        <span>100% sicher & privat</span>
+    <section class="clara-intro">
+        <div class="container">
+            <div class="clara-intro-content">
+                <div class="clara-image">[Foto: Clara Portrait]</div>
+                <div class="clara-text">
+                    <h2>Hi, ich bin Clara</h2>
+                    <p>
+                        Seit 14 Jahren helfe ich Menschen, ihren Körpertyp zu verstehen und die richtigen Kleidungslinien zu wählen. Mit über 1.000+ Analysen weiß ich genau, welche Schnitte welchen Figuren schmeicheln.
+                    </p>
+                    <div class="clara-highlight">
+                        <p style="font-weight: 600; margin-bottom: 8px;">Das Problem:</p>
+                        <p style="margin: 0;">Die meisten Styling-Tipps passen nicht für JEDEN. Du brauchst individuelle Empfehlungen – keine Pauschal-Ratschläge.</p>
                     </div>
                 </div>
             </div>
@@ -838,62 +594,26 @@
 
     <section class="benefits">
         <div class="container">
-            <h2>Das erhältst du</h2>
-            <p style="text-align: center; font-size: 20px; color: #718096; margin-bottom: 48px;">Deine persönliche Dating-Transformation in drei wertvollen Bausteinen</p>
+            <h2>Das bekommst du</h2>
             <div class="benefits-grid">
                 <div class="benefit-card">
-                    <img src="ClaraAudio.png" alt="Clara Audio Analyse" style="width: 100%; height: 350px; border-radius: 15px; margin-bottom: 24px; object-fit: cover;">
-                    <h3>Persönliche Audio-Botschaft</h3>
-                    <p>Clara erstellt dir eine individuelle Audio-Analyse deines Dating-Typs. Du bekommst persönliche Einschätzungen, die genau auf deine Situation zugeschnitten sind.</p>
+                    <div class="benefit-icon">📐</div>
+                    <h3>Dein Körpertyp</h3>
+                    <p>Detaillierte Analyse deiner Silhouette und welche Schnitte deine Proportionen optimal ergänzen.</p>
                 </div>
                 
                 <div class="benefit-card">
-                    <img src="ClaraNachdenken.png" alt="Clara Persönlichkeitsanalyse" style="width: 100%; height: 350px; border-radius: 15px; margin-bottom: 24px; object-fit: cover;">
-                    <h3>Vollständige Persönlichkeits-Analyse</h3>
-                    <p>Verstehe endlich deine Dating-Persönlichkeit im Detail. Die Analyse zeigt dir deine Stärken und gibt dir Klarheit über deinen idealen Partner-Typ.</p>
+                    <div class="benefit-icon">🎨</div>
+                    <h3>Deine Farbpalette</h3>
+                    <p>Entdecke die Farben, die zu deinem Hautunterton passen und dich strahlen lassen.</p>
                 </div>
                 
                 <div class="benefit-card">
-                    <img src="ClaraArbeit.png" alt="Clara Dating Empfehlungen" style="width: 100%; height: 350px; border-radius: 20px; margin-bottom: 24px; object-fit: cover;">
-                    <h3>Konkrete Dating-Empfehlungen</h3>
-                    <p>Erkenne deine bisherigen Muster und erhalte klare Hinweise, worauf du beim nächsten Date achten solltest. Keine Theorie, sondern praktische Schritte.</p>
+                    <div class="benefit-icon">✅</div>
+                    <h3>Do's & Don'ts</h3>
+                    <p>Konkrete Styling-Tipps – welche Schnitte und Farben du tragen solltest und welche nicht.</p>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section class="personality-impact">
-        <div class="container">
-            <div style="text-align: center; margin-bottom: 48px;">
-                <a href="/step2.html" class="cta-button">Meine ksotenfreie Analyse anfordern</a>
-            </div>
-            <h2 class="section-title">Warum deine Persönlichkeit über deine Partnerwahl entscheidet</h2>
-            <p class="section-subtitle">
-                Anziehung ist der Anfang – aber dauerhaft glücklich wirst du nur, wenn eure Persönlichkeiten zusammenpassen. Diese vier Dimensionen zeigen dir, warum es zählt.
-            </p>
-            <div class="card-grid">
-                <div class="card">
-                    <div class="card-icon">⭐</div>
-                    <h3>Werte und Lebensziele</h3>
-                    <p>Du träumst von einer Familie, er will frei bleiben? Du sparst für die Zukunft, sie lebt nur im Hier und Jetzt? Unterschiedliche Werte führen zu endlosen Diskussionen, die eure Beziehung zerreißen.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🔒</div>
-                    <h3>Bindungsstil und Sicherheit</h3>
-                    <p>Klammert er, obwohl du Freiraum brauchst? Zieht sie sich zurück, wenn du Nähe suchst? Diese Muster entstehen früh und sabotieren deine Beziehungen - oft ohne dass du es merkst.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">💬</div>
-                    <h3>Kommunikationsmuster</h3>
-                    <p>Schweigt sie bei Konflikten, während du reden willst? Wird er laut, wenn du ruhig bleiben möchtest? Missverständnisse häufen sich, bis nur noch Frust und Distanz bleiben.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">⚡</div>
-                    <h3>Temperament und Alltagstakt</h3>
-                    <p>Du liebst spontane Abenteuer, er plant jedes Detail? Du brauchst Ruhe nach der Arbeit, sie will ausgehen? Dieser tägliche Kampf um Kompromisse macht selbst die Liebe kaputt.</p>
-                </div>
-            </div>
-            <a href="/step2.html" class="cta-button">Meine kostenfreie Analyse anfordern</a>
         </div>
     </section>
 
@@ -902,197 +622,80 @@
             <h2>So funktioniert's</h2>
             <div class="steps">
                 <div class="step">
-                    <div class="step-icon">📝</div>
+                    <div class="step-image">[Bild: Person beantwortet Fragen am Laptop/Handy]</div>
                     <div class="step-number">1</div>
-                    <div>
-                        <h3>Fragebogen ausfüllen</h3>
-                        <p>In der Regel 5 Minuten, damit Clara alle Antworten bekommt, die sie für deine persönliche Analyse benötigt.</p>
-                    </div>
+                    <h3>Fragen beantworten (3 Min)</h3>
+                    <p>Beantworte einfache Fragen zu deiner Figur und Proportionen.</p>
                 </div>
                 
                 <div class="step">
-                    <div class="step-icon">🎯</div>
+                    <div class="step-image">[Bild: Fotos werden hochgeladen/Person macht Selfie]</div>
                     <div class="step-number">2</div>
-                    <div>
-                        <h3>Persönlichkeitsanalyse erhalten</h3>
-                        <p>Individuelle Einschätzung von Clara basierend auf deinen Antworten und 14 Jahren Erfahrung mit Dating-Dynamiken.</p>
-                    </div>
+                    <h3>Fotos hochladen</h3>
+                    <p>Lade deine Fotos hoch, damit Clara deine Silhouette analysieren kann.</p>
                 </div>
                 
                 <div class="step">
-                    <div class="step-icon">💡</div>
+                    <div class="step-image">[Bild: Personalisiertes PDF-Dokument auf Bildschirm]</div>
                     <div class="step-number">3</div>
-                    <div>
-                        <h3>Den richtigen Partner erkennen</h3>
-                        <p>Mit den Ergebnissen erkennst du sofort, wer dir begegnet und der wirklich zu dir passt. Keine Zeit mehr verschwenden.</p>
-                    </div>
+                    <h3>Personalisierte Analyse erhalten</h3>
+                    <p>Erhalte dein individuelles Body-Typing-PDF mit allen Do's und Don'ts.</p>
                 </div>
             </div>
             <div style="text-align: center; margin-top: 48px;">
-                <a href="/step2.html" class="cta-button">Meine kostenfreie Analyse anfordern</a>
+                <a href="#quiz-start" class="cta-button">Jetzt starten</a>
             </div>
         </div>
     </section>
 
     <section class="social-proof">
         <div class="container">
-            <h2>Bereits über 4.000 Menschen geholfen</h2>
+            <h2>Das sagen meine Kunden</h2>
             <div class="social-rating">
                 <div class="rating-stars">★★★★★</div>
-                <span>4.8/5 Sterne</span>
+                <span>4.9/5 Sterne</span>
             </div>
-            <p class="social-stats">In 14 Jahren Erfahrung mit Persönlichkeitstypen und Dating-Dynamiken</p>
-      
+            <p class="social-stats">1.300+ verifizierte Bewertungen</p>
+            
             <div class="testimonials">
                 <div class="testimonial">
-                    <img src="Paar1.png" alt="Testimonial Paar 1" style="width: 100%; height: 200px; border-radius: 15px; margin-bottom: 20px; object-fit: cover;">
                     <div class="testimonial-header">
                         <div class="testimonial-info">
-                            <h4>Sarah, 28, München</h4>
+                            <h4>Sarah K.</h4>
                             <p class="testimonial-stars">★★★★★</p>
                         </div>
                     </div>
-                    <p class="testimonial-text">Endlich verstehe ich, warum ich immer an die gleichen Typen gerate und wie ich das ändern kann.</p>
-                    <div class="testimonial-verification">
-                        <div class="verification-badge">Verifizierter Käufer</div>
-                        <div class="review-date">vor 1 Monat</div>
-                    </div>
+                    <p class="testimonial-text">"Ich bin sehr gespannt darauf, meine Linien zu kleiden! Die Analyse war super detailliert."</p>
                 </div>
-          
+                
                 <div class="testimonial">
-                    <img src="Paar2.png" alt="Testimonial Paar 2" style="width: 100%; height: 200px; border-radius: 15px; margin-bottom: 20px; object-fit: cover;">
                     <div class="testimonial-header">
                         <div class="testimonial-info">
-                            <h4>Michael, 51, Hamburg</h4>
+                            <h4>Lisa M.</h4>
                             <p class="testimonial-stars">★★★★★</p>
                         </div>
                     </div>
-                    <p class="testimonial-text">Die Audio-Analyse hat mir die Augen geöffnet und mein Dating-Leben komplett verändert.</p>
-                    <div class="testimonial-verification">
-                        <div class="verification-badge">Verifizierter Käufer</div>
-                        <div class="review-date">vor 2 Wochen</div>
-                    </div>
+                    <p class="testimonial-text">"Endlich verstehe ich, welche Schnitte mir stehen. Das PDF ist beim Shopping Gold wert!"</p>
                 </div>
-          
+                
                 <div class="testimonial">
-                    <img src="Paar3.png" alt="Testimonial Paar 3" style="width: 100%; height: 200px; border-radius: 15px; margin-bottom: 20px; object-fit: cover;">
                     <div class="testimonial-header">
                         <div class="testimonial-info">
-                            <h4>Lisa, 31, Berlin</h4>
+                            <h4>Anna B.</h4>
                             <p class="testimonial-stars">★★★★★</p>
                         </div>
                     </div>
-                    <p class="testimonial-text">Die persönliche Audio-Botschaft hat mir so viel Klarheit über meine Wünsche gegeben.</p>
-                    <div class="testimonial-verification">
-                        <div class="verification-badge">Verifizierter Käufer</div>
-                        <div class="review-date">vor 4 Tagen</div>
-                    </div>
+                    <p class="testimonial-text">"Schnelle Bearbeitung und mega hilfreiche Stilinformationen. Absolut empfehlenswert!"</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="proof-gallery">
+    <section class="final-cta">
         <div class="container">
-            <h2>Echte Ergebnisse unserer Kunden</h2>
-            <div class="gallery-grid">
-                <img src="Chat1.png" alt="Kundenergebnis 1" style="width: 100%; height: auto; display: block; border-radius: 12px;">
-                <img src="Chat2.png" alt="Kundenergebnis 2" style="width: 100%; height: auto; display: block; border-radius: 12px;">
-                <img src="Chat3.png" alt="Kundenergebnis 3" style="width: 100%; height: auto; display: block; border-radius: 12px;">
-                <img src="Chat4.png" alt="Kundenergebnis 4" style="width: 100%; height: auto; display: block; border-radius: 12px;">
-            </div>
-        </div>
-    </section>
-
-    <section class="guarantee" id="guarantee">
-        <div class="container">
-            <h2>14 Tage Geld-zurück-Garantie</h2>
-            <p>Gefällt dir die Analyse nicht? Kein Thema! Du erhältst dein Geld sofort zurück.</p>
-        </div>
-    </section>
-
-    <section class="faq" id="faq">
-        <div class="container">
-            <h2>Häufige Fragen</h2>
-            <div class="faq-container">
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>Wie funktioniert die Analyse von Clara?</span>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        Clara analysiert deine Antworten basierend auf 14 Jahren Erfahrung mit Persönlichkeitstypen und Dating-Dynamiken. Sie erstellt eine individuelle Audio-Botschaft und schriftliche Analyse deines Dating-Typs.
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>Wie zuverlässig ist die Analyse?</span>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        Die Analyse basiert auf fundierten Persönlichkeitsmodellen und Claras langjähriger Erfahrung. Über 4.000 zufriedene Kunden sprechen für die Qualität und Genauigkeit der Empfehlungen.
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>Wann erhalte ich meine Analyse?</span>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        Du erhältst deine persönliche Analyse innerhalb von 10 Stunden nach Abschluss des Fragebogens. Die Audio-Botschaft und schriftliche Auswertung werden dir per E-Mail zugeschickt.
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>Ist meine Privatsphäre geschützt?</span>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        Absolut! Alle deine Daten werden vertraulich behandelt und niemals an Dritte weitergegeben. Die Übertragung erfolgt SSL-verschlüsselt und deine Anonymität ist jederzeit gewährleistet.
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>Was unterscheidet diese Analyse von kostenlosen Tests?</span>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        Im Gegensatz zu automatisierten Tests erhältst du eine persönliche Audio-Botschaft von Clara mit individuellen Empfehlungen. Die Analyse ist speziell auf Dating-Situationen zugeschnitten und bietet konkrete Handlungsschritte.
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>Funktioniert die Analyse auch für LGBTQ+ Personen?</span>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        Ja, die Persönlichkeitsanalyse funktioniert unabhängig von der sexuellen Orientierung oder Geschlechtsidentität. Clara berücksichtigt alle Formen von Beziehungen und Dating-Präferenzen.
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>Kann ich die Analyse auch nach einer Trennung nutzen?</span>
-                        <span class="faq-toggle">+</span>
-                    </div>
-                    <div class="faq-answer">
-                        Besonders nach einer Trennung ist die Analyse wertvoll. Sie hilft dir zu verstehen, welche Muster in vergangenen Beziehungen aufgetreten sind und wie du in Zukunft bewusstere Entscheidungen treffen kannst.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section class="second-cta">
-        <div class="container">
-            <h2>Starte jetzt deine Dating-Transformation</h2>
-            <a href="/step2.html" class="cta-button">Meine kostenfreie Analyse erhalten</a>
-            <p class="disclaimer">Diese Analyse dient der Selbstreflexion und ersetzt keine professionelle psychologische Beratung.</p>
+            <h2>Bereit für dein Body-Typing?</h2>
+            <p style="font-size: 18px; margin-bottom: 32px;">Starte jetzt und erhalte dein personalisiertes PDF mit individuellen Styling-Empfehlungen.</p>
+            <a href="#quiz-start" class="cta-button">Jetzt Body-Typing starten</a>
         </div>
     </section>
 
@@ -1100,73 +703,65 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4>Clara Dating-Analyse</h4>
-                    <p>Individuelle Persönlichkeitsanalyse – fundiert durch moderne Methoden und echte Erfahrung im Dating-Alltag.</p>
+                    <h4>Über Clara</h4>
+                    <p style="color: #bdc3c7; font-size: 14px;">14 Jahre Erfahrung · 1.000+ Analysen · Fundiertes Wissen über Silhouetten</p>
                 </div>
                 
                 <div class="footer-section">
                     <h4>Rechtliches</h4>
                     <ul>
-                        <li><a href="datenschutz.html">Datenschutz</a></li>
-                        <li><a href="impressum.html">Impressum</a></li>
-                        <li><a href="agb.html">AGB</a></li>
-                        <li><a href="widerruf.html">Widerrufsrecht</a></li>
+                        <li><a href="#datenschutz">Datenschutz</a></li>
+                        <li><a href="#impressum">Impressum</a></li>
+                        <li><a href="#agb">AGB</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-section">
                     <h4>Support</h4>
                     <ul>
-                        <li><a href="#faq">Häufige Fragen</a></li>
-                        <li><a href="geld-zurueck.html">Geld-zurück-Garantie</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#kontakt">Kontakt</a></li>
                     </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Sicherheit</h4>
-                    <div class="security-badges">
-                        <div class="security-badge">
-                            🔒 SSL-verschlüsselt
-                        </div>
-                        <div class="security-badge">
-                            🇩🇪 Made in Germany
-                        </div>
-                        <div class="security-badge">
-                            ✓ DSGVO-konform
-                        </div>
-                    </div>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 Clara's Herzkompass. Alle Rechte vorbehalten.</p>
-                <p class="disclaimer">
-                    Claras Herzkompass ist ein Tool zur Persönlichkeitsanalyse, das der Selbstreflexion und Orientierung im Dating- und Beziehungsleben dient. Die Inhalte und Ergebnisse ersetzen weder eine medizinische, psychologische oder therapeutische Beratung noch eine professionelle Behandlung. Bei psychischen Belastungen oder ernsthaften Problemen wenden Sie sich bitte an qualifiziertes Fachpersonal.
-                </p>
+                <p>&copy; 2025 Clara's Body-Typing. Alle Rechte vorbehalten.</p>
             </div>
         </div>
     </footer>
 
     <script>
-        function toggleFaq(element) {
-            const faqItem = element.parentElement;
-            faqItem.classList.toggle('active');
+        // Banner Slider
+        const bannerTexts = [
+            'Über 1.000+ Kunden geholfen · 4.9★ Bewertung',
+            'Personalisiertes PDF mit Do\'s & Don\'ts',
+            'Individuelle Analyse von Clara'
+        ];
+        
+        let currentBanner = 0;
+        const bannerElement = document.getElementById('banner-text');
+        
+        function updateBanner() {
+            bannerElement.style.opacity = '0';
+            setTimeout(() => {
+                bannerElement.textContent = bannerTexts[currentBanner];
+                bannerElement.style.opacity = '1';
+                currentBanner = (currentBanner + 1) % bannerTexts.length;
+            }, 500);
         }
-
-        function initBannerSlider() {
-            const slides = document.querySelectorAll('.banner-slide');
-            if (slides.length === 0) return;
-            
-            let currentSlide = 0;
-            function nextSlide() {
-                if (slides[currentSlide]) slides[currentSlide].classList.remove('active');
-                currentSlide = (currentSlide + 1) % slides.length;
-                if (slides[currentSlide]) slides[currentSlide].classList.add('active');
-            }
-            setInterval(nextSlide, 4000);
-        }
-
-        document.addEventListener('DOMContentLoaded', initBannerSlider);
+        
+        bannerElement.style.transition = 'opacity 0.5s ease-in-out';
+        bannerElement.textContent = bannerTexts[0];
+        setInterval(updateBanner, 4000);
+        
+        // CTA Button Navigation
+        document.querySelectorAll('a[href="#quiz-start"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = '/step2.html';
+            });
+        });
     </script>
 </body>
 </html>
