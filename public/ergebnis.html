@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clara Dating-Analyse - Finde endlich die wahre Liebe</title>
+    <title>Dein Style-Profil ist bereit - Clara's Analyse</title>
     <style>
         * {
             margin: 0;
@@ -53,15 +53,29 @@
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 40px;
+            text-align: center;
+        }
+
+        .urgency-left {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: center;
         }
 
         .urgency-text {
             font-weight: 600;
             font-size: 15px;
+        }
+
+        .data-deletion-note {
+            font-size: 12px;
+            opacity: 0.9;
+            font-weight: 400;
         }
 
         .urgency-number {
@@ -79,10 +93,16 @@
             color: #ffeb3b;
         }
 
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
         /* HERO SECTION */
         .hero {
             background: linear-gradient(135deg, var(--white) 0%, #f1f3ff 100%);
-            padding: 80px 0;
+            padding: 60px 0;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -99,18 +119,22 @@
             pointer-events: none;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            position: relative;
+        .hero-badge {
+            background: linear-gradient(135deg, var(--success-color), #22C55E);
+            color: var(--white);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 auto 20px auto;
+            display: inline-block;
         }
 
         .hero-title {
-            font-size: clamp(36px, 5vw, 64px);
+            font-size: clamp(28px, 5vw, 48px);
             font-weight: 800;
             color: var(--text-dark);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             line-height: 1.1;
             letter-spacing: -0.02em;
         }
@@ -124,160 +148,236 @@
         }
 
         .hero-subtitle {
-            font-size: 20px;
+            font-size: 16px;
             color: var(--text-light);
-            margin-bottom: 40px;
-            max-width: 600px;
+            margin-bottom: 30px;
+            max-width: 700px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        .hero-cta {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: var(--white);
-            border: none;
-            padding: 18px 40px;
-            font-size: 18px;
-            font-weight: 700;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-medium);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-cta::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .hero-cta:hover::before {
-            left: 100%;
-        }
-
-        .hero-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-heavy);
-        }
-
-        /* PROGRESS SECTION */
-        .progress-section {
-            padding: 80px 0;
+        /* RESULTS SECTION */
+        .results-section {
+            padding: 60px 0;
             background: var(--white);
         }
 
-        .progress-cards {
+        .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 30px;
-            max-width: 900px;
-            margin: 0 auto;
+            margin-bottom: 50px;
         }
 
-        .progress-card {
+        .result-card {
             background: var(--white);
-            padding: 40px;
+            padding: 25px;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-medium);
-            border: 1px solid #e2e8f0;
+            border: 2px solid #e2e8f0;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .progress-card::before {
+        .result-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 4px;
             height: 100%;
-            transition: width 0.3s ease;
-        }
-
-        .progress-card.current::before {
-            background: linear-gradient(180deg, #ff6b6b, #ff8e8e);
-        }
-
-        .progress-card.clara::before {
             background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
         }
 
-        .progress-card:hover {
-            transform: translateY(-4px);
+        .result-card:hover {
+            transform: translateY(-3px);
             box-shadow: var(--shadow-heavy);
+            border-color: var(--primary-color);
         }
 
-        .progress-card:hover::before {
-            width: 8px;
+        .result-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            display: block;
         }
 
-        .progress-title {
-            font-size: 20px;
+        .result-title {
+            font-size: 18px;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 25px;
+            margin-bottom: 10px;
             line-height: 1.3;
         }
 
-        .progress-bar-container {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .progress-track {
-            width: 100%;
-            height: 12px;
-            background: #e2e8f0;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            border-radius: 20px;
-            position: relative;
-            width: 0%;
-            transition: width 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .progress-fill.current {
-            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
-        }
-
-        .progress-fill.clara {
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-        }
-
-        .progress-percentage {
-            position: absolute;
-            right: 0;
-            top: -30px;
-            font-weight: 700;
-            font-size: 18px;
-            color: var(--text-dark);
-        }
-
-        .progress-note {
+        .result-text {
             color: var(--text-light);
-            font-size: 14px;
-            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 15px;
         }
 
-        /* RESULTS PREVIEW */
-        .results-section {
-            padding: 80px 0;
+        .result-highlight {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        /* PREVIEW SECTION */
+        .preview-section {
+            padding: 60px 0;
             background: var(--bg-light);
         }
 
-        .results-header {
+        .preview-card {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            padding: 40px;
+            border: 2px solid var(--primary-color);
+            position: relative;
+        }
+
+        .preview-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .preview-title {
+            font-size: 28px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            margin-top: 5px;
+        }
+
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .insight-item {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: var(--border-radius-small);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .insight-image-placeholder {
+            width: 100%;
+            height: 120px;
+            background: var(--white);
+            border-radius: var(--border-radius-small);
+            margin-bottom: 10px;
+            border: 2px dashed #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .insight-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .insight-text {
+            color: var(--text-light);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .unlock-section {
+            background: linear-gradient(135deg, #f8fafc, var(--white));
+            padding: 40px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            border: 2px dashed var(--primary-color);
+            margin-top: 40px;
+        }
+
+        .clara-analysis-section {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .clara-analysis-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .clara-analysis-content {
+            flex: 1;
+        }
+
+        .unlock-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .unlock-subtitle {
+            color: var(--text-light);
+            margin-bottom: 0;
+            font-size: 15px;
+            text-align: left;
+        }
+
+        .unlock-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .unlock-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .unlock-feature .icon {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        /* PRICING SECTION */
+        .pricing-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f1f3ff 0%, var(--bg-light) 100%);
+        }
+
+        .pricing-header {
             text-align: center;
             margin-bottom: 60px;
         }
@@ -297,184 +397,9 @@
             margin: 0 auto;
         }
 
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-bottom: 50px;
-        }
-
-        .result-card {
-            background: var(--white);
-            padding: 35px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-light);
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .result-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-medium);
-            border-color: var(--primary-color);
-        }
-
-        .result-icon {
-            font-size: 32px;
-            margin-bottom: 20px;
-            display: block;
-        }
-
-        .result-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 15px;
-        }
-
-        .result-text {
-            color: var(--text-light);
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .result-highlight {
-            color: var(--primary-color);
-            font-weight: 600;
-            font-style: normal;
-        }
-
-        .blur-preview {
-            position: relative;
-            background: var(--white);
-            border-radius: var(--border-radius);
-            padding: 30px;
-            margin: 50px 0;
-            box-shadow: var(--shadow-medium);
-        }
-
-        .blur-content {
-            filter: blur(2px);
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .unlock-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(20px);
-            padding: 30px;
-            border-radius: var(--border-radius);
-            text-align: center;
-            box-shadow: var(--shadow-heavy);
-            border: 1px solid rgba(102, 126, 234, 0.2);
-        }
-
-        .unlock-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-        }
-
-        .unlock-subtitle {
-            color: var(--text-light);
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        .unlock-btn {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: var(--white);
-            border: none;
-            padding: 12px 24px;
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: var(--border-radius-small);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .unlock-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-medium);
-        }
-
-        /* CLARA PERSONAL SECTION */
-        .clara-section {
-            padding: 80px 0;
-            background: var(--white);
-        }
-
-        .clara-card {
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-heavy);
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-        }
-
-        .clara-image {
-            width: 100%;
-            height: 350px;
-            object-fit: cover;
-            object-position: center top;
-        }
-
-        .clara-content {
-            padding: 50px;
-            text-align: center;
-        }
-
-        .clara-quote {
-            font-size: 20px;
-            font-style: italic;
-            color: var(--text-dark);
-            line-height: 1.6;
-            margin-bottom: 30px;
-            position: relative;
-        }
-
-        .clara-quote::before,
-        .clara-quote::after {
-            content: '"';
-            font-size: 48px;
-            color: var(--primary-color);
-            opacity: 0.3;
-            font-family: serif;
-        }
-
-        .clara-signature {
-            text-align: right;
-            margin-right: 20px;
-        }
-
-        .signature-image {
-            max-width: 180px;
-            height: auto;
-            opacity: 0.8;
-        }
-
-        /* PRICING SECTION */
-        .pricing-section {
-            padding: 80px 0;
-            background: linear-gradient(135deg, #f1f3ff 0%, var(--bg-light) 100%);
-        }
-
-        .pricing-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
         .pricing-card {
             max-width: 600px;
-            margin: 0 auto 50px;
+            margin: 0 auto;
             background: var(--white);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-heavy);
@@ -497,16 +422,44 @@
         }
 
         .sales-indicator {
-            background: #22C55E;
-            color: var(--white);
+            background: var(--white);
+            color: var(--text-dark);
             padding: 10px 20px;
             border-radius: 25px;
             font-size: 14px;
             font-weight: 600;
             margin: 0 auto 25px auto;
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             text-align: center;
             max-width: fit-content;
+            border: 1px solid #22C55E;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
+        }
+
+        .live-indicator {
+            width: 8px;
+            height: 8px;
+            background: #22C55E;
+            border-radius: 50%;
+            animation: pulse-live 2s infinite;
+        }
+
+        @keyframes pulse-live {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .price-container {
@@ -538,30 +491,38 @@
 
         .benefits-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 10px;
             margin-bottom: 40px;
         }
 
         .benefit {
             display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 15px;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
             background: #f8fafc;
-            border-radius: var(--border-radius-small);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .benefit:hover {
+            background: #f1f3ff;
+            transform: translateX(2px);
         }
 
         .benefit-icon {
             color: var(--success-color);
-            font-size: 20px;
-            margin-top: 2px;
+            font-size: 16px;
+            font-weight: bold;
+            flex-shrink: 0;
         }
 
         .benefit-text {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-dark);
-            line-height: 1.4;
+            line-height: 1.3;
+            font-weight: 500;
         }
 
         .main-cta {
@@ -634,94 +595,6 @@
             line-height: 1.3;
         }
 
-        /* VALUE ADDITION */
-        .value-section {
-            max-width: 800px;
-            margin: 50px auto 0;
-            background: linear-gradient(135deg, #f8fafc, #ffffff);
-            padding: 50px;
-            border-radius: var(--border-radius);
-            border: 1px solid #e2e8f0;
-        }
-
-        .value-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--text-dark);
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .value-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .value-item {
-            text-align: center;
-            padding: 25px;
-            background: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-light);
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .value-item:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-medium);
-            border-color: var(--primary-color);
-        }
-
-        .value-icon {
-            font-size: 36px;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .value-item-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-            line-height: 1.3;
-        }
-
-        .value-item-text {
-            font-size: 14px;
-            color: var(--text-light);
-            line-height: 1.5;
-        }
-
-        .analysis-preview {
-            margin: 40px 0;
-            text-align: center;
-        }
-
-        .analysis-image {
-            width: 100%;
-            max-width: 500px;
-            height: auto;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-medium);
-        }
-
-        .value-guarantee {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: var(--white);
-            padding: 30px;
-            border-radius: var(--border-radius);
-            text-align: center;
-        }
-
-        .guarantee-text {
-            font-size: 16px;
-            line-height: 1.6;
-            margin: 0;
-        }
-
         /* TESTIMONIALS */
         .testimonials-section {
             padding: 80px 0;
@@ -737,7 +610,7 @@
 
         .testimonial {
             background: var(--white);
-            padding: 35px;
+            padding: 30px;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-light);
             border: 1px solid #e2e8f0;
@@ -747,6 +620,24 @@
         .testimonial:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow-medium);
+        }
+
+        .testimonial-before-after {
+            width: 100%;
+            height: 200px;
+            background: #f8fafc;
+            border-radius: var(--border-radius-small);
+            margin-bottom: 20px;
+            border: 2px dashed #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .before-after-placeholder {
+            color: var(--text-light);
+            font-size: 14px;
+            font-weight: 500;
         }
 
         .testimonial-header {
@@ -778,47 +669,6 @@
             font-style: italic;
             color: var(--text-light);
             line-height: 1.6;
-        }
-
-        /* FINAL CTA */
-        .final-cta-section {
-            padding: 80px 0;
-            background: linear-gradient(135deg, var(--text-dark), #34495e);
-            color: var(--white);
-            text-align: center;
-        }
-
-        .final-cta-title {
-            font-size: clamp(32px, 4vw, 48px);
-            font-weight: 800;
-            margin-bottom: 20px;
-        }
-
-        .final-cta-subtitle {
-            font-size: 20px;
-            opacity: 0.9;
-            margin-bottom: 40px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .final-cta-btn {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: var(--white);
-            border: none;
-            padding: 20px 50px;
-            font-size: 20px;
-            font-weight: 700;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-heavy);
-        }
-
-        .final-cta-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.4);
         }
 
         /* FOOTER */
@@ -867,42 +717,48 @@
             }
 
             .hero {
-                padding: 60px 0;
+                padding: 40px 0;
             }
 
             .container {
                 padding: 0 15px;
             }
 
-            .progress-cards {
+            .results-grid {
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
 
-            .progress-card,
             .result-card,
             .testimonial {
-                padding: 25px 20px;
+                padding: 20px 15px;
             }
 
-            .clara-content {
+            .clara-analysis-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .clara-analysis-image {
+                width: 100px;
+                height: 100px;
+            }
+
+            .unlock-title,
+            .unlock-subtitle {
+                text-align: center;
+            }
+
+            .preview-card {
                 padding: 30px 20px;
-            }
-
-            .clara-quote {
-                font-size: 18px;
             }
 
             .pricing-card {
                 padding: 30px 20px;
             }
 
-            .value-section {
-                padding: 30px 20px;
-                margin: 30px auto 0;
-            }
-
-            .value-grid {
+            .insight-grid {
                 grid-template-columns: 1fr;
                 gap: 15px;
             }
@@ -953,171 +809,128 @@
     <!-- URGENCY BAR -->
     <div class="urgency-bar">
         <div class="urgency-content">
-            <div class="urgency-text">
-                Heute nur noch <span class="urgency-number" id="available-count">3</span> Analysen verfügbar!
+            <div class="urgency-left">
+                <div class="urgency-text">
+                    Nur noch <span class="urgency-number" id="available-count">2</span> vollständige Analysen heute verfügbar!
+                </div>
+                <div class="data-deletion-note">
+                    Deine Fotos und Antworten werden gelöscht in: <span id="deletion-timer"></span>
+                </div>
             </div>
-            <div class="timer" id="timer">14:23</div>
+            <div class="timer" id="timer">11:47</div>
         </div>
     </div>
 
     <!-- HERO SECTION -->
     <section class="hero">
         <div class="container">
+            <div class="hero-badge">✓ Deine erste Einschätzung ist fertig</div>
             <h1 class="hero-title">
-                <span class="name-highlight" id="personalized-name">Du</span> verdienst eine Liebe, die deine Seele berührt
+                <span class="name-highlight" id="personalized-name">Dein</span> persönliches Style-Profil zeigt verborgene Potentiale
             </h1>
             <p class="hero-subtitle">
-                Diese ersten Erkenntnisse zeigen dir, warum dein Herz bisher unerfüllt blieb – die vollständige Heilung deiner Dating-Wunden wartet in deiner persönlichen Analyse.
+                Diese ersten Erkenntnisse basieren auf deinen Antworten. Die vollständige Analyse mit Foto-Auswertung und detaillierten Empfehlungen zeigt dir dein wahres Style-Potenzial.
             </p>
-            <button class="hero-cta" onclick="scrollToPrice()">
-                Jetzt den Weg zur wahren Liebe entdecken
-            </button>
         </div>
     </section>
 
-    <!-- PROGRESS SECTION -->
-    <section class="progress-section">
-        <div class="container">
-            <div class="progress-cards">
-                <div class="progress-card current">
-                    <h3 class="progress-title">Wo du jetzt stehst</h3>
-                    <div class="progress-bar-container">
-                        <div class="progress-track">
-                            <div class="progress-fill current" id="currentProgress"></div>
-                        </div>
-                        <span class="progress-percentage" id="currentPercentage">0%</span>
-                    </div>
-                    <p class="progress-note">Deine aktuelle Bereitschaft für eine tiefe Verbindung</p>
-                </div>
-                
-                <div class="progress-card clara">
-                    <h3 class="progress-title">Mit Claras Roadmap</h3>
-                    <div class="progress-bar-container">
-                        <div class="progress-track">
-                            <div class="progress-fill clara" id="claraProgress"></div>
-                        </div>
-                        <span class="progress-percentage" id="claraPercentage">0%</span>
-                    </div>
-                    <p class="progress-note">Deine Erfolgsrate mit der personalisierten Strategie</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- RESULTS PREVIEW -->
+    <!-- RESULTS SECTION -->
     <section class="results-section">
         <div class="container">
-            <div class="results-header animate-on-scroll">
-                <h2 class="section-title">Was deine Antworten über dein Liebesleben verraten</h2>
-                <p class="section-subtitle">Diese Muster sabotieren unbewusst jede Chance auf echte Liebe - erkennst du dich wieder?</p>
-            </div>
-            
             <div class="results-grid">
                 <div class="result-card animate-on-scroll">
-                    <span class="result-icon">💔</span>
-                    <h4 class="result-title">Warum du immer die "falschen" anziehst</h4>
-                    <p class="result-text">
-                        Deine Antworten zeigen ein klassisches Muster: Du suchst unbewusst Menschen, die deine Kindheitswunden spiegeln. Menschen mit sicherem Bindungsstil wirken auf dich "langweilig", während toxische Dynamiken sich vertraut anfühlen. Das ist der Grund, warum gesunde Menschen "keine Schmetterlinge" auslösen. 
-                        <span class="result-highlight">Claras Analyse deckt deine unbewussten Anziehungsmuster auf und zeigt dir, wie du sie durchbrichst.</span>
+                    <span class="result-icon">👗</span>
+                    <h4 class="result-title">Dein wahrscheinlicher Körpertyp</h4>
+                    <p class="result-text" id="body-type-analysis">
+                        Basierend auf deinen Antworten deutet vieles auf eine <span class="result-highlight" id="detected-body-type">A-Form</span> hin. 
+                        Das bedeutet, deine Schultern sind schmaler als deine Hüften. 
+                        <span class="result-highlight">Mit der Foto-Analyse kann Clara dies präzise bestimmen und dir perfekt passende Schnitte empfehlen.</span>
                     </p>
                 </div>
                 
                 <div class="result-card animate-on-scroll">
-                    <span class="result-icon">🎭</span>
-                    <h4 class="result-title">Die Maske, die dich einsam macht</h4>
-                    <p class="result-text">
-                        Du zeigst beim Dating eine "perfekte" Version von dir - charmant, stark, unabhängig. Aber diese Maske verhindert echte Intimität. Menschen verlieben sich in deine Fassade, nicht in dich. Deshalb fühlen sich selbst deine Beziehungen oberflächlich und leer an. Du hast Angst, dass niemand dein wahres Ich lieben könnte.
-                        <span class="result-highlight">Clara zeigt dir, wie du schrittweise authentisch wirst, ohne verletzlich zu wirken.</span>
+                    <span class="result-icon">🎨</span>
+                    <h4 class="result-title">Deine Farbrichtung & erste Empfehlungen</h4>
+                    <p class="result-text" id="color-analysis">
+                        Deine Haarfarbe und Schmuckvorlieben deuten auf einen <span class="result-highlight" id="detected-color-type">warmen Farbtyp</span> hin. 
+                        <span class="color-recommendations" id="color-recommendations">Goldtöne, warme Brauntöne und Erdfarben stehen dir besonders gut.</span>
+                        <span class="result-highlight">Die professionelle Farbanalyse zeigt dir deine exakte Farbpalette mit über 200 perfekten Farbtönen.</span>
                     </p>
                 </div>
                 
                 <div class="result-card animate-on-scroll">
-                    <span class="result-icon">🔄</span>
-                    <h4 class="result-title">Der Teufelskreis, der sich immer wiederholt</h4>
-                    <p class="result-text">
-                        Deine Beziehungen folgen immer dem gleichen Drehbuch: Intensive Anfangsphase, dann ziehst du dich zurück oder sie verlieren das Interesse. Du sabotierst unbewusst jede Chance auf dauerhafte Liebe, weil Nähe sich bedrohlich anfühlt. Nach jedem Scheitern überzeugst du dich, dass "wahre Liebe nicht existiert."
-                        <span class="result-highlight">Clara durchbricht diesen Kreislauf mit einem personalisierten Heilungsplan für deine Bindungsangst.</span>
+                    <span class="result-icon">💫</span>
+                    <h4 class="result-title">Deine größte Style-Herausforderung</h4>
+                    <p class="result-text" id="challenge-analysis">
+                        Du kämpfst wahrscheinlich damit, dass <span class="result-highlight" id="detected-challenge">vieles zu weit oder zu eng wirkt</span>. 
+                        Das liegt an der falschen Passform für deinen Körpertyp.
+                        <span class="result-highlight">Clara zeigt dir genau, welche Schnitte und Proportionen deine Figur optimal zur Geltung bringen.</span>
                     </p>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <!-- BLURRED PREVIEW -->
-            <div class="blur-preview animate-on-scroll">
-                <div class="blur-content">
-                    <h4>Deine vollständige Partner-Kompatibilitäts-Analyse</h4>
-                    <p>Basierend auf deiner Persönlichkeitsstruktur und deinen Antworten habe ich eine detaillierte Kompatibilitäts-Matrix erstellt. Diese zeigt dir nicht nur, welcher Typ Mensch zu dir passt, sondern auch konkret, wo du diese Menschen findest und wie du sie ansprichst...</p>
+    <!-- PREVIEW SECTION -->
+    <section class="preview-section">
+        <div class="container">
+            <div class="preview-card animate-on-scroll">
+                <div class="preview-badge">Vollständige Analyse verfügbar</div>
+                <h3 class="preview-title">Das erwartet dich in deiner kompletten Style-Analyse</h3>
+                
+                <div class="insight-grid">
+                    <div class="insight-item">
+                        <div class="insight-image-placeholder">[PDF-Ausschnitt: Körpertyp-Grafik]</div>
+                        <h4 class="insight-title">📸 Professionelle Foto-Auswertung</h4>
+                        <p class="insight-text">Clara analysiert deine Fotos und bestimmt deinen exakten Körpertyp, Proportionen und Farbtyp mit 95%iger Genauigkeit.</p>
+                    </div>
                     
-                    <div style="margin: 20px 0; text-align: center;">
-                        <div style="width: 100px; height: 100px; border-radius: 50%; background: conic-gradient(from 0deg, #ff6b6b 0%, #ffa500 30%, #00d4aa 70%, #667eea 100%); margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-                            <div style="width: 60px; height: 60px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #2c3e50;">92%</div>
+                    <div class="insight-item">
+                        <div class="insight-image-placeholder">[PDF-Ausschnitt: Styling-Empfehlungen]</div>
+                        <h4 class="insight-title">🎯 Personalisierte Empfehlungen</h4>
+                        <p class="insight-text">Konkrete Schnitte, Materialien und Styling-Tipps, die perfekt zu deiner individuellen Figur passen.</p>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-image-placeholder">[PDF-Ausschnitt: Farbpalette wie Bild 1]</div>
+                        <h4 class="insight-title">🌈 Deine perfekte Farbpalette</h4>
+                        <p class="insight-text">Über 200 Farbtöne, die dich strahlen lassen - von Basics bis zu Statement-Farben.</p>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-image-placeholder">[PDF-Ausschnitt: Shopping-Guide]</div>
+                        <h4 class="insight-title">🛍️ Shopping-Guide</h4>
+                        <p class="insight-text">Konkrete Marken und Shops, wo du deine optimalen Pieces findest - spare Zeit und Geld.</p>
+                    </div>
+                </div>
+
+                <div class="unlock-section">
+                    <div class="clara-analysis-section">
+                        <img src="ClaraArbeitNeu.jpeg" alt="Clara bei der persönlichen Analyse" class="clara-analysis-image">
+                        <div class="clara-analysis-content">
+                            <h4 class="unlock-title">Ich analysiere es dir persönlich</h4>
+                            <p class="unlock-subtitle">Clara wertet jedes Foto individuell aus und erstellt deine maßgeschneiderte Style-Strategie</p>
                         </div>
-                        <p style="margin-top: 10px; font-size: 14px; color: #666;">Kompatibilität mit deinem Ideal-Partner</p>
-                    </div>
-                </div>
-                
-                <div class="unlock-overlay">
-                    <h4 class="unlock-title">Vollständige Analyse freischalten</h4>
-                    <p class="unlock-subtitle">Erhalte deine persönliche Roadmap zur wahren Liebe</p>
-                    <button class="unlock-btn" onclick="scrollToPrice()">
-                        Jetzt freischalten
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CLARA PERSONAL -->
-    <section class="clara-section">
-        <div class="container">
-            <div class="clara-card animate-on-scroll">
-                <img src="ClaraArbeitNeu.jpeg" alt="Clara bei der Arbeit" class="clara-image">
-                <div class="clara-content">
-                    <p class="clara-quote">
-                        Über 8 Jahre habe ich Menschen dabei geholfen, ihre tiefsten Beziehungswunden zu heilen. Ich sehe in deinen Antworten nicht nur oberflächliche Vorlieben, sondern die unbewussten Muster, die dich immer wieder in dieselben schmerzhaften Situationen führen. Jede Analyse ist ein Heilungsplan - zugeschnitten auf deine einzigartige Liebesgeschichte.
-                    </p>
-                    <div class="clara-signature">
-                        <img src="ClaraUnterschrift.png" alt="Clara Unterschrift" class="signature-image">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- QUICK STEPS TEASER -->
-    <section style="padding: 50px 0; background: var(--white); border-top: 1px solid #e2e8f0;">
-        <div class="container">
-            <div class="animate-on-scroll" style="text-align: center; max-width: 700px; margin: 0 auto;">
-                <h2 style="font-size: 32px; font-weight: 800; color: var(--text-dark); margin-bottom: 15px; line-height: 1.2;">
-                    Du hast diese Probleme beim Dating?
-                </h2>
-                <p style="font-size: 18px; color: var(--text-light); margin-bottom: 25px; line-height: 1.5;">
-                    Immer die falschen Typen? Gespräche bleiben oberflächlich? Nach 2-3 Dates verlieren sie das Interesse? <strong style="color: var(--text-dark);">Claras 3-Schritte-System löst genau diese Probleme:</strong>
-                </p>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; margin-bottom: 30px;">
-                    <div style="text-align: center;">
-                        <div style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: var(--white); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; margin: 0 auto 12px;">1</div>
-                        <h4 style="font-weight: 700; color: var(--text-dark); margin-bottom: 8px; font-size: 16px;">Erkenne deine Dating-DNA</h4>
-                        <p style="color: var(--text-light); font-size: 13px; line-height: 1.4;">Verstehe endlich, warum du immer an die falschen Typen gerätst</p>
                     </div>
                     
-                    <div style="text-align: center;">
-                        <div style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: var(--white); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; margin: 0 auto 12px;">2</div>
-                        <h4 style="font-weight: 700; color: var(--text-dark); margin-bottom: 8px; font-size: 16px;">Finde den richtigen Menschen</h4>
-                        <p style="color: var(--text-light); font-size: 13px; line-height: 1.4;">Schluss mit hoffnungslosem Swipen - erfahre, wo dein Typ wirklich ist</p>
+                    <div class="unlock-features">
+                        <div class="unlock-feature">
+                            <span class="icon">✓</span>
+                            <span>Exakte Körpertyp-Bestimmung</span>
+                        </div>
+                        <div class="unlock-feature">
+                            <span class="icon">✓</span>
+                            <span>Präzise Farbanalyse</span>
+                        </div>
+                        <div class="unlock-feature">
+                            <span class="icon">✓</span>
+                            <span>Individuelle Styling-Tipps</span>
+                        </div>
+                        <div class="unlock-feature">
+                            <span class="icon">✓</span>
+                            <span>Persönliche Audio-Botschaft</span>
+                        </div>
                     </div>
-                    
-                    <div style="text-align: center;">
-                        <div style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: var(--white); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; margin: 0 auto 12px;">3</div>
-                        <h4 style="font-weight: 700; color: var(--text-dark); margin-bottom: 8px; font-size: 16px;">Sprich die richtige Sprache</h4>
-                        <p style="color: var(--text-light); font-size: 13px; line-height: 1.4;">Keine oberflächlichen Gespräche mehr - schaffe sofort echte Verbindung</p>
-                    </div>
-                </div>
-                
-                <div style="background: linear-gradient(135deg, #f8fafc, #ffffff); padding: 18px; border-radius: 12px; border-left: 4px solid var(--primary-color);">
-                    <p style="color: var(--text-dark); margin: 0; font-weight: 600; font-size: 15px;">
-                        <strong style="color: var(--primary-color);">Das Versprechen:</strong> Binnen 90 Tagen führst du mindestens 3 tiefgehende Gespräche mit Menschen, die wirklich zu dir passen - oder Geld zurück.
-                    </p>
                 </div>
             </div>
         </div>
@@ -1127,43 +940,16 @@
     <section class="pricing-section" id="pricing">
         <div class="container">
             <div class="pricing-header animate-on-scroll">
-                <h2 class="section-title">Durchbrich deine selbstzerstörerischen Beziehungsmuster</h2>
-                <p class="section-subtitle">🇩🇪 Made in Germany • 🔒 100% verschlüsselt • 🎯 Individuell für dich erstellt</p>
-            </div>
-
-            <!-- DEEP VALUE PROPOSITION -->
-            <div class="deep-value-section" style="max-width: 800px; margin: 0 auto 50px; background: linear-gradient(135deg, #f8fafc, #ffffff); padding: 50px 40px; border-radius: var(--border-radius); border: 1px solid #e2e8f0; box-shadow: var(--shadow-medium);">
-                <h3 style="font-size: 28px; font-weight: 800; color: var(--text-dark); text-align: center; margin-bottom: 30px;">
-                    Was du in deiner persönlichen Analyse erhältst:
-                </h3>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-bottom: 40px;">
-                    <div style="background: white; padding: 25px; border-radius: 12px; border-left: 4px solid var(--primary-color);">
-                        <h4 style="font-weight: 700; color: var(--text-dark); margin-bottom: 15px; font-size: 18px;">🧠 Deine unbewussten Sabotage-Muster</h4>
-                        <p style="color: var(--text-light); font-size: 15px; line-height: 1.6;">
-                            Detaillierte Analyse, warum du immer in dieselben toxischen Dynamiken gerätst. Ich zeige dir die versteckten Glaubenssätze aus deiner Kindheit, die heute noch deine Partnerwahl steuern.
-                        </p>
-                    </div>
-                    
-                    <div style="background: white; padding: 25px; border-radius: 12px; border-left: 4px solid var(--primary-color);">
-                        <h4 style="font-weight: 700; color: var(--text-dark); margin-bottom: 15px; font-size: 18px;">💝 Dein individueller Heilungsplan</h4>
-                        <p style="color: var(--text-light); font-size: 15px; line-height: 1.6;">
-                            Schritt-für-Schritt Anleitung, wie du deine Bindungsangst überwindest und emotionale Intimität zulässt, ohne dich zu verlieren. Inklusive konkreter Übungen für den Alltag.
-                        </p>
-                    </div>
-                </div>
-
-                <div style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; padding: 25px; border-radius: 12px; text-align: center;">
-                    <h4 style="font-size: 20px; font-weight: 700; margin-bottom: 15px;">Das Versprechen</h4>
-                    <p style="font-size: 16px; line-height: 1.6; margin: 0;">
-                        <strong>Innerhalb von 90 Tagen</strong> erkennst du deine toxischen Muster so klar, dass du sie sofort stoppen kannst. Du wirst nie wieder dieselben Beziehungsfehler machen - oder du bekommst dein Geld zurück.
-                    </p>
-                </div>
+                <h2 class="section-title">Entdecke dein volles Style-Potenzial</h2>
+                <p class="section-subtitle">🇩🇪 Made in Germany • 🔒 100% verschlüsselt • 📱 In 10h geliefert</p>
             </div>
             
             <div class="pricing-card animate-on-scroll">
                 <div class="popular-badge">Beliebteste Wahl</div>
-                <div class="sales-indicator" id="sales-counter">Heute bereits 12 mal gekauft</div>
+                <div class="sales-indicator" id="sales-counter">
+                    <span class="live-indicator"></span>
+                    In den letzten 24h 7 mal gekauft
+                </div>
                 
                 <div class="price-container">
                     <span class="price-old">89,00€</span>
@@ -1174,11 +960,15 @@
                 <div class="benefits-grid">
                     <div class="benefit">
                         <span class="benefit-icon">✓</span>
-                        <span class="benefit-text">Vollständige Persönlichkeitsanalyse in 10h geliefert</span>
+                        <span class="benefit-text">Vollständige Foto-Analyse in 10h geliefert</span>
                     </div>
                     <div class="benefit">
                         <span class="benefit-icon">✓</span>
-                        <span class="benefit-text">Partner-Kompatibilitäts-Matrix mit konkreten Empfehlungen</span>
+                        <span class="benefit-text">12-seitige personalisierte Style-Analyse</span>
+                    </div>
+                    <div class="benefit">
+                        <span class="benefit-icon">✓</span>
+                        <span class="benefit-text">Über 200 perfekte Farbtöne für deinen Typ</span>
                     </div>
                     <div class="benefit">
                         <span class="benefit-icon">✓</span>
@@ -1186,12 +976,16 @@
                     </div>
                     <div class="benefit">
                         <span class="benefit-icon">✓</span>
-                        <span class="benefit-text">Sofort umsetzbare Dating-Strategien</span>
+                        <span class="benefit-text">Konkrete Shopping-Empfehlungen</span>
+                    </div>
+                    <div class="benefit">
+                        <span class="benefit-icon">✓</span>
+                        <span class="benefit-text">Styling-Guide für jeden Anlass</span>
                     </div>
                 </div>
                 
                 <button class="main-cta" onclick="startCheckout()">
-                    Jetzt meine Roadmap zur wahren Liebe erhalten
+                    Jetzt vollständige Analyse erhalten
                 </button>
                 
                 <div class="trust-indicators">
@@ -1204,108 +998,10 @@
                         <div class="trust-text">In 10 Stunden geliefert</div>
                     </div>
                     <div class="trust-item">
-                        <span class="trust-icon"><img src="Stern.png" alt="Stern" style="width: 24px; height: 24px;"></span>
-                        <div class="trust-text">4,9 von 5 Sternen<br>Verifizierter Shop</div>
+                        <span class="trust-icon">🔒</span>
+                        <div class="trust-text">100% sicher & DSGVO-konform</div>
                     </div>
                 </div>
-            </div>
-
-            <!-- VALUE ADDITION -->
-            <div class="value-section animate-on-scroll">
-                <h3 class="value-title">Einblick in deine 12-seitige persönliche Analyse:</h3>
-                
-                <div class="value-grid">
-                    <div class="value-item">
-                        <span class="value-icon">🎯</span>
-                        <h4 class="value-item-title">Dein Bindungstyp-Profil</h4>
-                        <p class="value-item-text">Detaillierte Aufschlüsselung, warum du bestimmte Menschen anziehst und andere abstößt. Inklusive deiner unbewussten Trigger.</p>
-                    </div>
-                    
-                    <div class="value-item">
-                        <span class="value-icon">🔍</span>
-                        <h4 class="value-item-title">Deine Top 3 Sabotage-Muster</h4>
-                        <p class="value-item-text">Die spezifischen Verhaltensweisen, die deine Beziehungen zum Scheitern bringen - mit konkreten Beispielen aus deinen Antworten.</p>
-                    </div>
-                    
-                    <div class="value-item">
-                        <span class="value-icon">💊</span>
-                        <h4 class="value-item-title">Dein 30-Tage-Heilungsplan</h4>
-                        <p class="value-item-text">Tägliche Übungen und Reflexionsfragen, um deine toxischen Muster zu durchbrechen und gesunde Bindungen aufzubauen.</p>
-                    </div>
-                </div>
-
-                <div class="analysis-preview">
-                    <img src="IPadd.jpg" alt="Beispiel einer persönlichen Dating-Analyse" class="analysis-image">
-                    <p style="text-align: center; margin-top: 15px; color: var(--text-light); font-size: 14px; font-style: italic;">
-                        Beispiel: So sieht deine persönliche 12-seitige Analyse aus (Namen und Details anonymisiert)
-                    </p>
-                </div>
-                
-                <div class="value-guarantee">
-                    <p class="guarantee-text">
-                        <strong>Kein oberflächliches Dating-Coaching:</strong> Diese Analyse geht in die Tiefe deiner Psyche und zeigt dir die wahren Gründe für deine Dating-Probleme. Basierend auf Bindungstheorie, Traumatherapie und 8 Jahren praktischer Erfahrung.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- HOW TO FIND YOUR NEXT PARTNER -->
-    <section class="steps-section" style="padding: 80px 0; background: linear-gradient(135deg, #f1f3ff 0%, var(--bg-light) 100%);">
-        <div class="container">
-            <div class="results-header animate-on-scroll">
-                <h2 class="section-title">So findest du deinen nächsten Partner in 3 einfachen Schritten</h2>
-                <p class="section-subtitle">Claras erprobte Methode, mit der bereits über 2.847 Menschen ihre Seelenpartner gefunden haben</p>
-            </div>
-            
-            <div class="steps-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 60px;">
-                
-                <div class="step-card animate-on-scroll" style="background: var(--white); padding: 40px; border-radius: var(--border-radius); box-shadow: var(--shadow-medium); border: 1px solid #e2e8f0; text-align: center; position: relative;">
-                    <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: var(--white); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px;">1</div>
-                    
-                    <div style="font-size: 48px; margin: 30px 0 20px;">🧠</div>
-                    <h3 style="font-size: 24px; font-weight: 700; color: var(--text-dark); margin-bottom: 20px;">Erkenne deine Dating-DNA</h3>
-                    <p style="color: var(--text-light); line-height: 1.6; margin-bottom: 20px;">
-                        Mit Claras Analyse verstehst du endlich, warum bisherige Beziehungen scheiterten und welcher Persönlichkeitstyp wirklich zu dir passt.
-                    </p>
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-                        <strong style="color: var(--primary-color);">Ergebnis:</strong> <span style="color: var(--text-dark);">Du kennst deinen idealen Partner-Typ</span>
-                    </div>
-                </div>
-
-                <div class="step-card animate-on-scroll" style="background: var(--white); padding: 40px; border-radius: var(--border-radius); box-shadow: var(--shadow-medium); border: 1px solid #e2e8f0; text-align: center; position: relative;">
-                    <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: var(--white); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px;">2</div>
-                    
-                    <div style="font-size: 48px; margin: 30px 0 20px;">📍</div>
-                    <h3 style="font-size: 24px; font-weight: 700; color: var(--text-dark); margin-bottom: 20px;">Finde den richtigen Menschen</h3>
-                    <p style="color: var(--text-light); line-height: 1.6; margin-bottom: 20px;">
-                        Clara zeigt dir exakt, wo Menschen mit deinem Wunsch-Persönlichkeitstyp sich aufhalten – sowohl online als auch offline.
-                    </p>
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-                        <strong style="color: var(--primary-color);">Ergebnis:</strong> <span style="color: var(--text-dark);">Du weißt, wo du suchen musst</span>
-                    </div>
-                </div>
-
-                <div class="step-card animate-on-scroll" style="background: var(--white); padding: 40px; border-radius: var(--border-radius); box-shadow: var(--shadow-medium); border: 1px solid #e2e8f0; text-align: center; position: relative;">
-                    <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: var(--white); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px;">3</div>
-                    
-                    <div style="font-size: 48px; margin: 30px 0 20px;">💬</div>
-                    <h3 style="font-size: 24px; font-weight: 700; color: var(--text-dark); margin-bottom: 20px;">Sprich die richtige Sprache</h3>
-                    <p style="color: var(--text-light); line-height: 1.6; margin-bottom: 20px;">
-                        Mit deiner personalisierten Kommunikationsstrategie führst du Gespräche, die sofort eine tiefe Verbindung schaffen.
-                    </p>
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary-color);">
-                        <strong style="color: var(--primary-color);">Ergebnis:</strong> <span style="color: var(--text-dark);">Echte Dates statt oberflächlicher Gespräche</span>
-                    </div>
-                </div>
-                
-            </div>
-
-            <div class="success-guarantee" style="max-width: 600px; margin: 60px auto 0; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: var(--white); padding: 40px; border-radius: var(--border-radius); text-align: center;">
-                <h3 style="font-size: 24px; font-weight: 700; margin-bottom: 20px;">Das Versprechen</h3>
-                <p style="font-size: 18px; line-height: 1.6;">
-                    <strong>Innerhalb von 90 Tagen</strong> führst du mindestens 3 tiefgehende Gespräche mit Menschen, die wirklich zu dir passen – oder du bekommst dein Geld zurück.
-                </p>
             </div>
         </div>
     </section>
@@ -1313,68 +1009,53 @@
     <!-- TESTIMONIALS -->
     <section class="testimonials-section">
         <div class="container">
-            <div class="results-header animate-on-scroll">
-                <h2 class="section-title">Das sagen Menschen, die ihre wahre Liebe gefunden haben</h2>
+            <div class="pricing-header animate-on-scroll">
+                <h2 class="section-title">Das sagen unsere Kundinnen</h2>
             </div>
             
             <div class="testimonials-grid">
                 <div class="testimonial animate-on-scroll">
+                    <div class="testimonial-before-after">
+                        <div class="before-after-placeholder">[Vorher/Nachher Bild]</div>
+                    </div>
                     <div class="testimonial-header">
-                        <img src="Frau1.png" alt="Kundin Testimonial" class="testimonial-avatar">
+                        <img src="Paar4.png" alt="Kundin Testimonial" class="testimonial-avatar">
                         <div>
                             <div class="testimonial-name">Sarah K.</div>
                             <div class="testimonial-stars">★★★★★</div>
                         </div>
                     </div>
-                    <p class="testimonial-text">"Die Analyse hat mir die Augen geöffnet! Nach Jahren erfolgloser Dates habe ich endlich verstanden, warum es nie geklappt hat. Jetzt bin ich seit 8 Monaten glücklich vergeben."</p>
+                    <p class="testimonial-text">"Schon die erste Einschätzung war so hilfreich! Nach der vollständigen Analyse weiß ich endlich, welche Schnitte und Farben mir wirklich stehen."</p>
                 </div>
                 
                 <div class="testimonial animate-on-scroll">
-                    <div class="testimonial-header">
-                        <img src="Mann1.png" alt="Kunde Testimonial" class="testimonial-avatar">
-                        <div>
-                            <div class="testimonial-name">Michael R.</div>
-                            <div class="testimonial-stars">★★★★★</div>
-                        </div>
+                    <div class="testimonial-before-after">
+                        <div class="before-after-placeholder">[Vorher/Nachher Bild]</div>
                     </div>
-                    <p class="testimonial-text">"Unfassbar präzise! Clara hat meine Dating-Blockaden perfekt erkannt. Die Handlungsempfehlungen waren so konkret, dass ich sofort wusste, was zu tun ist."</p>
-                </div>
-                
-                <div class="testimonial animate-on-scroll">
                     <div class="testimonial-header">
-                        <img src="Frau2.png" alt="Kundin Testimonial" class="testimonial-avatar">
+                        <img src="Paar5.png" alt="Kundin Testimonial" class="testimonial-avatar">
                         <div>
                             <div class="testimonial-name">Lisa M.</div>
                             <div class="testimonial-stars">★★★★★</div>
                         </div>
                     </div>
-                    <p class="testimonial-text">"Ich war skeptisch, aber das Ergebnis war verblüffend genau. Besonders die Partner-Kompatibilitäts-Matrix hat mir geholfen, den richtigen Menschen zu finden."</p>
+                    <p class="testimonial-text">"Die Basis-Tipps haben mir schon viel geholfen. Die vollständige Analyse mit Fotos war dann perfekt - endlich keine Fehlkäufe mehr!"</p>
                 </div>
                 
                 <div class="testimonial animate-on-scroll">
+                    <div class="testimonial-before-after">
+                        <div class="before-after-placeholder">[Vorher/Nachher Bild]</div>
+                    </div>
                     <div class="testimonial-header">
-                        <img src="Mann2.png" alt="Kunde Testimonial" class="testimonial-avatar">
+                        <img src="Frau1.png" alt="Kundin Testimonial" class="testimonial-avatar">
                         <div>
-                            <div class="testimonial-name">Tom B.</div>
+                            <div class="testimonial-name">Anna B.</div>
                             <div class="testimonial-stars">★★★★★</div>
                         </div>
                     </div>
-                    <p class="testimonial-text">"Nach der Analyse verstehe ich endlich, warum meine Beziehungen immer nach 3 Monaten scheiterten. Jetzt bin ich seit über einem Jahr glücklich vergeben!"</p>
+                    <p class="testimonial-text">"Clara hat meine Figur perfekt analysiert. Die Shopping-Empfehlungen sind gold wert - ich spare so viel Zeit und Geld!"</p>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- FINAL CTA -->
-    <section class="final-cta-section">
-        <div class="container">
-            <h2 class="final-cta-title">Bereit für deine Liebes-Transformation?</h2>
-            <p class="final-cta-subtitle">
-                Heute noch beginnen, in 10 Stunden deine Roadmap zur wahren Liebe erhalten
-            </p>
-            <button class="final-cta-btn" onclick="startCheckout()">
-                Jetzt starten - nur 39,99€
-            </button>
         </div>
     </section>
 
@@ -1383,8 +1064,8 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4>Clara Dating-Analyse</h4>
-                    <p>Individuelle Persönlichkeitsanalyse – fundiert durch moderne Methoden und echte Erfahrung im Dating-Alltag.</p>
+                    <h4>Clara Style-Analyse</h4>
+                    <p>Individuelle Style-Beratung basierend auf professioneller Körpertyp- und Farbanalyse.</p>
                 </div>
                 
                 <div class="footer-section">
@@ -1421,10 +1102,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 Clara's Herzkompass. Alle Rechte vorbehalten.</p>
-                <p class="disclaimer" style="font-size: 12px; color: #7f8c8d; max-width: 800px; margin: 20px auto 0; line-height: 1.5;">
-                    Claras Herzkompass ist ein Tool zur Persönlichkeitsanalyse, das der Selbstreflexion und Orientierung im Dating- und Beziehungsleben dient. Die Inhalte und Ergebnisse ersetzen weder eine medizinische, psychologische oder therapeutische Beratung noch eine professionelle Behandlung. Bei psychischen Belastungen oder ernsthaften Problemen wenden Sie sich bitte an qualifiziertes Fachpersonal.
-                </p>
+                <p>&copy; 2025 Clara's Style-Kompass. Alle Rechte vorbehalten.</p>
             </div>
         </div>
     </footer>
@@ -1448,11 +1126,139 @@
             
             allData['_timestamp'] = new Date().toISOString();
             allData['_total_entries'] = totalCount.toString();
-            allData['_page_version'] = 'optimized_v2';
+            allData['_page_version'] = 'style_results_v1';
             allData['_user_agent'] = navigator.userAgent;
             allData['_screen_resolution'] = `${screen.width}x${screen.height}`;
             
             return allData;
+        }
+
+        // PERSONALIZATION BASED ON ANSWERS
+        function personalizeResults() {
+            const allData = getAllLocalStorageData();
+            
+            // Personalize name
+            const savedName = allData.user_name || allData.userName || 'Du';
+            const nameElement = document.getElementById('personalized-name');
+            if (nameElement && savedName !== 'Du') {
+                nameElement.textContent = savedName;
+            }
+
+            // Analyze body type from answers
+            const bodyShape = allData.body_shape || '';
+            const bodyDescription = allData.body_description || '';
+            const shoppingDifficulty = allData.shopping_difficulty || '';
+
+            // Determine body type
+            let detectedBodyType = 'A-Form';
+            if (bodyShape.includes('X-Form') || bodyDescription.includes('ausgeprägter')) {
+                detectedBodyType = 'X-Form';
+            } else if (bodyShape.includes('V-Form') || bodyDescription.includes('breite Schultern')) {
+                detectedBodyType = 'V-Form';
+            } else if (bodyShape.includes('O-Form') || bodyDescription.includes('rundliche')) {
+                detectedBodyType = 'O-Form';
+            } else if (bodyShape.includes('I-Form') || bodyDescription.includes('gerade')) {
+                detectedBodyType = 'I-Form';
+            }
+
+            // Determine color type
+            const hairColor = allData.hair_color || '';
+            const jewelryPreference = allData.jewelry_preference || '';
+            let detectedColorType = 'warmen Farbtyp';
+            if (jewelryPreference.includes('Silberner') || hairColor.includes('Aschblond') || hairColor.includes('kühlen')) {
+                detectedColorType = 'kühlen Farbtyp';
+            } else if (jewelryPreference.includes('gleich gut')) {
+                detectedColorType = 'neutralen Farbtyp';
+            }
+
+            // Determine main challenge
+            let detectedChallenge = 'vieles zu weit oder zu eng wirkt';
+            if (shoppingDifficulty.includes('Passform')) {
+                detectedChallenge = 'die Passform an Schultern/Oberweite nicht stimmt';
+            } else if (shoppingDifficulty.includes('Hüfte')) {
+                detectedChallenge = 'Hüfte und Po sich zu sehr betonen';
+            } else if (shoppingDifficulty.includes('Taille')) {
+                detectedChallenge = 'deine Taille nicht zur Geltung kommt';
+            } else if (shoppingDifficulty.includes('weit')) {
+                detectedChallenge = 'alles an dir zu weit/zu eng wirkt';
+            } else if (shoppingDifficulty.includes('Proportionen')) {
+                detectedChallenge = 'deine Proportionen unausgewogen wirken';
+            }
+
+            // Update content
+            const bodyTypeElement = document.getElementById('detected-body-type');
+            if (bodyTypeElement) bodyTypeElement.textContent = detectedBodyType;
+
+            const colorTypeElement = document.getElementById('detected-color-type');
+            if (colorTypeElement) colorTypeElement.textContent = detectedColorType;
+
+            const challengeElement = document.getElementById('detected-challenge');
+            if (challengeElement) challengeElement.textContent = detectedChallenge;
+
+            // Update body type analysis text
+            const bodyAnalysisElement = document.getElementById('body-type-analysis');
+            if (bodyAnalysisElement && detectedBodyType) {
+                let bodyDescription = '';
+                switch (detectedBodyType) {
+                    case 'A-Form':
+                        bodyDescription = 'Das bedeutet, deine Schultern sind schmaler als deine Hüften.';
+                        break;
+                    case 'V-Form':
+                        bodyDescription = 'Das bedeutet, deine Schultern sind breiter als deine Hüften.';
+                        break;
+                    case 'X-Form':
+                        bodyDescription = 'Das bedeutet, du hast eine ausgeprägte Taille bei proportionalen Schultern und Hüften.';
+                        break;
+                    case 'O-Form':
+                        bodyDescription = 'Das bedeutet, deine Körpermitte ist etwas breiter als Schultern und Hüften.';
+                        break;
+                    case 'I-Form':
+                        bodyDescription = 'Das bedeutet, du hast eine eher gerade, athletische Silhouette.';
+                        break;
+                }
+                bodyAnalysisElement.innerHTML = `
+                    Basierend auf deinen Antworten deutet vieles auf eine <span class="result-highlight">${detectedBodyType}</span> hin. 
+                    ${bodyDescription}
+                    <span class="result-highlight">Mit der Foto-Analyse kann Clara dies präzise bestimmen und dir perfekt passende Schnitte empfehlen.</span>
+                `;
+            }
+
+            // Update color analysis with specific recommendations
+            const colorAnalysisElement = document.getElementById('color-analysis');
+            const colorRecommendationsElement = document.getElementById('color-recommendations');
+            if (colorAnalysisElement && colorRecommendationsElement) {
+                let colorDescription = 'Goldtöne, warme Brauntöne und Erdfarben stehen dir besonders gut.';
+                let specificColors = '';
+                
+                if (detectedColorType.includes('kühlen')) {
+                    colorDescription = 'Silbertöne, kühle Blautöne und Grautöne stehen dir besonders gut.';
+                    specificColors = 'Trage Navy, kühles Grau, Silber und Icy-Töne für den perfekten Look. ';
+                } else if (detectedColorType.includes('neutralen')) {
+                    colorDescription = 'Sowohl warme als auch kühle Töne stehen dir gut.';
+                    specificColors = 'Du kannst sowohl Gold als auch Silber tragen - ein großer Vorteil! ';
+                } else {
+                    // Warm type
+                    specificColors = 'Setze auf Camel, warmes Braun, Gold und Korallentöne für deinen Hautton. ';
+                }
+                
+                colorRecommendationsElement.textContent = specificColors + colorDescription;
+                
+                colorAnalysisElement.innerHTML = `
+                    Deine Haarfarbe und Schmuckvorlieben deuten auf einen <span class="result-highlight">${detectedColorType}</span> hin. 
+                    <span class="color-recommendations">${specificColors + colorDescription}</span>
+                    <span class="result-highlight">Die professionelle Farbanalyse zeigt dir deine exakte Farbpalette mit über 200 perfekten Farbtönen.</span>
+                `;
+            }
+
+            // Update challenge analysis
+            const challengeAnalysisElement = document.getElementById('challenge-analysis');
+            if (challengeAnalysisElement) {
+                challengeAnalysisElement.innerHTML = `
+                    Du kämpfst wahrscheinlich damit, dass <span class="result-highlight">${detectedChallenge}</span>. 
+                    Das liegt an der falschen Passform für deinen Körpertyp.
+                    <span class="result-highlight">Clara zeigt dir genau, welche Schnitte und Proportionen deine Figur optimal zur Geltung bringen.</span>
+                `;
+            }
         }
 
         // ENHANCED CHECKOUT FUNCTION
@@ -1461,7 +1267,7 @@
                 console.log('=== ENHANCED CHECKOUT PROCESS ===');
                 
                 // Disable all CTA buttons
-                const buttons = document.querySelectorAll('.main-cta, .hero-cta, .unlock-btn, .final-cta-btn');
+                const buttons = document.querySelectorAll('.main-cta');
                 buttons.forEach(btn => {
                     btn.disabled = true;
                     btn.textContent = 'Wird geladen...';
@@ -1477,11 +1283,11 @@
                         ? completeData.user_email 
                         : undefined,
                     name: completeData.user_name || completeData.userName || 'Kunde',
-                    product: 'clara_dating_analysis_v2',
+                    product: 'clara_style_analysis_v1',
                     amount: 3999,
                     currency: 'eur',
                     answers: completeData,
-                    source: 'optimized_landing_page',
+                    source: 'style_results_page',
                     timestamp: new Date().toISOString()
                 };
                 
@@ -1523,44 +1329,20 @@
                 setTimeout(() => errorMessage.remove(), 5000);
                 
                 // Re-enable buttons
-                const buttons = document.querySelectorAll('.main-cta, .hero-cta, .unlock-btn, .final-cta-btn');
+                const buttons = document.querySelectorAll('.main-cta');
                 buttons.forEach(btn => {
                     btn.disabled = false;
                     btn.style.opacity = '1';
-                    if (btn.classList.contains('main-cta')) {
-                        btn.textContent = 'Jetzt meine Roadmap zur wahren Liebe erhalten';
-                    } else if (btn.classList.contains('hero-cta')) {
-                        btn.textContent = 'Jetzt den Weg zur wahren Liebe entdecken';
-                    } else if (btn.classList.contains('unlock-btn')) {
-                        btn.textContent = 'Jetzt freischalten';
-                    } else {
-                        btn.textContent = 'Jetzt starten - nur 39,99€';
-                    }
+                    btn.textContent = 'Jetzt vollständige Analyse erhalten';
                 });
             }
         }
 
-        // ENHANCED PERSONALIZATION
-        function personalizePage() {
-            const savedName = localStorage.getItem('user_name') || localStorage.getItem('userName');
-            if (savedName && savedName.trim()) {
-                const nameElement = document.getElementById('personalized-name');
-                if (nameElement) {
-                    nameElement.textContent = savedName;
-                }
-                
-                // Also personalize the hero title wrapper for better visibility
-                const heroTitle = document.querySelector('.hero-title');
-                if (heroTitle && !heroTitle.innerHTML.includes(savedName)) {
-                    heroTitle.innerHTML = `<span class="name-highlight">${savedName}</span>, du verdienst eine Liebe, die deine Seele berührt`;
-                }
-            }
-        }
-
-        // ENHANCED TIMER AND COUNTERS
-        let timeLeft = 15 * 60; // 15 minutes
-        let availableCount = 3;
-        let salesCount = 12;
+        // TIMER AND COUNTERS
+        let timeLeft = 12 * 60; // 12 minutes
+        let availableCount = 2;
+        let salesCount = 7;
+        let deletionTimeLeft = 24 * 60 * 60 - (12 * 60); // 24h minus 12 minutes
 
         function updateTimer() {
             const timerElement = document.getElementById('timer');
@@ -1584,6 +1366,20 @@
             }
         }
 
+        function updateDeletionTimer() {
+            const deletionTimerElement = document.getElementById('deletion-timer');
+            if (!deletionTimerElement) return;
+
+            const hours = Math.floor(deletionTimeLeft / 3600);
+            const minutes = Math.floor((deletionTimeLeft % 3600) / 60);
+            deletionTimerElement.textContent = `${hours}:${minutes.toString().padStart(2, '0')}`;
+
+            if (deletionTimeLeft > 0) {
+                deletionTimeLeft--;
+                setTimeout(updateDeletionTimer, 1000);
+            }
+        }
+
         function updateCounters() {
             const countElement = document.getElementById('available-count');
             const salesElement = document.getElementById('sales-counter');
@@ -1599,40 +1395,6 @@
             if (salesElement) {
                 salesElement.textContent = `Heute bereits ${salesCount} mal gekauft`;
             }
-        }
-
-        // PROGRESS BAR ANIMATIONS
-        function animateProgressBars() {
-            const currentProgress = document.getElementById('currentProgress');
-            const claraProgress = document.getElementById('claraProgress');
-            const currentPercentage = document.getElementById('currentPercentage');
-            const claraPercentage = document.getElementById('claraPercentage');
-
-            if (!currentProgress || !claraProgress) return;
-
-            // Animate current progress (45-60%)
-            const currentTarget = Math.floor(Math.random() * 15) + 45;
-            setTimeout(() => {
-                currentProgress.style.width = currentTarget + '%';
-                let current = 0;
-                const currentInterval = setInterval(() => {
-                    current++;
-                    currentPercentage.textContent = current + '%';
-                    if (current >= currentTarget) clearInterval(currentInterval);
-                }, 50);
-            }, 1000);
-
-            // Animate Clara progress (92-97%)
-            const claraTarget = Math.floor(Math.random() * 5) + 92;
-            setTimeout(() => {
-                claraProgress.style.width = claraTarget + '%';
-                let clara = 0;
-                const claraInterval = setInterval(() => {
-                    clara++;
-                    claraPercentage.textContent = clara + '%';
-                    if (clara >= claraTarget) clearInterval(claraInterval);
-                }, 30);
-            }, 2000);
         }
 
         // SCROLL ANIMATIONS
@@ -1655,49 +1417,44 @@
             });
         }
 
-        // SCROLL TO PRICE
-        function scrollToPrice() {
-            const pricingSection = document.getElementById('pricing');
-            if (pricingSection) {
-                pricingSection.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        }
-
         // COUNTER UPDATES
         function scheduleCounterUpdates() {
-            // Decrease availability after 2 minutes
+            // Decrease availability after 3 minutes
             setTimeout(() => {
-                if (availableCount > 1) {
-                    availableCount = 2;
-                    salesCount = 13;
+                if (availableCount > 0) {
+                    availableCount = 1;
+                    salesCount = 8;
                     updateCounters();
                 }
-            }, 120000);
+            }, 180000);
 
             // Final urgency after 8 minutes
             setTimeout(() => {
-                if (availableCount > 1) {
-                    availableCount = 1;
-                    salesCount = 14;
+                if (availableCount > 0) {
+                    availableCount = 0;
+                    salesCount = 9;
                     updateCounters();
+                    
+                    // Update urgency text
+                    const urgencyText = document.querySelector('.urgency-text');
+                    if (urgencyText) {
+                        urgencyText.innerHTML = 'Letzte Chance! <span class="urgency-number">Heute ausverkauft</span> - nur noch Warteliste möglich!';
+                    }
                 }
             }, 480000);
         }
 
         // INITIALIZE EVERYTHING
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('=== INITIALIZING OPTIMIZED PAGE ===');
+            console.log('=== INITIALIZING STYLE RESULTS PAGE ===');
             
-            personalizePage();
+            personalizeResults();
             updateTimer();
+            updateDeletionTimer();
             updateCounters();
             scheduleCounterUpdates();
             
             setTimeout(() => {
-                animateProgressBars();
                 initScrollAnimations();
             }, 500);
         });
