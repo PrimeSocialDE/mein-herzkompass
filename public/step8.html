@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dating-Analyse - Schritt 7</title>
+    <title>Body-Typing Analyse - Fast geschafft!</title>
     <style>
         * {
             margin: 0;
@@ -19,30 +19,8 @@
         }
 
         .main-container {
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
-        }
-
-        .countdown-box {
-            background: white;
-            border: 1px solid #764ba2;
-            border-radius: 15px;
-            padding: 6px 12px;
-            margin-bottom: 15px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: inline-block;
-            margin-left: 50%;
-            transform: translateX(-50%);
-            visibility: hidden;
-        }
-
-        .countdown-time {
-            font-size: 12px;
-            font-weight: 600;
-            color: #333;
-            min-width: 35px;
-            display: inline-block;
         }
 
         .progress-container {
@@ -51,6 +29,15 @@
             margin-bottom: 30px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
         }
 
         .progress-bar {
@@ -63,7 +50,7 @@
         .progress-fill {
             background: linear-gradient(90deg, #667eea, #764ba2);
             height: 100%;
-            width: 23.1%;
+            width: 100%;
             border-radius: 4px;
             transition: width 0.3s ease;
         }
@@ -80,47 +67,68 @@
         h1 {
             font-size: 28px;
             color: #333;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             font-weight: 600;
         }
 
-        .option-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 30px;
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.5;
         }
 
-        .option-button {
-            background: white;
+        .form-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px;
             border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 16px;
-            font-weight: 500;
-            color: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);
+            width: 100%;
+            margin-top: 16px;
         }
 
-        .option-button:hover {
-            border-color: #667eea;
+        .submit-button:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.45);
         }
 
-        .option-button.selected {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .option-icon {
-            font-size: 24px;
+        .submit-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .security-note {
@@ -133,10 +141,11 @@
             gap: 8px;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        .error-message {
+            color: #EF4444;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
         }
 
         @media (max-width: 480px) {
@@ -147,50 +156,46 @@
             h1 {
                 font-size: 24px;
             }
-            
-            .option-button {
-                padding: 15px;
-                font-size: 15px;
-            }
         }
     </style>
-  <script src="/tracking.js" defer></script>
-  <script src="/utm-make.js" defer></script>
+    <script src="/tracking.js" defer></script>
+    <script src="/utm-make.js" defer></script>
 </head>
 <body>
     <div class="main-container">
-        <!-- COUNTDOWN -->
-        <div class="countdown-box" id="countdown-box">
-            <span class="countdown-time" id="countdown"></span>
-        </div>
-
-        <!-- PROGRESS BAR -->
         <div class="progress-container">
+            <div class="progress-label">
+                <span>Frage 7 von 7</span>
+                <span>100%</span>
+            </div>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
         </div>
         
-        <!-- MAIN CONTENT -->
         <div class="container">
-            <h1>Wenn du an deine letzte Beziehung denkst – was hat dir am meisten gefehlt?</h1>
+            <h1>Fast geschafft! 🎉</h1>
+            <p class="subtitle">
+                Gib deine Email-Adresse ein, damit Clara dir deine personalisierte Analyse zusenden kann.
+            </p>
             
-            <div class="option-container">
-                <div class="option-button" data-value="aufmerksamkeit" onclick="selectOption(this, 'aufmerksamkeit')">
-                    <span class="option-icon">👁️</span>
-                    <span>Mir hat die Aufmerksamkeit gefehlt</span>
+            <form id="emailForm" onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <label for="email">Email-Adresse *</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="deine@email.de" 
+                        required
+                    >
+                    <div class="error-message" id="emailError">Bitte gib eine gültige Email-Adresse ein</div>
                 </div>
-                
-                <div class="option-button" data-value="ehrlichkeit" onclick="selectOption(this, 'ehrlichkeit')">
-                    <span class="option-icon">💯</span>
-                    <span>Mir hat die Ehrlichkeit gefehlt</span>
-                </div>
-                
-                <div class="option-button" data-value="beständigkeit" onclick="selectOption(this, 'beständigkeit')">
-                    <span class="option-icon">🪨</span>
-                    <span>Mir hat die Beständigkeit gefehlt</span>
-                </div>
-            </div>
+
+                <button type="submit" class="submit-button" id="submitBtn">
+                    Analyse anfordern
+                </button>
+            </form>
             
             <div class="security-note">
                 🔒 Deine Daten sind sicher und werden vertraulich behandelt
@@ -199,80 +204,49 @@
     </div>
 
     <script>
-        // Initialize countdown immediately when script loads
-        (function() {
-            const countdownElement = document.getElementById('countdown');
-            const countdownBox = document.getElementById('countdown-box');
+        function submitForm(event) {
+            event.preventDefault();
             
-            let startTime = localStorage.getItem('countdownStart');
+            const email = document.getElementById('email').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const emailError = document.getElementById('emailError');
             
-            if (!startTime) {
-                startTime = Date.now();
-                localStorage.setItem('countdownStart', startTime.toString());
+            // Email-Validierung
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                emailError.style.display = 'block';
+                return;
             }
             
-            // Calculate current time immediately
-            const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
-            const totalTime = 25 * 60;
-            let timeLeft = Math.max(0, totalTime - elapsed);
+            emailError.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Wird gesendet...';
             
-            // Set the correct time immediately
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            // Sammle alle Quiz-Daten aus localStorage
+            const quizData = {
+                email: email,
+                bodyShape: localStorage.getItem('bodyShape') || '',
+                waistDefinition: localStorage.getItem('waistDefinition') || '',
+                stylingChallenge: localStorage.getItem('stylingChallenge') || '',
+                skinUndertone: localStorage.getItem('skinUndertone') || '',
+                hairColor: localStorage.getItem('hairColor') || '',
+                photosUploaded: localStorage.getItem('photosUploaded') || 'false',
+                photoCount: localStorage.getItem('photoCount') || '0',
+                timestamp: new Date().toISOString()
+            };
             
-            // Make countdown visible now that it has correct content
-            countdownBox.style.visibility = 'visible';
+            // Speichere Email in localStorage
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('quizCompleted', 'true');
             
-            // Set color
-            if (timeLeft < 5 * 60 && timeLeft > 0) {
-                countdownElement.style.color = '#ff4757';
-            } else {
-                countdownElement.style.color = '#333';
-            }
+            console.log('Quiz-Daten gesammelt:', quizData);
             
-            // Continue countdown
-            function updateTime() {
-                timeLeft--;
-                
-                if (timeLeft < 0) return;
-                
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                if (timeLeft < 5 * 60 && timeLeft > 0) {
-                    countdownElement.style.color = '#ff4757';
-                    countdownElement.style.animation = 'pulse 1s infinite';
-                } else if (timeLeft === 0) {
-                    countdownElement.textContent = "0:00";
-                    countdownElement.style.color = '#ff4757';
-                    return;
-                } else {
-                    countdownElement.style.color = '#333';
-                    countdownElement.style.animation = 'none';
-                }
-                
-                setTimeout(updateTime, 1000);
-            }
-            
-            setTimeout(updateTime, 1000);
-        })();
-
-        function selectOption(element, value) {
-            document.querySelectorAll('.option-button').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            
-            element.classList.add('selected');
-            
-            if (typeof(Storage) !== "undefined") {
-                localStorage.setItem('missingInLastRelationship', value);
-            }
-            
+            // TODO: Hier später Supabase-Integration
+            // Für jetzt: Simuliere erfolgreichen Upload
             setTimeout(() => {
-                window.location.href = '/step9.html';
-            }, 500);
+                // Weiterleitung zu analyse.html
+                window.location.href = '/analyse.html';
+            }, 1000);
         }
 
         window.addEventListener('load', function() {
