@@ -134,7 +134,7 @@
             font-size: clamp(28px, 5vw, 48px);
             font-weight: 800;
             color: var(--text-dark);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             line-height: 1.1;
             letter-spacing: -0.02em;
         }
@@ -212,7 +212,7 @@
 
         .result-text {
             color: var(--text-light);
-            line-height: 1.6;
+            line-height: 1.1;
             margin-bottom: 15px;
         }
 
@@ -234,7 +234,7 @@
             background: var(--white);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-heavy);
-            padding: 40px;
+            padding: 50px 40px;
             border: 2px solid var(--primary-color);
             position: relative;
         }
@@ -250,6 +250,7 @@
             border-radius: 20px;
             font-size: 14px;
             font-weight: 600;
+            z-index: 10;
         }
 
         .preview-title {
@@ -258,7 +259,8 @@
             text-align: center;
             margin-bottom: 15px;
             color: var(--text-dark);
-            margin-top: 5px;
+            margin-top: 25px;
+            padding-top: 10px;
         }
 
         .insight-grid {
@@ -818,7 +820,7 @@
                     Nur noch <span class="urgency-number" id="available-count">2</span> vollständige Analysen heute verfügbar!
                 </div>
                 <div class="data-deletion-note">
-                    Deine Fotos und Antworten werden gelöscht in:
+                    Deine Fotos und Antworten werden gelöscht in: <span id="deletion-timer"></span>
                 </div>
             </div>
             <div class="timer" id="timer">11:47</div>
@@ -1199,30 +1201,36 @@
             const challengeElement = document.getElementById('detected-challenge');
             if (challengeElement) challengeElement.textContent = detectedChallenge;
 
-            // Update body type analysis text
+            // Update body type analysis with specific recommendations
             const bodyAnalysisElement = document.getElementById('body-type-analysis');
             if (bodyAnalysisElement && detectedBodyType) {
                 let bodyDescription = '';
+                let specificTips = '';
                 switch (detectedBodyType) {
                     case 'A-Form':
                         bodyDescription = 'Das bedeutet, deine Schultern sind schmaler als deine Hüften.';
+                        specificTips = 'Betone deine Schultern mit strukturierten Oberteilen und wähle A-Linien-Röcke, die deine Taille definieren. ';
                         break;
                     case 'V-Form':
                         bodyDescription = 'Das bedeutet, deine Schultern sind breiter als deine Hüften.';
+                        specificTips = 'Setze auf fließende Stoffe und A-Linien-Schnitte im unteren Bereich, um deine Proportionen auszugleichen. ';
                         break;
                     case 'X-Form':
                         bodyDescription = 'Das bedeutet, du hast eine ausgeprägte Taille bei proportionalen Schultern und Hüften.';
+                        specificTips = 'Betone deine natürliche Taille mit taillierten Schnitten und vermeide kastige Oberteile. ';
                         break;
                     case 'O-Form':
                         bodyDescription = 'Das bedeutet, deine Körpermitte ist etwas breiter als Schultern und Hüften.';
+                        specificTips = 'Empire-Schnitte und V-Ausschnitte strecken deine Silhouette optimal. ';
                         break;
                     case 'I-Form':
                         bodyDescription = 'Das bedeutet, du hast eine eher gerade, athletische Silhouette.';
+                        specificTips = 'Schaffe Kurven mit Gürteln, Rüschen und Wickelkleidern für mehr Weiblichkeit. ';
                         break;
                 }
                 bodyAnalysisElement.innerHTML = `
                     Basierend auf deinen Antworten deutet vieles auf eine <span class="result-highlight">${detectedBodyType}</span> hin. 
-                    ${bodyDescription}
+                    ${bodyDescription} ${specificTips}
                     <span class="result-highlight">Mit der Foto-Analyse kann Clara dies präzise bestimmen und dir perfekt passende Schnitte empfehlen.</span>
                 `;
             }
@@ -1254,12 +1262,35 @@
                 `;
             }
 
-            // Update challenge analysis
+            // Update challenge analysis with more emotional pain points
             const challengeAnalysisElement = document.getElementById('challenge-analysis');
             if (challengeAnalysisElement) {
+                let painDescription = '';
+                let emotionalImpact = '';
+                
+                if (detectedChallenge.includes('Passform')) {
+                    painDescription = 'Oberteile spannen oder schlackern an den falschen Stellen';
+                    emotionalImpact = 'Du fühlst dich unwohl und versteckst deinen Körper, anstatt ihn zu feiern. ';
+                } else if (detectedChallenge.includes('Hüfte')) {
+                    painDescription = 'deine Hüfte und Po zu sehr betont werden';
+                    emotionalImpact = 'Du vermeidest enge Kleidung und fühlst dich in deinem Körper nicht wohl. ';
+                } else if (detectedChallenge.includes('Taille')) {
+                    painDescription = 'deine Taille nicht zur Geltung kommt';
+                    emotionalImpact = 'Du wirkst formlos und fühlst dich nicht feminin genug. ';
+                } else if (detectedChallenge.includes('weit')) {
+                    painDescription = 'alles entweder zu eng oder zu weit wirkt';
+                    emotionalImpact = 'Shopping wird zum Frust und du kaufst oft Sachen, die du nie trägst. ';
+                } else if (detectedChallenge.includes('Proportionen')) {
+                    painDescription = 'deine Proportionen unausgewogen wirken';
+                    emotionalImpact = 'Du fühlst dich unproportioniert und weißt nicht, wie du dich richtig in Szene setzt. ';
+                } else {
+                    painDescription = 'vieles zu weit oder zu eng wirkt';
+                    emotionalImpact = 'Du hast das Gefühl, nie das Richtige zu finden und gibst frustriert auf. ';
+                }
+
                 challengeAnalysisElement.innerHTML = `
-                    Du kämpfst wahrscheinlich damit, dass <span class="result-highlight">${detectedChallenge}</span>. 
-                    Das liegt an der falschen Passform für deinen Körpertyp.
+                    Du kämpfst wahrscheinlich damit, dass <span class="result-highlight">${painDescription}</span>. 
+                    ${emotionalImpact}Das liegt an der falschen Passform für deinen Körpertyp.
                     <span class="result-highlight">Clara zeigt dir genau, welche Schnitte und Proportionen deine Figur optimal zur Geltung bringen.</span>
                 `;
             }
