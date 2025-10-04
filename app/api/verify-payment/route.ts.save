@@ -1,0 +1,102 @@
+// /app/api/verify-payment/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/lib/db";
+import Stripe from "stripe";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
+
+export async function POST(req: NextRequest) {
+  if (!stripe) {
+    console.error("Stripe nicht konfiguriert");
+    return NextResponse.json({ paid: false, error: "Stripe nicht verfügbar" }, { status: 500 });
+  }
+
+  try {
+    const { orderId, sessionId } = await req.json();
+
+    if (!orderId || !sessionId) {
+      return NextResponse.json({ paid: false, error: "Fehlende Parameter" }, { status: 400 });
+    }
+
+    console.log(`Verifying payment for order ${orderId} with session ${sessionId}`);
+
+    // 1. Stripe Session abrufen und verifizieren
+    let session: Stripe.Checkout.Session;
+    try {
+      session = await stripe.checkout.sessions.retrieve(sessionId);
+    } catch (stripeError) {
+      console.error("Stripe session retrieve error:", stripeError);
+      return NextResponse.json({ paid: false, error: "Ungültige Session-ID" }, { status: 400 });
+    }
+
+    // 2. Session gehört zur Order? (Sicherheitscheck)
+    const sessionOrderId = session.client_reference_id || session.metadata?.order_id;
+    if (sessionOrderId !== orderId) {
+      console.error(`Session-Order mismatch: ${sessionOrderId} !== ${orderId}`);
+      return NextResponse.json({ paid: false, error: "Session gehört nicht zur Order" }, { status: 400 });
+    }
+
+    // 3. Payment Status prüfen
+    const isPaid = session.payment_status === 'paid';
+    console.log(`Session ${sessionId} payment status: ${session.payment_status}`);
+
+    if (isPaid) {
+      // 4. Order in Datenbank aktualisieren (falls noch nicht geschehen)
+      try {
+        const updateData: any = {
+          status: 'paid',
+          paid_at: new Date().toISOString(),
+          due_at: new Date(Date.now() + 10 * 60 * 60 * 1000).toISOString(), // +10h
+          stripe_session_id: sessionId,
+        };
+
+        // Session-Details extrahieren
+        if (session.payment_intent) {
+          updateData.stripe_payment_intent = session.payment_intent as string;
+        }
+        
+        if (session.customer_email) {
+          updateData.email = session.customer_email;
+        } else if (session.customer_details?.email) {
+          updateData.email = session.customer_details.email;
+        }
+
+        if (session.customer_details?.name) {
+          updateData.name = session.customer_details.name;
+        }
+
+        const { error: updateError } = await supabase
+          .from('orders')
+          .update(updateData)
+          .eq('id', orderId);
+
+        if (updateError) {
+          console.error("Supabase update error:", updateError);
+          // Trotzdem als bezahlt melden, da Stripe sagt es ist bezahlt
+        } else {
+          console.log(`Order ${orderId} successfully updated to paid status`);
+        }
+
+        return NextResponse.json({ paid: true });
+      } catch (dbError) {
+        console.error("Database update error:", dbError);
+        // Trotzdem als bezahlt melden, da Stripe bestätigt
+        return NextResponse.json({ paid: true });
+      }
+    } else {
+      // Payment noch nicht abgeschlossen
+      console.log(`Payment not completed for order ${orderId}. Status: ${session.payment_status}`);
+      return NextResponse.json({ paid: false, status: session.payment_status });
+    }
+
+  } catch (error: any) {
+    console.error("Verify payment error:", error);
+    return NextResponse.json({ 
+      paid: false, 
+      error: error?.message || "Verification failed" 
+    }, { status: 500 });
+  }
+}
