@@ -81,7 +81,13 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({} as Record<string, unknown>));
 
-    const email = String(body.email ?? "").trim();
+    // E-Mail aus verschiedenen Quellen sammeln
+    const email = String(
+      body.email ?? 
+      body.userEmail ?? 
+      (answers as any).userEmail ?? 
+      ""
+    ).trim();
     const name = String(body.name ?? "").trim();
     const answers = isPlainObject(body.answers) ? body.answers : {};
     const answers_raw = isPlainObject(body.answers_raw) ? body.answers_raw : {};
