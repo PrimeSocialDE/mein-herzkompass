@@ -148,45 +148,6 @@
             display: none;
         }
 
-        /* Mobile Processing Overlay */
-        .processing-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .processing-content {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            max-width: 320px;
-            width: 90%;
-            color: #333;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         @media (max-width: 480px) {
             .container {
                 padding: 30px 20px;
@@ -242,19 +203,8 @@
         </div>
     </div>
 
-    <!-- Mobile Processing Overlay -->
-    <div class="processing-overlay" id="processingOverlay">
-        <div class="processing-content">
-            <div class="spinner"></div>
-            <div id="processingText">Daten werden verarbeitet...</div>
-            <div style="font-size: 14px; color: #666; margin-top: 8px;" id="processingDetail">
-                Dies kann einen Moment dauern
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Mobile-optimierte Bildkomprimierung
+        // Mobile-optimierte Bildkomprimierung (im Hintergrund)
         function compressImageForMobile(dataUrl) {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -262,58 +212,43 @@
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     
-                    // Berechne optimale Größe für Mobile
-                    let { width, height } = calculateOptimalSize(img.width, img.height);
+                    // Berechne optimale Größe
+                    let width = img.width;
+                    let height = img.height;
+                    const maxDimension = 1200;
+                    
+                    if (width > maxDimension || height > maxDimension) {
+                        if (width > height) {
+                            height = (height * maxDimension) / width;
+                            width = maxDimension;
+                        } else {
+                            width = (width * maxDimension) / height;
+                            height = maxDimension;
+                        }
+                    }
                     
                     canvas.width = width;
                     canvas.height = height;
-                    
-                    // Zeichne mit hoher Qualität
                     ctx.imageSmoothingEnabled = true;
                     ctx.imageSmoothingQuality = 'high';
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    // Komprimiere für Mobile (max 800KB)
+                    // Komprimiere
                     let quality = 0.8;
                     let result = canvas.toDataURL('image/jpeg', quality);
                     let sizeKB = Math.round(result.length * 0.75 / 1024);
                     
-                    // Iterative Komprimierung
-                    let iterations = 0;
-                    while (sizeKB > 800 && quality > 0.3 && iterations < 5) {
+                    // Reduziere Qualität falls nötig
+                    while (sizeKB > 800 && quality > 0.3) {
                         quality -= 0.1;
                         result = canvas.toDataURL('image/jpeg', quality);
                         sizeKB = Math.round(result.length * 0.75 / 1024);
-                        iterations++;
                     }
                     
-                    console.log(`Bild optimiert: ${width}x${height}, ${sizeKB}KB`);
                     resolve(result);
                 };
                 img.src = dataUrl;
             });
-        }
-        
-        function calculateOptimalSize(originalWidth, originalHeight) {
-            const maxDimension = 1200; // Mobile-optimiert
-            
-            if (originalWidth <= maxDimension && originalHeight <= maxDimension) {
-                return { width: originalWidth, height: originalHeight };
-            }
-            
-            const ratio = originalWidth / originalHeight;
-            
-            if (originalWidth > originalHeight) {
-                return {
-                    width: maxDimension,
-                    height: Math.round(maxDimension / ratio)
-                };
-            } else {
-                return {
-                    width: Math.round(maxDimension * ratio),
-                    height: maxDimension
-                };
-            }
         }
 
         async function submitForm(event) {
@@ -322,9 +257,6 @@
             const email = document.getElementById('email').value;
             const submitBtn = document.getElementById('submitBtn');
             const emailError = document.getElementById('emailError');
-            const processingOverlay = document.getElementById('processingOverlay');
-            const processingText = document.getElementById('processingText');
-            const processingDetail = document.getElementById('processingDetail');
             
             // Email-Validierung
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -335,15 +267,13 @@
             
             emailError.style.display = 'none';
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Wird gesendet...';
-            processingOverlay.style.display = 'flex';
-
-            // 30 Sekunden Timeout zum Schutz vor endlosem "Wird gesendet"
+            submitBtn.textContent = 'Wird verarbeitet...';
+            
+            // 30 Sekunden Timeout
             const timeoutId = setTimeout(() => {
-                processingOverlay.style.display = 'none';
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Analyse anfordern';
-                alert('Verbindung dauert zu lange. Überprüfe deine Internetverbindung und versuche es erneut.');
+                alert('Verbindung dauert zu lange. Bitte versuche es erneut.');
             }, 30000);
             
             try {
@@ -357,9 +287,7 @@
                     }
                 }
                 
-                processingText.textContent = 'Bilder werden optimiert...';
-                
-                // Sammle und optimiere Fotos für Mobile
+                // Sammle und optimiere Fotos (im Hintergrund)
                 const photos = [];
                 let totalSize = 0;
                 
@@ -368,26 +296,15 @@
                     const photoData = localStorage.getItem(photoKey);
                     
                     if (photoData && photoData.startsWith('data:image/')) {
-                        processingDetail.textContent = `Optimiere Bild ${photos.length + 1}...`;
-                        
                         try {
-                            // Komprimiere Bild für Mobile
                             const optimizedPhoto = await compressImageForMobile(photoData);
                             const sizeKB = Math.round(optimizedPhoto.length * 0.75 / 1024);
                             totalSize += sizeKB;
-                            
                             photos.push(optimizedPhoto);
-                            
-                            console.log(`Foto ${i} optimiert: ${sizeKB}KB`);
-                            
-                            // Kurze Pause für UI Update
-                            await new Promise(resolve => setTimeout(resolve, 100));
-                            
                         } catch (error) {
-                            console.warn(`Fehler beim Optimieren von Foto ${i}, verwende Original:`, error);
                             // Fallback: verwende Original wenn Komprimierung fehlschlägt
                             const sizeKB = Math.round(photoData.length * 0.75 / 1024);
-                            if (sizeKB < 2000) { // Max 2MB pro Bild als Fallback
+                            if (sizeKB < 2000) { // Max 2MB pro Bild
                                 totalSize += sizeKB;
                                 photos.push(photoData);
                             }
@@ -396,9 +313,6 @@
                 }
                 
                 console.log(`Sende ${photos.length} Fotos, Gesamtgröße: ${totalSize}KB`);
-                
-                processingText.textContent = 'Daten werden gesendet...';
-                processingDetail.textContent = `${photos.length} Bilder bereit (${totalSize}KB)`;
                 
                 // Email hinzufügen
                 allData.userEmail = email;
@@ -414,94 +328,41 @@
                     name: allData.userName || 'Kunde'
                 };
                 
-                // Retry-Mechanismus
-                await sendWithRetry(payload, 3, timeoutId);
-                
-            } catch (error) {
-                clearTimeout(timeoutId);
-                processingOverlay.style.display = 'none';
-                console.error('Fehler beim Verarbeiten:', error);
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Analyse anfordern';
-                alert('Fehler beim Verarbeiten der Daten. Bitte versuche es erneut.');
-            }
-        }
-
-        async function sendWithRetry(payload, retries, timeoutId) {
-            try {
-                const processingText = document.getElementById('processingText');
-                const processingDetail = document.getElementById('processingDetail');
-                
-                processingText.textContent = `Sende Daten... (${4-retries}/3)`;
-                console.log(`Sending attempt ${4-retries}/3...`);
-                
-                const controller = new AbortController();
-                const requestTimeoutId = setTimeout(() => controller.abort(), 25000); // 25s per request
-                
+                // Sende Daten
                 const response = await fetch('/api/checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                    signal: controller.signal
+                    body: JSON.stringify(payload)
                 });
                 
-                clearTimeout(requestTimeoutId);
                 clearTimeout(timeoutId);
                 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    throw new Error(`HTTP ${response.status}`);
                 }
                 
                 const data = await response.json();
                 
                 if (data.url) {
-                    console.log('Success! Redirecting to checkout...');
-                    processingText.textContent = 'Erfolgreich! Weiterleitung...';
-                    processingDetail.textContent = 'Einen Moment bitte...';
-                    
-                    setTimeout(() => {
-                        window.location.href = data.url;
-                    }, 1000);
+                    console.log('Success! Redirecting...');
+                    window.location.href = '/analyse.html'; // Direkte Weiterleitung zur Analyse
                 } else {
-                    throw new Error('No checkout URL received');
+                    throw new Error('No URL received');
                 }
                 
             } catch (error) {
-                console.error('Send error:', error);
+                clearTimeout(timeoutId);
+                console.error('Error:', error);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Analyse anfordern';
                 
-                if (retries > 0) {
-                    console.log(`Retrying... ${retries} attempts left`);
-                    document.getElementById('processingDetail').textContent = `Wiederhole... (${4-retries}/3)`;
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-                    return sendWithRetry(payload, retries - 1, timeoutId);
+                let errorMessage = 'Fehler beim Senden. ';
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage += 'Keine Internetverbindung.';
                 } else {
-                    clearTimeout(timeoutId);
-                    document.getElementById('processingOverlay').style.display = 'none';
-                    
-                    const submitBtn = document.getElementById('submitBtn');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Analyse anfordern';
-                    
-                    // Bessere Fehlermeldung basierend auf Error-Typ
-                    let errorMessage = 'Fehler beim Senden. ';
-                    if (error.name === 'AbortError') {
-                        errorMessage += 'Die Verbindung ist zu langsam. Bitte versuche es mit besserer Internetverbindung erneut.';
-                    } else if (error.message.includes('Failed to fetch')) {
-                        errorMessage += 'Keine Internetverbindung. Überprüfe deine Verbindung und versuche es erneut.';
-                    } else if (payload.photos && payload.photos.length > 0) {
-                        const totalSizeKB = payload.photos.reduce((sum, photo) => sum + Math.round(photo.length * 0.75 / 1024), 0);
-                        if (totalSizeKB > 4000) {
-                            errorMessage += 'Die Fotos sind zu groß. Versuche weniger oder kleinere Bilder zu verwenden.';
-                        } else {
-                            errorMessage += 'Bitte versuche es erneut oder kontaktiere den Support.';
-                        }
-                    } else {
-                        errorMessage += 'Bitte versuche es erneut oder kontaktiere den Support.';
-                    }
-                    
-                    alert(errorMessage);
+                    errorMessage += 'Bitte versuche es erneut.';
                 }
+                alert(errorMessage);
             }
         }
 
