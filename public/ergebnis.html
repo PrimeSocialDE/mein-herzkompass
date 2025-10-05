@@ -217,6 +217,73 @@
             font-style: normal;
         }
 
+        /* RESULTS CTA SECTION */
+        .results-cta-section {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .results-cta-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 40px 30px;
+            border-radius: var(--border-radius);
+            color: var(--white);
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-cta-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="150" fill="url(%23a)"/><circle cx="800" cy="800" r="200" fill="url(%23a)"/></svg>');
+            pointer-events: none;
+        }
+
+        .results-cta-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .results-cta-subtitle {
+            font-size: 16px;
+            margin-bottom: 25px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            line-height: 1.5;
+        }
+
+        .results-cta-button {
+            background: var(--white);
+            color: var(--primary-color);
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .results-cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            background: #f8fafc;
+        }
+
         /* PREVIEW SECTION */
         .preview-section {
             padding: 60px 0;
@@ -868,6 +935,19 @@
                 padding: 20px 15px;
             }
 
+            .results-cta-card {
+                padding: 30px 20px;
+                margin: 0 15px;
+            }
+
+            .results-cta-title {
+                font-size: 20px;
+            }
+
+            .results-cta-subtitle {
+                font-size: 15px;
+            }
+
             /* Improved mobile image handling */
             .insight-image {
                 height: 220px;
@@ -1122,6 +1202,17 @@
                     </p>
                 </div>
             </div>
+            
+            <!-- CTA SECTION AFTER RESULTS -->
+            <div class="results-cta-section">
+                <div class="results-cta-card">
+                    <h3 class="results-cta-title">Du willst genauere Infos?</h3>
+                    <p class="results-cta-subtitle">Die vollständige Analyse mit Foto-Auswertung zeigt dir dein wahres Style-Potenzial</p>
+                    <button class="results-cta-button" onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'})">
+                        Jetzt vollständige Analyse erhalten
+                    </button>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1267,7 +1358,7 @@
                     </div>
                 </div>
                 
-                <button class="main-cta" onclick="startCheckout()">
+                <button class="main-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'})">
                     Jetzt vollständige Analyse erhalten
                 </button>
                 
