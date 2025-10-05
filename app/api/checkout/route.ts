@@ -103,16 +103,25 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Order anlegen (queued) - now with photo URLs
+    // E-Mail aus step8.html zu answers hinzufügen (bleibt erhalten)
+    const enhancedAnswers = {
+      ...answers,
+      user_provided_email: email, // Original E-Mail von step8.html
+      email_collected_at: new Date().toISOString(),
+      email_source: 'step8_form'
+    };
+
+    // Order anlegen (queued) - E-Mail aus step8.html wird separat gespeichert
     const { data: order, error: insertError } = await supabase
       .from("orders")
       .insert({
-        email: email || null,
+        email: email || null, // Wird möglicherweise von Stripe überschrieben
+        user_email: email || null, // Original E-Mail aus step8.html (bleibt erhalten)
         name: name || null,
         status: "queued",
-        answers,
+        answers: enhancedAnswers, // Enthält auch user_provided_email als Backup
         answers_raw,
-        photo_urls: photoUrls, // Store photo URLs in database
+        photo_urls: photoUrls,
         photo_count: photoUrls.length,
         due_at: isoIn(10),
       })
@@ -133,9 +142,10 @@ export async function POST(req: NextRequest) {
         metadata: { 
           order_id: orderId, 
           name: name || "",
+          user_email: email || "", // Original E-Mail in Metadaten
           photo_count: photoUrls.length.toString()
         },
-        payment_intent_data: { metadata: { order_id: orderId } },
+        payment_intent_data: { metadata: { order_id: orderId, user_email: email || "" } },
         success_url: `${process.env.STRIPE_SUCCESS_URL}?orderId=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: process.env.STRIPE_CANCEL_URL!,
         customer_creation: "always",
@@ -162,7 +172,8 @@ export async function POST(req: NextRequest) {
       ok: true, 
       orderId, 
       url: checkoutUrl,
-      photosUploaded: photoUrls.length
+      photosUploaded: photoUrls.length,
+      userEmail: email // Bestätigung der gespeicherten E-Mail
     }, { status: 200 });
 
   } catch (err: any) {
