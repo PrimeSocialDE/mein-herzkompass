@@ -8,10 +8,22 @@
     <meta name="description" content="Erhalte deine personalisierte Body-Typing-Analyse und entdecke, welche Kleidungslinien deine Figur am besten zur Geltung bringen. Mit individuellem PDF-Report.">
     <link rel="icon" href="/favicon.png" type="image/png">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary-color: #667eea;
+            --primary-dark: #5a6fd8;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --success-color: #00d4aa;
+            --warning-color: #ff6b6b;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --shadow-light: 0 2px 10px rgba(0,0,0,0.05);
+            --shadow-medium: 0 8px 30px rgba(0,0,0,0.12);
+            --shadow-heavy: 0 20px 60px rgba(0,0,0,0.15);
+            --border-radius: 16px;
+            --border-radius-small: 8px;
         }
 
         html, body {
@@ -271,10 +283,131 @@
             margin-bottom: 12px;
         }
 
-        .benefit-card p {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* PREVIEW SECTION STYLES */
+        .preview-section {
+            padding: 60px 0;
+            background: var(--bg-light);
+        }
+
+        .preview-card {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            padding: 50px 40px;
+            border: 2px solid var(--primary-color);
+            position: relative;
+        }
+
+        .preview-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        .preview-title {
+            font-size: 28px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            margin-top: 25px;
+            padding-top: 10px;
+        }
+
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .insight-item {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: var(--border-radius-small);
+            border-left: 4px solid var(--primary-color);
+            position: relative;
+        }
+
+        .insight-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: var(--border-radius-small);
+            margin-bottom: 15px;
+            margin-top: 10px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* PDF Preview Effect */
+        .insight-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(255,255,255,0.1) 25%,
+                rgba(255,255,255,0.2) 50%,
+                rgba(255,255,255,0.1) 75%,
+                transparent 100%
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .insight-image::after {
+            content: 'PDF Vorschau';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .insight-item:hover .insight-image {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+        }
+
+        .insight-title {
             font-size: 16px;
-            color: #4a5568;
-            line-height: 1.6;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .insight-text {
+            color: var(--text-light);
+            font-size: 14px;
+            line-height: 1.5;
         }
 
         /* HOW IT WORKS */
@@ -620,26 +753,36 @@
         </div>
     </section>
 
-    <section class="benefits">
+    <section class="preview-section">
         <div class="container">
-            <h2>Das bekommst du</h2>
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <div class="benefit-icon">📐</div>
-                    <h3>Dein Körpertyp</h3>
-                    <p>Detaillierte Analyse deiner Silhouette und welche Schnitte deine Proportionen optimal ergänzen.</p>
-                </div>
+            <div class="preview-card">
+                <div class="preview-badge">Das erwartet dich</div>
+                <h2 class="preview-title">Das bekommst du</h2>
                 
-                <div class="benefit-card">
-                    <div class="benefit-icon">🎨</div>
-                    <h3>Deine Farbpalette</h3>
-                    <p>Entdecke die Farben, die zu deinem Hautunterton passen und dich strahlen lassen.</p>
-                </div>
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon">✅</div>
-                    <h3>Do's & Don'ts</h3>
-                    <p>Konkrete Styling-Tipps – welche Schnitte und Farben du tragen solltest und welche nicht.</p>
+                <div class="insight-grid">
+                    <div class="insight-item">
+                        <img src="4.png" alt="Foto-Auswertung Beispiel" class="insight-image" />
+                        <h4 class="insight-title">📸 Professionelle Foto-Auswertung</h4>
+                        <p class="insight-text">Clara analysiert deine Fotos und bestimmt deinen exakten Körpertyp, Proportionen und Farbtyp mit 95%iger Genauigkeit.</p>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <img src="3.png" alt="Personalisierte Styling-Empfehlungen" class="insight-image" />
+                        <h4 class="insight-title">🎯 Personalisierte Empfehlungen</h4>
+                        <p class="insight-text">Konkrete Schnitte, Materialien und Styling-Tipps, die perfekt zu deiner individuellen Figur passen.</p>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <img src="5.png" alt="Perfekte Farbpalette" class="insight-image" />
+                        <h4 class="insight-title">🌈 Deine perfekte Farbpalette</h4>
+                        <p class="insight-text">Über 200 Farbtöne, die dich strahlen lassen - von Basics bis zu Statement-Farben.</p>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <img src="2.png" alt="Frühlings-Look Shopping-Guide" class="insight-image" />
+                        <h4 class="insight-title">🛍️ Shopping-Guide</h4>
+                        <p class="insight-text">Konkrete Marken und Shops, wo du deine optimalen Pieces findest - spare Zeit und Geld.</p>
+                    </div>
                 </div>
             </div>
         </div>
