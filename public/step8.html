@@ -210,11 +210,6 @@
             const email = document.getElementById('email').value;
             const submitBtn = document.getElementById('submitBtn');
             const emailError = document.getElementById('emailError');
-            const payload = {
-  email: email,
-  photos: photosArray, // Hier müssen die Base64/File Daten stehen
-  answers: allData
-};
             
             // Email-Validierung
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -227,31 +222,63 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Wird gesendet...';
             
-            // Sammle alle Quiz-Daten aus localStorage
-            const quizData = {
+            // Sammle ALLE Daten aus localStorage
+            const allData = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                if (key && value && value !== 'null' && value !== 'undefined') {
+                    allData[key] = value;
+                }
+            }
+            
+            // Sammle Fotos aus localStorage (falls vorhanden)
+            const photos = [];
+            for (let i = 1; i <= 10; i++) {
+                const photoKey = `uploadedPhoto${i}`;
+                const photoData = localStorage.getItem(photoKey);
+                if (photoData && photoData.startsWith('data:image/')) {
+                    photos.push(photoData);
+                }
+            }
+            
+            // Email hinzufügen
+            allData.userEmail = email;
+            allData.email = email;
+            allData.quizCompleted = 'true';
+            allData.timestamp = new Date().toISOString();
+            
+            console.log('Sending data:', { email, photos: photos.length, allData });
+            
+            // Sende an Backend
+            const payload = {
                 email: email,
-                bodyShape: localStorage.getItem('bodyShape') || '',
-                waistDefinition: localStorage.getItem('waistDefinition') || '',
-                stylingChallenge: localStorage.getItem('stylingChallenge') || '',
-                skinUndertone: localStorage.getItem('skinUndertone') || '',
-                hairColor: localStorage.getItem('hairColor') || '',
-                photosUploaded: localStorage.getItem('photosUploaded') || 'false',
-                photoCount: localStorage.getItem('photoCount') || '0',
-                timestamp: new Date().toISOString()
+                userEmail: email,
+                photos: photos,
+                answers: allData,
+                name: allData.userName || 'Kunde'
             };
             
-            // Speichere Email in localStorage
-            localStorage.setItem('userEmail', email);
-            localStorage.setItem('quizCompleted', 'true');
-            
-            console.log('Quiz-Daten gesammelt:', quizData);
-            
-            // TODO: Hier später Supabase-Integration
-            // Für jetzt: Simuliere erfolgreichen Upload
-            setTimeout(() => {
-                // Weiterleitung zu analyse.html
-                window.location.href = '/analyse.html';
-            }, 1000);
+            fetch('/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.url) {
+                    // Weiterleitung zu Stripe Checkout
+                    window.location.href = data.url;
+                } else {
+                    throw new Error('No checkout URL received');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Analyse anfordern';
+                alert('Fehler beim Senden. Bitte versuche es erneut.');
+            });
         }
 
         window.addEventListener('load', function() {
