@@ -232,15 +232,26 @@
                 }
             }
             
-            // Sammle Fotos aus localStorage (falls vorhanden)
+            // Sammle Fotos aus localStorage (mit Größen-Check)
             const photos = [];
+            let totalSize = 0;
             for (let i = 1; i <= 10; i++) {
                 const photoKey = `uploadedPhoto${i}`;
                 const photoData = localStorage.getItem(photoKey);
                 if (photoData && photoData.startsWith('data:image/')) {
+                    const sizeKB = Math.round(photoData.length * 0.75 / 1024);
+                    totalSize += sizeKB;
+                    
+                    // Warnung bei großen Fotos
+                    if (sizeKB > 1000) {
+                        console.warn(`Foto ${i} ist groß: ${sizeKB}KB`);
+                    }
+                    
                     photos.push(photoData);
                 }
             }
+            
+            console.log(`Sende ${photos.length} Fotos, Gesamtgröße: ${totalSize}KB`);
             
             // Email hinzufügen
             allData.userEmail = email;
@@ -248,9 +259,6 @@
             allData.quizCompleted = 'true';
             allData.timestamp = new Date().toISOString();
             
-            console.log('Sending data:', { email, photos: photos.length, allData });
-            
-            // Sende an Backend
             const payload = {
                 email: email,
                 userEmail: email,
@@ -259,26 +267,67 @@
                 name: allData.userName || 'Kunde'
             };
             
-            fetch('/api/checkout', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.url) {
-                    // Weiterleitung zu Stripe Checkout
-                    window.location.href = data.url;
-                } else {
-                    throw new Error('No checkout URL received');
+            // Retry-Mechanismus
+            async function sendWithRetry(retries = 3) {
+                try {
+                    console.log(`Sending attempt ${4-retries}/3...`);
+                    
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+                    
+                    const response = await fetch('/api/checkout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.url) {
+                        console.log('Success! Redirecting to checkout...');
+                        window.location.href = data.url;
+                    } else {
+                        throw new Error('No checkout URL received');
+                    }
+                    
+                } catch (error) {
+                    console.error('Send error:', error);
+                    
+                    if (retries > 0) {
+                        console.log(`Retrying... ${retries} attempts left`);
+                        submitBtn.textContent = `Wiederhole... (${4-retries}/3)`;
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        return sendWithRetry(retries - 1);
+                    } else {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Analyse anfordern';
+                        
+                        // Bessere Fehlermeldung basierend auf Error-Typ
+                        let errorMessage = 'Fehler beim Senden. ';
+                        if (error.name === 'AbortError') {
+                            errorMessage += 'Die Verbindung ist zu langsam. Bitte versuche es mit besserer Internetverbindung erneut.';
+                        } else if (error.message.includes('Failed to fetch')) {
+                            errorMessage += 'Keine Internetverbindung. Überprüfe deine Verbindung und versuche es erneut.';
+                        } else if (totalSize > 5000) {
+                            errorMessage += 'Die Fotos sind zu groß. Versuche kleinere Bilder zu verwenden.';
+                        } else {
+                            errorMessage += 'Bitte versuche es erneut oder kontaktiere den Support.';
+                        }
+                        
+                        alert(errorMessage);
+                    }
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Analyse anfordern';
-                alert('Fehler beim Senden. Bitte versuche es erneut.');
-            });
+            }
+            
+            sendWithRetry();
         }
 
         window.addEventListener('load', function() {
