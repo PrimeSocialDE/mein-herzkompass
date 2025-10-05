@@ -210,6 +210,11 @@
             const email = document.getElementById('email').value;
             const submitBtn = document.getElementById('submitBtn');
             const emailError = document.getElementById('emailError');
+            const payload = {
+  email: email,
+  photos: photosArray, // Hier müssen die Base64/File Daten stehen
+  answers: allData
+};
             
             // Email-Validierung
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
