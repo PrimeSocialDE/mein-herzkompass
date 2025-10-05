@@ -217,73 +217,6 @@
             font-style: normal;
         }
 
-        /* RESULTS CTA SECTION */
-        .results-cta-section {
-            margin-top: 40px;
-            text-align: center;
-        }
-
-        .results-cta-card {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 40px 30px;
-            border-radius: var(--border-radius);
-            color: var(--white);
-            max-width: 600px;
-            margin: 0 auto;
-            box-shadow: var(--shadow-medium);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .results-cta-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="150" fill="url(%23a)"/><circle cx="800" cy="800" r="200" fill="url(%23a)"/></svg>');
-            pointer-events: none;
-        }
-
-        .results-cta-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .results-cta-subtitle {
-            font-size: 16px;
-            margin-bottom: 25px;
-            opacity: 0.9;
-            position: relative;
-            z-index: 1;
-            line-height: 1.5;
-        }
-
-        .results-cta-button {
-            background: var(--white);
-            color: var(--primary-color);
-            border: none;
-            padding: 15px 30px;
-            font-size: 16px;
-            font-weight: 700;
-            border-radius: var(--border-radius-small);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 1;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .results-cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            background: #f8fafc;
-        }
-
         /* PREVIEW SECTION */
         .preview-section {
             padding: 60px 0;
@@ -935,19 +868,6 @@
                 padding: 20px 15px;
             }
 
-            .results-cta-card {
-                padding: 30px 20px;
-                margin: 0 15px;
-            }
-
-            .results-cta-title {
-                font-size: 20px;
-            }
-
-            .results-cta-subtitle {
-                font-size: 15px;
-            }
-
             /* Improved mobile image handling */
             .insight-image {
                 height: 220px;
@@ -1202,17 +1122,6 @@
                     </p>
                 </div>
             </div>
-            
-            <!-- CTA SECTION AFTER RESULTS -->
-            <div class="results-cta-section">
-                <div class="results-cta-card">
-                    <h3 class="results-cta-title">Du willst genauere Infos?</h3>
-                    <p class="results-cta-subtitle">Die vollständige Analyse mit Foto-Auswertung zeigt dir dein wahres Style-Potenzial</p>
-                    <button class="results-cta-button" onclick="startCheckout()">
-                        Jetzt vollständige Analyse erhalten
-                    </button>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -1358,7 +1267,7 @@
                     </div>
                 </div>
                 
-                <button class="main-cta" onclick="quickCheckout()">
+                <button class="main-cta" onclick="startCheckout()">
                     Jetzt vollständige Analyse erhalten
                 </button>
                 
@@ -1681,29 +1590,15 @@
             }
         }
 
-        // SCHNELLER DIREKTER STRIPE CHECKOUT (ohne Backend)
-        function quickCheckout() {
-            // Sammle localStorage Daten für eventuelle spätere Nutzung
-            const userData = getAllStorageData();
-            console.log('User data collected:', userData);
-            
-            // Direkte Weiterleitung zu Stripe (schnell, ohne Backend-Aufruf)
-            window.location.href = 'https://buy.stripe.com/deine-checkout-url-hier';
-        }
-
-        // ENHANCED CHECKOUT FUNCTION (mit Backend für Datensammlung)
+        // ENHANCED CHECKOUT FUNCTION
         async function startCheckout() {
             try {
-                // Sammle alle localStorage Daten
-                const userData = getAllStorageData();
+                console.log('=== SENDING TO BACKEND ===', payload);
                 
-                console.log('=== SENDING USER DATA TO SUPABASE ===', userData);
-                
-                // Sende Daten an dein Backend/Supabase
                 const response = await fetch('/api/checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(userData)
+                    body: JSON.stringify(payload)
                 });
                 
                 const responseData = await response.json();
@@ -1712,37 +1607,15 @@
                     throw new Error(`Server Error ${response.status}: ${JSON.stringify(responseData)}`);
                 }
                 
-                // Weiterleitung zu Stripe nach erfolgreichem Daten-Upload
                 if (responseData.url || responseData.checkout_url) {
                     const redirectUrl = responseData.url || responseData.checkout_url;
-                    console.log('✅ Data saved, redirecting to Stripe:', redirectUrl);
+                    console.log('✅ Redirecting to:', redirectUrl);
                     window.location.href = redirectUrl;
                 } else {
-                    // Fallback: Direkte Stripe-URL wenn keine URL vom Backend kommt
-                    console.log('✅ Data saved, using fallback Stripe URL');
-                    window.location.href = 'https://buy.stripe.com/deine-checkout-url-hier';
+                    throw new Error('No checkout URL received');
                 }
                 
             } catch (error) {
-                console.error('❌ CHECKOUT ERROR:', error);
-                
-                // Bei Fehler: Trotzdem zu Stripe weiterleiten (damit der Checkout nicht blockiert wird)
-                console.log('⚠️ Error occurred, redirecting to Stripe anyway');
-                window.location.href = 'https://buy.stripe.com/deine-checkout-url-hier';
-                
-                // Optional: Zeige kurze Fehlermeldung
-                const errorMessage = document.createElement('div');
-                errorMessage.style.cssText = `
-                    position: fixed; top: 20px; right: 20px; z-index: 10000;
-                    background: #ff6b6b; color: white; padding: 15px 20px;
-                    border-radius: 8px; font-weight: 600; max-width: 300px;
-                `;
-                errorMessage.textContent = 'Daten konnten nicht gespeichert werden, Weiterleitung läuft...';
-                document.body.appendChild(errorMessage);
-                
-                setTimeout(() => errorMessage.remove(), 3000);
-            }
-        }
                 console.error('❌ CHECKOUT ERROR:', error);
                 
                 // Show user-friendly error
