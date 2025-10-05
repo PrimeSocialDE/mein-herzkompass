@@ -81,21 +81,23 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({} as Record<string, unknown>));
 
-    // ERST answers definieren
+    // ERST alle Variablen definieren
     const answers = isPlainObject(body.answers) ? body.answers : {};
     const answers_raw = isPlainObject(body.answers_raw) ? body.answers_raw : {};
     const photos = Array.isArray(body.photos) ? body.photos : [];
-
-    // DANN email mit answers verwenden
+    
+    // DANN email verwenden
     const email = String(
       body.email ?? 
       body.userEmail ?? 
-      (answers as any).userEmail ?? 
+      answers['userEmail'] ?? 
       ""
     ).trim();
     const name = String(body.name ?? "").trim();
 
-    // Rest des Codes bleibt gleich...
+    if (!process.env.STRIPE_PRICE_ID || !process.env.STRIPE_SUCCESS_URL || !process.env.STRIPE_CANCEL_URL) {
+      throw new Error("Stripe-ENV unvollständig");
+    }
 
     // Process and upload photos to Supabase Storage
     let photoUrls: string[] = [];
