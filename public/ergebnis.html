@@ -131,7 +131,7 @@
         }
 
         .hero-title {
-            font-size: clamp(28px, 5vw, 48px);
+            font-size: clamp(38px, 8vw, 48px);
             font-weight: 800;
             color: var(--text-dark);
             margin-bottom: 10px;
@@ -165,8 +165,8 @@
 
         .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
             margin-bottom: 50px;
         }
 
@@ -174,8 +174,8 @@
             background: var(--white);
             padding: 25px;
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow-medium);
-            border: 2px solid #e2e8f0;
+            box-shadow: var(--shadow-light);
+            border: 1px solid #e2e8f0;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -186,35 +186,39 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
         }
 
         .result-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-heavy);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
             border-color: var(--primary-color);
         }
 
         .result-icon {
-            font-size: 40px;
+            font-size: 36px;
             margin-bottom: 15px;
             display: block;
+            text-align: center;
         }
 
         .result-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 10px;
-            line-height: 1.3;
+            margin-bottom: 12px;
+            line-height: 1.4;
+            text-align: center;
         }
 
         .result-text {
             color: var(--text-light);
             line-height: 1.6;
             margin-bottom: 15px;
+            font-size: 14px;
+            text-align: left;
         }
 
         .result-highlight {
@@ -262,6 +266,7 @@
             color: var(--text-dark);
             margin-top: 25px;
             padding-top: 10px;
+            line-height: 1.3;
         }
 
         .insight-grid {
@@ -314,15 +319,16 @@
         .insight-image::after {
             content: 'PDF Vorschau';
             position: absolute;
-            top: 8px;
+            bottom: 8px;
             right: 8px;
-            background: rgba(0,0,0,0.7);
+            background: rgba(102, 126, 234, 0.9);
             color: white;
-            padding: 2px 8px;
+            padding: 4px 8px;
             border-radius: 4px;
             font-size: 10px;
             font-weight: 600;
             z-index: 2;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         /* Add shadow and slight blur to suggest it's a preview */
@@ -981,8 +987,8 @@
 
             /* Mobile hero improvements */
             .hero-title {
-                font-size: clamp(24px, 6vw, 36px);
-                line-height: 1.2;
+                font-size: clamp(36px, 7vw, 48px);
+                line-height: 1.1;
             }
 
             .hero-subtitle {
@@ -1595,33 +1601,6 @@
         // ENHANCED CHECKOUT FUNCTION
         async function startCheckout() {
             try {
-                console.log('=== ENHANCED CHECKOUT PROCESS ===');
-                
-                // Disable all CTA buttons
-                const buttons = document.querySelectorAll('.main-cta');
-                buttons.forEach(btn => {
-                    btn.disabled = true;
-                    btn.textContent = 'Wird geladen...';
-                    btn.style.opacity = '0.7';
-                });
-
-                // Collect comprehensive data
-                const completeData = getAllStorageData();
-                
-                // Enhanced payload
-                const payload = {
-                    email: (completeData.user_email && /.+@.+\..+/.test(completeData.user_email)) 
-                        ? completeData.user_email 
-                        : undefined,
-                    name: completeData.user_name || completeData.userName || 'Kunde',
-                    product: 'clara_style_analysis_v1',
-                    amount: 3999,
-                    currency: 'eur',
-                    answers: completeData,
-                    source: 'style_results_page',
-                    timestamp: new Date().toISOString()
-                };
-                
                 console.log('=== SENDING TO BACKEND ===', payload);
                 
                 const response = await fetch('/api/checkout', {
@@ -1813,4 +1792,4 @@
         });
     </script>
 </body>
-</html>
+</html> 
