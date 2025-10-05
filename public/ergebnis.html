@@ -285,12 +285,6 @@
             border-radius: var(--border-radius-small);
             margin-bottom: 10px;
             border: 1px solid #e2e8f0;
-            background: linear-gradient(45deg, #f8fafc, #e2e8f0);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-light);
-            font-size: 14px;
         }
 
         .insight-title {
@@ -330,12 +324,6 @@
             object-fit: cover;
             border: 3px solid var(--primary-color);
             flex-shrink: 0;
-            background: linear-gradient(45deg, #f8fafc, #e2e8f0);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-light);
-            font-size: 12px;
         }
 
         .clara-analysis-content {
@@ -715,11 +703,6 @@
             margin-bottom: 20px;
             overflow: hidden;
             border: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-light);
-            font-size: 14px;
         }
 
         .before-after-image {
@@ -741,12 +724,6 @@
             border-radius: 50%;
             margin-right: 15px;
             object-fit: cover;
-            background: linear-gradient(45deg, #f8fafc, #e2e8f0);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-light);
-            font-size: 12px;
         }
 
         .testimonial-name {
@@ -1301,8 +1278,25 @@
             console.log('=== ENHANCED DATA COLLECTION ===');
             const allData = {};
             
-            // Use demo data since we don't have localStorage in artifacts
-            Object.assign(allData, demoData);
+            // Try to get localStorage data first, fallback to demo data
+            try {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    
+                    if (key && value && value !== 'null' && value !== 'undefined' && value.trim() !== '') {
+                        allData[key] = value.trim();
+                    }
+                }
+            } catch (e) {
+                // Fallback to demo data if localStorage is not available
+                Object.assign(allData, demoData);
+            }
+            
+            // If no data in localStorage, use demo data
+            if (Object.keys(allData).length === 0) {
+                Object.assign(allData, demoData);
+            }
             
             allData['_timestamp'] = new Date().toISOString();
             allData['_page_version'] = 'style_results_v1';
@@ -1470,27 +1464,80 @@
         }
 
         // ENHANCED CHECKOUT FUNCTION
-        function startCheckout() {
-            console.log('=== CHECKOUT SIMULATION ===');
-            
-            // Disable button
-            const button = document.querySelector('.main-cta');
-            button.disabled = true;
-            button.textContent = 'Wird geladen...';
-            button.style.opacity = '0.7';
-
-            // Collect data
-            const completeData = getAllStorageData();
-            
-            // Show success message (simulation)
-            setTimeout(() => {
-                alert('Checkout-Simulation: In einer echten Implementierung würde hier eine Weiterleitung zur Zahlungsseite erfolgen.');
+        async function startCheckout() {
+            try {
+                console.log('=== ENHANCED CHECKOUT PROCESS ===');
                 
-                // Re-enable button
-                button.disabled = false;
-                button.style.opacity = '1';
-                button.textContent = 'Jetzt vollständige Analyse erhalten';
-            }, 2000);
+                // Disable all CTA buttons
+                const buttons = document.querySelectorAll('.main-cta');
+                buttons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.textContent = 'Wird geladen...';
+                    btn.style.opacity = '0.7';
+                });
+
+                // Collect comprehensive data
+                const completeData = getAllStorageData();
+                
+                // Enhanced payload
+                const payload = {
+                    email: (completeData.user_email && /.+@.+\..+/.test(completeData.user_email)) 
+                        ? completeData.user_email 
+                        : undefined,
+                    name: completeData.user_name || completeData.userName || 'Kunde',
+                    product: 'clara_style_analysis_v1',
+                    amount: 3999,
+                    currency: 'eur',
+                    answers: completeData,
+                    source: 'style_results_page',
+                    timestamp: new Date().toISOString()
+                };
+                
+                console.log('=== SENDING TO BACKEND ===', payload);
+                
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const responseData = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(`Server Error ${response.status}: ${JSON.stringify(responseData)}`);
+                }
+                
+                if (responseData.url || responseData.checkout_url) {
+                    const redirectUrl = responseData.url || responseData.checkout_url;
+                    console.log('✅ Redirecting to:', redirectUrl);
+                    window.location.href = redirectUrl;
+                } else {
+                    throw new Error('No checkout URL received');
+                }
+                
+            } catch (error) {
+                console.error('❌ CHECKOUT ERROR:', error);
+                
+                // Show user-friendly error
+                const errorMessage = document.createElement('div');
+                errorMessage.style.cssText = `
+                    position: fixed; top: 20px; right: 20px; z-index: 10000;
+                    background: #ff6b6b; color: white; padding: 15px 20px;
+                    border-radius: 8px; font-weight: 600; max-width: 300px;
+                `;
+                errorMessage.textContent = 'Fehler beim Laden. Bitte versuche es erneut.';
+                document.body.appendChild(errorMessage);
+                
+                setTimeout(() => errorMessage.remove(), 5000);
+                
+                // Re-enable buttons
+                const buttons = document.querySelectorAll('.main-cta');
+                buttons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.textContent = 'Jetzt vollständige Analyse erhalten';
+                });
+            }
         }
 
         // TIMER AND COUNTERS
@@ -1623,6 +1670,17 @@
             const currentScroll = window.pageYOffset;
             const maxScroll = document.body.scrollHeight - window.innerHeight;
             scrollDepth = Math.max(scrollDepth, currentScroll / maxScroll);
+        });
+
+        // Store engagement data
+        window.addEventListener('beforeunload', () => {
+            const timeSpent = Date.now() - timeOnPage;
+            try {
+                localStorage.setItem('engagement_time', timeSpent.toString());
+                localStorage.setItem('scroll_depth', (scrollDepth * 100).toFixed(0));
+            } catch (e) {
+                console.log('Could not store engagement data');
+            }
         });
     </script>
 </body>
