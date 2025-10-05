@@ -824,13 +824,37 @@
                 padding: 20px 15px;
             }
 
+            /* Improved mobile image handling */
+            .insight-image {
+                height: 160px;
+                width: 100%;
+                object-fit: cover;
+                border-radius: var(--border-radius-small);
+            }
+
+            .clara-analysis-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .clara-analysis-image {
+                width: 100%;
+                max-width: 280px;
+                height: 200px;
+                margin: 0 auto;
+                object-fit: cover;
+            }
+
             .testimonial-before-after {
-                height: 300px;
-                margin-bottom: 25px;
+                height: 250px;
+                margin-bottom: 20px;
+                width: 100%;
             }
 
             .before-after-image {
                 height: 100%;
+                width: 100%;
                 object-fit: cover;
             }
 
@@ -839,28 +863,18 @@
             }
 
             .testimonial-avatar {
-                width: 50px;
-                height: 50px;
+                width: 45px;
+                height: 45px;
                 margin-right: 12px;
+                object-fit: cover;
             }
 
             .testimonial-name {
-                font-size: 16px;
+                font-size: 15px;
             }
 
             .testimonial-stars {
                 font-size: 13px;
-            }
-
-            .clara-analysis-section {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-            }
-
-            .clara-analysis-image {
-                width: 240px;
-                height: 180px;
             }
 
             .unlock-title,
@@ -873,16 +887,20 @@
             }
 
             .preview-card {
-                padding: 30px 20px;
+                padding: 25px 15px;
             }
 
             .pricing-card {
-                padding: 30px 20px;
+                padding: 30px 15px;
             }
 
             .insight-grid {
                 grid-template-columns: 1fr;
-                gap: 15px;
+                gap: 20px;
+            }
+
+            .insight-item {
+                padding: 15px;
             }
 
             .benefits-grid {
@@ -891,6 +909,72 @@
 
             .trust-indicators {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            /* Mobile guarantee section improvements */
+            .guarantee-section {
+                padding: 20px 15px;
+            }
+
+            .guarantee-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .guarantee-avatars {
+                justify-content: center;
+            }
+
+            .guarantee-rating {
+                text-align: center;
+            }
+
+            /* Mobile hero improvements */
+            .hero-title {
+                font-size: clamp(24px, 6vw, 36px);
+                line-height: 1.2;
+            }
+
+            .hero-subtitle {
+                font-size: 15px;
+                padding: 0 10px;
+            }
+        }
+
+        /* Extra small mobile devices */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .insight-image {
+                height: 140px;
+            }
+
+            .clara-analysis-image {
+                height: 180px;
+                max-width: 260px;
+            }
+
+            .testimonial-before-after {
+                height: 220px;
+            }
+
+            .preview-card {
+                padding: 20px 10px;
+            }
+
+            .pricing-card {
+                padding: 25px 10px;
+            }
+
+            .guarantee-section {
+                padding: 15px 10px;
+            }
+
+            .avatar-item {
+                width: 35px;
+                height: 35px;
             }
         }
 
