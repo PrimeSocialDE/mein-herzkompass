@@ -1531,7 +1531,7 @@
             console.log('User data collected:', userData);
             
             // Direkte Weiterleitung zu Stripe (schnell, ohne Backend-Aufruf)
-            window.location.href = 'https://buy.stripe.com/deine-checkout-url-hier';
+            window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
         }
 
         // ENHANCED CHECKOUT FUNCTION (mit Backend für Datensammlung)
@@ -1563,7 +1563,7 @@
                 } else {
                     // Fallback: Direkte Stripe-URL wenn keine URL vom Backend kommt
                     console.log('✅ Data saved, using fallback Stripe URL');
-                    window.location.href = 'https://buy.stripe.com/deine-checkout-url-hier';
+                    window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
                 }
                 
             } catch (error) {
@@ -1571,7 +1571,7 @@
                 
                 // Bei Fehler: Trotzdem zu Stripe weiterleiten (damit der Checkout nicht blockiert wird)
                 console.log('⚠️ Error occurred, redirecting to Stripe anyway');
-                window.location.href = 'https://buy.stripe.com/deine-checkout-url-hier';
+                window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
                 
                 // Optional: Zeige kurze Fehlermeldung
                 const errorMessage = document.createElement('div');
