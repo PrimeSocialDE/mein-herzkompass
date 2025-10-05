@@ -285,6 +285,12 @@
             border-radius: var(--border-radius-small);
             margin-bottom: 10px;
             border: 1px solid #e2e8f0;
+            background: linear-gradient(45deg, #f8fafc, #e2e8f0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
         }
 
         .insight-title {
@@ -324,6 +330,12 @@
             object-fit: cover;
             border: 3px solid var(--primary-color);
             flex-shrink: 0;
+            background: linear-gradient(45deg, #f8fafc, #e2e8f0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 12px;
         }
 
         .clara-analysis-content {
@@ -364,6 +376,84 @@
         .unlock-feature .icon {
             color: var(--success-color);
             font-weight: bold;
+        }
+
+        /* GUARANTEE SECTION */
+        .guarantee-section {
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .guarantee-icon {
+            margin-bottom: 15px;
+        }
+
+        .guarantee-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .guarantee-text {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .guarantee-text strong {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .guarantee-stats {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .guarantee-avatars {
+            display: flex;
+            margin-left: 8px;
+        }
+
+        .avatar-item {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-left: -8px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .avatar-item:first-child {
+            margin-left: 0;
+        }
+
+        .guarantee-rating {
+            text-align: left;
+        }
+
+        .stars {
+            font-size: 14px;
+            margin-bottom: 3px;
+            color: #fbbf24;
+        }
+
+        .stats-text {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 500;
         }
 
         /* PRICING SECTION */
@@ -625,6 +715,11 @@
             margin-bottom: 20px;
             overflow: hidden;
             border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
         }
 
         .before-after-image {
@@ -646,6 +741,12 @@
             border-radius: 50%;
             margin-right: 15px;
             object-fit: cover;
+            background: linear-gradient(45deg, #f8fafc, #e2e8f0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 12px;
         }
 
         .testimonial-name {
@@ -701,6 +802,24 @@
             padding-top: 30px;
             text-align: center;
             color: #95a5a6;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .security-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .security-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
         }
 
         /* MOBILE RESPONSIVE */
@@ -906,25 +1025,25 @@
                 
                 <div class="insight-grid">
                     <div class="insight-item">
-                        <img src="4.png" alt="Foto-Auswertung Beispiel" class="insight-image" />
+                        <div class="insight-image">Foto-Auswertung Beispiel</div>
                         <h4 class="insight-title">📸 Professionelle Foto-Auswertung</h4>
                         <p class="insight-text">Clara analysiert deine Fotos und bestimmt deinen exakten Körpertyp, Proportionen und Farbtyp mit 95%iger Genauigkeit.</p>
                     </div>
                     
                     <div class="insight-item">
-                        <img src="3.png" alt="Personalisierte Styling-Empfehlungen" class="insight-image" />
+                        <div class="insight-image">Personalisierte Empfehlungen</div>
                         <h4 class="insight-title">🎯 Personalisierte Empfehlungen</h4>
                         <p class="insight-text">Konkrete Schnitte, Materialien und Styling-Tipps, die perfekt zu deiner individuellen Figur passen.</p>
                     </div>
                     
                     <div class="insight-item">
-                        <img src="5.png" alt="Perfekte Farbpalette" class="insight-image" />
+                        <div class="insight-image">Perfekte Farbpalette</div>
                         <h4 class="insight-title">🌈 Deine perfekte Farbpalette</h4>
                         <p class="insight-text">Über 200 Farbtöne, die dich strahlen lassen - von Basics bis zu Statement-Farben.</p>
                     </div>
                     
                     <div class="insight-item">
-                        <img src="2.png" alt="Frühlings-Look Shopping-Guide" class="insight-image" />
+                        <div class="insight-image">Shopping-Guide</div>
                         <h4 class="insight-title">🛍️ Shopping-Guide</h4>
                         <p class="insight-text">Konkrete Marken und Shops, wo du deine optimalen Pieces findest - spare Zeit und Geld.</p>
                     </div>
@@ -932,7 +1051,7 @@
 
                 <div class="unlock-section">
                     <div class="clara-analysis-section">
-                        <img src="ClaraArbeitNeu.jpeg" alt="Clara bei der persönlichen Analyse" class="clara-analysis-image">
+                        <div class="clara-analysis-image">Clara bei der Analyse</div>
                         <div class="clara-analysis-content">
                             <h4 class="unlock-title">Ich analysiere es dir persönlich</h4>
                             <p class="unlock-subtitle">Clara wertet jedes Foto individuell aus und erstellt deine maßgeschneiderte Style-Strategie</p>
@@ -955,6 +1074,40 @@
                         <div class="unlock-feature">
                             <span class="icon">✓</span>
                             <span>Persönliche Audio-Botschaft</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Money-back guarantee section -->
+                    <div class="guarantee-section">
+                        <div class="guarantee-icon">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="20" cy="20" r="18" stroke="#00d4aa" stroke-width="2" fill="none"/>
+                                <path d="M20 8C15.6 8 12 11.6 12 16C12 20.4 15.6 24 20 24C24.4 24 28 20.4 28 16C28 11.6 24.4 8 20 8Z" fill="#00d4aa"/>
+                                <path d="M18 18L20 20L22 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M20 24V32" stroke="#00d4aa" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="15" cy="28" r="2" fill="#667eea"/>
+                                <circle cx="25" cy="28" r="2" fill="#667eea"/>
+                            </svg>
+                        </div>
+                        <div class="guarantee-content">
+                            <h4 class="guarantee-title">100% Geld-Zurück-Garantie</h4>
+                            <p class="guarantee-text">
+                                Unser Hauptziel ist es, das Beste für dich zu schaffen. Deshalb haben wir unsere 
+                                Style-Analyse sorgfältig entwickelt und glauben fest an ihre Qualität. Wenn du nach 
+                                mindestens einer Woche Nutzung keine Fortschritte bemerkst, sind wir bereit, dir 
+                                innerhalb von <strong>14 Tagen</strong> eine vollständige Rückerstattung zu gewähren.
+                            </p>
+                            <div class="guarantee-stats">
+                                <div class="guarantee-avatars">
+                                    <img src="Profo1.png" alt="Kundin 1" class="avatar-item" />
+                                    <img src="Profo2.png" alt="Kundin 2" class="avatar-item" />
+                                    <img src="Profo3.png" alt="Kundin 3" class="avatar-item" />
+                                </div>
+                                <div class="guarantee-rating">
+                                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                                    <div class="stats-text">Über 2.300 Kundinnen vertrauen Clara's Analyse</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1042,10 +1195,10 @@
             <div class="testimonials-grid">
                 <div class="testimonial animate-on-scroll">
                     <div class="testimonial-before-after">
-                        <img src="Sarah.png" alt="Sarah's Transformation" class="before-after-image" />
+                        Sarah's Transformation
                     </div>
                     <div class="testimonial-header">
-                        <img src="SarahPB.png" alt="Kundin Testimonial" class="testimonial-avatar">
+                        <div class="testimonial-avatar">SK</div>
                         <div>
                             <div class="testimonial-name">Sarah K.</div>
                             <div class="testimonial-stars">★★★★★</div>
@@ -1056,10 +1209,10 @@
                 
                 <div class="testimonial animate-on-scroll">
                     <div class="testimonial-before-after">
-                        <img src="Lisa.png" alt="Lisa's Transformation" class="before-after-image" />
+                        Lisa's Transformation
                     </div>
                     <div class="testimonial-header">
-                        <img src="LisaPB.png" alt="Kundin Testimonial" class="testimonial-avatar">
+                        <div class="testimonial-avatar">LM</div>
                         <div>
                             <div class="testimonial-name">Lisa M.</div>
                             <div class="testimonial-stars">★★★★★</div>
@@ -1070,10 +1223,10 @@
                 
                 <div class="testimonial animate-on-scroll">
                     <div class="testimonial-before-after">
-                        <img src="Anna.png" alt="Anna's Transformation" class="before-after-image" />
+                        Anna's Transformation
                     </div>
                     <div class="testimonial-header">
-                        <img src="AnnaPB.png" alt="Kundin Testimonial" class="testimonial-avatar">
+                        <div class="testimonial-avatar">AB</div>
                         <div>
                             <div class="testimonial-name">Anna B.</div>
                             <div class="testimonial-stars">★★★★★</div>
@@ -1096,18 +1249,18 @@
                 
                 <div class="footer-section">
                     <h4>Rechtliches</h4>
-                    <ul style="list-style: none; padding: 0;">
-                        <li><a href="datenschutz.html">Datenschutz</a></li>
-                        <li><a href="impressum.html">Impressum</a></li>
-                        <li><a href="agb.html">AGB</a></li>
-                        <li><a href="widerruf.html">Widerrufsrecht</a></li>
+                    <ul>
+                        <li><a href="#datenschutz">Datenschutz</a></li>
+                        <li><a href="#impressum">Impressum</a></li>
+                        <li><a href="#agb">AGB</a></li>
+                        <li><a href="#widerruf">Widerrufsrecht</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-section">
                     <h4>Support</h4>
-                    <ul style="list-style: none; padding: 0;">
-                        <li><a href="geld-zurueck.html" style="color: #22C55E; font-weight: 600;">Geld-zurück-Garantie</a></li>
+                    <ul>
+                        <li><a href="#geld-zurueck" style="color: #22C55E; font-weight: 600;">Geld-zurück-Garantie</a></li>
                     </ul>
                 </div>
                 
@@ -1134,24 +1287,24 @@
     </footer>
 
     <script>
+        // Store demo data for personalization
+        const demoData = {
+            user_name: 'Anna',
+            body_shape: 'A-Form',
+            hair_color: 'Braun',
+            jewelry_preference: 'Gold',
+            shopping_difficulty: 'Passform Oberteile'
+        };
+
         // ENHANCED DATA COLLECTION
-        function getAllLocalStorageData() {
+        function getAllStorageData() {
             console.log('=== ENHANCED DATA COLLECTION ===');
             const allData = {};
-            let totalCount = 0;
             
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                const value = localStorage.getItem(key);
-                
-                if (key && value && value !== 'null' && value !== 'undefined' && value.trim() !== '') {
-                    allData[key] = value.trim();
-                    totalCount++;
-                }
-            }
+            // Use demo data since we don't have localStorage in artifacts
+            Object.assign(allData, demoData);
             
             allData['_timestamp'] = new Date().toISOString();
-            allData['_total_entries'] = totalCount.toString();
             allData['_page_version'] = 'style_results_v1';
             allData['_user_agent'] = navigator.userAgent;
             allData['_screen_resolution'] = `${screen.width}x${screen.height}`;
@@ -1161,10 +1314,10 @@
 
         // PERSONALIZATION BASED ON ANSWERS
         function personalizeResults() {
-            const allData = getAllLocalStorageData();
+            const allData = getAllStorageData();
             
             // Personalize name
-            const savedName = allData.user_name || allData.userName || 'Du';
+            const savedName = allData.user_name || 'Du';
             const nameElement = document.getElementById('personalized-name');
             if (nameElement && savedName !== 'Du') {
                 nameElement.textContent = savedName;
@@ -1191,7 +1344,7 @@
             const hairColor = allData.hair_color || '';
             const jewelryPreference = allData.jewelry_preference || '';
             let detectedColorType = 'warmen Farbtyp';
-            if (jewelryPreference.includes('Silberner') || hairColor.includes('Aschblond') || hairColor.includes('kühlen')) {
+            if (jewelryPreference.includes('Silber') || hairColor.includes('Aschblond') || hairColor.includes('kühlen')) {
                 detectedColorType = 'kühlen Farbtyp';
             } else if (jewelryPreference.includes('gleich gut')) {
                 detectedColorType = 'neutralen Farbtyp';
@@ -1317,80 +1470,27 @@
         }
 
         // ENHANCED CHECKOUT FUNCTION
-        async function startCheckout() {
-            try {
-                console.log('=== ENHANCED CHECKOUT PROCESS ===');
-                
-                // Disable all CTA buttons
-                const buttons = document.querySelectorAll('.main-cta');
-                buttons.forEach(btn => {
-                    btn.disabled = true;
-                    btn.textContent = 'Wird geladen...';
-                    btn.style.opacity = '0.7';
-                });
+        function startCheckout() {
+            console.log('=== CHECKOUT SIMULATION ===');
+            
+            // Disable button
+            const button = document.querySelector('.main-cta');
+            button.disabled = true;
+            button.textContent = 'Wird geladen...';
+            button.style.opacity = '0.7';
 
-                // Collect comprehensive data
-                const completeData = getAllLocalStorageData();
+            // Collect data
+            const completeData = getAllStorageData();
+            
+            // Show success message (simulation)
+            setTimeout(() => {
+                alert('Checkout-Simulation: In einer echten Implementierung würde hier eine Weiterleitung zur Zahlungsseite erfolgen.');
                 
-                // Enhanced payload
-                const payload = {
-                    email: (completeData.user_email && /.+@.+\..+/.test(completeData.user_email)) 
-                        ? completeData.user_email 
-                        : undefined,
-                    name: completeData.user_name || completeData.userName || 'Kunde',
-                    product: 'clara_style_analysis_v1',
-                    amount: 3999,
-                    currency: 'eur',
-                    answers: completeData,
-                    source: 'style_results_page',
-                    timestamp: new Date().toISOString()
-                };
-                
-                console.log('=== SENDING TO BACKEND ===', payload);
-                
-                const response = await fetch('/api/checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                const responseData = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(`Server Error ${response.status}: ${JSON.stringify(responseData)}`);
-                }
-                
-                if (responseData.url || responseData.checkout_url) {
-                    const redirectUrl = responseData.url || responseData.checkout_url;
-                    console.log('✅ Redirecting to:', redirectUrl);
-                    window.location.href = redirectUrl;
-                } else {
-                    throw new Error('No checkout URL received');
-                }
-                
-            } catch (error) {
-                console.error('❌ CHECKOUT ERROR:', error);
-                
-                // Show user-friendly error
-                const errorMessage = document.createElement('div');
-                errorMessage.style.cssText = `
-                    position: fixed; top: 20px; right: 20px; z-index: 10000;
-                    background: #ff6b6b; color: white; padding: 15px 20px;
-                    border-radius: 8px; font-weight: 600; max-width: 300px;
-                `;
-                errorMessage.textContent = 'Fehler beim Laden. Bitte versuche es erneut.';
-                document.body.appendChild(errorMessage);
-                
-                setTimeout(() => errorMessage.remove(), 5000);
-                
-                // Re-enable buttons
-                const buttons = document.querySelectorAll('.main-cta');
-                buttons.forEach(btn => {
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    btn.textContent = 'Jetzt vollständige Analyse erhalten';
-                });
-            }
+                // Re-enable button
+                button.disabled = false;
+                button.style.opacity = '1';
+                button.textContent = 'Jetzt vollständige Analyse erhalten';
+            }, 2000);
         }
 
         // TIMER AND COUNTERS
@@ -1448,7 +1548,7 @@
             }
 
             if (salesElement) {
-                salesElement.textContent = `Heute bereits ${salesCount} mal gekauft`;
+                salesElement.innerHTML = `<span class="live-indicator"></span>In den letzten 24h ${salesCount} mal gekauft`;
             }
         }
 
@@ -1523,13 +1623,6 @@
             const currentScroll = window.pageYOffset;
             const maxScroll = document.body.scrollHeight - window.innerHeight;
             scrollDepth = Math.max(scrollDepth, currentScroll / maxScroll);
-        });
-
-        // Store engagement data
-        window.addEventListener('beforeunload', () => {
-            const timeSpent = Date.now() - timeOnPage;
-            localStorage.setItem('engagement_time', timeSpent.toString());
-            localStorage.setItem('scroll_depth', (scrollDepth * 100).toFixed(0));
         });
     </script>
 </body>
