@@ -276,6 +276,7 @@
             padding: 20px;
             border-radius: var(--border-radius-small);
             border-left: 4px solid var(--primary-color);
+            position: relative;
         }
 
         .insight-image {
@@ -285,6 +286,49 @@
             border-radius: var(--border-radius-small);
             margin-bottom: 10px;
             border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* PDF Preview Effect */
+        .insight-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(255,255,255,0.1) 25%,
+                rgba(255,255,255,0.2) 50%,
+                rgba(255,255,255,0.1) 75%,
+                transparent 100%
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .insight-image::after {
+            content: 'PDF Vorschau';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        /* Add shadow and slight blur to suggest it's a preview */
+        .insight-item:hover .insight-image {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: scale(1.02);
+            transition: all 0.3s ease;
         }
 
         .insight-title {
