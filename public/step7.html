@@ -229,6 +229,13 @@
             gap: 8px;
         }
 
+        .processing-message {
+            color: #667eea;
+            font-weight: 600;
+            margin-top: 10px;
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .example-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -329,6 +336,10 @@
             <button class="continue-button" id="continueBtn" disabled onclick="submitPhotos()">
                 Weiter zur letzten Frage
             </button>
+
+            <div class="processing-message" id="processingMessage">
+                Fotos werden verarbeitet...
+            </div>
             
             <div class="security-note">
                 🔒 Deine Fotos werden vertraulich behandelt und nur für die Analyse verwendet
@@ -393,19 +404,64 @@
         }
 
         function submitPhotos() {
+            if (uploadedFiles.length === 0) {
+                alert('Bitte lade mindestens ein Foto hoch.');
+                return;
+            }
+
+            const btn = document.getElementById('continueBtn');
+            const processingMsg = document.getElementById('processingMessage');
+            
+            btn.disabled = true;
+            btn.textContent = 'Fotos werden verarbeitet...';
+            processingMsg.style.display = 'block';
+
             if (typeof(Storage) !== "undefined") {
+                // Erst alte Fotos aus localStorage löschen
+                for (let i = 1; i <= 10; i++) {
+                    localStorage.removeItem(`uploadedPhoto${i}`);
+                }
+
+                // Speichere Foto-Metadaten
                 localStorage.setItem('photosUploaded', 'true');
                 localStorage.setItem('photoCount', uploadedFiles.length.toString());
                 
-                let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
-                allAnswers['photosUploaded'] = true;
-                allAnswers['photoCount'] = uploadedFiles.length;
-                localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
+                let photosProcessed = 0;
                 
-                console.log('Fotos gespeichert:', uploadedFiles.length, 'Dateien');
+                // Speichere die tatsächlichen Foto-Daten als Base64
+                uploadedFiles.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        localStorage.setItem(`uploadedPhoto${index + 1}`, e.target.result);
+                        console.log(`Foto ${index + 1} als Base64 gespeichert (${Math.round(e.target.result.length / 1024)}KB)`);
+                        
+                        photosProcessed++;
+                        
+                        // Wenn alle Fotos gespeichert sind, weiterleiten
+                        if (photosProcessed === uploadedFiles.length) {
+                            let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
+                            allAnswers['photosUploaded'] = true;
+                            allAnswers['photoCount'] = uploadedFiles.length;
+                            localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
+                            
+                            console.log('Alle Fotos erfolgreich gespeichert:', uploadedFiles.length, 'Dateien');
+                            
+                            // Kurze Verzögerung für bessere UX
+                            setTimeout(() => {
+                                window.location.href = '/step8.html';
+                            }, 500);
+                        }
+                    };
+                    reader.readAsDataURL(file); // Konvertiert zu Base64
+                });
+            } else {
+                // Fallback falls kein localStorage
+                console.warn('localStorage nicht verfügbar, Fotos können nicht gespeichert werden');
+                alert('Fotos können nicht gespeichert werden. Bitte verwende einen anderen Browser.');
+                btn.disabled = false;
+                btn.textContent = 'Weiter zur letzten Frage';
+                processingMsg.style.display = 'none';
             }
-            
-            window.location.href = '/step8.html';
         }
 
         window.addEventListener('load', function() {
