@@ -1522,6 +1522,20 @@
                 Object.assign(allData, demoData);
             }
             
+            // Extrahiere photo_urls aus quizAnswers falls vorhanden
+            if (allData.quizAnswers) {
+                try {
+                    const quizData = JSON.parse(allData.quizAnswers);
+                    if (quizData.photo_urls && Array.isArray(quizData.photo_urls)) {
+                        // Setze photo_urls als Top-Level-Feld für Backend
+                        allData.photo_urls = quizData.photo_urls;
+                        console.log('Extracted photo_urls from quizAnswers:', quizData.photo_urls);
+                    }
+                } catch (e) {
+                    console.warn('Could not parse quizAnswers for photo_urls extraction');
+                }
+            }
+            
             // Stelle sicher, dass photo_urls als Array gesendet wird, nicht als String
             if (allData.photo_urls && typeof allData.photo_urls === 'string') {
                 try {
@@ -1537,7 +1551,7 @@
             allData['_screen_resolution'] = `${screen.width}x${screen.height}`;
             
             console.log('Collected data keys:', Object.keys(allData));
-            console.log('photo_urls:', allData.photo_urls);
+            console.log('photo_urls for backend:', allData.photo_urls);
             return allData;
         }
 
