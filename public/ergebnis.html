@@ -1483,68 +1483,6 @@
     </footer>
 
     <script>
-        // Store demo data for personalization
-        const demoData = {
-            user_name: 'Anna',
-            body_shape: 'A-Form',
-            hair_color: 'Braun',
-            jewelry_preference: 'Gold',
-            shopping_difficulty: 'Passform Oberteile'
-        };
-
-        // ENHANCED DATA COLLECTION
-        function getAllStorageData() {
-            console.log('=== ENHANCED DATA COLLECTION ===');
-            const allData = {};
-            
-            // Sammle ALLE localStorage Daten
-            try {
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    const value = localStorage.getItem(key);
-                    
-                    if (key && value && value !== 'null' && value !== 'undefined' && value.trim() !== '') {
-                        allData[key] = value.trim();
-                    }
-                }
-            } catch (e) {
-                console.warn('localStorage Zugriff fehlgeschlagen:', e);
-            }
-            
-            // Extrahiere photo_urls aus quizAnswers falls vorhanden
-            if (allData.quizAnswers) {
-                try {
-                    const quizData = JSON.parse(allData.quizAnswers);
-                    if (quizData.photo_urls && Array.isArray(quizData.photo_urls)) {
-                        allData.photo_urls = quizData.photo_urls;
-                    }
-                } catch (e) {
-                    console.warn('Could not parse quizAnswers for photo_urls extraction');
-                }
-            }
-            
-            // Stelle sicher, dass photo_urls als Array gesendet wird
-            if (allData.photo_urls && typeof allData.photo_urls === 'string') {
-                try {
-                    allData.photo_urls = JSON.parse(allData.photo_urls);
-                } catch (e) {
-                    console.warn('Could not parse photo_urls as JSON');
-                }
-            }
-            
-            // Metadaten hinzufügen
-            allData['_timestamp'] = new Date().toISOString();
-            allData['_page_version'] = 'style_results_v1';
-            allData['_user_agent'] = navigator.userAgent;
-            allData['_screen_resolution'] = `${screen.width}x${screen.height}`;
-            
-            console.log('Gesammelte Daten:', Object.keys(allData));
-            console.log('Photo URLs für Backend:', allData.photo_urls);
-            console.log('Temp Photo Data vorhanden:', !!allData.temp_photo_data);
-            
-            return allData;
-        }
-
         // KORRIGIERTE QUICK CHECKOUT FUNKTION
         async function quickCheckout() {
             const button = document.querySelector('.main-cta');
@@ -1633,7 +1571,7 @@
             }
         }
 
-        // VERBESSERTE PERSONALIZATION FUNKTION
+        // VERBESSERTE PERSONALIZATION FUNKTION MIT KORRIGIERTEM MAPPING
         function personalizeResults() {
             console.log('=== ENHANCED PERSONALIZING RESULTS ===');
             
@@ -1676,7 +1614,6 @@
             
             // 4. Kombiniere alle Datenquellen (Reihenfolge wichtig!)
             const combinedData = {
-                ...demoData,      // Fallback-Daten
                 ...allData,       // localStorage Strings
                 ...parsedAnswers, // Geparste JSON-Daten
                 ...quizAnswers    // Quiz-Antworten (höchste Priorität)
@@ -1684,14 +1621,11 @@
             
             console.log('Combined data for analysis:', combinedData);
             
-            // 5. DEBUGGING: Zeige alle möglichen Schlüssel an
-            console.log('=== DEBUGGING DATA SEARCH ===');
-            
-            // Suche nach Körpertyp mit erweiterten Schlüsseln
+            // 5. SUCHE NACH KÖRPERTYP - MIT KORRIGIERTEN SCHLÜSSELN
             const bodyShapeKeys = [
-                'body_shape', 'body_type', 'koerperform', 'figure_type', 'bodyShape', 'bodyType',
-                'question1', 'step1', 'answer1', 'körperform', 'figur', 'körpertyp',
-                'shoulder_hip_relation', 'waist_definition', 'body_silhouette'
+                'bodyShape',      // Das ist der richtige Schlüssel aus step2.html!
+                'body_shape', 'body_type', 'koerperform', 'figure_type', 'bodyType',
+                'question1', 'step1', 'answer1', 'körperform', 'figur', 'körpertyp'
             ];
             
             console.log('Searching for body shape in these keys:', bodyShapeKeys);
@@ -1710,95 +1644,87 @@
                 }
             }
             
-            // Suche nach Haarfarbe
-            const hairColorKeys = [
-                'hair_color', 'haarfarbe', 'hairColor', 'hair_colour',
-                'question2', 'step2', 'answer2', 'haarfarbe_auswahl'
-            ];
-            
-            console.log('Searching for hair color in these keys:', hairColorKeys);
-            
-            let foundHairColor = '';
-            let hairColorSource = '';
-            
-            for (const key of hairColorKeys) {
-                if (combinedData[key]) {
-                    foundHairColor = combinedData[key];
-                    hairColorSource = key;
-                    console.log(`✅ Found hair color: "${foundHairColor}" in key: "${key}"`);
-                    break;
-                }
-            }
-            
-            // Suche nach Schmuckvorliebe
-            const jewelryKeys = [
-                'jewelry_preference', 'schmuck', 'jewelry', 'jewelryPreference',
-                'question3', 'step3', 'answer3', 'schmuckvorliebe', 'metall_praeferenz'
-            ];
-            
-            console.log('Searching for jewelry preference in these keys:', jewelryKeys);
-            
-            let foundJewelry = '';
-            let jewelrySource = '';
-            
-            for (const key of jewelryKeys) {
-                if (combinedData[key]) {
-                    foundJewelry = combinedData[key];
-                    jewelrySource = key;
-                    console.log(`✅ Found jewelry: "${foundJewelry}" in key: "${key}"`);
-                    break;
-                }
-            }
-            
-            // Suche nach Shopping-Problemen
-            const shoppingKeys = [
-                'shopping_difficulty', 'shopping_problems', 'einkaufsprobleme', 'shoppingDifficulty',
-                'styling_challenge', 'stylingChallenge', 'problem', 'herausforderung',
-                'question4', 'step4', 'answer4', 'shopping_frustration'
-            ];
-            
-            console.log('Searching for shopping difficulty in these keys:', shoppingKeys);
-            
-            let foundShopping = '';
-            let shoppingSource = '';
-            
-            for (const key of shoppingKeys) {
-                if (combinedData[key]) {
-                    foundShopping = combinedData[key];
-                    shoppingSource = key;
-                    console.log(`✅ Found shopping difficulty: "${foundShopping}" in key: "${key}"`);
-                    break;
-                }
-            }
-            
-            console.log('=== FINAL FOUND VALUES ===');
-            console.log('Body Shape:', foundBodyShape, 'from:', bodyShapeSource);
-            console.log('Hair Color:', foundHairColor, 'from:', hairColorSource);
-            console.log('Jewelry:', foundJewelry, 'from:', jewelrySource);
-            console.log('Shopping:', foundShopping, 'from:', shoppingSource);
-            
-            // 6. ERWEITERTE MAPPING-LOGIK
-            
-            // Body Type Mapping
+            // 6. KORRIGIERTES BODY TYPE MAPPING - FÜR STEP2.HTML WERTE
             let detectedBodyType = 'A-Form'; // Fallback
             if (foundBodyShape) {
                 const bodyShapeLower = foundBodyShape.toLowerCase();
                 console.log('Analyzing body shape:', bodyShapeLower);
                 
-                if (bodyShapeLower.includes('o') || bodyShapeLower.includes('apple') || bodyShapeLower.includes('rundlich') || bodyShapeLower.includes('oval')) {
+                // NEUE MAPPINGS FÜR DIE TATSÄCHLICHEN STEP2.HTML WERTE
+                if (bodyShapeLower.includes('schultern-breit')) {
+                    detectedBodyType = 'V-Form';
+                } else if (bodyShapeLower.includes('ausgeglichen')) {
+                    detectedBodyType = 'X-Form';
+                } else if (bodyShapeLower.includes('hueften-breit')) {
+                    detectedBodyType = 'A-Form';
+                } else if (bodyShapeLower.includes('rundlich')) {
+                    detectedBodyType = 'O-Form';
+                } else if (bodyShapeLower.includes('gerade')) {
+                    detectedBodyType = 'I-Form';
+                }
+                // FALLBACK MAPPINGS (für andere Quellen)
+                else if (bodyShapeLower.includes('o') || bodyShapeLower.includes('apple') || bodyShapeLower.includes('oval')) {
                     detectedBodyType = 'O-Form';
                 } else if (bodyShapeLower.includes('x') || bodyShapeLower.includes('sanduhr') || bodyShapeLower.includes('hourglass') || bodyShapeLower.includes('8')) {
                     detectedBodyType = 'X-Form';
                 } else if (bodyShapeLower.includes('v') || bodyShapeLower.includes('triangle') || bodyShapeLower.includes('schultern') || bodyShapeLower.includes('breite schultern')) {
                     detectedBodyType = 'V-Form';
-                } else if (bodyShapeLower.includes('i') || bodyShapeLower.includes('rechteck') || bodyShapeLower.includes('gerade') || bodyShapeLower.includes('rectangle')) {
+                } else if (bodyShapeLower.includes('i') || bodyShapeLower.includes('rechteck') || bodyShapeLower.includes('rectangle')) {
                     detectedBodyType = 'I-Form';
                 } else if (bodyShapeLower.includes('a') || bodyShapeLower.includes('birne') || bodyShapeLower.includes('pear') || bodyShapeLower.includes('hüfte')) {
                     detectedBodyType = 'A-Form';
                 }
             }
             
-            // Color Type Mapping
+            // 7. SUCHE NACH ANDEREN DATEN (Haarfarbe, Schmuck, Shopping)
+            
+            // Haarfarbe
+            const hairColorKeys = [
+                'hair_color', 'haarfarbe', 'hairColor', 'hair_colour',
+                'question2', 'step2', 'answer2', 'haarfarbe_auswahl'
+            ];
+            
+            let foundHairColor = '';
+            for (const key of hairColorKeys) {
+                if (combinedData[key]) {
+                    foundHairColor = combinedData[key];
+                    console.log(`✅ Found hair color: "${foundHairColor}" in key: "${key}"`);
+                    break;
+                }
+            }
+            
+            // Schmuckvorliebe
+            const jewelryKeys = [
+                'jewelry_preference', 'schmuck', 'jewelry', 'jewelryPreference',
+                'question3', 'step3', 'answer3', 'schmuckvorliebe', 'metall_praeferenz'
+            ];
+            
+            let foundJewelry = '';
+            for (const key of jewelryKeys) {
+                if (combinedData[key]) {
+                    foundJewelry = combinedData[key];
+                    console.log(`✅ Found jewelry: "${foundJewelry}" in key: "${key}"`);
+                    break;
+                }
+            }
+            
+            // Shopping-Probleme
+            const shoppingKeys = [
+                'shopping_difficulty', 'shopping_problems', 'einkaufsprobleme', 'shoppingDifficulty',
+                'styling_challenge', 'stylingChallenge', 'problem', 'herausforderung',
+                'question4', 'step4', 'answer4', 'shopping_frustration'
+            ];
+            
+            let foundShopping = '';
+            for (const key of shoppingKeys) {
+                if (combinedData[key]) {
+                    foundShopping = combinedData[key];
+                    console.log(`✅ Found shopping difficulty: "${foundShopping}" in key: "${key}"`);
+                    break;
+                }
+            }
+            
+            // 8. COLOR TYPE MAPPING
             let detectedColorType = 'warmen Farbtyp'; // Fallback
             if (foundHairColor || foundJewelry) {
                 const hairLower = foundHairColor.toLowerCase();
@@ -1815,7 +1741,7 @@
                 }
             }
             
-            // Challenge Mapping
+            // 9. CHALLENGE MAPPING
             let detectedChallenge = 'vieles zu weit oder zu eng wirkt'; // Fallback
             if (foundShopping) {
                 const shoppingLower = foundShopping.toLowerCase();
@@ -1844,12 +1770,12 @@
             console.log('Color Type:', detectedColorType);
             console.log('Challenge:', detectedChallenge);
             
-            // 7. UPDATE HTML ELEMENTS
+            // 10. UPDATE HTML ELEMENTS
             updateElementSafely('detected-body-type', detectedBodyType);
             updateElementSafely('detected-color-type', detectedColorType);
             updateElementSafely('detected-challenge', detectedChallenge);
             
-            // 8. UPDATE DETAILED SECTIONS
+            // 11. UPDATE DETAILED SECTIONS
             updateBodyAnalysis(detectedBodyType);
             updateColorAnalysis(detectedColorType, foundHairColor, foundJewelry);
             updateChallengeAnalysis(detectedChallenge, foundShopping);
