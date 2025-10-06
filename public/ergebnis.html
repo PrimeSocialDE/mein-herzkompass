@@ -1545,7 +1545,7 @@
             return allData;
         }
 
-        // QUICK CHECKOUT mit Ladeanzeige und verbesserter Datenübertragung
+        // QUICK CHECKOUT - Vereinfacht und robust
         async function quickCheckout() {
             const button = document.querySelector('.main-cta');
             const originalText = button.textContent;
@@ -1553,84 +1553,75 @@
             // Button-Status ändern
             button.disabled = true;
             button.textContent = 'Wird vorbereitet...';
-            button.style.opacity = '0.7';
             
             try {
-                // Sammle localStorage Daten
-                const userData = getAllStorageData();
-                console.log('=== CHECKOUT GESTARTET ===');
-                console.log('Alle Daten:', userData);
+                // Sammle ALLE localStorage Daten ohne Filterung
+                const userData = {};
                 
-                // Prüfe ob temporäre Fotos vorhanden sind
-                const tempPhotos = localStorage.getItem('temp_photo_data');
-                console.log('Temp photos vorhanden:', !!tempPhotos);
-                
-                if (tempPhotos) {
-                    try {
-                        const photoData = JSON.parse(tempPhotos);
-                        console.log('Verarbeite Fotos:', photoData.length);
-                        
-                        // Simuliere Photo-URLs (hier würden echte Uploads passieren)
-                        const photoUrls = photoData.map((photo, index) => 
-                            `https://xomsitpvyksrzmixbdwf.supabase.co/storage/v1/object/public/user-photos/photo-${Date.now()}-${index}.jpg`
-                        );
-                        
-                        // Speichere URLs in userData
-                        userData.photo_urls = photoUrls;
-                        userData.temp_photo_data = photoData; // Echte Foto-Daten für Backend
-                        
-                        console.log('Photo URLs erstellt:', photoUrls);
-                        console.log('Foto-Daten für Backend bereit:', photoData.length);
-                        
-                    } catch (error) {
-                        console.error('Fehler bei Foto-Verarbeitung:', error);
+                // Kopiere ALLES aus localStorage
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    if (key && value) {
+                        userData[key] = value;
                     }
                 }
                 
-                // KRITISCH: Sende Daten an Backend VOR Stripe-Weiterleitung
-                console.log('Sende Daten an Backend...');
+                // Metadaten hinzufügen
+                userData['_timestamp'] = new Date().toISOString();
+                userData['_checkout_from'] = 'ergebnis_page';
+                
+                console.log('=== CHECKOUT DATEN ===');
+                console.log('Anzahl localStorage Keys:', Object.keys(userData).length);
+                console.log('temp_photo_data vorhanden:', !!userData.temp_photo_data);
+                console.log('photo_urls vorhanden:', !!userData.photo_urls);
+                console.log('quizAnswers vorhanden:', !!userData.quizAnswers);
+                
                 button.textContent = 'Daten werden übertragen...';
                 
-                try {
-                    const response = await fetch('/api/checkout', {
-                        method: 'POST',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify(userData)
-                    });
+                // API-Aufruf mit besserer Fehlerbehandlung
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                console.log('API Response Status:', response.status);
+                console.log('API Response Headers:', response.headers);
+                
+                if (response.ok) {
+                    const responseData = await response.text(); // Erst als Text lesen
+                    console.log('API Response Text:', responseData);
                     
-                    console.log('Backend Response Status:', response.status);
-                    
-                    if (response.ok) {
-                        const responseData = await response.json();
-                        console.log('Backend Response:', responseData);
-                        button.textContent = 'Erfolgreich! Weiterleitung...';
-                    } else {
-                        console.warn('Backend Warnung:', response.status);
-                        button.textContent = 'Warnung: Weiterleitung...';
+                    try {
+                        const jsonData = JSON.parse(responseData);
+                        console.log('API Response JSON:', jsonData);
+                    } catch (e) {
+                        console.log('Response ist kein JSON, aber OK Status');
                     }
                     
-                } catch (backendError) {
-                    console.error('Backend-Fehler:', backendError);
-                    button.textContent = 'Fehler: Trotzdem weiterleiten...';
+                    button.textContent = 'Erfolgreich! Weiterleitung...';
+                } else {
+                    const errorText = await response.text();
+                    console.error('API Fehler:', response.status, errorText);
+                    button.textContent = 'Fehler - trotzdem weiterleiten...';
                 }
                 
-                // Warte kurz und leite dann zu Stripe weiter
+                // Kurz warten und dann zu Stripe
                 setTimeout(() => {
-                    console.log('Weiterleitung zu Stripe...');
                     window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
-                }, 1000);
+                }, 1500);
                 
             } catch (error) {
-                console.error('Checkout-Fehler:', error);
+                console.error('Checkout Fehler:', error);
                 button.textContent = 'Fehler - Bitte erneut versuchen';
                 button.disabled = false;
-                button.style.opacity = '1';
                 
                 setTimeout(() => {
                     button.textContent = originalText;
+                    button.disabled = false;
                 }, 3000);
             }
         }
