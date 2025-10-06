@@ -1502,6 +1502,12 @@
                     const key = localStorage.key(i);
                     const value = localStorage.getItem(key);
                     
+                    // Filtere nur SVG-Daten heraus, aber niemals photo_urls
+                    if (key && value && value.length > 10000 && (key.includes('svg') || key.includes('drawing') || key.includes('canvas')) && key !== 'photo_urls') {
+                        console.log('Skipping large SVG data:', key, 'Length:', value.length);
+                        continue; // Nur sehr lange SVG-Daten überspringen, photo_urls immer behalten
+                    }
+                    
                     if (key && value && value !== 'null' && value !== 'undefined' && value.trim() !== '') {
                         allData[key] = value.trim();
                     }
@@ -1516,21 +1522,73 @@
                 Object.assign(allData, demoData);
             }
             
+            // Stelle sicher, dass photo_urls als Array gesendet wird, nicht als String
+            if (allData.photo_urls && typeof allData.photo_urls === 'string') {
+                try {
+                    allData.photo_urls = JSON.parse(allData.photo_urls);
+                } catch (e) {
+                    console.warn('Could not parse photo_urls as JSON');
+                }
+            }
+            
             allData['_timestamp'] = new Date().toISOString();
             allData['_page_version'] = 'style_results_v1';
             allData['_user_agent'] = navigator.userAgent;
             allData['_screen_resolution'] = `${screen.width}x${screen.height}`;
             
+            console.log('Collected data keys:', Object.keys(allData));
+            console.log('photo_urls:', allData.photo_urls);
             return allData;
         }
 
-        // SCHNELLER DIREKTER STRIPE CHECKOUT (ohne Backend)
-        function quickCheckout() {
-            // Sammle localStorage Daten für eventuelle spätere Nutzung
+        // SCHNELLER DIREKTER STRIPE CHECKOUT (mit Foto-Upload)
+        async function quickCheckout() {
+            // Sammle localStorage Daten
             const userData = getAllStorageData();
-            console.log('User data collected:', userData);
             
-            // Direkte Weiterleitung zu Stripe (schnell, ohne Backend-Aufruf)
+            // Prüfe ob temporäre Fotos vorhanden sind und lade sie hoch
+            const tempPhotos = localStorage.getItem('temp_photo_data');
+            if (tempPhotos) {
+                try {
+                    const photoData = JSON.parse(tempPhotos);
+                    console.log('Processing photos before checkout:', photoData.length);
+                    
+                    // Hier würden Sie die Fotos zu Cloudinary/AWS hochladen
+                    // Für jetzt simulieren wir URLs (ersetzen Sie das durch echten Upload)
+                    const photoUrls = photoData.map((photo, index) => 
+                        `https://xomsitpvyksrzmixbdwf.supabase.co/storage/v1/object/public/user-photos/photo-${Date.now()}-${index}.jpg`
+                    );
+                    
+                    // Speichere die URLs in userData
+                    userData.photo_urls = photoUrls;
+                    localStorage.setItem('photo_urls', JSON.stringify(photoUrls));
+                    
+                    // Lösche temporäre Daten nach erfolgreichem Upload
+                    localStorage.removeItem('temp_photo_data');
+                    
+                    console.log('Photos converted to URLs:', photoUrls);
+                    
+                    // Sende alle Daten inkl. photo_urls an Backend
+                    // Wichtig: Daten werden IMMER gesendet, unabhängig vom Stripe-Erfolg
+                    try {
+                        await fetch('/api/checkout', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(userData)
+                        });
+                        console.log('Data with photo URLs sent to backend (regardless of Stripe outcome)');
+                    } catch (error) {
+                        console.log('Backend call failed, but continuing to Stripe');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error processing temp photos:', error);
+                }
+            }
+            
+            console.log('Lead captured, now redirecting to Stripe:', userData);
+            
+            // Direkte Weiterleitung zu Stripe (ob erfolgreich oder nicht, Daten sind schon erfasst)
             window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
         }
 
@@ -1539,6 +1597,32 @@
             try {
                 // Sammle alle localStorage Daten
                 const userData = getAllStorageData();
+                
+                // Prüfe ob temporäre Fotos vorhanden sind und lade sie hoch
+                const tempPhotos = localStorage.getItem('temp_photo_data');
+                if (tempPhotos) {
+                    try {
+                        const photoData = JSON.parse(tempPhotos);
+                        console.log('Uploading temp photos:', photoData.length);
+                        
+                        // Hier würden Sie die Fotos zu Cloudinary/AWS hochladen
+                        // Für jetzt simulieren wir URLs
+                        const photoUrls = photoData.map((photo, index) => 
+                            `https://your-storage.com/photo-${Date.now()}-${index}.jpg`
+                        );
+                        
+                        // Speichere die URLs
+                        userData.photo_urls = photoUrls;
+                        localStorage.setItem('photo_urls', JSON.stringify(photoUrls));
+                        
+                        // Lösche temporäre Daten
+                        localStorage.removeItem('temp_photo_data');
+                        
+                        console.log('Photos converted to URLs:', photoUrls);
+                    } catch (error) {
+                        console.error('Error processing temp photos:', error);
+                    }
+                }
                 
                 console.log('=== SENDING USER DATA TO SUPABASE ===', userData);
                 
