@@ -403,8 +403,8 @@
             btn.disabled = uploadedFiles.length === 0;
         }
 
-        // Mobile-optimierte Bildkomprimierung (im Hintergrund)
-        function compressImageForMobile(file) {
+        // Stark komprimierte Bilder für temporäre Speicherung
+        function compressImageHeavily(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
@@ -413,10 +413,10 @@
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
                         
-                        // Berechne optimale Größe
+                        // Sehr kleine Größe für Speicherung
                         let width = img.width;
                         let height = img.height;
-                        const maxDimension = 1200;
+                        const maxDimension = 600; // Kleiner als vorher
                         
                         if (width > maxDimension || height > maxDimension) {
                             if (width > height) {
@@ -434,18 +434,19 @@
                         ctx.imageSmoothingQuality = 'high';
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // Komprimiere
-                        let quality = 0.8;
+                        // Niedrige Qualität für Speicherplatz
+                        let quality = 0.4;
                         let result = canvas.toDataURL('image/jpeg', quality);
                         let sizeKB = Math.round(result.length * 0.75 / 1024);
                         
-                        // Reduziere Qualität falls nötig
-                        while (sizeKB > 800 && quality > 0.3) {
-                            quality -= 0.1;
+                        // Weiter reduzieren falls immer noch zu groß
+                        while (sizeKB > 300 && quality > 0.1) {
+                            quality -= 0.05;
                             result = canvas.toDataURL('image/jpeg', quality);
                             sizeKB = Math.round(result.length * 0.75 / 1024);
                         }
                         
+                        console.log(`Komprimiert: ${sizeKB}KB bei Qualität ${quality}`);
                         resolve(result);
                     };
                     img.src = e.target.result;
@@ -467,7 +468,6 @@
             btn.textContent = 'Fotos werden verarbeitet...';
             processingMsg.style.display = 'block';
 
-            // 15 Sekunden Timeout
             const timeoutId = setTimeout(() => {
                 btn.disabled = false;
                 btn.textContent = 'Weiter zur letzten Frage';
@@ -477,56 +477,52 @@
 
             try {
                 if (typeof(Storage) !== "undefined") {
-                    // Erst alte Foto-Metadaten aus localStorage löschen
+                    // Lösche alte temporäre Daten
+                    localStorage.removeItem('temp_photo_data');
                     for (let i = 1; i <= 10; i++) {
+                        localStorage.removeItem(`uploadedPhoto${i}`);
                         localStorage.removeItem(`photoName${i}`);
                         localStorage.removeItem(`photoSize${i}`);
                         localStorage.removeItem(`photoType${i}`);
-                        localStorage.removeItem(`uploadedPhoto${i}`); // Alte base64-Daten auch löschen
                     }
 
-                    // Speichere nur Foto-Metadaten (keine base64-Daten)
-                    localStorage.setItem('photosUploaded', 'true');
-                    localStorage.setItem('photoCount', uploadedFiles.length.toString());
-                    
-                    let photosProcessed = 0;
-                    
-                    // Verarbeite Fotos - speichere nur Metadaten
+                    // Komprimiere Fotos stark und speichere temporär
+                    const compressedPhotos = [];
                     for (let index = 0; index < uploadedFiles.length; index++) {
                         const file = uploadedFiles[index];
-                        
                         try {
-                            // Speichere nur wichtige Metadaten, KEINE base64-Daten
-                            localStorage.setItem(`photoName${index + 1}`, file.name);
-                            localStorage.setItem(`photoSize${index + 1}`, file.size.toString());
-                            localStorage.setItem(`photoType${index + 1}`, file.type);
-                            
-                            console.log(`Foto ${index + 1} Metadaten gespeichert: ${file.name} (${Math.round(file.size/1024)}KB)`);
-                            
+                            const compressedImage = await compressImageHeavily(file);
+                            compressedPhotos.push({
+                                data: compressedImage,
+                                name: file.name,
+                                size: file.size,
+                                type: file.type
+                            });
                         } catch (error) {
-                            console.warn(`Fehler beim Verarbeiten von Foto ${index + 1}:`, error);
+                            console.warn(`Fehler beim Komprimieren von Foto ${index + 1}:`, error);
                         }
-                        
-                        photosProcessed++;
                     }
                     
-                    // Speichere Quiz-Antworten
+                    // Speichere komprimierte Fotos temporär (werden beim Checkout hochgeladen)
+                    localStorage.setItem('temp_photo_data', JSON.stringify(compressedPhotos));
+                    localStorage.setItem('photosUploaded', 'true');
+                    localStorage.setItem('photoCount', compressedPhotos.length.toString());
+                    
+                    // Quiz-Antworten aktualisieren
                     let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
                     allAnswers['photosUploaded'] = true;
-                    allAnswers['photoCount'] = uploadedFiles.length;
+                    allAnswers['photoCount'] = compressedPhotos.length;
                     localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
                     
-                    console.log('Foto-Metadaten erfolgreich gespeichert:', uploadedFiles.length, 'Dateien');
+                    console.log('Komprimierte Fotos temporär gespeichert:', compressedPhotos.length);
                     
                     clearTimeout(timeoutId);
                     
-                    // Kurze Verzögerung für bessere UX
                     setTimeout(() => {
                         window.location.href = '/step8.html';
                     }, 500);
                     
                 } else {
-                    // Fallback falls kein localStorage
                     clearTimeout(timeoutId);
                     console.warn('localStorage nicht verfügbar');
                     alert('Fotos können nicht gespeichert werden. Bitte verwende einen anderen Browser.');
