@@ -1492,35 +1492,23 @@
             shopping_difficulty: 'Passform Oberteile'
         };
 
-        // ENHANCED DATA COLLECTION
+        // ENHANCED DATA COLLECTION - Bessere Datensammlung
         function getAllStorageData() {
             console.log('=== ENHANCED DATA COLLECTION ===');
             const allData = {};
             
-            // Try to get localStorage data first, fallback to demo data
+            // Sammle ALLE localStorage Daten
             try {
                 for (let i = 0; i < localStorage.length; i++) {
                     const key = localStorage.key(i);
                     const value = localStorage.getItem(key);
-                    
-                    // Filtere nur SVG-Daten heraus, aber niemals photo_urls
-                    if (key && value && value.length > 10000 && (key.includes('svg') || key.includes('drawing') || key.includes('canvas')) && key !== 'photo_urls') {
-                        console.log('Skipping large SVG data:', key, 'Length:', value.length);
-                        continue; // Nur sehr lange SVG-Daten überspringen, photo_urls immer behalten
-                    }
                     
                     if (key && value && value !== 'null' && value !== 'undefined' && value.trim() !== '') {
                         allData[key] = value.trim();
                     }
                 }
             } catch (e) {
-                // Fallback to demo data if localStorage is not available
-                Object.assign(allData, demoData);
-            }
-            
-            // If no data in localStorage, use demo data
-            if (Object.keys(allData).length === 0) {
-                Object.assign(allData, demoData);
+                console.warn('localStorage Zugriff fehlgeschlagen:', e);
             }
             
             // Extrahiere photo_urls aus quizAnswers falls vorhanden
@@ -1528,16 +1516,14 @@
                 try {
                     const quizData = JSON.parse(allData.quizAnswers);
                     if (quizData.photo_urls && Array.isArray(quizData.photo_urls)) {
-                        // Setze photo_urls als Top-Level-Feld für Backend
                         allData.photo_urls = quizData.photo_urls;
-                        console.log('Extracted photo_urls from quizAnswers:', quizData.photo_urls);
                     }
                 } catch (e) {
                     console.warn('Could not parse quizAnswers for photo_urls extraction');
                 }
             }
             
-            // Stelle sicher, dass photo_urls als Array gesendet wird, nicht als String
+            // Stelle sicher, dass photo_urls als Array gesendet wird
             if (allData.photo_urls && typeof allData.photo_urls === 'string') {
                 try {
                     allData.photo_urls = JSON.parse(allData.photo_urls);
@@ -1546,65 +1532,107 @@
                 }
             }
             
+            // Metadaten hinzufügen
             allData['_timestamp'] = new Date().toISOString();
             allData['_page_version'] = 'style_results_v1';
             allData['_user_agent'] = navigator.userAgent;
             allData['_screen_resolution'] = `${screen.width}x${screen.height}`;
             
-            console.log('Collected data keys:', Object.keys(allData));
-            console.log('photo_urls for backend:', allData.photo_urls);
+            console.log('Gesammelte Daten:', Object.keys(allData));
+            console.log('Photo URLs für Backend:', allData.photo_urls);
+            console.log('Temp Photo Data vorhanden:', !!allData.temp_photo_data);
+            
             return allData;
         }
 
-        // QUICK CHECKOUT FUNCTION
+        // QUICK CHECKOUT mit Ladeanzeige und verbesserter Datenübertragung
         async function quickCheckout() {
-            // Sammle localStorage Daten
-            const userData = getAllStorageData();
+            const button = document.querySelector('.main-cta');
+            const originalText = button.textContent;
             
-            // Prüfe ob temporäre Fotos vorhanden sind und lade sie hoch
-            const tempPhotos = localStorage.getItem('temp_photo_data');
-            if (tempPhotos) {
-                try {
-                    const photoData = JSON.parse(tempPhotos);
-                    console.log('Processing photos before checkout:', photoData.length);
-                    
-                    // Hier würden Sie die Fotos zu Cloudinary/AWS hochladen
-                    // Für jetzt simulieren wir URLs (ersetzen Sie das durch echten Upload)
-                    const photoUrls = photoData.map((photo, index) => 
-                        `https://xomsitpvyksrzmixbdwf.supabase.co/storage/v1/object/public/user-photos/photo-${Date.now()}-${index}.jpg`
-                    );
-                    
-                    // Speichere die URLs in userData
-                    userData.photo_urls = photoUrls;
-                    localStorage.setItem('photo_urls', JSON.stringify(photoUrls));
-                    
-                    // Lösche temporäre Daten nach erfolgreichem Upload
-                    localStorage.removeItem('temp_photo_data');
-                    
-                    console.log('Photos converted to URLs:', photoUrls);
-                    
-                    // Sende alle Daten inkl. photo_urls an Backend
-                    // Wichtig: Daten werden IMMER gesendet, unabhängig vom Stripe-Erfolg
+            // Button-Status ändern
+            button.disabled = true;
+            button.textContent = 'Wird vorbereitet...';
+            button.style.opacity = '0.7';
+            
+            try {
+                // Sammle localStorage Daten
+                const userData = getAllStorageData();
+                console.log('=== CHECKOUT GESTARTET ===');
+                console.log('Alle Daten:', userData);
+                
+                // Prüfe ob temporäre Fotos vorhanden sind
+                const tempPhotos = localStorage.getItem('temp_photo_data');
+                console.log('Temp photos vorhanden:', !!tempPhotos);
+                
+                if (tempPhotos) {
                     try {
-                        await fetch('/api/checkout', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(userData)
-                        });
-                        console.log('Data with photo URLs sent to backend (regardless of Stripe outcome)');
+                        const photoData = JSON.parse(tempPhotos);
+                        console.log('Verarbeite Fotos:', photoData.length);
+                        
+                        // Simuliere Photo-URLs (hier würden echte Uploads passieren)
+                        const photoUrls = photoData.map((photo, index) => 
+                            `https://xomsitpvyksrzmixbdwf.supabase.co/storage/v1/object/public/user-photos/photo-${Date.now()}-${index}.jpg`
+                        );
+                        
+                        // Speichere URLs in userData
+                        userData.photo_urls = photoUrls;
+                        userData.temp_photo_data = photoData; // Echte Foto-Daten für Backend
+                        
+                        console.log('Photo URLs erstellt:', photoUrls);
+                        console.log('Foto-Daten für Backend bereit:', photoData.length);
+                        
                     } catch (error) {
-                        console.log('Backend call failed, but continuing to Stripe');
+                        console.error('Fehler bei Foto-Verarbeitung:', error);
+                    }
+                }
+                
+                // KRITISCH: Sende Daten an Backend VOR Stripe-Weiterleitung
+                console.log('Sende Daten an Backend...');
+                button.textContent = 'Daten werden übertragen...';
+                
+                try {
+                    const response = await fetch('/api/checkout', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(userData)
+                    });
+                    
+                    console.log('Backend Response Status:', response.status);
+                    
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        console.log('Backend Response:', responseData);
+                        button.textContent = 'Erfolgreich! Weiterleitung...';
+                    } else {
+                        console.warn('Backend Warnung:', response.status);
+                        button.textContent = 'Warnung: Weiterleitung...';
                     }
                     
-                } catch (error) {
-                    console.error('Error processing temp photos:', error);
+                } catch (backendError) {
+                    console.error('Backend-Fehler:', backendError);
+                    button.textContent = 'Fehler: Trotzdem weiterleiten...';
                 }
+                
+                // Warte kurz und leite dann zu Stripe weiter
+                setTimeout(() => {
+                    console.log('Weiterleitung zu Stripe...');
+                    window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Checkout-Fehler:', error);
+                button.textContent = 'Fehler - Bitte erneut versuchen';
+                button.disabled = false;
+                button.style.opacity = '1';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 3000);
             }
-            
-            console.log('Lead captured, now redirecting to Stripe:', userData);
-            
-            // Direkte Weiterleitung zu Stripe (ob erfolgreich oder nicht, Daten sind schon erfasst)
-            window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
         }
 
         // ENHANCED CHECKOUT FUNCTION (mit Backend für Datensammlung)
