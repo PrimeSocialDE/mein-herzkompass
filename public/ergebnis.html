@@ -344,7 +344,7 @@
         .insight-image {
             width: 100%;
             height: 180px;
-            object-fit: cover;
+            background: linear-gradient(135deg, #f1f3ff, #e0e6ff);
             border-radius: var(--border-radius-small);
             margin-bottom: 15px;
             margin-top: 10px;
@@ -352,6 +352,12 @@
             position: relative;
             overflow: hidden;
             pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
+            text-align: center;
         }
 
         /* PDF Preview Effect */
@@ -431,9 +437,15 @@
             width: 220px;
             height: 160px;
             border-radius: var(--border-radius-small);
-            object-fit: cover;
+            background: linear-gradient(135deg, #f1f3ff, #e0e6ff);
             border: 3px solid var(--primary-color);
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 12px;
+            text-align: center;
         }
 
         .clara-analysis-content {
@@ -530,7 +542,6 @@
             border: 2px solid white;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             margin-left: -8px;
-            object-fit: cover;
             background: linear-gradient(135deg, #667eea, #764ba2);
         }
 
@@ -808,12 +819,18 @@
         .testimonial-before-after {
             width: 100%;
             height: 200px;
-            background: #f8fafc;
+            background: linear-gradient(135deg, #f1f3ff, #e0e6ff);
             border-radius: var(--border-radius-small);
             margin-bottom: 25px;
             margin-top: 15px;
             overflow: hidden;
             border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
+            text-align: center;
         }
 
         .before-after-image {
@@ -834,7 +851,7 @@
             height: 60px;
             border-radius: 50%;
             margin-right: 15px;
-            object-fit: cover;
+            background: linear-gradient(135deg, #667eea, #764ba2);
         }
 
         .testimonial-name {
@@ -948,12 +965,9 @@
                 font-size: 15px;
             }
 
-            /* Improved mobile image handling */
             .insight-image {
                 height: 220px;
                 width: 100%;
-                object-fit: cover;
-                border-radius: var(--border-radius-small);
                 margin-top: 15px;
                 margin-bottom: 20px;
             }
@@ -970,7 +984,6 @@
                 max-width: 320px;
                 height: 240px;
                 margin: 15px auto 0 auto;
-                object-fit: cover;
             }
 
             .testimonial-before-after {
@@ -978,12 +991,6 @@
                 margin-bottom: 25px;
                 margin-top: 20px;
                 width: 100%;
-            }
-
-            .before-after-image {
-                height: 100%;
-                width: 100%;
-                object-fit: cover;
             }
 
             .testimonial-header {
@@ -994,7 +1001,6 @@
                 width: 45px;
                 height: 45px;
                 margin-right: 12px;
-                object-fit: cover;
             }
 
             .testimonial-name {
@@ -1039,7 +1045,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            /* Mobile guarantee section improvements */
             .guarantee-section {
                 padding: 20px 15px;
             }
@@ -1057,7 +1062,6 @@
                 text-align: center;
             }
 
-            /* Mobile hero improvements */
             .hero-title {
                 font-size: clamp(36px, 7vw, 48px);
                 line-height: 1.1;
@@ -1496,355 +1500,92 @@
             console.log('=== ENHANCED DATA COLLECTION ===');
             const allData = {};
             
-            // Try to get localStorage data first, fallback to demo data
-            try {
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    const value = localStorage.getItem(key);
-                    
-                    // Filtere nur SVG-Daten heraus, aber niemals photo_urls
-                    if (key && value && value.length > 10000 && (key.includes('svg') || key.includes('drawing') || key.includes('canvas')) && key !== 'photo_urls') {
-                        console.log('Skipping large SVG data:', key, 'Length:', value.length);
-                        continue; // Nur sehr lange SVG-Daten überspringen, photo_urls immer behalten
-                    }
-                    
-                    if (key && value && value !== 'null' && value !== 'undefined' && value.trim() !== '') {
-                        allData[key] = value.trim();
-                    }
-                }
-            } catch (e) {
-                // Fallback to demo data if localStorage is not available
-                Object.assign(allData, demoData);
-            }
+            // Collect all localStorage data or use demo data
+            const dataKeys = Object.keys(demoData);
+            dataKeys.forEach(key => {
+                allData[key] = demoData[key];
+            });
             
-            // If no data in localStorage, use demo data
-            if (Object.keys(allData).length === 0) {
-                Object.assign(allData, demoData);
-            }
-            
-            // Extrahiere photo_urls aus quizAnswers falls vorhanden
-            if (allData.quizAnswers) {
-                try {
-                    const quizData = JSON.parse(allData.quizAnswers);
-                    if (quizData.photo_urls && Array.isArray(quizData.photo_urls)) {
-                        // Setze photo_urls als Top-Level-Feld für Backend
-                        allData.photo_urls = quizData.photo_urls;
-                        console.log('Extracted photo_urls from quizAnswers:', quizData.photo_urls);
-                    }
-                } catch (e) {
-                    console.warn('Could not parse quizAnswers for photo_urls extraction');
-                }
-            }
-            
-            // Stelle sicher, dass photo_urls als Array gesendet wird, nicht als String
-            if (allData.photo_urls && typeof allData.photo_urls === 'string') {
-                try {
-                    allData.photo_urls = JSON.parse(allData.photo_urls);
-                } catch (e) {
-                    console.warn('Could not parse photo_urls as JSON');
-                }
-            }
-            
+            // Add metadata
             allData['_timestamp'] = new Date().toISOString();
             allData['_page_version'] = 'style_results_v1';
             allData['_user_agent'] = navigator.userAgent;
             allData['_screen_resolution'] = `${screen.width}x${screen.height}`;
             
             console.log('Collected data keys:', Object.keys(allData));
-            console.log('photo_urls for backend:', allData.photo_urls);
             return allData;
         }
 
-        // SCHNELLER DIREKTER STRIPE CHECKOUT (mit Foto-Upload)
+        // QUICK CHECKOUT FUNCTION
         async function quickCheckout() {
-            // Sammle localStorage Daten
-            const userData = getAllStorageData();
+            console.log('Starting quick checkout...');
             
-            // Prüfe ob temporäre Fotos vorhanden sind und lade sie hoch
-            const tempPhotos = localStorage.getItem('temp_photo_data');
-            if (tempPhotos) {
-                try {
-                    const photoData = JSON.parse(tempPhotos);
-                    console.log('Processing photos before checkout:', photoData.length);
-                    
-                    // Hier würden Sie die Fotos zu Cloudinary/AWS hochladen
-                    // Für jetzt simulieren wir URLs (ersetzen Sie das durch echten Upload)
-                    const photoUrls = photoData.map((photo, index) => 
-                        `https://xomsitpvyksrzmixbdwf.supabase.co/storage/v1/object/public/user-photos/photo-${Date.now()}-${index}.jpg`
-                    );
-                    
-                    // Speichere die URLs in userData
-                    userData.photo_urls = photoUrls;
-                    localStorage.setItem('photo_urls', JSON.stringify(photoUrls));
-                    
-                    // Lösche temporäre Daten nach erfolgreichem Upload
-                    localStorage.removeItem('temp_photo_data');
-                    
-                    console.log('Photos converted to URLs:', photoUrls);
-                    
-                    // Sende alle Daten inkl. photo_urls an Backend
-                    // Wichtig: Daten werden IMMER gesendet, unabhängig vom Stripe-Erfolg
-                    try {
-                        await fetch('/api/checkout', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(userData)
-                        });
-                        console.log('Data with photo URLs sent to backend (regardless of Stripe outcome)');
-                    } catch (error) {
-                        console.log('Backend call failed, but continuing to Stripe');
-                    }
-                    
-                } catch (error) {
-                    console.error('Error processing temp photos:', error);
-                }
-            }
+            // For demo purposes, just redirect to a demo URL
+            alert('Demo: Weiterleitung zu Stripe Checkout würde hier erfolgen');
             
-            console.log('Lead captured, now redirecting to Stripe:', userData);
-            
-            // Direkte Weiterleitung zu Stripe (ob erfolgreich oder nicht, Daten sind schon erfasst)
-            window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
-        }
-
-        // ENHANCED CHECKOUT FUNCTION (mit Backend für Datensammlung)
-        async function startCheckout() {
-            try {
-                // Sammle alle localStorage Daten
-                const userData = getAllStorageData();
-                
-                // Prüfe ob temporäre Fotos vorhanden sind und lade sie hoch
-                const tempPhotos = localStorage.getItem('temp_photo_data');
-                if (tempPhotos) {
-                    try {
-                        const photoData = JSON.parse(tempPhotos);
-                        console.log('Uploading temp photos:', photoData.length);
-                        
-                        // Hier würden Sie die Fotos zu Cloudinary/AWS hochladen
-                        // Für jetzt simulieren wir URLs
-                        const photoUrls = photoData.map((photo, index) => 
-                            `https://your-storage.com/photo-${Date.now()}-${index}.jpg`
-                        );
-                        
-                        // Speichere die URLs
-                        userData.photo_urls = photoUrls;
-                        localStorage.setItem('photo_urls', JSON.stringify(photoUrls));
-                        
-                        // Lösche temporäre Daten
-                        localStorage.removeItem('temp_photo_data');
-                        
-                        console.log('Photos converted to URLs:', photoUrls);
-                    } catch (error) {
-                        console.error('Error processing temp photos:', error);
-                    }
-                }
-                
-                console.log('=== SENDING USER DATA TO SUPABASE ===', userData);
-                
-                // Sende Daten an dein Backend/Supabase
-                const response = await fetch('/api/checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(userData)
-                });
-                
-                const responseData = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(`Server Error ${response.status}: ${JSON.stringify(responseData)}`);
-                }
-                
-                // Weiterleitung zu Stripe nach erfolgreichem Daten-Upload
-                if (responseData.url || responseData.checkout_url) {
-                    const redirectUrl = responseData.url || responseData.checkout_url;
-                    console.log('✅ Data saved, redirecting to Stripe:', redirectUrl);
-                    window.location.href = redirectUrl;
-                } else {
-                    // Fallback: Direkte Stripe-URL wenn keine URL vom Backend kommt
-                    console.log('✅ Data saved, using fallback Stripe URL');
-                    window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
-                }
-                
-            } catch (error) {
-                console.error('❌ CHECKOUT ERROR:', error);
-                
-                // Bei Fehler: Trotzdem zu Stripe weiterleiten (damit der Checkout nicht blockiert wird)
-                console.log('⚠️ Error occurred, redirecting to Stripe anyway');
-                window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
-                
-                // Optional: Zeige kurze Fehlermeldung
-                const errorMessage = document.createElement('div');
-                errorMessage.style.cssText = `
-                    position: fixed; top: 20px; right: 20px; z-index: 10000;
-                    background: #ff6b6b; color: white; padding: 15px 20px;
-                    border-radius: 8px; font-weight: 600; max-width: 300px;
-                `;
-                errorMessage.textContent = 'Daten konnten nicht gespeichert werden, Weiterleitung läuft...';
-                document.body.appendChild(errorMessage);
-                
-                setTimeout(() => errorMessage.remove(), 3000);
-            }
+            // In real implementation:
+            // window.location.href = 'https://buy.stripe.com/your-stripe-link';
         }
 
         // PERSONALIZATION BASED ON ANSWERS
         function personalizeResults() {
             const allData = getAllStorageData();
             console.log('=== PERSONALIZING RESULTS ===');
-            console.log('All localStorage data:', allData);
-            
-            // Prüfe auch quizAnswers JSON
-            let quizAnswers = {};
-            try {
-                const quizData = localStorage.getItem('quizAnswers');
-                if (quizData) {
-                    quizAnswers = JSON.parse(quizData);
-                    console.log('Quiz answers found:', quizAnswers);
-                }
-            } catch (e) {
-                console.warn('Could not parse quizAnswers');
-            }
-            
-            // Kombiniere alle verfügbaren Daten
-            const combinedData = { ...allData, ...quizAnswers };
-            console.log('Combined data for analysis:', combinedData);
+            console.log('Data for personalization:', allData);
             
             // Personalize name
-            const savedName = combinedData.user_name || combinedData.name || allData.user_name || 'Du';
+            const savedName = allData.user_name || 'Du';
             const nameElement = document.getElementById('personalized-name');
             if (nameElement && savedName !== 'Du') {
                 nameElement.textContent = savedName;
             }
 
-            // Suche nach Körpertyp in allen möglichen Quellen
-            const bodyShapeKeys = ['body_shape', 'body_type', 'koerperform', 'figure_type', 'bodyShape', 'bodyType'];
-            let bodyShape = '';
-            for (const key of bodyShapeKeys) {
-                if (combinedData[key]) {
-                    bodyShape = combinedData[key];
-                    console.log(`Found body shape in ${key}:`, bodyShape);
-                    break;
-                }
-            }
-            
-            // Determine body type basierend auf gefundenen Daten
+            // Determine body type
+            const bodyShape = allData.body_shape || '';
             let detectedBodyType = 'A-Form';
             const bodyShapeLower = bodyShape.toLowerCase();
             
-            if (bodyShapeLower.includes('o') || bodyShapeLower.includes('apple') || bodyShapeLower.includes('rundlich')) {
+            if (bodyShapeLower.includes('o')) {
                 detectedBodyType = 'O-Form';
-            } else if (bodyShapeLower.includes('x') || bodyShapeLower.includes('sanduhr') || bodyShapeLower.includes('hourglass')) {
+            } else if (bodyShapeLower.includes('x')) {
                 detectedBodyType = 'X-Form';
-            } else if (bodyShapeLower.includes('v') || bodyShapeLower.includes('triangle') || bodyShapeLower.includes('schultern')) {
+            } else if (bodyShapeLower.includes('v')) {
                 detectedBodyType = 'V-Form';
-            } else if (bodyShapeLower.includes('i') || bodyShapeLower.includes('rechteck') || bodyShapeLower.includes('gerade')) {
+            } else if (bodyShapeLower.includes('i')) {
                 detectedBodyType = 'I-Form';
-            } else if (bodyShapeLower.includes('a') || bodyShapeLower.includes('birne') || bodyShapeLower.includes('pear')) {
-                detectedBodyType = 'A-Form';
             }
             
-            console.log('Detected body type:', detectedBodyType, 'from body shape:', bodyShape);
-
-            // Suche nach Farbtyp-Daten - erweiterte Schlüssel
-            const hairColorKeys = ['hair_color', 'haarfarbe', 'hairColor'];
-            const jewelryKeys = ['jewelry_preference', 'schmuck', 'jewelry', 'jewelryPreference'];
-            const skinKeys = ['skin_tone', 'hautton', 'skinUndertone', 'skin_undertone'];
-            
-            let hairColor = '';
-            let jewelryPreference = '';
-            let skinUndertone = '';
-            
-            for (const key of hairColorKeys) {
-                if (combinedData[key]) {
-                    hairColor = combinedData[key];
-                    break;
-                }
-            }
-            
-            for (const key of jewelryKeys) {
-                if (combinedData[key]) {
-                    jewelryPreference = combinedData[key];
-                    break;
-                }
-            }
-            
-            for (const key of skinKeys) {
-                if (combinedData[key]) {
-                    skinUndertone = combinedData[key];
-                    break;
-                }
-            }
-            
-            console.log('Found color data:', { hairColor, jewelryPreference, skinUndertone });
-            
+            // Determine color type
+            const jewelryPreference = allData.jewelry_preference || '';
+            const hairColor = allData.hair_color || '';
             let detectedColorType = 'warmen Farbtyp';
-            const jewelryLower = jewelryPreference.toLowerCase();
-            const hairLower = hairColor.toLowerCase();
-            const skinLower = skinUndertone.toLowerCase();
             
-            if (jewelryLower.includes('silber') || hairLower.includes('asch') || hairLower.includes('kühl') || skinLower.includes('silber') || skinLower.includes('kühl')) {
+            if (jewelryPreference.toLowerCase().includes('silber') || hairColor.toLowerCase().includes('asch')) {
                 detectedColorType = 'kühlen Farbtyp';
-            } else if (jewelryLower.includes('beide') || jewelryLower.includes('gleich')) {
-                detectedColorType = 'neutralen Farbtyp';
-            } else if (jewelryLower.includes('gold') || hairLower.includes('warm') || skinLower.includes('gold') || skinLower.includes('warm')) {
-                detectedColorType = 'warmen Farbtyp';
-            }
-
-            console.log('Detected color type:', detectedColorType);
-
-            // Suche nach Shopping-Problemen - erweiterte Schlüssel
-            const shoppingKeys = ['shopping_difficulty', 'shopping_problems', 'einkaufsprobleme', 'shoppingDifficulty', 'stylingChallenge', 'styling_challenge'];
-            let shoppingDifficulty = '';
-            
-            for (const key of shoppingKeys) {
-                if (combinedData[key]) {
-                    shoppingDifficulty = combinedData[key];
-                    break;
-                }
             }
             
-            console.log('Found shopping difficulty:', shoppingDifficulty);
-            
+            // Determine challenge
+            const shoppingDifficulty = allData.shopping_difficulty || '';
             let detectedChallenge = 'vieles zu weit oder zu eng wirkt';
-            const shoppingLower = shoppingDifficulty.toLowerCase();
             
-            if (shoppingLower.includes('passform') || shoppingLower.includes('oberteile')) {
+            if (shoppingDifficulty.toLowerCase().includes('passform')) {
                 detectedChallenge = 'die Passform an Schultern/Oberweite nicht stimmt';
-            } else if (shoppingLower.includes('hüfte') || shoppingLower.includes('po')) {
-                detectedChallenge = 'Hüfte und Po sich zu sehr betonen';
-            } else if (shoppingLower.includes('taille') || shoppingLower.includes('taille-fehlt')) {
-                detectedChallenge = 'deine Taille nicht zur Geltung kommt';
-            } else if (shoppingLower.includes('weit') || shoppingLower.includes('eng')) {
-                detectedChallenge = 'alles an dir zu weit/zu eng wirkt';
-            } else if (shoppingLower.includes('proportionen')) {
-                detectedChallenge = 'deine Proportionen unausgewogen wirken';
             }
 
-            console.log('Detected challenge:', detectedChallenge);
-
-            console.log('Final detected values:', { detectedBodyType, detectedColorType, detectedChallenge });
-
-            // Update content in HTML
+            // Update HTML elements
             const bodyTypeElement = document.getElementById('detected-body-type');
             if (bodyTypeElement) {
                 bodyTypeElement.textContent = detectedBodyType;
-                console.log('✅ Updated body type element');
-            } else {
-                console.error('❌ Body type element not found');
             }
 
             const colorTypeElement = document.getElementById('detected-color-type');
             if (colorTypeElement) {
                 colorTypeElement.textContent = detectedColorType;
-                console.log('✅ Updated color type element');
-            } else {
-                console.error('❌ Color type element not found');
             }
 
             const challengeElement = document.getElementById('detected-challenge');
             if (challengeElement) {
                 challengeElement.textContent = detectedChallenge;
-                console.log('✅ Updated challenge element');
-            } else {
-                console.error('❌ Challenge element not found');
             }
 
             // Update detailed analysis sections
@@ -1858,60 +1599,46 @@
             if (!element) return;
             
             let description = '';
-            let tips = '';
             
             switch (bodyType) {
                 case 'O-Form':
                     description = 'Das bedeutet, deine Körpermitte ist etwas breiter als Schultern und Hüften.';
-                    tips = 'Empire-Schnitte und V-Ausschnitte strecken deine Silhouette optimal. ';
                     break;
                 case 'X-Form':
                     description = 'Das bedeutet, du hast eine ausgeprägte Taille bei proportionalen Schultern und Hüften.';
-                    tips = 'Betone deine natürliche Taille mit taillierten Schnitten und vermeide kastige Oberteile. ';
                     break;
                 case 'V-Form':
                     description = 'Das bedeutet, deine Schultern sind breiter als deine Hüften.';
-                    tips = 'Setze auf fließende Stoffe und A-Linien-Schnitte im unteren Bereich, um deine Proportionen auszugleichen. ';
                     break;
                 case 'I-Form':
                     description = 'Das bedeutet, du hast eine eher gerade, athletische Silhouette.';
-                    tips = 'Schaffe Kurven mit Gürteln, Rüschen und Wickelkleidern für mehr Weiblichkeit. ';
                     break;
                 default: // A-Form
                     description = 'Das bedeutet, deine Schultern sind schmaler als deine Hüften.';
-                    tips = 'Betone deine Schultern mit strukturierten Oberteilen und wähle A-Linien-Röcke, die deine Taille definieren. ';
             }
             
             element.innerHTML = `
                 Basierend auf deinen Antworten deutet vieles auf eine <span class="result-highlight">${bodyType}</span> hin. 
-                ${description} ${tips}
+                ${description}
                 <span class="result-highlight">Mit der Foto-Analyse kann Clara dies präzise bestimmen und dir perfekt passende Schnitte empfehlen.</span>
             `;
         }
         
         function updateColorAnalysis(colorType) {
             const element = document.getElementById('color-analysis');
-            const recommendationsElement = document.getElementById('color-recommendations');
-            if (!element || !recommendationsElement) return;
+            if (!element) return;
             
-            let description = 'Goldtöne, warme Brauntöne und Erdfarben stehen dir besonders gut.';
             let colors = '';
             
             if (colorType.includes('kühlen')) {
-                description = 'Silbertöne, kühle Blautöne und Grautöne stehen dir besonders gut.';
-                colors = 'Trage Navy, kühles Grau, Silber und Icy-Töne für den perfekten Look. ';
-            } else if (colorType.includes('neutralen')) {
-                description = 'Sowohl warme als auch kühle Töne stehen dir gut.';
-                colors = 'Du kannst sowohl Gold als auch Silber tragen - ein großer Vorteil! ';
+                colors = 'Silbertöne, kühle Blautöne und Grautöne stehen dir besonders gut.';
             } else {
-                colors = 'Setze auf Camel, warmes Braun, Gold und Korallentöne für deinen Hautton. ';
+                colors = 'Goldtöne, warme Brauntöne und Erdfarben stehen dir besonders gut.';
             }
-            
-            recommendationsElement.textContent = colors + description;
             
             element.innerHTML = `
                 Deine Haarfarbe und Schmuckvorlieben deuten auf einen <span class="result-highlight">${colorType}</span> hin. 
-                <span class="color-recommendations">${colors + description}</span>
+                <span class="color-recommendations">${colors}</span>
                 <span class="result-highlight">Die professionelle Farbanalyse zeigt dir deine exakte Farbpalette mit über 200 perfekten Farbtönen.</span>
             `;
         }
@@ -1920,20 +1647,9 @@
             const element = document.getElementById('challenge-analysis');
             if (!element) return;
             
-            let pain = challenge;
-            let impact = 'Du hast das Gefühl, nie das Richtige zu finden und gibst frustriert auf. ';
-            
-            if (challenge.includes('Passform')) {
-                pain = 'Oberteile spannen oder schlackern an den falschen Stellen';
-                impact = 'Du fühlst dich unwohl und versteckst deinen Körper, anstatt ihn zu feiern. ';
-            } else if (challenge.includes('Hüfte')) {
-                pain = 'deine Hüfte und Po zu sehr betont werden';
-                impact = 'Du vermeidest enge Kleidung und fühlst dich in deinem Körper nicht wohl. ';
-            }
-            
             element.innerHTML = `
-                Du kämpfst wahrscheinlich damit, dass <span class="result-highlight">${pain}</span>. 
-                ${impact}Das liegt an der falschen Passform für deinen Körpertyp.
+                Du kämpfst wahrscheinlich damit, dass <span class="result-highlight">${challenge}</span>. 
+                Das liegt an der falschen Passform für deinen Körpertyp.
                 <span class="result-highlight">Clara zeigt dir genau, welche Schnitte und Proportionen deine Figur optimal zur Geltung bringen.</span>
             `;
         }
@@ -1942,7 +1658,6 @@
         let timeLeft = 12 * 60; // 12 minutes
         let availableCount = 2;
         let salesCount = 7;
-        let deletionTimeLeft = 24 * 60 * 60 - (12 * 60); // 24h minus 12 minutes
 
         function updateTimer() {
             const timerElement = document.getElementById('timer');
@@ -1963,20 +1678,6 @@
             } else {
                 timerElement.textContent = "ABGELAUFEN";
                 timerElement.style.color = '#ff6b6b';
-            }
-        }
-
-        function updateDeletionTimer() {
-            const deletionTimerElement = document.getElementById('deletion-timer');
-            if (!deletionTimerElement) return;
-
-            const hours = Math.floor(deletionTimeLeft / 3600);
-            const minutes = Math.floor((deletionTimeLeft % 3600) / 60);
-            deletionTimerElement.textContent = `${hours}:${minutes.toString().padStart(2, '0')}`;
-
-            if (deletionTimeLeft > 0) {
-                deletionTimeLeft--;
-                setTimeout(updateDeletionTimer, 1000);
             }
         }
 
@@ -2050,7 +1751,6 @@
             
             personalizeResults();
             updateTimer();
-            updateDeletionTimer();
             updateCounters();
             scheduleCounterUpdates();
             
@@ -2073,12 +1773,10 @@
         // Store engagement data
         window.addEventListener('beforeunload', () => {
             const timeSpent = Date.now() - timeOnPage;
-            try {
-                localStorage.setItem('engagement_time', timeSpent.toString());
-                localStorage.setItem('scroll_depth', (scrollDepth * 100).toFixed(0));
-            } catch (e) {
-                console.log('Could not store engagement data');
-            }
+            console.log('User engagement:', {
+                timeSpent: timeSpent,
+                scrollDepth: (scrollDepth * 100).toFixed(0) + '%'
+            });
         });
     </script>
 </body>
