@@ -403,6 +403,16 @@
             btn.disabled = uploadedFiles.length === 0;
         }
 
+        // Helper-Funktion für Base64-Konvertierung
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
         async function submitPhotos() {
             if (uploadedFiles.length === 0) {
                 alert('Bitte lade mindestens ein Foto hoch.');
@@ -434,12 +444,30 @@
                     }
                     localStorage.removeItem('temp_photo_data');
 
-                    // Erstelle direkt photo_urls (simulierte URLs)
+                    // WICHTIG: Speichere echte Foto-Daten für das Backend
+                    const photoDataArray = [];
+                    
+                    // Konvertiere alle Fotos zu Base64
+                    for (let i = 0; i < uploadedFiles.length; i++) {
+                        const file = uploadedFiles[i];
+                        const base64Data = await fileToBase64(file);
+                        photoDataArray.push({
+                            data: base64Data,
+                            name: file.name,
+                            type: file.type,
+                            size: file.size
+                        });
+                    }
+                    
+                    // Speichere echte Foto-Daten für Backend-Upload
+                    localStorage.setItem('temp_photo_data', JSON.stringify(photoDataArray));
+                    
+                    // Erstelle simulierte URLs für die Vorschau
                     const photoUrls = uploadedFiles.map((file, index) => 
                         `https://xomsitpvyksrzmixbdwf.supabase.co/storage/v1/object/public/user-photos/photo-${Date.now()}-${index}-${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`
                     );
                     
-                    // Speichere direkt als photo_urls
+                    // Speichere URLs für die Vorschau
                     localStorage.setItem('photo_urls', JSON.stringify(photoUrls));
                     localStorage.setItem('photosUploaded', 'true');
                     localStorage.setItem('photoCount', uploadedFiles.length.toString());
@@ -448,10 +476,11 @@
                     let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
                     allAnswers['photosUploaded'] = true;
                     allAnswers['photoCount'] = uploadedFiles.length;
-                    allAnswers['photo_urls'] = photoUrls;
+                    allAnswers['photo_urls'] = photoUrls; // Für Vorschau
                     localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
                     
-                    console.log('Photo URLs direkt erstellt:', photoUrls);
+                    console.log('Photos saved for backend upload:', photoDataArray.length);
+                    console.log('Preview URLs created:', photoUrls);
                     
                     clearTimeout(timeoutId);
                     
