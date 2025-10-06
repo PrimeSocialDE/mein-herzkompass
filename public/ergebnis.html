@@ -1492,7 +1492,7 @@
             shopping_difficulty: 'Passform Oberteile'
         };
 
-        // ENHANCED DATA COLLECTION - Bessere Datensammlung
+        // ENHANCED DATA COLLECTION
         function getAllStorageData() {
             console.log('=== ENHANCED DATA COLLECTION ===');
             const allData = {};
@@ -1545,7 +1545,7 @@
             return allData;
         }
 
-        // QUICK CHECKOUT - Vereinfacht und robust
+        // KORRIGIERTE QUICK CHECKOUT FUNKTION
         async function quickCheckout() {
             const button = document.querySelector('.main-cta');
             const originalText = button.textContent;
@@ -1589,547 +1589,398 @@
                 });
                 
                 console.log('API Response Status:', response.status);
-                console.log('API Response Headers:', response.headers);
                 
                 if (response.ok) {
-                    const responseData = await response.text(); // Erst als Text lesen
-                    console.log('API Response Text:', responseData);
+                    button.textContent = 'Daten gespeichert! Weiterleitung...';
                     
+                    // Versuche JSON zu parsen
                     try {
-                        const jsonData = JSON.parse(responseData);
+                        const jsonData = await response.json();
                         console.log('API Response JSON:', jsonData);
-                    } catch (e) {
-                        console.log('Response ist kein JSON, aber OK Status');
+                        
+                        // Verwende die URL vom Backend falls vorhanden
+                        if (jsonData.url) {
+                            console.log('✅ Redirecting to backend URL:', jsonData.url);
+                            window.location.href = jsonData.url;
+                            return;
+                        }
+                    } catch (jsonError) {
+                        console.log('Response kein JSON, verwende Fallback URL');
                     }
                     
-                    button.textContent = 'Erfolgreich! Weiterleitung...';
+                    // Fallback: Direkte Stripe-URL
+                    setTimeout(() => {
+                        window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
+                    }, 1000);
+                    
                 } else {
                     const errorText = await response.text();
                     console.error('API Fehler:', response.status, errorText);
-                    button.textContent = 'Fehler - trotzdem weiterleiten...';
+                    throw new Error(`API Error: ${response.status}`);
                 }
-                
-                // Kurz warten und dann zu Stripe
-                setTimeout(() => {
-                    window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
-                }, 1500);
                 
             } catch (error) {
                 console.error('Checkout Fehler:', error);
                 button.textContent = 'Fehler - Bitte erneut versuchen';
                 button.disabled = false;
                 
+                // Zeige Fehlermeldung
+                alert('Es gab einen Fehler beim Speichern deiner Daten. Bitte versuche es erneut.');
+                
                 setTimeout(() => {
                     button.textContent = originalText;
-                    button.disabled = false;
                 }, 3000);
             }
         }
 
-        // ENHANCED CHECKOUT FUNCTION (mit Backend für Datensammlung)
-        async function startCheckout() {
-            try {
-                // Sammle alle localStorage Daten
-                const userData = getAllStorageData();
-                
-                // Prüfe ob temporäre Fotos vorhanden sind und lade sie hoch
-                const tempPhotos = localStorage.getItem('temp_photo_data');
-                if (tempPhotos) {
+        // VERBESSERTE PERSONALIZATION FUNKTION
+        function personalizeResults() {
+            console.log('=== ENHANCED PERSONALIZING RESULTS ===');
+            
+            // 1. Sammle ALLE localStorage Daten
+            const allData = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                if (key && value && value !== 'null' && value !== 'undefined') {
+                    allData[key] = value.trim();
+                }
+            }
+            
+            console.log('All localStorage data:', allData);
+            console.log('Available keys:', Object.keys(allData));
+            
+            // 2. Parse quizAnswers falls vorhanden
+            let quizAnswers = {};
+            if (allData.quizAnswers) {
+                try {
+                    quizAnswers = JSON.parse(allData.quizAnswers);
+                    console.log('Parsed quiz answers:', quizAnswers);
+                } catch (e) {
+                    console.warn('Could not parse quizAnswers:', e);
+                }
+            }
+            
+            // 3. Parse einzelne Antworten falls sie als JSON gespeichert sind
+            const parsedAnswers = {};
+            Object.keys(allData).forEach(key => {
+                const value = allData[key];
+                if (value.startsWith('{') || value.startsWith('[')) {
                     try {
-                        const photoData = JSON.parse(tempPhotos);
-                        console.log('Uploading temp photos:', photoData.length);
-                        
-                        // Hier würden Sie die Fotos zu Cloudinary/AWS hochladen
-                        // Für jetzt simulieren wir URLs
-                        const photoUrls = photoData.map((photo, index) => 
-                            `https://your-storage.com/photo-${Date.now()}-${index}.jpg`
-                        );
-                        
-                        // Speichere die URLs
-                        userData.photo_urls = photoUrls;
-                        localStorage.setItem('photo_urls', JSON.stringify(photoUrls));
-                        
-                        // Lösche temporäre Daten
-                        localStorage.removeItem('temp_photo_data');
-                        
-                        console.log('Photos converted to URLs:', photoUrls);
-                    } catch (error) {
-                        console.error('Error processing temp photos:', error);
+                        parsedAnswers[key] = JSON.parse(value);
+                    } catch (e) {
+                        // Ignore, keep as string
                     }
                 }
-                
-                console.log('=== SENDING USER DATA TO SUPABASE ===', userData);
-                
-                // Sende Daten an dein Backend/Supabase
-                // KORRIGIERTE QUICK CHECKOUT FUNKTION
-async function quickCheckout() {
-    const button = document.querySelector('.main-cta');
-    const originalText = button.textContent;
-    
-    // Button-Status ändern
-    button.disabled = true;
-    button.textContent = 'Wird vorbereitet...';
-    
-    try {
-        // Sammle ALLE localStorage Daten ohne Filterung
-        const userData = {};
-        
-        // Kopiere ALLES aus localStorage
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            const value = localStorage.getItem(key);
-            if (key && value) {
-                userData[key] = value;
-            }
-        }
-        
-        // Metadaten hinzufügen
-        userData['_timestamp'] = new Date().toISOString();
-        userData['_checkout_from'] = 'ergebnis_page';
-        
-        console.log('=== CHECKOUT DATEN ===');
-        console.log('Anzahl localStorage Keys:', Object.keys(userData).length);
-        console.log('temp_photo_data vorhanden:', !!userData.temp_photo_data);
-        console.log('photo_urls vorhanden:', !!userData.photo_urls);
-        console.log('quizAnswers vorhanden:', !!userData.quizAnswers);
-        
-        button.textContent = 'Daten werden übertragen...';
-        
-        // API-Aufruf mit besserer Fehlerbehandlung
-        const response = await fetch('/api/checkout', {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(userData)
-        });
-        
-        console.log('API Response Status:', response.status);
-        
-        if (response.ok) {
-            button.textContent = 'Daten gespeichert! Weiterleitung...';
+            });
             
-            // Versuche JSON zu parsen
-            try {
-                const jsonData = await response.json();
-                console.log('API Response JSON:', jsonData);
-                
-                // Verwende die URL vom Backend falls vorhanden
-                if (jsonData.url) {
-                    console.log('✅ Redirecting to backend URL:', jsonData.url);
-                    window.location.href = jsonData.url;
-                    return;
-                }
-            } catch (jsonError) {
-                console.log('Response kein JSON, verwende Fallback URL');
-            }
+            // 4. Kombiniere alle Datenquellen (Reihenfolge wichtig!)
+            const combinedData = {
+                ...demoData,      // Fallback-Daten
+                ...allData,       // localStorage Strings
+                ...parsedAnswers, // Geparste JSON-Daten
+                ...quizAnswers    // Quiz-Antworten (höchste Priorität)
+            };
             
-            // Fallback: Direkte Stripe-URL
-            setTimeout(() => {
-                window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
-            }, 1000);
+            console.log('Combined data for analysis:', combinedData);
             
-        } else {
-            const errorText = await response.text();
-            console.error('API Fehler:', response.status, errorText);
-            throw new Error(`API Error: ${response.status}`);
-        }
-        
-    } catch (error) {
-        console.error('Checkout Fehler:', error);
-        button.textContent = 'Fehler - Bitte erneut versuchen';
-        button.disabled = false;
-        
-        // Zeige Fehlermeldung
-        alert('Es gab einen Fehler beim Speichern deiner Daten. Bitte versuche es erneut.');
-        
-        setTimeout(() => {
-            button.textContent = originalText;
-        }, 3000);
-    }
-}
-                
-                // Weiterleitung zu Stripe nach erfolgreichem Daten-Upload
-                if (responseData.url || responseData.checkout_url) {
-                    const redirectUrl = responseData.url || responseData.checkout_url;
-                    console.log('✅ Data saved, redirecting to Stripe:', redirectUrl);
-                    window.location.href = redirectUrl;
+            // 5. DEBUGGING: Zeige alle möglichen Schlüssel an
+            console.log('=== DEBUGGING DATA SEARCH ===');
+            
+            // Suche nach Körpertyp mit erweiterten Schlüsseln
+            const bodyShapeKeys = [
+                'body_shape', 'body_type', 'koerperform', 'figure_type', 'bodyShape', 'bodyType',
+                'question1', 'step1', 'answer1', 'körperform', 'figur', 'körpertyp',
+                'shoulder_hip_relation', 'waist_definition', 'body_silhouette'
+            ];
+            
+            console.log('Searching for body shape in these keys:', bodyShapeKeys);
+            
+            let foundBodyShape = '';
+            let bodyShapeSource = '';
+            
+            for (const key of bodyShapeKeys) {
+                if (combinedData[key]) {
+                    foundBodyShape = combinedData[key];
+                    bodyShapeSource = key;
+                    console.log(`✅ Found body shape: "${foundBodyShape}" in key: "${key}"`);
+                    break;
                 } else {
-                    // Fallback: Direkte Stripe-URL wenn keine URL vom Backend kommt
-                    console.log('✅ Data saved, using fallback Stripe URL');
-                    window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
+                    console.log(`❌ No data in key: "${key}"`);
                 }
+            }
+            
+            // Suche nach Haarfarbe
+            const hairColorKeys = [
+                'hair_color', 'haarfarbe', 'hairColor', 'hair_colour',
+                'question2', 'step2', 'answer2', 'haarfarbe_auswahl'
+            ];
+            
+            console.log('Searching for hair color in these keys:', hairColorKeys);
+            
+            let foundHairColor = '';
+            let hairColorSource = '';
+            
+            for (const key of hairColorKeys) {
+                if (combinedData[key]) {
+                    foundHairColor = combinedData[key];
+                    hairColorSource = key;
+                    console.log(`✅ Found hair color: "${foundHairColor}" in key: "${key}"`);
+                    break;
+                }
+            }
+            
+            // Suche nach Schmuckvorliebe
+            const jewelryKeys = [
+                'jewelry_preference', 'schmuck', 'jewelry', 'jewelryPreference',
+                'question3', 'step3', 'answer3', 'schmuckvorliebe', 'metall_praeferenz'
+            ];
+            
+            console.log('Searching for jewelry preference in these keys:', jewelryKeys);
+            
+            let foundJewelry = '';
+            let jewelrySource = '';
+            
+            for (const key of jewelryKeys) {
+                if (combinedData[key]) {
+                    foundJewelry = combinedData[key];
+                    jewelrySource = key;
+                    console.log(`✅ Found jewelry: "${foundJewelry}" in key: "${key}"`);
+                    break;
+                }
+            }
+            
+            // Suche nach Shopping-Problemen
+            const shoppingKeys = [
+                'shopping_difficulty', 'shopping_problems', 'einkaufsprobleme', 'shoppingDifficulty',
+                'styling_challenge', 'stylingChallenge', 'problem', 'herausforderung',
+                'question4', 'step4', 'answer4', 'shopping_frustration'
+            ];
+            
+            console.log('Searching for shopping difficulty in these keys:', shoppingKeys);
+            
+            let foundShopping = '';
+            let shoppingSource = '';
+            
+            for (const key of shoppingKeys) {
+                if (combinedData[key]) {
+                    foundShopping = combinedData[key];
+                    shoppingSource = key;
+                    console.log(`✅ Found shopping difficulty: "${foundShopping}" in key: "${key}"`);
+                    break;
+                }
+            }
+            
+            console.log('=== FINAL FOUND VALUES ===');
+            console.log('Body Shape:', foundBodyShape, 'from:', bodyShapeSource);
+            console.log('Hair Color:', foundHairColor, 'from:', hairColorSource);
+            console.log('Jewelry:', foundJewelry, 'from:', jewelrySource);
+            console.log('Shopping:', foundShopping, 'from:', shoppingSource);
+            
+            // 6. ERWEITERTE MAPPING-LOGIK
+            
+            // Body Type Mapping
+            let detectedBodyType = 'A-Form'; // Fallback
+            if (foundBodyShape) {
+                const bodyShapeLower = foundBodyShape.toLowerCase();
+                console.log('Analyzing body shape:', bodyShapeLower);
                 
-            } catch (error) {
-                console.error('❌ CHECKOUT ERROR:', error);
+                if (bodyShapeLower.includes('o') || bodyShapeLower.includes('apple') || bodyShapeLower.includes('rundlich') || bodyShapeLower.includes('oval')) {
+                    detectedBodyType = 'O-Form';
+                } else if (bodyShapeLower.includes('x') || bodyShapeLower.includes('sanduhr') || bodyShapeLower.includes('hourglass') || bodyShapeLower.includes('8')) {
+                    detectedBodyType = 'X-Form';
+                } else if (bodyShapeLower.includes('v') || bodyShapeLower.includes('triangle') || bodyShapeLower.includes('schultern') || bodyShapeLower.includes('breite schultern')) {
+                    detectedBodyType = 'V-Form';
+                } else if (bodyShapeLower.includes('i') || bodyShapeLower.includes('rechteck') || bodyShapeLower.includes('gerade') || bodyShapeLower.includes('rectangle')) {
+                    detectedBodyType = 'I-Form';
+                } else if (bodyShapeLower.includes('a') || bodyShapeLower.includes('birne') || bodyShapeLower.includes('pear') || bodyShapeLower.includes('hüfte')) {
+                    detectedBodyType = 'A-Form';
+                }
+            }
+            
+            // Color Type Mapping
+            let detectedColorType = 'warmen Farbtyp'; // Fallback
+            if (foundHairColor || foundJewelry) {
+                const hairLower = foundHairColor.toLowerCase();
+                const jewelryLower = foundJewelry.toLowerCase();
                 
-                // Bei Fehler: Trotzdem zu Stripe weiterleiten (damit der Checkout nicht blockiert wird)
-                console.log('⚠️ Error occurred, redirecting to Stripe anyway');
-                window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
+                console.log('Analyzing color indicators:', { hairLower, jewelryLower });
                 
-                // Optional: Zeige kurze Fehlermeldung
-                const errorMessage = document.createElement('div');
-                errorMessage.style.cssText = `
-                    position: fixed; top: 20px; right: 20px; z-index: 10000;
-                    background: #ff6b6b; color: white; padding: 15px 20px;
-                    border-radius: 8px; font-weight: 600; max-width: 300px;
-                `;
-                errorMessage.textContent = 'Daten konnten nicht gespeichert werden, Weiterleitung läuft...';
-                document.body.appendChild(errorMessage);
+                if (jewelryLower.includes('silber') || hairLower.includes('asch') || hairLower.includes('kühl') || hairLower.includes('platinum') || hairLower.includes('grau')) {
+                    detectedColorType = 'kühlen Farbtyp';
+                } else if (jewelryLower.includes('beide') || jewelryLower.includes('gleich') || jewelryLower.includes('egal')) {
+                    detectedColorType = 'neutralen Farbtyp';
+                } else if (jewelryLower.includes('gold') || hairLower.includes('warm') || hairLower.includes('braun') || hairLower.includes('rot') || hairLower.includes('honey')) {
+                    detectedColorType = 'warmen Farbtyp';
+                }
+            }
+            
+            // Challenge Mapping
+            let detectedChallenge = 'vieles zu weit oder zu eng wirkt'; // Fallback
+            if (foundShopping) {
+                const shoppingLower = foundShopping.toLowerCase();
                 
-                setTimeout(() => errorMessage.remove(), 3000);
+                console.log('Analyzing shopping challenge:', shoppingLower);
+                
+                if (shoppingLower.includes('passform') || shoppingLower.includes('oberteile') || shoppingLower.includes('schulter') || shoppingLower.includes('brust')) {
+                    detectedChallenge = 'die Passform an Schultern/Oberweite nicht stimmt';
+                } else if (shoppingLower.includes('hüfte') || shoppingLower.includes('po') || shoppingLower.includes('unterteil') || shoppingLower.includes('hintern')) {
+                    detectedChallenge = 'Hüfte und Po sich zu sehr betonen';
+                } else if (shoppingLower.includes('taille') || shoppingLower.includes('bauch') || shoppingLower.includes('mitte')) {
+                    detectedChallenge = 'deine Taille nicht zur Geltung kommt';
+                } else if (shoppingLower.includes('weit') || shoppingLower.includes('eng') || shoppingLower.includes('größe')) {
+                    detectedChallenge = 'alles an dir zu weit/zu eng wirkt';
+                } else if (shoppingLower.includes('proportion') || shoppingLower.includes('ausgewogen') || shoppingLower.includes('balance')) {
+                    detectedChallenge = 'deine Proportionen unausgewogen wirken';
+                } else if (shoppingLower.includes('farbe') || shoppingLower.includes('ton')) {
+                    detectedChallenge = 'die falschen Farben dich fahl aussehen lassen';
+                } else if (shoppingLower.includes('stil') || shoppingLower.includes('look') || shoppingLower.includes('einheitlich')) {
+                    detectedChallenge = 'du keinen einheitlichen Stil findest';
+                }
+            }
+            
+            console.log('=== FINAL DETECTED VALUES ===');
+            console.log('Body Type:', detectedBodyType);
+            console.log('Color Type:', detectedColorType);
+            console.log('Challenge:', detectedChallenge);
+            
+            // 7. UPDATE HTML ELEMENTS
+            updateElementSafely('detected-body-type', detectedBodyType);
+            updateElementSafely('detected-color-type', detectedColorType);
+            updateElementSafely('detected-challenge', detectedChallenge);
+            
+            // 8. UPDATE DETAILED SECTIONS
+            updateBodyAnalysis(detectedBodyType);
+            updateColorAnalysis(detectedColorType, foundHairColor, foundJewelry);
+            updateChallengeAnalysis(detectedChallenge, foundShopping);
+        }
+
+        // Hilfsfunktion für sicheres Element-Update
+        function updateElementSafely(elementId, value) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = value;
+                console.log(`✅ Updated ${elementId} with: ${value}`);
+            } else {
+                console.error(`❌ Element not found: ${elementId}`);
             }
         }
 
-        // PERSONALIZATION BASED ON ANSWERS
-        // VERBESSERTE PERSONALIZATION FUNKTION
-function personalizeResults() {
-    console.log('=== ENHANCED PERSONALIZING RESULTS ===');
-    
-    // 1. Sammle ALLE localStorage Daten
-    const allData = {};
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        const value = localStorage.getItem(key);
-        if (key && value && value !== 'null' && value !== 'undefined') {
-            allData[key] = value.trim();
-        }
-    }
-    
-    console.log('All localStorage data:', allData);
-    console.log('Available keys:', Object.keys(allData));
-    
-    // 2. Parse quizAnswers falls vorhanden
-    let quizAnswers = {};
-    if (allData.quizAnswers) {
-        try {
-            quizAnswers = JSON.parse(allData.quizAnswers);
-            console.log('Parsed quiz answers:', quizAnswers);
-        } catch (e) {
-            console.warn('Could not parse quizAnswers:', e);
-        }
-    }
-    
-    // 3. Parse einzelne Antworten falls sie als JSON gespeichert sind
-    const parsedAnswers = {};
-    Object.keys(allData).forEach(key => {
-        const value = allData[key];
-        if (value.startsWith('{') || value.startsWith('[')) {
-            try {
-                parsedAnswers[key] = JSON.parse(value);
-            } catch (e) {
-                // Ignore, keep as string
+        // ERWEITERTE UPDATE-FUNKTIONEN
+        function updateBodyAnalysis(bodyType) {
+            const element = document.getElementById('body-type-analysis');
+            if (!element) {
+                console.error('❌ body-type-analysis element not found');
+                return;
             }
+            
+            let description = '';
+            let tips = '';
+            
+            switch (bodyType) {
+                case 'O-Form':
+                    description = 'Das bedeutet, deine Körpermitte ist etwas breiter als Schultern und Hüften.';
+                    tips = 'Empire-Schnitte und V-Ausschnitte strecken deine Silhouette optimal. ';
+                    break;
+                case 'X-Form':
+                    description = 'Das bedeutet, du hast eine ausgeprägte Taille bei proportionalen Schultern und Hüften.';
+                    tips = 'Betone deine natürliche Taille mit taillierten Schnitten und vermeide kastige Oberteile. ';
+                    break;
+                case 'V-Form':
+                    description = 'Das bedeutet, deine Schultern sind breiter als deine Hüften.';
+                    tips = 'Setze auf fließende Stoffe und A-Linien-Schnitte im unteren Bereich, um deine Proportionen auszugleichen. ';
+                    break;
+                case 'I-Form':
+                    description = 'Das bedeutet, du hast eine eher gerade, athletische Silhouette.';
+                    tips = 'Schaffe Kurven mit Gürteln, Rüschen und Wickelkleidern für mehr Weiblichkeit. ';
+                    break;
+                default: // A-Form
+                    description = 'Das bedeutet, deine Schultern sind schmaler als deine Hüften.';
+                    tips = 'Betone deine Schultern mit strukturierten Oberteilen und wähle A-Linien-Röcke, die deine Taille definieren. ';
+            }
+            
+            element.innerHTML = `
+                Basierend auf deinen Antworten deutet vieles auf eine <span class="result-highlight">${bodyType}</span> hin. 
+                ${description} ${tips}
+                <span class="result-highlight">Mit der Foto-Analyse kann Clara dies präzise bestimmen und dir perfekt passende Schnitte empfehlen.</span>
+            `;
+            
+            console.log(`✅ Updated body analysis for ${bodyType}`);
         }
-    });
-    
-    // 4. Kombiniere alle Datenquellen (Reihenfolge wichtig!)
-    const combinedData = {
-        ...demoData,      // Fallback-Daten
-        ...allData,       // localStorage Strings
-        ...parsedAnswers, // Geparste JSON-Daten
-        ...quizAnswers    // Quiz-Antworten (höchste Priorität)
-    };
-    
-    console.log('Combined data for analysis:', combinedData);
-    
-    // 5. DEBUGGING: Zeige alle möglichen Schlüssel an
-    console.log('=== DEBUGGING DATA SEARCH ===');
-    
-    // Suche nach Körpertyp mit erweiterten Schlüsseln
-    const bodyShapeKeys = [
-        'body_shape', 'body_type', 'koerperform', 'figure_type', 'bodyShape', 'bodyType',
-        'question1', 'step1', 'answer1', 'körperform', 'figur', 'körpertyp',
-        'shoulder_hip_relation', 'waist_definition', 'body_silhouette'
-    ];
-    
-    console.log('Searching for body shape in these keys:', bodyShapeKeys);
-    
-    let foundBodyShape = '';
-    let bodyShapeSource = '';
-    
-    for (const key of bodyShapeKeys) {
-        if (combinedData[key]) {
-            foundBodyShape = combinedData[key];
-            bodyShapeSource = key;
-            console.log(`✅ Found body shape: "${foundBodyShape}" in key: "${key}"`);
-            break;
-        } else {
-            console.log(`❌ No data in key: "${key}"`);
-        }
-    }
-    
-    // Suche nach Haarfarbe
-    const hairColorKeys = [
-        'hair_color', 'haarfarbe', 'hairColor', 'hair_colour',
-        'question2', 'step2', 'answer2', 'haarfarbe_auswahl'
-    ];
-    
-    console.log('Searching for hair color in these keys:', hairColorKeys);
-    
-    let foundHairColor = '';
-    let hairColorSource = '';
-    
-    for (const key of hairColorKeys) {
-        if (combinedData[key]) {
-            foundHairColor = combinedData[key];
-            hairColorSource = key;
-            console.log(`✅ Found hair color: "${foundHairColor}" in key: "${key}"`);
-            break;
-        }
-    }
-    
-    // Suche nach Schmuckvorliebe
-    const jewelryKeys = [
-        'jewelry_preference', 'schmuck', 'jewelry', 'jewelryPreference',
-        'question3', 'step3', 'answer3', 'schmuckvorliebe', 'metall_praeferenz'
-    ];
-    
-    console.log('Searching for jewelry preference in these keys:', jewelryKeys);
-    
-    let foundJewelry = '';
-    let jewelrySource = '';
-    
-    for (const key of jewelryKeys) {
-        if (combinedData[key]) {
-            foundJewelry = combinedData[key];
-            jewelrySource = key;
-            console.log(`✅ Found jewelry: "${foundJewelry}" in key: "${key}"`);
-            break;
-        }
-    }
-    
-    // Suche nach Shopping-Problemen
-    const shoppingKeys = [
-        'shopping_difficulty', 'shopping_problems', 'einkaufsprobleme', 'shoppingDifficulty',
-        'styling_challenge', 'stylingChallenge', 'problem', 'herausforderung',
-        'question4', 'step4', 'answer4', 'shopping_frustration'
-    ];
-    
-    console.log('Searching for shopping difficulty in these keys:', shoppingKeys);
-    
-    let foundShopping = '';
-    let shoppingSource = '';
-    
-    for (const key of shoppingKeys) {
-        if (combinedData[key]) {
-            foundShopping = combinedData[key];
-            shoppingSource = key;
-            console.log(`✅ Found shopping difficulty: "${foundShopping}" in key: "${key}"`);
-            break;
-        }
-    }
-    
-    console.log('=== FINAL FOUND VALUES ===');
-    console.log('Body Shape:', foundBodyShape, 'from:', bodyShapeSource);
-    console.log('Hair Color:', foundHairColor, 'from:', hairColorSource);
-    console.log('Jewelry:', foundJewelry, 'from:', jewelrySource);
-    console.log('Shopping:', foundShopping, 'from:', shoppingSource);
-    
-    // 6. ERWEITERTE MAPPING-LOGIK
-    
-    // Body Type Mapping
-    let detectedBodyType = 'A-Form'; // Fallback
-    if (foundBodyShape) {
-        const bodyShapeLower = foundBodyShape.toLowerCase();
-        console.log('Analyzing body shape:', bodyShapeLower);
-        
-        if (bodyShapeLower.includes('o') || bodyShapeLower.includes('apple') || bodyShapeLower.includes('rundlich') || bodyShapeLower.includes('oval')) {
-            detectedBodyType = 'O-Form';
-        } else if (bodyShapeLower.includes('x') || bodyShapeLower.includes('sanduhr') || bodyShapeLower.includes('hourglass') || bodyShapeLower.includes('8')) {
-            detectedBodyType = 'X-Form';
-        } else if (bodyShapeLower.includes('v') || bodyShapeLower.includes('triangle') || bodyShapeLower.includes('schultern') || bodyShapeLower.includes('breite schultern')) {
-            detectedBodyType = 'V-Form';
-        } else if (bodyShapeLower.includes('i') || bodyShapeLower.includes('rechteck') || bodyShapeLower.includes('gerade') || bodyShapeLower.includes('rectangle')) {
-            detectedBodyType = 'I-Form';
-        } else if (bodyShapeLower.includes('a') || bodyShapeLower.includes('birne') || bodyShapeLower.includes('pear') || bodyShapeLower.includes('hüfte')) {
-            detectedBodyType = 'A-Form';
-        }
-    }
-    
-    // Color Type Mapping
-    let detectedColorType = 'warmen Farbtyp'; // Fallback
-    if (foundHairColor || foundJewelry) {
-        const hairLower = foundHairColor.toLowerCase();
-        const jewelryLower = foundJewelry.toLowerCase();
-        
-        console.log('Analyzing color indicators:', { hairLower, jewelryLower });
-        
-        if (jewelryLower.includes('silber') || hairLower.includes('asch') || hairLower.includes('kühl') || hairLower.includes('platinum') || hairLower.includes('grau')) {
-            detectedColorType = 'kühlen Farbtyp';
-        } else if (jewelryLower.includes('beide') || jewelryLower.includes('gleich') || jewelryLower.includes('egal')) {
-            detectedColorType = 'neutralen Farbtyp';
-        } else if (jewelryLower.includes('gold') || hairLower.includes('warm') || hairLower.includes('braun') || hairLower.includes('rot') || hairLower.includes('honey')) {
-            detectedColorType = 'warmen Farbtyp';
-        }
-    }
-    
-    // Challenge Mapping
-    let detectedChallenge = 'vieles zu weit oder zu eng wirkt'; // Fallback
-    if (foundShopping) {
-        const shoppingLower = foundShopping.toLowerCase();
-        
-        console.log('Analyzing shopping challenge:', shoppingLower);
-        
-        if (shoppingLower.includes('passform') || shoppingLower.includes('oberteile') || shoppingLower.includes('schulter') || shoppingLower.includes('brust')) {
-            detectedChallenge = 'die Passform an Schultern/Oberweite nicht stimmt';
-        } else if (shoppingLower.includes('hüfte') || shoppingLower.includes('po') || shoppingLower.includes('unterteil') || shoppingLower.includes('hintern')) {
-            detectedChallenge = 'Hüfte und Po sich zu sehr betonen';
-        } else if (shoppingLower.includes('taille') || shoppingLower.includes('bauch') || shoppingLower.includes('mitte')) {
-            detectedChallenge = 'deine Taille nicht zur Geltung kommt';
-        } else if (shoppingLower.includes('weit') || shoppingLower.includes('eng') || shoppingLower.includes('größe')) {
-            detectedChallenge = 'alles an dir zu weit/zu eng wirkt';
-        } else if (shoppingLower.includes('proportion') || shoppingLower.includes('ausgewogen') || shoppingLower.includes('balance')) {
-            detectedChallenge = 'deine Proportionen unausgewogen wirken';
-        } else if (shoppingLower.includes('farbe') || shoppingLower.includes('ton')) {
-            detectedChallenge = 'die falschen Farben dich fahl aussehen lassen';
-        } else if (shoppingLower.includes('stil') || shoppingLower.includes('look') || shoppingLower.includes('einheitlich')) {
-            detectedChallenge = 'du keinen einheitlichen Stil findest';
-        }
-    }
-    
-    console.log('=== FINAL DETECTED VALUES ===');
-    console.log('Body Type:', detectedBodyType);
-    console.log('Color Type:', detectedColorType);
-    console.log('Challenge:', detectedChallenge);
-    
-    // 7. UPDATE HTML ELEMENTS
-    updateElementSafely('detected-body-type', detectedBodyType);
-    updateElementSafely('detected-color-type', detectedColorType);
-    updateElementSafely('detected-challenge', detectedChallenge);
-    
-    // 8. UPDATE DETAILED SECTIONS
-    updateBodyAnalysis(detectedBodyType);
-    updateColorAnalysis(detectedColorType, foundHairColor, foundJewelry);
-    updateChallengeAnalysis(detectedChallenge, foundShopping);
-}
 
-// Hilfsfunktion für sicheres Element-Update
-function updateElementSafely(elementId, value) {
-    const element = document.getElementById(elementId);
-    if (element) {
-        element.textContent = value;
-        console.log(`✅ Updated ${elementId} with: ${value}`);
-    } else {
-        console.error(`❌ Element not found: ${elementId}`);
-    }
-}
-
-// ERWEITERTE UPDATE-FUNKTIONEN
-function updateBodyAnalysis(bodyType) {
-    const element = document.getElementById('body-type-analysis');
-    if (!element) {
-        console.error('❌ body-type-analysis element not found');
-        return;
-    }
-    
-    let description = '';
-    let tips = '';
-    
-    switch (bodyType) {
-        case 'O-Form':
-            description = 'Das bedeutet, deine Körpermitte ist etwas breiter als Schultern und Hüften.';
-            tips = 'Empire-Schnitte und V-Ausschnitte strecken deine Silhouette optimal. ';
-            break;
-        case 'X-Form':
-            description = 'Das bedeutet, du hast eine ausgeprägte Taille bei proportionalen Schultern und Hüften.';
-            tips = 'Betone deine natürliche Taille mit taillierten Schnitten und vermeide kastige Oberteile. ';
-            break;
-        case 'V-Form':
-            description = 'Das bedeutet, deine Schultern sind breiter als deine Hüften.';
-            tips = 'Setze auf fließende Stoffe und A-Linien-Schnitte im unteren Bereich, um deine Proportionen auszugleichen. ';
-            break;
-        case 'I-Form':
-            description = 'Das bedeutet, du hast eine eher gerade, athletische Silhouette.';
-            tips = 'Schaffe Kurven mit Gürteln, Rüschen und Wickelkleidern für mehr Weiblichkeit. ';
-            break;
-        default: // A-Form
-            description = 'Das bedeutet, deine Schultern sind schmaler als deine Hüften.';
-            tips = 'Betone deine Schultern mit strukturierten Oberteilen und wähle A-Linien-Röcke, die deine Taille definieren. ';
-    }
-    
-    element.innerHTML = `
-        Basierend auf deinen Antworten deutet vieles auf eine <span class="result-highlight">${bodyType}</span> hin. 
-        ${description} ${tips}
-        <span class="result-highlight">Mit der Foto-Analyse kann Clara dies präzise bestimmen und dir perfekt passende Schnitte empfehlen.</span>
-    `;
-    
-    console.log(`✅ Updated body analysis for ${bodyType}`);
-}
-
-function updateColorAnalysis(colorType, hairColor, jewelry) {
-    const element = document.getElementById('color-analysis');
-    const recommendationsElement = document.getElementById('color-recommendations');
-    if (!element) {
-        console.error('❌ color-analysis element not found');
-        return;
-    }
-    
-    let colors = '';
-    let reasoning = '';
-    
-    if (colorType.includes('kühlen')) {
-        colors = 'Trage Navy, kühles Grau, Silber und Icy-Töne für den perfekten Look. ';
-        reasoning = hairColor ? `Deine ${hairColor} Haare` : 'Deine Haarfarbe';
-        if (jewelry && jewelry.toLowerCase().includes('silber')) {
-            reasoning += ' und deine Vorliebe für Silber';
+        function updateColorAnalysis(colorType, hairColor, jewelry) {
+            const element = document.getElementById('color-analysis');
+            const recommendationsElement = document.getElementById('color-recommendations');
+            if (!element) {
+                console.error('❌ color-analysis element not found');
+                return;
+            }
+            
+            let colors = '';
+            let reasoning = '';
+            
+            if (colorType.includes('kühlen')) {
+                colors = 'Trage Navy, kühles Grau, Silber und Icy-Töne für den perfekten Look. ';
+                reasoning = hairColor ? `Deine ${hairColor} Haare` : 'Deine Haarfarbe';
+                if (jewelry && jewelry.toLowerCase().includes('silber')) {
+                    reasoning += ' und deine Vorliebe für Silber';
+                }
+            } else if (colorType.includes('neutralen')) {
+                colors = 'Du kannst sowohl Gold als auch Silber tragen - ein großer Vorteil! ';
+                reasoning = 'Deine ausgeglichenen Merkmale';
+            } else {
+                colors = 'Setze auf Camel, warmes Braun, Gold und Korallentöne für deinen Hautton. ';
+                reasoning = hairColor ? `Deine ${hairColor} Haare` : 'Deine Haarfarbe';
+                if (jewelry && jewelry.toLowerCase().includes('gold')) {
+                    reasoning += ' und deine Vorliebe für Gold';
+                }
+            }
+            
+            element.innerHTML = `
+                ${reasoning} ${jewelry ? 'und Schmuckvorlieben deuten' : 'deutet'} auf einen <span class="result-highlight">${colorType}</span> hin. 
+                <span class="color-recommendations">${colors}</span>
+                <span class="result-highlight">Die professionelle Farbanalyse zeigt dir deine exakte Farbpalette mit über 200 perfekten Farbtönen.</span>
+            `;
+            
+            if (recommendationsElement) {
+                recommendationsElement.textContent = colors;
+            }
+            
+            console.log(`✅ Updated color analysis for ${colorType}`);
         }
-    } else if (colorType.includes('neutralen')) {
-        colors = 'Du kannst sowohl Gold als auch Silber tragen - ein großer Vorteil! ';
-        reasoning = 'Deine ausgeglichenen Merkmale';
-    } else {
-        colors = 'Setze auf Camel, warmes Braun, Gold und Korallentöne für deinen Hautton. ';
-        reasoning = hairColor ? `Deine ${hairColor} Haare` : 'Deine Haarfarbe';
-        if (jewelry && jewelry.toLowerCase().includes('gold')) {
-            reasoning += ' und deine Vorliebe für Gold';
-        }
-    }
-    
-    element.innerHTML = `
-        ${reasoning} ${jewelry ? 'und Schmuckvorlieben deuten' : 'deutet'} auf einen <span class="result-highlight">${colorType}</span> hin. 
-        <span class="color-recommendations">${colors}</span>
-        <span class="result-highlight">Die professionelle Farbanalyse zeigt dir deine exakte Farbpalette mit über 200 perfekten Farbtönen.</span>
-    `;
-    
-    if (recommendationsElement) {
-        recommendationsElement.textContent = colors;
-    }
-    
-    console.log(`✅ Updated color analysis for ${colorType}`);
-}
 
-function updateChallengeAnalysis(challenge, originalDifficulty) {
-    const element = document.getElementById('challenge-analysis');
-    if (!element) {
-        console.error('❌ challenge-analysis element not found');
-        return;
-    }
-    
-    let impact = 'Du hast das Gefühl, nie das Richtige zu finden und gibst frustriert auf. ';
-    let solution = 'Das liegt an der falschen Passform für deinen Körpertyp.';
-    
-    if (challenge.includes('Passform') || challenge.includes('Schultern')) {
-        impact = 'Du fühlst dich unwohl und versteckst deinen Oberkörper, anstatt ihn zu feiern. ';
-        solution = 'Das liegt an der falschen Passform für deine Oberweite und Schultern.';
-    } else if (challenge.includes('Hüfte') || challenge.includes('Po')) {
-        impact = 'Du vermeidest enge Kleidung und fühlst dich in deinem Körper nicht wohl. ';
-        solution = 'Das liegt an den falschen Schnitten für deine Hüftpartie.';
-    } else if (challenge.includes('Taille')) {
-        impact = 'Du wirkst kastig und deine Weiblichkeit kommt nicht zur Geltung. ';
-        solution = 'Das liegt daran, dass deine Taille nicht richtig betont wird.';
-    } else if (challenge.includes('Farben')) {
-        impact = 'Du siehst müde und fahl aus, obwohl du dich gut fühlst. ';
-        solution = 'Das liegt an den falschen Farben für deinen Hautton.';
-    }
-    
-    element.innerHTML = `
-        Du kämpfst wahrscheinlich damit, dass <span class="result-highlight">${challenge}</span>. 
-        ${impact}${solution}
-        <span class="result-highlight">Clara zeigt dir genau, welche Schnitte und Proportionen deine Figur optimal zur Geltung bringen.</span>
-    `;
-    
-    console.log(`✅ Updated challenge analysis for ${challenge}`);
-}
+        function updateChallengeAnalysis(challenge, originalDifficulty) {
+            const element = document.getElementById('challenge-analysis');
+            if (!element) {
+                console.error('❌ challenge-analysis element not found');
+                return;
+            }
+            
+            let impact = 'Du hast das Gefühl, nie das Richtige zu finden und gibst frustriert auf. ';
+            let solution = 'Das liegt an der falschen Passform für deinen Körpertyp.';
+            
+            if (challenge.includes('Passform') || challenge.includes('Schultern')) {
+                impact = 'Du fühlst dich unwohl und versteckst deinen Oberkörper, anstatt ihn zu feiern. ';
+                solution = 'Das liegt an der falschen Passform für deine Oberweite und Schultern.';
+            } else if (challenge.includes('Hüfte') || challenge.includes('Po')) {
+                impact = 'Du vermeidest enge Kleidung und fühlst dich in deinem Körper nicht wohl. ';
+                solution = 'Das liegt an den falschen Schnitten für deine Hüftpartie.';
+            } else if (challenge.includes('Taille')) {
+                impact = 'Du wirkst kastig und deine Weiblichkeit kommt nicht zur Geltung. ';
+                solution = 'Das liegt daran, dass deine Taille nicht richtig betont wird.';
+            } else if (challenge.includes('Farben')) {
+                impact = 'Du siehst müde und fahl aus, obwohl du dich gut fühlst. ';
+                solution = 'Das liegt an den falschen Farben für deinen Hautton.';
+            }
+            
+            element.innerHTML = `
+                Du kämpfst wahrscheinlich damit, dass <span class="result-highlight">${challenge}</span>. 
+                ${impact}${solution}
+                <span class="result-highlight">Clara zeigt dir genau, welche Schnitte und Proportionen deine Figur optimal zur Geltung bringen.</span>
+            `;
+            
+            console.log(`✅ Updated challenge analysis for ${challenge}`);
+        }
 
         // TIMER AND COUNTERS
         let timeLeft = 12 * 60; // 12 minutes
