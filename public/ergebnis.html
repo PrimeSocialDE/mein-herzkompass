@@ -1674,64 +1674,92 @@
         // PERSONALIZATION BASED ON ANSWERS
         function personalizeResults() {
             const allData = getAllStorageData();
+            console.log('=== PERSONALIZING RESULTS ===', allData);
             
             // Personalize name
-            const savedName = allData.user_name || 'Du';
+            const savedName = allData.user_name || allData.name || 'Du';
             const nameElement = document.getElementById('personalized-name');
             if (nameElement && savedName !== 'Du') {
                 nameElement.textContent = savedName;
             }
 
-            // Analyze body type from answers
-            const bodyShape = allData.body_shape || '';
-            const bodyDescription = allData.body_description || '';
-            const shoppingDifficulty = allData.shopping_difficulty || '';
+            // Analyze body type from answers - prüfe verschiedene mögliche Schlüssel
+            const bodyShape = allData.body_shape || allData.body_type || allData.koerperform || '';
+            const bodyDescription = allData.body_description || allData.figure_description || '';
+            const shoppingDifficulty = allData.shopping_difficulty || allData.shopping_problems || allData.einkaufsprobleme || '';
+            
+            console.log('Body analysis data:', { bodyShape, bodyDescription, shoppingDifficulty });
 
-            // Determine body type
+            // Determine body type mit erweiterten Erkennungsmustern
             let detectedBodyType = 'A-Form';
-            if (bodyShape.includes('X-Form') || bodyDescription.includes('ausgeprägter')) {
+            if (bodyShape.toLowerCase().includes('x') || bodyShape.includes('X-Form') || bodyDescription.includes('ausgeprägter') || bodyDescription.includes('taille')) {
                 detectedBodyType = 'X-Form';
-            } else if (bodyShape.includes('V-Form') || bodyDescription.includes('breite Schultern')) {
+            } else if (bodyShape.toLowerCase().includes('v') || bodyShape.includes('V-Form') || bodyDescription.includes('breite schultern') || bodyDescription.includes('schultern breiter')) {
                 detectedBodyType = 'V-Form';
-            } else if (bodyShape.includes('O-Form') || bodyDescription.includes('rundliche')) {
+            } else if (bodyShape.toLowerCase().includes('o') || bodyShape.includes('O-Form') || bodyDescription.includes('rundliche') || bodyDescription.includes('bauch')) {
                 detectedBodyType = 'O-Form';
-            } else if (bodyShape.includes('I-Form') || bodyDescription.includes('gerade')) {
+            } else if (bodyShape.toLowerCase().includes('i') || bodyShape.includes('I-Form') || bodyDescription.includes('gerade') || bodyDescription.includes('athletisch')) {
                 detectedBodyType = 'I-Form';
+            } else if (bodyShape.toLowerCase().includes('a') || bodyShape.includes('A-Form') || bodyDescription.includes('hüfte breiter') || shoppingDifficulty.includes('hüfte')) {
+                detectedBodyType = 'A-Form';
             }
 
-            // Determine color type
-            const hairColor = allData.hair_color || '';
-            const jewelryPreference = allData.jewelry_preference || '';
+            // Determine color type - erweiterte Suche
+            const hairColor = allData.hair_color || allData.haarfarbe || '';
+            const jewelryPreference = allData.jewelry_preference || allData.schmuck || allData.jewelry || '';
+            const skinTone = allData.skin_tone || allData.hautton || '';
+            
+            console.log('Color analysis data:', { hairColor, jewelryPreference, skinTone });
+            
             let detectedColorType = 'warmen Farbtyp';
-            if (jewelryPreference.includes('Silber') || hairColor.includes('Aschblond') || hairColor.includes('kühlen')) {
+            if (jewelryPreference.toLowerCase().includes('silber') || hairColor.toLowerCase().includes('aschblond') || hairColor.toLowerCase().includes('kühlen') || skinTone.toLowerCase().includes('kühl')) {
                 detectedColorType = 'kühlen Farbtyp';
-            } else if (jewelryPreference.includes('gleich gut')) {
+            } else if (jewelryPreference.toLowerCase().includes('gleich') || jewelryPreference.toLowerCase().includes('beide')) {
                 detectedColorType = 'neutralen Farbtyp';
+            } else if (jewelryPreference.toLowerCase().includes('gold') || hairColor.toLowerCase().includes('warm') || skinTone.toLowerCase().includes('warm')) {
+                detectedColorType = 'warmen Farbtyp';
             }
 
-            // Determine main challenge
+            // Determine main challenge - erweiterte Mustererkennung
             let detectedChallenge = 'vieles zu weit oder zu eng wirkt';
-            if (shoppingDifficulty.includes('Passform')) {
+            if (shoppingDifficulty.toLowerCase().includes('passform') || shoppingDifficulty.includes('oberteile')) {
                 detectedChallenge = 'die Passform an Schultern/Oberweite nicht stimmt';
-            } else if (shoppingDifficulty.includes('Hüfte')) {
+            } else if (shoppingDifficulty.toLowerCase().includes('hüfte') || shoppingDifficulty.includes('po')) {
                 detectedChallenge = 'Hüfte und Po sich zu sehr betonen';
-            } else if (shoppingDifficulty.includes('Taille')) {
+            } else if (shoppingDifficulty.toLowerCase().includes('taille')) {
                 detectedChallenge = 'deine Taille nicht zur Geltung kommt';
-            } else if (shoppingDifficulty.includes('weit')) {
+            } else if (shoppingDifficulty.toLowerCase().includes('weit') || shoppingDifficulty.toLowerCase().includes('eng')) {
                 detectedChallenge = 'alles an dir zu weit/zu eng wirkt';
-            } else if (shoppingDifficulty.includes('Proportionen')) {
+            } else if (shoppingDifficulty.toLowerCase().includes('proportionen')) {
                 detectedChallenge = 'deine Proportionen unausgewogen wirken';
             }
 
+            console.log('Detected values:', { detectedBodyType, detectedColorType, detectedChallenge });
+
             // Update content
             const bodyTypeElement = document.getElementById('detected-body-type');
-            if (bodyTypeElement) bodyTypeElement.textContent = detectedBodyType;
+            if (bodyTypeElement) {
+                bodyTypeElement.textContent = detectedBodyType;
+                console.log('Updated body type to:', detectedBodyType);
+            } else {
+                console.warn('Body type element not found');
+            }
 
             const colorTypeElement = document.getElementById('detected-color-type');
-            if (colorTypeElement) colorTypeElement.textContent = detectedColorType;
+            if (colorTypeElement) {
+                colorTypeElement.textContent = detectedColorType;
+                console.log('Updated color type to:', detectedColorType);
+            } else {
+                console.warn('Color type element not found');
+            }
 
             const challengeElement = document.getElementById('detected-challenge');
-            if (challengeElement) challengeElement.textContent = detectedChallenge;
+            if (challengeElement) {
+                challengeElement.textContent = detectedChallenge;
+                console.log('Updated challenge to:', detectedChallenge);
+            } else {
+                console.warn('Challenge element not found');
+            }
 
             // Update body type analysis with specific recommendations
             const bodyAnalysisElement = document.getElementById('body-type-analysis');
@@ -1765,6 +1793,7 @@
                     ${bodyDescription} ${specificTips}
                     <span class="result-highlight">Mit der Foto-Analyse kann Clara dies präzise bestimmen und dir perfekt passende Schnitte empfehlen.</span>
                 `;
+                console.log('Updated body analysis');
             }
 
             // Update color analysis with specific recommendations
@@ -1792,6 +1821,7 @@
                     <span class="color-recommendations">${specificColors + colorDescription}</span>
                     <span class="result-highlight">Die professionelle Farbanalyse zeigt dir deine exakte Farbpalette mit über 200 perfekten Farbtönen.</span>
                 `;
+                console.log('Updated color analysis');
             }
 
             // Update challenge analysis with more emotional pain points
@@ -1825,6 +1855,7 @@
                     ${emotionalImpact}Das liegt an der falschen Passform für deinen Körpertyp.
                     <span class="result-highlight">Clara zeigt dir genau, welche Schnitte und Proportionen deine Figur optimal zur Geltung bringen.</span>
                 `;
+                console.log('Updated challenge analysis');
             }
         }
 
