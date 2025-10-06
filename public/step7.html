@@ -455,63 +455,95 @@
         }
 
         async function submitPhotos() {
-            if (uploadedFiles.length === 0) {
-                alert('Bitte lade mindestens ein Foto hoch.');
-                return;
+    if (uploadedFiles.length === 0) {
+        alert('Bitte lade mindestens ein Foto hoch.');
+        return;
+    }
+
+    const btn = document.getElementById('continueBtn');
+    const processingMsg = document.getElementById('processingMessage');
+    
+    btn.disabled = true;
+    btn.textContent = 'Fotos werden verarbeitet...';
+    processingMsg.style.display = 'block';
+
+    // 15 Sekunden Timeout
+    const timeoutId = setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = 'Weiter zur letzten Frage';
+        processingMsg.style.display = 'none';
+        alert('Bildverarbeitung dauert zu lange. Versuche kleinere Bilder.');
+    }, 15000);
+
+    try {
+        if (typeof(Storage) !== "undefined") {
+            // Erst alte Foto-Metadaten aus localStorage löschen
+            for (let i = 1; i <= 10; i++) {
+                localStorage.removeItem(`photoName${i}`);
+                localStorage.removeItem(`photoSize${i}`);
+                localStorage.removeItem(`photoType${i}`);
+                localStorage.removeItem(`uploadedPhoto${i}`); // Alte base64-Daten auch löschen
             }
 
-            const btn = document.getElementById('continueBtn');
-            const processingMsg = document.getElementById('processingMessage');
+            // Speichere nur Foto-Metadaten (keine base64-Daten)
+            localStorage.setItem('photosUploaded', 'true');
+            localStorage.setItem('photoCount', uploadedFiles.length.toString());
             
-            btn.disabled = true;
-            btn.textContent = 'Fotos werden verarbeitet...';
-            processingMsg.style.display = 'block';
-
-            // 15 Sekunden Timeout
-            const timeoutId = setTimeout(() => {
-                btn.disabled = false;
-                btn.textContent = 'Weiter zur letzten Frage';
-                processingMsg.style.display = 'none';
-                alert('Bildverarbeitung dauert zu lange. Versuche kleinere Bilder.');
-            }, 15000);
-
-            try {
-                if (typeof(Storage) !== "undefined") {
-                    // Erst alte Fotos aus localStorage löschen
-                    for (let i = 1; i <= 10; i++) {
-                        localStorage.removeItem(`uploadedPhoto${i}`);
-                    }
-
-                    // Speichere Foto-Metadaten
-                    localStorage.setItem('photosUploaded', 'true');
-                    localStorage.setItem('photoCount', uploadedFiles.length.toString());
+            let photosProcessed = 0;
+            
+            // Verarbeite Fotos - speichere nur Metadaten
+            for (let index = 0; index < uploadedFiles.length; index++) {
+                const file = uploadedFiles[index];
+                
+                try {
+                    // Speichere nur wichtige Metadaten, KEINE base64-Daten
+                    localStorage.setItem(`photoName${index + 1}`, file.name);
+                    localStorage.setItem(`photoSize${index + 1}`, file.size.toString());
+                    localStorage.setItem(`photoType${index + 1}`, file.type);
                     
-                    let photosProcessed = 0;
+                    console.log(`Foto ${index + 1} Metadaten gespeichert: ${file.name} (${Math.round(file.size/1024)}KB)`);
                     
-                    // Verarbeite Fotos sequenziell mit Komprimierung
-                    for (let index = 0; index < uploadedFiles.length; index++) {
-                        const file = uploadedFiles[index];
-                        
-                        try {
-                            // Komprimiere Bild für Mobile
-                            const compressedImage = await compressImageForMobile(file);
-                            localStorage.setItem(`uploadedPhoto${index + 1}`, compressedImage);
-                            
-                            const sizeKB = Math.round(compressedImage.length * 0.75 / 1024);
-                            console.log(`Foto ${index + 1} gespeichert: ${sizeKB}KB`);
-                            
-                        } catch (error) {
-                            console.warn(`Fehler beim Komprimieren von Foto ${index + 1}, verwende Original:`, error);
-                            // Fallback: verwende Original
-                            const reader = new FileReader();
-                            reader.onload = function(e) {
-                                localStorage.setItem(`uploadedPhoto${index + 1}`, e.target.result);
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                        
-                        photosProcessed++;
-                    }
+                } catch (error) {
+                    console.warn(`Fehler beim Verarbeiten von Foto ${index + 1}:`, error);
+                }
+                
+                photosProcessed++;
+            }
+            
+            // Speichere Quiz-Antworten
+            let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
+            allAnswers['photosUploaded'] = true;
+            allAnswers['photoCount'] = uploadedFiles.length;
+            localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
+            
+            console.log('Foto-Metadaten erfolgreich gespeichert:', uploadedFiles.length, 'Dateien');
+            
+            clearTimeout(timeoutId);
+            
+            // Kurze Verzögerung für bessere UX
+            setTimeout(() => {
+                window.location.href = '/step8.html';
+            }, 500);
+            
+        } else {
+            // Fallback falls kein localStorage
+            clearTimeout(timeoutId);
+            console.warn('localStorage nicht verfügbar');
+            alert('Fotos können nicht gespeichert werden. Bitte verwende einen anderen Browser.');
+            btn.disabled = false;
+            btn.textContent = 'Weiter zur letzten Frage';
+            processingMsg.style.display = 'none';
+        }
+        
+    } catch (error) {
+        clearTimeout(timeoutId);
+        console.error('Fehler beim Verarbeiten der Fotos:', error);
+        alert('Fehler beim Verarbeiten der Fotos. Bitte versuche es erneut.');
+        btn.disabled = false;
+        btn.textContent = 'Weiter zur letzten Frage';
+        processingMsg.style.display = 'none';
+    }
+}
                     
                     // Speichere Quiz-Antworten
                     let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
