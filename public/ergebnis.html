@@ -1743,12 +1743,14 @@
             
             console.log('Detected body type:', detectedBodyType, 'from body shape:', bodyShape);
 
-            // Suche nach Farbtyp-Daten
+            // Suche nach Farbtyp-Daten - erweiterte Schlüssel
             const hairColorKeys = ['hair_color', 'haarfarbe', 'hairColor'];
             const jewelryKeys = ['jewelry_preference', 'schmuck', 'jewelry', 'jewelryPreference'];
+            const skinKeys = ['skin_tone', 'hautton', 'skinUndertone', 'skin_undertone'];
             
             let hairColor = '';
             let jewelryPreference = '';
+            let skinUndertone = '';
             
             for (const key of hairColorKeys) {
                 if (combinedData[key]) {
@@ -1764,20 +1766,32 @@
                 }
             }
             
-            console.log('Found hair color:', hairColor, 'jewelry preference:', jewelryPreference);
+            for (const key of skinKeys) {
+                if (combinedData[key]) {
+                    skinUndertone = combinedData[key];
+                    break;
+                }
+            }
+            
+            console.log('Found color data:', { hairColor, jewelryPreference, skinUndertone });
             
             let detectedColorType = 'warmen Farbtyp';
             const jewelryLower = jewelryPreference.toLowerCase();
             const hairLower = hairColor.toLowerCase();
+            const skinLower = skinUndertone.toLowerCase();
             
-            if (jewelryLower.includes('silber') || hairLower.includes('asch') || hairLower.includes('kühl')) {
+            if (jewelryLower.includes('silber') || hairLower.includes('asch') || hairLower.includes('kühl') || skinLower.includes('silber') || skinLower.includes('kühl')) {
                 detectedColorType = 'kühlen Farbtyp';
             } else if (jewelryLower.includes('beide') || jewelryLower.includes('gleich')) {
                 detectedColorType = 'neutralen Farbtyp';
+            } else if (jewelryLower.includes('gold') || hairLower.includes('warm') || skinLower.includes('gold') || skinLower.includes('warm')) {
+                detectedColorType = 'warmen Farbtyp';
             }
 
-            // Suche nach Shopping-Problemen
-            const shoppingKeys = ['shopping_difficulty', 'shopping_problems', 'einkaufsprobleme', 'shoppingDifficulty'];
+            console.log('Detected color type:', detectedColorType);
+
+            // Suche nach Shopping-Problemen - erweiterte Schlüssel
+            const shoppingKeys = ['shopping_difficulty', 'shopping_problems', 'einkaufsprobleme', 'shoppingDifficulty', 'stylingChallenge', 'styling_challenge'];
             let shoppingDifficulty = '';
             
             for (const key of shoppingKeys) {
@@ -1796,9 +1810,15 @@
                 detectedChallenge = 'die Passform an Schultern/Oberweite nicht stimmt';
             } else if (shoppingLower.includes('hüfte') || shoppingLower.includes('po')) {
                 detectedChallenge = 'Hüfte und Po sich zu sehr betonen';
-            } else if (shoppingLower.includes('taille')) {
+            } else if (shoppingLower.includes('taille') || shoppingLower.includes('taille-fehlt')) {
                 detectedChallenge = 'deine Taille nicht zur Geltung kommt';
+            } else if (shoppingLower.includes('weit') || shoppingLower.includes('eng')) {
+                detectedChallenge = 'alles an dir zu weit/zu eng wirkt';
+            } else if (shoppingLower.includes('proportionen')) {
+                detectedChallenge = 'deine Proportionen unausgewogen wirken';
             }
+
+            console.log('Detected challenge:', detectedChallenge);
 
             console.log('Final detected values:', { detectedBodyType, detectedColorType, detectedChallenge });
 
