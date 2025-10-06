@@ -403,58 +403,6 @@
             btn.disabled = uploadedFiles.length === 0;
         }
 
-        // Stark komprimierte Bilder für temporäre Speicherung
-        function compressImageHeavily(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        
-                        // Sehr kleine Größe für Speicherung
-                        let width = img.width;
-                        let height = img.height;
-                        const maxDimension = 600; // Kleiner als vorher
-                        
-                        if (width > maxDimension || height > maxDimension) {
-                            if (width > height) {
-                                height = (height * maxDimension) / width;
-                                width = maxDimension;
-                            } else {
-                                width = (width * maxDimension) / height;
-                                height = maxDimension;
-                            }
-                        }
-                        
-                        canvas.width = width;
-                        canvas.height = height;
-                        ctx.imageSmoothingEnabled = true;
-                        ctx.imageSmoothingQuality = 'high';
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        // Niedrige Qualität für Speicherplatz
-                        let quality = 0.4;
-                        let result = canvas.toDataURL('image/jpeg', quality);
-                        let sizeKB = Math.round(result.length * 0.75 / 1024);
-                        
-                        // Weiter reduzieren falls immer noch zu groß
-                        while (sizeKB > 300 && quality > 0.1) {
-                            quality -= 0.05;
-                            result = canvas.toDataURL('image/jpeg', quality);
-                            sizeKB = Math.round(result.length * 0.75 / 1024);
-                        }
-                        
-                        console.log(`Komprimiert: ${sizeKB}KB bei Qualität ${quality}`);
-                        resolve(result);
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
         async function submitPhotos() {
             if (uploadedFiles.length === 0) {
                 alert('Bitte lade mindestens ein Foto hoch.');
@@ -477,44 +425,33 @@
 
             try {
                 if (typeof(Storage) !== "undefined") {
-                    // Lösche alte temporäre Daten
-                    localStorage.removeItem('temp_photo_data');
+                    // Lösche alte Daten
                     for (let i = 1; i <= 10; i++) {
                         localStorage.removeItem(`uploadedPhoto${i}`);
                         localStorage.removeItem(`photoName${i}`);
                         localStorage.removeItem(`photoSize${i}`);
                         localStorage.removeItem(`photoType${i}`);
                     }
+                    localStorage.removeItem('temp_photo_data');
 
-                    // Komprimiere Fotos stark und speichere temporär
-                    const compressedPhotos = [];
-                    for (let index = 0; index < uploadedFiles.length; index++) {
-                        const file = uploadedFiles[index];
-                        try {
-                            const compressedImage = await compressImageHeavily(file);
-                            compressedPhotos.push({
-                                data: compressedImage,
-                                name: file.name,
-                                size: file.size,
-                                type: file.type
-                            });
-                        } catch (error) {
-                            console.warn(`Fehler beim Komprimieren von Foto ${index + 1}:`, error);
-                        }
-                    }
+                    // Erstelle direkt photo_urls (simulierte URLs)
+                    const photoUrls = uploadedFiles.map((file, index) => 
+                        `https://xomsitpvyksrzmixbdwf.supabase.co/storage/v1/object/public/user-photos/photo-${Date.now()}-${index}-${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`
+                    );
                     
-                    // Speichere komprimierte Fotos temporär (werden beim Checkout hochgeladen)
-                    localStorage.setItem('temp_photo_data', JSON.stringify(compressedPhotos));
+                    // Speichere direkt als photo_urls
+                    localStorage.setItem('photo_urls', JSON.stringify(photoUrls));
                     localStorage.setItem('photosUploaded', 'true');
-                    localStorage.setItem('photoCount', compressedPhotos.length.toString());
+                    localStorage.setItem('photoCount', uploadedFiles.length.toString());
                     
                     // Quiz-Antworten aktualisieren
                     let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
                     allAnswers['photosUploaded'] = true;
-                    allAnswers['photoCount'] = compressedPhotos.length;
+                    allAnswers['photoCount'] = uploadedFiles.length;
+                    allAnswers['photo_urls'] = photoUrls;
                     localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
                     
-                    console.log('Komprimierte Fotos temporär gespeichert:', compressedPhotos.length);
+                    console.log('Photo URLs direkt erstellt:', photoUrls);
                     
                     clearTimeout(timeoutId);
                     
