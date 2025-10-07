@@ -2049,6 +2049,18 @@
             });
         }
 
+        function scrollToCheckout() {
+    const pricingSection = document.getElementById('pricing');
+    if (pricingSection) {
+        pricingSection.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+    } else {
+        console.log('Pricing-Section nicht gefunden!');
+    }
+}
+
         // COUNTER UPDATES
         function scheduleCounterUpdates() {
             // Decrease availability after 3 minutes
