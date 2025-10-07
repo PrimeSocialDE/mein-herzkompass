@@ -2052,10 +2052,30 @@
         function scrollToCheckout() {
     const pricingSection = document.getElementById('pricing');
     if (pricingSection) {
-        pricingSection.scrollIntoView({ 
-            behavior: 'smooth',
-            block: 'start'
-        });
+        const targetPosition = pricingSection.getBoundingClientRect().top + window.pageYOffset;
+        const startPosition = window.pageYOffset;
+        const distance = targetPosition - startPosition;
+        const duration = 1500; // 1.5 Sekunden (vorher war es ~500ms)
+        let start = null;
+
+        function animation(currentTime) {
+            if (start === null) start = currentTime;
+            const timeElapsed = currentTime - start;
+            const progress = Math.min(timeElapsed / duration, 1);
+            
+            // Easing function für smootheren Scroll
+            const ease = progress < 0.5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+            
+            window.scrollTo(0, startPosition + distance * ease);
+            
+            if (timeElapsed < duration) {
+                requestAnimationFrame(animation);
+            }
+        }
+
+        requestAnimationFrame(animation);
     } else {
         console.log('Pricing-Section nicht gefunden!');
     }
