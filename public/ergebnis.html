@@ -499,6 +499,79 @@
             font-weight: bold;
         }
 
+/* VIDEO TESTIMONIAL SECTION */
+.video-testimonial-section {
+    padding: 80px 0;
+    background: var(--white);
+}
+
+.video-testimonial-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.video-testimonial-card {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-heavy);
+    overflow: hidden;
+    border: 2px solid var(--primary-color);
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    background: #000;
+}
+
+.testimonial-video {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-height: 600px;
+    object-fit: contain;
+}
+
+.video-testimonial-content {
+    padding: 30px;
+    background: var(--white);
+}
+
+.video-testimonial-text {
+    color: var(--text-light);
+    font-size: 16px;
+    line-height: 1.6;
+    font-style: italic;
+    margin-top: 15px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .video-testimonial-section {
+        padding: 60px 0;
+    }
+    
+    .video-testimonial-card {
+        margin: 0 15px;
+    }
+    
+    .video-testimonial-content {
+        padding: 20px 15px;
+    }
+    
+    .testimonial-video {
+        max-height: 400px;
+    }
+}
+
+@media (max-width: 480px) {
+    .testimonial-video {
+        max-height: 300px;
+    }
+}
+
         /* GUARANTEE SECTION */
         .guarantee-section {
             background: linear-gradient(135deg, #f8fafc, #ffffff);
@@ -1229,6 +1302,42 @@
                 </div>
             </div>
             
+<!-- VIDEO TESTIMONIAL SECTION -->
+<section class="video-testimonial-section">
+    <div class="container">
+        <div class="video-testimonial-header animate-on-scroll">
+            <h2 class="section-title">Echte Erfahrungen mit Clara's Analyse</h2>
+            <p class="section-subtitle">Höre selbst, wie die Analyse anderen Frauen geholfen hat</p>
+        </div>
+        
+        <div class="video-testimonial-card animate-on-scroll">
+            <div class="video-container">
+                <video 
+                    controls 
+                    preload="metadata"
+                    poster="video-thumbnail.jpg"
+                    class="testimonial-video">
+                    <source src="testimonial-video.mp4" type="video/mp4">
+                    Dein Browser unterstützt das Video-Tag nicht.
+                </video>
+            </div>
+            
+            <div class="video-testimonial-content">
+                <div class="testimonial-header">
+                    <img src="Profo1.png" alt="Testimonial" class="testimonial-avatar">
+                    <div>
+                        <div class="testimonial-name">Echte Kundin</div>
+                        <div class="testimonial-stars">★★★★★</div>
+                    </div>
+                </div>
+                <p class="video-testimonial-text">
+                    "Die Analyse hat mein Leben verändert - endlich weiß ich, was mir wirklich steht!"
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
             <!-- CTA SECTION AFTER RESULTS -->
             <div class="results-cta-section">
                 <div class="results-cta-card">
