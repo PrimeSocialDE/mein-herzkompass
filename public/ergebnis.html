@@ -1662,93 +1662,84 @@
     </footer>
 
     <script>
-        // KORRIGIERTE QUICK CHECKOUT FUNKTION
+        
         async function quickCheckout() {
-            const button = document.querySelector('.main-cta');
-            const originalText = button.textContent;
-            
-            // Button-Status ändern
-            button.disabled = true;
-            button.textContent = 'Wird vorbereitet...';
-            
-            try {
-                // Sammle ALLE localStorage Daten ohne Filterung
-                const userData = {};
-                
-                // Kopiere ALLES aus localStorage
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    const value = localStorage.getItem(key);
-                    if (key && value) {
-                        userData[key] = value;
-                    }
-                }
-                
-                // Metadaten hinzufügen
-                userData['_timestamp'] = new Date().toISOString();
-                userData['_checkout_from'] = 'ergebnis_page';
-                
-                console.log('=== CHECKOUT DATEN ===');
-                console.log('Anzahl localStorage Keys:', Object.keys(userData).length);
-                console.log('temp_photo_data vorhanden:', !!userData.temp_photo_data);
-                console.log('photo_urls vorhanden:', !!userData.photo_urls);
-                console.log('quizAnswers vorhanden:', !!userData.quizAnswers);
-                
-                button.textContent = 'Daten werden übertragen...';
-                
-                // API-Aufruf mit besserer Fehlerbehandlung
-                const response = await fetch('/api/checkout', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(userData)
-                });
-                
-                console.log('API Response Status:', response.status);
-                
-                if (response.ok) {
-                    button.textContent = 'Daten gespeichert! Weiterleitung...';
-                    
-                    // Versuche JSON zu parsen
-                    try {
-                        const jsonData = await response.json();
-                        console.log('API Response JSON:', jsonData);
-                        
-                        // Verwende die URL vom Backend falls vorhanden
-                        if (jsonData.url) {
-                            console.log('✅ Redirecting to backend URL:', jsonData.url);
-                            window.location.href = jsonData.url;
-                            return;
-                        }
-                    } catch (jsonError) {
-                        console.log('Response kein JSON, verwende Fallback URL');
-                    }
-                    
-                    // Fallback: Direkte Stripe-URL
-                    setTimeout(() => {
-                        window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
-                    }, 1000);
-                    
-                } else {
-                    const errorText = await response.text();
-                    console.error('API Fehler:', response.status, errorText);
-                    throw new Error(`API Error: ${response.status}`);
-                }
-                
-            } catch (error) {
-                console.error('Checkout Fehler:', error);
-                button.textContent = 'Fehler - Bitte erneut versuchen';
-                button.disabled = false;
-                
-                // Zeige Fehlermeldung
-                alert('Es gab einen Fehler beim Speichern deiner Daten. Bitte versuche es erneut.');
-                
-                setTimeout(() => {
-                    button.textContent = originalText;
-                }, 3000);
+    // TikTok Event: AddToCart beim Button-Klick
+    ttq.track('AddToCart', {
+        value: 39.99,
+        currency: 'EUR',
+        content_type: 'product',
+        content_id: 'style_analysis',
+        content_name: 'Vollständige Style-Analyse'
+    });
+
+    const button = document.querySelector('.main-cta');
+    const originalText = button.textContent;
+    
+    button.disabled = true;
+    button.textContent = 'Wird vorbereitet...';
+    
+    try {
+        const userData = {};
+        
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const value = localStorage.getItem(key);
+            if (key && value) {
+                userData[key] = value;
             }
         }
+        
+        userData['_timestamp'] = new Date().toISOString();
+        userData['_checkout_from'] = 'ergebnis_page';
+        
+        button.textContent = 'Daten werden übertragen...';
+        
+        const response = await fetch('/api/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userData)
+        });
+        
+        if (response.ok) {
+            // TikTok Event: InitiateCheckout bei erfolgreichem API-Call
+            ttq.track('InitiateCheckout', {
+                value: 39.99,
+                currency: 'EUR',
+                content_type: 'product',
+                content_id: 'style_analysis'
+            });
+
+            button.textContent = 'Daten gespeichert! Weiterleitung...';
+            
+            try {
+                const jsonData = await response.json();
+                if (jsonData.url) {
+                    window.location.href = jsonData.url;
+                    return;
+                }
+            } catch (jsonError) {
+                console.log('Response kein JSON, verwende Fallback URL');
+            }
+            
+            setTimeout(() => {
+                window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
+            }, 1000);
+            
+        } else {
+            throw new Error(`API Error: ${response.status}`);
+        }
+        
+    } catch (error) {
+        console.error('Checkout Fehler:', error);
+        button.textContent = 'Fehler - Bitte erneut versuchen';
+        button.disabled = false;
+        
+        setTimeout(() => {
+            button.textContent = originalText;
+        }, 3000);
+    }
+}
 
         // KORRIGIERTE PERSONALISATION FUNKTION MIT RICHTIGEN SCHLÜSSELN
         function personalizeResults() {
