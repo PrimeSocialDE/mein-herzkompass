@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deine persönliche Analyse ist fast fertig. Erfahre, welche Farben und Schnitte dich sofort frischer, eleganter und selbstbewusster wirken lassen.</title>
+    <title>Deine persönliche Farb-Analyse ist fast fertig. Erfahre, welche Farben und Schnitte dich sofort frischer, eleganter und selbstbewusster wirken lassen.</title>
     
     <!-- TikTok Pixel Code -->
     <script>
@@ -54,7 +54,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
 
         :root {
             --primary-color: #667eea;
@@ -203,85 +202,230 @@
         }
 
         .hero-cta-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: var(--white);
-    border: none;
-    padding: 18px 40px;
-    font-size: 18px;
-    font-weight: 700;
-    border-radius: var(--border-radius-small);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    z-index: 1;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    margin-top: 2rem;
-}
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--white);
+            border: none;
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-top: 2rem;
+        }
 
-.hero-cta-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-    background: linear-gradient(135deg, #7c8ff0 0%, #8b5bb5 100%);
-}
+        .hero-cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+            background: linear-gradient(135deg, #7c8ff0 0%, #8b5bb5 100%);
+        }
 
-        /* RESULTS SECTION */
+        /* RESULTS SECTION - MODERNE KARTEN */
         .results-section {
             padding: 60px 0;
             background: var(--white);
         }
 
-        .results-grid {
+        .results-grid-modern {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
             margin-bottom: 50px;
         }
 
-        .result-card {
+        .result-card-modern {
             background: var(--white);
-            padding: 25px;
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow-light);
-            border: 2px solid var(--primary-color);
-            transition: all 0.3s ease;
-            position: relative;
             overflow: hidden;
+            box-shadow: var(--shadow-light);
+            border: 2px solid #e2e8f0;
+            transition: all 0.4s ease;
+            cursor: pointer;
         }
 
-        .result-card:hover {
-            transform: translateY(-2px);
+        .result-card-modern:hover {
+            transform: translateY(-5px);
             box-shadow: var(--shadow-medium);
-            border-color: var(--secondary-color);
+            border-color: var(--primary-color);
         }
 
-        .result-icon {
-            font-size: 36px;
-            margin-bottom: 15px;
+        .card-header-modern {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .card-icon-modern {
+            font-size: 32px;
+            margin-bottom: 10px;
             display: block;
-            text-align: center;
         }
 
-        .result-title {
+        .card-title-modern {
             font-size: 16px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 12px;
-            line-height: 1.4;
-            text-align: center;
+            font-weight: 600;
+            margin: 0;
+            line-height: 1.3;
         }
 
-        .result-text {
+        .card-content-modern {
+            padding: 25px;
+            background: var(--white);
+        }
+
+        .progress-indicator {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-modern {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+            border-radius: 3px;
+            transition: width 2s ease-out;
+            width: 0%;
+        }
+
+        .result-text-modern {
+            font-size: 14px;
             color: var(--text-light);
             line-height: 1.6;
             margin-bottom: 15px;
-            font-size: 14px;
-            text-align: left;
         }
 
-        .result-highlight {
+        .confidence-badge {
+            background: rgba(102, 126, 234, 0.1);
             color: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 600;
-            font-style: normal;
+            display: inline-block;
+        }
+
+        /* UNLOCK PREVIEW CARD MIT VERPIXELUNGSEFFEKT */
+        .unlock-preview-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
+            border: 2px solid var(--primary-color);
+            margin-top: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .blurred-content {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #f8fafc, var(--white));
+            position: relative;
+        }
+
+        .preview-header {
+            margin-bottom: 30px;
+        }
+
+        .lock-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+            opacity: 0.8;
+        }
+
+        .preview-header h4 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .blurred-insights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .insight-item-blurred {
+            background: rgba(102, 126, 234, 0.05);
+            padding: 20px;
+            border-radius: var(--border-radius-small);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .blur-icon {
+            font-size: 24px;
+            opacity: 0.6;
+            flex-shrink: 0;
+        }
+
+        .blur-text {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .blur-line {
+            background: linear-gradient(90deg, 
+                rgba(102, 126, 234, 0.3) 0%,
+                rgba(102, 126, 234, 0.1) 50%,
+                rgba(102, 126, 234, 0.3) 100%);
+            height: 12px;
+            border-radius: 6px;
+            animation: shimmer 2s infinite;
+            font-size: 12px;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+
+        @keyframes shimmer {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .unlock-action {
+            background: var(--white);
+            border-radius: var(--border-radius-small);
+            padding: 25px;
+            border: 2px solid var(--primary-color);
+        }
+
+        .unlock-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .unlock-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .unlock-hint {
+            color: var(--text-light);
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.4;
         }
 
         /* RESULTS CTA SECTION */
@@ -544,78 +688,53 @@
             font-weight: bold;
         }
 
-/* VIDEO TESTIMONIAL SECTION */
-.video-testimonial-section {
-    padding: 80px 0;
-    background: var(--white);
-}
+        /* VIDEO TESTIMONIAL SECTION */
+        .video-testimonial-section {
+            padding: 80px 0;
+            background: var(--white);
+        }
 
-.video-testimonial-header {
-    text-align: center;
-    margin-bottom: 50px;
-}
+        .video-testimonial-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
 
-.video-testimonial-card {
-    max-width: 900px;
-    margin: 0 auto;
-    background: var(--white);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-heavy);
-    overflow: hidden;
-    border: 2px solid var(--primary-color);
-}
+        .video-testimonial-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            overflow: hidden;
+            border: 2px solid var(--primary-color);
+        }
 
-.video-container {
-    position: relative;
-    width: 100%;
-    background: #000;
-}
+        .video-container {
+            position: relative;
+            width: 100%;
+            background: #000;
+        }
 
-.testimonial-video {
-    width: 100%;
-    height: auto;
-    display: block;
-    max-height: 600px;
-    object-fit: contain;
-}
+        .testimonial-video {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 600px;
+            object-fit: contain;
+        }
 
-.video-testimonial-content {
-    padding: 30px;
-    background: var(--white);
-}
+        .video-testimonial-content {
+            padding: 30px;
+            background: var(--white);
+        }
 
-.video-testimonial-text {
-    color: var(--text-light);
-    font-size: 16px;
-    line-height: 1.6;
-    font-style: italic;
-    margin-top: 15px;
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    .video-testimonial-section {
-        padding: 60px 0;
-    }
-    
-    .video-testimonial-card {
-        margin: 0 15px;
-    }
-    
-    .video-testimonial-content {
-        padding: 20px 15px;
-    }
-    
-    .testimonial-video {
-        max-height: 400px;
-    }
-}
-
-@media (max-width: 480px) {
-    .testimonial-video {
-        max-height: 300px;
-    }
-}
+        .video-testimonial-text {
+            color: var(--text-light);
+            font-size: 16px;
+            line-height: 1.6;
+            font-style: italic;
+            margin-top: 15px;
+        }
 
         /* GUARANTEE SECTION */
         .guarantee-section {
@@ -1066,12 +1185,12 @@
                 padding: 0 15px;
             }
 
-            .results-grid {
+            .results-grid-modern {
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
 
-            .result-card,
+            .result-card-modern,
             .testimonial {
                 padding: 20px 15px;
             }
@@ -1087,6 +1206,30 @@
 
             .results-cta-subtitle {
                 font-size: 15px;
+            }
+
+            .blurred-insights {
+                grid-template-columns: 1fr;
+            }
+            
+            .blurred-content {
+                padding: 20px;
+            }
+
+            .video-testimonial-section {
+                padding: 60px 0;
+            }
+            
+            .video-testimonial-card {
+                margin: 0 15px;
+            }
+            
+            .video-testimonial-content {
+                padding: 20px 15px;
+            }
+            
+            .testimonial-video {
+                max-height: 400px;
             }
 
             /* Improved mobile image handling */
@@ -1245,6 +1388,10 @@
                 width: 35px;
                 height: 35px;
             }
+
+            .testimonial-video {
+                max-height: 300px;
+            }
         }
 
         /* ANIMATIONS */
@@ -1297,100 +1444,158 @@
     </div>
 
     <!-- HERO SECTION -->
-<section class="hero">
-    <div class="container">
-        <div class="hero-badge">✓ Deine erste Einschätzung ist fertig</div>
-        <h1 class="hero-title">
-            <span class="name-highlight" id="personalized-name">Deine</span> Analyse ist vorbereitet – hol dir jetzt dein vollständiges Ergebnis
-        </h1>
-        <p class="hero-subtitle">
-            Deine Fotos sind gespeichert und bereit zur Auswertung. Sobald du abschließt, startet Clara deine persönliche Farb- und Stil-Analyse. Sichere dir deinen Platz, bevor die heutigen Slots vergeben sind.
-        </p>
-        <button class="hero-cta-button" onclick="scrollToCheckout()">
-            Jetzt Analyse freischalten
-        </button>
-    </div>
-</section>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">✓ Deine erste Einschätzung ist fertig</div>
+            <h1 class="hero-title">
+                <span class="name-highlight" id="personalized-name">Deine</span> Farb- & Style-Analyse ist vorbereitet
+            </h1>
+            <p class="hero-subtitle">
+                Deine Antworten sind gespeichert und bereit zur Auswertung. Sobald du abschließt, startet Clara deine persönliche Farb- und Style-Analyse basierend auf deinen Fotos. Sichere dir deinen Platz, bevor die heutigen Slots vergeben sind.
+            </p>
+            <button class="hero-cta-button" onclick="scrollToCheckout()">
+                Jetzt Farb-Analyse freischalten
+            </button>
+        </div>
+    </section>
 
     <!-- RESULTS SECTION -->
     <section class="results-section">
         <div class="container">
-            <div class="results-grid">
-                <div class="result-card animate-on-scroll">
-                    <span class="result-icon">👗</span>
-                    <h4 class="result-title">Dein wahrscheinlicher Körpertyp</h4>
-                    <p class="result-text" id="body-type-analysis">
-                        Basierend auf deinen Antworten deutet vieles auf eine <span class="result-highlight" id="detected-body-type">A-Form</span> hin. 
-                        Das bedeutet, deine Schultern sind schmaler als deine Hüften. 
-                        <span class="result-highlight">Mit der Foto-Analyse kann Clara dies präzise bestimmen und dir perfekt passende Schnitte empfehlen.</span>
-                    </p>
-                </div>
-                
-                <div class="result-card animate-on-scroll">
-                    <span class="result-icon">🎨</span>
-                    <h4 class="result-title">Deine Farbrichtung & erste Empfehlungen</h4>
-                    <p class="result-text" id="color-analysis">
-                        Deine Haarfarbe und Schmuckvorlieben deuten auf einen <span class="result-highlight" id="detected-color-type">warmen Farbtyp</span> hin. 
-                        <span class="color-recommendations" id="color-recommendations">Goldtöne, warme Brauntöne und Erdfarben stehen dir besonders gut.</span>
-                        <span class="result-highlight">Die professionelle Farbanalyse zeigt dir deine exakte Farbpalette mit über 200 perfekten Farbtönen.</span>
-                    </p>
-                </div>
-                
-                <div class="result-card animate-on-scroll">
-                    <span class="result-icon">💫</span>
-                    <h4 class="result-title">Deine größte Style-Herausforderung</h4>
-                    <p class="result-text" id="challenge-analysis">
-                        Du kämpfst wahrscheinlich damit, dass <span class="result-highlight" id="detected-challenge">vieles zu weit oder zu eng wirkt</span>. 
-                        Das liegt an der falschen Passform für deinen Körpertyp.
-                        <span class="result-highlight">Clara zeigt dir genau, welche Schnitte und Proportionen deine Figur optimal zur Geltung bringen.</span>
-                    </p>
-                </div>
-            </div>
-            
-<!-- VIDEO TESTIMONIAL SECTION -->
-<section class="video-testimonial-section">
-    <div class="container">
-        <div class="video-testimonial-header animate-on-scroll">
-            <h2 class="section-title">Echte Erfahrungen mit Clara's Analyse</h2>
-            <p class="section-subtitle">Höre selbst, wie die Analyse anderen Frauen geholfen hat</p>
-        </div>
-        
-        <div class="video-testimonial-card animate-on-scroll">
-            <div class="video-container">
-                <video 
-                    controls 
-                    preload="metadata"
-                    poster="video-thumbnail.jpg"
-                    class="testimonial-video">
-                    <source src="testimonial-video.mp4" type="video/mp4">
-                    Dein Browser unterstützt das Video-Tag nicht.
-                </video>
-            </div>
-            
-            <div class="video-testimonial-content">
-                <div class="testimonial-header">
-                    <img src="LauraPB.png" alt="Testimonial" class="testimonial-avatar">
-                    <div>
-                        <div class="testimonial-name">Laura, 28 Jahre alt</div>
-                        <div class="testimonial-stars">★★★★★</div>
+            <!-- MODERNE FORTSCHRITTS-KARTEN -->
+            <div class="results-grid-modern">
+                <div class="result-card-modern animate-on-scroll">
+                    <div class="card-header-modern">
+                        <span class="card-icon-modern">👁️</span>
+                        <h4 class="card-title-modern">Augen-Farbtyp erkannt</h4>
+                    </div>
+                    <div class="card-content-modern">
+                        <div class="progress-indicator">
+                            <div class="progress-bar-modern" style="width: 85%" id="eyes-progress"></div>
+                        </div>
+                        <p class="result-text-modern" id="eyes-analysis">
+                            Deine <strong id="detected-eyes">blauen Augen</strong> deuten auf einen kühlen Farbtyp hin
+                        </p>
+                        <span class="confidence-badge">85% Sicherheit</span>
                     </div>
                 </div>
-                <p class="video-testimonial-text">
-                    "Dank Claras Farbberatung hat sich mein ganzes Gefühl für Mode verändert. Zum ersten Mal weiß ich wirklich, was mir steht und welche Farben meine Ausstrahlung unterstreichen. Seit der Analyse fühle ich mich sicherer, authentischer und einfach wohl in meiner Haut. Es ist beeindruckend, wie viel Selbstbewusstsein entsteht, wenn man seinen Stil wirklich versteht."
-                </p>
+                
+                <div class="result-card-modern animate-on-scroll">
+                    <div class="card-header-modern">
+                        <span class="card-icon-modern">☀️</span>
+                        <h4 class="card-title-modern">Hauttyp bestimmt</h4>
+                    </div>
+                    <div class="card-content-modern">
+                        <div class="progress-indicator">
+                            <div class="progress-bar-modern" style="width: 78%" id="skin-progress"></div>
+                        </div>
+                        <p class="result-text-modern" id="skin-analysis">
+                            Du <strong id="detected-skin">bräunst schnell</strong> - warmer Hautunterton
+                        </p>
+                        <span class="confidence-badge">78% Sicherheit</span>
+                    </div>
+                </div>
+                
+                <div class="result-card-modern animate-on-scroll">
+                    <div class="card-header-modern">
+                        <span class="card-icon-modern">✨</span>
+                        <h4 class="card-title-modern">Style-Präferenz erkannt</h4>
+                    </div>
+                    <div class="card-content-modern">
+                        <div class="progress-indicator">
+                            <div class="progress-bar-modern" style="width: 92%" id="style-progress"></div>
+                        </div>
+                        <p class="result-text-modern" id="style-analysis">
+                            <strong id="detected-style">Elegant & klassisch</strong> passt zu deinem Typ
+                        </p>
+                        <span class="confidence-badge">92% Sicherheit</span>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</section>
+
+            <!-- VERPIXELTE VORSCHAU-KARTE -->
+            <div class="unlock-preview-card animate-on-scroll">
+                <div class="blurred-content">
+                    <div class="preview-header">
+                        <span class="lock-icon">🔒</span>
+                        <h4>Vollständige Farb-Analyse verfügbar</h4>
+                    </div>
+                    <div class="blurred-insights">
+                        <div class="insight-item-blurred">
+                            <span class="blur-icon">🎨</span>
+                            <div class="blur-text">
+                                <span class="blur-line">████████ ████ ████████</span>
+                                <span class="blur-line">████ ████████ ████</span>
+                            </div>
+                        </div>
+                        <div class="insight-item-blurred">
+                            <span class="blur-icon">👗</span>
+                            <div class="blur-text">
+                                <span class="blur-line">████████ ████████</span>
+                                <span class="blur-line">████ ████ ████████</span>
+                            </div>
+                        </div>
+                        <div class="insight-item-blurred">
+                            <span class="blur-icon">💫</span>
+                            <div class="blur-text">
+                                <span class="blur-line">████ ████████ ████</span>
+                                <span class="blur-line">████████ ████</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="unlock-action">
+                        <button class="unlock-button" onclick="scrollToCheckout()">
+                            Vollständige Farb-Analyse freischalten
+                        </button>
+                        <p class="unlock-hint">Erfahre deine exakten Farbtöne, perfekte Schnitte und individuelle Style-Tipps</p>
+                    </div>
+                </div>
+            </div>
 
             <!-- CTA SECTION AFTER RESULTS -->
             <div class="results-cta-section">
                 <div class="results-cta-card">
-                    <h3 class="results-cta-title">Du willst genauere Infos?</h3>
-                    <p class="results-cta-subtitle">Die vollständige Analyse mit Foto-Auswertung zeigt dir dein wahres Style-Potenzial</p>
+                    <h3 class="results-cta-title">Du willst präzisere Farb-Empfehlungen?</h3>
+                    <p class="results-cta-subtitle">Die vollständige Analyse mit Foto-Auswertung zeigt dir deine exakte Farbpalette und perfekte Style-Richtung</p>
                     <button class="results-cta-button" onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'})">
-                        Jetzt vollständige Analyse erhalten
+                        Jetzt vollständige Farb-Analyse erhalten
                     </button>
+                </div>
+            </div>
+        </div>
+    </section>
+            
+    <!-- VIDEO TESTIMONIAL SECTION -->
+    <section class="video-testimonial-section">
+        <div class="container">
+            <div class="video-testimonial-header animate-on-scroll">
+                <h2 class="section-title">Echte Erfahrungen mit Clara's Analyse</h2>
+                <p class="section-subtitle">Höre selbst, wie die Analyse anderen Frauen geholfen hat</p>
+            </div>
+            
+            <div class="video-testimonial-card animate-on-scroll">
+                <div class="video-container">
+                    <video 
+                        controls 
+                        preload="metadata"
+                        poster="video-thumbnail.jpg"
+                        class="testimonial-video">
+                        <source src="testimonial-video.mp4" type="video/mp4">
+                        Dein Browser unterstützt das Video-Tag nicht.
+                    </video>
+                </div>
+                
+                <div class="video-testimonial-content">
+                    <div class="testimonial-header">
+                        <img src="LauraPB.png" alt="Testimonial" class="testimonial-avatar">
+                        <div>
+                            <div class="testimonial-name">Laura, 28 Jahre alt</div>
+                            <div class="testimonial-stars">★★★★★</div>
+                        </div>
+                    </div>
+                    <p class="video-testimonial-text">
+                        "Dank Claras Farbberatung hat sich mein ganzes Gefühl für Mode verändert. Zum ersten Mal weiß ich wirklich, was mir steht und welche Farben meine Ausstrahlung unterstreichen. Seit der Analyse fühle ich mich sicherer, authentischer und einfach wohl in meiner Haut. Es ist beeindruckend, wie viel Selbstbewusstsein entsteht, wenn man seinen Stil wirklich versteht."
+                    </p>
                 </div>
             </div>
         </div>
@@ -1401,29 +1606,29 @@
         <div class="container">
             <div class="preview-card animate-on-scroll">
                 <div class="preview-badge">Vollständige Analyse verfügbar</div>
-                <h3 class="preview-title">Das erwartet dich in deiner kompletten Style-Analyse</h3>
+                <h3 class="preview-title">Das erwartet dich in deiner kompletten Farb- & Style-Analyse</h3>
                 
                 <div class="insight-grid">
                     <div class="insight-item">
                         <img src="4.png" alt="Foto-Auswertung Beispiel" class="insight-image" />
-                        <h4 class="insight-title">📸 Professionelle Foto-Auswertung</h4>
-                        <p class="insight-text">Clara analysiert deine Fotos und bestimmt deinen exakten Körpertyp, Proportionen und Farbtyp mit 95%iger Genauigkeit.</p>
+                        <h4 class="insight-title">📸 Professionelle Foto-Analyse</h4>
+                        <p class="insight-text">Clara analysiert deine Fotos und bestimmt deinen exakten Farbtyp und optimale Style-Richtung mit 95%iger Genauigkeit.</p>
                     </div>
                     
                     <div class="insight-item">
-                        <img src="3.png" alt="Personalisierte Styling-Empfehlungen" class="insight-image" />
-                        <h4 class="insight-title">🎯 Personalisierte Empfehlungen</h4>
-                        <p class="insight-text">Konkrete Schnitte, Materialien und Styling-Tipps, die perfekt zu deiner individuellen Figur passen.</p>
+                        <img src="3.png" alt="Personalisierte Farb-Empfehlungen" class="insight-image" />
+                        <h4 class="insight-title">🎨 Deine perfekte Farbpalette</h4>
+                        <p class="insight-text">Über 200 Farbtöne, die dich strahlen lassen - von Basics bis zu Statement-Farben, perfekt auf dich abgestimmt.</p>
                     </div>
                     
                     <div class="insight-item">
-                        <img src="5.png" alt="Perfekte Farbpalette" class="insight-image" />
-                        <h4 class="insight-title">🌈 Deine perfekte Farbpalette</h4>
-                        <p class="insight-text">Über 200 Farbtöne, die dich strahlen lassen - von Basics bis zu Statement-Farben.</p>
+                        <img src="5.png" alt="Style-Empfehlungen" class="insight-image" />
+                        <h4 class="insight-title">✨ Personalisierte Style-Tipps</h4>
+                        <p class="insight-text">Konkrete Styling-Empfehlungen, die zu deiner Persönlichkeit und deinem Farbtyp passen.</p>
                     </div>
                     
                     <div class="insight-item">
-                        <img src="2.png" alt="Frühlings-Look Shopping-Guide" class="insight-image" />
+                        <img src="2.png" alt="Shopping-Guide" class="insight-image" />
                         <h4 class="insight-title">🛍️ Shopping-Guide</h4>
                         <p class="insight-text">Konkrete Marken und Shops, wo du deine optimalen Pieces findest - spare Zeit und Geld.</p>
                     </div>
@@ -1434,14 +1639,14 @@
                         <img src="ClaraArbeitNeu.png" alt="Clara bei der persönlichen Analyse" class="clara-analysis-image">
                         <div class="clara-analysis-content">
                             <h4 class="unlock-title">Ich bin Clara und ich analysiere jedes deiner Fotos persönlich, damit du genau weißt, was dich wirklich strahlen lässt.</h4>
-                            <p class="unlock-subtitle">Ich werte jedes Foto individuell aus und erstelle dir deine maßgeschneiderte Farb- undStyle-Strategie</p>
+                            <p class="unlock-subtitle">Ich werte jedes Foto individuell aus und erstelle dir deine maßgeschneiderte Farb- und Style-Strategie</p>
                         </div>
                     </div>
                     
                     <div class="unlock-features">
                         <div class="unlock-feature">
                             <span class="icon">✓</span>
-                            <span>Exakte Körpertyp-Bestimmung</span>
+                            <span>Exakte Farbtyp-Bestimmung</span>
                         </div>
                         <div class="unlock-feature">
                             <span class="icon">✓</span>
@@ -1518,7 +1723,7 @@
                     </div>
                     <div class="benefit">
                         <span class="benefit-icon">✓</span>
-                        <span class="benefit-text">12-seitige personalisierte Style-Analyse</span>
+                        <span class="benefit-text">12-seitige personalisierte Farb-Analyse</span>
                     </div>
                     <div class="benefit">
                         <span class="benefit-icon">✓</span>
@@ -1539,7 +1744,7 @@
                 </div>
                 
                 <button class="main-cta" onclick="quickCheckout()">
-                    Jetzt vollständige Analyse erhalten
+                    Jetzt vollständige Farb-Analyse erhalten
                 </button>
                 
                 <div class="trust-indicators">
@@ -1619,7 +1824,7 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h4>Clara Style-Analyse</h4>
-                    <p>Individuelle Style-Beratung basierend auf professioneller Körpertyp- und Farbanalyse.</p>
+                    <p>Individuelle Style-Beratung basierend auf professioneller Farb- und Style-Analyse.</p>
                 </div>
                 
                 <div class="footer-section">
@@ -1662,88 +1867,87 @@
     </footer>
 
     <script>
-        
         async function quickCheckout() {
-    // TikTok Event: AddToCart beim Button-Klick
-    ttq.track('AddToCart', {
-        value: 39.99,
-        currency: 'EUR',
-        content_type: 'product',
-        content_id: 'style_analysis',
-        content_name: 'Vollständige Style-Analyse'
-    });
-
-    const button = document.querySelector('.main-cta');
-    const originalText = button.textContent;
-    
-    button.disabled = true;
-    button.textContent = 'Wird vorbereitet...';
-    
-    try {
-        const userData = {};
-        
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            const value = localStorage.getItem(key);
-            if (key && value) {
-                userData[key] = value;
-            }
-        }
-        
-        userData['_timestamp'] = new Date().toISOString();
-        userData['_checkout_from'] = 'ergebnis_page';
-        
-        button.textContent = 'Daten werden übertragen...';
-        
-        const response = await fetch('/api/checkout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(userData)
-        });
-        
-        if (response.ok) {
-            // TikTok Event: InitiateCheckout bei erfolgreichem API-Call
-            ttq.track('InitiateCheckout', {
+            // TikTok Event: AddToCart beim Button-Klick
+            ttq.track('AddToCart', {
                 value: 39.99,
                 currency: 'EUR',
                 content_type: 'product',
-                content_id: 'style_analysis'
+                content_id: 'style_analysis',
+                content_name: 'Vollständige Style-Analyse'
             });
 
-            button.textContent = 'Daten gespeichert! Weiterleitung...';
+            const button = document.querySelector('.main-cta');
+            const originalText = button.textContent;
+            
+            button.disabled = true;
+            button.textContent = 'Wird vorbereitet...';
             
             try {
-                const jsonData = await response.json();
-                if (jsonData.url) {
-                    window.location.href = jsonData.url;
-                    return;
+                const userData = {};
+                
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    if (key && value) {
+                        userData[key] = value;
+                    }
                 }
-            } catch (jsonError) {
-                console.log('Response kein JSON, verwende Fallback URL');
-            }
-            
-            setTimeout(() => {
-                window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
-            }, 1000);
-            
-        } else {
-            throw new Error(`API Error: ${response.status}`);
-        }
-        
-    } catch (error) {
-        console.error('Checkout Fehler:', error);
-        button.textContent = 'Fehler - Bitte erneut versuchen';
-        button.disabled = false;
-        
-        setTimeout(() => {
-            button.textContent = originalText;
-        }, 3000);
-    }
-}
+                
+                userData['_timestamp'] = new Date().toISOString();
+                userData['_checkout_from'] = 'ergebnis_page';
+                
+                button.textContent = 'Daten werden übertragen...';
+                
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+                
+                if (response.ok) {
+                    // TikTok Event: InitiateCheckout bei erfolgreichem API-Call
+                    ttq.track('InitiateCheckout', {
+                        value: 39.99,
+                        currency: 'EUR',
+                        content_type: 'product',
+                        content_id: 'style_analysis'
+                    });
 
-        // KORRIGIERTE PERSONALISATION FUNKTION MIT RICHTIGEN SCHLÜSSELN
+                    button.textContent = 'Daten gespeichert! Weiterleitung...';
+                    
+                    try {
+                        const jsonData = await response.json();
+                        if (jsonData.url) {
+                            window.location.href = jsonData.url;
+                            return;
+                        }
+                    } catch (jsonError) {
+                        console.log('Response kein JSON, verwende Fallback URL');
+                    }
+                    
+                    setTimeout(() => {
+                        window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
+                    }, 1000);
+                    
+                } else {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+            } catch (error) {
+                console.error('Checkout Fehler:', error);
+                button.textContent = 'Fehler - Bitte erneut versuchen';
+                button.disabled = false;
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 3000);
+            }
+        }
+
+        // FARB-ANALYSE PERSONALISIERUNG
         function personalizeResults() {
-            console.log('=== KORRIGIERTE PERSONALISIERUNG ===');
+            console.log('=== FARB-ANALYSE PERSONALISIERUNG ===');
             
             // 1. Sammle ALLE localStorage Daten
             const allData = {};
@@ -1777,342 +1981,115 @@
             
             console.log('Kombinierte Daten für Analyse:', combinedData);
             
-            // 4. KÖRPERTYP-MAPPING - BASIEREND AUF STEP2.HTML
-            // Verwende die KORREKTEN Schlüssel aus step2.html
-            let foundBodyShape = '';
-            let bodyShapeSource = '';
+            // 4. AUGENFARBE-MAPPING (aus Frage 1 - bodyShape Schlüssel)
+            let foundEyeColor = combinedData.bodyShape || '';
+            let detectedEyeColor = 'blaue Augen';
+            let eyeColorType = 'kühlen';
+            let seasonTendency = 'Winter';
             
-            // Erst in quizAnswers suchen, dann in direkten Schlüsseln
-            const bodyShapeKeys = [
-                'bodyShape',           // Das ist der korrekte Schlüssel aus step2.html!
-                'körperform',          // Fallback deutsch
-                'body_shape',          // Fallback englisch
-                'figure_type'          // Weiterer Fallback
-            ];
-            
-            for (const key of bodyShapeKeys) {
-                if (combinedData[key]) {
-                    foundBodyShape = combinedData[key];
-                    bodyShapeSource = key;
-                    console.log(`✅ Körperform gefunden: "${foundBodyShape}" in Schlüssel: "${key}"`);
-                    break;
-                } else {
-                    console.log(`❌ Keine Daten in Schlüssel: "${key}"`);
+            if (foundEyeColor) {
+                const eyeLower = foundEyeColor.toLowerCase();
+                if (eyeLower.includes('braun')) {
+                    detectedEyeColor = 'braune Augen';
+                    eyeColorType = 'warmen';
+                    seasonTendency = 'Herbst';
+                } else if (eyeLower.includes('gruen')) {
+                    detectedEyeColor = 'grüne Augen';
+                    eyeColorType = 'neutralen';
+                    seasonTendency = 'Frühling';
+                } else if (eyeLower.includes('grau')) {
+                    detectedEyeColor = 'graue Augen';
+                    eyeColorType = 'kühlen';
+                    seasonTendency = 'Sommer';
+                } else if (eyeLower.includes('misch')) {
+                    detectedEyeColor = 'Mischaugen';
+                    eyeColorType = 'gemischten';
+                    seasonTendency = 'Frühling-Herbst-Mix';
                 }
             }
             
-            // 5. KORRIGIERTE KÖRPERTYP-ZUORDNUNG für step2.html Werte
-            let detectedBodyType = 'A-Form'; // Fallback
-            if (foundBodyShape) {
-                const bodyShapeLower = foundBodyShape.toLowerCase();
-                console.log('Analysiere Körperform:', bodyShapeLower);
-                
-                // MAPPINGS für die TATSÄCHLICHEN step2.html Werte
-                if (bodyShapeLower.includes('schultern-breit')) {
-                    detectedBodyType = 'V-Form (breite Schultern)';
-                } else if (bodyShapeLower.includes('ausgeglichen')) {
-                    detectedBodyType = 'X-Form (Sanduhr)';
-                } else if (bodyShapeLower.includes('hueften-breit')) {
-                    detectedBodyType = 'A-Form (Birne)';
-                } else if (bodyShapeLower.includes('rundlich')) {
-                    detectedBodyType = 'O-Form (Apfel)';
-                } else if (bodyShapeLower.includes('gerade')) {
-                    detectedBodyType = 'I-Form (Rechteck)';
-                }
-                // Fallback-Mappings für andere mögliche Werte
-                else if (bodyShapeLower.includes('o') || bodyShapeLower.includes('apple') || bodyShapeLower.includes('oval')) {
-                    detectedBodyType = 'O-Form (Apfel)';
-                } else if (bodyShapeLower.includes('x') || bodyShapeLower.includes('sanduhr') || bodyShapeLower.includes('hourglass')) {
-                    detectedBodyType = 'X-Form (Sanduhr)';
-                } else if (bodyShapeLower.includes('v') || bodyShapeLower.includes('triangle') || bodyShapeLower.includes('schultern')) {
-                    detectedBodyType = 'V-Form (breite Schultern)';
-                } else if (bodyShapeLower.includes('i') || bodyShapeLower.includes('rechteck') || bodyShapeLower.includes('rectangle')) {
-                    detectedBodyType = 'I-Form (Rechteck)';
-                } else if (bodyShapeLower.includes('a') || bodyShapeLower.includes('birne') || bodyShapeLower.includes('pear')) {
-                    detectedBodyType = 'A-Form (Birne)';
+            // 5. HAUTTYP-MAPPING (aus Frage 2 - waistDefinition Schlüssel)
+            let foundSkinType = combinedData.waistDefinition || '';
+            let detectedSkinType = 'bräunst schnell';
+            let skinAnalysis = 'warmer Hautunterton';
+            let skinSeasonHint = 'Herbst-Typ';
+            
+            if (foundSkinType) {
+                const skinLower = foundSkinType.toLowerCase();
+                if (skinLower.includes('blass') || skinLower.includes('meide')) {
+                    detectedSkinType = 'meidest die Sonne';
+                    skinAnalysis = 'sehr heller, kühler Hauttyp';
+                    skinSeasonHint = 'Winter-Typ';
+                } else if (skinLower.includes('rot')) {
+                    detectedSkinType = 'wirst rot statt braun';
+                    skinAnalysis = 'empfindlicher, kühler Hauttyp';
+                    skinSeasonHint = 'Sommer-Typ';
+                } else if (skinLower.includes('langsam')) {
+                    detectedSkinType = 'bräunst langsam';
+                    skinAnalysis = 'neutraler Hauttyp';
+                    skinSeasonHint = 'Frühling-Typ';
                 }
             }
             
-            // 6. TAILLE-MAPPING - BASIEREND AUF STEP3.HTML
-            // Verwende die KORREKTEN Schlüssel aus step3.html
-            let foundWaist = '';
-            const waistKeys = [
-                'waistDefinition',     // Das ist der korrekte Schlüssel aus step3.html!
-                'taille',              // Fallback deutsch
-                'waist_type',          // Fallback englisch
-                'taillen_typ'          // Weiterer Fallback
-            ];
+            // 6. STYLE-MAPPING (aus Frage 3 - stylingChallenge Schlüssel)
+            let foundStyle = combinedData.stylingChallenge || '';
+            let detectedStyle = 'Elegant & klassisch';
             
-            for (const key of waistKeys) {
-                if (combinedData[key]) {
-                    foundWaist = combinedData[key];
-                    console.log(`✅ Taille gefunden: "${foundWaist}" in Schlüssel: "${key}"`);
-                    break;
+            if (foundStyle) {
+                const styleLower = foundStyle.toLowerCase();
+                if (styleLower.includes('schlicht')) {
+                    detectedStyle = 'Natürlich & schlicht';
+                } else if (styleLower.includes('verspielt')) {
+                    detectedStyle = 'Kreativ & verspielt';
+                } else if (styleLower.includes('modern')) {
+                    detectedStyle = 'Modern & minimalistisch';
                 }
             }
             
-            // 7. SHOPPING-HERAUSFORDERUNG - BASIEREND AUF STEP4.HTML
-            // Verwende die KORREKTEN Schlüssel aus step4.html
-            let foundChallenge = '';
-            const challengeKeys = [
-                'stylingChallenge',    // Das ist der korrekte Schlüssel aus step4.html!
-                'shopping_challenge',  // Fallback
-                'style_problem',       // Fallback
-                'kleidung_problem'     // Fallback deutsch
-            ];
+            console.log('=== ERKANNTE WERTE ===');
+            console.log('Augenfarbe:', detectedEyeColor);
+            console.log('Hauttyp:', detectedSkinType);
+            console.log('Style:', detectedStyle);
             
-            for (const key of challengeKeys) {
-                if (combinedData[key]) {
-                    foundChallenge = combinedData[key];
-                    console.log(`✅ Styling-Herausforderung gefunden: "${foundChallenge}" in Schlüssel: "${key}"`);
-                    break;
-                }
-            }
+            // 7. UPDATE HTML ELEMENTS
+            updateElementSafely('detected-eyes', detectedEyeColor);
+            updateElementSafely('detected-skin', detectedSkinType);
+            updateElementSafely('detected-style', detectedStyle);
             
-            // 8. HAUTUNTERTON - BASIEREND AUF STEP5.HTML
-            // Verwende die KORREKTEN Schlüssel aus step5.html
-            let foundSkinTone = '';
-            const skinToneKeys = [
-                'skinUndertone',       // Das ist der korrekte Schlüssel aus step5.html!
-                'hautunterton',        // Fallback deutsch
-                'skin_tone',           // Fallback englisch
-                'jewelry_preference'   // Weiterer Fallback
-            ];
-            
-            for (const key of skinToneKeys) {
-                if (combinedData[key]) {
-                    foundSkinTone = combinedData[key];
-                    console.log(`✅ Hautunterton gefunden: "${foundSkinTone}" in Schlüssel: "${key}"`);
-                    break;
-                }
-            }
-            
-            // 9. HAARFARBE - BASIEREND AUF STEP6.HTML
-            // Verwende die KORREKTEN Schlüssel aus step6.html
-            let foundHairColor = '';
-            const hairColorKeys = [
-                'hairColor',           // Das ist der korrekte Schlüssel aus step6.html!
-                'haarfarbe',           // Fallback deutsch
-                'hair_colour',         // Fallback englisch
-                'natural_hair_color'   // Weiterer Fallback
-            ];
-            
-            for (const key of hairColorKeys) {
-                if (combinedData[key]) {
-                    foundHairColor = combinedData[key];
-                    console.log(`✅ Haarfarbe gefunden: "${foundHairColor}" in Schlüssel: "${key}"`);
-                    break;
-                }
-            }
-            
-            // 10. FARBTYP-MAPPING basierend auf Hautunterton und Haarfarbe
-            let detectedColorType = 'warmen Farbtyp'; // Fallback
-            if (foundSkinTone || foundHairColor) {
-                const skinLower = foundSkinTone.toLowerCase();
-                const hairLower = foundHairColor.toLowerCase();
-                
-                console.log('Analysiere Farbindikatoren:', { skinLower, hairLower });
-                
-                // Mapping basierend auf step5.html Werten
-                if (skinLower.includes('silber') || skinLower.includes('silver')) {
-                    detectedColorType = 'kühlen Farbtyp';
-                } else if (skinLower.includes('gold') || skinLower.includes('golden')) {
-                    detectedColorType = 'warmen Farbtyp';
-                } else if (skinLower.includes('beides') || skinLower.includes('gleich')) {
-                    detectedColorType = 'neutralen Farbtyp';
-                } else if (skinLower.includes('unsicher')) {
-                    detectedColorType = 'gemischten Farbtyp';
-                }
-                
-                // Zusätzliche Analyse basierend auf Haarfarbe (step6.html)
-                if (hairLower.includes('aschblond-braun-kuhl')) {
-                    detectedColorType = 'kühlen Farbtyp';
-                } else if (hairLower.includes('dunkelblond-braun-warm')) {
-                    detectedColorType = 'warmen Farbtyp';
-                } else if (hairLower.includes('schwarz-rot')) {
-                    detectedColorType = 'warmen Farbtyp';
-                } else if (hairLower.includes('hellblond-grau')) {
-                    detectedColorType = 'kühlen Farbtyp';
-                }
-            }
-            
-            // 11. HERAUSFORDERUNGS-MAPPING basierend auf step4.html Werten
-            let detectedChallenge = 'vieles zu weit oder zu eng wirkt'; // Fallback
-            if (foundChallenge) {
-                const challengeLower = foundChallenge.toLowerCase();
-                
-                console.log('Analysiere Styling-Herausforderung:', challengeLower);
-                
-                // Mapping basierend auf step4.html Werten
-                if (challengeLower.includes('schultern-oberweite')) {
-                    detectedChallenge = 'die Passform an Schultern und Oberweite nicht stimmt';
-                } else if (challengeLower.includes('huefte-po')) {
-                    detectedChallenge = 'Hüfte und Po sich zu sehr betonen';
-                } else if (challengeLower.includes('taille-fehlt')) {
-                    detectedChallenge = 'deine Taille nicht zur Geltung kommt';
-                } else if (challengeLower.includes('passform-allgemein')) {
-                    detectedChallenge = 'alles an dir zu weit oder zu eng wirkt';
-                } else if (challengeLower.includes('proportionen')) {
-                    detectedChallenge = 'deine Proportionen unausgewogen wirken';
-                }
-            }
-            
-            console.log('=== FINALE ERKANNTE WERTE ===');
-            console.log('Körpertyp:', detectedBodyType);
-            console.log('Farbtyp:', detectedColorType);
-            console.log('Herausforderung:', detectedChallenge);
-            console.log('Datenquellen:', { bodyShapeSource, foundSkinTone, foundHairColor, foundChallenge });
-            
-            // 12. UPDATE HTML ELEMENTS
-            updateElementSafely('detected-body-type', detectedBodyType);
-            updateElementSafely('detected-color-type', detectedColorType);
-            updateElementSafely('detected-challenge', detectedChallenge);
-            
-            // 13. UPDATE DETAILLIERTE BEREICHE
-            updateBodyAnalysis(detectedBodyType, foundBodyShape);
-            updateColorAnalysis(detectedColorType, foundHairColor, foundSkinTone);
-            updateChallengeAnalysis(detectedChallenge, foundChallenge);
+            updateElementSafely('eyes-analysis', `Deine <strong>${detectedEyeColor}</strong> deuten auf einen ${eyeColorType} Farbtyp hin. Das deutet auf ${seasonTendency}-Töne - <strong>mehr Details</strong> in der vollständigen Analyse.`);
+            updateElementSafely('skin-analysis', `Du <strong>${detectedSkinType}</strong> - ${skinAnalysis}. Das spricht für einen ${skinSeasonHint} - die Analyse zeigt <strong>mehr über</strong> deine exakte Farbpalette.`);
+            updateElementSafely('style-analysis', `<strong>${detectedStyle}</strong> passt zu deinem Typ. Kombiniert mit deiner Farbrichtung entstehen perfekte Looks - <strong>mehr dazu</strong> in der Analyse.`);
         }
 
-        // Hilfsfunktion für sicheres Element-Update
         function updateElementSafely(elementId, value) {
             const element = document.getElementById(elementId);
             if (element) {
-                element.textContent = value;
+                element.innerHTML = value;
                 console.log(`✅ Updated ${elementId} mit: ${value}`);
             } else {
                 console.error(`❌ Element nicht gefunden: ${elementId}`);
             }
         }
 
-        // ERWEITERTE UPDATE-FUNKTIONEN
-        function updateBodyAnalysis(bodyType, originalValue) {
-            const element = document.getElementById('body-type-analysis');
-            if (!element) {
-                console.error('❌ body-type-analysis Element nicht gefunden');
-                return;
-            }
+        // FORTSCHRITTSBALKEN-ANIMATION
+        function animateProgressBars() {
+            const progressBars = document.querySelectorAll('.progress-bar-modern');
             
-            let description = '';
-            let tips = '';
-            
-            if (bodyType.includes('O-Form')) {
-                description = 'Das bedeutet, deine Körpermitte ist etwas breiter als Schultern und Hüften.';
-                tips = 'Empire-Schnitte und V-Ausschnitte strecken deine Silhouette optimal. ';
-            } else if (bodyType.includes('X-Form')) {
-                description = 'Das bedeutet, du hast eine ausgeprägte Taille bei proportionalen Schultern und Hüften.';
-                tips = 'Betone deine natürliche Taille mit taillierten Schnitten und vermeide kastige Oberteile. ';
-            } else if (bodyType.includes('V-Form')) {
-                description = 'Das bedeutet, deine Schultern sind breiter als deine Hüften.';
-                tips = 'Setze auf fließende Stoffe und A-Linien-Schnitte im unteren Bereich, um deine Proportionen auszugleichen. ';
-            } else if (bodyType.includes('I-Form')) {
-                description = 'Das bedeutet, du hast eine eher gerade, athletische Silhouette.';
-                tips = 'Schaffe Kurven mit Gürteln, Rüschen und Wickelkleidern für mehr Weiblichkeit. ';
-            } else { // A-Form
-                description = 'Das bedeutet, deine Schultern sind schmaler als deine Hüften.';
-                tips = 'Betone deine Schultern mit strukturierten Oberteilen und wähle A-Linien-Röcke, die deine Taille definieren. ';
-            }
-            
-            element.innerHTML = `
-                Basierend auf deinen Antworten deutet vieles auf eine <span class="result-highlight">${bodyType}</span> hin. 
-                ${description} ${tips}
-                <span class="result-highlight">Mit der Foto-Analyse kann Clara dies präzise bestimmen und dir perfekt passende Schnitte empfehlen.</span>
-            `;
-            
-            console.log(`✅ Körpertyp-Analyse aktualisiert für ${bodyType}`);
-        }
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const targetWidth = entry.target.style.width;
+                        entry.target.style.width = '0%';
+                        setTimeout(() => {
+                            entry.target.style.width = targetWidth;
+                        }, 300);
+                    }
+                });
+            });
 
-        function updateColorAnalysis(colorType, hairColor, skinTone) {
-            const element = document.getElementById('color-analysis');
-            const recommendationsElement = document.getElementById('color-recommendations');
-            if (!element) {
-                console.error('❌ color-analysis Element nicht gefunden');
-                return;
-            }
-            
-            let colors = '';
-            let reasoning = '';
-            
-            if (colorType.includes('kühlen')) {
-                colors = 'Navy, kühles Grau, Silber und Eisblau-Töne stehen dir perfekt. ';
-                reasoning = 'Deine Hautuntertöne und';
-                if (hairColor) {
-                    reasoning = `Deine ${getHairColorDescription(hairColor)} und`;
-                }
-                reasoning += ' deine Schmuckvorlieben';
-            } else if (colorType.includes('neutralen') || colorType.includes('gemischten')) {
-                colors = 'Du kannst sowohl warme als auch kühle Töne tragen - ein großer Vorteil! ';
-                reasoning = 'Deine ausgewogenen Merkmale';
-            } else {
-                colors = 'Camel, warmes Braun, Gold und Korallentöne bringen dich zum Strahlen. ';
-                reasoning = 'Deine warmen Untertöne und';
-                if (hairColor) {
-                    reasoning = `Deine ${getHairColorDescription(hairColor)} und`;
-                }
-                reasoning += ' deine Schmuckvorlieben';
-            }
-            
-            element.innerHTML = `
-                ${reasoning} deuten auf einen <span class="result-highlight">${colorType}</span> hin. 
-                <span class="color-recommendations">${colors}</span>
-                <span class="result-highlight">Die professionelle Farbanalyse zeigt dir deine exakte Farbpalette mit über 200 perfekten Farbtönen.</span>
-            `;
-            
-            if (recommendationsElement) {
-                recommendationsElement.textContent = colors;
-            }
-            
-            console.log(`✅ Farbtyp-Analyse aktualisiert für ${colorType}`);
-        }
-
-        function updateChallengeAnalysis(challenge, originalValue) {
-            const element = document.getElementById('challenge-analysis');
-            if (!element) {
-                console.error('❌ challenge-analysis Element nicht gefunden');
-                return;
-            }
-            
-            let impact = 'Du fühlst dich unsicher bei der Kleiderwahl und weißt nicht, was dir steht. ';
-            let solution = 'Das liegt an der falschen Passform für deinen Körpertyp.';
-            
-            if (challenge.includes('Schultern') || challenge.includes('Oberweite')) {
-                impact = 'Du fühlst dich unwohl im Oberkörperbereich und versteckst deine Figur. ';
-                solution = 'Das liegt an der falschen Passform für deine Schultern und Oberweite.';
-            } else if (challenge.includes('Hüfte') || challenge.includes('Po')) {
-                impact = 'Du vermeidest figurbetonte Kleidung und fühlst dich unten herum zu breit. ';
-                solution = 'Das liegt an den falschen Schnitten für deine Hüftpartie.';
-            } else if (challenge.includes('Taille')) {
-                impact = 'Du wirkst kastig und deine feminine Silhouette kommt nicht zur Geltung. ';
-                solution = 'Das liegt daran, dass deine Taille nicht richtig betont wird.';
-            } else if (challenge.includes('Proportionen')) {
-                impact = 'Du findest nie das richtige Verhältnis und wirkst unausgewogen. ';
-                solution = 'Das liegt an falschen Proportionen in deinen Outfits.';
-            }
-            
-            element.innerHTML = `
-                Du kämpfst wahrscheinlich damit, dass <span class="result-highlight">${challenge}</span>. 
-                ${impact}${solution}
-                <span class="result-highlight">Clara zeigt dir genau, welche Schnitte und Proportionen deine Figur optimal zur Geltung bringen.</span>
-            `;
-            
-            console.log(`✅ Herausforderungs-Analyse aktualisiert für ${challenge}`);
-        }
-
-        function getHairColorDescription(hairColor) {
-            if (!hairColor) return 'Haarfarbe';
-            
-            const hairLower = hairColor.toLowerCase();
-            if (hairLower.includes('dunkelblond-braun-warm')) {
-                return 'warmen blond-braunen Haare';
-            } else if (hairLower.includes('aschblond-braun-kuhl')) {
-                return 'kühlen aschblonden Haare';
-            } else if (hairLower.includes('schwarz-rot')) {
-                return 'dunklen Haare';
-            } else if (hairLower.includes('hellblond-grau')) {
-                return 'hellen Haare';
-            } else {
-                return 'Haarfarbe';
-            }
+            progressBars.forEach(bar => {
+                observer.observe(bar);
+            });
         }
 
         // TIMER AND COUNTERS
@@ -2195,36 +2172,36 @@
         }
 
         function scrollToCheckout() {
-    const pricingSection = document.getElementById('pricing');
-    if (pricingSection) {
-        const targetPosition = pricingSection.getBoundingClientRect().top + window.pageYOffset;
-        const startPosition = window.pageYOffset;
-        const distance = targetPosition - startPosition;
-        const duration = 1500; // 1.5 Sekunden (vorher war es ~500ms)
-        let start = null;
+            const pricingSection = document.getElementById('pricing');
+            if (pricingSection) {
+                const targetPosition = pricingSection.getBoundingClientRect().top + window.pageYOffset;
+                const startPosition = window.pageYOffset;
+                const distance = targetPosition - startPosition;
+                const duration = 1500; // 1.5 Sekunden
+                let start = null;
 
-        function animation(currentTime) {
-            if (start === null) start = currentTime;
-            const timeElapsed = currentTime - start;
-            const progress = Math.min(timeElapsed / duration, 1);
-            
-            // Easing function für smootheren Scroll
-            const ease = progress < 0.5
-                ? 4 * progress * progress * progress
-                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-            
-            window.scrollTo(0, startPosition + distance * ease);
-            
-            if (timeElapsed < duration) {
+                function animation(currentTime) {
+                    if (start === null) start = currentTime;
+                    const timeElapsed = currentTime - start;
+                    const progress = Math.min(timeElapsed / duration, 1);
+                    
+                    // Easing function für smootheren Scroll
+                    const ease = progress < 0.5
+                        ? 4 * progress * progress * progress
+                        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                    
+                    window.scrollTo(0, startPosition + distance * ease);
+                    
+                    if (timeElapsed < duration) {
+                        requestAnimationFrame(animation);
+                    }
+                }
+
                 requestAnimationFrame(animation);
+            } else {
+                console.log('Pricing-Section nicht gefunden!');
             }
         }
-
-        requestAnimationFrame(animation);
-    } else {
-        console.log('Pricing-Section nicht gefunden!');
-    }
-}
 
         // COUNTER UPDATES
         function scheduleCounterUpdates() {
@@ -2255,9 +2232,10 @@
 
         // INITIALIZE EVERYTHING
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('=== INITIALISIERE STYLE RESULTS PAGE ===');
+            console.log('=== INITIALISIERE FARB-ANALYSE RESULTS PAGE ===');
             
             personalizeResults();
+            animateProgressBars();
             updateTimer();
             updateDeletionTimer();
             updateCounters();
