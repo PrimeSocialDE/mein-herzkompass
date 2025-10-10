@@ -652,40 +652,143 @@
             flex: 1;
         }
 
-        .unlock-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-            text-align: left;
+        /* UNLOCK PREVIEW CARD MIT VERPIXELUNGSEFFEKT */
+        .unlock-preview-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
+            border: 2px solid var(--primary-color);
+            margin: 40px auto;
+            overflow: hidden;
+            position: relative;
+            max-width: 800px;
         }
 
-        .unlock-subtitle {
-            color: var(--text-light);
-            margin-bottom: 0;
-            font-size: 15px;
-            text-align: left;
+        .blurred-content {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #f8fafc, var(--white));
+            position: relative;
         }
 
-        .unlock-features {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
+        .preview-header {
             margin-bottom: 30px;
         }
 
-        .unlock-feature {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: center;
-            font-size: 14px;
-            color: var(--text-dark);
+        .lock-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+            opacity: 0.8;
         }
 
-        .unlock-feature .icon {
-            color: var(--success-color);
-            font-weight: bold;
+        .preview-header h4 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .blurred-insights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .insight-item-blurred {
+            background: rgba(102, 126, 234, 0.05);
+            padding: 20px;
+            border-radius: var(--border-radius-small);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .blur-icon {
+            font-size: 24px;
+            opacity: 0.6;
+            flex-shrink: 0;
+        }
+
+        .blur-text {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .insight-title-blur {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-dark);
+            opacity: 1;
+            margin-bottom: 8px;
+            display: block;
+            line-height: 1.3;
+        }
+
+        .blur-line {
+            background: linear-gradient(90deg, 
+                rgba(102, 126, 234, 0.3) 0%,
+                rgba(102, 126, 234, 0.1) 50%,
+                rgba(102, 126, 234, 0.3) 100%);
+            height: 12px;
+            border-radius: 6px;
+            animation: shimmer 2s infinite;
+            font-size: 12px;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+
+        @keyframes shimmer {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .unlock-action {
+            background: var(--white);
+            border-radius: var(--border-radius-small);
+            padding: 25px;
+            border: 2px solid var(--primary-color);
+        }
+
+        .unlock-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .unlock-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .unlock-hint {
+            color: var(--text-light);
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .blurred-insights {
+                grid-template-columns: 1fr;
+            }
+            
+            .blurred-content {
+                padding: 20px;
+            }
         }
 
         /* VIDEO TESTIMONIAL SECTION */
@@ -1514,43 +1617,44 @@
             </div>
 
             <!-- VERPIXELTE VORSCHAU-KARTE -->
-            <div class="unlock-preview-card animate-on-scroll">
-                <div class="blurred-content">
-                    <div class="preview-header">
-                        <span class="lock-icon">🔒</span>
-                        <h4>Vollständige Farb-Analyse verfügbar</h4>
+    <div class="unlock-preview-card">
+        <div class="blurred-content">
+            <div class="preview-header">
+                <span class="lock-icon">🔒</span>
+                <h4>Vollständige Farb-Analyse verfügbar</h4>
+            </div>
+            <div class="blurred-insights">
+                <div class="insight-item-blurred">
+                    <span class="blur-icon">💖</span>
+                    <div class="blur-text">
+                        <span class="insight-title-blur">Endlich wissen, was dir wirklich steht</span>
+                        <span class="blur-line">████████ ████ ████████</span>
                     </div>
-                    <div class="blurred-insights">
-                        <div class="insight-item-blurred">
-                            <span class="blur-icon">🎨</span>
-                            <div class="blur-text">
-                                <span class="blur-line">████████ ████ ████████</span>
-                                <span class="blur-line">████ ████████ ████</span>
-                            </div>
-                        </div>
-                        <div class="insight-item-blurred">
-                            <span class="blur-icon">👗</span>
-                            <div class="blur-text">
-                                <span class="blur-line">████████ ████████</span>
-                                <span class="blur-line">████ ████ ████████</span>
-                            </div>
-                        </div>
-                        <div class="insight-item-blurred">
-                            <span class="blur-icon">💫</span>
-                            <div class="blur-text">
-                                <span class="blur-line">████ ████████ ████</span>
-                                <span class="blur-line">████████ ████</span>
-                            </div>
-                        </div>
+                </div>
+                <div class="insight-item-blurred">
+                    <span class="blur-icon">✨</span>
+                    <div class="blur-text">
+                        <span class="insight-title-blur">Nie wieder Fehlkäufe oder Zweifel</span>
+                        <span class="blur-line">████████ ████████</span>
                     </div>
-                    <div class="unlock-action">
-                        <button class="unlock-button" onclick="scrollToCheckout()">
-                            Vollständige Farb-Analyse freischalten
-                        </button>
-                        <p class="unlock-hint">Erfahre deine exakten Farbtöne, perfekte Schnitte und individuelle Style-Tipps</p>
+                </div>
+                <div class="insight-item-blurred">
+                    <span class="blur-icon">🌟</span>
+                    <div class="blur-text">
+                        <span class="insight-title-blur">Selbstbewusst strahlen jeden Tag</span>
+                        <span class="blur-line">████ ████████ ████</span>
                     </div>
                 </div>
             </div>
+            <div class="unlock-action">
+                <button class="unlock-button" onclick="alert('Zur Checkout-Sektion scrollen')">
+                    Vollständige Farb-Analyse freischalten
+                </button>
+                <p class="unlock-hint">Verwandle dein Styling-Gefühl und strahle mit deinen perfekten Farben</p>
+            </div>
+        </div>
+    </div>
+
 
             <!-- CTA SECTION AFTER RESULTS -->
             <div class="results-cta-section">
