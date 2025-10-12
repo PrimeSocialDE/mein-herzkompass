@@ -404,6 +404,26 @@
             display: none;
         }
 
+        .photo-story-section {
+            background: linear-gradient(135deg, #f8f9ff, #f0f2ff);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .privacy-note {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 0;
+            display: inline-block;
+        }
+
         .uploaded-photos {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -581,19 +601,19 @@
             }
             
             .farbkreis-section {
-                padding: 25px 15px;
-                margin-bottom: 15px;
+                padding: 30px 20px;
+                margin-bottom: 20px;
             }
             
             .farbkreis-image {
-                width: 280px;
-                height: 180px;
-                margin: 0 auto 15px auto;
-                border-radius: 12px;
+                width: 380px;
+                height: 270px;
+                margin: 0 auto 20px auto;
+                border-radius: 15px;
             }
             
             .farbkreis-section h3 {
-                font-size: 18px;
+                font-size: 20px;
             }
             
             .container {
@@ -730,6 +750,32 @@
                 line-height: 1.4;
             }
             
+            .farbkreis-section {
+                padding: 25px 15px;
+                margin-bottom: 15px;
+            }
+            
+            .farbkreis-image {
+                width: 280px;
+                height: 180px;
+                margin: 0 auto 15px auto;
+                border-radius: 12px;
+            }
+            
+            .farbkreis-section h3 {
+                font-size: 18px;
+            }
+            
+            .photo-story-section {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+            
+            .privacy-note {
+                font-size: 11px;
+                padding: 8px 12px;
+            }
+            
             .container {
                 padding: 25px 15px;
                 border-radius: 15px;
@@ -853,7 +899,7 @@
         </div>
 
         <div class="how-clara-works">
-            <h2>🎨 Deine Ausstrahlung ist einzigartig, aber viele Farben zeigen das nicht. Mit deinen Fotos finde ich heraus, welche Farbtöne dich zum Strahlen bringen:</h2>
+            <h2>Wie ich Schritt für Schritt deine perfekte Farbwelt finde:</h2>
             <div class="clara-features">
                 <div class="feature-card">
                     <div class="feature-image">
@@ -888,13 +934,13 @@
         </div>
         
         <div class="container">
-            <h1>Deine Analyse ist individuell. Deine Fotos bleiben vertraulich</h1>
+            <h1>Deine Bilder erzählen mehr als tausend Worte</h1>
             <p class="subtitle">Für eine präzise Analyse brauche ich 2–3 natürliche Fotos von dir. Sie werden nur zur Auswertung genutzt und danach automatisch gelöscht.</p>
             
             <div class="photo-examples">
                 <div class="example-section">
                     <h3 style="color: #22C55E; margin-bottom: 15px;">✅ Beispiele für Fotos, die funktionieren:</h3>
-                    <p style="color: #16a34a; font-size: 16px; margin-bottom: 20px; line-height: 1.6;">Natürliches Licht ist am besten! Vermeide Fotos gegen das Fenster. Sende gerne mehrere Fotos, damit ich dich optimal einschätzen kann.</p>
+                    <p style="color: #16a34a; font-size: 16px; margin-bottom: 20px; line-height: 1.6;">• Natürliches Licht verwenden<br>• Mehrere Fotos senden<br>• Nicht gegen das Fenster fotografieren</p>
                     <div class="example-grid">
                         <div class="example-photo">
                             <img src="/Foto-Gut-1.png" alt="Gutes Foto-Beispiel 1">
@@ -910,7 +956,7 @@
                 
                 <div class="example-section">
                     <h3 style="color: #EF4444; margin-bottom: 15px;">❌ Beispiele für Fotos, die NICHT funktionieren:</h3>
-                    <p style="color: #dc2626; font-size: 16px; margin-bottom: 20px; line-height: 1.6;">Direktes Sonnenlicht, Blitzlicht, schlechte Beleuchtung, Vintage-Fotos und Filter sind nicht geeignet für die Analyse.</p>
+                    <p style="color: #dc2626; font-size: 16px; margin-bottom: 20px; line-height: 1.6;">• Direktes Sonnenlicht vermeiden<br>• Kein Blitzlicht verwenden<br>• Filter und Vintage-Effekte meiden</p>
                     <div class="example-grid">
                         <div class="example-photo">
                             <img src="/Foto-Schlecht-1.jpg" alt="Schlechtes Foto-Beispiel 1">
@@ -932,6 +978,12 @@
             </div>
 
             <input type="file" id="fileInput" class="file-input" accept="image/*" multiple onchange="handleFiles(this.files)">
+
+            <div class="photo-story-section">
+                <div class="privacy-note">
+                    🛡️ DSGVO-konform · Keine Weitergabe · Automatische Löschung
+                </div>
+            </div>
 
             <div class="uploaded-photos" id="uploadedPhotos"></div>
 
