@@ -992,7 +992,9 @@
     background: #22C55E;
     border-radius: 50%;
     animation: pulse-live 2s infinite;
-    margin-top: 2px; /* verschiebt den Punkt nach unten */
+    position: relative;
+    top: 3px !important; /* !important um andere Styles zu überschreiben */
+    display: inline-block; /* sicherstellen dass position funktioniert */
 }
 
         @keyframes pulse-live {
