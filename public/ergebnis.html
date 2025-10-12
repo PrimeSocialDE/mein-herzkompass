@@ -950,18 +950,21 @@
     transform: translateX(-50%);
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: var(--white);
-    padding: 8px 44px;
+    padding: 10px 20px; /* weniger seitliches Padding */
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 13px; /* etwas kleinere Schrift */
     font-weight: 600;
+    min-width: 160px; /* Mindestbreite setzen */
+    text-align: center;
+    white-space: nowrap; /* Text in einer Zeile halten */
 }
 
-@media (max-width: 480px) {
+/* Für sehr kleine Bildschirme */
+@media (max-width: 380px) {
     .popular-badge {
-        padding: 10px 50px;
-        font-size: 13px;
-        min-width: 180px;
-        text-align: center;
+        font-size: 12px;
+        padding: 8px 15px;
+        min-width: 140px;
     }
 }
 
