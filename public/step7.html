@@ -181,8 +181,8 @@
         }
 
         .farbkreis-image {
-            width: 380px;
-            height: 260px;
+            width: 420px;
+            height: 300px;
             margin: 0 auto 25px auto;
             border-radius: 20px;
             overflow: hidden;
@@ -191,12 +191,22 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            position: relative;
         }
 
         .farbkreis-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .farbkreis-image img.active {
+            opacity: 1;
         }
 
         .farbkreis-section h3 {
@@ -576,8 +586,8 @@
             }
             
             .farbkreis-image {
-                width: 300px;
-                height: 210px;
+                width: 340px;
+                height: 240px;
                 margin: 0 auto 15px auto;
                 border-radius: 12px;
             }
@@ -871,7 +881,8 @@
 
         <div class="farbkreis-section">
             <div class="farbkreis-image">
-                <img src="/Farbkreis1.png" alt="Individueller Farbkreis">
+                <img src="/Farbkreis1.png" alt="Individueller Farbkreis" class="active">
+                <img src="/Farbkreis2.png" alt="Individueller Farbkreis Variante">
             </div>
             <h3>So kann ich deinen individuellen Farbkreis erstellen</h3>
         </div>
@@ -1178,6 +1189,26 @@
                     container.style.transform = 'translateY(0)';
                 }, index * 200);
             });
+
+            // Farbkreis image slideshow
+            const farbkreisImages = document.querySelectorAll('.farbkreis-image img');
+            let currentImageIndex = 0;
+
+            function switchFarbkreisImage() {
+                // Remove active class from current image
+                farbkreisImages[currentImageIndex].classList.remove('active');
+                
+                // Move to next image (loop back to 0 if at end)
+                currentImageIndex = (currentImageIndex + 1) % farbkreisImages.length;
+                
+                // Add active class to new image
+                farbkreisImages[currentImageIndex].classList.add('active');
+            }
+
+            // Start slideshow if images exist
+            if (farbkreisImages.length > 1) {
+                setInterval(switchFarbkreisImage, 4000); // Switch every 4 seconds
+            }
         });
     </script>
 </body>
