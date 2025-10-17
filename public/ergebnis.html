@@ -2282,82 +2282,64 @@
             });
         }
 
-        // TIMER AND COUNTERS mit localStorage
-let timeLeft;
-let availableCount = 2;
-let salesCount = 7;
-let deletionTimeLeft;
+        // TIMER AND COUNTERS
+        let timeLeft = 12 * 60; // 12 minutes
+        let availableCount = 2;
+        let salesCount = 7;
+        let deletionTimeLeft = 24 * 60 * 60 - (12 * 60); // 24h minus 12 minutes
 
-// Timer initialisieren oder aus localStorage laden
-function initializeTimer() {
-    const savedStartTime = localStorage.getItem('timer_start_time');
-    const currentTime = Date.now();
-    
-    if (savedStartTime) {
-        // Berechne verstrichene Zeit seit dem ersten Besuch
-        const elapsedSeconds = Math.floor((currentTime - parseInt(savedStartTime)) / 1000);
-        timeLeft = Math.max(0, (12 * 60) - elapsedSeconds); // 12 Minuten minus verstrichene Zeit
-        deletionTimeLeft = Math.max(0, (24 * 60 * 60) - elapsedSeconds); // 24h minus verstrichene Zeit
-    } else {
-        // Erster Besuch - speichere Startzeit
-        localStorage.setItem('timer_start_time', currentTime.toString());
-        timeLeft = 12 * 60; // 12 Minuten
-        deletionTimeLeft = 24 * 60 * 60; // 24 Stunden
-    }
-}
+        function updateTimer() {
+            const timerElement = document.getElementById('timer');
+            if (!timerElement) return;
 
-function updateTimer() {
-    const timerElement = document.getElementById('timer');
-    if (!timerElement) return;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            if (timeLeft <= 5 * 60) {
+                timerElement.style.color = '#ff6b6b';
+                timerElement.classList.add('pulse-animation');
+            }
 
-    if (timeLeft <= 5 * 60) {
-        timerElement.style.color = '#ff6b6b';
-        timerElement.classList.add('pulse-animation');
-    }
+            if (timeLeft > 0) {
+                timeLeft--;
+                setTimeout(updateTimer, 1000);
+            } else {
+                timerElement.textContent = "ABGELAUFEN";
+                timerElement.style.color = '#ff6b6b';
+            }
+        }
 
-    if (timeLeft > 0) {
-        timeLeft--;
-        setTimeout(updateTimer, 1000);
-    } else {
-        timerElement.textContent = "ABGELAUFEN";
-        timerElement.style.color = '#ff6b6b';
-    }
-}
+        function updateDeletionTimer() {
+            const deletionTimerElement = document.getElementById('deletion-timer');
+            if (!deletionTimerElement) return;
 
-function updateDeletionTimer() {
-    const deletionTimerElement = document.getElementById('deletion-timer');
-    if (!deletionTimerElement) return;
+            const hours = Math.floor(deletionTimeLeft / 3600);
+            const minutes = Math.floor((deletionTimeLeft % 3600) / 60);
+            deletionTimerElement.textContent = `${hours}:${minutes.toString().padStart(2, '0')}`;
 
-    const hours = Math.floor(deletionTimeLeft / 3600);
-    const minutes = Math.floor((deletionTimeLeft % 3600) / 60);
-    deletionTimerElement.textContent = `${hours}:${minutes.toString().padStart(2, '0')}`;
+            if (deletionTimeLeft > 0) {
+                deletionTimeLeft--;
+                setTimeout(updateDeletionTimer, 1000);
+            }
+        }
 
-    if (deletionTimeLeft > 0) {
-        deletionTimeLeft--;
-        setTimeout(updateDeletionTimer, 1000);
-    }
-}
+        function updateCounters() {
+            const countElement = document.getElementById('available-count');
+            const salesElement = document.getElementById('sales-counter');
 
-// Im DOMContentLoaded Event Handler:
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('=== INITIALISIERE FARB-ANALYSE RESULTS PAGE ===');
-    
-    initializeTimer(); // Timer zuerst initialisieren
-    personalizeResults();
-    animateProgressBars();
-    updateTimer();
-    updateDeletionTimer();
-    updateCounters();
-    scheduleCounterUpdates();
-    
-    setTimeout(() => {
-        initScrollAnimations();
-    }, 500);
-});
+            if (countElement) {
+                countElement.textContent = availableCount;
+                if (availableCount <= 1) {
+                    countElement.style.color = '#ff6b6b';
+                    countElement.classList.add('pulse-animation');
+                }
+            }
+
+            if (salesElement) {
+                salesElement.innerHTML = `<span class="live-indicator"></span>In den letzten 24h ${salesCount} mal gekauft`;
+            }
+        }
 
         // SCROLL ANIMATIONS
         function initScrollAnimations() {
