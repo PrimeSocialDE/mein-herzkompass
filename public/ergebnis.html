@@ -2250,17 +2250,8 @@
                 
                 // Simulate API call
                 // Send data to Supabase
-const response = await fetch('/api/save-standard-analysis', {
-    method: 'POST',
-    headers: { 
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(userData)
-});
-
-if (!response.ok) {
-    throw new Error('Failed to save data');
-}
+// Simulate API call
+await new Promise(resolve => setTimeout(resolve, 1000));
                 
                 // TikTok Event: InitiateCheckout bei erfolgreichem API-Call
                 if (typeof ttq !== 'undefined') {
