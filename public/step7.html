@@ -658,7 +658,7 @@
         </div>
         
         <div class="container">
-            <h1>1-3 Bilder reichen mir!</h1>
+            <h1>1-3 Fotos reichen mir!</h1>
             <p class="subtitle">Für eine präzise Analyse brauche ich 1–3 natürliche Fotos von dir. Sie werden nur zur Auswertung genutzt und danach automatisch gelöscht.</p>
             
             <div class="photo-examples">
@@ -712,7 +712,7 @@
             <div class="uploaded-photos" id="uploadedPhotos"></div>
 
             <button class="continue-button" id="continueBtn" disabled onclick="submitPhotos()">
-                Analyse sichern
+                Zur Bezahlung & Analyse
             </button>
 
             <div class="processing-message" id="processingMessage">
@@ -829,6 +829,34 @@
             });
         }
 
+        // Funktion zum Hochladen der Fotos zu Supabase
+        async function uploadToSupabase(photoDataArray) {
+            try {
+                const response = await fetch('/api/upload-photos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        photos: photoDataArray,
+                        userId: localStorage.getItem('userId') || `user_${Date.now()}`,
+                        quizAnswers: JSON.parse(localStorage.getItem('quizAnswers') || '{}')
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Upload failed: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('Photos uploaded successfully:', result);
+                return result;
+            } catch (error) {
+                console.error('Supabase upload error:', error);
+                throw error;
+            }
+        }
+
         async function submitPhotos() {
             if (uploadedFiles.length === 0) {
                 alert('Bitte lade mindestens ein Foto hoch.');
@@ -839,111 +867,88 @@
             const processingMsg = document.getElementById('processingMessage');
             
             btn.disabled = true;
-            btn.textContent = 'Fotos werden verarbeitet...';
+            btn.textContent = 'Fotos werden hochgeladen...';
             processingMsg.style.display = 'block';
 
             const timeoutId = setTimeout(() => {
                 btn.disabled = false;
                 btn.textContent = 'Zur Bezahlung & Analyse';
                 processingMsg.style.display = 'none';
-                alert('Bildverarbeitung dauert zu lange. Versuche kleinere Bilder.');
-            }, 25000);
+                alert('Upload dauert zu lange. Bitte versuche es erneut.');
+            }, 30000);
 
             try {
-                if (typeof(Storage) !== "undefined") {
-                    // Lösche alte Daten
-                    for (let i = 1; i <= 10; i++) {
-                        localStorage.removeItem(`uploadedPhoto${i}`);
-                        localStorage.removeItem(`photoName${i}`);
-                        localStorage.removeItem(`photoSize${i}`);
-                        localStorage.removeItem(`photoType${i}`);
+                // WICHTIG: Bereite echte Foto-Daten für das Backend vor
+                const photoDataArray = [];
+                
+                console.log('Starting photo conversion for', uploadedFiles.length, 'files');
+                
+                // Konvertiere alle Fotos zu Base64 mit Fehlerbehandlung
+                for (let i = 0; i < uploadedFiles.length; i++) {
+                    try {
+                        const file = uploadedFiles[i];
+                        console.log(`Converting photo ${i + 1}:`, file.name, 'Size:', Math.round(file.size / 1024), 'KB');
+                        
+                        const base64Data = await fileToBase64(file);
+                        photoDataArray.push({
+                            data: base64Data,
+                            name: file.name,
+                            type: file.type,
+                            size: file.size
+                        });
+                        
+                        console.log(`Photo ${i + 1} converted successfully`);
+                    } catch (error) {
+                        console.error(`Error converting photo ${i + 1}:`, error);
+                        alert(`Foto "${uploadedFiles[i].name}" konnte nicht verarbeitet werden und wird übersprungen.`);
                     }
-                    localStorage.removeItem('temp_photo_data');
+                }
+                
+                if (photoDataArray.length === 0) {
+                    throw new Error('Keine Fotos konnten verarbeitet werden');
+                }
 
-                    // WICHTIG: Speichere echte Foto-Daten für das Backend
-                    const photoDataArray = [];
-                    
-                    console.log('Starting photo conversion for', uploadedFiles.length, 'files');
-                    
-                    // Konvertiere alle Fotos zu Base64 mit Fehlerbehandlung
-                    for (let i = 0; i < uploadedFiles.length; i++) {
-                        try {
-                            const file = uploadedFiles[i];
-                            console.log(`Converting photo ${i + 1}:`, file.name, 'Size:', Math.round(file.size / 1024), 'KB');
-                            
-                            const base64Data = await fileToBase64(file);
-                            photoDataArray.push({
-                                data: base64Data,
-                                name: file.name,
-                                type: file.type,
-                                size: file.size
-                            });
-                            
-                            console.log(`Photo ${i + 1} converted successfully`);
-                        } catch (error) {
-                            console.error(`Error converting photo ${i + 1}:`, error);
-                            // Überspringe dieses Foto, aber mache mit den anderen weiter
-                            alert(`Foto "${uploadedFiles[i].name}" konnte nicht verarbeitet werden und wird übersprungen.`);
-                        }
-                    }
-                    
-                    if (photoDataArray.length === 0) {
-                        throw new Error('Keine Fotos konnten verarbeitet werden');
-                    }
-                    
-                    // Prüfe localStorage-Größe
-                    const dataSize = JSON.stringify(photoDataArray).length;
-                    console.log('Total data size:', Math.round(dataSize / 1024), 'KB');
-                    
-                    if (dataSize > 8 * 1024 * 1024) { // 8MB Limit
-                        throw new Error('Fotos sind zu groß für den Speicher. Bitte verwende kleinere Bilder.');
-                    }
-                    
-                    // Speichere echte Foto-Daten für Backend-Upload
-                    localStorage.setItem('temp_photo_data', JSON.stringify(photoDataArray));
-                    
-                    // Erstelle simulierte URLs für die Vorschau
-                    const photoUrls = photoDataArray.map((photo, index) => 
-                        `https://xomsitpvyksrzmixbdwf.supabase.co/storage/v1/object/public/user-photos/photo-${Date.now()}-${index}-${photo.name.replace(/[^a-zA-Z0-9.]/g, '')}`
-                    );
-                    
-                    // Speichere URLs für die Vorschau
-                    localStorage.setItem('photo_urls', JSON.stringify(photoUrls));
+                // Lade Fotos direkt zu Supabase hoch
+                btn.textContent = 'Fotos werden zu Supabase hochgeladen...';
+                const uploadResult = await uploadToSupabase(photoDataArray);
+                
+                // Speichere Upload-Ergebnisse
+                if (typeof(Storage) !== "undefined") {
                     localStorage.setItem('photosUploaded', 'true');
                     localStorage.setItem('photoCount', photoDataArray.length.toString());
+                    localStorage.setItem('photo_urls', JSON.stringify(uploadResult.photoUrls || []));
+                    localStorage.setItem('uploadTimestamp', new Date().toISOString());
                     
                     // Quiz-Antworten aktualisieren
                     let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
                     allAnswers['photosUploaded'] = true;
                     allAnswers['photoCount'] = photoDataArray.length;
-                    allAnswers['photo_urls'] = photoUrls; // Für Vorschau
+                    allAnswers['photo_urls'] = uploadResult.photoUrls || [];
+                    allAnswers['uploadTimestamp'] = new Date().toISOString();
                     localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
-                    
-                    console.log('Photos saved for backend upload:', photoDataArray.length);
-                    console.log('Preview URLs created:', photoUrls);
-                    
-                    clearTimeout(timeoutId);
-                    
-                    // Redirect to Stripe payment link
-                    setTimeout(() => {
-                        window.location.href = 'https://buy.stripe.com/cNi6oGgyWghdfSYesv1VK06';
-                    }, 500);
-                    
-                } else {
-                    throw new Error('localStorage nicht verfügbar');
                 }
+                
+                console.log('Photos uploaded to Supabase:', uploadResult);
+                
+                clearTimeout(timeoutId);
+                
+                // Erfolgreiche Weiterleitung zu Stripe
+                btn.textContent = 'Weiterleitung zur Bezahlung...';
+                setTimeout(() => {
+                    window.location.href = 'https://buy.stripe.com/cNi6oGgyWghdfSYesv1VK06';
+                }, 1000);
                 
             } catch (error) {
                 clearTimeout(timeoutId);
-                console.error('Fehler beim Verarbeiten der Fotos:', error);
+                console.error('Fehler beim Hochladen der Fotos:', error);
                 
-                let errorMessage = 'Fehler beim Verarbeiten der Fotos. ';
+                let errorMessage = 'Fehler beim Hochladen der Fotos. ';
                 if (error.message.includes('zu groß')) {
-                    errorMessage += 'Die Bilder sind zu groß. Bitte verwende kleinere Bilder oder weniger Fotos.';
-                } else if (error.message.includes('localStorage')) {
-                    errorMessage += 'Speicher ist voll. Bitte verwende kleinere Bilder.';
+                    errorMessage += 'Die Bilder sind zu groß. Bitte verwende kleinere Bilder.';
+                } else if (error.message.includes('Upload failed')) {
+                    errorMessage += 'Server-Fehler beim Upload. Bitte versuche es erneut.';
                 } else {
-                    errorMessage += 'Bitte versuche es mit anderen Bildern.';
+                    errorMessage += 'Bitte versuche es erneut oder verwende andere Bilder.';
                 }
                 
                 alert(errorMessage);
