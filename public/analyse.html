@@ -458,41 +458,41 @@
         }
 
         function animateBar(barNumber, startDelay) {
-            setTimeout(() => {
-                try {
-                    const bar = document.querySelector(`[data-bar="${barNumber}"]`);
-                    const percentElement = document.querySelector(`[data-percent="${barNumber}"]`);
+    setTimeout(() => {
+        try {
+            const bar = document.querySelector(`[data-bar="${barNumber}"]`);
+            const percentElement = document.querySelector(`[data-percent="${barNumber}"]`);
+            
+            if (!bar || !percentElement) return;
+            
+            let currentPercent = 0;
+            
+            const interval = setInterval(() => {
+                if (currentPercent < 100) {
+                    let increment;
+                    if (currentPercent < 25) {
+                        increment = 2.5 + Math.random() * 1.5; // Schneller: war 0.8 + 0.4
+                    } else if (currentPercent < 75) {
+                        increment = 1.8 + Math.random() * 1.2; // Schneller: war 0.4 + 0.3
+                    } else {
+                        increment = 2.2 + Math.random() * 1.8; // Schneller: war 0.6 + 0.6
+                    }
                     
-                    if (!bar || !percentElement) return;
+                    currentPercent = Math.min(100, currentPercent + increment);
                     
-                    let currentPercent = 0;
-                    
-                    const interval = setInterval(() => {
-                        if (currentPercent < 100) {
-                            let increment;
-                            if (currentPercent < 25) {
-                                increment = 0.8 + Math.random() * 0.4;
-                            } else if (currentPercent < 75) {
-                                increment = 0.4 + Math.random() * 0.3;
-                            } else {
-                                increment = 0.6 + Math.random() * 0.6;
-                            }
-                            
-                            currentPercent = Math.min(100, currentPercent + increment);
-                            
-                            bar.style.width = currentPercent + '%';
-                            percentElement.textContent = Math.floor(currentPercent) + '%';
-                        } else {
-                            clearInterval(interval);
-                            completedBars++;
-                            checkAllBarsComplete();
-                        }
-                    }, 80);
-                    
-                    barIntervals.push(interval);
-                } catch (e) {}
-            }, startDelay);
-        }
+                    bar.style.width = currentPercent + '%';
+                    percentElement.textContent = Math.floor(currentPercent) + '%';
+                } else {
+                    clearInterval(interval);
+                    completedBars++;
+                    checkAllBarsComplete();
+                }
+            }, 50); // Schneller: war 80ms, jetzt 50ms
+            
+            barIntervals.push(interval);
+        } catch (e) {}
+    }, startDelay);
+}
 
         function init() {
             try {
