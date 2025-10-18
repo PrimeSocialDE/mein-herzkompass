@@ -91,6 +91,7 @@ export async function POST(req: NextRequest) {
     console.log('Body keys:', Object.keys(body));
     console.log('temp_photo_data vorhanden:', !!body.temp_photo_data);
     console.log('photo_urls vorhanden:', !!body.photo_urls);
+    console.log('createStripeSession:', body.createStripeSession);
 
     // FOTOS EXTRAHIEREN - Erweiterte Logik für verschiedene Quellen
     let photos: any[] = [];
@@ -199,7 +200,10 @@ export async function POST(req: NextRequest) {
 
     let checkoutUrl: string | null = null;
 
-    if (stripe) {
+    // Prüfe ob Stripe Session erstellt werden soll
+    const createStripeSession = body.createStripeSession !== false; // Default: true
+
+    if (createStripeSession && stripe) {
       const params: Stripe.Checkout.SessionCreateParams = {
         mode: "payment",
         line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
@@ -230,6 +234,9 @@ export async function POST(req: NextRequest) {
         .eq("id", orderId);
         
       console.log('Stripe Session erstellt:', session.id);
+    } else {
+      console.log('Stripe Session übersprungen - createStripeSession ist false');
+      checkoutUrl = null;
     }
 
     return NextResponse.json({ 
