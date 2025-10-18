@@ -2309,30 +2309,34 @@
                 </div>
 
                 <div class="unlock-section">
-                    <div class="clara-analysis-section">
-                        <img src="ClaraArbeitNeu.png" alt="Clara bei der persönlichen Analyse" class="clara-analysis-image">
-                        <div class="clara-analysis-content">
-                            <h4 class="unlock-title">Ich bin Clara und ich analysiere jedes deiner Fotos persönlich, damit du genau weißt, was dich wirklich strahlen lässt.</h4>
-                            <p class="unlock-subtitle">Ich werte jedes Foto individuell aus und erstelle dir deine maßgeschneiderte Farb- und Style-Strategie</p>
+                    <div class="clara-section-with-slider">
+                        <div class="clara-slider-container">
+                            <div class="clara-slider-wrapper">
+                                <div class="clara-slide active">
+                                    <img src="Arbeit1.png" alt="Clara bei der Arbeit 1" class="clara-slider-image">
+                                </div>
+                                <div class="clara-slide">
+                                    <img src="Arbeit2.png" alt="Clara bei der Arbeit 2" class="clara-slider-image">
+                                </div>
+                                <div class="clara-slide">
+                                    <img src="Arbeit3.png" alt="Clara bei der Arbeit 3" class="clara-slider-image">
+                                </div>
+                            </div>
+                            <div class="clara-slider-dots">
+                                <span class="dot active" onclick="currentSlide(1, 'clara')"></span>
+                                <span class="dot" onclick="currentSlide(2, 'clara')"></span>
+                                <span class="dot" onclick="currentSlide(3, 'clara')"></span>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="unlock-features">
-                        <div class="unlock-feature">
-                            <span class="icon">✓</span>
-                            <span>Exakte Farbtyp-Bestimmung</span>
-                        </div>
-                        <div class="unlock-feature">
-                            <span class="icon">✓</span>
-                            <span>Präzise Farbanalyse</span>
-                        </div>
-                        <div class="unlock-feature">
-                            <span class="icon">✓</span>
-                            <span>Individuelle Styling-Tipps</span>
-                        </div>
-                        <div class="unlock-feature">
-                            <span class="icon">✓</span>
-                            <span>Tipps, die dich selbstbewusster machen</span>
+                        
+                        <div class="clara-emotional-content">
+                            <h4 class="clara-emotional-title">Ich bin Clara und ich verstehe, wie überwältigend es sein kann, nicht zu wissen, was einem wirklich steht.</h4>
+                            <p class="clara-emotional-text">
+                                Jahrelang habe ich Frauen dabei geholfen herauszufinden, welche Farben sie zum Strahlen bringen. Jede Analyse erstelle ich persönlich mit viel Liebe zum Detail, weil ich weiß, wie lebensverändernd es ist, endlich seine perfekten Farben zu kennen.
+                            </p>
+                            <p class="clara-emotional-highlight">
+                                Du verdienst es, dich jeden Tag wunderschön und selbstbewusst zu fühlen. Lass mich dir dabei helfen, deine natürliche Schönheit zu entdecken.
+                            </p>
                         </div>
                     </div>
                     
@@ -2407,7 +2411,7 @@
                         </div>
                         <div class="benefit-item disabled">
                             <span class="benefit-icon">❌</span>
-                            <span class="benefit-text">Keine individuelle Einschätzung von Haar, Haut & Augen</span>
+                            <span class="benefit-text">Kein Vorher-Nachher</span>
                         </div>
                     </div>
                     
@@ -2422,7 +2426,7 @@
 
                 <!-- Premium Analyse -->
                 <div class="pricing-card premium-card animate-on-scroll">
-                    <div class="popular-badge">❗️ Statt 300€ Vorort</div>
+                    <div class="popular-badge">🌟 Empfohlen</div>
                     <div class="pricing-header-card">
                         <h3 class="pricing-title">Premium Analyse</h3>
                         <div class="price-container-small">
@@ -2442,11 +2446,11 @@
                         </div>
                         <div class="benefit-item">
                             <span class="benefit-icon">✓</span>
-                            <span class="benefit-text">Farbkreis, Outfit-Beispiele, No's und Go's</span>
+                            <span class="benefit-text">Farbkreis, Outfit-Beispiele, Vorher-Nachher</span>
                         </div>
                         <div class="benefit-item">
                             <span class="benefit-icon">✓</span>
-                            <span class="benefit-text">Empfehlungen für Accesoires, Schmuck & Materialien</span>
+                            <span class="benefit-text">Empfehlungen für Make-up, Schmuck & Materialien</span>
                         </div>
                     </div>
                     
@@ -2580,12 +2584,19 @@
 
     <script>
         // PACKAGE SLIDERS FUNCTIONALITY
-        let currentSlideIndex = { standard: 1, premium: 1 };
-        let slideIntervals = { standard: null, premium: null };
+        let currentSlideIndex = { standard: 1, premium: 1, clara: 1 };
+        let slideIntervals = { standard: null, premium: null, clara: null };
 
         function showSlide(n, sliderType) {
-            let slides = document.querySelectorAll(`.${sliderType}-slider .slide`);
-            let dots = document.querySelectorAll(`.${sliderType}-slider + .slider-dots .dot`);
+            let slides, dots;
+            
+            if (sliderType === 'clara') {
+                slides = document.querySelectorAll('.clara-slide');
+                dots = document.querySelectorAll('.clara-slider-dots .dot');
+            } else {
+                slides = document.querySelectorAll(`.${sliderType}-slider .slide`);
+                dots = document.querySelectorAll(`.${sliderType}-slider + .slider-dots .dot`);
+            }
             
             if (n > slides.length) { currentSlideIndex[sliderType] = 1; }
             if (n < 1) { currentSlideIndex[sliderType] = slides.length; }
@@ -2620,13 +2631,15 @@
         }
 
         function initializeSliders() {
-            // Initialize both sliders
+            // Initialize all sliders
             showSlide(currentSlideIndex.standard, 'standard');
             showSlide(currentSlideIndex.premium, 'premium');
+            showSlide(currentSlideIndex.clara, 'clara');
             
-            // Start auto-advance for both sliders
+            // Start auto-advance for all sliders
             startSlideInterval('standard');
             startSlideInterval('premium');
+            startSlideInterval('clara');
         }
 
         async function selectStandardAnalysis() {
