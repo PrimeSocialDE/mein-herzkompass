@@ -828,6 +828,46 @@
         // Funktion zum Hochladen zu Supabase über API
         async function uploadToSupabase(photoDataArray) {
             try {
+                // Sammle ALLE localStorage-Daten für die Quiz-Antworten
+                const allQuizAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
+                
+                // Zusätzliche Einzelwerte aus localStorage sammeln
+                const additionalData = {
+                    userId: localStorage.getItem('userId') || `user_${Date.now()}`,
+                    email: localStorage.getItem('email') || localStorage.getItem('userEmail') || '',
+                    name: localStorage.getItem('name') || localStorage.getItem('userName') || '',
+                    step1Answer: localStorage.getItem('step1Answer'),
+                    step2Answer: localStorage.getItem('step2Answer'),
+                    step3Answer: localStorage.getItem('step3Answer'),
+                    step4Answer: localStorage.getItem('step4Answer'),
+                    step5Answer: localStorage.getItem('step5Answer'),
+                    step6Answer: localStorage.getItem('step6Answer'),
+                    currentStep: localStorage.getItem('currentStep'),
+                    startTime: localStorage.getItem('startTime'),
+                    sessionId: localStorage.getItem('sessionId'),
+                    referrer: localStorage.getItem('referrer'),
+                    utm_source: localStorage.getItem('utm_source'),
+                    utm_medium: localStorage.getItem('utm_medium'),
+                    utm_campaign: localStorage.getItem('utm_campaign'),
+                    
+                    // Meta-Informationen
+                    browser: navigator.userAgent,
+                    timestamp: new Date().toISOString(),
+                    url: window.location.href,
+                    language: navigator.language
+                };
+
+                // Kombiniere alle Antworten
+                const completeAnswers = {
+                    ...allQuizAnswers,
+                    ...additionalData,
+                    photoCount: photoDataArray.length,
+                    step7_completed: true,
+                    step7_timestamp: new Date().toISOString()
+                };
+
+                console.log('Sending complete quiz answers:', Object.keys(completeAnswers));
+
                 const response = await fetch('/api/checkout', {
                     method: 'POST',
                     headers: {
@@ -835,10 +875,18 @@
                     },
                     body: JSON.stringify({
                         temp_photo_data: photoDataArray,
-                        userId: localStorage.getItem('userId') || `user_${Date.now()}`,
-                        quizAnswers: JSON.parse(localStorage.getItem('quizAnswers') || '{}'),
-                        email: localStorage.getItem('email') || '',
-                        createStripeSession: false // Keine Stripe Session erstellen
+                        userId: additionalData.userId,
+                        quizAnswers: completeAnswers,
+                        email: additionalData.email,
+                        name: additionalData.name,
+                        createStripeSession: false, // Keine Stripe Session erstellen
+                        
+                        // Für Backward-Compatibility auch direkt als body-properties
+                        userEmail: additionalData.email,
+                        user_email: additionalData.email,
+                        user_name: additionalData.name,
+                        answers: completeAnswers,
+                        answers_raw: completeAnswers
                     })
                 });
 
@@ -847,7 +895,7 @@
                 }
 
                 const result = await response.json();
-                console.log('Photos uploaded successfully:', result);
+                console.log('Photos and quiz answers uploaded successfully:', result);
                 return result;
             } catch (error) {
                 console.error('Upload error:', error);
