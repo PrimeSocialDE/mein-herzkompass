@@ -23,151 +23,7 @@
             margin: 0 auto;
         }
 
-        .progress-container {
-            background: white;
-            padding: 25px;
-            margin-bottom: 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-            backdrop-filter: blur(10px);
-        }
 
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 16px;
-            color: #555;
-            font-weight: 700;
-        }
-
-        .progress-bar {
-            background: #f0f0f0;
-            height: 12px;
-            border-radius: 6px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-fill {
-            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
-            height: 100%;
-            width: 85.8%;
-            border-radius: 6px;
-            transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 30px;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
-            animation: shine 2s infinite;
-        }
-
-        @keyframes shine {
-            0% { transform: translateX(-30px); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateX(30px); opacity: 0; }
-        }
-
-        .how-clara-works {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            padding: 40px;
-            margin-bottom: 30px;
-            border-radius: 25px;
-            color: white;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
-            position: relative;
-            overflow: hidden;
-            aspect-ratio: 1536 / 1024;
-            min-height: 600px;
-        }
-
-        .how-clara-works::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 1024"><rect width="1536" height="1024" fill="%23f8f9fa" opacity="0.1"/><text x="768" y="500" text-anchor="middle" fill="%23ffffff" font-family="Arial" font-size="48" opacity="0.3">Clara AI Platzhalter</text><text x="768" y="560" text-anchor="middle" fill="%23ffffff" font-family="Arial" font-size="24" opacity="0.3">1536 × 1024 Pixel</text></svg>') center/cover;
-            border-radius: 25px;
-            opacity: 0.3;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .how-clara-works h2 {
-            font-size: 32px;
-            margin-bottom: 20px;
-            font-weight: 700;
-            position: relative;
-            z-index: 1;
-        }
-
-        .clara-features {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-            margin-top: 30px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .feature-image {
-            width: 240px;
-            height: 150px;
-            margin: 0 auto 20px auto;
-            border-radius: 20px;
-            overflow: hidden;
-            background: rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
-        }
-
-        .feature-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .feature-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px 20px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        .feature-card h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .feature-card p {
-            font-size: 14px;
-            line-height: 1.5;
-            opacity: 0.9;
-        }
 
         .farbkreis-section {
             background: rgba(255, 255, 255, 0.9);
@@ -557,49 +413,6 @@
                 padding: 15px;
             }
             
-            .progress-container {
-                padding: 20px 15px;
-                margin-bottom: 20px;
-            }
-            
-            .how-clara-works {
-                padding: 30px 20px;
-                margin-bottom: 20px;
-                aspect-ratio: unset;
-                min-height: 500px;
-            }
-            
-            .how-clara-works h2 {
-                font-size: 24px;
-                margin-bottom: 15px;
-            }
-            
-            .clara-features {
-                grid-template-columns: 1fr;
-                gap: 20px;
-                margin-top: 20px;
-            }
-            
-            .feature-image {
-                width: 280px;
-                height: 170px;
-                margin: 0 auto 15px auto;
-                border-radius: 15px;
-            }
-            
-            .feature-card {
-                padding: 20px 15px;
-            }
-            
-            .feature-card h3 {
-                font-size: 16px;
-                margin-bottom: 8px;
-            }
-            
-            .feature-card p {
-                font-size: 13px;
-            }
-            
             .farbkreis-section {
                 padding: 30px 20px;
                 margin-bottom: 20px;
@@ -694,60 +507,6 @@
         @media (max-width: 480px) {
             .main-container {
                 padding: 10px;
-            }
-            
-            .progress-container {
-                padding: 15px;
-                margin-bottom: 15px;
-                border-radius: 15px;
-            }
-            
-            .progress-label {
-                font-size: 14px;
-                margin-bottom: 8px;
-            }
-            
-            .progress-bar {
-                height: 10px;
-            }
-            
-            .how-clara-works {
-                padding: 25px 15px;
-                margin-bottom: 15px;
-                border-radius: 20px;
-                min-height: 400px;
-            }
-            
-            .how-clara-works h2 {
-                font-size: 20px;
-                margin-bottom: 12px;
-            }
-            
-            .clara-features {
-                gap: 15px;
-                margin-top: 15px;
-            }
-            
-            .feature-image {
-                width: 260px;
-                height: 160px;
-                margin: 0 auto 12px auto;
-                border-radius: 12px;
-            }
-            
-            .feature-card {
-                padding: 15px;
-                border-radius: 15px;
-            }
-            
-            .feature-card h3 {
-                font-size: 15px;
-                margin-bottom: 6px;
-            }
-            
-            .feature-card p {
-                font-size: 12px;
-                line-height: 1.4;
             }
             
             .farbkreis-section {
@@ -888,42 +647,7 @@
 </head>
 <body>
     <div class="main-container">
-        <div class="progress-container">
-            <div class="progress-label">
-                <span>Frage 6 von 7</span>
-                <span>86%</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
-            </div>
-        </div>
 
-        <div class="how-clara-works">
-            <h2>Wie ich Schritt für Schritt deine perfekte Farbwelt finde:</h2>
-            <div class="clara-features">
-                <div class="feature-card">
-                    <div class="feature-image">
-                        <img src="/Arbeit1.png" alt="Persönliche Hauttonanalyse">
-                    </div>
-                    <h3>Persönliche Hauttonanalyse</h3>
-                    <p>Ich analysiere über 150 Farbparameter in deinen Fotos, um deinen exakten Hautunterton zu bestimmen</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-image">
-                        <img src="/Arbeit2.png" alt="Individuelle Farbpalette">
-                    </div>
-                    <h3>Deine Farbpalette & Kleidung für mehr Selbstbewusstsein</h3>
-                    <p>Ich erstelle deine individuelle Farbpalette mit über 200 Farben und zeige dir Kleidung, die dich strahlen lässt und dein Selbstbewusstsein sichtbar macht.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-image">
-                        <img src="/Arbeit3.png" alt="Präzise Empfehlungen">
-                    </div>
-                    <h3>Präzise Empfehlungen</h3>
-                    <p>Durch die Analyse deiner natürlichen Merkmale kann ich dir die Farben empfehlen, die dich am besten strahlen lassen</p>
-                </div>
-            </div>
-        </div>
 
         <div class="farbkreis-section">
             <div class="farbkreis-image">
@@ -988,7 +712,7 @@
             <div class="uploaded-photos" id="uploadedPhotos"></div>
 
             <button class="continue-button" id="continueBtn" disabled onclick="submitPhotos()">
-                Sicher zur Analyse
+                Zur Bezahlung & Analyse
             </button>
 
             <div class="processing-message" id="processingMessage">
@@ -1120,10 +844,10 @@
 
             const timeoutId = setTimeout(() => {
                 btn.disabled = false;
-                btn.textContent = 'Weiter zur letzten Frage';
+                btn.textContent = 'Zur Bezahlung & Analyse';
                 processingMsg.style.display = 'none';
                 alert('Bildverarbeitung dauert zu lange. Versuche kleinere Bilder.');
-            }, 25000); // Verlängert auf 25 Sekunden
+            }, 25000);
 
             try {
                 if (typeof(Storage) !== "undefined") {
@@ -1200,8 +924,9 @@
                     
                     clearTimeout(timeoutId);
                     
+                    // Redirect to Stripe payment link
                     setTimeout(() => {
-                        window.location.href = '/analyse.html';
+                        window.location.href = 'https://buy.stripe.com/cNi6oGgyWghdfSYesv1VK06';
                     }, 500);
                     
                 } else {
@@ -1223,14 +948,14 @@
                 
                 alert(errorMessage);
                 btn.disabled = false;
-                btn.textContent = 'Weiter zur letzten Frage';
+                btn.textContent = 'Zur Bezahlung & Analyse';
                 processingMsg.style.display = 'none';
             }
         }
 
         window.addEventListener('load', function() {
             // Animate containers on load
-            const containers = document.querySelectorAll('.progress-container, .how-clara-works, .container');
+            const containers = document.querySelectorAll('.farbkreis-section, .container');
             containers.forEach((container, index) => {
                 container.style.opacity = '0';
                 container.style.transform = 'translateY(30px)';
