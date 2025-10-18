@@ -658,8 +658,8 @@
         </div>
         
         <div class="container">
-            <h1>1-3 Fotos reichen mir!</h1>
-            <p class="subtitle">Für eine präzise Analyse brauche ich 1–3 natürliche Fotos von dir. Sie werden nur zur Auswertung genutzt und danach automatisch gelöscht.</p>
+            <h1>Deine Bilder erzählen mehr als tausend Worte</h1>
+            <p class="subtitle">Für eine präzise Analyse brauche ich 2–3 natürliche Fotos von dir. Sie werden nur zur Auswertung genutzt und danach automatisch gelöscht.</p>
             
             <div class="photo-examples">
                 <div class="example-section">
@@ -712,7 +712,7 @@
             <div class="uploaded-photos" id="uploadedPhotos"></div>
 
             <button class="continue-button" id="continueBtn" disabled onclick="submitPhotos()">
-                Analyse sichern
+                Zur Bezahlung & Analyse
             </button>
 
             <div class="processing-message" id="processingMessage">
@@ -829,30 +829,38 @@
             });
         }
 
-        // Funktion zum Hochladen der Fotos zu Supabase
-        async function uploadToSupabase(photoDataArray) {
+        // Funktion zum Senden der Daten zur bestehenden Checkout-API
+        async function submitToCheckout(photoDataArray) {
             try {
-                const response = await fetch('/api/upload-photos', {
+                const response = await fetch('/api/checkout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        photos: photoDataArray,
+                        temp_photo_data: photoDataArray,
                         userId: localStorage.getItem('userId') || `user_${Date.now()}`,
-                        quizAnswers: JSON.parse(localStorage.getItem('quizAnswers') || '{}')
+                        quizAnswers: JSON.parse(localStorage.getItem('quizAnswers') || '{}'),
+                        email: localStorage.getItem('email') || '',
+                        createStripeSession: true
                     })
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Upload failed: ${response.status}`);
+                    throw new Error(`Checkout failed: ${response.status}`);
                 }
 
                 const result = await response.json();
-                console.log('Photos uploaded successfully:', result);
-                return result;
+                console.log('Checkout API response:', result);
+                
+                if (result.url) {
+                    // Direkt zur Stripe Checkout Session
+                    return { checkoutUrl: result.url, ...result };
+                } else {
+                    throw new Error('Keine Checkout-URL erhalten');
+                }
             } catch (error) {
-                console.error('Supabase upload error:', error);
+                console.error('Checkout API error:', error);
                 throw error;
             }
         }
@@ -867,7 +875,7 @@
             const processingMsg = document.getElementById('processingMessage');
             
             btn.disabled = true;
-            btn.textContent = 'Fotos werden hochgeladen...';
+            btn.textContent = 'Fotos werden verarbeitet...';
             processingMsg.style.display = 'block';
 
             const timeoutId = setTimeout(() => {
@@ -875,10 +883,9 @@
                 btn.textContent = 'Zur Bezahlung & Analyse';
                 processingMsg.style.display = 'none';
                 alert('Upload dauert zu lange. Bitte versuche es erneut.');
-            }, 30000);
+            }, 20000);
 
             try {
-                // WICHTIG: Bereite echte Foto-Daten für das Backend vor
                 const photoDataArray = [];
                 
                 console.log('Starting photo conversion for', uploadedFiles.length, 'files');
@@ -908,47 +915,49 @@
                     throw new Error('Keine Fotos konnten verarbeitet werden');
                 }
 
-                // Lade Fotos direkt zu Supabase hoch
-                btn.textContent = 'Fotos werden zu Supabase hochgeladen...';
-                const uploadResult = await uploadToSupabase(photoDataArray);
+                // Sende an bestehende Checkout-API
+                btn.textContent = 'Erstelle Bestellung...';
+                const checkoutResult = await submitToCheckout(photoDataArray);
                 
-                // Speichere Upload-Ergebnisse
+                // Speichere Ergebnisse lokal
                 if (typeof(Storage) !== "undefined") {
                     localStorage.setItem('photosUploaded', 'true');
                     localStorage.setItem('photoCount', photoDataArray.length.toString());
-                    localStorage.setItem('photo_urls', JSON.stringify(uploadResult.photoUrls || []));
+                    localStorage.setItem('orderId', checkoutResult.orderId || '');
                     localStorage.setItem('uploadTimestamp', new Date().toISOString());
                     
                     // Quiz-Antworten aktualisieren
                     let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
                     allAnswers['photosUploaded'] = true;
                     allAnswers['photoCount'] = photoDataArray.length;
-                    allAnswers['photo_urls'] = uploadResult.photoUrls || [];
+                    allAnswers['orderId'] = checkoutResult.orderId;
                     allAnswers['uploadTimestamp'] = new Date().toISOString();
                     localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
                 }
                 
-                console.log('Photos uploaded to Supabase:', uploadResult);
+                console.log('Checkout successful:', checkoutResult);
                 
                 clearTimeout(timeoutId);
                 
-                // Erfolgreiche Weiterleitung zu Stripe
+                // Weiterleitung zur Stripe Checkout
                 btn.textContent = 'Weiterleitung zur Bezahlung...';
                 setTimeout(() => {
-                    window.location.href = 'https://buy.stripe.com/cNi6oGgyWghdfSYesv1VK06';
+                    window.location.href = checkoutResult.checkoutUrl;
                 }, 1000);
                 
             } catch (error) {
                 clearTimeout(timeoutId);
-                console.error('Fehler beim Hochladen der Fotos:', error);
+                console.error('Fehler beim Checkout:', error);
                 
-                let errorMessage = 'Fehler beim Hochladen der Fotos. ';
+                let errorMessage = 'Fehler beim Erstellen der Bestellung. ';
                 if (error.message.includes('zu groß')) {
                     errorMessage += 'Die Bilder sind zu groß. Bitte verwende kleinere Bilder.';
-                } else if (error.message.includes('Upload failed')) {
-                    errorMessage += 'Server-Fehler beim Upload. Bitte versuche es erneut.';
+                } else if (error.message.includes('Keine Fotos')) {
+                    errorMessage += 'Keine gültigen Fotos gefunden. Bitte versuche andere Bilder.';
+                } else if (error.message.includes('Checkout failed')) {
+                    errorMessage += 'Server-Fehler. Bitte versuche es erneut.';
                 } else {
-                    errorMessage += 'Bitte versuche es erneut oder verwende andere Bilder.';
+                    errorMessage += 'Bitte versuche es erneut.';
                 }
                 
                 alert(errorMessage);
