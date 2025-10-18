@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Body-Typing Analyse - Fast geschafft!</title>
+    <title>Body-Typing Analyse - Wie fühlst du dich in deiner Kleidung?</title>
     <style>
         * {
             margin: 0;
@@ -50,7 +50,7 @@
         .progress-fill {
             background: linear-gradient(90deg, #667eea, #764ba2);
             height: 100%;
-            width: 100%;
+            width: 86%;
             border-radius: 4px;
             transition: width 0.3s ease;
         }
@@ -78,35 +78,52 @@
             line-height: 1.5;
         }
 
-        .form-group {
-            margin-bottom: 24px;
-            text-align: left;
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 40px;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-            font-size: 15px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 16px;
+        .option {
+            background: #f8f9fa;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
             transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
         }
 
-        .form-group input:focus {
-            outline: none;
+        .option:hover {
+            background: #f1f3ff;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
         }
 
-        .submit-button {
+        .option.selected {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);
+        }
+
+        .option-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .option-description {
+            font-size: 14px;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        .continue-button {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
@@ -118,17 +135,18 @@
             transition: all 0.3s ease;
             box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);
             width: 100%;
-            margin-top: 16px;
+            opacity: 0.5;
+            pointer-events: none;
         }
 
-        .submit-button:hover:not(:disabled) {
+        .continue-button.enabled {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .continue-button.enabled:hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 32px rgba(102, 126, 234, 0.45);
-        }
-
-        .submit-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
 
         .security-note {
@@ -141,13 +159,6 @@
             gap: 8px;
         }
 
-        .error-message {
-            color: #EF4444;
-            font-size: 14px;
-            margin-top: 8px;
-            display: none;
-        }
-
         @media (max-width: 480px) {
             .container {
                 padding: 30px 20px;
@@ -155,6 +166,10 @@
             
             h1 {
                 font-size: 24px;
+            }
+
+            .option {
+                padding: 16px;
             }
         }
     </style>
@@ -165,8 +180,8 @@
     <div class="main-container">
         <div class="progress-container">
             <div class="progress-label">
-                <span>Frage 7 von 7</span>
-                <span>100%</span>
+                <span>Frage 6 von 7</span>
+                <span>86%</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
@@ -174,198 +189,72 @@
         </div>
         
         <div class="container">
-            <h1>Fast geschafft! 🎉</h1>
+            <h1>Wie fühlst du dich in deiner Kleidung aktuell?</h1>
             <p class="subtitle">
-                Gib deine Email-Adresse ein, damit Clara dir deine personalisierte Analyse zusenden kann.
+                Deine Antwort hilft mir zu verstehen, wie selbstbewusst du dich derzeit in deinen Outfits fühlst.
             </p>
             
-            <form id="emailForm" onsubmit="submitForm(event)">
-                <div class="form-group">
-                    <label for="email">Email-Adresse *</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        placeholder="deine@email.de" 
-                        required
-                    >
-                    <div class="error-message" id="emailError">Bitte gib eine gültige Email-Adresse ein</div>
+            <div class="options-container">
+                <div class="option" data-value="selbstbewusst" onclick="selectOption(this)">
+                    <div class="option-title">Selbstbewusst und sicher</div>
+                    <div class="option-description">Ich fühle mich wohl und strahle Selbstvertrauen aus</div>
                 </div>
+                
+                <div class="option" data-value="zurückhaltend" onclick="selectOption(this)">
+                    <div class="option-title">Eher zurückhaltend</div>
+                    <div class="option-description">Ich bin nicht ganz sicher, ob mir alles steht</div>
+                </div>
+                
+                <div class="option" data-value="unsicher" onclick="selectOption(this)">
+                    <div class="option-title">Oft unsicher, was mir steht</div>
+                    <div class="option-description">Ich zweifle häufig an meinen Outfit-Entscheidungen</div>
+                </div>
+                
+                <div class="option" data-value="gleiche_kleidung" onclick="selectOption(this)">
+                    <div class="option-title">Ich trage immer das Gleiche</div>
+                    <div class="option-description">Ich bleibe bei sicheren, bewährten Looks</div>
+                </div>
+            </div>
 
-                <button type="submit" class="submit-button" id="submitBtn">
-                    Analyse anfordern
-                </button>
-            </form>
+            <button class="continue-button" id="continueBtn" onclick="continueToNext()">
+                Analyse starten
+            </button>
             
             <div class="security-note">
-                🔒 Deine Daten sind sicher und werden vertraulich behandelt
+                🔒 Deine Antworten werden vertraulich behandelt
             </div>
         </div>
     </div>
 
     <script>
-        // Mobile-optimierte Bildkomprimierung (im Hintergrund)
-        function compressImageForMobile(dataUrl) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    
-                    // Berechne optimale Größe
-                    let width = img.width;
-                    let height = img.height;
-                    const maxDimension = 1200;
-                    
-                    if (width > maxDimension || height > maxDimension) {
-                        if (width > height) {
-                            height = (height * maxDimension) / width;
-                            width = maxDimension;
-                        } else {
-                            width = (width * maxDimension) / height;
-                            height = maxDimension;
-                        }
-                    }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
-                    ctx.imageSmoothingEnabled = true;
-                    ctx.imageSmoothingQuality = 'high';
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    // Komprimiere
-                    let quality = 0.8;
-                    let result = canvas.toDataURL('image/jpeg', quality);
-                    let sizeKB = Math.round(result.length * 0.75 / 1024);
-                    
-                    // Reduziere Qualität falls nötig
-                    while (sizeKB > 800 && quality > 0.3) {
-                        quality -= 0.1;
-                        result = canvas.toDataURL('image/jpeg', quality);
-                        sizeKB = Math.round(result.length * 0.75 / 1024);
-                    }
-                    
-                    resolve(result);
-                };
-                img.src = dataUrl;
+        let selectedAnswer = null;
+
+        function selectOption(element) {
+            // Entferne previous selection
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
             });
+            
+            // Markiere gewählte Option
+            element.classList.add('selected');
+            selectedAnswer = element.dataset.value;
+            
+            // Enable continue button
+            const continueBtn = document.getElementById('continueBtn');
+            continueBtn.classList.add('enabled');
         }
 
-        async function submitForm(event) {
-            event.preventDefault();
+        function continueToNext() {
+            if (!selectedAnswer) return;
             
-            const email = document.getElementById('email').value;
-            const submitBtn = document.getElementById('submitBtn');
-            const emailError = document.getElementById('emailError');
+            // Speichere Antwort
+            localStorage.setItem('clothingConfidence', selectedAnswer);
             
-            // Email-Validierung
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                emailError.style.display = 'block';
-                return;
-            }
-            
-            emailError.style.display = 'none';
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Wird verarbeitet...';
-            
-            // 30 Sekunden Timeout
-            const timeoutId = setTimeout(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Analyse anfordern';
-                alert('Verbindung dauert zu lange. Bitte versuche es erneut.');
-            }, 30000);
-            
-            try {
-                // Sammle ALLE Daten aus localStorage
-                const allData = {};
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    const value = localStorage.getItem(key);
-                    if (key && value && value !== 'null' && value !== 'undefined') {
-                        allData[key] = value;
-                    }
-                }
-                
-                // Sammle und optimiere Fotos (im Hintergrund)
-                const photos = [];
-                let totalSize = 0;
-                
-                for (let i = 1; i <= 10; i++) {
-                    const photoKey = `uploadedPhoto${i}`;
-                    const photoData = localStorage.getItem(photoKey);
-                    
-                    if (photoData && photoData.startsWith('data:image/')) {
-                        try {
-                            const optimizedPhoto = await compressImageForMobile(photoData);
-                            const sizeKB = Math.round(optimizedPhoto.length * 0.75 / 1024);
-                            totalSize += sizeKB;
-                            photos.push(optimizedPhoto);
-                        } catch (error) {
-                            // Fallback: verwende Original wenn Komprimierung fehlschlägt
-                            const sizeKB = Math.round(photoData.length * 0.75 / 1024);
-                            if (sizeKB < 2000) { // Max 2MB pro Bild
-                                totalSize += sizeKB;
-                                photos.push(photoData);
-                            }
-                        }
-                    }
-                }
-                
-                console.log(`Sende ${photos.length} Fotos, Gesamtgröße: ${totalSize}KB`);
-                
-                // Email hinzufügen
-                allData.userEmail = email;
-                allData.email = email;
-                allData.quizCompleted = 'true';
-                allData.timestamp = new Date().toISOString();
-                
-                const payload = {
-                    email: email,
-                    userEmail: email,
-                    photos: photos,
-                    answers: allData,
-                    name: allData.userName || 'Kunde'
-                };
-                
-                // Sende Daten
-                const response = await fetch('/api/checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                clearTimeout(timeoutId);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                if (data.url) {
-                    console.log('Success! Redirecting...');
-                    window.location.href = '/analyse.html'; // Direkte Weiterleitung zur Analyse
-                } else {
-                    throw new Error('No URL received');
-                }
-                
-            } catch (error) {
-                clearTimeout(timeoutId);
-                console.error('Error:', error);
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Analyse anfordern';
-                
-                let errorMessage = 'Fehler beim Senden. ';
-                if (error.message.includes('Failed to fetch')) {
-                    errorMessage += 'Keine Internetverbindung.';
-                } else {
-                    errorMessage += 'Bitte versuche es erneut.';
-                }
-                alert(errorMessage);
-            }
+            // Weiterleitung zur Analyse-Seite
+            window.location.href = '/analyse.html';
         }
 
+        // Animation beim Laden
         window.addEventListener('load', function() {
             const container = document.querySelector('.container');
             container.style.opacity = '0';
@@ -376,6 +265,18 @@
                 container.style.opacity = '1';
                 container.style.transform = 'translateY(0)';
             }, 100);
+            
+            // Animate options
+            const options = document.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                option.style.opacity = '0';
+                option.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    option.style.transition = 'all 0.4s ease';
+                    option.style.opacity = '1';
+                    option.style.transform = 'translateY(0)';
+                }, 200 + (index * 100));
+            });
         });
     </script>
 </body>
