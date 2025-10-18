@@ -471,11 +471,11 @@
                 if (currentPercent < 100) {
                     let increment;
                     if (currentPercent < 25) {
-                        increment = 2.5 + Math.random() * 1.5; // Schneller: war 0.8 + 0.4
+                        increment = 1.5 + Math.random() * 0.8; // Moderat: zwischen vorherigen Werten
                     } else if (currentPercent < 75) {
-                        increment = 1.8 + Math.random() * 1.2; // Schneller: war 0.4 + 0.3
+                        increment = 1.0 + Math.random() * 0.6; // Moderat
                     } else {
-                        increment = 2.2 + Math.random() * 1.8; // Schneller: war 0.6 + 0.6
+                        increment = 1.3 + Math.random() * 0.9; // Moderat
                     }
                     
                     currentPercent = Math.min(100, currentPercent + increment);
@@ -487,7 +487,7 @@
                     completedBars++;
                     checkAllBarsComplete();
                 }
-            }, 50); // Schneller: war 80ms, jetzt 50ms
+            }, 65); // Moderat: 65ms (zwischen 50 und 80)
             
             barIntervals.push(interval);
         } catch (e) {}
