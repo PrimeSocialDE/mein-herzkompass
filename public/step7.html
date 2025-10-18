@@ -23,8 +23,6 @@
             margin: 0 auto;
         }
 
-
-
         .farbkreis-section {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
@@ -647,8 +645,6 @@
 </head>
 <body>
     <div class="main-container">
-
-
         <div class="farbkreis-section">
             <div class="farbkreis-image">
                 <img src="/Farbkreis1.png" alt="Individueller Farbkreis" class="active">
@@ -712,7 +708,7 @@
             <div class="uploaded-photos" id="uploadedPhotos"></div>
 
             <button class="continue-button" id="continueBtn" disabled onclick="submitPhotos()">
-                Analyse sichern
+                Zur Bezahlung & Analyse
             </button>
 
             <div class="processing-message" id="processingMessage">
@@ -829,8 +825,8 @@
             });
         }
 
-        // Funktion zum Senden der Daten zur bestehenden Checkout-API
-        async function submitToCheckout(photoDataArray) {
+        // Funktion zum Hochladen zu Supabase über API
+        async function uploadToSupabase(photoDataArray) {
             try {
                 const response = await fetch('/api/checkout', {
                     method: 'POST',
@@ -842,25 +838,19 @@
                         userId: localStorage.getItem('userId') || `user_${Date.now()}`,
                         quizAnswers: JSON.parse(localStorage.getItem('quizAnswers') || '{}'),
                         email: localStorage.getItem('email') || '',
-                        createStripeSession: true
+                        createStripeSession: false // Keine Stripe Session erstellen
                     })
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Checkout failed: ${response.status}`);
+                    throw new Error(`Upload failed: ${response.status}`);
                 }
 
                 const result = await response.json();
-                console.log('Checkout API response:', result);
-                
-                if (result.url) {
-                    // Direkt zur Stripe Checkout Session
-                    return { checkoutUrl: result.url, ...result };
-                } else {
-                    throw new Error('Keine Checkout-URL erhalten');
-                }
+                console.log('Photos uploaded successfully:', result);
+                return result;
             } catch (error) {
-                console.error('Checkout API error:', error);
+                console.error('Upload error:', error);
                 throw error;
             }
         }
@@ -890,7 +880,7 @@
                 
                 console.log('Starting photo conversion for', uploadedFiles.length, 'files');
                 
-                // Konvertiere alle Fotos zu Base64 mit Fehlerbehandlung
+                // Konvertiere alle Fotos zu Base64
                 for (let i = 0; i < uploadedFiles.length; i++) {
                     try {
                         const file = uploadedFiles[i];
@@ -915,46 +905,46 @@
                     throw new Error('Keine Fotos konnten verarbeitet werden');
                 }
 
-                // Sende an bestehende Checkout-API
-                btn.textContent = 'Erstelle Bestellung...';
-                const checkoutResult = await submitToCheckout(photoDataArray);
+                // Upload zu Supabase
+                btn.textContent = 'Fotos werden hochgeladen...';
+                const uploadResult = await uploadToSupabase(photoDataArray);
                 
-                // Speichere Ergebnisse lokal
+                // Speichere Upload-Ergebnisse
                 if (typeof(Storage) !== "undefined") {
                     localStorage.setItem('photosUploaded', 'true');
                     localStorage.setItem('photoCount', photoDataArray.length.toString());
-                    localStorage.setItem('orderId', checkoutResult.orderId || '');
+                    localStorage.setItem('orderId', uploadResult.orderId || '');
                     localStorage.setItem('uploadTimestamp', new Date().toISOString());
                     
                     // Quiz-Antworten aktualisieren
                     let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
                     allAnswers['photosUploaded'] = true;
                     allAnswers['photoCount'] = photoDataArray.length;
-                    allAnswers['orderId'] = checkoutResult.orderId;
+                    allAnswers['orderId'] = uploadResult.orderId;
                     allAnswers['uploadTimestamp'] = new Date().toISOString();
                     localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
                 }
                 
-                console.log('Checkout successful:', checkoutResult);
+                console.log('Upload successful:', uploadResult);
                 
                 clearTimeout(timeoutId);
                 
-                // Weiterleitung zur Stripe Checkout
+                // Weiterleitung zur festen Stripe URL
                 btn.textContent = 'Weiterleitung zur Bezahlung...';
                 setTimeout(() => {
-                    window.location.href = checkoutResult.checkoutUrl;
+                    window.location.href = 'https://buy.stripe.com/cNi6oGgyWghdfSYesv1VK06';
                 }, 1000);
                 
             } catch (error) {
                 clearTimeout(timeoutId);
-                console.error('Fehler beim Checkout:', error);
+                console.error('Fehler beim Upload:', error);
                 
-                let errorMessage = 'Fehler beim Erstellen der Bestellung. ';
+                let errorMessage = 'Fehler beim Hochladen der Fotos. ';
                 if (error.message.includes('zu groß')) {
                     errorMessage += 'Die Bilder sind zu groß. Bitte verwende kleinere Bilder.';
                 } else if (error.message.includes('Keine Fotos')) {
                     errorMessage += 'Keine gültigen Fotos gefunden. Bitte versuche andere Bilder.';
-                } else if (error.message.includes('Checkout failed')) {
+                } else if (error.message.includes('Upload failed')) {
                     errorMessage += 'Server-Fehler. Bitte versuche es erneut.';
                 } else {
                     errorMessage += 'Bitte versuche es erneut.';
