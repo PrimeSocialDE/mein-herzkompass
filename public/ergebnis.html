@@ -785,6 +785,36 @@
             border-bottom: 1px solid #e2e8f0;
         }
 
+        .standard-slider + .slider-dots {
+            background: var(--white);
+        }
+
+        .standard-slider .slider-title,
+        .package-slider-container:has(.standard-slider) .slider-title {
+            background: linear-gradient(135deg, #f8fafc, #e8f0fe);
+            color: #495057;
+        }
+
+        .premium-slider + .slider-dots {
+            background: var(--white);
+        }
+
+        .premium-slider .slider-title,
+        .package-slider-container:has(.premium-slider) .slider-title {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            color: var(--primary-color);
+        }
+
+        .clara-slider + .slider-dots {
+            background: var(--white);
+        }
+
+        .clara-slider .slider-title,
+        .package-slider-container:has(.clara-slider) .slider-title {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(34, 197, 94, 0.1));
+            color: var(--success-color);
+        }
+
         .slider-wrapper {
             position: relative;
             width: 100%;
@@ -810,6 +840,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            border-radius: var(--border-radius-small);
             background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
                         linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
                         linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
@@ -1429,6 +1460,27 @@
 
             .slider-wrapper {
                 height: 280px;
+            }
+
+            /* Clara Slider Mobile Optimierung */
+            .clara-slider-section .package-slider-container {
+                margin: 0 15px;
+                max-width: none;
+            }
+
+            .clara-slider-section .slider-wrapper {
+                height: 300px;
+            }
+
+            .clara-slider-section .slider-image {
+                object-fit: cover;
+                object-position: center;
+                border-radius: var(--border-radius-small);
+            }
+
+            .clara-text-section {
+                padding: 0 15px;
+                margin-top: 25px;
             }
 
             .pricing-options {
