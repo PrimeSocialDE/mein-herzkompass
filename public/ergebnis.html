@@ -525,7 +525,67 @@
 
         .pricing-header {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 25px;
+        }
+
+        .live-sales-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--text-light);
+            border: 2px solid #16a34a;
+            border-radius: 20px;
+            padding: 12px 20px;
+            background: transparent;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #16a34a;
+            border-radius: 50%;
+            animation: pulse-green 2s infinite;
+        }
+
+        .live-text {
+            font-weight: 500;
+        }
+
+        @keyframes pulse-green {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .klarna-payment {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .klarna-text {
+            font-size: 14px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .klarna-logo {
+            background: linear-gradient(135deg, #ffb3d9, #ff80b3);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .pricing-card {
@@ -1156,15 +1216,25 @@
                 <p class="section-subtitle">🇩🇪 Made in Germany • 🔒 100% verschlüsselt • 📱 In 24h geliefert</p>
             </div>
             
+            <!-- Live Sales Indicator -->
+            <div class="live-sales-indicator">
+                <span class="live-dot"></span>
+                <span class="live-text">Heute bereits 7 mal gekauft</span>
+            </div>
+            
             <div class="pricing-card animate-on-scroll">
-                <div class="popular-badge">Statt 300€ vor Ort</div>
+                <div class="popular-badge">Statt 2h Beratung beim Stylisten (150€)</div>
                 <div class="pricing-header-card">
-                    <h3 class="pricing-title">Für 95%+ genaue Ergebnisse</h3>
+                    <h3 class="pricing-title">Sichere dir deine persönliche Farbanalyse</h3>
                     <div class="price-container">
                         <div class="price-comparison">
-                            <span class="old-price">Normalpreis: 99,99€</span>
+                            <span class="old-price">Normalpreis: 49,00€</span>
                             <span class="arrow">→</span>
-                            <span class="price-new">Heute nur 49,99€</span>
+                            <span class="price-new">Heute nur 39,99€</span>
+                        </div>
+                        <div class="klarna-payment">
+                            <span class="klarna-text">oder 3x 13,33€ mit</span>
+                            <span class="klarna-logo">Klarna</span>
                         </div>
                     </div>
                     <p class="pricing-subtitle">Fotos hochladen → Bezahlen → Analyse erhalten</p>
@@ -1402,7 +1472,7 @@
             // TikTok Event: AddToCart
             if (typeof ttq !== 'undefined') {
                 ttq.track('AddToCart', {
-                    value: 49.00,
+                    value: 39.99,
                     currency: 'EUR',
                     content_type: 'product',
                     content_id: 'color_analysis',
@@ -1441,7 +1511,7 @@
                 // TikTok Event: InitiateCheckout
                 if (typeof ttq !== 'undefined') {
                     ttq.track('InitiateCheckout', {
-                        value: 49.00,
+                        value: 39.99,
                         currency: 'EUR',
                         content_type: 'product',
                         content_id: 'color_analysis'
