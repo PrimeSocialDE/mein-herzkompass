@@ -96,7 +96,7 @@
         }
 
         h1 {
-            font-size: 36px;
+            font-size: 42px;
             color: #333;
             margin-bottom: 25px;
             font-weight: 700;
@@ -654,22 +654,16 @@
         </div>
         
         <div class="container">
-            <h1>Deine Bilder erzählen mehr als tausend Worte</h1>
-            <p class="subtitle">Für eine präzise Analyse brauche ich 2–3 natürliche Fotos von dir. Sie werden nur zur Auswertung genutzt und danach automatisch gelöscht.</p>
+            <h1>Ich brauche nur 1 gutes Foto von dir</h1>
+            <p class="subtitle">Für eine präzise Analyse brauche ich ein natürliches Foto von dir mit guter Beleuchtung. Es wird nur zur Auswertung genutzt und danach automatisch gelöscht.</p>
             
             <div class="photo-examples">
                 <div class="example-section">
-                    <h3 style="color: #22C55E; margin-bottom: 15px;">✅ Beispiele für Fotos, die funktionieren:</h3>
-                    <p style="color: #16a34a; font-size: 16px; margin-bottom: 20px; line-height: 1.6;">• Natürliches Licht verwenden<br>• Mehrere Fotos senden<br>• Nicht gegen das Fenster fotografieren</p>
-                    <div class="example-grid">
+                    <h3 style="color: #22C55E; margin-bottom: 15px;">✅ Beispiel für ein Foto, das funktioniert:</h3>
+                    <p style="color: #16a34a; font-size: 16px; margin-bottom: 20px; line-height: 1.6;">• Natürliches Licht verwenden<br>• Gute Beleuchtung<br>• Nicht gegen das Fenster fotografieren</p>
+                    <div class="example-grid" style="grid-template-columns: 1fr; max-width: 300px; margin: 0 auto;">
                         <div class="example-photo">
-                            <img src="/Foto-Gut-1.png" alt="Gutes Foto-Beispiel 1">
-                        </div>
-                        <div class="example-photo">
-                            <img src="/Foto-Gut-2.jpg" alt="Gutes Foto-Beispiel 2">
-                        </div>
-                        <div class="example-photo">
-                            <img src="/Foto-Gut-3.jpg" alt="Gutes Foto-Beispiel 3">
+                            <img src="/Foto-Gut-2.jpg" alt="Gutes Foto-Beispiel">
                         </div>
                     </div>
                 </div>
@@ -677,15 +671,12 @@
                 <div class="example-section">
                     <h3 style="color: #EF4444; margin-bottom: 15px;">❌ Beispiele für Fotos, die NICHT funktionieren:</h3>
                     <p style="color: #dc2626; font-size: 16px; margin-bottom: 20px; line-height: 1.6;">• Direktes Sonnenlicht vermeiden<br>• Kein Blitzlicht verwenden<br>• Filter und Vintage-Effekte meiden</p>
-                    <div class="example-grid">
+                    <div class="example-grid" style="grid-template-columns: 1fr 1fr; max-width: 500px; margin: 0 auto;">
                         <div class="example-photo">
-                            <img src="/Foto-Schlecht-1.jpg" alt="Schlechtes Foto-Beispiel 1">
+                            <img src="/Foto-Schlecht-2.jpg" alt="Schlechtes Foto-Beispiel 1">
                         </div>
                         <div class="example-photo">
-                            <img src="/Foto-Schlecht-2.jpg" alt="Schlechtes Foto-Beispiel 2">
-                        </div>
-                        <div class="example-photo">
-                            <img src="/Foto-Schlecht-3.jpg" alt="Schlechtes Foto-Beispiel 3">
+                            <img src="/Foto-Schlecht-1.jpg" alt="Schlechtes Foto-Beispiel 2">
                         </div>
                     </div>
                 </div>
@@ -693,11 +684,11 @@
 
             <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
                 <div class="upload-icon">📸</div>
-                <div class="upload-text">Fotos hochladen</div>
-                <div class="upload-subtext">Klicke hier oder ziehe Fotos hierher</div>
+                <div class="upload-text">1 gutes Foto hochladen</div>
+                <div class="upload-subtext">Klicke hier oder ziehe ein Foto hierher</div>
             </div>
 
-            <input type="file" id="fileInput" class="file-input" accept="image/*" multiple onchange="handleFiles(this.files)">
+            <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFiles(this.files)">
 
             <div class="photo-story-section">
                 <div class="privacy-note">
@@ -712,11 +703,11 @@
             </button>
 
             <div class="processing-message" id="processingMessage">
-                Fotos werden verarbeitet...
+                Foto wird verarbeitet...
             </div>
             
             <div class="security-note">
-                🔒 Deine Fotos werden vertraulich behandelt und nur für die Analyse verwendet
+                🔒 Dein Foto wird vertraulich behandelt und nur für die Analyse verwendet
             </div>
         </div>
     </div>
@@ -741,11 +732,14 @@
         });
 
         function handleFiles(files) {
-            for (let file of files) {
-                if (file.type.startsWith('image/')) {
-                    uploadedFiles.push(file);
-                    displayPhoto(file);
-                }
+            // Nur das erste Bild verwenden, da wir nur ein Foto wollen
+            const file = files[0];
+            if (file && file.type.startsWith('image/')) {
+                // Ersetze vorhandenes Foto, falls vorhanden
+                uploadedFiles = [file];
+                const container = document.getElementById('uploadedPhotos');
+                container.innerHTML = '';
+                displayPhoto(file);
             }
             updateContinueButton();
         }
@@ -905,7 +899,7 @@
 
         async function submitPhotos() {
             if (uploadedFiles.length === 0) {
-                alert('Bitte lade mindestens ein Foto hoch.');
+                alert('Bitte lade ein Foto hoch.');
                 return;
             }
 
@@ -913,7 +907,7 @@
             const processingMsg = document.getElementById('processingMessage');
             
             btn.disabled = true;
-            btn.textContent = 'Fotos werden verarbeitet...';
+            btn.textContent = 'Foto wird verarbeitet...';
             processingMsg.style.display = 'block';
 
             const timeoutId = setTimeout(() => {
@@ -926,35 +920,33 @@
             try {
                 const photoDataArray = [];
                 
-                console.log('Starting photo conversion for', uploadedFiles.length, 'files');
+                console.log('Starting photo conversion for', uploadedFiles.length, 'file');
                 
-                // Konvertiere alle Fotos zu Base64
-                for (let i = 0; i < uploadedFiles.length; i++) {
-                    try {
-                        const file = uploadedFiles[i];
-                        console.log(`Converting photo ${i + 1}:`, file.name, 'Size:', Math.round(file.size / 1024), 'KB');
-                        
-                        const base64Data = await fileToBase64(file);
-                        photoDataArray.push({
-                            data: base64Data,
-                            name: file.name,
-                            type: file.type,
-                            size: file.size
-                        });
-                        
-                        console.log(`Photo ${i + 1} converted successfully`);
-                    } catch (error) {
-                        console.error(`Error converting photo ${i + 1}:`, error);
-                        alert(`Foto "${uploadedFiles[i].name}" konnte nicht verarbeitet werden und wird übersprungen.`);
-                    }
+                // Konvertiere das Foto zu Base64
+                try {
+                    const file = uploadedFiles[0];
+                    console.log('Converting photo:', file.name, 'Size:', Math.round(file.size / 1024), 'KB');
+                    
+                    const base64Data = await fileToBase64(file);
+                    photoDataArray.push({
+                        data: base64Data,
+                        name: file.name,
+                        type: file.type,
+                        size: file.size
+                    });
+                    
+                    console.log('Photo converted successfully');
+                } catch (error) {
+                    console.error('Error converting photo:', error);
+                    throw new Error('Foto konnte nicht verarbeitet werden');
                 }
                 
                 if (photoDataArray.length === 0) {
-                    throw new Error('Keine Fotos konnten verarbeitet werden');
+                    throw new Error('Kein Foto konnte verarbeitet werden');
                 }
 
                 // Upload zu Supabase
-                btn.textContent = 'Fotos werden hochgeladen...';
+                btn.textContent = 'Foto wird hochgeladen...';
                 const uploadResult = await uploadToSupabase(photoDataArray);
                 
                 // Speichere Upload-Ergebnisse
@@ -987,11 +979,11 @@
                 clearTimeout(timeoutId);
                 console.error('Fehler beim Upload:', error);
                 
-                let errorMessage = 'Fehler beim Hochladen der Fotos. ';
+                let errorMessage = 'Fehler beim Hochladen des Fotos. ';
                 if (error.message.includes('zu groß')) {
-                    errorMessage += 'Die Bilder sind zu groß. Bitte verwende kleinere Bilder.';
-                } else if (error.message.includes('Keine Fotos')) {
-                    errorMessage += 'Keine gültigen Fotos gefunden. Bitte versuche andere Bilder.';
+                    errorMessage += 'Das Bild ist zu groß. Bitte verwende ein kleineres Bild.';
+                } else if (error.message.includes('Kein Foto')) {
+                    errorMessage += 'Kein gültiges Foto gefunden. Bitte versuche ein anderes Bild.';
                 } else if (error.message.includes('Upload failed')) {
                     errorMessage += 'Server-Fehler. Bitte versuche es erneut.';
                 } else {
