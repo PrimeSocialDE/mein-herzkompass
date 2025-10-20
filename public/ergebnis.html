@@ -199,10 +199,10 @@
 
 .hero-image {
     width: 100%;
-    max-width: 100%;
-    height: 350px;
+    max-width: 1536px;
+    height: auto;
+    max-height: 400px;
     object-fit: cover;
-    object-position: center;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-medium);
     background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
@@ -213,12 +213,15 @@
     background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
 }
 
-/* Mobile */
+/* Mobile Responsive */
 @media (max-width: 768px) {
+    .hero-image-container {
+        margin-bottom: 30px;
+    }
+
     .hero-image {
-        height: 200px;
+        max-height: 250px;
         border-radius: var(--border-radius-small);
-        object-position: center;
     }
 }
 
