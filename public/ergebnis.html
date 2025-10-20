@@ -184,6 +184,47 @@
             font-weight: 500;
         }
 
+        /* HERO SECTION */
+.hero {
+    background: linear-gradient(135deg, var(--white) 0%, #f1f3ff 100%);
+    padding: 60px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-image-container {
+    margin-bottom: 40px;
+}
+
+.hero-image {
+    width: 100%;
+    max-width: 1536px;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-medium);
+    background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+    background-size: 30px 30px;
+    background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .hero-image-container {
+        margin-bottom: 30px;
+    }
+
+    .hero-image {
+        max-height: 250px;
+        border-radius: var(--border-radius-small);
+    }
+}
+
         .hero-cta-button {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: var(--white);
@@ -1046,6 +1087,10 @@
     <!-- HERO SECTION -->
     <section class="hero">
         <div class="container">
+<!-- Hero Image -->
+<div class="hero-image-container">
+    <img src="Hero-Bild1.png" alt="Clara Farbanalyse" class="hero-image">
+</div>
             <div class="hero-card">
                 <h1 class="hero-headline">
                     Jetzt fehlt nur noch <span class="highlight-text">dein Foto für die genaue Analyse</span>
