@@ -197,32 +197,67 @@
     margin-bottom: 40px;
 }
 
-.hero-image {
-    width: 100%;
-    max-width: 1536px;
+/* HERO SECTION */ 
+.hero {     
+    background: linear-gradient(135deg, var(--white) 0%, #f1f3ff 100%);     
+    padding: 60px 0;     
+    text-align: center;     
+    position: relative;     
+    overflow: hidden; 
+} 
+
+.hero-image-container {     
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} 
+
+.hero-image {     
+    width: 100%;     
     height: auto;
-    max-height: 400px;
-    object-fit: cover;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-medium);
-    background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
-                linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
-                linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
-    background-size: 30px 30px;
-    background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
+    border-radius: var(--border-radius);     
+    box-shadow: var(--shadow-medium);     
+    background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%),                  
+                linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),                  
+                linear-gradient(45deg, transparent 75%, #f0f0f0 75%),                  
+                linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);     
+    background-size: 30px 30px;     
+    background-position: 0 0, 0 15px, 15px -15px, -15px 0px; 
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    .hero-image-container {
-        margin-bottom: 30px;
-    }
-
+/* Desktop-spezifische Korrekturen */
+@media (min-width: 769px) {
     .hero-image {
-        max-height: 250px;
-        border-radius: var(--border-radius-small);
+        max-width: 800px;        /* Begrenzung der maximalen Breite */
+        max-height: 300px;       /* Feste maximale Höhe für Desktop */
+        object-fit: cover;       /* Bild proportional beschneiden */
+        aspect-ratio: 16/9;      /* Festes Seitenverhältnis */
     }
+    
+    .hero-image-container {
+        margin-bottom: 50px;
+    }
+}
+
+/* Große Desktop-Bildschirme */
+@media (min-width: 1200px) {
+    .hero-image {
+        max-width: 900px;
+        max-height: 350px;
+    }
+}
+
+/* Mobile Responsive (unverändert) */
+@media (max-width: 768px) {     
+    .hero-image-container {         
+        margin-bottom: 30px;     
+    }     
+    
+    .hero-image {         
+        max-height: 250px;         
+        border-radius: var(--border-radius-small);     
+    } 
 }
 
         .hero-cta-button {
