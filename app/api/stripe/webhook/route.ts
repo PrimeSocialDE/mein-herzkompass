@@ -84,11 +84,41 @@ export async function POST(req: NextRequest) {
 }
 
 async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
+  console.log("🔍 === CHECKOUT SUCCESS DEBUG ===");
+  console.log("🔍 Session ID:", session.id);
+  console.log("🔍 Client Reference ID:", session.client_reference_id);
+  console.log("🔍 Session Metadata:", JSON.stringify(session.metadata, null, 2));
+  
   const orderId = session.client_reference_id || session.metadata?.order_id;
+  console.log("🔍 Extrahierte Order ID:", orderId);
+  
   if (!orderId) {
-    console.error("Keine Order-ID in Session gefunden");
+    console.error("❌ Keine Order-ID in Session gefunden");
+    console.log("🔍 Verfügbare Session-Daten:", {
+      id: session.id,
+      client_reference_id: session.client_reference_id,
+      metadata: session.metadata,
+      customer: session.customer,
+      customer_email: session.customer_email
+    });
     return;
   }
+
+  // Prüfe ob Order existiert BEVOR Update
+  console.log("🔍 Prüfe ob Order existiert...");
+  const { data: existingOrder, error: selectError } = await supabase
+    .from("orders")
+    .select("id, status, email")
+    .eq("id", orderId)
+    .single();
+    
+  if (selectError) {
+    console.error("❌ Order nicht gefunden:", selectError);
+    console.log("🔍 Supabase Select Error Details:", JSON.stringify(selectError, null, 2));
+    return;
+  }
+  
+  console.log("✅ Order gefunden:", JSON.stringify(existingOrder, null, 2));
 
   let customerEmail = session.customer_email || session.customer_details?.email;
   let customerName = session.customer_details?.name;
@@ -144,12 +174,22 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
       console.log(`Name gefunden: ${customerName}`);
     }
 
-    const { error } = await supabase.from("orders").update(updateData).eq("id", orderId);
+    console.log("🔍 Update Data:", JSON.stringify(updateData, null, 2));
+    console.log("🔍 Führe Supabase Update aus...");
+
+    const { data: updatedData, error } = await supabase
+      .from("orders")
+      .update(updateData)
+      .eq("id", orderId)
+      .select("*"); // Wichtig: .select("*") um zu sehen was aktualisiert wurde
     
     if (error) {
-      console.error("Fehler beim Aktualisieren der Order:", error);
+      console.error("❌ Supabase Update Error:", JSON.stringify(error, null, 2));
     } else {
+      console.log("✅ Supabase Update erfolgreich!");
+      console.log("🔍 Aktualisierte Order:", JSON.stringify(updatedData, null, 2));
       console.log(`Order ${orderId} erfolgreich als bezahlt markiert`);
+      
       // ▼▼▼ NEU: Make informieren
       await notifyMake(orderId, {
         source: "checkout.session",
@@ -160,6 +200,8 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
       });
       // ▲▲▲
     }
+    
+    console.log("🔍 === CHECKOUT SUCCESS DEBUG ENDE ===");
   } catch (err) {
     console.error("Supabase-Fehler bei Checkout Session:", err);
   }
