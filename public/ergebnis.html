@@ -1598,7 +1598,7 @@
             <div class="pricing-card animate-on-scroll">
                 <div class="popular-badge">❗️Statt bis zu 300€ Vorort!</div>
                 <div class="pricing-header-card">
-                    <h3 class="pricing-title">Sichere dir deine persönliche Farbanalyse.</h3>
+                    <h3 class="pricing-title">Sichere dir deine persönliche Farbanalyse und fühl dich sofort selbstbewusster.</h3>
                     <div class="price-container">
                         <div class="price-comparison">
                             <span class="old-price">Normalpreis: 89,99€</span>
@@ -2028,31 +2028,67 @@
 
         function scrollToCheckout() {
             const pricingSection = document.getElementById('pricing');
-            if (pricingSection) {
-                const targetPosition = pricingSection.getBoundingClientRect().top + window.pageYOffset;
+            const mediaSection = document.querySelector('.media-mentions');
+            
+            if (pricingSection && mediaSection) {
+                const finalTarget = pricingSection.getBoundingClientRect().top + window.pageYOffset;
+                const mediaTarget = mediaSection.getBoundingClientRect().top + window.pageYOffset;
                 const startPosition = window.pageYOffset;
-                const distance = targetPosition - startPosition;
-                const duration = 1200;
-                let start = null;
-
-                function animation(currentTime) {
-                    if (start === null) start = currentTime;
-                    const timeElapsed = currentTime - start;
-                    const progress = Math.min(timeElapsed / duration, 1);
+                
+                // Phase 1: Langsam zu Media Section (2 Sekunden)
+                const phase1Duration = 2000;
+                const phase1Distance = mediaTarget - startPosition;
+                let phase1Start = null;
+                
+                function phase1Animation(currentTime) {
+                    if (phase1Start === null) phase1Start = currentTime;
+                    const timeElapsed = currentTime - phase1Start;
+                    const progress = Math.min(timeElapsed / phase1Duration, 1);
                     
-                    // Smooth easing function
-                    const ease = progress < 0.5
-                        ? 4 * progress * progress * progress
-                        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                    // Sehr sanfte Easing-Funktion für langsamen Start
+                    const ease = progress * progress * (3 - 2 * progress); // Smooth step
                     
-                    window.scrollTo(0, startPosition + distance * ease);
+                    window.scrollTo(0, startPosition + phase1Distance * ease);
                     
-                    if (timeElapsed < duration) {
-                        requestAnimationFrame(animation);
+                    if (timeElapsed < phase1Duration) {
+                        requestAnimationFrame(phase1Animation);
+                    } else {
+                        // Kurze Pause (800ms) bei den Logos
+                        setTimeout(() => {
+                            startPhase2();
+                        }, 800);
                     }
                 }
-
-                requestAnimationFrame(animation);
+                
+                // Phase 2: Schnell zum Pricing (1 Sekunde)
+                function startPhase2() {
+                    const phase2Duration = 1000;
+                    const currentPos = window.pageYOffset;
+                    const phase2Distance = finalTarget - currentPos;
+                    let phase2Start = null;
+                    
+                    function phase2Animation(currentTime) {
+                        if (phase2Start === null) phase2Start = currentTime;
+                        const timeElapsed = currentTime - phase2Start;
+                        const progress = Math.min(timeElapsed / phase2Duration, 1);
+                        
+                        // Schnellere Easing-Funktion
+                        const ease = progress < 0.5
+                            ? 4 * progress * progress * progress
+                            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                        
+                        window.scrollTo(0, currentPos + phase2Distance * ease);
+                        
+                        if (timeElapsed < phase2Duration) {
+                            requestAnimationFrame(phase2Animation);
+                        }
+                    }
+                    
+                    requestAnimationFrame(phase2Animation);
+                }
+                
+                // Starte Phase 1
+                requestAnimationFrame(phase1Animation);
             }
         }
 
