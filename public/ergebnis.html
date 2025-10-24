@@ -1250,20 +1250,15 @@
         }
 
         .media-logo-placeholder {
-            height: 80px;
-            width: 80px;
-            background: linear-gradient(135deg, #f1f3ff, #e2e8f0);
-            border: 2px dashed rgba(102, 126, 234, 0.3);
+            height: 120px;
+            width: 120px;
+            background: transparent;
+            border: none;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
-            color: var(--text-light);
-            font-weight: 600;
             transition: all 0.3s ease;
-            text-align: center;
-            line-height: 1.2;
             overflow: hidden;
         }
 
@@ -1271,13 +1266,16 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
-            padding: 8px;
+            filter: grayscale(20%);
+            transition: all 0.3s ease;
         }
 
         .media-logo-placeholder:hover {
-            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
-            border-color: rgba(102, 126, 234, 0.5);
             transform: scale(1.05);
+        }
+
+        .media-logo-placeholder:hover .logo-image {
+            filter: grayscale(0%);
         }
 
         @media (max-width: 768px) {
@@ -1295,10 +1293,8 @@
             }
             
             .media-logo-placeholder {
-                height: 65px;
-                width: 65px;
-                font-size: 10px;
-                border-radius: 10px;
+                height: 100px;
+                width: 100px;
             }
         }
 
@@ -1313,10 +1309,8 @@
             }
             
             .media-logo-placeholder {
-                height: 55px;
-                width: 55px;
-                font-size: 9px;
-                border-radius: 8px;
+                height: 80px;
+                width: 80px;
             }
         }
 
