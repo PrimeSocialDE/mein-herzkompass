@@ -873,7 +873,7 @@
                         quizAnswers: completeAnswers,
                         email: additionalData.email,
                         name: additionalData.name,
-                        createStripeSession: false, // Keine Stripe Session erstellen
+                        createStripeSession: true, // Stripe Session mit Order ID erstellen
                         
                         // Für Backward-Compatibility auch direkt als body-properties
                         userEmail: additionalData.email,
@@ -972,8 +972,12 @@
                 // Weiterleitung zur festen Stripe URL
                 btn.textContent = 'Weiterleitung zur Bezahlung...';
                 setTimeout(() => {
-                    window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
-                }, 1000);
+    if (uploadResult.url) {
+        window.location.href = uploadResult.url;
+    } else {
+        window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
+    }
+}, 1000);
                 
             } catch (error) {
                 clearTimeout(timeoutId);
