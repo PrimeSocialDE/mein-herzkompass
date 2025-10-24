@@ -1598,7 +1598,7 @@
             <div class="pricing-card animate-on-scroll">
                 <div class="popular-badge">❗️Statt bis zu 300€ Vorort!</div>
                 <div class="pricing-header-card">
-                    <h3 class="pricing-title">Sichere dir deine persönliche Farbanalyse und fühl dich sofort selbstbewusster.</h3>
+                    <h3 class="pricing-title">Sichere dir deine persönliche Farbanalyse.</h3>
                     <div class="price-container">
                         <div class="price-comparison">
                             <span class="old-price">Normalpreis: 89,99€</span>
@@ -2035,8 +2035,8 @@
                 const mediaTarget = mediaSection.getBoundingClientRect().top + window.pageYOffset;
                 const startPosition = window.pageYOffset;
                 
-                // Phase 1: Langsam zu Media Section (2 Sekunden)
-                const phase1Duration = 2000;
+                // Phase 1: Langsam zu Media Section (1.2 Sekunden)
+                const phase1Duration = 1200;
                 const phase1Distance = mediaTarget - startPosition;
                 let phase1Start = null;
                 
@@ -2045,7 +2045,7 @@
                     const timeElapsed = currentTime - phase1Start;
                     const progress = Math.min(timeElapsed / phase1Duration, 1);
                     
-                    // Sehr sanfte Easing-Funktion für langsamen Start
+                    // Sanfte Easing-Funktion für langsamen Start
                     const ease = progress * progress * (3 - 2 * progress); // Smooth step
                     
                     window.scrollTo(0, startPosition + phase1Distance * ease);
@@ -2053,16 +2053,14 @@
                     if (timeElapsed < phase1Duration) {
                         requestAnimationFrame(phase1Animation);
                     } else {
-                        // Kurze Pause (800ms) bei den Logos
-                        setTimeout(() => {
-                            startPhase2();
-                        }, 800);
+                        // Direkt zu Phase 2 ohne Pause
+                        startPhase2();
                     }
                 }
                 
-                // Phase 2: Schnell zum Pricing (1 Sekunde)
+                // Phase 2: Schnell zum Pricing (0.8 Sekunden)
                 function startPhase2() {
-                    const phase2Duration = 1000;
+                    const phase2Duration = 800;
                     const currentPos = window.pageYOffset;
                     const phase2Distance = finalTarget - currentPos;
                     let phase2Start = null;
