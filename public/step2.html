@@ -225,7 +225,7 @@
             element.classList.add('selected');
             
             // Speichere Antwort mit Tracking
-            saveAnswer('bodyShape', value);
+            saveAnswer('Augenfarbe', value);
             
             setTimeout(() => {
                 window.location.href = '/step3.html';
@@ -244,7 +244,7 @@
             }, 100);
             
             // Lade vorherige Auswahl wenn vorhanden
-            const savedValue = localStorage.getItem('bodyShape');
+            const savedValue = localStorage.getItem('Augenfarbe');
             if (savedValue) {
                 const button = document.querySelector(`[data-value="${savedValue}"]`);
                 if (button) button.classList.add('selected');
