@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcher Farbtyp bist du? Mach jetzt deine Farbanalyse!</title>
-    <meta name="description" content="Erhalte deine personalisierte Body-Typing-Analyse und entdecke, welche Kleidungslinien deine Figur am besten zur Geltung bringen. Mit individuellem PDF-Report.">
+    <meta name="description" content="Erhalte deine personalisierte Farbanalyse und entdecke, welche Farben und Schnitte deine Figur am besten zur Geltung bringen. Mit individueller Beratung.">
     <link rel="icon" href="/favicon.png" type="image/png">
     <meta name="p:domain_verify" content="0a3c93425f1ae13c5eb76120a1066e35"/>
 <!-- Pinterest Tag -->
@@ -97,29 +97,412 @@
             33%, 100% { opacity: 0; }
         }
 
-        /* HERO SECTION */
+        /* HERO SECTION - ELEGANT DESIGN */
         .hero {
-            background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
-            padding: 48px 0 64px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+            padding: 60px 0 80px;
             text-align: center;
+            position: relative;
         }
 
-        .hero h1 {
-            font-size: 42px;
-            font-weight: 800;
-            margin-bottom: 16px;
-            color: #1a202c;
-            line-height: 1.2;
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="%23667eea" opacity="0.05"/><circle cx="80" cy="40" r="1" fill="%23764ba2" opacity="0.05"/><circle cx="40" cy="80" r="1" fill="%23667eea" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
         }
 
-        .hero-subtitle {
-            font-size: 18px;
-            color: #4a5568;
-            margin-bottom: 32px;
-            line-height: 1.5;
-            max-width: 600px;
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* PROBLEM HOOK */
+        .problem-hook {
+            margin-bottom: 50px;
+            max-width: 800px;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        .problem-headline {
+            font-size: clamp(32px, 5vw, 42px);
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #1a202c;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        .problem-text {
+            font-size: 20px;
+            color: #4a5568;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* HERO IMAGE */
+        .hero-img {
+            width: 100%;
+            max-width: 500px;
+            height: 420px;
+            border-radius: 24px;
+            margin: 0 auto 40px;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
+            display: block;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            background-image: url('MainFoto5.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hero-img:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(102, 126, 234, 0.3);
+        }
+
+        .hero-img::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 24px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .hero-img:hover::after {
+            opacity: 1;
+        }
+
+        /* MAIN CTA - ELEGANT BUTTON */
+        .main-cta-section {
+            margin-bottom: 50px;
+        }
+
+        .main-cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 22px 50px;
+            border: none;
+            border-radius: 60px;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+            margin-bottom: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.3px;
+        }
+
+        .main-cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .main-cta-button:hover::before {
+            left: 100%;
+        }
+
+        .main-cta-button:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.4);
+        }
+
+        .cta-subtext {
+            font-size: 15px;
+            color: #48bb78;
+            font-weight: 600;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* SOLUTION SECTION */
+        .solution-section {
+            margin: 50px 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .solution-headline {
+            font-size: clamp(26px, 4vw, 34px);
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+        }
+
+        .solution-text {
+            font-size: 19px;
+            color: #4a5568;
+            line-height: 1.7;
+            margin-bottom: 35px;
+            font-weight: 400;
+        }
+
+        /* HOW IT WORKS MINI - ELEGANT */
+        .how-it-works-mini {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 35px 0;
+            padding: 30px 25px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .step-mini {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .step-mini:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+        }
+
+        .step-number-mini {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .step-text-mini {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .step-arrow {
+            color: #667eea;
+            font-size: 20px;
+            font-weight: bold;
+            opacity: 0.7;
+        }
+
+        /* TRUST BAR - ELEGANT */
+        .trust-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 50px 0;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .trust-item-hero {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: white;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .trust-item-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .trust-icon {
+            font-size: 26px;
+            filter: grayscale(0.2);
+        }
+
+        .trust-details {
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .trust-details strong {
+            display: block;
+            font-size: 15px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .trust-details span {
+            font-size: 13px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        /* SOCIAL PROOF PREVIEW - ELEGANT */
+        .social-proof-preview {
+            margin-top: 50px;
+            padding: 25px 30px;
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.05), rgba(72, 187, 120, 0.08));
+            border: 1px solid rgba(72, 187, 120, 0.15);
+            border-radius: 20px;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .customer-avatars {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: -12px;
+            margin-bottom: 15px;
+        }
+
+        .avatar-small {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+            margin-left: -12px;
+            transition: transform 0.3s ease;
+        }
+
+        .avatar-small:hover {
+            transform: scale(1.1);
+            z-index: 2;
+            position: relative;
+        }
+
+        .avatar-small:first-child {
+            margin-left: 0;
+        }
+
+        .avatar-count {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-left: 12px;
+            box-shadow: 0 3px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .social-text {
+            font-size: 15px;
+            color: #4a5568;
+            font-style: italic;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* MOBILE OPTIMIZATIONS */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 40px 0 60px;
+            }
+            
+            .problem-headline {
+                font-size: 28px;
+            }
+            
+            .problem-text {
+                font-size: 18px;
+            }
+            
+            .solution-headline {
+                font-size: 22px;
+            }
+            
+            .solution-text {
+                font-size: 17px;
+            }
+            
+            .hero-img {
+                height: 280px;
+                margin-bottom: 30px;
+            }
+            
+            .how-it-works-mini {
+                flex-direction: column;
+                gap: 15px;
+                padding: 25px 20px;
+            }
+            
+            .step-mini {
+                padding: 10px 16px;
+            }
+            
+            .step-text-mini {
+                font-size: 14px;
+            }
+            
+            .step-arrow {
+                transform: rotate(90deg);
+            }
+            
+            .trust-bar {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .main-cta-button {
+                padding: 20px 35px;
+                font-size: 18px;
+            }
+            
+            .cta-subtext {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .customer-avatars {
+                gap: 0;
+            }
         }
 
         .hero-img {
@@ -377,7 +760,7 @@
             overflow: hidden;
         }
 
-        /* PDF Preview Effect */
+        /* Analyse Preview Effect */
         .insight-image::before {
             content: '';
             position: absolute;
@@ -398,7 +781,7 @@
         }
 
         .insight-image::after {
-            content: 'PDF Vorschau';
+            content: 'Analyse Vorschau';
             position: absolute;
             top: 8px;
             right: 8px;
@@ -976,21 +1359,91 @@
 
     <section class="hero">
         <div class="container">
-            <h1>Finde deinen Farbtyp und trag endlich Outfits, die dich wirklich strahlen lassen.</h1>
-            <p class="hero-subtitle">
-                Erhalte deinen Farbtyp, 6 abgestimmte Outfits & passende Accessoires
-            </p>
-            
+            <!-- PROBLEM HOOK -->
+            <div class="problem-hook">
+                <h1 class="problem-headline">Du hast schon mal 100€ für ein Outfit ausgegeben – und es nie getragen?</h1>
+                <p class="problem-text">Das passiert, wenn du nicht weißt, welche Farben und Schnitte <strong>wirklich</strong> zu dir passen. Schluss mit teuren Fehlkäufen!</p>
+            </div>
+
+            <!-- HERO IMAGE -->
             <div class="hero-img"></div>
-            
-            <a href="#quiz-start" class="cta-button">Meine Farbanalyse sichern →</a>
-            <p class="trust-line">Personalisierte Analyse mit Do's & Don'ts für deinen Typ</p>
-            
-            <p style="font-size: 16px; font-weight: 600; color: #667eea; margin-top: 20px; margin-bottom: 20px;">
-                Lieferung innerhalb von 24h
-            </p>
-            
-        
+
+            <!-- MAIN CTA DIRECTLY UNDER IMAGE -->
+            <div class="main-cta-section">
+                <a href="#quiz-start" class="main-cta-button">Jetzt Farbtyp bestimmen & Fehlkäufe vermeiden →</a>
+                <p class="cta-subtext">✓ In 3 Minuten fertig ✓ Sofort verfügbar ✓ 100% Geld-zurück-Garantie</p>
+            </div>
+
+            <!-- SOLUTION PROMISE -->
+            <div class="solution-section">
+                <h2 class="solution-headline">Kennst du das... Trag endlich Outfits, die dich jünger, frischer und selbstbewusster wirken lassen</h2>
+                <p class="solution-text">Mit deiner <strong>persönlichen Farbanalyse</strong> entdeckst du in nur 3 Minuten, welche Farben dich zum Strahlen bringen und welche Schnitte deine Figur perfekt betonen.</p>
+                
+                <!-- HOW IT WORKS MINI -->
+                <div class="how-it-works-mini">
+                    <div class="step-mini">
+                        <span class="step-number-mini">1</span>
+                        <span class="step-text-mini">3 Min Fragen</span>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step-mini">
+                        <span class="step-number-mini">2</span>
+                        <span class="step-text-mini">Foto hochladen</span>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step-mini">
+                        <span class="step-number-mini">3</span>
+                        <span class="step-text-mini">Clara analysiert</span>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step-mini">
+                        <span class="step-number-mini">4</span>
+                        <span class="step-text-mini">Analyse erhalten</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRUST ELEMENTS -->
+            <div class="trust-bar">
+                <div class="trust-item-hero">
+                    <div class="trust-icon">⭐</div>
+                    <div class="trust-details">
+                        <strong>4.9/5 Sterne</strong>
+                        <span>1.300+ Bewertungen</span>
+                    </div>
+                </div>
+                <div class="trust-item-hero">
+                    <div class="trust-icon">🚀</div>
+                    <div class="trust-details">
+                        <strong>24h Lieferung</strong>
+                        <span>Sofort per E-Mail</span>
+                    </div>
+                </div>
+                <div class="trust-item-hero">
+                    <div class="trust-icon">🇩🇪</div>
+                    <div class="trust-details">
+                        <strong>Made in Germany</strong>
+                        <span>Von Expertin Clara</span>
+                    </div>
+                </div>
+                <div class="trust-item-hero">
+                    <div class="trust-icon">💯</div>
+                    <div class="trust-details">
+                        <strong>100% Garantie</strong>
+                        <span>14 Tage Geld zurück</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOCIAL PROOF PREVIEW -->
+            <div class="social-proof-preview">
+                <div class="customer-avatars">
+                    <img src="Sarah.png" alt="Kundin" class="avatar-small">
+                    <img src="Lisa.png" alt="Kundin" class="avatar-small">
+                    <img src="Anna.png" alt="Kundin" class="avatar-small">
+                    <span class="avatar-count">+2.297</span>
+                </div>
+                <p class="social-text">"Endlich weiß ich, was mir steht!" - Sarah und über 2.300 andere Frauen haben bereits ihre perfekte Farbpalette gefunden.</p>
             </div>
         </div>
     </section>
@@ -1092,9 +1545,57 @@
         </div>
     </section>
 
+    <!-- CTA ZWISCHEN PREVIEW UND FUNKTIONSWEISE -->
+    <section style="padding: 50px 0; background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08)); text-align: center;">
+        <div class="container">
+            <h3 style="font-size: 28px; font-weight: 800; color: #2d3748; margin-bottom: 16px; line-height: 1.3;">Wow! Das will ich auch haben 😍</h3>
+            <p style="font-size: 18px; color: #4a5568; margin-bottom: 28px; max-width: 500px; margin-left: auto; margin-right: auto;">Starte jetzt deine 3-Minuten-Analyse und entdecke deine perfekten Farben</p>
+            <a href="#quiz-start" class="main-cta-button" style="margin-bottom: 0;">Jetzt meine Farben entdecken →</a>
+            <p style="font-size: 14px; color: #48bb78; margin-top: 12px; font-weight: 600;">✓ Nur 3 Minuten ✓ Sofort verfügbar</p>
+        </div>
+    </section>
+
+    <section class="how-it-works">
+        <div class="container">
+            <h2>So funktioniert's</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-image" style="background-image: url('Schritt1.png');"></div>
+                    <div class="step-number">1</div>
+                    <h3>Fragen beantworten (3 Min)</h3>
+                    <p>Beantworte einfache Fragen zu deiner Figur und Proportionen.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-image" style="background-image: url('Schritt2.png');"></div>
+                    <div class="step-number">2</div>
+                    <h3>Fotos hochladen</h3>
+                    <p>Lade deine Fotos hoch, damit Clara deine Silhouette analysieren kann.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-image" style="background-image: url('Arbeit1.png');"></div>
+                    <div class="step-number">3</div>
+                    <h3>Clara analysiert persönlich</h3>
+                    <p>Mit über 14 Jahren Erfahrung erstellt Clara deine individuelle Farbanalyse - jede Analyse wird persönlich von ihr geprüft.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-image" style="background-image: url('Schritt3.png');"></div>
+                    <div class="step-number">4</div>
+                    <h3>Personalisierte Beratung erhalten</h3>
+                    <p>Erhalte dein individuelles Farbberatung mit allen Do's und Don'ts.</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 48px;">
+                <a href="#quiz-start" class="cta-button">Meine Farbanalyse sichern →</a>
+            </div>
+        </div>
+    </section>
+
     <section class="social-proof">
         <div class="container">
-            <h2>Ergebnisse die für sich sprechen</h2>
+            <h2>Das sagen meine Kunden</h2>
             <div class="social-rating">
                 <div class="rating-stars">
                     <img src="Stern.png" alt="Stern" style="width: 24px; height: 24px; margin-right: 2px;">
@@ -1156,49 +1657,16 @@
                             </p>
                         </div>
                     </div>
-                    <p class="testimonial-text">"Das PDF nehme ich zu jedem Shopping-Trip mit. Keine Fehlkäufe mehr – ich spare so viel Zeit und Geld!"</p>
+                    <p class="testimonial-text">"Meine persönliche Analyse nehme ich zu jedem Shopping-Trip mit. Keine Fehlkäufe mehr – ich spare so viel Zeit und Geld!"</p>
                 </div>
             </div>
         </div>
     </section>
-
-    <section class="how-it-works">
-        <div class="container">
-            <h2>So funktioniert's</h2>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-image" style="background-image: url('Schritt1.png');"></div>
-                    <div class="step-number">1</div>
-                    <h3>Fragen beantworten (3 Min)</h3>
-                    <p>Beantworte einfache Fragen zu deiner Figur und Proportionen.</p>
-                </div>
-                
-                <div class="step">
-                    <div class="step-image" style="background-image: url('Schritt2.png');"></div>
-                    <div class="step-number">2</div>
-                    <h3>Fotos hochladen</h3>
-                    <p>Lade deine Fotos hoch, damit Clara deine Silhouette analysieren kann.</p>
-                </div>
-                
-                <div class="step">
-                    <div class="step-image" style="background-image: url('Schritt3.png');"></div>
-                    <div class="step-number">3</div>
-                    <h3>Personalisierte Beratung erhalten</h3>
-                    <p>Erhalte dein individuelles Farbberatung mit allen Do's und Don'ts.</p>
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 48px;">
-                <a href="#quiz-start" class="cta-button">Meine Farbanalyse sichern →</a>
-            </div>
-        </div>
-    </section>
-
-    
 
     <section class="final-cta">
         <div class="container">
             <h2>Bereit für dein Body-Typing?</h2>
-            <p style="font-size: 18px; margin-bottom: 32px;">Starte jetzt und erhalte dein personalisiertes PDF mit individuellen Styling-Empfehlungen.</p>
+            <p style="font-size: 18px; margin-bottom: 32px;">Starte jetzt und erhalte deine persönliche Farbanalyse mit individuellen Styling-Empfehlungen.</p>
             <a href="#quiz-start" class="cta-button">Kostenlose Farbberatung starten →</a>
         </div>
     </section>
@@ -1238,7 +1706,7 @@
         // Banner Slider
         const bannerTexts = [
             'Über 1.000+ Kunden geholfen',
-            'Personalisiertes PDF mit Do\'s & Don\'ts',
+            'Persönliche Farbanalyse mit Do\'s & Don\'ts',
             'Individuelle Beratung von Clara'
         ];
         
