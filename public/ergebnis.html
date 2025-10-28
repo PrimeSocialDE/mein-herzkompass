@@ -203,6 +203,110 @@
             font-weight: 500;
         }
 
+        /* CONVERSION BOOSTER TEASER */
+        .teaser-preview {
+            margin-top: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+            border: 2px dashed rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .preview-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .blurred-text {
+            filter: blur(12px);
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            position: relative;
+            letter-spacing: 2px;
+        }
+
+        .color-wheel {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            filter: blur(6px);
+            opacity: 0.8;
+            animation: wheelRotate 8s linear infinite;
+        }
+
+        .color-segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0 0;
+            transform: rotate(var(--rotation)) skewY(-60deg);
+            overflow: hidden;
+        }
+
+        .color-segment:nth-child(1) { background: linear-gradient(45deg, #ff6b9d, #ff8e9b); }
+        .color-segment:nth-child(2) { background: linear-gradient(45deg, #ff9ff3, #f368e0); }
+        .color-segment:nth-child(3) { background: linear-gradient(45deg, #bf9aff, #a29bfe); }
+        .color-segment:nth-child(4) { background: linear-gradient(45deg, #74b9ff, #0984e3); }
+        .color-segment:nth-child(5) { background: linear-gradient(45deg, #4ecdc4, #00b894); }
+        .color-segment:nth-child(6) { background: linear-gradient(45deg, #55a3ff, #2d3436); }
+        .color-segment:nth-child(7) { background: linear-gradient(45deg, #a29bfe, #6c5ce7); }
+        .color-segment:nth-child(8) { background: linear-gradient(45deg, #fd79a8, #e84393); }
+        .color-segment:nth-child(9) { background: linear-gradient(45deg, #fdcb6e, #e17055); }
+        .color-segment:nth-child(10) { background: linear-gradient(45deg, #6c5ce7, #a29bfe); }
+        .color-segment:nth-child(11) { background: linear-gradient(45deg, #00b894, #00cec9); }
+        .color-segment:nth-child(12) { background: linear-gradient(45deg, #e17055, #d63031); }
+
+        @keyframes wheelRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .unlock-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .lock-icon {
+            font-size: 16px;
+            animation: lockPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes lockPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @media (max-width: 480px) {
+            .color-wheel {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .preview-title {
+                font-size: 14px;
+            }
+            
+            .unlock-text {
+                font-size: 12px;
+            }
+        }
+
         /* HERO SECTION */
 .hero {
     background: linear-gradient(135deg, var(--white) 0%, #f1f3ff 100%);
@@ -1385,6 +1489,29 @@
                         <div class="quiz-answer-item">
                             <span class="answer-icon">✨</span>
                             <span class="answer-text" id="user-style">Style-Präferenz wird geladen...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- CONVERSION BOOSTER -->
+                    <div class="teaser-preview">
+                        <div class="preview-title">🎨 Zu 87% bist du ein <span class="blurred-text">Frühlingstyp</span></div>
+                        <div class="color-wheel">
+                            <div class="color-segment" style="--rotation: 0deg;"></div>
+                            <div class="color-segment" style="--rotation: 30deg;"></div>
+                            <div class="color-segment" style="--rotation: 60deg;"></div>
+                            <div class="color-segment" style="--rotation: 90deg;"></div>
+                            <div class="color-segment" style="--rotation: 120deg;"></div>
+                            <div class="color-segment" style="--rotation: 150deg;"></div>
+                            <div class="color-segment" style="--rotation: 180deg;"></div>
+                            <div class="color-segment" style="--rotation: 210deg;"></div>
+                            <div class="color-segment" style="--rotation: 240deg;"></div>
+                            <div class="color-segment" style="--rotation: 270deg;"></div>
+                            <div class="color-segment" style="--rotation: 300deg;"></div>
+                            <div class="color-segment" style="--rotation: 330deg;"></div>
+                        </div>
+                        <div class="unlock-text">
+                            <span class="lock-icon">🔒</span>
+                            <span>Foto hochladen um exakte Analyse freizuschalten</span>
                         </div>
                     </div>
                 </div>
