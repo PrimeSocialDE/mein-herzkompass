@@ -711,6 +711,258 @@
                 height: 20px;
             }
         }
+
+        /* PREVIEW SECTION */
+        .preview-section {
+            padding: 60px 0;
+            background: var(--bg-light);
+        }
+
+        .preview-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            padding: 50px 40px;
+            position: relative;
+        }
+
+        .preview-title {
+            font-size: 28px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        .preview-subtitle {
+            font-size: 18px;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+
+        /* PACKAGE PREVIEW SLIDERS */
+        .package-sliders-section {
+            margin-bottom: 40px;
+        }
+
+        .package-slider-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .package-slider-container {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+            border: 2px solid #e2e8f0;
+        }
+
+        .slider-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fafc, #f1f3ff);
+            margin: 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .premium-slider .slider-title,
+        .package-slider-container:has(.premium-slider) .slider-title {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            color: var(--primary-color);
+        }
+
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slider-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--border-radius-small);
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 30px 30px;
+            background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
+        }
+
+        .slider-dots {
+            text-align: center;
+            padding: 15px 0;
+            background: var(--white);
+        }
+
+        .dot {
+            height: 10px;
+            width: 10px;
+            margin: 0 4px;
+            background-color: #bdc3c7;
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dot.active,
+        .dot:hover {
+            background-color: var(--primary-color);
+        }
+
+        /* CLARA SLIDER SECTION */
+        .clara-slider-section {
+            margin-bottom: 40px;
+        }
+
+        .clara-text-section {
+            text-align: center;
+            max-width: 800px;
+            margin: 20px auto 0;
+        }
+
+        .clara-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .clara-subtitle {
+            font-size: 16px;
+            color: var(--text-light);
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        /* GUARANTEE SECTION */
+        .guarantee-section {
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .guarantee-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .guarantee-stats {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .guarantee-avatars {
+            display: flex;
+            margin-left: 8px;
+        }
+
+        .avatar-item {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-left: -8px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .avatar-item:first-child {
+            margin-left: 0;
+        }
+
+        .guarantee-rating {
+            text-align: left;
+        }
+
+        .stars {
+            font-size: 14px;
+            margin-bottom: 3px;
+            color: #fbbf24;
+        }
+
+        .stats-text {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* MOBILE OPTIMIZATIONS FOR NEW SECTIONS */
+        @media (max-width: 768px) {
+            .package-slider-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .package-slider-container {
+                margin: 0 10px;
+            }
+            
+            .slider-wrapper {
+                height: 300px;
+            }
+            
+            .preview-card {
+                padding: 30px 20px;
+                margin: 0 15px;
+            }
+            
+            .preview-title {
+                font-size: 24px;
+            }
+            
+            .preview-subtitle {
+                font-size: 16px;
+            }
+            
+            .clara-title {
+                font-size: 20px;
+            }
+            
+            .guarantee-stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
     </style>
     <script src="/tracking.js" defer></script>
     <script src="/utm-make.js" defer></script>
@@ -726,7 +978,7 @@
         <div class="container">
             <h1>Finde deinen Farbtyp und trag endlich Outfits, die dich wirklich strahlen lassen.</h1>
             <p class="hero-subtitle">
-                Erhalte deinen Farbtyp, 6 abgestimmte Outfits & passende Accessoires, die dich selbstbewusst und stilvoll wirken lassen.
+                Erhalte deinen Farbtyp, 6 abgestimmte Outfits & passende Accessoires
             </p>
             
             <div class="hero-img"></div>
@@ -744,74 +996,144 @@
                     <span>4.9/5 Sterne</span>
                 </div>
                 <div class="trust-item">
-                    <span style="font-size: 20px;">👗</span>
-                    <span>6 abgestimmte Outfitsn</span>
+                    <span style="font-size: 20px;">✅</span>
+                    <span>1.300+ Bewertungen</span>
                 </div>
                 <div class="trust-item">
-                    <span style="font-size: 20px;">🎨</span>
-                    <span>Individuelle Farbanalys</span>
+                    <span style="font-size: 20px;">📊</span>
+                    <span>Individuelle Beratung</span>
                 </div>
             </div>
         </div>
     </section>
 
-
-    <section class="clara-intro">
-        <div class="container">
-            <div class="clara-intro-content">
-                <div class="clara-image"></div>
-                <div class="clara-text">
-                    <h2>Hi, ich bin Clara</h2>
-                    <p>
-                        Seit 14 Jahren helfe ich Menschen, ihren Körpertyp zu verstehen und die richtigen Kleidungslinien zu wählen. Mit über 1.000+ Beratungen weiß ich genau, welche Schnitte welchen Figuren schmeicheln.
-                    </p>
-                    <div class="clara-highlight">
-                        <p style="font-weight: 600; margin-bottom: 8px;">Das Problem:</p>
-                        <p style="margin: 0;">Die meisten Styling-Tipps passen nicht für JEDEN. Du brauchst individuelle Empfehlungen – keine Pauschal-Ratschläge.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    <!-- PREVIEW SECTION -->
     <section class="preview-section">
         <div class="container">
-            <div class="preview-card">
-                <div class="preview-badge">Das erwartet dich</div>
-                <h2 class="preview-title">Das bekommst du</h2>
+            <div class="preview-card animate-on-scroll">
+                <h3 class="preview-title">Das bekommst du in deiner persönlichen Farbanalyse</h3>
+                <p class="preview-subtitle">Eine 19-seitige, individuell auf dich abgestimmte Analyse mit praktischen Tipps für den Alltag</p>
                 
-                <div class="insight-grid">
-                    <div class="insight-item">
-                        <img src="4.png" alt="Foto-Auswertung Beispiel" class="insight-image" />
-                        <h4 class="insight-title">📸 Professionelle Foto-Auswertung</h4>
-                        <p class="insight-text">Clara analysiert deine Fotos und bestimmt deinen exakten Körpertyp, Proportionen und Farbtyp mit 95%iger Genauigkeit.</p>
-                    </div>
-                    
-                    <div class="insight-item">
-                        <img src="3.png" alt="Personalisierte Styling-Empfehlungen" class="insight-image" />
-                        <h4 class="insight-title">🎯 Personalisierte Empfehlungen</h4>
-                        <p class="insight-text">Konkrete Schnitte, Materialien und Styling-Tipps, die perfekt zu deiner individuellen Figur passen.</p>
-                    </div>
-                    
-                    <div class="insight-item">
-                        <img src="5.png" alt="Perfekte Farbpalette" class="insight-image" />
-                        <h4 class="insight-title">🌈 Deine perfekte Farbpalette</h4>
-                        <p class="insight-text">Über 200 Farbtöne, die dich strahlen lassen - von Basics bis zu Statement-Farben.</p>
-                    </div>
-                    
-                    <div class="insight-item">
-                        <img src="2.png" alt="Frühlings-Look Shopping-Guide" class="insight-image" />
-                        <h4 class="insight-title">🛍️ Shopping-Guide</h4>
-                        <p class="insight-text">Konkrete Marken und Shops, wo du deine optimalen Pieces findest - spare Zeit und Geld.</p>
+                <!-- PACKAGE PREVIEW SLIDERS -->
+                <div class="package-sliders-section">
+                    <div class="package-slider-grid">
+                        <!-- Premium Package Slider -->
+                        <div class="package-slider-container">
+                            <h4 class="slider-title">Deine persönliche Farbpalette</h4>
+                            <div class="slider-wrapper premium-slider">
+                                <div class="slide active">
+                                    <img src="premium-slide1.png" alt="Farbpalette Beispiel 1" class="slider-image">
+                                </div>
+                                <div class="slide">
+                                    <img src="premium-slide2.png" alt="Farbpalette Beispiel 2" class="slider-image">
+                                </div>
+                                <div class="slide">
+                                    <img src="premium-slide3.png" alt="Farbpalette Beispiel 3" class="slider-image">
+                                </div>
+                                <div class="slide">
+                                    <img src="premium-slide4.png" alt="Farbpalette Beispiel 4" class="slider-image">
+                                </div>
+                                <div class="slide">
+                                    <img src="standard-slide2.png" alt="Analyse Beispiel 2" class="slider-image">
+                                </div>
+                                <div class="slide">
+                                    <img src="standard-slide3.png" alt="Analyse Beispiel 3" class="slider-image">
+                                </div>
+                            </div>
+                            <div class="slider-dots">
+                                <span class="dot active" onclick="currentSlide(1, 'premium')"></span>
+                                <span class="dot" onclick="currentSlide(2, 'premium')"></span>
+                                <span class="dot" onclick="currentSlide(3, 'premium')"></span>
+                                <span class="dot" onclick="currentSlide(4, 'premium')"></span>
+                                <span class="dot" onclick="currentSlide(5, 'premium')"></span>
+                                <span class="dot" onclick="currentSlide(6, 'premium')"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- CLARA SLIDER SECTION -->
+                <div class="clara-slider-section">
+                    <div class="package-slider-container" style="max-width: 500px; margin: 0 auto;">
+                        <h4 class="slider-title">Claras persönliche Arbeitsweise</h4>
+                        <div class="slider-wrapper clara-slider">
+                            <div class="slide active">
+                                <img src="Arbeit1.png" alt="Clara Arbeit Beispiel 1" class="slider-image">
+                            </div>
+                            <div class="slide">
+                                <img src="Arbeit2.png" alt="Clara Arbeit Beispiel 2" class="slider-image">
+                            </div>
+                            <div class="slide">
+                                <img src="Arbeit3.png" alt="Clara Arbeit Beispiel 3" class="slider-image">
+                            </div>
+                        </div>
+                        <div class="slider-dots">
+                            <span class="dot active" onclick="currentSlide(1, 'clara')"></span>
+                            <span class="dot" onclick="currentSlide(2, 'clara')"></span>
+                            <span class="dot" onclick="currentSlide(3, 'clara')"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="clara-text-section">
+                        <h4 class="clara-title">Das bin ich!</h4>
+                        <p class="clara-subtitle">Jahrelang habe ich Frauen dabei geholfen herauszufinden, welche Farben sie zum Strahlen bringen. Du verdienst es, dich jeden Tag wunderschön und selbstbewusst zu fühlen.</p>
+                    </div>
+                </div>
+                    
+                <!-- Money-back guarantee section -->
+                <div class="guarantee-section">
+                    <h4 class="guarantee-title">100% Geld-Zurück-Garantie</h4>
+                    
+                    <div class="guarantee-stats">
+                        <div class="guarantee-avatars">
+                            <img src="Profo1.png" alt="Kundin 1" class="avatar-item" />
+                            <img src="Profo2.png" alt="Kundin 2" class="avatar-item" />
+                            <img src="Profo3.png" alt="Kundin 3" class="avatar-item" />
+                        </div>
+                        <div class="guarantee-rating">
+                            <div class="stars">⭐⭐⭐⭐⭐</div>
+                            <div class="stats-text">Über 2.300 Kundinnen vertrauen Clara's Analyse</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works">
+        <div class="container">
+            <h2>So funktioniert's</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-image" style="background-image: url('Schritt1.png');"></div>
+                    <div class="step-number">1</div>
+                    <h3>Fragen beantworten (3 Min)</h3>
+                    <p>Beantworte einfache Fragen zu deiner Figur und Proportionen.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-image" style="background-image: url('Schritt2.png');"></div>
+                    <div class="step-number">2</div>
+                    <h3>Fotos hochladen</h3>
+                    <p>Lade deine Fotos hoch, damit Clara deine Silhouette analysieren kann.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-image" style="background-image: url('Schritt3.png');"></div>
+                    <div class="step-number">3</div>
+                    <h3>Personalisierte Beratung erhalten</h3>
+                    <p>Erhalte dein individuelles Farbberatung mit allen Do's und Don'ts.</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 48px;">
+                <a href="#quiz-start" class="cta-button">Meine Farbanalyse sichern →</a>
             </div>
         </div>
     </section>
 
     <section class="social-proof">
         <div class="container">
-            <h2>Echte Stimmen. Echte Veränderungen.</h2>
+            <h2>Das sagen meine Kunden</h2>
             <div class="social-rating">
                 <div class="rating-stars">
                     <img src="Stern.png" alt="Stern" style="width: 24px; height: 24px; margin-right: 2px;">
@@ -879,41 +1201,9 @@
         </div>
     </section>
 
-    <section class="how-it-works">
-        <div class="container">
-            <h2>So funktioniert's</h2>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-image" style="background-image: url('Schritt1.png');"></div>
-                    <div class="step-number">1</div>
-                    <h3>Fragen beantworten (3 Min)</h3>
-                    <p>Beantworte einfache Fragen zu deiner Figur und Proportionen.</p>
-                </div>
-                
-                <div class="step">
-                    <div class="step-image" style="background-image: url('Schritt2.png');"></div>
-                    <div class="step-number">2</div>
-                    <h3>Fotos hochladen</h3>
-                    <p>Lade deine Fotos hoch, damit Clara deine Silhouette analysieren kann.</p>
-                </div>
-                
-                <div class="step">
-                    <div class="step-image" style="background-image: url('Schritt3.png');"></div>
-                    <div class="step-number">3</div>
-                    <h3>Personalisierte Beratung erhalten</h3>
-                    <p>Erhalte dein individuelles Farbberatung mit allen Do's und Don'ts.</p>
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 48px;">
-                <a href="#quiz-start" class="cta-button">Meine Farbanalyse sichern →</a>
-            </div>
-        </div>
-    </section>
-
-
     <section class="final-cta">
         <div class="container">
-            <h2>Bereit für deine Farbanalyse?</h2>
+            <h2>Bereit für dein Body-Typing?</h2>
             <p style="font-size: 18px; margin-bottom: 32px;">Starte jetzt und erhalte dein personalisiertes PDF mit individuellen Styling-Empfehlungen.</p>
             <a href="#quiz-start" class="cta-button">Kostenlose Farbberatung starten →</a>
         </div>
@@ -981,6 +1271,54 @@
                 window.location.href = '/step2.html';
             });
         });
+
+        // Slider functionality
+        let slideIndex = {
+            'premium': 1,
+            'clara': 1
+        };
+
+        function currentSlide(n, sliderType) {
+            showSlides(slideIndex[sliderType] = n, sliderType);
+        }
+
+        function showSlides(n, sliderType) {
+            const sliderWrapper = document.querySelector(`.${sliderType}-slider`);
+            const slides = sliderWrapper.querySelectorAll('.slide');
+            const dots = sliderWrapper.parentElement.querySelectorAll('.dot');
+            
+            if (n > slides.length) {slideIndex[sliderType] = 1}
+            if (n < 1) {slideIndex[sliderType] = slides.length}
+            
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].classList.remove('active');
+            }
+            
+            for (let i = 0; i < dots.length; i++) {
+                dots[i].classList.remove('active');
+            }
+            
+            slides[slideIndex[sliderType] - 1].classList.add('active');
+            dots[slideIndex[sliderType] - 1].classList.add('active');
+        }
+
+        // Auto-advance sliders
+        function autoAdvanceSliders() {
+            Object.keys(slideIndex).forEach(sliderType => {
+                const sliderWrapper = document.querySelector(`.${sliderType}-slider`);
+                if (sliderWrapper) {
+                    const slides = sliderWrapper.querySelectorAll('.slide');
+                    slideIndex[sliderType]++;
+                    if (slideIndex[sliderType] > slides.length) {
+                        slideIndex[sliderType] = 1;
+                    }
+                    showSlides(slideIndex[sliderType], sliderType);
+                }
+            });
+        }
+
+        // Auto-advance every 5 seconds
+        setInterval(autoAdvanceSliders, 5000);
     </script>
 </body>
 </html>
