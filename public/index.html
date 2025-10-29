@@ -190,6 +190,25 @@
             opacity: 1;
         }
 
+        /* VIDEO PLAY BUTTON FOR TIKTOK COMPATIBILITY */
+        .video-play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            background: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            padding: 15px;
+        }
+
+        .video-play-button:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: rgba(0,0,0,0.8);
+        }
+
         /* HERO IMAGE FALLBACK (keep for backwards compatibility) */
         .hero-img {
             width: 100%;
@@ -1614,12 +1633,19 @@
 
             <!-- HERO VIDEO -->
             <div class="hero-video-container">
-                <video class="hero-video" autoplay muted loop playsinline>
+                <video class="hero-video" autoplay muted loop playsinline preload="auto" webkit-playsinline="true">
                     <source src="HeroVideo1.mp4" type="video/mp4">
                     <source src="HeroVideo1.webm" type="video/webm">
                     <!-- Fallback image if video doesn't load -->
                     <img src="MainFoto5.png" alt="Farbberatung Video" style="width: 100%; height: 100%; object-fit: cover; border-radius: 24px;">
                 </video>
+                <!-- Play button overlay for manual start -->
+                <div class="video-play-button" onclick="playVideo()" style="display: none;">
+                    <svg width="60" height="60" viewBox="0 0 60 60" fill="white">
+                        <circle cx="30" cy="30" r="30" fill="rgba(0,0,0,0.7)"/>
+                        <polygon points="23,18 23,42 42,30" fill="white"/>
+                    </svg>
+                </div>
             </div>
 
             <!-- MAIN CTA DIRECTLY UNDER IMAGE -->
@@ -1930,7 +1956,7 @@
         </div>
     </section>
 
-    
+
 
     <footer class="footer">
         <div class="container">
@@ -1965,6 +1991,61 @@
 
     <script>
         // Banner Slider
+        // TikTok Video Compatibility
+        function playVideo() {
+            const video = document.querySelector('.hero-video');
+            const playButton = document.querySelector('.video-play-button');
+            
+            video.play().then(() => {
+                playButton.style.display = 'none';
+            }).catch(err => {
+                console.log('Video autoplay failed:', err);
+            });
+        }
+
+        // Check if video can autoplay (TikTok browser detection)
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.querySelector('.hero-video');
+            const playButton = document.querySelector('.video-play-button');
+            
+            if (!video || !playButton) return;
+            
+            // Detect TikTok browser
+            const isTikTok = /tiktok/i.test(navigator.userAgent) || 
+                             /bytedance/i.test(navigator.userAgent);
+            
+            // Check if autoplay works
+            video.play().then(() => {
+                // Autoplay worked
+                playButton.style.display = 'none';
+            }).catch(() => {
+                // Autoplay failed, show play button
+                playButton.style.display = 'block';
+                
+                // For TikTok, show fallback image
+                if (isTikTok) {
+                    const fallbackImg = video.querySelector('img');
+                    if (fallbackImg) {
+                        video.style.opacity = '0';
+                        fallbackImg.style.display = 'block';
+                    }
+                }
+            });
+
+            // Try to play on first user interaction
+            ['touchstart', 'click'].forEach(event => {
+                document.addEventListener(event, function() {
+                    if (video.paused) {
+                        video.play().then(() => {
+                            playButton.style.display = 'none';
+                            video.style.opacity = '1';
+                        });
+                    }
+                }, { once: true });
+            });
+        });
+
+        // Banner Text Rotation
         const bannerTexts = [
             'Über 1.000+ Kunden geholfen',
             'Persönliche Farbanalyse mit Do\'s & Don\'ts',
