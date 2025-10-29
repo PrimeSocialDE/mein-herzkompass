@@ -145,7 +145,52 @@
             font-weight: 400;
         }
 
-        /* HERO IMAGE */
+        /* HERO VIDEO */
+        .hero-video-container {
+            width: 100%;
+            max-width: 500px;
+            height: 420px;
+            border-radius: 24px;
+            margin: 0 auto 40px;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
+            display: block;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .hero-video-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(102, 126, 234, 0.3);
+        }
+
+        .hero-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 24px;
+            display: block;
+        }
+
+        .hero-video-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 24px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .hero-video-container:hover::after {
+            opacity: 1;
+        }
+
+        /* HERO IMAGE FALLBACK (keep for backwards compatibility) */
         .hero-img {
             width: 100%;
             max-width: 500px;
@@ -465,6 +510,16 @@
             .hero-img {
                 height: 280px;
                 margin-bottom: 30px;
+            }
+            
+            .hero-video-container {
+                height: 280px;
+                margin-bottom: 30px;
+                max-width: 100%;
+            }
+            
+            .hero-video {
+                border-radius: 20px;
             }
             
             .how-it-works-mini {
@@ -1432,13 +1487,20 @@
                 <p class="problem-text">Bist du ein <strong>Frühlings-, Sommer-, Herbst- oder Wintertyp?</strong> Entdecke deine perfekten Farben und strahle endlich wie nie zuvor!</p>
             </div>
 
-            <!-- HERO IMAGE -->
-            <div class="hero-img"></div>
+            <!-- HERO VIDEO -->
+            <div class="hero-video-container">
+                <video class="hero-video" autoplay muted loop playsinline>
+                    <source src="HeroVideo1.mp4" type="video/mp4">
+                    <source src="HeroVideo1.webm" type="video/webm">
+                    <!-- Fallback image if video doesn't load -->
+                    <img src="MainFoto5.png" alt="Farbberatung Video" style="width: 100%; height: 100%; object-fit: cover; border-radius: 24px;">
+                </video>
+            </div>
 
             <!-- MAIN CTA DIRECTLY UNDER IMAGE -->
             <div class="main-cta-section">
                 <a href="#quiz-start" class="main-cta-button">Jetzt meinen Farbtyp herausfinden! →</a>
-                <p class="cta-subtext">✓ Nie wieder Unsicherheiten ✓ Sofort Ergebnis ✓ 5+ individuelle Outfits</p>
+                <p class="cta-subtext">✓ Nur 3 Minuten ✓ Sofort Ergebnis ✓ 100% kostenlos testen</p>
             </div>
 
             <!-- SOLUTION PROMISE -->
@@ -1743,7 +1805,7 @@
         </div>
     </section>
 
-
+    
 
     <footer class="footer">
         <div class="container">
