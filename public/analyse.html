@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deine Antworten werden analysiert...</title>
+    <title>Ihre Antworten werden analysiert...</title>
     <style>
         * {
             margin: 0;
@@ -149,13 +149,17 @@
             margin-top: 30px;
             opacity: 0;
             animation: fadeInUp 0.8s ease 2.8s forwards;
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            height: 400px;
         }
 
         .testimonials-grid {
-            display: flex;
-            justify-content: center;
-            gap: 60px;
-            flex-wrap: wrap;
+            position: relative;
+            width: 320px;
+            height: 100%;
         }
 
         .testimonial-item {
@@ -167,6 +171,28 @@
             border: 2px solid #f0f0f0;
             text-align: center;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            animation: fadeTestimonials 6s infinite;
+        }
+
+        .testimonial-item:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .testimonial-item:nth-child(2) {
+            animation-delay: 3s;
+        }
+
+        @keyframes fadeTestimonials {
+            0%, 45% {
+                opacity: 1;
+            }
+            55%, 100% {
+                opacity: 0;
+            }
         }
 
         .testimonial-item:hover {
@@ -197,11 +223,11 @@
         }
 
         .testimonial-photo {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
+            width: 200px;
+            height: 133px;
+            border-radius: 15px;
             margin: 0 auto 30px auto;
-            border: 5px solid #e8eaed;
+            border: 3px solid #e8eaed;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             overflow: hidden;
         }
@@ -328,8 +354,8 @@
     
     <div class="page-wrapper">
         <div class="analysis-container">
-            <h1 class="main-title">Deine Antworten werden analysiert</h1>
-            <p class="subtitle">Clara erstellt dein erstes Style-Profil<span class="loading-dots"></span></p>
+            <h1 class="main-title">Ihre Antworten werden analysiert</h1>
+            <p class="subtitle">Clara erstellt Ihr vorläufigen Farbtyp<span class="loading-dots"></span></p>
             
             <div class="chart-container">
                 <div class="chart-title">Analysierte Bereiche</div>
@@ -351,7 +377,7 @@
                     </div>
                     
                     <div class="bar-item">
-                        <div class="bar-label">Farbtyp-Bestimmung</div>
+                        <div class="bar-label">Ihr vorläufiger Farbtyp wird erstellt</div>
                         <div class="bar-background">
                             <div class="bar-fill" data-bar="3"></div>
                         </div>
@@ -379,38 +405,38 @@
             <div class="security-info">
                 <div class="security-icon">🔒</div>
                 <div class="security-text">
-                    Deine Daten werden sicher gespeichert • 
+                    Ihre Daten werden sicher gespeichert • 
                 </div>
             </div>
             
             <div class="completion-message">
-                Deine erste Einschätzung wird gleich bereitgestellt...
+                Ihre erste Einschätzung wird gleich bereitgestellt...
             </div>
             
             <div class="testimonials-container">
                 <div class="testimonials-grid">
                     <div class="testimonial-item">
                         <div class="testimonial-header">
-                            <div class="testimonial-name">Sabrina M.</div>
+                            <div class="testimonial-name">Lisa K.</div>
                             <div class="testimonial-date">vor 3 Tagen</div>
                         </div>
                         <div class="testimonial-photo">
-                            <img src="Profo1.png" alt="Sabrina M.">
+                            <img src="Lisa.png" alt="Lisa K.">
                         </div>
                         <div class="testimonial-stars">★★★★★</div>
-                        <div class="testimonial-text">"Schon die erste Einschätzung war so hilfreich! Nach der Buchung bekam ich dann die detaillierte Foto-Analyse."</div>
+                        <div class="testimonial-text">"Seitdem ich weiß, dass ich ein warmer Herbst bin, ist mein Kleiderschrank endlich stimmig. Ich kaufe viel bewusster ein – und bekomme ständig Komplimente, dass ich so 'frisch' aussehe, obwohl ich kaum Make-up trage. Die Analyse hat mir so viel Klarheit gegeben – ich fühle mich endlich wie ich selbst."</div>
                     </div>
                     
                     <div class="testimonial-item">
                         <div class="testimonial-header">
-                            <div class="testimonial-name">Monika S.</div>
-                            <div class="testimonial-date">gestern</div>
+                            <div class="testimonial-name">Anna S.</div>
+                            <div class="testimonial-date">vor 1 Woche</div>
                         </div>
                         <div class="testimonial-photo">
-                            <img src="Profo2.png" alt="Monika S.">
+                            <img src="Anna.png" alt="Anna S.">
                         </div>
                         <div class="testimonial-stars">★★★★★</div>
-                        <div class="testimonial-text">"Die Basis-Tipps haben mir schon viel geholfen. Die vollständige Analyse war dann perfekt!"</div>
+                        <div class="testimonial-text">"Ich wusste nie, warum mir manche Farben nicht stehen – bis ich herausgefunden habe, dass ich ein warmer Frühling bin. Jetzt trage ich Apricot, Creme und Koralle – und sehe auf einmal gesünder und strahlender aus. Die Farbanalyse war für mich ein echter Gamechanger – es hat sich einfach alles gefügt."</div>
                     </div>
                 </div>
             </div>
@@ -487,7 +513,7 @@
                     completedBars++;
                     checkAllBarsComplete();
                 }
-            }, 65); // Moderat: 65ms (zwischen 50 und 80)
+            }, 100); // Langsamer: 100ms (statt 65ms)
             
             barIntervals.push(interval);
         } catch (e) {}
@@ -512,7 +538,7 @@
                         barIntervals.forEach(interval => clearInterval(interval));
                         window.location.href = 'ergebnis.html';
                     }
-                }, 11000);
+                }, 13000);
             } catch (e) {}
         }
 
