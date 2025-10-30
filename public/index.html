@@ -2026,6 +2026,7 @@
             });
         }
 
+        
         // Check if video can autoplay (TikTok browser detection)
         document.addEventListener('DOMContentLoaded', function() {
             const video = document.querySelector('.hero-video');
@@ -2185,5 +2186,19 @@
         // Auto-advance every 5 seconds
         setInterval(autoAdvanceSliders, 5000);
     </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const ctaButton = document.querySelector('.main-cta-button');
+      if (ctaButton) {
+        ctaButton.addEventListener('click', function () {
+          if (typeof fbq !== 'undefined') {
+            fbq('trackCustom', 'StartQuizButtonClicked');
+          }
+        });
+      }
+    });
+  </script>
+  
 </body>
 </html>
