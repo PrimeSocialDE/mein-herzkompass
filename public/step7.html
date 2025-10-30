@@ -684,8 +684,8 @@
 
             <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
                 <div class="upload-icon">📸</div>
-                <div class="upload-text">1 gutes Foto hochladen</div>
-                <div class="upload-subtext">Klicke hier oder ziehe ein Foto hierher</div>
+                <div class="upload-text">1 gutes Foto hochladen (optional)</div>
+                <div class="upload-subtext">Klicke hier oder ziehe ein Foto hierher - oder überspringe diesen Schritt</div>
             </div>
 
             <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFiles(this.files)">
@@ -698,12 +698,12 @@
 
             <div class="uploaded-photos" id="uploadedPhotos"></div>
 
-            <button class="continue-button" id="continueBtn" disabled onclick="submitPhotos()">
+            <button class="continue-button" id="continueBtn" onclick="submitPhotos()">
                 Persönliche Analyse sichern
             </button>
 
             <div class="processing-message" id="processingMessage">
-                Foto wird verarbeitet...
+                Daten werden verarbeitet...
             </div>
             
             <div class="security-note">
@@ -767,8 +767,9 @@
         }
 
         function updateContinueButton() {
+            // Button ist immer aktiv - Foto-Upload ist optional
             const btn = document.getElementById('continueBtn');
-            btn.disabled = uploadedFiles.length === 0;
+            btn.disabled = false;
         }
 
         // Helper-Funktion für Base64-Konvertierung mit Größenbegrenzung
@@ -898,67 +899,63 @@
         }
 
         async function submitPhotos() {
-            if (uploadedFiles.length === 0) {
-                alert('Bitte lade ein Foto hoch.');
-                return;
-            }
-
             const btn = document.getElementById('continueBtn');
             const processingMsg = document.getElementById('processingMessage');
             
             btn.disabled = true;
-            btn.textContent = 'Foto wird verarbeitet...';
+            btn.textContent = 'Verarbeitung läuft...';
             processingMsg.style.display = 'block';
 
             const timeoutId = setTimeout(() => {
                 btn.disabled = false;
-                btn.textContent = 'Zur Bezahlung & Analyse';
+                btn.textContent = 'Persönliche Analyse sichern';
                 processingMsg.style.display = 'none';
-                alert('Upload dauert zu lange. Bitte versuche es erneut.');
+                alert('Verarbeitung dauert zu lange. Bitte versuche es erneut.');
             }, 20000);
 
             try {
                 const photoDataArray = [];
                 
-                console.log('Starting photo conversion for', uploadedFiles.length, 'file');
-                
-                // Konvertiere das Foto zu Base64
-                try {
-                    const file = uploadedFiles[0];
-                    console.log('Converting photo:', file.name, 'Size:', Math.round(file.size / 1024), 'KB');
+                // Nur Foto konvertieren wenn eines hochgeladen wurde
+                if (uploadedFiles.length > 0) {
+                    console.log('Starting photo conversion for', uploadedFiles.length, 'file');
                     
-                    const base64Data = await fileToBase64(file);
-                    photoDataArray.push({
-                        data: base64Data,
-                        name: file.name,
-                        type: file.type,
-                        size: file.size
-                    });
-                    
-                    console.log('Photo converted successfully');
-                } catch (error) {
-                    console.error('Error converting photo:', error);
-                    throw new Error('Foto konnte nicht verarbeitet werden');
-                }
-                
-                if (photoDataArray.length === 0) {
-                    throw new Error('Kein Foto konnte verarbeitet werden');
+                    try {
+                        const file = uploadedFiles[0];
+                        console.log('Converting photo:', file.name, 'Size:', Math.round(file.size / 1024), 'KB');
+                        
+                        const base64Data = await fileToBase64(file);
+                        photoDataArray.push({
+                            data: base64Data,
+                            name: file.name,
+                            type: file.type,
+                            size: file.size
+                        });
+                        
+                        console.log('Photo converted successfully');
+                    } catch (error) {
+                        console.error('Error converting photo:', error);
+                        // Foto-Fehler nicht blockierend - weiter ohne Foto
+                        console.log('Continuing without photo due to conversion error');
+                    }
+                } else {
+                    console.log('No photo uploaded - continuing without photo');
                 }
 
-                // Upload zu Supabase
-                btn.textContent = 'Foto wird hochgeladen...';
+                // Upload zu Supabase (auch ohne Foto möglich)
+                btn.textContent = 'Daten werden übertragen...';
                 const uploadResult = await uploadToSupabase(photoDataArray);
                 
                 // Speichere Upload-Ergebnisse
                 if (typeof(Storage) !== "undefined") {
-                    localStorage.setItem('photosUploaded', 'true');
+                    localStorage.setItem('photosUploaded', photoDataArray.length > 0 ? 'true' : 'false');
                     localStorage.setItem('photoCount', photoDataArray.length.toString());
                     localStorage.setItem('orderId', uploadResult.orderId || '');
                     localStorage.setItem('uploadTimestamp', new Date().toISOString());
                     
                     // Quiz-Antworten aktualisieren
                     let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
-                    allAnswers['photosUploaded'] = true;
+                    allAnswers['photosUploaded'] = photoDataArray.length > 0;
                     allAnswers['photoCount'] = photoDataArray.length;
                     allAnswers['orderId'] = uploadResult.orderId;
                     allAnswers['uploadTimestamp'] = new Date().toISOString();
@@ -972,23 +969,19 @@
                 // Weiterleitung zur festen Stripe URL
                 btn.textContent = 'Weiterleitung zur Bezahlung...';
                 setTimeout(() => {
-    if (uploadResult.url) {
-        window.location.href = uploadResult.url;
-    } else {
-        window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
-    }
-}, 1000);
+                    if (uploadResult.url) {
+                        window.location.href = uploadResult.url;
+                    } else {
+                        window.location.href = 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04';
+                    }
+                }, 1000);
                 
             } catch (error) {
                 clearTimeout(timeoutId);
                 console.error('Fehler beim Upload:', error);
                 
-                let errorMessage = 'Fehler beim Hochladen des Fotos. ';
-                if (error.message.includes('zu groß')) {
-                    errorMessage += 'Das Bild ist zu groß. Bitte verwende ein kleineres Bild.';
-                } else if (error.message.includes('Kein Foto')) {
-                    errorMessage += 'Kein gültiges Foto gefunden. Bitte versuche ein anderes Bild.';
-                } else if (error.message.includes('Upload failed')) {
+                let errorMessage = 'Fehler bei der Verarbeitung. ';
+                if (error.message.includes('Upload failed')) {
                     errorMessage += 'Server-Fehler. Bitte versuche es erneut.';
                 } else {
                     errorMessage += 'Bitte versuche es erneut.';
@@ -996,7 +989,7 @@
                 
                 alert(errorMessage);
                 btn.disabled = false;
-                btn.textContent = 'Zur Bezahlung & Analyse';
+                btn.textContent = 'Persönliche Analyse sichern';
                 processingMsg.style.display = 'none';
             }
         }
