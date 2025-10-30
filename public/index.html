@@ -8,26 +8,6 @@
     <meta name="description" content="Erhalte deine personalisierte Farbanalyse und entdecke, welche Farben und Schnitte deine Figur am besten zur Geltung bringen. Mit individueller Beratung.">
     <link rel="icon" href="/favicon.png" type="image/png">
     <meta name="p:domain_verify" content="0a3c93425f1ae13c5eb76120a1066e35"/>
-
-<!-- Meta Pixel Code -->
-<script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '804110612194796'); 
-    fbq('track', 'PageView');
-  </script>
-  <noscript>
-    <img height="1" width="1" style="display:none" 
-         src="https://www.facebook.com/tr?id=804110612194796_HIER&ev=PageView&noscript=1"/>
-  </noscript>
-  <!-- End Meta Pixel Code -->
-
 <!-- Pinterest Tag -->
 <script>
     !function(e){if(!window.pintrk){window.pintrk = function () {
@@ -44,6 +24,24 @@
       src="https://ct.pinterest.com/v3/?event=init&tid=2612944818854&pd[em]=<hashed_email_address>&noscript=1" />
     </noscript>
     <!-- end Pinterest Tag -->
+    
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '804110612194796');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=804110612194796&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
     
 
     <style>
@@ -1673,7 +1671,7 @@
 
             <!-- MAIN CTA DIRECTLY UNDER IMAGE -->
             <div class="main-cta-section">
-                <a href="#quiz-start" class="main-cta-button" onclick="fbq('track', 'Lead')">Meine Farbberatung starten →</a>
+                <a href="#quiz-start" class="main-cta-button" onclick="fbq('track', 'Lead', {content_name: 'Button Oben'});">Meine Farbberatung starten →</a>
                 <p class="cta-subtext">✓ Professionelle Analyse ✓ Sofort verfügbar ✓ 100% Geld-zurück-Garantie</p>
             </div>
 
@@ -1853,7 +1851,7 @@
         <div class="container">
             <h3 style="font-size: 28px; font-weight: 800; color: #2d3748; margin-bottom: 16px; line-height: 1.3;">Das möchte ich auch! 😍</h3>
             <p style="font-size: 18px; color: #4a5568; margin-bottom: 28px; max-width: 500px; margin-left: auto; margin-right: auto;">Starten Sie jetzt Ihre professionelle Farbberatung und entdecken Sie Ihre schönsten Farben</p>
-            <a href="#quiz-start" class="main-cta-button" style="margin-bottom: 0;">Jetzt meine Farben entdecken →</a>
+            <a href="#quiz-start" class="main-cta-button" style="margin-bottom: 0;" onclick="fbq('track', 'Lead', {content_name: 'Button Mitte'});">Jetzt meine Farben entdecken →</a>
             <p style="font-size: 14px; color: #48bb78; margin-top: 12px; font-weight: 600;">✓ Professionell ✓ Sofort verfügbar</p>
         </div>
     </section>
@@ -1893,7 +1891,7 @@
             <div style="text-align: center; margin-top: 48px; padding: 40px 20px; background: linear-gradient(135deg, rgba(72, 187, 120, 0.05), rgba(72, 187, 120, 0.08)); border-radius: 20px;">
                 <h3 style="font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 16px;">So einfach geht's! Worauf wartest du noch?</h3>
                 <p style="font-size: 16px; color: #4a5568; margin-bottom: 24px;">Tausende Frauen haben es schon getan - jetzt bist du dran!</p>
-                <a href="#quiz-start" class="main-cta-button">Ja, ich will meine Farben wissen! →</a>
+                <a href="#quiz-start" class="main-cta-button" onclick="fbq('track', 'Lead', {content_name: 'Button Unten'});">Ja, ich will meine Farben wissen! →</a>
                 <p style="font-size: 14px; color: #48bb78; margin-top: 12px; font-weight: 600;">✓ Dauert nur 3 Minuten ✓ 100% Geld-zurück-Garantie</p>
             </div>
         </div>
@@ -1979,7 +1977,13 @@
         </div>
     </section>
 
-    
+    <section class="final-cta">
+        <div class="container">
+            <h2>Letzte Chance! Verpasse nicht deine Transformation</h2>
+            <p style="font-size: 18px; margin-bottom: 32px;">Starte jetzt und erhalte deine persönliche Farbanalyse mit individuellen Styling-Empfehlungen.</p>
+            <a href="#quiz-start" class="cta-button">Jetzt starten - bevor ich es vergesse! →</a>
+        </div>
+    </section>
 
     <footer class="footer">
         <div class="container">
@@ -2026,7 +2030,6 @@
             });
         }
 
-        
         // Check if video can autoplay (TikTok browser detection)
         document.addEventListener('DOMContentLoaded', function() {
             const video = document.querySelector('.hero-video');
@@ -2109,7 +2112,7 @@
 
         // Banner Text Rotation
         const bannerTexts = [
-            'Über 1.000+ Analysen durchgeführt',
+            'Über 1.000+ Kunden geholfen',
             'Persönliche Farbanalyse mit Do\'s & Don\'ts',
             'Individuelle Beratung von Clara'
         ];
@@ -2186,19 +2189,5 @@
         // Auto-advance every 5 seconds
         setInterval(autoAdvanceSliders, 5000);
     </script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const ctaButton = document.querySelector('.main-cta-button');
-      if (ctaButton) {
-        ctaButton.addEventListener('click', function () {
-          if (typeof fbq !== 'undefined') {
-            fbq('trackCustom', 'StartQuizButtonClicked');
-          }
-        });
-      }
-    });
-  </script>
-  
 </body>
 </html>
