@@ -1599,13 +1599,13 @@
             }
 
             .hero-section {
-                padding: 25px 20px;
-                margin-bottom: 25px;
+                padding: 25px 20px 15px 20px;
+                margin-bottom: 20px;
             }
 
             .hero-image {
-                max-width: 280px;
-                max-height: 160px;
+                max-width: 350px;
+                max-height: 200px;
             }
 
             .hero-title {
@@ -1615,13 +1615,13 @@
 
             .hero-subtitle {
                 font-size: 14px;
-                margin-bottom: 20px;
+                margin-bottom: 15px;
             }
 
             .color-type-reveal {
                 font-size: 16px;
                 padding: 15px 25px;
-                margin: 15px auto;
+                margin: 10px auto 15px auto;
             }
 
             .color-type-reveal div {
@@ -2025,94 +2025,7 @@
                 </div>
             </div>
 
-            <div class="comparison-container">
-                <h3 class="comparison-title">Basis-Analyse vs. Ihre persönliche Foto-Analyse</h3>
-                <div class="comparison-grid">
-                    <div class="comparison-column free-column">
-                        <div class="column-header">✅ Basis (soeben erhalten)</div>
-                        <ul class="feature-list">
-                            <li class="feature-item">
-                                <span class="feature-icon">🎨</span>
-                                <span>Ihr individueller Farbtyp</span>
-                            </li>
-                            <li class="feature-item">
-                                <span class="feature-icon">🌈</span>
-                                <span>3 perfekte Basis-Farben</span>
-                            </li>
-                            <li class="feature-item">
-                                <span class="feature-icon">💡</span>
-                                <span>Grundlegende Styling-Tipps</span>
-                            </li>
-                            <li class="feature-item" style="opacity: 0.6;">
-                                <span class="feature-icon">❓</span>
-                                <span>Nur allgemeine Empfehlungen ohne Foto</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="comparison-column premium-column">
-                        <div class="column-header">💎 Ihre persönliche Foto-Analyse</div>
-                        <ul class="feature-list">
-                            <li class="feature-item">
-                                <span class="feature-icon">📸</span>
-                                <span>Professionelle Analyse Ihres Fotos</span>
-                            </li>
-                            <li class="feature-item">
-                                <span class="feature-icon">🌈</span>
-                                <span>45 weitere Farben speziell für Sie</span>
-                            </li>
-                            <li class="feature-item">
-                                <span class="feature-icon">👗</span>
-                                <span>6 komplette Outfits die Ihnen schmeicheln</span>
-                            </li>
-                            <li class="feature-item">
-                                <span class="feature-icon">🛍️</span>
-                                <span>Shopping-Links für Ihre perfekten Teile</span>
-                            </li>
-                            <li class="feature-item">
-                                <span class="feature-icon">👓</span>
-                                <span>Brillen und Accessoires passend zu Ihrem Typ</span>
-                            </li>
-                            <li class="feature-item">
-                                <span class="feature-icon">📋</span>
-                                <span>19-seitige persönliche Analyse nur für Sie</span>
-                            </li>
-                            <li class="feature-item">
-                                <span class="feature-icon">🎯</span>
-                                <span>95% Genauigkeit durch Ihre Foto-Analyse</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PREMIUM PREVIEW -->
-            <div class="premium-preview">
-                <div class="preview-content">
-                    <h4 style="text-align: center; margin-bottom: 20px; font-size: 18px; font-weight: 600;">
-                        So sieht Ihre persönliche Foto-Analyse aus:
-                    </h4>
-                    <div class="preview-grid">
-                        <div class="preview-swatch"></div>
-                        <div class="preview-swatch"></div>
-                        <div class="preview-swatch"></div>
-                        <div class="preview-swatch"></div>
-                        <div class="preview-swatch"></div>
-                        <div class="preview-swatch"></div>
-                        <div class="preview-swatch"></div>
-                        <div class="preview-swatch"></div>
-                        <div class="preview-swatch"></div>
-                        <div class="preview-swatch"></div>
-                    </div>
-                    <p style="text-align: center; color: var(--text-light); font-size: 15px; margin-top: 15px;">
-                        + Outfit-Guides für Sie + Brillen & Accessoires + Shopping-Links + Farbkarte
-                    </p>
-                </div>
-                <div class="unlock-overlay">
-                    <span class="lock-icon">🔓</span>
-                    <span>Foto hochladen & für 39,99€ Ihre persönliche Analyse erhalten</span>
-                </div>
-            </div>
-        </div>
+            
 
         <!-- PRICING SECTION -->
         <div class="pricing-section animate-on-scroll">
@@ -2793,14 +2706,57 @@
 
         // SCROLL TO FUNCTIONS
         function scrollToCheckout() {
-            console.log('Scrolling to checkout...');
-            const pricingSection = document.querySelector('.pricing-section');
-            if (pricingSection) {
-                pricingSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
-            }
+            console.log('Saving data and redirecting to step7...');
+            
+            // Hole aktuelle Farbtyp-Ergebnisse
+            const result = determineColorType();
+            
+            // Sammle alle Quiz-Antworten
+            const quizAnswers = {
+                Augenfarbe: localStorage.getItem('Augenfarbe') || '',
+                Sonnenverhältnis: localStorage.getItem('Sonnenverhältnis') || '',
+                SchmuckGoldSilber: localStorage.getItem('SchmuckGoldSilber') || '',
+                hairColor: localStorage.getItem('hairColor') || '',
+                Kleidungsstil: localStorage.getItem('Kleidungsstil') || '',
+                email: localStorage.getItem('email') || '',
+                name: localStorage.getItem('name') || '',
+                userId: localStorage.getItem('userId') || `user_${Date.now()}`
+            };
+            
+            // Erstelle komplettes Ergebnis-Objekt
+            const completeResults = {
+                // Farbtyp-Ergebnisse
+                colorType: result.colorType,
+                confidence: result.confidence,
+                colors: result.colors,
+                tips: result.tips,
+                
+                // Quiz-Antworten
+                quizAnswers: quizAnswers,
+                
+                // Metadaten
+                timestamp: new Date().toISOString(),
+                source: 'ergebnis_premium',
+                step: 'basis_analyse_completed',
+                nextStep: 'photo_upload',
+                
+                // Conversion-Tracking
+                conversionPath: [
+                    { step: 'quiz_completed', timestamp: new Date().toISOString() },
+                    { step: 'results_viewed', timestamp: new Date().toISOString() },
+                    { step: 'upgrade_clicked', timestamp: new Date().toISOString() }
+                ]
+            };
+            
+            // Speichere alle Daten
+            localStorage.setItem('colorAnalysisResults', JSON.stringify(completeResults));
+            localStorage.setItem('quizCompleted', 'true');
+            localStorage.setItem('upgradeClicked', 'true');
+            
+            console.log('Saved complete results:', completeResults);
+            
+            // Weiterleitung zu step7.html
+            window.location.href = 'step7.html';
         }
 
         function scrollToUpgrade() {
