@@ -3,27 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deine persönliche Farbanalyse - Entdecke welche Farben und Schnitte dich authentisch wirken lassen</title>
+    <title>Ihre persönliche Farbanalyse - Ihr Farbtyp steht fest!</title>
     <meta name="p:domain_verify" content="0a3c93425f1ae13c5eb76120a1066e35"/>
 
-    <!-- Pinterest Tag -->
-<script>
-    !function(e){if(!window.pintrk){window.pintrk = function () {
-    window.pintrk.queue.push(Array.prototype.slice.call(arguments))};var
-      n=window.pintrk;n.queue=[],n.version="3.0";var
-      t=document.createElement("script");t.async=!0,t.src=e;var
-      r=document.getElementsByTagName("script")[0];
-      r.parentNode.insertBefore(t,r)}}("https://s.pinimg.com/ct/core.js");
-    pintrk('load', '2612944818854', {em: '<user_email_address>'});
-    pintrk('page');
-    </script>
-    <noscript>
-    <img height="1" width="1" style="display:none;" alt=""
-      src="https://ct.pinterest.com/v3/?event=init&tid=2612944818854&pd[em]=<hashed_email_address>&noscript=1" />
-    </noscript>
-    <!-- end Pinterest Tag -->
-    
-    
     <!-- TikTok Pixel Code -->
     <script>
     !function (w, d, t) {
@@ -66,17 +48,7 @@
     }(window, document, 'ttq');
     </script>
     <!-- End TikTok Pixel Code -->
-    
 
-    <!-- Microsoft Clarity -->
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "te5set74fl");
-    </script>
-    <!-- End Microsoft Clarity -->
     <style>
         * {
             margin: 0;
@@ -104,75 +76,210 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
-            background: var(--bg-light);
+            background: linear-gradient(135deg, var(--bg-light) 0%, #f1f3ff 100%);
             color: var(--text-dark);
             line-height: 1.6;
             font-size: 16px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 40px 20px;
         }
 
+        /* HEADER SECTION */
         /* HERO SECTION */
-        .hero {
-            background: linear-gradient(135deg, var(--white) 0%, #f1f3ff 100%);
-            padding: 80px 0 60px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-card {
-            max-width: 800px;
-            background: var(--white);
+        .hero-section {
+            background: linear-gradient(135deg, var(--white) 0%, #f8faff 100%);
             border-radius: 24px;
-            padding: 60px 50px;
-            box-shadow: var(--shadow-heavy);
+            padding: 45px 35px;
             text-align: center;
+            margin-bottom: 35px;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.15);
+            border: 2px solid transparent;
+            background-clip: padding-box;
             position: relative;
             overflow: hidden;
-            margin: 0 auto;
-            border: 2px solid var(--primary-color);
         }
 
-        .hero-headline {
-            font-size: clamp(32px, 5vw, 48px);
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color), var(--primary-color));
+            background-size: 200% 100%;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-image-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.15);
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 30px 30px;
+            background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
+            transition: all 0.4s ease;
+        }
+
+        .hero-image:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 50px rgba(102, 126, 234, 0.2);
+        }
+
+        .success-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--success-color), #00b894);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 20px rgba(0, 212, 170, 0.3);
+            animation: successPulse 4s infinite;
+            letter-spacing: 0.3px;
+        }
+
+        @keyframes successPulse {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 6px 20px rgba(0, 212, 170, 0.3); 
+            }
+            50% { 
+                transform: scale(1.03); 
+                box-shadow: 0 8px 25px rgba(0, 212, 170, 0.4); 
+            }
+        }
+
+        .hero-title {
+            font-size: clamp(24px, 4vw, 32px);
             font-weight: 800;
             color: var(--text-dark);
-            margin-bottom: 30px;
+            margin-bottom: 15px;
             line-height: 1.2;
             letter-spacing: -0.02em;
-        }
-
-        .highlight-text {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--text-dark) 0%, var(--primary-color) 100%);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 700;
         }
 
-        .hero-text {
-            font-size: clamp(18px, 3vw, 22px);
-            line-height: 1.6;
+        .highlight-text {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            position: relative;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
             color: var(--text-light);
-            margin-bottom: 40px;
-            font-weight: 400;
+            margin-bottom: 25px;
+            font-weight: 500;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.4;
         }
 
-        .quiz-summary {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
-            border: 2px solid rgba(102, 126, 234, 0.2);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            margin: 30px 0;
-            text-align: left;
+        .color-type-reveal {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 18px 30px;
+            border-radius: 16px;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 20px auto;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            max-width: 400px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .quiz-summary h3 {
+        .color-type-reveal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* FREE RESULTS SECTION */
+        .results-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-medium);
+            border: 2px solid var(--success-color);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .free-badge {
+            background: var(--success-color);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .colors-showcase {
+            margin-bottom: 25px;
+        }
+
+        .colors-title {
             font-size: 18px;
             font-weight: 700;
             color: var(--text-dark);
@@ -180,460 +287,180 @@
             text-align: center;
         }
 
-        .quiz-answers {
+        .colors-grid {
             display: grid;
-            gap: 12px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+            max-width: 350px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .quiz-answer-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-        }
-
-        .answer-icon {
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-
-        .answer-text {
-            font-size: 14px;
-            color: var(--text-dark);
-            font-weight: 500;
-        }
-
-        .motivation-text {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(102, 126, 234, 0.2);
-            text-align: center;
-        }
-
-        .motivation-text p {
-            font-size: 15px;
-            color: var(--text-dark);
-            line-height: 1.5;
-            margin: 0;
-        }
-
-        .motivation-text strong {
-            color: var(--primary-color);
-            font-weight: 700;
-        }
-
-        /* CONVERSION BOOSTER TEASER */
-        .teaser-preview {
-            margin-top: 25px;
-            padding: 20px;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
-            border: 2px dashed rgba(102, 126, 234, 0.3);
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .preview-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 20px;
-        }
-
-        .blurred-text {
-            filter: blur(12px);
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-            position: relative;
-            letter-spacing: 2px;
-        }
-
-        .color-wheel {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 20px;
-            border-radius: 50%;
-            overflow: hidden;
-            filter: blur(6px);
-            opacity: 0.8;
-            animation: wheelRotate 8s linear infinite;
-        }
-
-        .color-segment {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            top: 0;
-            left: 60px;
-            transform-origin: 0 60px;
-            clip-path: polygon(0 0, 86.6% 50%, 0 100%);
-        }
-
-        .color-segment:nth-child(1) { 
-            background: linear-gradient(45deg, #ff6b9d, #ff8e9b); 
-            transform: rotate(0deg);
-        }
-        .color-segment:nth-child(2) { 
-            background: linear-gradient(45deg, #ff9ff3, #f368e0); 
-            transform: rotate(30deg);
-        }
-        .color-segment:nth-child(3) { 
-            background: linear-gradient(45deg, #bf9aff, #a29bfe); 
-            transform: rotate(60deg);
-        }
-        .color-segment:nth-child(4) { 
-            background: linear-gradient(45deg, #74b9ff, #0984e3); 
-            transform: rotate(90deg);
-        }
-        .color-segment:nth-child(5) { 
-            background: linear-gradient(45deg, #4ecdc4, #00b894); 
-            transform: rotate(120deg);
-        }
-        .color-segment:nth-child(6) { 
-            background: linear-gradient(45deg, #55a3ff, #2d3436); 
-            transform: rotate(150deg);
-        }
-        .color-segment:nth-child(7) { 
-            background: linear-gradient(45deg, #a29bfe, #6c5ce7); 
-            transform: rotate(180deg);
-        }
-        .color-segment:nth-child(8) { 
-            background: linear-gradient(45deg, #fd79a8, #e84393); 
-            transform: rotate(210deg);
-        }
-        .color-segment:nth-child(9) { 
-            background: linear-gradient(45deg, #fdcb6e, #e17055); 
-            transform: rotate(240deg);
-        }
-        .color-segment:nth-child(10) { 
-            background: linear-gradient(45deg, #6c5ce7, #a29bfe); 
-            transform: rotate(270deg);
-        }
-        .color-segment:nth-child(11) { 
-            background: linear-gradient(45deg, #00b894, #00cec9); 
-            transform: rotate(300deg);
-        }
-        .color-segment:nth-child(12) { 
-            background: linear-gradient(45deg, #e17055, #d63031); 
-            transform: rotate(330deg);
-        }
-
-        @keyframes wheelRotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .unlock-text {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 13px;
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-
-        .lock-icon {
-            font-size: 16px;
-            animation: lockPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes lockPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        @media (max-width: 480px) {
-            .color-wheel {
-                width: 100px;
-                height: 100px;
-            }
-            
-            .preview-title {
-                font-size: 14px;
-            }
-            
-            .unlock-text {
-                font-size: 12px;
-            }
-        }
-
-        /* HERO SECTION */
-.hero {
-    background: linear-gradient(135deg, var(--white) 0%, #f1f3ff 100%);
-    padding: 60px 0;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.hero-image-container {
-    margin-bottom: 40px;
-}
-
-/* HERO SECTION */ 
-.hero {     
-    background: linear-gradient(135deg, var(--white) 0%, #f1f3ff 100%);     
-    padding: 60px 0;     
-    text-align: center;     
-    position: relative;     
-    overflow: hidden; 
-} 
-
-.hero-image-container {     
-    margin-bottom: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-} 
-
-.hero-image {     
-    width: 100%;     
-    height: auto;
-    border-radius: var(--border-radius);     
-    box-shadow: var(--shadow-medium);     
-    background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%),                  
-                linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),                  
-                linear-gradient(45deg, transparent 75%, #f0f0f0 75%),                  
-                linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);     
-    background-size: 30px 30px;     
-    background-position: 0 0, 0 15px, 15px -15px, -15px 0px; 
-}
-
-/* Desktop-spezifische Korrekturen */
-@media (min-width: 769px) {
-    .hero-image {
-        max-width: 600px;        /* Schmaler wie der untere Container */
-        max-height: 400px;       /* Höher für bessere Proportionen */
-        object-fit: cover;       /* Bild proportional beschneiden */
-        aspect-ratio: 3/2;       /* Kompakteres Seitenverhältnis */
-    }
-    
-    .hero-image-container {
-        margin-bottom: 50px;
-    }
-}
-
-/* Große Desktop-Bildschirme */
-@media (min-width: 1200px) {
-    .hero-image {
-        max-width: 700px;        /* Auch auf großen Bildschirmen schmaler */
-        max-height: 450px;       /* Entsprechend höher */
-    }
-}
-
-/* Mobile Responsive (unverändert) */
-@media (max-width: 768px) {     
-    .hero-image-container {         
-        margin-bottom: 30px;     
-    }     
-    
-    .hero-image {         
-        max-height: 250px;         
-        border-radius: var(--border-radius-small);     
-    } 
-}
-
-        .hero-cta-button {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: var(--white);
-            border: none;
-            padding: 20px 50px;
-            font-size: clamp(16px, 2.5vw, 20px);
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
-        }
-
-        .hero-cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
-        }
-
-        /* VIDEO TESTIMONIAL SECTION */
-        .video-testimonial-section {
-            padding: 80px 0;
+        .color-card {
             background: var(--white);
-        }
-
-        .video-testimonial-header {
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: var(--shadow-light);
+            border: 2px solid #f0f2f5;
+            transition: all 0.3s ease;
             text-align: center;
-            margin-bottom: 50px;
         }
 
-        .section-title {
-            font-size: clamp(32px, 4vw, 48px);
-            font-weight: 800;
+        .color-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            border-color: var(--primary-color);
+        }
+
+        .color-swatch {
+            width: 100%;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 auto 8px auto;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+            aspect-ratio: 1/1;
+        }
+
+        .color-name {
+            font-size: 11px;
+            font-weight: 600;
             color: var(--text-dark);
-            margin-bottom: 20px;
             line-height: 1.2;
         }
 
-        .section-subtitle {
-            font-size: 18px;
-            color: var(--text-light);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .video-testimonial-card {
-            max-width: 900px;
-            margin: 0 auto;
-            background: var(--white);
+        /* STYLING TIPS */
+        .styling-tips {
+            background: linear-gradient(135deg, #f8fff8, #f0fff4);
+            border: 2px solid var(--success-color);
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow-heavy);
-            overflow: hidden;
-            border: 2px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 15px;
         }
 
-        .video-container {
-            position: relative;
-            width: 100%;
-            background: #000;
-        }
-
-        .testimonial-video {
-            width: 100%;
-            height: auto;
-            display: block;
-            max-height: 600px;
-            object-fit: cover;
-            background: linear-gradient(45deg, #333 25%, transparent 25%), 
-                        linear-gradient(-45deg, #333 25%, transparent 25%), 
-                        linear-gradient(45deg, transparent 75%, #333 75%), 
-                        linear-gradient(-45deg, transparent 75%, #333 75%);
-            background-size: 30px 30px;
-            background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
-        }
-
-        .video-testimonial-content {
-            padding: 30px;
-            background: var(--white);
-        }
-
-        .testimonial-header {
+        .tips-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
+            gap: 8px;
         }
 
-        .testimonial-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-right: 15px;
-            object-fit: cover;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
         }
 
-        .testimonial-name {
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 5px;
+        .tip-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 13px;
         }
 
-        .testimonial-stars {
-            color: #fbbf24;
-            font-size: 14px;
-        }
-
-        .video-testimonial-text {
-            color: var(--text-light);
+        .tip-icon {
             font-size: 16px;
-            line-height: 1.6;
-            font-style: italic;
-            margin-top: 15px;
+            flex-shrink: 0;
         }
 
-        /* PREVIEW SECTION */
-        .preview-section {
-            padding: 60px 0;
-            background: var(--bg-light);
+        /* ZWISCHEN-CTA BUTTON */
+        .intermediate-cta {
+            text-align: center;
+            margin: 25px 0;
         }
 
-        .preview-card {
-            max-width: 900px;
-            margin: 0 auto;
+        .intermediate-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #5A3E63, #764B9C);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(90, 62, 99, 0.3);
+        }
+
+        .intermediate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(90, 62, 99, 0.4);
+            background: linear-gradient(135deg, #4A2F52, #6A4187);
+        }
+
+        .intermediate-btn .btn-icon {
+            font-size: 18px;
+        }
+
+        .intermediate-btn .btn-text {
+            font-weight: 700;
+        }
+
+        .intermediate-btn .btn-arrow {
+            font-size: 18px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .intermediate-btn:hover .btn-arrow {
+            transform: translateX(3px);
+        }
+
+        /* INDIVIDUELLE FARBPALETTE SECTION */
+        .color-palette-section {
             background: var(--white);
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow-heavy);
-            padding: 50px 40px;
-            position: relative;
-        }
-
-        .preview-title {
-            font-size: 28px;
-            font-weight: 800;
-            text-align: center;
+            padding: 35px 30px;
             margin-bottom: 30px;
-            color: var(--text-dark);
-            line-height: 1.3;
+            box-shadow: var(--shadow-medium);
+            border: 2px solid rgba(102, 126, 234, 0.2);
         }
 
-        .preview-subtitle {
-            font-size: 18px;
+        .palette-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .palette-subtitle {
+            font-size: 14px;
             color: var(--text-light);
             text-align: center;
-            margin-bottom: 40px;
-            line-height: 1.5;
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        /* PACKAGE PREVIEW SLIDERS */
-        .package-sliders-section {
-            margin-bottom: 40px;
-        }
-
-        .package-slider-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .package-slider-container {
-            background: var(--white);
+        .palette-slider-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
             border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: var(--shadow-light);
-            border: 2px solid #e2e8f0;
         }
 
-        .slider-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-dark);
-            text-align: center;
-            padding: 20px;
-            background: linear-gradient(135deg, #f8fafc, #f1f3ff);
-            margin: 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .standard-slider .slider-title,
-        .package-slider-container:has(.standard-slider) .slider-title {
-            background: linear-gradient(135deg, #f8fafc, #e8f0fe);
-            color: #495057;
-        }
-
-        .premium-slider .slider-title,
-        .package-slider-container:has(.premium-slider) .slider-title {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-            color: var(--primary-color);
-        }
-
-        .slider-wrapper {
+        .palette-slider-wrapper {
             position: relative;
             width: 100%;
             height: 350px;
             overflow: hidden;
         }
 
-        .slide {
+        .palette-slide {
             position: absolute;
             top: 0;
             left: 0;
@@ -643,15 +470,14 @@
             transition: opacity 1s ease-in-out;
         }
 
-        .slide.active {
+        .palette-slide.active {
             opacity: 1;
         }
 
-        .slider-image {
+        .palette-slide-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: var(--border-radius-small);
             background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
                         linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
                         linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
@@ -660,617 +486,252 @@
             background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
         }
 
-        .slider-dots {
-            text-align: center;
-            padding: 15px 0;
-            background: var(--white);
+        .palette-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.95);
         }
 
-        .dot {
-            height: 10px;
+        .palette-dot {
             width: 10px;
-            margin: 0 4px;
-            background-color: #bdc3c7;
+            height: 10px;
             border-radius: 50%;
-            display: inline-block;
-            transition: background-color 0.3s ease;
+            background: #cbd5e0;
             cursor: pointer;
-        }
-
-        .dot.active,
-        .dot:hover {
-            background-color: var(--primary-color);
-        }
-
-        /* CLARA SLIDER SECTION */
-        .clara-slider-section {
-            margin-bottom: 40px;
-        }
-
-        .clara-text-section {
-            text-align: center;
-            max-width: 800px;
-            margin: 20px auto 0;
-        }
-
-        .clara-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 15px;
-            line-height: 1.3;
-        }
-
-        .clara-subtitle {
-            font-size: 16px;
-            color: var(--text-light);
-            line-height: 1.5;
-            margin-bottom: 30px;
-        }
-
-        /* GUARANTEE SECTION */
-        .guarantee-section {
-            background: linear-gradient(135deg, #f8fafc, #ffffff);
-            border: 1px solid #e2e8f0;
-            border-radius: var(--border-radius);
-            padding: 25px;
-            margin-top: 25px;
-            text-align: center;
-        }
-
-        .guarantee-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 12px;
-            line-height: 1.3;
-        }
-
-        .guarantee-stats {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .guarantee-avatars {
-            display: flex;
-            margin-left: 8px;
-        }
-
-        .avatar-item {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-left: -8px;
-            object-fit: cover;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
-        .avatar-item:first-child {
-            margin-left: 0;
-        }
-
-        .guarantee-rating {
-            text-align: left;
-        }
-
-        .stars {
-            font-size: 14px;
-            margin-bottom: 3px;
-            color: #fbbf24;
-        }
-
-        .stats-text {
-            font-size: 12px;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        /* PRICING SECTION */
-        .pricing-section {
-            padding: 80px 0;
-            background: linear-gradient(135deg, #f1f3ff 0%, var(--bg-light) 100%);
-        }
-
-        .pricing-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .live-sales-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: var(--text-light);
-            border: 2px solid #16a34a;
-            border-radius: 20px;
-            padding: 12px 20px;
-            background: transparent;
-            max-width: 300px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: #16a34a;
-            border-radius: 50%;
-            animation: pulse-green 2s infinite;
-        }
-
-        .live-text {
-            font-weight: 500;
-        }
-
-        @keyframes pulse-green {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.1); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        .klarna-payment {
-            margin-top: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .klarna-text {
-            font-size: 14px;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        .klarna-logo {
-            background: linear-gradient(135deg, #ffb3d9, #ff80b3);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .pricing-card {
-            max-width: 500px;
-            margin: 0 auto;
-            background: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-medium);
-            padding: 40px 30px;
-            border: 2px solid var(--primary-color);
-            position: relative;
             transition: all 0.3s ease;
         }
 
-        .pricing-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-heavy);
+        .palette-dot.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
         }
 
-        .popular-badge {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: var(--white);
-            padding: 8px 20px;
+        /* FOTO-ANALYSE SECTION */
+        .color-palette-section {
+            background: var(--white);
             border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: center;
-            white-space: nowrap;
+            padding: 30px 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-medium);
+            border: 2px solid rgba(102, 126, 234, 0.2);
         }
 
-        .pricing-header-card {
+        .palette-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-dark);
             text-align: center;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .emotional-subtitle {
+            font-size: 18px;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+
+        .personal-questions {
             margin-bottom: 30px;
         }
 
-        .pricing-title {
-            font-size: 28px;
-            font-weight: 700;
-            line-height: 1.2;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-            margin-top: 20px;
-        }
-
-        .price-container {
-            margin-bottom: 15px;
-        }
-
-        .price-comparison {
+        .question-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .old-price {
-            font-size: 16px;
-            color: #6c757d;
-            text-decoration: line-through;
+            gap: 15px;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.03), rgba(255, 182, 193, 0.03));
+            border-radius: 15px;
+            border-left: 4px solid var(--accent-color);
             font-weight: 500;
+            transition: all 0.3s ease;
         }
 
-        .arrow {
-            font-size: 20px;
-            color: var(--primary-color);
-            font-weight: bold;
+        .question-item:hover {
+            transform: translateX(8px);
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.06), rgba(255, 182, 193, 0.06));
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.1);
         }
 
-        .price-new {
-            font-size: 28px;
+        .question-icon {
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 16px;
+            color: var(--text-dark);
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        .emotional-cta {
+            text-align: center;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(248, 187, 208, 0.05));
+            border-radius: 16px;
+            padding: 25px 20px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .cta-title {
+            font-size: 22px;
             font-weight: 800;
             color: var(--text-dark);
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .pricing-subtitle {
-            color: var(--text-light);
+        .cta-subtitle {
             font-size: 16px;
+            color: var(--text-light);
             line-height: 1.4;
-        }
-
-        .benefits-list {
-            margin-bottom: 30px;
-        }
-
-        .benefit-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 2px 0;
-    transition: all 0.2s ease;
-}
-
-.benefit-item .benefit-icon {
-    color: var(--success-color);
-    font-size: 18px;
-    font-weight: bold;
-    flex-shrink: 0;
-}
-
-        .benefit-item .benefit-text {
-            font-size: 15px;
-            color: var(--text-dark);
-            line-height: 1.4;
-            font-weight: 500;
-        }
-
-        .cta-button {
-            width: 100%;
-            padding: 18px 30px;
-            font-size: 18px;
-            font-weight: 700;
-            border-radius: var(--border-radius-small);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: var(--white);
-            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+            font-style: italic;
             margin-bottom: 20px;
         }
 
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
-        }
-
-        .payment-methods {
+        .cta-buttons {
             display: flex;
-            justify-content: center;
-            align-items: center;
             gap: 12px;
-            margin-top: 20px;
+            justify-content: center;
             flex-wrap: wrap;
         }
 
-        .payment-logo {
-            width: 60px;
-            height: 35px;
-            background: var(--white);
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
+        .cta-btn {
             display: flex;
             align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 180px;
             justify-content: center;
-            transition: all 0.2s ease;
-            padding: 4px;
         }
 
-        .payment-logo:hover {
-            border-color: var(--primary-color);
+        .primary-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .secondary-btn {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary-color);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .secondary-btn:hover {
+            background: rgba(102, 126, 234, 0.15);
+            border-color: rgba(102, 126, 234, 0.3);
             transform: translateY(-1px);
         }
 
-        .payment-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
-                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
-                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
-                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
-            background-size: 8px 8px;
-            background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
-            border-radius: 2px;
+        .btn-icon {
+            font-size: 16px;
         }
 
-        .logo-placeholder {
-            font-size: 10px;
+        .btn-text {
             font-weight: 600;
-            color: #6c757d;
-            text-align: center;
         }
 
-        .trust-indicators {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .trust-item {
-            background: var(--white);
-            border: 1px solid #e2e8f0;
-            border-radius: var(--border-radius-small);
-            padding: 20px 10px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .trust-item:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-        }
-
-        .trust-icon {
-            font-size: 24px;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .trust-text {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-dark);
-            line-height: 1.3;
-        }
-
-        /* TESTIMONIALS SECTION */
-        .testimonials-section {
-            padding: 80px 0;
-            background: var(--white);
-        }
-
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 60px;
-        }
-
-        .testimonial {
-            background: var(--white);
-            padding: 30px;
+        .simple-photo-slider {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
             border-radius: var(--border-radius);
+            overflow: hidden;
             box-shadow: var(--shadow-light);
             border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
         }
 
-        .testimonial:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-medium);
-        }
-
-        .testimonial-before-after {
+        .photo-slides-wrapper {
+            position: relative;
             width: 100%;
-            height: 200px;
-            background: #f8fafc;
-            border-radius: var(--border-radius-small);
-            margin-bottom: 25px;
-            margin-top: 15px;
+            height: 300px;
             overflow: hidden;
-            border: 1px solid #e2e8f0;
-            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
-                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
-                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
-                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
-            background-size: 20px 20px;
-            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
         }
 
-        .before-after-image {
+        .photo-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .photo-slide.active {
+            opacity: 1;
+        }
+
+        .simple-slide-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: var(--border-radius-small);
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 30px 30px;
+            background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
         }
 
-        .testimonial-text {
-            font-style: italic;
-            color: var(--text-light);
-            line-height: 1.6;
-        }
-
-        /* FOOTER */
-        .footer {
-            background: var(--text-dark);
-            color: var(--white);
-            padding: 60px 0 30px;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
+        /* CLARA ARBEITSWEISE SECTION */
+        .clara-work-section {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 50px 40px;
             margin-bottom: 40px;
+            box-shadow: var(--shadow-heavy);
+            border: 2px solid rgba(102, 126, 234, 0.1);
         }
 
-        .footer-section h4 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .footer-section p,
-        .footer-section a {
-            color: #bdc3c7;
-            text-decoration: none;
-            line-height: 1.6;
-        }
-
-        .footer-section a:hover {
-            color: var(--primary-color);
-        }
-
-        .footer-bottom {
-            border-top: 1px solid #34495e;
-            padding-top: 30px;
+        .work-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-dark);
             text-align: center;
-            color: #95a5a6;
+            margin-bottom: 15px;
         }
 
-        .footer-section ul {
-            list-style: none;
-            padding: 0;
+        .work-subtitle {
+            font-size: 18px;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .security-badges {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .security-badge {
-            background: rgba(255,255,255,0.1);
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-        }
-
-        /* ANIMATIONS */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease;
-        }
-
-        .animate-on-scroll.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* MOBILE RESPONSIVE */
-        @media (max-width: 768px) {
-            .hero {
-                padding: 60px 0 40px;
-            }
-
-            .container {
-                padding: 0 15px;
-            }
-
-            .hero-card {
-                padding: 40px 30px;
-                margin: 0 15px;
-            }
-
-            .video-testimonial-section {
-                padding: 60px 0;
-            }
-            
-            .video-testimonial-card {
-                margin: 0 15px;
-            }
-            
-            .video-testimonial-content {
-                padding: 20px 15px;
-            }
-            
-            .testimonial-video {
-                max-height: 400px;
-            }
-
-            .preview-card {
-                padding: 25px 15px;
-                margin: 0 15px;
-            }
-
-            .package-slider-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .package-slider-container {
-                margin: 0 15px;
-            }
-
-            .slider-wrapper {
-                height: 280px;
-            }
-
-            .clara-slider-section .package-slider-container {
-                margin: 0 15px;
-                max-width: none;
-            }
-
-            .clara-slider-section .slider-wrapper {
-                height: 300px;
-            }
-
-            .clara-text-section {
-                padding: 0 15px;
-                margin-top: 25px;
-            }
-
-            .pricing-card {
-                padding: 30px 20px;
-                margin: 0 15px;
-            }
-
-            .guarantee-stats {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .guarantee-rating {
-                text-align: center;
-            }
-
-            .trust-indicators {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .work-slider-container {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-medium);
         }
 
         /* MEDIA MENTIONS SECTION */
@@ -1279,6 +740,12 @@
             padding: 60px 0;
             border-top: 1px solid rgba(102, 126, 234, 0.1);
             border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .media-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
         .media-mentions .section-title {
@@ -1449,305 +916,1207 @@
             filter: grayscale(0%);
         }
 
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 30px 30px;
+            background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
+        }
+
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cbd5e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: var(--primary-color);
+            transform: scale(1.3);
+        }
+
+        /* PHOTO UPLOAD SECTION */
+        .photo-upload-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .upload-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .upload-subtitle {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .upload-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .upload-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .upload-note {
+            font-size: 14px;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        /* PREMIUM UPGRADE SECTION */
+        .premium-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 24px;
+            padding: 40px 30px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+        }
+
+        .upgrade-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .upgrade-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .upgrade-subtitle {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 25px;
+        }
+
+        /* PHOTO PREVIEW SECTION */
+        .photo-preview-section {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-light);
+            border: 2px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .photo-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .photo-benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .photo-benefit {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .photo-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .photo-text {
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .comparison-container {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-light);
+        }
+
+        .comparison-title {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--text-dark);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .comparison-column {
+            text-align: center;
+        }
+
+        .column-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .free-column .column-header {
+            background: linear-gradient(135deg, #f8fff8, #f0fff4);
+            color: var(--success-color);
+            border: 2px solid var(--success-color);
+        }
+
+        .premium-column .column-header {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 8px 0;
+        }
+
+        .feature-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        /* PREMIUM PREVIEW */
+        .premium-preview {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 3px dashed rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-content {
+            filter: blur(3px);
+            opacity: 0.6;
+            position: relative;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .preview-swatch {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .unlock-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: 50px;
+            box-shadow: var(--shadow-heavy);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 16px;
+        }
+
+        .lock-icon {
+            font-size: 24px;
+            animation: lockPulse 2s infinite;
+        }
+
+        @keyframes lockPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* PRICING SECTION */
+        .pricing-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f1f3ff 0%, var(--bg-light) 100%);
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .live-sales-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--text-light);
+            border: 2px solid #16a34a;
+            border-radius: 20px;
+            padding: 12px 20px;
+            background: transparent;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #16a34a;
+            border-radius: 50%;
+            animation: pulse-green 2s infinite;
+        }
+
+        .live-text {
+            font-weight: 500;
+        }
+
+        @keyframes pulse-green {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .klarna-payment {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .klarna-text {
+            font-size: 14px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .klarna-logo {
+            background: linear-gradient(135deg, #ffb3d9, #ff80b3);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .pricing-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
+            padding: 40px 30px;
+            border: 2px solid var(--primary-color);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .pricing-header-card {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .pricing-title {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+
+        .price-container {
+            margin-bottom: 15px;
+        }
+
+        .price-comparison {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .old-price {
+            font-size: 16px;
+            color: #6c757d;
+            text-decoration: line-through;
+            font-weight: 500;
+        }
+
+        .arrow {
+            font-size: 20px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .price-new {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pricing-subtitle {
+            color: var(--text-light);
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .benefits-list {
+            margin-bottom: 30px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 2px 0;
+            transition: all 0.2s ease;
+        }
+
+        .benefit-item .benefit-icon {
+            color: var(--success-color);
+            font-size: 18px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .benefit-item .benefit-text {
+            font-size: 15px;
+            color: var(--text-dark);
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 18px 30px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .payment-methods {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .payment-logo {
+            width: 60px;
+            height: 35px;
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            padding: 4px;
+        }
+
+        .payment-logo:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .payment-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 8px 8px;
+            background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+            border-radius: 2px;
+        }
+
+        .trust-indicators {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .trust-item {
+            background: var(--white);
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius-small);
+            padding: 20px 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .trust-item:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .trust-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .trust-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        /* TESTIMONIALS SECTION */
+        .testimonials-section {
+            padding: 80px 0;
+            background: var(--white);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .testimonial {
+            background: var(--white);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .testimonial:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .testimonial-before-after {
+            width: 100%;
+            height: 200px;
+            background: #f8fafc;
+            border-radius: var(--border-radius-small);
+            margin-bottom: 25px;
+            margin-top: 15px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        .before-after-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--border-radius-small);
+        }
+
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .testimonial-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .testimonial-stars {
+            color: #fbbf24;
+            font-size: 14px;
+        }
+
+        .testimonial-text {
+            color: var(--text-light);
+            font-size: 15px;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .media-slide {
-                padding: 30px 20px;
+            .container {
+                padding: 20px 15px;
             }
-            
-            .media-quote {
-                font-size: 18px;
-                padding: 0 20px;
+
+            .hero-section {
+                padding: 25px 20px;
+                margin-bottom: 25px;
             }
-            
-            .media-logos-grid {
+
+            .hero-image {
+                max-width: 280px;
+                max-height: 160px;
+            }
+
+            .hero-title {
+                font-size: clamp(20px, 5vw, 26px);
+                margin-bottom: 12px;
+            }
+
+            .hero-subtitle {
+                font-size: 14px;
+                margin-bottom: 20px;
+            }
+
+            .color-type-reveal {
+                font-size: 16px;
+                padding: 15px 25px;
+                margin: 15px auto;
+            }
+
+            .color-type-reveal div {
+                flex-direction: column !important;
+                gap: 8px !important;
+            }
+
+            .color-type-reveal div > div {
+                padding: 4px 10px !important;
+                font-size: 12px !important;
+            }
+
+            .results-section,
+            .color-palette-section,
+            .clara-work-section,
+            .premium-section,
+            .pricing-section {
+                padding: 20px 15px;
+            }
+
+            .colors-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .color-swatch {
+                height: 40px;
+            }
+
+            .color-name {
+                font-size: 10px;
+            }
+
+            .palette-slider-wrapper {
+                height: 280px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .cta-btn {
+                min-width: 100%;
+                padding: 14px 20px;
+                font-size: 16px;
+            }
+
+            .intermediate-btn {
+                padding: 14px 20px;
+                font-size: 15px;
+                width: 100%;
+            }
+
+            .intermediate-btn .btn-text {
+                font-size: 15px;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
                 gap: 20px;
             }
-            
-            .media-logo-placeholder {
-                height: 100px;
-                width: 100px;
-            }
-        }
 
-        @media (max-width: 480px) {
-            .media-quote {
-                font-size: 16px;
-                padding: 0 15px;
-            }
-            
-            .media-logos-grid {
-                gap: 15px;
-            }
-            
-            .media-logo-placeholder {
-                height: 80px;
-                width: 80px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 0 10px;
+            .tips-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
             }
 
-            .hero-card {
-                padding: 30px 20px;
+            .photo-benefits-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .price-comparison {
+                flex-direction: column;
+                gap: 10px;
             }
 
             .slider-wrapper {
-                height: 250px;
-            }
-
-            .preview-card {
-                padding: 20px 10px;
-            }
-
-            .pricing-card {
-                padding: 25px 15px;
-            }
-
-            .media-mentions {
-                padding: 40px 0;
+                height: 300px;
             }
         }
+
+        /* FOOTER */
+        .footer {
+            background: var(--text-dark);
+            color: var(--white);
+            padding: 60px 0 30px;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--white);
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #bdc3c7;
+            text-decoration: none;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-color);
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .security-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .security-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #34495e;
+            padding-top: 30px;
+            text-align: center;
+            color: #95a5a6;
+        }
+
+        .footer-bottom p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        /* ANIMATIONS */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
+    <script src="/tracking.js" defer></script>
+    <script src="/utm-make.js" defer></script>
 </head>
 <body>
-    <!-- HERO SECTION -->
-    <section class="hero">
-        <div class="container">
+    <div class="container">
+        <!-- HERO SECTION -->
+        <div class="hero-section animate-on-scroll">
             <!-- Hero Image -->
             <div class="hero-image-container">
                 <img src="Hero-Bild2.png" alt="Clara Farbanalyse" class="hero-image">
             </div>
-            <div class="hero-card">
-                <h1 class="hero-headline">
-                    Entdecken Sie Ihre perfekten Farben. <span class="highlight-text">Professionell. Individuell. Sofort.</span>
-                </h1>
-                
-                <p class="hero-text">
-                    Schluss mit Unsicherheit beim Shopping. Investieren Sie in Farben, die Ihre natürliche Ausstrahlung unterstreichen und Sie selbstbewusst auftreten lassen.
-                </p>
+            
+            <div class="success-indicator">
+                <span>✨</span>
+                <span>Ihr Farbtyp ist bereitgestellt</span>
+            </div>
+            <h1 class="hero-title">
+                Ihre erste <span class="highlight-text">Farbtyp-Einschätzung</span> ist da!
+            </h1>
+            <p class="hero-subtitle">Diese erste Einschätzung basiert nur auf Ihren Antworten - das kann eine Richtung geben, aber <strong>mit Ihrem Foto erstelle ich eine viel präzisere, persönliche Analyse.</strong></p>
+            <div class="color-type-reveal" id="colorTypeDisplay">
+                🎨 Ihr Farbtyp wird geladen...
+            </div>
+        </div>
 
-                <div class="quiz-summary">
-                    <h3>Ihre Angaben zeigen mir bereits:</h3>
-                    <div class="quiz-answers">
-                        <div class="quiz-answer-item">
-                            <span class="answer-icon">👁️</span>
-                            <span class="answer-text" id="user-eyes">Augenfarbe wird geladen...</span>
-                        </div>
-                        <div class="quiz-answer-item">
-                            <span class="answer-icon">☀️</span>
-                            <span class="answer-text" id="user-skin">Hauttyp wird geladen...</span>
-                        </div>
-                        <div class="quiz-answer-item">
-                            <span class="answer-icon">✨</span>
-                            <span class="answer-text" id="user-style">Style-Präferenz wird geladen...</span>
-                        </div>
-                    </div>
-                    
-                    <div class="motivation-text">
-                        <p><strong>Damit erstelle ich Ihnen eine fundierte Farbanalyse</strong>, die Ihre natürliche Ausstrahlung perfekt unterstreicht. Investieren Sie in sich selbst – nicht in weitere Fehlkäufe.</p>
-                    </div>
+        <!-- FREE RESULTS SECTION -->
+        <div class="results-section animate-on-scroll">
+            <div class="section-header">
+                <h2 class="section-title">Ihre erste Farbtyp-Einschätzung</h2>
+                <span class="free-badge">KOSTENLOS</span>
+            </div>
+
+            <div class="colors-showcase">
+                <h3 class="colors-title">Diese 3 Farben stehen Ihnen perfekt:</h3>
+                <div class="colors-grid" id="colorsGrid">
+                    <!-- Colors will be populated by JavaScript -->
                 </div>
-                
-                <button class="hero-cta-button" onclick="scrollToCheckout()">
-                    Meine professionelle Farbanalyse jetzt sichern
+            </div>
+
+            <div class="styling-tips">
+                <div class="tips-title">
+                    <span>💡</span>
+                    <span>Ihre wichtigsten Styling-Regeln:</span>
+                </div>
+                <div class="tips-grid" id="stylingTips">
+                    <!-- Tips will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- ZWISCHENBUTTEON NACH STYLING-TIPPS -->
+            <div class="intermediate-cta">
+                <button class="intermediate-btn" onclick="scrollToCheckout()">
+                    <span class="btn-icon">✨</span>
+                    <span class="btn-text">Ihre persönliche Foto-Analyse erhalten</span>
+                    <span class="btn-arrow">→</span>
                 </button>
             </div>
         </div>
-    </section>
 
-    <!-- MEDIA MENTIONS SECTION -->
-    <section class="media-mentions">
-        <div class="container">
-            <div class="section-title animate-on-scroll">
-                <h2><span class="highlight-text">Presse</span> über Farbberatung</h2>
-                <p style="font-size: 14px;">Was führende Medien über die Wirkung berichten</p>
+        <!-- FOTO-ANALYSE SECTION -->
+        <div class="color-palette-section animate-on-scroll">
+            <h2 class="palette-title">Schön zu wissen - aber welche Outfits passen wirklich zu Ihnen?</h2>
+            <p class="emotional-subtitle">Mit Ihrer <strong>Foto-Analyse</strong> erhalten Sie persönliche Antworten auf die Fragen, die wirklich zählen:</p>
+            
+            <div class="personal-questions">
+                <div class="question-item">
+                    <span class="question-icon">👗</span>
+                    <span class="question-text">Welche Outfits lassen Sie strahlen statt blass aussehen?</span>
+                </div>
+                <div class="question-item">
+                    <span class="question-icon">👓</span>
+                    <span class="question-text">Welche Brillen und Accessoires unterstreichen Ihren Typ?</span>
+                </div>
+                <div class="question-item">
+                    <span class="question-icon">✨</span>
+                    <span class="question-text">Was steht wirklich Ihnen - nicht irgendwem, sondern Ihnen?</span>
+                </div>
             </div>
             
-            <div class="media-slider-container animate-on-scroll">
-                <div class="media-slide active">
-                    <blockquote class="media-quote">
-                        Die Farbe der Kleidung verrät – so werden Sie wahrgenommen.
-                    </blockquote>
-                    <div class="media-source">Quelle: <a href="https://www.stern.de/panorama/die-farbe-der-kleidung-verraet--so-werden-sie-wahrgenommen-33203058.html" target="_blank" rel="noopener noreferrer">Stern - 19. Februar 2023</a></div>
-                </div>
+            <div class="emotional-cta">
+                <h3 class="cta-title">Ihre persönliche Foto-Analyse zeigt es Ihnen</h3>
+                <p class="cta-subtitle">Individuell auf Sie zugeschnitten. Nicht allgemein, sondern für Ihren Hautunterton, Ihre Augenfarbe, Ihren Stil.</p>
                 
-                <div class="media-slide">
-                    <blockquote class="media-quote">
-                        Eine Farb‑ und Typberatung kann wahre Wunder wirken.
-                    </blockquote>
-                    <div class="media-source">Quelle: <a href="https://www.bild.de/infos/stilberatung/stilberatung/farb--und-typberatung-11570528.bild.html" target="_blank" rel="noopener noreferrer">BILD - 3. August 2011</a></div>
-                </div>
-                
-                <div class="media-slide">
-                    <blockquote class="media-quote">
-                        Anhand der Haare, Haut und Augenfarbe lassen sich vier Grundgenres kategorisieren.
-                    </blockquote>
-                    <div class="media-source">Quelle: <a href="https://www.breuninger.com/de/editorial/farbberatung/farbtyp-test/" target="_blank" rel="noopener noreferrer">Breuninger Editorial - 6. März 2019</a></div>
-                </div>
-                
-                <div class="media-slider-dots">
-                    <span class="media-slider-dot active" onclick="showMediaSlide(0)"></span>
-                    <span class="media-slider-dot" onclick="showMediaSlide(1)"></span>
-                    <span class="media-slider-dot" onclick="showMediaSlide(2)"></span>
+                <div class="cta-buttons">
+                    <button class="cta-btn primary-btn" onclick="scrollToCheckout()">
+                        <span class="btn-icon">📸</span>
+                        <span class="btn-text">Jetzt Foto-Analyse erhalten</span>
+                    </button>
+                    <button class="cta-btn secondary-btn" onclick="scrollToUpgrade()">
+                        <span class="btn-icon">👀</span>
+                        <span class="btn-text">Mehr erfahren</span>
+                    </button>
                 </div>
             </div>
-
-            <!-- MEDIA LOGOS -->
-            <div class="media-logos-container animate-on-scroll">
-                <div class="media-logos-title">Zitiert aus:</div>
-                <div class="media-logos-grid">
-                    <div class="media-logo-placeholder">
-                        <img src="BildLogo.png" alt="BILD Logo" class="logo-image">
+            
+            <div class="simple-photo-slider">
+                <div class="photo-slides-wrapper">
+                    <div class="photo-slide active">
+                        <img src="premium-slide1.png" alt="Ihre persönliche Farbanalyse" class="simple-slide-image">
                     </div>
-                    
-                    <div class="media-logo-placeholder">
-                        <img src="SternLogo.png" alt="STERN Logo" class="logo-image">
+                    <div class="photo-slide">
+                        <img src="premium-slide2.png" alt="Ihre persönliche Farbanalyse" class="simple-slide-image">
                     </div>
-                    
-                    <div class="media-logo-placeholder">
-                        <img src="BreuningerLogo.png" alt="BREUNINGER Logo" class="logo-image">
+                    <div class="photo-slide">
+                        <img src="premium-slide3.png" alt="Ihre persönliche Farbanalyse" class="simple-slide-image">
                     </div>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- PREVIEW SECTION -->
-    <section class="preview-section">
-        <div class="container">
-            <div class="preview-card animate-on-scroll">
-                <h3 class="preview-title">Das erhalten Sie in Ihrer professionellen Farbanalyse</h3>
-                <p class="preview-subtitle">Eine 19-seitige, wissenschaftlich fundierte Analyse mit konkreten Empfehlungen für Ihren Alltag</p>
-                
-                <!-- PACKAGE PREVIEW SLIDERS -->
-                <div class="package-sliders-section">
-                    <div class="package-slider-grid">
-                        <!-- Premium Package Slider -->
-                        <div class="package-slider-container">
-                            <h4 class="slider-title">Ihre persönliche Farbpalette</h4>
-                            <div class="slider-wrapper premium-slider">
-                                <div class="slide active">
-                                    <img src="premium-slide1.png" alt="Farbpalette Beispiel 1" class="slider-image">
-                                </div>
-                                <div class="slide">
-                                    <img src="premium-slide2.png" alt="Farbpalette Beispiel 2" class="slider-image">
-                                </div>
-                                <div class="slide">
-                                    <img src="premium-slide3.png" alt="Farbpalette Beispiel 3" class="slider-image">
-                                </div>
-                                <div class="slide">
-                                    <img src="premium-slide4.png" alt="Farbpalette Beispiel 4" class="slider-image">
-                                </div>
-                                <div class="slide">
-                                    <img src="standard-slide2.png" alt="Analyse Beispiel 2" class="slider-image">
-                                </div>
-                                <div class="slide">
-                                    <img src="standard-slide3.png" alt="Analyse Beispiel 3" class="slider-image">
-                                </div>
-                            </div>
-                            <div class="slider-dots">
-                                <span class="dot active" onclick="currentSlide(1, 'premium')"></span>
-                                <span class="dot" onclick="currentSlide(2, 'premium')"></span>
-                                <span class="dot" onclick="currentSlide(3, 'premium')"></span>
-                                <span class="dot" onclick="currentSlide(4, 'premium')"></span>
-                                <span class="dot" onclick="currentSlide(5, 'premium')"></span>
-                                <span class="dot" onclick="currentSlide(6, 'premium')"></span>
-                            </div>
-                        </div>
+        <!-- CLARA ARBEITSWEISE SECTION -->
+        <div class="clara-work-section animate-on-scroll">
+            <h2 class="work-title">So arbeite ich für Sie</h2>
+            <p class="work-subtitle">Einblick in meine professionelle Analyse-Methode für Ihre optimalen Farben</p>
+            
+            <div class="work-slider-container">
+                <div class="slider-wrapper">
+                    <div class="slide active">
+                        <img src="Arbeit1.png" alt="Clara's Arbeitsweise 1" class="slide-image">
+                    </div>
+                    <div class="slide">
+                        <img src="Arbeit2.png" alt="Clara's Arbeitsweise 2" class="slide-image">
+                    </div>
+                    <div class="slide">
+                        <img src="Arbeit3.png" alt="Clara's Arbeitsweise 3" class="slide-image">
                     </div>
                 </div>
-
-                <!-- CLARA SLIDER SECTION -->
-                <div class="clara-slider-section">
-                    <div class="package-slider-container" style="max-width: 500px; margin: 0 auto;">
-                        <h4 class="slider-title">Claras professionelle Arbeitsweise</h4>
-                        <div class="slider-wrapper clara-slider">
-                            <div class="slide active">
-                                <img src="Arbeit1.png" alt="Clara Arbeit Beispiel 1" class="slider-image">
-                            </div>
-                            <div class="slide">
-                                <img src="Arbeit2.png" alt="Clara Arbeit Beispiel 2" class="slider-image">
-                            </div>
-                            <div class="slide">
-                                <img src="Arbeit3.png" alt="Clara Arbeit Beispiel 3" class="slider-image">
-                            </div>
-                        </div>
-                        <div class="slider-dots">
-                            <span class="dot active" onclick="currentSlide(1, 'clara')"></span>
-                            <span class="dot" onclick="currentSlide(2, 'clara')"></span>
-                            <span class="dot" onclick="currentSlide(3, 'clara')"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="clara-text-section">
-                        <h4 class="clara-title">Ihre Farbexpertin Clara</h4>
-                        <p class="clara-subtitle">Seit Jahren unterstütze ich Frauen dabei, ihre authentische Ausstrahlung zu entdecken. Sie verdienen es, sich jeden Tag selbstbewusst und stilvoll zu fühlen.</p>
-                    </div>
-                </div>
-                    
-                <!-- Money-back guarantee section -->
-                <div class="guarantee-section">
-                    <h4 class="guarantee-title">100% Geld-Zurück-Garantie</h4>
-                    
-                    <div class="guarantee-stats">
-                        <div class="guarantee-avatars">
-                            <img src="Profo1.png" alt="Kundin 1" class="avatar-item" />
-                            <img src="Profo2.png" alt="Kundin 2" class="avatar-item" />
-                            <img src="Profo3.png" alt="Kundin 3" class="avatar-item" />
-                        </div>
-                        <div class="guarantee-rating">
-                            <div class="stars">⭐⭐⭐⭐⭐</div>
-                            <div class="stats-text">Über 2.300 Kundinnen vertrauen Clara's Analyse</div>
-                        </div>
-                    </div>
+                <div class="slider-dots">
+                    <span class="dot active" onclick="currentSlide(1)"></span>
+                    <span class="dot" onclick="currentSlide(2)"></span>
+                    <span class="dot" onclick="currentSlide(3)"></span>
                 </div>
             </div>
         </div>
-    </section>
-            
-    <!-- VIDEO TESTIMONIAL SECTION -->
-    <section class="video-testimonial-section">
-        <div class="container">
-            <div class="video-testimonial-header animate-on-scroll">
-                <h2 class="section-title">Erfahrungen unserer Kundinnen</h2>
-                <p class="section-subtitle">Hören Sie selbst, wie die professionelle Analyse das Leben anderer Frauen bereichert hat</p>
-            </div>
-            
-            <div class="video-testimonial-card animate-on-scroll">
-                <div class="video-container">
-                    <video 
-                        controls 
-                        preload="metadata"
-                        poster="Thumbnail.png"
-                        class="testimonial-video">
-                        <source src="testimonial-video.mp4" type="video/mp4">
-                        Ihr Browser unterstützt das Video-Tag nicht.
-                    </video>
+
+        <!-- MEDIA MENTIONS SECTION -->
+        <section class="media-mentions animate-on-scroll">
+            <div class="media-container">
+                <div class="section-title">
+                    <h2><span class="highlight-text">Presse</span> über Farbberatung</h2>
+                    <p style="font-size: 14px;">Was führende Medien über die Wirkung berichten</p>
                 </div>
                 
-                <div class="video-testimonial-content">
-                    <div class="testimonial-header">
-                        <img src="MartinaPB.png" alt="Testimonial" class="testimonial-avatar">
-                        <div>
-                            <div class="testimonial-name">Martina, 48 Jahre alt</div>
-                            <div class="testimonial-stars">★★★★★</div>
+                <div class="media-slider-container">
+                    <div class="media-slide active">
+                        <blockquote class="media-quote">
+                            Die Farbe der Kleidung verrät – so werden Sie wahrgenommen.
+                        </blockquote>
+                        <div class="media-source">Quelle: <a href="https://www.stern.de/panorama/die-farbe-der-kleidung-verraet--so-werden-sie-wahrgenommen-33203058.html" target="_blank" rel="noopener noreferrer">Stern - 19. Februar 2023</a></div>
+                    </div>
+                    
+                    <div class="media-slide">
+                        <blockquote class="media-quote">
+                            Eine Farb‑ und Typberatung kann wahre Wunder wirken.
+                        </blockquote>
+                        <div class="media-source">Quelle: <a href="https://www.bild.de/infos/stilberatung/stilberatung/farb--und-typberatung-11570528.bild.html" target="_blank" rel="noopener noreferrer">BILD - 3. August 2011</a></div>
+                    </div>
+                    
+                    <div class="media-slide">
+                        <blockquote class="media-quote">
+                            Anhand der Haare, Haut und Augenfarbe lassen sich vier Grundgenres kategorisieren.
+                        </blockquote>
+                        <div class="media-source">Quelle: <a href="https://www.breuninger.com/de/editorial/farbberatung/farbtyp-test/" target="_blank" rel="noopener noreferrer">Breuninger Editorial - 6. März 2019</a></div>
+                    </div>
+                    
+                    <div class="media-slider-dots">
+                        <span class="media-slider-dot active" onclick="showMediaSlide(0)"></span>
+                        <span class="media-slider-dot" onclick="showMediaSlide(1)"></span>
+                        <span class="media-slider-dot" onclick="showMediaSlide(2)"></span>
+                    </div>
+                </div>
+
+                <!-- MEDIA LOGOS -->
+                <div class="media-logos-container">
+                    <div class="media-logos-title">Zitiert aus:</div>
+                    <div class="media-logos-grid">
+                        <div class="media-logo-placeholder">
+                            <img src="BildLogo.png" alt="BILD Logo" class="logo-image">
+                        </div>
+                        
+                        <div class="media-logo-placeholder">
+                            <img src="SternLogo.png" alt="STERN Logo" class="logo-image">
+                        </div>
+                        
+                        <div class="media-logo-placeholder">
+                            <img src="BreuningerLogo.png" alt="BREUNINGER Logo" class="logo-image">
                         </div>
                     </div>
-                    <p class="video-testimonial-text">
-                        "Dank Clara's professioneller Farbberatung hat sich mein Stilbewusstsein grundlegend verändert. Erstmals weiß ich mit Sicherheit, welche Farben meine natürliche Ausstrahlung unterstreichen. Seit der Analyse fühle ich mich authentischer, selbstbewusster und einfach wohl in meiner Haut."
+                </div>
+            </div>
+        </section>
+
+        <!-- PHOTO UPLOAD SECTION -->
+        <div class="photo-upload-section animate-on-scroll">
+            <h3 class="upload-title">Für noch präzisere Ergebnisse</h3>
+            <p class="upload-subtitle">
+                Laden Sie optional ein Foto hoch, damit ich Ihre Analyse noch individueller gestalten kann
+            </p>
+            <button class="upload-button" onclick="scrollToUpgrade()">
+                📸 Foto hochladen für Premium-Analyse
+            </button>
+            <p class="upload-note">
+                *Optional - Sie können auch ohne Foto fortfahren
+            </p>
+        </div>
+
+        <!-- PREMIUM UPGRADE SECTION -->
+        <div class="premium-section animate-on-scroll" id="upgrade-section">
+            <div class="upgrade-header">
+                <h2 class="upgrade-title">Das war erst der Anfang...</h2>
+                <p class="upgrade-subtitle">Ihre <strong>persönliche Foto-Analyse</strong> zeigt Ihnen, was wirklich zu <em>Ihnen</em> passt:</p>
+            </div>
+
+            <!-- PHOTO PREVIEW SECTION -->
+            <div class="photo-preview-section">
+                <h3 class="photo-title">👤 Mit Ihrem Foto erstelle ich speziell für Sie:</h3>
+                <div class="photo-benefits-grid">
+                    <div class="photo-benefit">
+                        <span class="photo-icon">🎨</span>
+                        <span class="photo-text">Analyse Ihres individuellen Hautuntertons</span>
+                    </div>
+                    <div class="photo-benefit">
+                        <span class="photo-icon">👁️</span>
+                        <span class="photo-text">Präzise Bestimmung Ihrer Augenfarb-Nuancen</span>
+                    </div>
+                    <div class="photo-benefit">
+                        <span class="photo-icon">👓</span>
+                        <span class="photo-text">Brillen und Accessoires die zu Ihnen passen</span>
+                    </div>
+                    <div class="photo-benefit">
+                        <span class="photo-icon">👗</span>
+                        <span class="photo-text">Outfit-Kombinationen die Sie strahlen lassen</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comparison-container">
+                <h3 class="comparison-title">Basis-Analyse vs. Ihre persönliche Foto-Analyse</h3>
+                <div class="comparison-grid">
+                    <div class="comparison-column free-column">
+                        <div class="column-header">✅ Basis (soeben erhalten)</div>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon">🎨</span>
+                                <span>Ihr individueller Farbtyp</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🌈</span>
+                                <span>3 perfekte Basis-Farben</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">💡</span>
+                                <span>Grundlegende Styling-Tipps</span>
+                            </li>
+                            <li class="feature-item" style="opacity: 0.6;">
+                                <span class="feature-icon">❓</span>
+                                <span>Nur allgemeine Empfehlungen ohne Foto</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="comparison-column premium-column">
+                        <div class="column-header">💎 Ihre persönliche Foto-Analyse</div>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon">📸</span>
+                                <span>Professionelle Analyse Ihres Fotos</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🌈</span>
+                                <span>45 weitere Farben speziell für Sie</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">👗</span>
+                                <span>6 komplette Outfits die Ihnen schmeicheln</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🛍️</span>
+                                <span>Shopping-Links für Ihre perfekten Teile</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">👓</span>
+                                <span>Brillen und Accessoires passend zu Ihrem Typ</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">📋</span>
+                                <span>19-seitige persönliche Analyse nur für Sie</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🎯</span>
+                                <span>95% Genauigkeit durch Ihre Foto-Analyse</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PREMIUM PREVIEW -->
+            <div class="premium-preview">
+                <div class="preview-content">
+                    <h4 style="text-align: center; margin-bottom: 20px; font-size: 18px; font-weight: 600;">
+                        So sieht Ihre persönliche Foto-Analyse aus:
+                    </h4>
+                    <div class="preview-grid">
+                        <div class="preview-swatch"></div>
+                        <div class="preview-swatch"></div>
+                        <div class="preview-swatch"></div>
+                        <div class="preview-swatch"></div>
+                        <div class="preview-swatch"></div>
+                        <div class="preview-swatch"></div>
+                        <div class="preview-swatch"></div>
+                        <div class="preview-swatch"></div>
+                        <div class="preview-swatch"></div>
+                        <div class="preview-swatch"></div>
+                    </div>
+                    <p style="text-align: center; color: var(--text-light); font-size: 15px; margin-top: 15px;">
+                        + Outfit-Guides für Sie + Brillen & Accessoires + Shopping-Links + Farbkarte
                     </p>
                 </div>
+                <div class="unlock-overlay">
+                    <span class="lock-icon">🔓</span>
+                    <span>Foto hochladen & für 39,99€ Ihre persönliche Analyse erhalten</span>
+                </div>
             </div>
         </div>
-    </section>
 
-    <!-- PRICING -->
-    <section class="pricing-section" id="pricing">
-        <div class="container">
-            <div class="pricing-header animate-on-scroll">
+        <!-- PRICING SECTION -->
+        <div class="pricing-section animate-on-scroll">
+            <div class="pricing-header">
                 <h2 class="section-title">Investieren Sie in Ihre authentische Ausstrahlung</h2>
                 <p class="section-subtitle">🇩🇪 Made in Germany • ✅ 14 Tage-Geld-Zurück-Garantien • 💜 Einmalzahlung - kein Abo </p>
             </div>
@@ -1758,7 +2127,7 @@
                 <span class="live-text">Heute bereits 7 Analysen durchgeführt</span>
             </div>
             
-            <div class="pricing-card animate-on-scroll">
+            <div class="pricing-card">
                 <div class="popular-badge">✨ Limitierte Verfügbarkeit</div>
                 <div class="pricing-header-card">
                     <h3 class="pricing-title">Sichern Sie sich Ihre professionelle Farbanalyse</h3>
@@ -1768,7 +2137,6 @@
                             <span class="arrow">→</span>
                             <span class="price-new">Heute nur 39,99€</span>
                         </div>
-                        
                     </div>
                     <p class="pricing-subtitle">💡 Eine Investition, die sich lohnt: Statt 300€ für eine persönliche Stilberatung erhalten Sie hier eine fundierte Analyse in nur 24 Stunden.</p>
                 </div>
@@ -1802,10 +2170,14 @@
                     </div>
                 </div>
                 
-                <button class="cta-button" onclick="selectAnalysis()">
+                <button class="cta-button" onclick="upgradeToFull()">
                     Foto hochladen & professionelle Analyse in 24h erhalten
                 </button>
                  
+                <div class="klarna-payment">
+                    <span class="klarna-text">Oder in 3 Raten zahlen mit</span>
+                    <span class="klarna-logo">Klarna</span>
+                </div>
                 
                 <div class="payment-methods">
                     <div class="payment-logo">
@@ -1841,89 +2213,91 @@
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- TESTIMONIALS -->
-    <section class="testimonials-section">
-        <div class="container">
-            <div class="pricing-header animate-on-scroll">
-                <h2 class="section-title">Transformationen unserer Kundinnen</h2>
-            </div>
-            
-            <div class="testimonials-grid">
-                <div class="testimonial animate-on-scroll">
-                    <div class="testimonial-before-after">
-                        <img src="Sarah.png" alt="Sarah's Transformation" class="before-after-image" />
-                    </div>
-                    <div class="testimonial-header">
-                        <img src="SarahPB.png" alt="Kundin Testimonial" class="testimonial-avatar">
-                        <div>
-                            <div class="testimonial-name">Sarah K., 52 Jahre</div>
-                            <div class="testimonial-stars">★★★★★</div>
-                        </div>
-                    </div>
-                    <p class="testimonial-text">"Anfangs war ich skeptisch bezüglich des Preises, da ich befürchtete, es handele sich um ein weiteres automatisiertes System. Doch ich lag völlig falsch. Die Analyse war außergewöhnlich detailliert, stimmig und präzise auf mich zugeschnitten. Seitdem habe ich kein einziges Kleidungsstück mehr gekauft, das nicht zu mir passt. Es fühlt sich an, als hätte ich endlich meinen authentischen Stil gefunden."</p>
+        <!-- TESTIMONIALS SECTION -->
+        <section class="testimonials-section">
+            <div class="container">
+                <div class="pricing-header animate-on-scroll">
+                    <h2 class="section-title">Transformationen unserer Kundinnen</h2>
                 </div>
                 
-                <div class="testimonial animate-on-scroll">
-                    <div class="testimonial-before-after">
-                        <img src="Lisa.png" alt="Lisa's Transformation" class="before-after-image" />
-                    </div>
-                    <div class="testimonial-header">
-                        <img src="LisaPB.png" alt="Kundin Testimonial" class="testimonial-avatar">
-                        <div>
-                            <div class="testimonial-name">Lisa M., 47 Jahre</div>
-                            <div class="testimonial-stars">★★★★★</div>
+                <div class="testimonials-grid">
+                    <div class="testimonial animate-on-scroll">
+                        <div class="testimonial-before-after">
+                            <img src="Sarah.png" alt="Sarah's Transformation" class="before-after-image" />
                         </div>
-                    </div>
-                    <p class="testimonial-text">"Jahrelang habe ich Geld für Kleidung ausgegeben, die dann ungetragen im Schrank verblieb. Diese Analyse war eine meiner besten Entscheidungen, da sie mir konkret aufzeigte, worauf ich wirklich achten sollte. Das PDF hängt ausgedruckt in meinem Kleiderschrank. Ich erhalte seitdem mehr Komplimente als in den vergangenen Jahren zusammen."</p>
-                </div>
-                
-                <div class="testimonial animate-on-scroll">
-                    <div class="testimonial-before-after">
-                        <img src="Anna.png" alt="Anna's Transformation" class="before-after-image" />
-                    </div>
-                    <div class="testimonial-header">
-                        <img src="AnnaPB.png" alt="Kundin Testimonial" class="testimonial-avatar">
-                        <div>
-                            <div class="testimonial-name">Anna B., 32 Jahre</div>
-                            <div class="testimonial-stars">★★★★★</div>
+                        <div class="testimonial-header">
+                            <img src="SarahPB.png" alt="Kundin Testimonial" class="testimonial-avatar">
+                            <div>
+                                <div class="testimonial-name">Sarah K., 52 Jahre</div>
+                                <div class="testimonial-stars">★★★★★</div>
+                            </div>
                         </div>
+                        <p class="testimonial-text">"Anfangs war ich skeptisch bezüglich des Preises, da ich befürchtete, es handele sich um ein weiteres automatisiertes System. Doch ich lag völlig falsch. Die Analyse war außergewöhnlich detailliert, stimmig und präzise auf mich zugeschnitten. Seitdem habe ich kein einziges Kleidungsstück mehr gekauft, das nicht zu mir passt. Es fühlt sich an, als hätte ich endlich meinen authentischen Stil gefunden."</p>
                     </div>
-                    <p class="testimonial-text">"Clara hat meine Figur und meinen Typ äußerst präzise analysiert. Die Shopping-Empfehlungen sind von unschätzbarem Wert – ich spare sowohl Zeit als auch Geld und fühle mich in meiner Kleidung endlich wohl."</p>
+                    
+                    <div class="testimonial animate-on-scroll">
+                        <div class="testimonial-before-after">
+                            <img src="Lisa.png" alt="Lisa's Transformation" class="before-after-image" />
+                        </div>
+                        <div class="testimonial-header">
+                            <img src="LisaPB.png" alt="Kundin Testimonial" class="testimonial-avatar">
+                            <div>
+                                <div class="testimonial-name">Lisa M., 47 Jahre</div>
+                                <div class="testimonial-stars">★★★★★</div>
+                            </div>
+                        </div>
+                        <p class="testimonial-text">"Jahrelang habe ich Geld für Kleidung ausgegeben, die dann ungetragen im Schrank verblieb. Diese Analyse war eine meiner besten Entscheidungen, da sie mir konkret aufzeigte, worauf ich wirklich achten sollte. Das PDF hängt ausgedruckt in meinem Kleiderschrank. Ich erhalte seitdem mehr Komplimente als in den vergangenen Jahren zusammen."</p>
+                    </div>
+                    
+                    <div class="testimonial animate-on-scroll">
+                        <div class="testimonial-before-after">
+                            <img src="Anna.png" alt="Anna's Transformation" class="before-after-image" />
+                        </div>
+                        <div class="testimonial-header">
+                            <img src="AnnaPB.png" alt="Kundin Testimonial" class="testimonial-avatar">
+                            <div>
+                                <div class="testimonial-name">Anna B., 32 Jahre</div>
+                                <div class="testimonial-stars">★★★★★</div>
+                            </div>
+                        </div>
+                        <p class="testimonial-text">"Clara hat meine Figur und meinen Typ äußerst präzise analysiert. Die Shopping-Empfehlungen sind von unschätzbarem Wert – ich spare sowohl Zeit als auch Geld und fühle mich in meiner Kleidung endlich wohl."</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <!-- FOOTER -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4>Clara Style-Analyse</h4>
-                    <p>Individuelle Style-Beratung basierend auf professioneller Farb- und Style-Analyse.</p>
+                    <h4>Clara's Farbanalyse</h4>
+                    <p>Professionelle Farbberatung für Ihre authentische Ausstrahlung. Entdecken Sie Ihre perfekten Farben und entwickeln Sie Ihren individuellen Stil.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Service</h4>
+                    <ul>
+                        <li><a href="/geld-zurueck" style="color: #22C55E; font-weight: 600;">🛡️ Geld-zurück-Garantie</a></li>
+                        <li><a href="mailto:support@claras-farbanalyse.de">📧 E-Mail Support</a></li>
+                        <li><a href="/faq">❓ Häufige Fragen</a></li>
+                    </ul>
                 </div>
                 
                 <div class="footer-section">
                     <h4>Rechtliches</h4>
                     <ul>
-                        <li><a href="/datenschutz.html">Datenschutz</a></li>
-                        <li><a href="/impressum.html">Impressum</a></li>
-                        <li><a href="/agb.html">AGB</a></li>
-                        <li><a href="/widerruf.html">Widerrufsrecht</a></li>
+                        <li><a href="/datenschutz">Datenschutz</a></li>
+                        <li><a href="/impressum">Impressum</a></li>
+                        <li><a href="/agb">AGB</a></li>
+                        <li><a href="/widerruf">Widerrufsrecht</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-section">
-                    <h4>Support</h4>
-                    <ul>
-                        <li><a href="/geld-zurueck" style="color: #22C55E; font-weight: 600;">Geld-zurück-Garantie</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Sicherheit</h4>
+                    <h4>Sicherheit & Qualität</h4>
                     <div class="security-badges">
                         <div class="security-badge">
                             🔒 SSL-verschlüsselt
@@ -1934,328 +2308,88 @@
                         <div class="security-badge">
                             ✓ DSGVO-konform
                         </div>
+                        <div class="security-badge">
+                            ⭐ 2.300+ zufriedene Kundinnen
+                        </div>
                     </div>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 Clara's Style-Kompass. Alle Rechte vorbehalten.</p>
+                <p>&copy; 2025 Clara's Farbanalyse. Alle Rechte vorbehalten.</p>
+                <p style="margin-top: 10px; font-size: 13px; opacity: 0.8;">
+                    Professionelle Farbberatung • Individueller Stil • Authentische Ausstrahlung
+                </p>
             </div>
         </div>
     </footer>
 
     <script>
-        // PACKAGE SLIDERS FUNCTIONALITY
-        let currentSlideIndex = { standard: 1, premium: 1, clara: 1 };
-        let slideIntervals = { standard: null, premium: null, clara: null };
+        // SLIDER FUNCTIONALITY
+        let currentSlideIndex = 1;
+        let currentPaletteSlideIndex = 1;
 
-        function showSlide(n, sliderType) {
-            let slides, dots;
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
             
-            if (sliderType === 'clara') {
-                slides = document.querySelectorAll('.clara-slider .slide');
-                dots = document.querySelectorAll('.clara-slider + .slider-dots .dot');
-            } else {
-                slides = document.querySelectorAll(`.${sliderType}-slider .slide`);
-                dots = document.querySelectorAll(`.${sliderType}-slider + .slider-dots .dot`);
-            }
-            
-            if (n > slides.length) { currentSlideIndex[sliderType] = 1; }
-            if (n < 1) { currentSlideIndex[sliderType] = slides.length; }
+            if (n > slides.length) { currentSlideIndex = 1; }
+            if (n < 1) { currentSlideIndex = slides.length; }
             
             slides.forEach(slide => slide.classList.remove('active'));
             dots.forEach(dot => dot.classList.remove('active'));
             
-            if (slides[currentSlideIndex[sliderType] - 1]) {
-                slides[currentSlideIndex[sliderType] - 1].classList.add('active');
+            if (slides[currentSlideIndex - 1]) {
+                slides[currentSlideIndex - 1].classList.add('active');
             }
-            if (dots[currentSlideIndex[sliderType] - 1]) {
-                dots[currentSlideIndex[sliderType] - 1].classList.add('active');
-            }
-        }
-
-        function nextSlide(sliderType) {
-            currentSlideIndex[sliderType]++;
-            showSlide(currentSlideIndex[sliderType], sliderType);
-        }
-
-        function currentSlide(n, sliderType) {
-            currentSlideIndex[sliderType] = n;
-            showSlide(currentSlideIndex[sliderType], sliderType);
-            
-            // Reset the interval when manually clicking
-            clearInterval(slideIntervals[sliderType]);
-            startSlideInterval(sliderType);
-        }
-
-        function startSlideInterval(sliderType) {
-            slideIntervals[sliderType] = setInterval(() => nextSlide(sliderType), 4000); // 4 seconds
-        }
-
-        function initializeSliders() {
-            // Initialize all sliders
-            showSlide(currentSlideIndex.standard, 'standard');
-            showSlide(currentSlideIndex.premium, 'premium');
-            showSlide(currentSlideIndex.clara, 'clara');
-            
-            // Start auto-advance for all sliders
-            startSlideInterval('standard');
-            startSlideInterval('premium');
-            startSlideInterval('clara');
-        }
-
-        async function selectAnalysis() {
-            // TikTok Event: AddToCart
-            if (typeof ttq !== 'undefined') {
-                ttq.track('AddToCart', {
-                    value: 39.99,
-                    currency: 'EUR',
-                    content_type: 'product',
-                    content_id: 'color_analysis',
-                    content_name: 'Persönliche Farbanalyse'
-                });
-            }
-
-            const button = document.querySelector('.cta-button');
-            const originalText = button.textContent;
-            
-            button.disabled = true;
-            button.textContent = 'Wird vorbereitet...';
-            
-            try {
-                const userData = loadAndDisplayQuizData();
-                
-                button.textContent = 'Daten werden übertragen...';
-                
-                // Send data to Supabase
-                const response = await fetch('/api/checkout', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        ...userData,
-                        createStripeSession: false,
-                        email: 'kunde@test.de'
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to save data');
-                }
-                
-                // TikTok Event: InitiateCheckout
-                if (typeof ttq !== 'undefined') {
-                    ttq.track('InitiateCheckout', {
-                        value: 39.99,
-                        currency: 'EUR',
-                        content_type: 'product',
-                        content_id: 'color_analysis'
-                    });
-                }
-
-                button.textContent = 'Daten gespeichert! Weiterleitung...';
-                
-                setTimeout(() => {
-                    // Hier würde normalerweise der Stripe-Link stehen
-                    window.location.href = '/step7';
-                }, 1000);
-                
-            } catch (error) {
-                console.error('Checkout Fehler:', error);
-                button.textContent = 'Fehler - Bitte erneut versuchen';
-                button.disabled = false;
-                
-                setTimeout(() => {
-                    button.textContent = originalText;
-                }, 3000);
+            if (dots[currentSlideIndex - 1]) {
+                dots[currentSlideIndex - 1].classList.add('active');
             }
         }
 
-        // LOAD AND DISPLAY QUIZ DATA
-        function loadAndDisplayQuizData() {
-            console.log('=== LADE QUIZ-DATEN ===');
+        function showPaletteSlide(n) {
+            const slides = document.querySelectorAll('.palette-slide');
+            const dots = document.querySelectorAll('.palette-dot');
             
-            // Simulate data from localStorage/quiz (from original version)
-            const simulatedData = {
-                Augenfarbe: localStorage.getItem('Augenfarbe') || 'blaue Augen',
-                Sonnenverhältnis: localStorage.getItem('Sonnenverhältnis') || 'bräunst schnell',
-                Kleidungsstil: localStorage.getItem('Kleidungsstil') || 'elegant klassisch'
-            };
+            if (n > slides.length) { currentPaletteSlideIndex = 1; }
+            if (n < 1) { currentPaletteSlideIndex = slides.length; }
             
-            console.log('Geladene Quiz-Daten:', simulatedData);
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
             
-            // AUGENFARBE-MAPPING
-            let foundEyeColor = simulatedData.Augenfarbe || '';
-            let detectedEyeColor = 'Blaue Augen';
-            
-            if (foundEyeColor) {
-                const eyeLower = foundEyeColor.toLowerCase();
-                if (eyeLower.includes('braun')) {
-                    detectedEyeColor = 'Braune Augen';
-                } else if (eyeLower.includes('gruen') || eyeLower.includes('grün')) {
-                    detectedEyeColor = 'Grüne Augen';
-                } else if (eyeLower.includes('grau')) {
-                    detectedEyeColor = 'Graue Augen';
-                } else if (eyeLower.includes('misch')) {
-                    detectedEyeColor = 'Mischaugen (mehrere Farben)';
-                } else if (eyeLower.includes('blau')) {
-                    detectedEyeColor = 'Blaue Augen';
-                }
+            if (slides[currentPaletteSlideIndex - 1]) {
+                slides[currentPaletteSlideIndex - 1].classList.add('active');
             }
-            
-            // HAUTTYP-MAPPING
-            let foundSkinType = simulatedData.Sonnenverhältnis || '';
-            let detectedSkinType = 'Bräune schnell';
-            
-            if (foundSkinType) {
-                const skinLower = foundSkinType.toLowerCase();
-                if (skinLower.includes('blass') || skinLower.includes('meide')) {
-                    detectedSkinType = 'Meide die Sonne (sehr heller Hauttyp)';
-                } else if (skinLower.includes('rot')) {
-                    detectedSkinType = 'Werde rot statt braun';
-                } else if (skinLower.includes('langsam')) {
-                    detectedSkinType = 'Bräune langsam aber gleichmäßig';
-                } else if (skinLower.includes('schnell')) {
-                    detectedSkinType = 'Bräune schnell und tief';
-                }
-            }
-            
-            // STYLE-MAPPING
-            let foundStyle = simulatedData.Kleidungsstil || '';
-            let detectedStyle = 'Elegant & klassisch';
-            
-            if (foundStyle) {
-                const styleLower = foundStyle.toLowerCase();
-                if (styleLower.includes('schlicht') || styleLower.includes('natürlich')) {
-                    detectedStyle = 'Natürlich & schlicht';
-                } else if (styleLower.includes('verspielt') || styleLower.includes('kreativ')) {
-                    detectedStyle = 'Kreativ & verspielt';
-                } else if (styleLower.includes('modern') || styleLower.includes('minimalistisch')) {
-                    detectedStyle = 'Modern & minimalistisch';
-                } else if (styleLower.includes('elegant') || styleLower.includes('klassisch')) {
-                    detectedStyle = 'Elegant & klassisch';
-                }
-            }
-            
-            console.log('=== ERKANNTE WERTE ===');
-            console.log('Augenfarbe:', detectedEyeColor);
-            console.log('Hauttyp:', detectedSkinType);
-            console.log('Style:', detectedStyle);
-            
-            // UPDATE HTML ELEMENTS
-            updateElementSafely('user-eyes', detectedEyeColor);
-            updateElementSafely('user-skin', detectedSkinType);
-            updateElementSafely('user-style', detectedStyle);
-            
-            return {
-                timestamp: new Date().toISOString(),
-                source: 'color_analysis_quiz',
-                eyes: detectedEyeColor,
-                skin: detectedSkinType,
-                style: detectedStyle,
-                package: 'premium'
-            };
-        }
-
-        function updateElementSafely(elementId, value) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.textContent = value;
-                console.log(`✅ Updated ${elementId} mit: ${value}`);
-            } else {
-                console.error(`❌ Element nicht gefunden: ${elementId}`);
+            if (dots[currentPaletteSlideIndex - 1]) {
+                dots[currentPaletteSlideIndex - 1].classList.add('active');
             }
         }
 
-        // SCROLL ANIMATIONS
-        function initScrollAnimations() {
-            const elements = document.querySelectorAll('.animate-on-scroll');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            });
-
-            elements.forEach(element => {
-                observer.observe(element);
-            });
+        function currentSlide(n) {
+            currentSlideIndex = n;
+            showSlide(currentSlideIndex);
         }
 
-        function scrollToCheckout() {
-            const pricingSection = document.getElementById('pricing');
-            const mediaSection = document.querySelector('.media-mentions');
-            
-            if (pricingSection && mediaSection) {
-                const finalTarget = pricingSection.getBoundingClientRect().top + window.pageYOffset;
-                const mediaTarget = mediaSection.getBoundingClientRect().top + window.pageYOffset;
-                const startPosition = window.pageYOffset;
-                
-                // Phase 1: Langsam zu Media Section (1.2 Sekunden)
-                const phase1Duration = 1200;
-                const phase1Distance = mediaTarget - startPosition;
-                let phase1Start = null;
-                
-                function phase1Animation(currentTime) {
-                    if (phase1Start === null) phase1Start = currentTime;
-                    const timeElapsed = currentTime - phase1Start;
-                    const progress = Math.min(timeElapsed / phase1Duration, 1);
-                    
-                    // Sanfte Easing-Funktion für langsamen Start
-                    const ease = progress * progress * (3 - 2 * progress); // Smooth step
-                    
-                    window.scrollTo(0, startPosition + phase1Distance * ease);
-                    
-                    if (timeElapsed < phase1Duration) {
-                        requestAnimationFrame(phase1Animation);
-                    } else {
-                        // Direkt zu Phase 2 ohne Pause
-                        startPhase2();
-                    }
-                }
-                
-                // Phase 2: Schnell zum Pricing (0.8 Sekunden)
-                function startPhase2() {
-                    const phase2Duration = 800;
-                    const currentPos = window.pageYOffset;
-                    const phase2Distance = finalTarget - currentPos;
-                    let phase2Start = null;
-                    
-                    function phase2Animation(currentTime) {
-                        if (phase2Start === null) phase2Start = currentTime;
-                        const timeElapsed = currentTime - phase2Start;
-                        const progress = Math.min(timeElapsed / phase2Duration, 1);
-                        
-                        // Schnellere Easing-Funktion
-                        const ease = progress < 0.5
-                            ? 4 * progress * progress * progress
-                            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-                        
-                        window.scrollTo(0, currentPos + phase2Distance * ease);
-                        
-                        if (timeElapsed < phase2Duration) {
-                            requestAnimationFrame(phase2Animation);
-                        }
-                    }
-                    
-                    requestAnimationFrame(phase2Animation);
-                }
-                
-                // Starte Phase 1
-                requestAnimationFrame(phase1Animation);
-            }
+        function currentPaletteSlide(n) {
+            currentPaletteSlideIndex = n;
+            showPaletteSlide(currentPaletteSlideIndex);
         }
 
+        function nextSlide() {
+            currentSlideIndex++;
+            showSlide(currentSlideIndex);
+        }
+
+        function nextPaletteSlide() {
+            currentPaletteSlideIndex++;
+            showPaletteSlide(currentPaletteSlideIndex);
+        }
+
+        // Auto-advance sliders
+        setInterval(nextSlide, 4000);
+        
         // MEDIA SLIDER FUNCTIONALITY
         let currentMediaSlide = 0;
-        const mediaSlides = document.querySelectorAll('.media-slide');
-        const mediaDots = document.querySelectorAll('.media-slider-dot');
 
         function showMediaSlide(index) {
             // Hide all slides
@@ -2282,20 +2416,463 @@
             setInterval(() => {
                 currentMediaSlide = (currentMediaSlide + 1) % 3;
                 showMediaSlide(currentMediaSlide);
-            }, 4000);
+            }, 5000);
         }
 
-        // INITIALIZE EVERYTHING
+        // Auto-advance palette slider
+        function initializePaletteSlider() {
+            setInterval(nextPaletteSlide, 4500);
+        }
+
+        // FARBTYP-BESTIMMUNG ALGORITHMUS
+        function determineColorType() {
+            console.log('=== BESTIMME FARBTYP ===');
+            
+            // Lade Quiz-Antworten
+            const answers = {
+                eyes: localStorage.getItem('Augenfarbe') || '',
+                skin: localStorage.getItem('Sonnenverhältnis') || '',
+                jewelry: localStorage.getItem('SchmuckGoldSilber') || '',
+                hair: localStorage.getItem('hairColor') || '',
+                style: localStorage.getItem('Kleidungsstil') || ''
+            };
+            
+            console.log('Quiz-Antworten:', answers);
+            
+            let warm = 0;
+            let cool = 0;
+            let light = 0;
+            let deep = 0;
+            let clear = 0;
+            let muted = 0;
+            
+            // AUGENFARBE BEWERTUNG
+            const eyeLower = answers.eyes.toLowerCase();
+            if (eyeLower.includes('braun')) {
+                warm += 1;
+                deep += 1;
+                if (eyeLower.includes('hell') || eyeLower.includes('golden')) clear += 1;
+                else muted += 1;
+            } else if (eyeLower.includes('blau')) {
+                cool += 1;
+                if (eyeLower.includes('hell') || eyeLower.includes('klar')) {
+                    light += 1;
+                    clear += 1;
+                } else {
+                    deep += 1;
+                    muted += 1;
+                }
+            } else if (eyeLower.includes('gruen') || eyeLower.includes('grün')) {
+                warm += 1;
+                light += 1;
+                clear += 1;
+            } else if (eyeLower.includes('grau')) {
+                cool += 1;
+                light += 1;
+                muted += 1;
+            }
+            
+            // HAUTTYP BEWERTUNG
+            const skinLower = answers.skin.toLowerCase();
+            if (skinLower.includes('schnell') || skinLower.includes('goldbraun')) {
+                warm += 2;
+                deep += 1;
+                clear += 1;
+            } else if (skinLower.includes('rot') || skinLower.includes('blass') || skinLower.includes('meide')) {
+                cool += 1;
+                light += 2;
+                muted += 1;
+            } else if (skinLower.includes('langsam')) {
+                light += 1;
+                muted += 1;
+            }
+            
+            // SCHMUCK BEWERTUNG
+            const jewelryLower = answers.jewelry.toLowerCase();
+            if (jewelryLower.includes('gold')) {
+                warm += 2;
+                clear += 1;
+            } else if (jewelryLower.includes('silber')) {
+                cool += 2;
+                muted += 1;
+            }
+            
+            console.log('Scores - Warm:', warm, 'Cool:', cool, 'Light:', light, 'Deep:', deep, 'Clear:', clear, 'Muted:', muted);
+            
+            // BERECHNE CONFIDENCE-PROZENTSATZ
+            const totalPoints = warm + cool + light + deep + clear + muted;
+            let confidence = 55; // Basis-Confidence für Quiz ohne Foto
+            
+            // Je eindeutiger die Antworten, desto höher die Confidence
+            let dominantScore = 0;
+            let secondScore = 0;
+            
+            // Finde die zwei höchsten Scores
+            const scores = [warm, cool, light, deep, clear, muted];
+            scores.sort((a, b) => b - a);
+            dominantScore = scores[0];
+            secondScore = scores[1];
+            
+            // Eindeutigkeit = Unterschied zwischen höchstem und zweithöchstem Score
+            const clarity = dominantScore - secondScore;
+            
+            // Confidence basierend auf Eindeutigkeit: 55% - 78%
+            if (clarity >= 3) confidence = 78; // Sehr eindeutig
+            else if (clarity >= 2) confidence = 72; // Ziemlich eindeutig  
+            else if (clarity >= 1) confidence = 67; // Etwas eindeutig
+            else confidence = 62; // Wenig eindeutig
+            
+            // Bonus für mehr Antworten (falls alle Fragen beantwortet)
+            if (totalPoints >= 8) confidence += 2;
+            
+            console.log('Clarity:', clarity, 'Final confidence:', confidence + '%');
+            
+            // 12 SPEZIFISCHE FARBTYPEN BESTIMMUNG - NUR 3 TOP FARBEN
+            let colorType = '';
+            let typeEmoji = '';
+            let colors = [];
+            let tips = [];
+            
+            if (warm > cool && light > deep && clear > muted) {
+                colorType = 'Klarer Frühling';
+                typeEmoji = '🌞';
+                colors = [
+                    { color: '#FFD700', name: 'Sonnengelb' },
+                    { color: '#00B2A9', name: 'Türkisblau' },
+                    { color: '#F7A072', name: 'Knalliges Apricot' }
+                ];
+            } else if (warm > cool && light > deep && muted >= clear) {
+                colorType = 'Heller Frühling';
+                typeEmoji = '🌸';
+                colors = [
+                    { color: '#FDEBD0', name: 'Soft Apricot' },
+                    { color: '#B4DFAA', name: 'Frisches Mintgrün' },
+                    { color: '#FFDD94', name: 'Helles Goldgelb' }
+                ];
+            } else if (warm > cool && light > deep) {
+                colorType = 'Warmer Frühling';
+                typeEmoji = '🌼';
+                colors = [
+                    { color: '#F6BE8A', name: 'Koralle' },
+                    { color: '#FFD966', name: 'Goldgelb' },
+                    { color: '#A4C686', name: 'Apfelgrün' }
+                ];
+            } else if (warm > cool && deep >= light && clear > muted) {
+                colorType = 'Warmer Herbst';
+                typeEmoji = '🍁';
+                colors = [
+                    { color: '#C97B63', name: 'Terracotta' },
+                    { color: '#D6A77A', name: 'Kürbis' },
+                    { color: '#9DAD6F', name: 'Olivgrün' }
+                ];
+            } else if (warm > cool && deep >= light && muted >= clear) {
+                colorType = 'Gedämpfter Herbst';
+                typeEmoji = '🌰';
+                colors = [
+                    { color: '#BDAA94', name: 'Taupebeige' },
+                    { color: '#A67B5B', name: 'Rostbraun' },
+                    { color: '#78866B', name: 'Moosgrün' }
+                ];
+            } else if (warm > cool && deep >= light) {
+                colorType = 'Tiefer Herbst';
+                typeEmoji = '🍂';
+                colors = [
+                    { color: '#A85D3C', name: 'Kupfer' },
+                    { color: '#6C3E2A', name: 'Schokobraun' },
+                    { color: '#B7A75A', name: 'Senfgelb' }
+                ];
+            } else if (cool >= warm && light > deep && clear <= muted) {
+                colorType = 'Heller Sommer';
+                typeEmoji = '❄️';
+                colors = [
+                    { color: '#E6D0DE', name: 'Rosé' },
+                    { color: '#C0D6DF', name: 'Hellblau' },
+                    { color: '#C8C3E3', name: 'Lavendel' }
+                ];
+            } else if (cool >= warm && light > deep && muted > clear) {
+                colorType = 'Gedämpfter Sommer';
+                typeEmoji = '🌸';
+                colors = [
+                    { color: '#B9AFA3', name: 'Staubrosa' },
+                    { color: '#A4B6C1', name: 'Nebelblau' },
+                    { color: '#BDA4C4', name: 'Flieder' }
+                ];
+            } else if (cool >= warm && light > deep) {
+                colorType = 'Kühler Sommer';
+                typeEmoji = '🌫️';
+                colors = [
+                    { color: '#C4B6D7', name: 'Kühles Flieder' },
+                    { color: '#8EA4B8', name: 'Eisblau' },
+                    { color: '#E4CBDC', name: 'Altrosa' }
+                ];
+            } else if (cool >= warm && deep >= light && clear > muted) {
+                colorType = 'Klarer Winter';
+                typeEmoji = '🧊';
+                colors = [
+                    { color: '#E60026', name: 'Signalrot' },
+                    { color: '#00AEEF', name: 'Kühles Cyan' },
+                    { color: '#1C1C1C', name: 'Tiefschwarz' }
+                ];
+            } else if (cool >= warm && deep >= light && muted > clear) {
+                colorType = 'Kühler Winter';
+                typeEmoji = '🌙';
+                colors = [
+                    { color: '#003B73', name: 'Marineblau' },
+                    { color: '#CF1B5D', name: 'Pinkrot' },
+                    { color: '#92A8D1', name: 'Periblau' }
+                ];
+            } else {
+                colorType = 'Tiefer Winter';
+                typeEmoji = '🖤';
+                colors = [
+                    { color: '#2E2E2E', name: 'Anthrazit' },
+                    { color: '#5A3E63', name: 'Pflaume' },
+                    { color: '#1D4E89', name: 'Tiefes Blau' }
+                ];
+            }
+            
+            // Generiere passende Tipps basierend auf dem Farbtyp
+            if (colorType.includes('Frühling')) {
+                tips = [
+                    { icon: '✅', text: 'Setzen Sie auf warme, helle Töne und klare Farben' },
+                    { icon: '❌', text: 'Vermeiden Sie kalte Grau- und dunkle Schwarztöne' }
+                ];
+            } else if (colorType.includes('Sommer')) {
+                tips = [
+                    { icon: '✅', text: 'Kühle, gedämpfte Farben und sanfte Töne stehen Ihnen perfekt' },
+                    { icon: '❌', text: 'Vermeiden Sie kräftige Orange- und warme Brauntöne' }
+                ];
+            } else if (colorType.includes('Herbst')) {
+                tips = [
+                    { icon: '✅', text: 'Erdige, warme Farben und tiefe Töne sind ideal für Sie' },
+                    { icon: '❌', text: 'Meiden Sie kalte Pink- und kühle Blautöne' }
+                ];
+            } else {
+                tips = [
+                    { icon: '✅', text: 'Klare, intensive Farben und hohe Kontraste sind perfekt' },
+                    { icon: '❌', text: 'Vermeiden Sie gedeckte, warme Braun- und Orangetöne' }
+                ];
+            }
+            
+            console.log('Ermittelter Farbtyp:', colorType, 'mit', confidence + '% Confidence');
+            
+            return { colorType: typeEmoji + ' ' + colorType, colors, tips, confidence };
+        }
+
+        function displayResults() {
+            const result = determineColorType();
+            
+            // Farbtyp mit schickem Prozent-Design anzeigen
+            document.getElementById('colorTypeDisplay').innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                    <span style="font-size: 18px; font-weight: 700;">${result.colorType}</span>
+                    <div style="background: white; padding: 6px 12px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid rgba(102, 126, 234, 0.2);">
+                        <span style="font-size: 13px; color: #667eea; font-weight: 600; letter-spacing: 0.5px;">${result.confidence}% ÜBEREINSTIMMUNG</span>
+                    </div>
+                </div>
+            `;
+            
+            // Basis-Farben anzeigen
+            const colorsGrid = document.getElementById('colorsGrid');
+            colorsGrid.innerHTML = '';
+            
+            result.colors.forEach(colorObj => {
+                const colorCard = document.createElement('div');
+                colorCard.className = 'color-card';
+                colorCard.innerHTML = `
+                    <div class="color-swatch" style="background-color: ${colorObj.color};"></div>
+                    <div class="color-name">${colorObj.name}</div>
+                `;
+                colorsGrid.appendChild(colorCard);
+            });
+            
+            // Styling-Tipps anzeigen
+            const tipsContainer = document.getElementById('stylingTips');
+            tipsContainer.innerHTML = '';
+            
+            result.tips.forEach(tip => {
+                const tipDiv = document.createElement('div');
+                tipDiv.className = 'tip-item';
+                tipDiv.innerHTML = `
+                    <span class="tip-icon">${tip.icon}</span>
+                    <span>${tip.text}</span>
+                `;
+                tipsContainer.appendChild(tipDiv);
+            });
+        }
+
+        function scrollToUpgrade() {
+            document.getElementById('upgrade-section').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+
+        async function upgradeToFull() {
+            // TikTok Event: AddToCart
+            if (typeof ttq !== 'undefined') {
+                ttq.track('AddToCart', {
+                    value: 39.99,
+                    currency: 'EUR',
+                    content_type: 'product',
+                    content_id: 'color_analysis_premium',
+                    content_name: 'Premium Farbanalyse'
+                });
+            }
+
+            const button = document.querySelector('.cta-button');
+            const originalText = button.textContent;
+            
+            button.disabled = true;
+            button.textContent = 'Verarbeitung läuft...';
+            
+            try {
+                // Sammle alle Quiz-Daten und Ergebnisse
+                const colorType = document.getElementById('colorTypeDisplay').textContent;
+                const quizData = {
+                    colorType: colorType,
+                    timestamp: new Date().toISOString(),
+                    premium_upgrade: true,
+                    source: 'results_page',
+                    ...JSON.parse(localStorage.getItem('quizAnswers') || '{}')
+                };
+                
+                button.textContent = 'Daten werden übertragen...';
+                
+                // Sende zu Supabase API
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        quizAnswers: quizData,
+                        createStripeSession: true,
+                        email: localStorage.getItem('email') || 'kunde@test.de',
+                        premium_upgrade: true,
+                        value: 39.99,
+                        userId: localStorage.getItem('userId') || `user_${Date.now()}`
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('API Fehler');
+                }
+
+                const result = await response.json();
+                
+                // TikTok Event: InitiateCheckout
+                if (typeof ttq !== 'undefined') {
+                    ttq.track('InitiateCheckout', {
+                        value: 39.99,
+                        currency: 'EUR',
+                        content_type: 'product',
+                        content_id: 'color_analysis_premium'
+                    });
+                }
+                
+                button.textContent = 'Weiterleitung zur Bezahlung...';
+                
+                setTimeout(() => {
+                    if (result.url) {
+                        window.location.href = result.url;
+                    } else {
+                        window.location.href = '/step7';
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Upgrade Fehler:', error);
+                button.textContent = 'Fehler - Bitte erneut versuchen';
+                button.disabled = false;
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 3000);
+            }
+        }
+
+        // SCROLL TO FUNCTIONS
+        function scrollToCheckout() {
+            console.log('Scrolling to checkout...');
+            const pricingSection = document.querySelector('.pricing-section');
+            if (pricingSection) {
+                pricingSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        }
+
+        function scrollToUpgrade() {
+            console.log('Scrolling to upgrade section...');
+            const upgradeSection = document.querySelector('#upgrade-section');
+            if (upgradeSection) {
+                upgradeSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        }
+
+        // SIMPLE PHOTO SLIDER FUNCTIONALITY
+        let currentPhotoSlideIndex = 0;
+
+        function showPhotoSlide() {
+            const photoSlides = document.querySelectorAll('.photo-slide');
+            
+            photoSlides.forEach(slide => slide.classList.remove('active'));
+            
+            if (photoSlides[currentPhotoSlideIndex]) {
+                photoSlides[currentPhotoSlideIndex].classList.add('active');
+            }
+        }
+
+        function nextPhotoSlide() {
+            const photoSlides = document.querySelectorAll('.photo-slide');
+            if (photoSlides.length > 0) {
+                currentPhotoSlideIndex = (currentPhotoSlideIndex + 1) % photoSlides.length;
+                showPhotoSlide();
+            }
+        }
+
+        // Auto-advance photo slider
+        function initializePhotoSlider() {
+            setInterval(nextPhotoSlide, 3000);
+        }
+
+        // SCROLL ANIMATIONS
+        function initScrollAnimations() {
+            const elements = document.querySelectorAll('.animate-on-scroll');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            elements.forEach(element => {
+                observer.observe(element);
+            });
+        }
+
+        // INITIALIZE
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('=== INITIALISIERE FARBANALYSE PAGE ===');
+            console.log('=== ELEGANTE ERGEBNISSEITE GELADEN ===');
             
-            loadAndDisplayQuizData();
-            initializeSliders();
+            displayResults();
+            initScrollAnimations();
             initializeMediaSlider();
+            initializePhotoSlider();
             
+            // Starte mit Animation der ersten Sektion
             setTimeout(() => {
-                initScrollAnimations();
-            }, 500);
+                document.querySelector('.hero-section').classList.add('visible');
+            }, 100);
         });
     </script>
 </body>
