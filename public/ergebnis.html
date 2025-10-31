@@ -1840,7 +1840,7 @@
 
             <!-- ZWISCHENBUTTEON NACH STYLING-TIPPS -->
             <div class="intermediate-cta">
-                <button class="intermediate-btn" onclick="scrollToCheckout()">
+                <button class="intermediate-btn" onclick="scrollToCheckoutSection()">
                     <span class="btn-icon">✨</span>
                     <span class="btn-text">Ihre persönliche Foto-Analyse erhalten</span>
                     <span class="btn-arrow">→</span>
@@ -1873,11 +1873,11 @@
                 <p class="cta-subtitle">Individuell auf Sie zugeschnitten. Nicht allgemein, sondern für Ihren Hautunterton, Ihre Augenfarbe, Ihren Stil.</p>
                 
                 <div class="cta-buttons">
-                    <button class="cta-btn primary-btn" onclick="scrollToCheckout()">
+                    <button class="cta-btn primary-btn" onclick="scrollToCheckoutSection()">
                         <span class="btn-icon">📸</span>
                         <span class="btn-text">Jetzt Foto-Analyse erhalten</span>
                     </button>
-                    <button class="cta-btn secondary-btn" onclick="scrollToUpgrade()">
+                    <button class="cta-btn secondary-btn" onclick="scrollToCheckoutSection()">
                         <span class="btn-icon">👀</span>
                         <span class="btn-text">Mehr erfahren</span>
                     </button>
@@ -1987,7 +1987,7 @@
             <p class="upload-subtitle">
                 Laden Sie optional ein Foto hoch, damit ich Ihre Analyse noch individueller gestalten kann
             </p>
-            <button class="upload-button" onclick="scrollToCheckout()">
+            <button class="upload-button" onclick="scrollToCheckoutSection()">
                 📸 Foto hochladen für Premium-Analyse
             </button>
             <p class="upload-note">
@@ -2027,10 +2027,11 @@
 
 
 
-            
+
+        </div>
 
         <!-- PRICING SECTION -->
-        <div class="pricing-section animate-on-scroll">
+        <div class="pricing-section animate-on-scroll" id="checkout-section">
             <div class="pricing-header">
                 <h2 class="section-title">Investieren Sie in Ihre authentische Ausstrahlung</h2>
                 <p class="section-subtitle">🇩🇪 Made in Germany • ✅ 14 Tage-Geld-Zurück-Garantien • 💜 Einmalzahlung - kein Abo </p>
@@ -2766,6 +2767,17 @@
             const upgradeSection = document.querySelector('#upgrade-section');
             if (upgradeSection) {
                 upgradeSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        }
+
+        function scrollToCheckoutSection() {
+            console.log('Scrolling to checkout section...');
+            const checkoutSection = document.querySelector('#checkout-section');
+            if (checkoutSection) {
+                checkoutSection.scrollIntoView({ 
                     behavior: 'smooth', 
                     block: 'start' 
                 });
