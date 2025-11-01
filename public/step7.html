@@ -650,17 +650,17 @@
                 <img src="/Farbkreis1.png" alt="Individueller Farbkreis" class="active">
                 <img src="/Farbkreis2.png" alt="Individueller Farbkreis Variante">
             </div>
-            <h3>So kann ich ihren individuellen Farbkreis erstellen</h3>
+            <h3>Passend zu Ihrem individuellen Typ</h3>
         </div>
         
         <div class="container">
-            <h1>Lade jetzt dein Foto hoch, in 24h erhältst du deine persönliche Farbpalette & 6 perfekte Outfits.</h1>
-            <p class="subtitle">Für eine präzise Analyse brauche ich ein natürliches Foto von dir mit guter Beleuchtung. Es wird nur zur Auswertung genutzt und danach automatisch gelöscht.</p>
+            <h1>Perfekte Outfit-Kombinationen für Ihren Typ</h1>
+            <p class="subtitle">Foto hochladen für präzise Empfehlungen oder ohne Foto für Basis-Outfits starten. <strong>Foto ist optional!</strong></p>
             
             <div class="photo-examples">
                 <div class="example-section">
                     <h3 style="color: #22C55E; margin-bottom: 15px;">✅ Beispiel für ein Foto, das funktioniert:</h3>
-                    <p style="color: #16a34a; font-size: 16px; margin-bottom: 20px; line-height: 1.6;">• Natürliches Licht verwenden<br>• Gute Beleuchtung<br>• Nicht gegen das Fenster fotografieren</p>
+                    <p style="color: #16a34a; font-size: 16px; margin-bottom: 20px; line-height: 1.6;">Natürliches Licht • Gute Beleuchtung</p>
                     <div class="example-grid" style="grid-template-columns: 1fr; max-width: 300px; margin: 0 auto;">
                         <div class="example-photo">
                             <img src="/Foto-Gut-2.jpg" alt="Gutes Foto-Beispiel">
@@ -670,7 +670,7 @@
                 
                 <div class="example-section">
                     <h3 style="color: #EF4444; margin-bottom: 15px;">❌ Beispiele für Fotos, die NICHT funktionieren:</h3>
-                    <p style="color: #dc2626; font-size: 16px; margin-bottom: 20px; line-height: 1.6;">• Direktes Sonnenlicht vermeiden<br>• Kein Blitzlicht verwenden<br>• Filter und Vintage-Effekte meiden</p>
+                    <p style="color: #dc2626; font-size: 16px; margin-bottom: 20px; line-height: 1.6;">Kein Blitzlicht • Keine Filter</p>
                     <div class="example-grid" style="grid-template-columns: 1fr 1fr; max-width: 500px; margin: 0 auto;">
                         <div class="example-photo">
                             <img src="/Foto-Schlecht-2.jpg" alt="Schlechtes Foto-Beispiel 1">
@@ -683,31 +683,31 @@
             </div>
 
             <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-                <div class="upload-icon">📸</div>
-                <div class="upload-text">1 gutes Foto hochladen (optional)</div>
-                <div class="upload-subtext">Klicke hier oder ziehe ein Foto hierher - oder überspringe diesen Schritt</div>
+                <div class="upload-icon">👗</div>
+                <div class="upload-text">Foto hochladen (optional)</div>
+                <div class="upload-subtext">Für präzise Outfits - oder ohne Foto starten</div>
             </div>
 
             <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFiles(this.files)">
 
             <div class="photo-story-section">
                 <div class="privacy-note">
-                    🛡️ DSGVO-konform · ✅ 14 Tage-Geld-Zurück-Garantie· 4,8 ⭐️ von 4000+ Bewertungen
+                    🛡️ DSGVO-konform · ✅ 14 Tage-Geld-Zurück-Garantie · 4,8 ⭐️ von 4000+ Bewertungen
                 </div>
             </div>
 
             <div class="uploaded-photos" id="uploadedPhotos"></div>
 
             <button class="continue-button" id="continueBtn" onclick="submitPhotos()">
-                Persönliche Analyse sichern
+                Meine individuellen Outfits erhalten
             </button>
 
             <div class="processing-message" id="processingMessage">
-                Daten werden verarbeitet...
+                Wird verarbeitet...
             </div>
             
             <div class="security-note">
-                🔒 Ihr Foto wird vertraulich behandelt und nur für die Analyse verwendet
+                🔒 Ihr Foto wird vertraulich behandelt und nur für die Outfit-Analyse verwendet
             </div>
         </div>
     </div>
@@ -903,14 +903,14 @@
             const processingMsg = document.getElementById('processingMessage');
             
             btn.disabled = true;
-            btn.textContent = 'Verarbeitung läuft...';
+            btn.textContent = 'Verarbeitung...';
             processingMsg.style.display = 'block';
 
             const timeoutId = setTimeout(() => {
                 btn.disabled = false;
-                btn.textContent = 'Persönliche Analyse sichern';
+                btn.textContent = 'Meine individuellen Outfits erhalten';
                 processingMsg.style.display = 'none';
-                alert('Verarbeitung dauert zu lange. Bitte versuche es erneut.');
+                alert('Bitte erneut versuchen.');
             }, 20000);
 
             try {
@@ -939,11 +939,11 @@
                         console.log('Continuing without photo due to conversion error');
                     }
                 } else {
-                    console.log('No photo uploaded - continuing without photo');
+                    console.log('No photo uploaded - continuing with basis outfit recommendations');
                 }
 
                 // Upload zu Supabase (auch ohne Foto möglich)
-                btn.textContent = 'Daten werden übertragen...';
+                btn.textContent = 'Übertragung...';
                 const uploadResult = await uploadToSupabase(photoDataArray);
                 
                 // Speichere Upload-Ergebnisse
@@ -989,7 +989,7 @@
                 
                 alert(errorMessage);
                 btn.disabled = false;
-                btn.textContent = 'Persönliche Analyse sichern';
+                btn.textContent = 'Meine 6 Outfit-Kombinationen erhalten';
                 processingMsg.style.display = 'none';
             }
         }
