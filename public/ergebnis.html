@@ -416,15 +416,7 @@
             transform: translateX(3px);
         }
 
-        /* INDIVIDUELLE FARBPALETTE SECTION */
-        .color-palette-section {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            padding: 35px 30px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow-medium);
-            border: 2px solid rgba(102, 126, 234, 0.2);
-        }
+        /* INDIVIDUELLE FARBPALETTE SECTION - REMOVED DUPLICATE */
 
         .palette-title {
             font-size: 24px;
@@ -2260,7 +2252,6 @@
     <script>
         // SLIDER FUNCTIONALITY
         let currentSlideIndex = 1;
-        let currentPaletteSlideIndex = 1;
 
         function showSlide(n) {
             const slides = document.querySelectorAll('.slide');
@@ -2280,32 +2271,9 @@
             }
         }
 
-        function showPaletteSlide(n) {
-            const slides = document.querySelectorAll('.palette-slide');
-            const dots = document.querySelectorAll('.palette-dot');
-            
-            if (n > slides.length) { currentPaletteSlideIndex = 1; }
-            if (n < 1) { currentPaletteSlideIndex = slides.length; }
-            
-            slides.forEach(slide => slide.classList.remove('active'));
-            dots.forEach(dot => dot.classList.remove('active'));
-            
-            if (slides[currentPaletteSlideIndex - 1]) {
-                slides[currentPaletteSlideIndex - 1].classList.add('active');
-            }
-            if (dots[currentPaletteSlideIndex - 1]) {
-                dots[currentPaletteSlideIndex - 1].classList.add('active');
-            }
-        }
-
         function currentSlide(n) {
             currentSlideIndex = n;
             showSlide(currentSlideIndex);
-        }
-
-        function currentPaletteSlide(n) {
-            currentPaletteSlideIndex = n;
-            showPaletteSlide(currentPaletteSlideIndex);
         }
 
         function nextSlide() {
@@ -2313,29 +2281,21 @@
             showSlide(currentSlideIndex);
         }
 
-        function nextPaletteSlide() {
-            currentPaletteSlideIndex++;
-            showPaletteSlide(currentPaletteSlideIndex);
-        }
-
-        // Auto-advance sliders
+        // Auto-advance Clara work slider
         setInterval(nextSlide, 4000);
         
         // MEDIA SLIDER FUNCTIONALITY
         let currentMediaSlide = 0;
 
         function showMediaSlide(index) {
-            // Hide all slides
             document.querySelectorAll('.media-slide').forEach(slide => {
                 slide.classList.remove('active');
             });
             
-            // Remove active class from all dots
             document.querySelectorAll('.media-slider-dot').forEach(dot => {
                 dot.classList.remove('active');
             });
             
-            // Show selected slide and dot
             if (document.querySelectorAll('.media-slide')[index]) {
                 document.querySelectorAll('.media-slide')[index].classList.add('active');
                 document.querySelectorAll('.media-slider-dot')[index].classList.add('active');
@@ -2352,790 +2312,11 @@
             }, 5000);
         }
 
-        // Auto-advance palette slider
-        function initializePaletteSlider() {
-            setInterval(nextPaletteSlide, 4500);
-        }
-
-        // FARBTYP-BESTIMMUNG ALGORITHMUS
-        function determineColorType() {
-            console.log('=== BESTIMME FARBTYP ===');
-            
-            // Lade Quiz-Antworten
-            const answers = {
-                eyes: localStorage.getItem('Augenfarbe') || '',
-                skin: localStorage.getItem('Sonnenverhältnis') || '',
-                jewelry: localStorage.getItem('SchmuckGoldSilber') || '',
-                hair: localStorage.getItem('hairColor') || '',
-                style: localStorage.getItem('Kleidungsstil') || ''
-            };
-            
-            console.log('Quiz-Antworten:', answers);
-            
-            let warm = 0;
-            let cool = 0;
-            let light = 0;
-            let deep = 0;
-            let clear = 0;
-            let muted = 0;
-            
-            // AUGENFARBE BEWERTUNG
-            const eyeLower = answers.eyes.toLowerCase();
-            if (eyeLower.includes('braun')) {
-                warm += 1;
-                deep += 1;
-                if (eyeLower.includes('hell') || eyeLower.includes('golden')) clear += 1;
-                else muted += 1;
-            } else if (eyeLower.includes('blau')) {
-                cool += 1;
-                if (eyeLower.includes('hell') || eyeLower.includes('klar')) {
-                    light += 1;
-                    clear += 1;
-                } else {
-                    deep += 1;
-                    muted += 1;
-                }
-            } else if (eyeLower.includes('gruen') || eyeLower.includes('grün')) {
-                warm += 1;
-                light += 1;
-                clear += 1;
-            } else if (eyeLower.includes('grau')) {
-                cool += 1;
-                light += 1;
-                muted += 1;
-            }
-            
-            // HAUTTYP BEWERTUNG
-            const skinLower = answers.skin.toLowerCase();
-            if (skinLower.includes('schnell') || skinLower.includes('goldbraun')) {
-                warm += 2;
-                deep += 1;
-                clear += 1;
-            } else if (skinLower.includes('rot') || skinLower.includes('blass') || skinLower.includes('meide')) {
-                cool += 1;
-                light += 2;
-                muted += 1;
-            } else if (skinLower.includes('langsam')) {
-                light += 1;
-                muted += 1;
-            }
-            
-            // SCHMUCK BEWERTUNG
-            const jewelryLower = answers.jewelry.toLowerCase();
-            if (jewelryLower.includes('gold')) {
-                warm += 2;
-                clear += 1;
-            } else if (jewelryLower.includes('silber')) {
-                cool += 2;
-                muted += 1;
-            }
-            
-            console.log('Scores - Warm:', warm, 'Cool:', cool, 'Light:', light, 'Deep:', deep, 'Clear:', clear, 'Muted:', muted);
-            
-            // BERECHNE CONFIDENCE-PROZENTSATZ
-            const totalPoints = warm + cool + light + deep + clear + muted;
-            let confidence = 55; // Basis-Confidence für Quiz ohne Foto
-            
-            // Je eindeutiger die Antworten, desto höher die Confidence
-            let dominantScore = 0;
-            let secondScore = 0;
-            
-            // Finde die zwei höchsten Scores
-            const scores = [warm, cool, light, deep, clear, muted];
-            scores.sort((a, b) => b - a);
-            dominantScore = scores[0];
-            secondScore = scores[1];
-            
-            // Eindeutigkeit = Unterschied zwischen höchstem und zweithöchstem Score
-            const clarity = dominantScore - secondScore;
-            
-            // Confidence basierend auf Eindeutigkeit: 55% - 78%
-            if (clarity >= 3) confidence = 78; // Sehr eindeutig
-            else if (clarity >= 2) confidence = 72; // Ziemlich eindeutig  
-            else if (clarity >= 1) confidence = 67; // Etwas eindeutig
-            else confidence = 62; // Wenig eindeutig
-            
-            // Bonus für mehr Antworten (falls alle Fragen beantwortet)
-            if (totalPoints >= 8) confidence += 2;
-            
-            console.log('Clarity:', clarity, 'Final confidence:', confidence + '%');
-            
-            // 12 SPEZIFISCHE FARBTYPEN BESTIMMUNG - NUR 3 TOP FARBEN
-            let colorType = '';
-            let typeEmoji = '';
-            let colors = [];
-            let tips = [];
-            
-            if (warm > cool && light > deep && clear > muted) {
-                colorType = 'Klarer Frühling';
-                typeEmoji = '🌞';
-                colors = [
-                    { color: '#FFD700', name: 'Sonnengelb' },
-                    { color: '#00B2A9', name: 'Türkisblau' },
-                    { color: '#F7A072', name: 'Knalliges Apricot' }
-                ];
-            } else if (warm > cool && light > deep && muted >= clear) {
-                colorType = 'Heller Frühling';
-                typeEmoji = '🌸';
-                colors = [
-                    { color: '#FDEBD0', name: 'Soft Apricot' },
-                    { color: '#B4DFAA', name: 'Frisches Mintgrün' },
-                    { color: '#FFDD94', name: 'Helles Goldgelb' }
-                ];
-            } else if (warm > cool && light > deep) {
-                colorType = 'Warmer Frühling';
-                typeEmoji = '🌼';
-                colors = [
-                    { color: '#F6BE8A', name: 'Koralle' },
-                    { color: '#FFD966', name: 'Goldgelb' },
-                    { color: '#A4C686', name: 'Apfelgrün' }
-                ];
-            } else if (warm > cool && deep >= light && clear > muted) {
-                colorType = 'Warmer Herbst';
-                typeEmoji = '🍁';
-                colors = [
-                    { color: '#C97B63', name: 'Terracotta' },
-                    { color: '#D6A77A', name: 'Kürbis' },
-                    { color: '#9DAD6F', name: 'Olivgrün' }
-                ];
-            } else if (warm > cool && deep >= light && muted >= clear) {
-                colorType = 'Gedämpfter Herbst';
-                typeEmoji = '🌰';
-                colors = [
-                    { color: '#BDAA94', name: 'Taupebeige' },
-                    { color: '#A67B5B', name: 'Rostbraun' },
-                    { color: '#78866B', name: 'Moosgrün' }
-                ];
-            } else if (warm > cool && deep >= light) {
-                colorType = 'Tiefer Herbst';
-                typeEmoji = '🍂';
-                colors = [
-                    { color: '#A85D3C', name: 'Kupfer' },
-                    { color: '#6C3E2A', name: 'Schokobraun' },
-                    { color: '#B7A75A', name: 'Senfgelb' }
-                ];
-            } else if (cool >= warm && light > deep && clear <= muted) {
-                colorType = 'Heller Sommer';
-                typeEmoji = '❄️';
-                colors = [
-                    { color: '#E6D0DE', name: 'Rosé' },
-                    { color: '#C0D6DF', name: 'Hellblau' },
-                    { color: '#C8C3E3', name: 'Lavendel' }
-                ];
-            } else if (cool >= warm && light > deep && muted > clear) {
-                colorType = 'Gedämpfter Sommer';
-                typeEmoji = '🌸';
-                colors = [
-                    { color: '#B9AFA3', name: 'Staubrosa' },
-                    { color: '#A4B6C1', name: 'Nebelblau' },
-                    { color: '#BDA4C4', name: 'Flieder' }
-                ];
-            } else if (cool >= warm && light > deep) {
-                colorType = 'Kühler Sommer';
-                typeEmoji = '🌫️';
-                colors = [
-                    { color: '#C4B6D7', name: 'Kühles Flieder' },
-                    { color: '#8EA4B8', name: 'Eisblau' },
-                    { color: '#E4CBDC', name: 'Altrosa' }
-                ];
-            } else if (cool >= warm && deep >= light && clear > muted) {
-                colorType = 'Klarer Winter';
-                typeEmoji = '🧊';
-                colors = [
-                    { color: '#E60026', name: 'Signalrot' },
-                    { color: '#00AEEF', name: 'Kühles Cyan' },
-                    { color: '#1C1C1C', name: 'Tiefschwarz' }
-                ];
-            } else if (cool >= warm && deep >= light && muted > clear) {
-                colorType = 'Kühler Winter';
-                typeEmoji = '🌙';
-                colors = [
-                    { color: '#003B73', name: 'Marineblau' },
-                    { color: '#CF1B5D', name: 'Pinkrot' },
-                    { color: '#92A8D1', name: 'Periblau' }
-                ];
-            } else {
-                colorType = 'Tiefer Winter';
-                typeEmoji = '🖤';
-                colors = [
-                    { color: '#2E2E2E', name: 'Anthrazit' },
-                    { color: '#5A3E63', name: 'Pflaume' },
-                    { color: '#1D4E89', name: 'Tiefes Blau' }
-                ];
-            }
-            
-            // Generiere passende Tipps basierend auf dem Farbtyp
-            if (colorType.includes('Frühling')) {
-                tips = [
-                    { icon: '✅', text: 'Setzen Sie auf warme, helle Töne und klare Farben' },
-                    { icon: '❌', text: 'Erfahren Sie in der Foto-Analyse' }
-                ];
-            } else if (colorType.includes('Sommer')) {
-                tips = [
-                    { icon: '✅', text: 'Kühle, gedämpfte Farben und sanfte Töne stehen Ihnen perfekt' },
-                    { icon: '❌', text: 'Erfahren Sie in der Foto-Analyse' }
-                ];
-            } else if (colorType.includes('Herbst')) {
-                tips = [
-                    { icon: '✅', text: 'Erdige, warme Farben und tiefe Töne sind ideal für Sie' },
-                    { icon: '❌', text: 'Erfahren Sie in der Foto-Analyse' }
-                ];
-            } else {
-                tips = [
-                    { icon: '✅', text: 'Klare, intensive Farben und hohe Kontraste sind perfekt' },
-                    { icon: '❌', text: 'Erfahren Sie in der Foto-Analyse' }
-                ];
-            }
-            
-            console.log('Ermittelter Farbtyp:', colorType, 'mit', confidence + '% Confidence');
-            
-            return { colorType: typeEmoji + ' ' + colorType, colors, tips, confidence };
-        }
-
-        function displayResults() {
-            const result = determineColorType();
-            
-            // Farbtyp mit schickem Prozent-Design anzeigen
-            document.getElementById('colorTypeDisplay').innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
-                    <span style="font-size: 18px; font-weight: 700;">${result.colorType}</span>
-                    <div style="background: white; padding: 6px 12px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid rgba(102, 126, 234, 0.2);">
-                        <span style="font-size: 13px; color: #667eea; font-weight: 600; letter-spacing: 0.5px;">${result.confidence}% ÜBEREINSTIMMUNG</span>
-                    </div>
-                </div>
-            `;
-            
-            // Basis-Farben anzeigen
-            const colorsGrid = document.getElementById('colorsGrid');
-            colorsGrid.innerHTML = '';
-            
-            result.colors.forEach(colorObj => {
-                const colorCard = document.createElement('div');
-                colorCard.className = 'color-card';
-                colorCard.innerHTML = `
-                    <div class="color-swatch" style="background-color: ${colorObj.color};"></div>
-                    <div class="color-name">${colorObj.name}</div>
-                `;
-                colorsGrid.appendChild(colorCard);
-            });
-            
-            // Styling-Tipps anzeigen
-            const tipsContainer = document.getElementById('stylingTips');
-            tipsContainer.innerHTML = '';
-            
-            result.tips.forEach(tip => {
-                const tipDiv = document.createElement('div');
-                tipDiv.className = 'tip-item';
-                tipDiv.innerHTML = `
-                    <span class="tip-icon">${tip.icon}</span>
-                    <span>${tip.text}</span>
-                `;
-                tipsContainer.appendChild(tipDiv);
-            });
-        }
-
-        // SCROLL TO FUNCTIONS
-        function scrollToCheckout() {
-            console.log('Saving data and redirecting to step7...');
-            
-            // Hole aktuelle Farbtyp-Ergebnisse
-            const result = determineColorType();
-            
-            // Sammle alle Quiz-Antworten
-            const quizAnswers = {
-                Augenfarbe: localStorage.getItem('Augenfarbe') || '',
-                Sonnenverhältnis: localStorage.getItem('Sonnenverhältnis') || '',
-                SchmuckGoldSilber: localStorage.getItem('SchmuckGoldSilber') || '',
-                hairColor: localStorage.getItem('hairColor') || '',
-                Kleidungsstil: localStorage.getItem('Kleidungsstil') || '',
-                email: localStorage.getItem('email') || '',
-                name: localStorage.getItem('name') || '',
-                userId: localStorage.getItem('userId') || `user_${Date.now()}`
-            };
-            
-            // Erstelle komplettes Ergebnis-Objekt
-            const completeResults = {
-                // Farbtyp-Ergebnisse
-                colorType: result.colorType,
-                confidence: result.confidence,
-                colors: result.colors,
-                tips: result.tips,
-                
-                // Quiz-Antworten
-                quizAnswers: quizAnswers,
-                
-                // Metadaten
-                timestamp: new Date().toISOString(),
-                source: 'ergebnis_premium',
-                step: 'basis_analyse_completed',
-                nextStep: 'photo_upload',
-                
-                // Conversion-Tracking
-                conversionPath: [
-                    { step: 'quiz_completed', timestamp: new Date().toISOString() },
-                    { step: 'results_viewed', timestamp: new Date().toISOString() },
-                    { step: 'upgrade_clicked', timestamp: new Date().toISOString() }
-                ]
-            };
-            
-            // Speichere alle Daten
-            localStorage.setItem('colorAnalysisResults', JSON.stringify(completeResults));
-            localStorage.setItem('quizCompleted', 'true');
-            localStorage.setItem('upgradeClicked', 'true');
-            
-            console.log('Saved complete results:', completeResults);
-            
-            // Weiterleitung zu step7.html
-            window.location.href = 'step7.html';
-        }
-
-        function scrollToUpgrade() {
-            console.log('Scrolling to upgrade section...');
-            const upgradeSection = document.querySelector('#upgrade-section');
-            if (upgradeSection) {
-                upgradeSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
-            }
-        }
-
-        function scrollToCheckoutSection() {
-            console.log('Scrolling to checkout section...');
-            const checkoutSection = document.querySelector('#checkout-section');
-            if (checkoutSection) {
-                checkoutSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
-            }
-        }
-
-        // SCROLL ANIMATIONS
-        function initScrollAnimations() {
-            const elements = document.querySelectorAll('.animate-on-scroll');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            });
-
-            elements.forEach(element => {
-                observer.observe(element);
-            });
-        }
-
-        // INITIALIZE
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('=== ELEGANTE ERGEBNISSEITE GELADEN ===');
-            
-            displayResults();
-            initScrollAnimations();
-            initializeMediaSlider();
-            initializePhotoSlider();
-            
-            // Starte mit Animation der ersten Sektion
-            setTimeout(() => {
-                document.querySelector('.hero-section').classList.add('visible');
-            }, 100);
-        });
-    </script>
-</body>
-</html>
-            let colorType = '';
-            let typeEmoji = '';
-            let colors = [];
-            let tips = [];
-            
-            if (warm > cool && light > deep && clear > muted) {
-                colorType = 'Klarer Frühling';
-                typeEmoji = '🌞';
-                colors = [
-                    { color: '#FFD700', name: 'Sonnengelb' },
-                    { color: '#00B2A9', name: 'Türkisblau' },
-                    { color: '#F7A072', name: 'Knalliges Apricot' }
-                ];
-            } else if (warm > cool && light > deep && muted >= clear) {
-                colorType = 'Heller Frühling';
-                typeEmoji = '🌸';
-                colors = [
-                    { color: '#FDEBD0', name: 'Soft Apricot' },
-                    { color: '#B4DFAA', name: 'Frisches Mintgrün' },
-                    { color: '#FFDD94', name: 'Helles Goldgelb' }
-                ];
-            } else if (warm > cool && light > deep) {
-                colorType = 'Warmer Frühling';
-                typeEmoji = '🌼';
-                colors = [
-                    { color: '#F6BE8A', name: 'Koralle' },
-                    { color: '#FFD966', name: 'Goldgelb' },
-                    { color: '#A4C686', name: 'Apfelgrün' }
-                ];
-            } else if (warm > cool && deep >= light && clear > muted) {
-                colorType = 'Warmer Herbst';
-                typeEmoji = '🍁';
-                colors = [
-                    { color: '#C97B63', name: 'Terracotta' },
-                    { color: '#D6A77A', name: 'Kürbis' },
-                    { color: '#9DAD6F', name: 'Olivgrün' }
-                ];
-            } else if (warm > cool && deep >= light && muted >= clear) {
-                colorType = 'Gedämpfter Herbst';
-                typeEmoji = '🌰';
-                colors = [
-                    { color: '#BDAA94', name: 'Taupebeige' },
-                    { color: '#A67B5B', name: 'Rostbraun' },
-                    { color: '#78866B', name: 'Moosgrün' }
-                ];
-            } else if (warm > cool && deep >= light) {
-                colorType = 'Tiefer Herbst';
-                typeEmoji = '🍂';
-                colors = [
-                    { color: '#A85D3C', name: 'Kupfer' },
-                    { color: '#6C3E2A', name: 'Schokobraun' },
-                    { color: '#B7A75A', name: 'Senfgelb' }
-                ];
-            } else if (cool >= warm && light > deep && clear <= muted) {
-                colorType = 'Heller Sommer';
-                typeEmoji = '❄️';
-                colors = [
-                    { color: '#E6D0DE', name: 'Rosé' },
-                    { color: '#C0D6DF', name: 'Hellblau' },
-                    { color: '#C8C3E3', name: 'Lavendel' }
-                ];
-            } else if (cool >= warm && light > deep && muted > clear) {
-                colorType = 'Gedämpfter Sommer';
-                typeEmoji = '🌸';
-                colors = [
-                    { color: '#B9AFA3', name: 'Staubrosa' },
-                    { color: '#A4B6C1', name: 'Nebelblau' },
-                    { color: '#BDA4C4', name: 'Flieder' }
-                ];
-            } else if (cool >= warm && light > deep) {
-                colorType = 'Kühler Sommer';
-                typeEmoji = '🌫️';
-                colors = [
-                    { color: '#C4B6D7', name: 'Kühles Flieder' },
-                    { color: '#8EA4B8', name: 'Eisblau' },
-                    { color: '#E4CBDC', name: 'Altrosa' }
-                ];
-            } else if (cool >= warm && deep >= light && clear > muted) {
-                colorType = 'Klarer Winter';
-                typeEmoji = '🧊';
-                colors = [
-                    { color: '#E60026', name: 'Signalrot' },
-                    { color: '#00AEEF', name: 'Kühles Cyan' },
-                    { color: '#1C1C1C', name: 'Tiefschwarz' }
-                ];
-            } else if (cool >= warm && deep >= light && muted > clear) {
-                colorType = 'Kühler Winter';
-                typeEmoji = '🌙';
-                colors = [
-                    { color: '#003B73', name: 'Marineblau' },
-                    { color: '#CF1B5D', name: 'Pinkrot' },
-                    { color: '#92A8D1', name: 'Periblau' }
-                ];
-            } else {
-                colorType = 'Tiefer Winter';
-                typeEmoji = '🖤';
-                colors = [
-                    { color: '#2E2E2E', name: 'Anthrazit' },
-                    { color: '#5A3E63', name: 'Pflaume' },
-                    { color: '#1D4E89', name: 'Tiefes Blau' }
-                ];
-            }
-            
-            // Generiere passende Tipps basierend auf dem Farbtyp
-            if (colorType.includes('Frühling')) {
-                tips = [
-                    { icon: '✅', text: 'Setzen Sie auf warme, helle Töne und klare Farben' },
-                    { icon: '❌', text: 'Vermeiden Sie kalte Grau- und dunkle Schwarztöne' }
-                ];
-            } else if (colorType.includes('Sommer')) {
-                tips = [
-                    { icon: '✅', text: 'Kühle, gedämpfte Farben und sanfte Töne stehen Ihnen perfekt' },
-                    { icon: '❌', text: 'Vermeiden Sie kräftige Orange- und warme Brauntöne' }
-                ];
-            } else if (colorType.includes('Herbst')) {
-                tips = [
-                    { icon: '✅', text: 'Erdige, warme Farben und tiefe Töne sind ideal für Sie' },
-                    { icon: '❌', text: 'Meiden Sie kalte Pink- und kühle Blautöne' }
-                ];
-            } else {
-                tips = [
-                    { icon: '✅', text: 'Klare, intensive Farben und hohe Kontraste sind perfekt' },
-                    { icon: '❌', text: 'Vermeiden Sie gedeckte, warme Braun- und Orangetöne' }
-                ];
-            }
-            
-            console.log('Ermittelter Farbtyp:', colorType, 'mit', confidence + '% Confidence');
-            
-            return { colorType: typeEmoji + ' ' + colorType, colors, tips, confidence };
-        }
-
-        function displayResults() {
-            const result = determineColorType();
-            
-            // Farbtyp mit schickem Prozent-Design anzeigen
-            document.getElementById('colorTypeDisplay').innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
-                    <span style="font-size: 18px; font-weight: 700;">${result.colorType}</span>
-                    <div style="background: white; padding: 6px 12px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid rgba(102, 126, 234, 0.2);">
-                        <span style="font-size: 13px; color: #667eea; font-weight: 600; letter-spacing: 0.5px;">${result.confidence}% ÜBEREINSTIMMUNG</span>
-                    </div>
-                </div>
-            `;
-            
-            // Basis-Farben anzeigen
-            const colorsGrid = document.getElementById('colorsGrid');
-            colorsGrid.innerHTML = '';
-            
-            result.colors.forEach(colorObj => {
-                const colorCard = document.createElement('div');
-                colorCard.className = 'color-card';
-                colorCard.innerHTML = `
-                    <div class="color-swatch" style="background-color: ${colorObj.color};"></div>
-                    <div class="color-name">${colorObj.name}</div>
-                `;
-                colorsGrid.appendChild(colorCard);
-            });
-            
-            // Styling-Tipps anzeigen
-            const tipsContainer = document.getElementById('stylingTips');
-            tipsContainer.innerHTML = '';
-            
-            result.tips.forEach(tip => {
-                const tipDiv = document.createElement('div');
-                tipDiv.className = 'tip-item';
-                tipDiv.innerHTML = `
-                    <span class="tip-icon">${tip.icon}</span>
-                    <span>${tip.text}</span>
-                `;
-                tipsContainer.appendChild(tipDiv);
-            });
-        }
-
-        function scrollToUpgrade() {
-            document.getElementById('upgrade-section').scrollIntoView({ 
-                behavior: 'smooth' 
-            });
-        }
-
-        async function upgradeToFull() {
-            // TikTok Event: AddToCart
-            if (typeof ttq !== 'undefined') {
-                ttq.track('AddToCart', {
-                    value: 39.99,
-                    currency: 'EUR',
-                    content_type: 'product',
-                    content_id: 'color_analysis_premium',
-                    content_name: 'Premium Farbanalyse'
-                });
-            }
-
-            const button = document.querySelector('.cta-button');
-            const originalText = button.textContent;
-            
-            button.disabled = true;
-            button.textContent = 'Verarbeitung läuft...';
-            
-            try {
-                // Sammle alle Quiz-Daten und Ergebnisse
-                const colorType = document.getElementById('colorTypeDisplay').textContent;
-                const quizData = {
-                    colorType: colorType,
-                    timestamp: new Date().toISOString(),
-                    premium_upgrade: true,
-                    source: 'results_page',
-                    ...JSON.parse(localStorage.getItem('quizAnswers') || '{}')
-                };
-                
-                button.textContent = 'Daten werden übertragen...';
-                
-                // Sende zu Supabase API
-                const response = await fetch('/api/checkout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        quizAnswers: quizData,
-                        createStripeSession: true,
-                        email: localStorage.getItem('email') || 'kunde@test.de',
-                        premium_upgrade: true,
-                        value: 39.99,
-                        userId: localStorage.getItem('userId') || `user_${Date.now()}`
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error('API Fehler');
-                }
-
-                const result = await response.json();
-                
-                // TikTok Event: InitiateCheckout
-                if (typeof ttq !== 'undefined') {
-                    ttq.track('InitiateCheckout', {
-                        value: 39.99,
-                        currency: 'EUR',
-                        content_type: 'product',
-                        content_id: 'color_analysis_premium'
-                    });
-                }
-                
-                button.textContent = 'Weiterleitung zur Bezahlung...';
-                
-                setTimeout(() => {
-                    if (result.url) {
-                        window.location.href = result.url;
-                    } else {
-                        window.location.href = '/step7';
-                    }
-                }, 1000);
-                
-            } catch (error) {
-                console.error('Upgrade Fehler:', error);
-                button.textContent = 'Fehler - Bitte erneut versuchen';
-                button.disabled = false;
-                
-                setTimeout(() => {
-                    button.textContent = originalText;
-                }, 3000);
-            }
-        }
-
-        // SCROLL TO FUNCTIONS
-        function scrollToCheckout() {
-            console.log('Saving data and redirecting to step7...');
-            
-            // Hole aktuelle Farbtyp-Ergebnisse
-            const result = determineColorType();
-            
-            // Sammle alle Quiz-Antworten
-            const quizAnswers = {
-                Augenfarbe: localStorage.getItem('Augenfarbe') || '',
-                Sonnenverhältnis: localStorage.getItem('Sonnenverhältnis') || '',
-                SchmuckGoldSilber: localStorage.getItem('SchmuckGoldSilber') || '',
-                hairColor: localStorage.getItem('hairColor') || '',
-                Kleidungsstil: localStorage.getItem('Kleidungsstil') || '',
-                email: localStorage.getItem('email') || '',
-                name: localStorage.getItem('name') || '',
-                userId: localStorage.getItem('userId') || `user_${Date.now()}`
-            };
-            
-            // Erstelle komplettes Ergebnis-Objekt
-            const completeResults = {
-                // Farbtyp-Ergebnisse
-                colorType: result.colorType,
-                confidence: result.confidence,
-                colors: result.colors,
-                tips: result.tips,
-                
-                // Quiz-Antworten
-                quizAnswers: quizAnswers,
-                
-                // Metadaten
-                timestamp: new Date().toISOString(),
-                source: 'ergebnis_premium',
-                step: 'basis_analyse_completed',
-                nextStep: 'photo_upload',
-                
-                // Conversion-Tracking
-                conversionPath: [
-                    { step: 'quiz_completed', timestamp: new Date().toISOString() },
-                    { step: 'results_viewed', timestamp: new Date().toISOString() },
-                    { step: 'upgrade_clicked', timestamp: new Date().toISOString() }
-                ]
-            };
-            
-            // Speichere alle Daten lokal
-            localStorage.setItem('colorAnalysisResults', JSON.stringify(completeResults));
-            localStorage.setItem('quizCompleted', 'true');
-            localStorage.setItem('upgradeClicked', 'true');
-            
-            console.log('Saved complete results:', completeResults);
-            
-            // OPTIONAL: Direkt zu Supabase senden
-            saveToSupabase(completeResults).then(() => {
-                // Weiterleitung zu step7.html nach erfolgreicher Speicherung
-                window.location.href = 'step7.html';
-            }).catch(error => {
-                console.error('Supabase save error:', error);
-                // Trotzdem weiterleiten, auch wenn Supabase fehlschlägt
-                window.location.href = 'step7.html';
-            });
-        }
-
-        // SUPABASE SAVE FUNCTION
-        async function saveToSupabase(data) {
-            try {
-                const response = await fetch('/api/save-results', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        userId: data.quizAnswers.userId,
-                        email: data.quizAnswers.email,
-                        colorAnalysisData: data,
-                        step: 'results_viewed',
-                        source: 'ergebnis_page'
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Supabase API Fehler');
-                }
-
-                const result = await response.json();
-                console.log('Successfully saved to Supabase:', result);
-                return result;
-            } catch (error) {
-                console.error('Supabase save failed:', error);
-                throw error;
-            }
-        }
-
-        function scrollToUpgrade() {
-            console.log('Scrolling to upgrade section...');
-            const upgradeSection = document.querySelector('#upgrade-section');
-            if (upgradeSection) {
-                upgradeSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
-            }
-        }
-
-        function scrollToCheckoutSection() {
-            console.log('Scrolling to checkout section...');
-            const checkoutSection = document.querySelector('#checkout-section');
-            if (checkoutSection) {
-                checkoutSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
-            }
-        }
-
-        // SIMPLE PHOTO SLIDER FUNCTIONALITY
+        // PHOTO SLIDER FUNCTIONALITY
         let currentPhotoSlideIndex = 0;
-        const totalPhotoSlides = 4; // Explicitly set to 4 slides
 
         function showPhotoSlide() {
             const photoSlides = document.querySelectorAll('.photo-slide');
-            
-            // Ensure we don't exceed the number of slides
-            if (photoSlides.length !== totalPhotoSlides) {
-                console.warn(`Expected ${totalPhotoSlides} slides, found ${photoSlides.length}`);
-            }
             
             photoSlides.forEach(slide => slide.classList.remove('active'));
             
@@ -3147,7 +2328,7 @@
         function nextPhotoSlide() {
             const photoSlides = document.querySelectorAll('.photo-slide');
             if (photoSlides.length > 0) {
-                currentPhotoSlideIndex = (currentPhotoSlideIndex + 1) % Math.min(photoSlides.length, totalPhotoSlides);
+                currentPhotoSlideIndex = (currentPhotoSlideIndex + 1) % photoSlides.length;
                 showPhotoSlide();
             }
         }
@@ -3157,36 +2338,225 @@
             setInterval(nextPhotoSlide, 3000);
         }
 
+        // FARBTYP-BESTIMMUNG ALGORITHMUS
+        function determineColorType() {
+            console.log('=== BESTIMME FARBTYP ===');
+            
+            const answers = {
+                eyes: localStorage.getItem('Augenfarbe') || '',
+                skin: localStorage.getItem('Sonnenverhältnis') || '',
+                jewelry: localStorage.getItem('SchmuckGoldSilber') || '',
+                hair: localStorage.getItem('hairColor') || '',
+                style: localStorage.getItem('Kleidungsstil') || ''
+            };
+            
+            let warm = 0, cool = 0, light = 0, deep = 0, clear = 0, muted = 0;
+            
+            // AUGENFARBE BEWERTUNG
+            const eyeLower = answers.eyes.toLowerCase();
+            if (eyeLower.includes('braun')) {
+                warm += 1; deep += 1;
+                if (eyeLower.includes('hell') || eyeLower.includes('golden')) clear += 1;
+                else muted += 1;
+            } else if (eyeLower.includes('blau')) {
+                cool += 1;
+                if (eyeLower.includes('hell') || eyeLower.includes('klar')) {
+                    light += 1; clear += 1;
+                } else { deep += 1; muted += 1; }
+            } else if (eyeLower.includes('gruen') || eyeLower.includes('grün')) {
+                warm += 1; light += 1; clear += 1;
+            } else if (eyeLower.includes('grau')) {
+                cool += 1; light += 1; muted += 1;
+            }
+            
+            // HAUTTYP BEWERTUNG
+            const skinLower = answers.skin.toLowerCase();
+            if (skinLower.includes('schnell') || skinLower.includes('goldbraun')) {
+                warm += 2; deep += 1; clear += 1;
+            } else if (skinLower.includes('rot') || skinLower.includes('blass') || skinLower.includes('meide')) {
+                cool += 1; light += 2; muted += 1;
+            } else if (skinLower.includes('langsam')) {
+                light += 1; muted += 1;
+            }
+            
+            // SCHMUCK BEWERTUNG
+            const jewelryLower = answers.jewelry.toLowerCase();
+            if (jewelryLower.includes('gold')) { warm += 2; clear += 1; }
+            else if (jewelryLower.includes('silber')) { cool += 2; muted += 1; }
+            
+            // CONFIDENCE BERECHNUNG
+            let confidence = 55;
+            const scores = [warm, cool, light, deep, clear, muted];
+            scores.sort((a, b) => b - a);
+            const clarity = scores[0] - scores[1];
+            
+            if (clarity >= 3) confidence = 78;
+            else if (clarity >= 2) confidence = 72;
+            else if (clarity >= 1) confidence = 67;
+            else confidence = 62;
+            
+            // FARBTYP BESTIMMUNG
+            let colorType = '', typeEmoji = '', colors = [], tips = [];
+            
+            if (warm > cool && light > deep && clear > muted) {
+                colorType = 'Klarer Frühling'; typeEmoji = '🌞';
+                colors = [
+                    { color: '#FFD700', name: 'Sonnengelb' },
+                    { color: '#00B2A9', name: 'Türkisblau' },
+                    { color: '#F7A072', name: 'Knalliges Apricot' }
+                ];
+            } else if (warm > cool && light > deep && muted >= clear) {
+                colorType = 'Heller Frühling'; typeEmoji = '🌸';
+                colors = [
+                    { color: '#FDEBD0', name: 'Soft Apricot' },
+                    { color: '#B4DFAA', name: 'Frisches Mintgrün' },
+                    { color: '#FFDD94', name: 'Helles Goldgelb' }
+                ];
+            } else if (cool >= warm && light > deep) {
+                colorType = 'Kühler Sommer'; typeEmoji = '🌫️';
+                colors = [
+                    { color: '#C4B6D7', name: 'Kühles Flieder' },
+                    { color: '#8EA4B8', name: 'Eisblau' },
+                    { color: '#E4CBDC', name: 'Altrosa' }
+                ];
+            } else {
+                colorType = 'Tiefer Winter'; typeEmoji = '🖤';
+                colors = [
+                    { color: '#2E2E2E', name: 'Anthrazit' },
+                    { color: '#5A3E63', name: 'Pflaume' },
+                    { color: '#1D4E89', name: 'Tiefes Blau' }
+                ];
+            }
+            
+            // STYLING-TIPPS
+            if (colorType.includes('Frühling')) {
+                tips = [
+                    { icon: '✅', text: 'Setzen Sie auf warme, helle Töne und klare Farben' },
+                    { icon: '❌', text: 'Erfahren Sie in der Foto-Analyse' }
+                ];
+            } else if (colorType.includes('Sommer')) {
+                tips = [
+                    { icon: '✅', text: 'Kühle, gedämpfte Farben und sanfte Töne stehen Ihnen perfekt' },
+                    { icon: '❌', text: 'Erfahren Sie in der Foto-Analyse' }
+                ];
+            } else {
+                tips = [
+                    { icon: '✅', text: 'Klare, intensive Farben und hohe Kontraste sind perfekt' },
+                    { icon: '❌', text: 'Erfahren Sie in der Foto-Analyse' }
+                ];
+            }
+            
+            return { colorType: typeEmoji + ' ' + colorType, colors, tips, confidence };
+        }
+
+        function displayResults() {
+            const result = determineColorType();
+            
+            // Farbtyp anzeigen
+            document.getElementById('colorTypeDisplay').innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                    <span style="font-size: 18px; font-weight: 700;">${result.colorType}</span>
+                    <div style="background: white; padding: 6px 12px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid rgba(102, 126, 234, 0.2);">
+                        <span style="font-size: 13px; color: #667eea; font-weight: 600; letter-spacing: 0.5px;">${result.confidence}% ÜBEREINSTIMMUNG</span>
+                    </div>
+                </div>
+            `;
+            
+            // Dynamischer Farbtyp in Fragen einfügen
+            setTimeout(() => {
+                const farbtypElements = document.querySelectorAll('#farbtyp-text, #farbtyp-cta');
+                farbtypElements.forEach(element => {
+                    if (element) element.textContent = result.colorType;
+                });
+            }, 100);
+            
+            // Farben anzeigen
+            const colorsGrid = document.getElementById('colorsGrid');
+            colorsGrid.innerHTML = '';
+            result.colors.forEach(colorObj => {
+                const colorCard = document.createElement('div');
+                colorCard.className = 'color-card';
+                colorCard.innerHTML = `
+                    <div class="color-swatch" style="background-color: ${colorObj.color};"></div>
+                    <div class="color-name">${colorObj.name}</div>
+                `;
+                colorsGrid.appendChild(colorCard);
+            });
+            
+            // Styling-Tipps anzeigen
+            const tipsContainer = document.getElementById('stylingTips');
+            tipsContainer.innerHTML = '';
+            result.tips.forEach(tip => {
+                const tipDiv = document.createElement('div');
+                tipDiv.className = 'tip-item';
+                tipDiv.innerHTML = `
+                    <span class="tip-icon">${tip.icon}</span>
+                    <span>${tip.text}</span>
+                `;
+                tipsContainer.appendChild(tipDiv);
+            });
+        }
+
+        // SCROLL FUNCTIONS
+        function scrollToCheckout() {
+            const result = determineColorType();
+            const quizAnswers = {
+                Augenfarbe: localStorage.getItem('Augenfarbe') || '',
+                Sonnenverhältnis: localStorage.getItem('Sonnenverhältnis') || '',
+                SchmuckGoldSilber: localStorage.getItem('SchmuckGoldSilber') || '',
+                hairColor: localStorage.getItem('hairColor') || '',
+                Kleidungsstil: localStorage.getItem('Kleidungsstil') || '',
+                email: localStorage.getItem('email') || '',
+                name: localStorage.getItem('name') || '',
+                userId: localStorage.getItem('userId') || `user_${Date.now()}`
+            };
+            
+            const completeResults = {
+                colorType: result.colorType,
+                confidence: result.confidence,
+                colors: result.colors,
+                tips: result.tips,
+                quizAnswers: quizAnswers,
+                timestamp: new Date().toISOString(),
+                source: 'ergebnis_premium'
+            };
+            
+            localStorage.setItem('colorAnalysisResults', JSON.stringify(completeResults));
+            localStorage.setItem('quizCompleted', 'true');
+            localStorage.setItem('upgradeClicked', 'true');
+            
+            window.location.href = 'step7.html';
+        }
+
+        function scrollToCheckoutSection() {
+            const checkoutSection = document.querySelector('#checkout-section');
+            if (checkoutSection) {
+                checkoutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
         // SCROLL ANIMATIONS
         function initScrollAnimations() {
             const elements = document.querySelectorAll('.animate-on-scroll');
-            
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
                     }
                 });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            });
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-            elements.forEach(element => {
-                observer.observe(element);
-            });
+            elements.forEach(element => observer.observe(element));
         }
 
         // INITIALIZE
         document.addEventListener('DOMContentLoaded', function() {
             console.log('=== ELEGANTE ERGEBNISSEITE GELADEN ===');
-            
             displayResults();
             initScrollAnimations();
             initializeMediaSlider();
             initializePhotoSlider();
             
-            // Starte mit Animation der ersten Sektion
             setTimeout(() => {
                 document.querySelector('.hero-section').classList.add('visible');
             }, 100);
