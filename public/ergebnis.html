@@ -661,6 +661,7 @@
             width: 100%;
             height: 300px;
             overflow: hidden;
+            background: #f8fafc;
         }
 
         .photo-slide {
@@ -671,6 +672,9 @@
             height: 100%;
             opacity: 0;
             transition: opacity 1.5s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .photo-slide.active {
@@ -681,12 +685,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
-                        linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
-                        linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
-                        linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
-            background-size: 30px 30px;
-            background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
+            border-radius: 0;
         }
 
         /* CLARA ARBEITSWEISE SECTION */
@@ -1842,8 +1841,8 @@
 
         <!-- FOTO-ANALYSE SECTION -->
         <div class="color-palette-section animate-on-scroll">
-            <h2 class="palette-title">Schön zu wissen, aber was passt nun wirklich zu Ihnen?</h2>
-            <p class="emotional-subtitle">Mit Ihrer <strong>Foto-Analyse</strong> erhalten Sie persönliche Antworten auf die Fragen, die wirklich zählen:</p>
+            <h2 class="palette-title">Schön zu wissen - aber welche Outfits stehen Ihnen wirklich?</h2>
+            <p class="emotional-subtitle">Mit Ihrer <strong>individuellen Outfit-Analyse</strong> erhalten Sie persönliche Styling-Kombinationen, die perfekt zu Ihnen passen - <em>mit oder ohne Foto</em>:</p>
             
             <div class="simple-photo-slider">
                 <div class="photo-slides-wrapper">
@@ -1865,30 +1864,30 @@
             <div class="personal-questions">
                 <div class="question-item">
                     <span class="question-icon">👗</span>
-                    <span class="question-text">Welche konkreten Outfit-Kombinationen lassen Sie als <strong id="farbtyp-text">Ihren Farbtyp</strong> über Monate hinweg strahlen?</span>
+                    <span class="question-text">Welche Outfit-Kombinationen lassen Sie als <strong id="farbtyp-text">Ihren Farbtyp</strong> monatelang perfekt aussehen - individuell für Sie?</span>
                 </div>
                 <div class="question-item">
-                    <span class="question-icon">🗓️</span>
-                    <span class="question-text">Was können Sie die nächsten 3-6 Monate tragen, ohne jemals falsch angezogen zu sein?</span>
+                    <span class="question-icon">💫</span>
+                    <span class="question-text">Wie kombinieren Sie Ihre Farben zu einem authentischen, selbstbewussten Stil?</span>
                 </div>
                 <div class="question-item">
-                    <span class="question-icon">✨</span>
-                    <span class="question-text">Wie stylen Sie sich authentisch und selbstbewusst - passend zu Ihrem individuellen Typ?</span>
+                    <span class="question-icon">🎯</span>
+                    <span class="question-text">Was sind Ihre perfekten Outfit-Formeln für Arbeit, Freizeit und besondere Anlässe?</span>
                 </div>
             </div>
             
             <div class="emotional-cta">
-                <h3 class="cta-title">Ihre persönliche Outfit-Kollektion für jeden Anlass</h3>
-                <p class="cta-subtitle">Monatelang perfekt angezogen - mit Outfit-Inspirationen, die speziell für <strong id="farbtyp-cta">Ihren Farbtyp</strong> und Ihren Stil kreiert wurden.</p>
+                <h3 class="cta-title">Ihre individuelle Outfit-Kollektion wartet auf Sie</h3>
+                <p class="cta-subtitle"><strong>Sofort verfügbar:</strong> Outfit-Kombinationen die zu Ihrem Farbtyp und Lifestyle passen. <em>Optional:</em> Mit Foto wird die Analyse noch präziser.</p>
                 
                 <div class="cta-buttons">
                     <button class="cta-btn primary-btn" onclick="scrollToCheckoutSection()">
-                        <span class="btn-icon">👗</span>
-                        <span class="btn-text">Meine Outfit-Kollektion erhalten</span>
+                        <span class="btn-icon">✨</span>
+                        <span class="btn-text">Meine Outfit-Analyse starten</span>
                     </button>
                     <button class="cta-btn secondary-btn" onclick="scrollToCheckoutSection()">
                         <span class="btn-icon">👀</span>
-                        <span class="btn-text">Mehr erfahren</span>
+                        <span class="btn-text">Outfit-Beispiele ansehen</span>
                     </button>
                 </div>
             </div>
@@ -1992,15 +1991,16 @@
 
         <!-- PHOTO UPLOAD SECTION -->
         <div class="photo-upload-section animate-on-scroll">
-            <h3 class="upload-title">Für noch präzisere Ergebnisse</h3>
+            <h3 class="upload-title">🎯 Noch präzisere Ergebnisse gewünscht?</h3>
             <p class="upload-subtitle">
-                Laden Sie optional ein Foto hoch, damit ich Ihre Analyse noch individueller gestalten kann
+                Ihre Outfit-Analyse funktioniert bereits perfekt mit Ihren Quiz-Antworten.<br>
+                <strong>Optional:</strong> Fügen Sie ein Foto hinzu für noch individuellere Empfehlungen.
             </p>
             <button class="upload-button" onclick="scrollToCheckoutSection()">
-                📸 Foto hochladen für Premium-Analyse
+                ✨ Jetzt Outfit-Analyse erhalten (Foto optional)
             </button>
             <p class="upload-note">
-                *Optional - Sie können auch ohne Foto fortfahren
+                *Sie können auch ohne Foto starten und später einfach ein Bild per E-Mail nachreichen
             </p>
         </div>
 
@@ -2089,14 +2089,12 @@
                     </div>
                     <div class="benefit-item">
                         <span class="benefit-icon">💜</span>
-                        <span class="benefit-text">Gerade kein gutes Foto parat?
-                            Sichere dir trotzdem jetzt deine Analyse,
-                            du kannst dein Bild später ganz entspannt per Mail senden.(Ich benachrichtige Sie)</span>
+                        <span class="benefit-text">Starten Sie sofort! Foto können Sie ganz entspannt später per E-Mail nachreichen - ich benachrichtige Sie wie das geht.</span>
                     </div>
                 </div>
                 
                 <button class="cta-button" onclick="scrollToCheckout()">
-                    Foto hochladen & professionelle Analyse in 24h erhalten
+                    Jetzt Outfit-Analyse erhalten (Foto optional später hinzufügbar)
                 </button>
                  
                 <div class="klarna-payment">
@@ -2316,19 +2314,27 @@
         let currentPhotoSlideIndex = 0;
 
         function showPhotoSlide() {
-            const photoSlides = document.querySelectorAll('.photo-slide');
+            const photoSliders = document.querySelectorAll('.simple-photo-slider');
             
-            photoSlides.forEach(slide => slide.classList.remove('active'));
-            
-            if (photoSlides[currentPhotoSlideIndex]) {
-                photoSlides[currentPhotoSlideIndex].classList.add('active');
-            }
+            photoSliders.forEach(slider => {
+                const photoSlides = slider.querySelectorAll('.photo-slide');
+                
+                photoSlides.forEach(slide => slide.classList.remove('active'));
+                
+                if (photoSlides[currentPhotoSlideIndex]) {
+                    photoSlides[currentPhotoSlideIndex].classList.add('active');
+                }
+            });
         }
 
         function nextPhotoSlide() {
             const photoSlides = document.querySelectorAll('.photo-slide');
             if (photoSlides.length > 0) {
-                currentPhotoSlideIndex = (currentPhotoSlideIndex + 1) % photoSlides.length;
+                // Get total slides from first slider
+                const firstSlider = document.querySelector('.simple-photo-slider');
+                const slidesInFirstSlider = firstSlider ? firstSlider.querySelectorAll('.photo-slide').length : 4;
+                
+                currentPhotoSlideIndex = (currentPhotoSlideIndex + 1) % slidesInFirstSlider;
                 showPhotoSlide();
             }
         }
