@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wie fühlst Sie sich in ihrer Kleidung?</title>
+    <title>Arbeitserlaubnis Analyse: Frage 7</title>
     <style>
         * {
             margin: 0;
@@ -12,10 +12,11 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
+            font-family: "Inter", Arial, sans-serif;
+            background: #ffffff;
             min-height: 100vh;
             padding: 20px;
+            color: #333;
         }
 
         .main-container {
@@ -27,8 +28,9 @@
             background: white;
             padding: 20px;
             margin-bottom: 30px;
-            border-radius: 10px;
+            border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e0e0e0;
         }
 
         .progress-label {
@@ -48,105 +50,60 @@
         }
 
         .progress-fill {
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: #1e3c72;
             height: 100%;
-            width: 86%;
+            width: 70%;
             border-radius: 4px;
             transition: width 0.3s ease;
         }
 
         .container {
             background: white;
-            border-radius: 15px;
+            border-radius: 8px;
             padding: 40px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid #764ba2;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
         }
 
         h1 {
             font-size: 28px;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .subtitle {
-            font-size: 16px;
-            color: #666;
+            color: #000;
             margin-bottom: 40px;
-            line-height: 1.5;
+            font-weight: 600;
+            line-height: 1.2;
         }
 
-        .options-container {
+        .option-container {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            margin-bottom: 40px;
+            gap: 15px;
+            margin-bottom: 30px;
         }
 
-        .option {
-            background: #f8f9fa;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
+        .option-button {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 4px;
             padding: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-align: left;
-            position: relative;
-        }
-
-        .option:hover {
-            background: #f1f3ff;
-            border-color: #667eea;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-        }
-
-        .option.selected {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-color: #667eea;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);
-        }
-
-        .option-title {
-            font-weight: 600;
             font-size: 16px;
-            margin-bottom: 4px;
+            font-weight: 500;
+            color: #333;
+            text-align: left;
         }
 
-        .option-description {
-            font-size: 14px;
-            opacity: 0.8;
-            line-height: 1.4;
+        .option-button:hover {
+            border-color: #1e3c72;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.15);
         }
 
-        .continue-button {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        .option-button.selected {
+            border-color: #1e3c72;
+            background: #1e3c72;
             color: white;
-            border: none;
-            padding: 18px 40px;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);
-            width: 100%;
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        .continue-button.enabled {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .continue-button.enabled:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.45);
         }
 
         .security-note {
@@ -157,6 +114,10 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #1e3c72;
         }
 
         @media (max-width: 480px) {
@@ -167,9 +128,10 @@
             h1 {
                 font-size: 24px;
             }
-
-            .option {
-                padding: 16px;
+            
+            .option-button {
+                padding: 15px;
+                font-size: 15px;
             }
         }
     </style>
@@ -178,83 +140,80 @@
 </head>
 <body>
     <div class="main-container">
+        <!-- PROGRESS BAR -->
         <div class="progress-container">
             <div class="progress-label">
-                <span>Frage 6 von 7</span>
-                <span>86%</span>
+                <span>Frage 7 von 10</span>
+                <span>70%</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
         </div>
         
+        <!-- MAIN CONTENT -->
         <div class="container">
-            <h1>Wie fühlen Sie sich in ihrer Kleidung aktuell?</h1>
-            <p class="subtitle">
-                Ihre Antwort hilft mir zu verstehen, wie selbstbewusst Sie sich derzeit in ihren Outfits fühlen.
-            </p>
+            <h1>Wie gut sprichst du aktuell Deutsch?</h1>
             
-            <div class="options-container">
-                <div class="option" data-value="selbstbewusst" onclick="selectOption(this)">
-                    <div class="option-title">Selbstbewusst und sicher</div>
-                    <div class="option-description">Ich fühle mich wohl und strahle Selbstvertrauen aus</div>
+            <div class="option-container">
+                <div class="option-button" data-value="a1" onclick="selectOption(this, 'a1')">
+                    A1 (Grundkenntnisse)
                 </div>
                 
-                <div class="option" data-value="zurückhaltend" onclick="selectOption(this)">
-                    <div class="option-title">Eher zurückhaltend</div>
-                    <div class="option-description">Ich bin nicht ganz sicher, ob mir alles steht</div>
+                <div class="option-button" data-value="a2" onclick="selectOption(this, 'a2')">
+                    A2
                 </div>
                 
-                <div class="option" data-value="unsicher" onclick="selectOption(this)">
-                    <div class="option-title">Oft unsicher, was mir steht</div>
-                    <div class="option-description">Ich zweifle häufig an meinen Outfit-Entscheidungen</div>
+                <div class="option-button" data-value="b1" onclick="selectOption(this, 'b1')">
+                    B1
                 </div>
                 
-                <div class="option" data-value="gleiche_kleidung" onclick="selectOption(this)">
-                    <div class="option-title">Ich trage immer das Gleiche</div>
-                    <div class="option-description">Ich bleibe bei sicheren, bewährten Looks</div>
+                <div class="option-button" data-value="b2" onclick="selectOption(this, 'b2')">
+                    B2 oder besser
+                </div>
+                
+                <div class="option-button" data-value="kein_deutsch" onclick="selectOption(this, 'kein_deutsch')">
+                    Ich spreche kein Deutsch
                 </div>
             </div>
-
-            <button class="continue-button" id="continueBtn" onclick="continueToNext()">
-                Analyse starten
-            </button>
             
             <div class="security-note">
-                🔒 Ihre Antworten werden vertraulich behandelt
+                🔒 Ihre Daten sind sicher und werden vertraulich behandelt
             </div>
         </div>
     </div>
 
     <script>
-        let selectedAnswer = null;
+        // Tracking-Funktion für Antworten
+        function saveAnswer(question, answer) {
+            if (typeof(Storage) !== "undefined") {
+                // Speichere einzelne Antwort
+                localStorage.setItem(question, answer);
+                
+                // Speichere auch in einem Gesamt-Objekt für späteres Versenden
+                let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
+                allAnswers[question] = answer;
+                localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
+                
+                console.log('Gespeichert:', question, '=', answer);
+            }
+        }
 
-        function selectOption(element) {
-            // Entferne previous selection
-            document.querySelectorAll('.option').forEach(opt => {
-                opt.classList.remove('selected');
+        function selectOption(element, value) {
+            document.querySelectorAll('.option-button').forEach(btn => {
+                btn.classList.remove('selected');
             });
             
-            // Markiere gewählte Option
             element.classList.add('selected');
-            selectedAnswer = element.dataset.value;
             
-            // Enable continue button
-            const continueBtn = document.getElementById('continueBtn');
-            continueBtn.classList.add('enabled');
+            // Speichere Antwort mit Tracking
+            saveAnswer('Deutschkenntnisse', value);
+            
+            setTimeout(() => {
+                window.location.href = '/step9.html';
+            }, 500);
         }
 
-        function continueToNext() {
-            if (!selectedAnswer) return;
-            
-            // Speichere Antwort
-            localStorage.setItem('clothingConfidence', selectedAnswer);
-            
-            // Weiterleitung zur Analyse-Seite
-            window.location.href = '/analyse.html';
-        }
-
-        // Animation beim Laden
         window.addEventListener('load', function() {
             const container = document.querySelector('.container');
             container.style.opacity = '0';
@@ -266,17 +225,12 @@
                 container.style.transform = 'translateY(0)';
             }, 100);
             
-            // Animate options
-            const options = document.querySelectorAll('.option');
-            options.forEach((option, index) => {
-                option.style.opacity = '0';
-                option.style.transform = 'translateY(20px)';
-                setTimeout(() => {
-                    option.style.transition = 'all 0.4s ease';
-                    option.style.opacity = '1';
-                    option.style.transform = 'translateY(0)';
-                }, 200 + (index * 100));
-            });
+            // Lade vorherige Auswahl wenn vorhanden
+            const savedValue = localStorage.getItem('Deutschkenntnisse');
+            if (savedValue) {
+                const button = document.querySelector(`[data-value="${savedValue}"]`);
+                if (button) button.classList.add('selected');
+            }
         });
     </script>
 </body>
