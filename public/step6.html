@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farbanalyse: Frage 5</title>
+    <title>Arbeitserlaubnis Analyse: Frage 5</title>
     <style>
         * {
             margin: 0;
@@ -12,10 +12,11 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
+            font-family: "Inter", Arial, sans-serif;
+            background: #ffffff;
             min-height: 100vh;
             padding: 20px;
+            color: #333;
         }
 
         .main-container {
@@ -27,8 +28,9 @@
             background: white;
             padding: 20px;
             margin-bottom: 30px;
-            border-radius: 10px;
+            border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e0e0e0;
         }
 
         .progress-label {
@@ -48,48 +50,28 @@
         }
 
         .progress-fill {
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: #1e3c72;
             height: 100%;
-            width: 71.5%;
+            width: 50%;
             border-radius: 4px;
             transition: width 0.3s ease;
         }
 
         .container {
             background: white;
-            border-radius: 15px;
+            border-radius: 8px;
             padding: 40px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid #764ba2;
-        }
-
-        .example-image {
-            width: 100%;
-            max-width: 500px;
-            height: 280px;
-            background: linear-gradient(135deg, #667eea20, #764ba220);
-            border-radius: 15px;
-            margin: 0 auto 30px;
-            overflow: hidden;
-            background-image: url('/Haarfarben.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
         }
 
         h1 {
             font-size: 28px;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .subtitle {
-            font-size: 16px;
-            color: #666;
+            color: #000;
             margin-bottom: 40px;
-            line-height: 1.5;
+            font-weight: 600;
+            line-height: 1.2;
         }
 
         .option-container {
@@ -101,8 +83,8 @@
 
         .option-button {
             background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
             padding: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -113,14 +95,14 @@
         }
 
         .option-button:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            border-color: #1e3c72;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.15);
         }
 
         .option-button.selected {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #1e3c72;
+            background: #1e3c72;
             color: white;
         }
 
@@ -132,6 +114,10 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #1e3c72;
         }
 
         @media (max-width: 480px) {
@@ -147,10 +133,6 @@
                 padding: 15px;
                 font-size: 15px;
             }
-
-            .example-image {
-                height: 200px;
-            }
         }
     </style>
     <script src="/tracking.js" defer></script>
@@ -161,8 +143,8 @@
         <!-- PROGRESS BAR -->
         <div class="progress-container">
             <div class="progress-label">
-                <span>Frage 5 von 7</span>
-                <span>71%</span>
+                <span>Frage 5 von 10</span>
+                <span>50%</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
@@ -171,30 +153,15 @@
         
         <!-- MAIN CONTENT -->
         <div class="container">
-            <div class="example-image"></div>
-            
-            <h1>Beschreibe Sie ihre natürliche Haarfarbe</h1>
-            <p class="subtitle">Dies hilft uns, ihren Farbtyp präziser zu bestimmen und die perfekte Farbpalette für Sie zu finden.</p>
+            <h1>Kommst du allein oder mit Familie nach Deutschland?</h1>
             
             <div class="option-container">
-                <div class="option-button" data-value="dunkelblond-braun-warm" onclick="selectOption(this, 'dunkelblond-braun-warm')">
-                    1. Dunkelblond bis Braun mit warmen/goldenen Tönen
+                <div class="option-button" data-value="allein" onclick="selectOption(this, 'allein')">
+                    Allein
                 </div>
                 
-                <div class="option-button" data-value="aschblond-braun-kuhl" onclick="selectOption(this, 'aschblond-braun-kuhl')">
-                    2. Aschblond bis Dunkelbraun mit kühlen Tönen
-                </div>
-                
-                <div class="option-button" data-value="schwarz-rot" onclick="selectOption(this, 'schwarz-rot')">
-                    3. Schwarz oder Rot-Töne
-                </div>
-                
-                <div class="option-button" data-value="hellblond-grau" onclick="selectOption(this, 'hellblond-grau')">
-                    4. Sehr hellblond, platinblond oder Grau/Silber
-                </div>
-                
-                <div class="option-button" data-value="anderes" onclick="selectOption(this, 'anderes')">
-                    5. Anderes (z.B. gefärbt, mehrfarbig)
+                <div class="option-button" data-value="mit_familie" onclick="selectOption(this, 'mit_familie')">
+                    Mit Familie
                 </div>
             </div>
             
@@ -208,8 +175,10 @@
         // Tracking-Funktion für Antworten
         function saveAnswer(question, answer) {
             if (typeof(Storage) !== "undefined") {
+                // Speichere einzelne Antwort
                 localStorage.setItem(question, answer);
                 
+                // Speichere auch in einem Gesamt-Objekt für späteres Versenden
                 let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
                 allAnswers[question] = answer;
                 localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
@@ -225,10 +194,11 @@
             
             element.classList.add('selected');
             
-            saveAnswer('hairColor', value);
+            // Speichere Antwort mit Tracking
+            saveAnswer('Familie_Deutschland', value);
             
             setTimeout(() => {
-                window.location.href = '/step8.html';
+                window.location.href = '/step7.html';
             }, 500);
         }
 
@@ -243,7 +213,8 @@
                 container.style.transform = 'translateY(0)';
             }, 100);
             
-            const savedValue = localStorage.getItem('hairColor');
+            // Lade vorherige Auswahl wenn vorhanden
+            const savedValue = localStorage.getItem('Familie_Deutschland');
             if (savedValue) {
                 const button = document.querySelector(`[data-value="${savedValue}"]`);
                 if (button) button.classList.add('selected');
