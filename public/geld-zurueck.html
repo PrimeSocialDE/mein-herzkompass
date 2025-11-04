@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>14 Tage Geld-zurück-Garantie - Clara's Herzkompass</title>
+    <title>30-дневная гарантия возврата денег - Помощь с разрешением на работу</title>
     <style>
         * {
             margin: 0;
@@ -12,99 +12,86 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
-            color: #333;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #ffffff;
+            color: #2c3e50;
             line-height: 1.6;
         }
 
-        .navbar {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        /* Top Header */
+        .top-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
             padding: 15px 0;
-            box-shadow: 0 2px 10px rgba(103, 126, 234, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
-
-        .nav-container {
+        
+        .header-content {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
         }
-
-        .logo {
-            color: white;
-            font-size: 24px;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .nav-menu {
+        
+        .logo-placeholder {
             display: flex;
-            list-style: none;
-            gap: 30px;
+            align-items: center;
         }
-
-        .nav-menu a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 16px;
-            transition: opacity 0.3s ease;
+        
+        .logo-box {
+            width: 120px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
         }
-
-        .nav-menu a:hover {
-            opacity: 0.8;
-        }
-
-        .mobile-menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
+        
+        .logo-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 60px 20px;
         }
 
         .guarantee-card {
             background: white;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid #1e3c72;
             margin-bottom: 30px;
         }
 
         h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
-            color: #22C55E;
-            margin-bottom: 20px;
+            color: #1e3c72;
+            margin-bottom: 30px;
             text-align: center;
+            letter-spacing: -0.5px;
         }
 
         .guarantee-icon {
             text-align: center;
-            font-size: 50px;
-            margin-bottom: 20px;
+            font-size: 60px;
+            margin-bottom: 30px;
+            color: #27ae60;
         }
 
         .main-message {
-            background: #22C55E;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 40px;
             text-align: center;
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.2);
         }
 
         .main-message h2 {
@@ -112,91 +99,115 @@
             font-weight: 700;
             margin-bottom: 20px;
             color: white;
+            letter-spacing: -0.5px;
         }
 
         .main-message p {
             font-size: 18px;
-            line-height: 1.6;
+            line-height: 1.7;
             margin-bottom: 15px;
+            opacity: 0.95;
         }
 
         .email-highlight {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .email-highlight a {
             color: white;
             font-weight: 700;
             font-size: 20px;
-            text-decoration: underline;
+            text-decoration: none;
+            border-bottom: 2px solid white;
+        }
+
+        .email-highlight a:hover {
+            opacity: 0.8;
         }
 
         .warning-box {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            padding: 25px;
-            border-radius: 15px;
-            margin: 30px 0;
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #f39c12;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 40px 0;
+            border-left: 6px solid #dc3545;
         }
 
         .warning-box h3 {
-            color: #856404;
+            color: #dc3545;
             font-size: 22px;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .warning-box p {
             color: #856404;
             font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 10px;
+            line-height: 1.7;
+            margin-bottom: 15px;
         }
 
         .warning-box strong {
             font-weight: 700;
+            color: #dc3545;
         }
 
         .process-steps {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
-            margin: 30px 0;
-            border-left: 5px solid #22C55E;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            padding: 40px;
+            border-radius: 12px;
+            margin: 40px 0;
+            border-left: 6px solid #1e3c72;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
         .process-steps h3 {
-            color: #2c3e50;
+            color: #1e3c72;
             font-size: 24px;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
         }
 
         .step {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 20px;
-            padding: 15px;
+            margin-bottom: 25px;
+            padding: 20px;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e9ecef;
+            transition: transform 0.2s ease;
+        }
+
+        .step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .step-number {
-            background: #22C55E;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            margin-right: 15px;
+            font-size: 18px;
+            margin-right: 20px;
             flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(30, 60, 114, 0.3);
         }
 
         .step-content {
@@ -204,81 +215,133 @@
         }
 
         .step-content strong {
-            color: #2c3e50;
+            color: #1e3c72;
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .step-content p {
+            color: #2c3e50;
+            line-height: 1.6;
         }
 
         .contact-info {
-            background: #667eea;
-            color: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin: 30px 0;
+            background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%);
+            border: 2px solid #1e3c72;
+            color: #1e3c72;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 40px 0;
             text-align: center;
         }
 
         .contact-info h3 {
-            color: white;
+            color: #1e3c72;
             font-size: 22px;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .contact-info a {
-            color: white;
+            color: #1e3c72;
             font-size: 18px;
             font-weight: 600;
-            text-decoration: underline;
+            text-decoration: none;
+            border-bottom: 2px solid #1e3c72;
+            display: inline-block;
+            margin: 5px 10px;
+        }
+
+        .contact-info a:hover {
+            opacity: 0.8;
+        }
+
+        .footer-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #f1f3f4;
         }
 
         .footer-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%);
+            border: 2px solid #1e3c72;
+            color: #1e3c72;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        .back-link {
             text-align: center;
             margin-top: 30px;
         }
 
-        .footer-link a {
-            color: #667eea;
+        .back-link a {
+            display: inline-block;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 15px 35px;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
         }
 
-        .footer-link a:hover {
-            text-decoration: underline;
+        .back-link a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
         }
 
         /* Conversion Section */
         .conversion-section {
             margin-top: 50px;
-            background: #2c3e50;
-            border-radius: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(44, 62, 80, 0.3);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.2);
         }
 
         .conversion-header {
-            background: linear-gradient(45deg, #667eea, #764ba2);
             padding: 40px;
             text-align: center;
             color: white;
         }
 
         .conversion-header h2 {
-            font-size: 32px;
-            font-weight: 800;
+            font-size: 28px;
+            font-weight: 700;
             margin-bottom: 15px;
             color: white;
+            letter-spacing: -0.5px;
         }
 
         .conversion-header p {
             font-size: 18px;
-            opacity: 0.9;
+            opacity: 0.95;
+            line-height: 1.6;
         }
 
         .conversion-body {
             padding: 40px;
-            background: #2c3e50;
+            background: rgba(255, 255, 255, 0.05);
             color: white;
         }
 
@@ -291,10 +354,16 @@
 
         .benefit-item {
             text-align: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
+            padding: 25px 20px;
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .benefit-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.12);
         }
 
         .benefit-icon {
@@ -307,56 +376,59 @@
             font-size: 18px;
             font-weight: 700;
             margin-bottom: 10px;
-            color: #ecf0f1;
+            color: white;
         }
 
         .benefit-item p {
             font-size: 14px;
-            color: #bdc3c7;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
         }
 
         .pricing-highlight {
             text-align: center;
             background: rgba(255, 255, 255, 0.08);
             padding: 30px;
-            border-radius: 15px;
+            border-radius: 12px;
             margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .price-comparison {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .old-price {
             font-size: 20px;
             text-decoration: line-through;
-            color: #95a5a6;
+            color: rgba(255, 255, 255, 0.6);
             margin-right: 15px;
         }
 
         .new-price {
             font-size: 36px;
-            font-weight: 800;
+            font-weight: 700;
             color: white;
+            letter-spacing: -1px;
         }
 
         .cta-button-main {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 20px 50px;
-            border-radius: 50px;
-            font-size: 20px;
+            background: white;
+            color: #1e3c72;
+            padding: 18px 40px;
+            border-radius: 8px;
+            font-size: 18px;
             font-weight: 700;
             text-decoration: none;
             transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             margin: 20px 0;
         }
 
         .cta-button-main:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .trust-indicators {
@@ -369,47 +441,27 @@
 
         .trust-item {
             font-size: 14px;
-            color: #bdc3c7;
+            color: rgba(255, 255, 255, 0.8);
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
         }
 
         @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: linear-gradient(135deg, #667eea, #764ba2);
-                flex-direction: column;
-                padding: 20px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            }
-
-            .nav-menu.active {
-                display: flex;
-            }
-
-            .mobile-menu-toggle {
-                display: block;
-            }
-
-            .nav-container {
-                position: relative;
+            .container {
+                padding: 30px 15px;
             }
 
             h1 {
-                font-size: 24px;
+                font-size: 26px;
             }
 
             .guarantee-card {
                 padding: 25px;
             }
 
-            .container {
-                padding: 20px 15px;
+            .main-message {
+                padding: 30px 20px;
             }
 
             .main-message h2 {
@@ -423,11 +475,11 @@
 
             .step-number {
                 margin-right: 0;
-                margin-bottom: 10px;
+                margin-bottom: 15px;
             }
 
             .conversion-header h2 {
-                font-size: 26px;
+                font-size: 24px;
             }
 
             .benefits-grid {
@@ -437,128 +489,143 @@
             .trust-indicators {
                 flex-direction: column;
                 gap: 15px;
+                align-items: center;
+            }
+
+            .footer-navigation {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
             }
         }
     </style>
-  <script src="/tracking.js" defer></script>
-  <script src="/utm-make.js" defer></script>
+    <script src="/tracking.js" defer></script>
+    <script src="/utm-make.js" defer></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/index.html" class="logo">Clara's Herzkompass</a>
-            <ul class="nav-menu" id="nav-menu">
-                <li><a href="/index.html">Startseite</a></li>
-                <li><a href="/datenschutz.html">Datenschutz</a></li>
-                <li><a href="/impressum.html">Impressum</a></li>
-                <li><a href="/agb.html">AGB</a></li>
-                <li><a href="/geld-zurueck.html" style="color: #22C55E; font-weight: 600;">14 Tage Geld-zurück</a></li>
-            </ul>
-            <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰</button>
+    <!-- Top Header Bar -->
+    <header class="top-header">
+        <div class="header-content">
+            <div class="logo-placeholder">
+                <div class="logo-box">
+                    <img src="LogoGer.png" alt="Logo" class="logo-img">
+                </div>
+            </div>
         </div>
-    </nav>
+    </header>
 
     <div class="container">
         <div class="guarantee-card">
             <div class="guarantee-icon">✅</div>
-            <h1>14 Tage Geld-zurück-Garantie</h1>
+            <h1>30-дневная гарантия возврата денег</h1>
 
             <div class="main-message">
-                <h2>Einfache Stornierung - Nur eine E-Mail!</h2>
-                <p>Sie sind mit Ihrer Analyse nicht zufrieden? Kein Problem!</p>
-                <p>Senden Sie uns einfach eine E-Mail mit dem Betreff "Stornierung" und Sie erhalten Ihr Geld direkt zurück.</p>
+                <h2>Простая отмена - всего одно письмо!</h2>
+                <p>Вы не удовлетворены Вашей инструкцией по получению разрешения на работу? Нет проблем!</p>
+                <p>Просто отправьте нам письмо с темой "Отмена" и Вы получите свои деньги обратно напрямую.</p>
                 
                 <div class="email-highlight">
-                    <strong>E-Mail an:</strong><br>
-                    <a href="mailto:clara@mein-herzkompass.de">clara@mein-herzkompass.de</a>
+                    <strong>Отправить письмо на:</strong><br>
+                    <a href="mailto:support@germany-start.de">support@germany-start.de</a>
                 </div>
             </div>
 
             <div class="warning-box">
-                <h3>⚠️ Wichtiger Hinweis</h3>
-                <p><strong>Bitte kontaktieren Sie NICHT PayPal oder Ihre Bank!</strong></p>
-                <p>Eine einfache E-Mail an uns reicht völlig aus. Wir bearbeiten Ihre Stornierung schnell und unkompliziert. PayPal-Disputes oder Bankrückbuchungen sind nicht notwendig und verzögern nur den Prozess.</p>
-                <p><strong>Wichtig:</strong> Bei PayPal-Disputes oder Bankrückbuchungen können zusätzliche Gebühren für Sie entstehen. Vermeiden Sie diese unnötigen Kosten durch eine einfache E-Mail an uns!</p>
+                <h3>⚠️ Важное замечание</h3>
+                <p><strong>Пожалуйста, НЕ обращайтесь в PayPal или в Ваш банк!</strong></p>
+                <p>Простого письма нам вполне достаточно. Мы обработаем Вашу отмену быстро и без проблем. Споры в PayPal или возвраты через банк не нужны и только затягивают процесс.</p>
+                <p><strong>Важно:</strong> При спорах в PayPal или возвратах через банк для Вас могут возникнуть дополнительные сборы. Избегайте этих ненужных расходов, отправив нам простое письмо!</p>
             </div>
 
             <div class="process-steps">
-                <h3>So einfach funktioniert die Stornierung:</h3>
+                <h3>Так просто работает отмена:</h3>
                 
                 <div class="step">
                     <div class="step-number">1</div>
                     <div class="step-content">
-                        <strong>E-Mail senden</strong>
-                        Schreiben Sie eine E-Mail an clara@mein-herzkompass.de mit dem Betreff "Stornierung"
+                        <strong>Отправить письмо</strong>
+                        <p>Напишите письмо на support@germany-start.de с темой "Отмена"</p>
                     </div>
                 </div>
 
                 <div class="step">
                     <div class="step-number">2</div>
                     <div class="step-content">
-                        <strong>Bestätigung erhalten</strong>
-                        Wir bestätigen Ihre Stornierung innerhalb von 24 Stunden
+                        <strong>Получить подтверждение</strong>
+                        <p>Мы подтвердим Вашу отмену в течение 24 часов</p>
                     </div>
                 </div>
 
                 <div class="step">
                     <div class="step-number">3</div>
                     <div class="step-content">
-                        <strong>Geld zurück</strong>
-                        Sie erhalten Ihr Geld innerhalb von 2-5 Werktagen zurück
+                        <strong>Деньги обратно</strong>
+                        <p>Вы получите Ваши деньги обратно в течение 2-5 рабочих дней</p>
                     </div>
                 </div>
             </div>
 
             <div class="contact-info">
-                <h3>Haben Sie Fragen?</h3>
-                <p>Kontaktieren Sie uns jederzeit:</p>
-                <a href="mailto:clara@mein-herzkompass.de">clara@mein-herzkompass.de</a><br>
-                <span style="margin-top: 10px; display: inline-block;">Tel: 0178 5772525</span>
+                <h3>Есть вопросы?</h3>
+                <p>Обращайтесь к нам в любое время:</p>
+                <a href="mailto:support@germany-start.de">support@germany-start.de</a>
             </div>
 
-            <div class="footer-link">
-                <a href="/index.html">← Zurück zur Startseite</a>
+            <div class="footer-navigation">
+                <a href="/datenschutz.html" class="footer-link">Защита данных</a>
+                <a href="/agb.html" class="footer-link">Условия использования</a>
+                <a href="/impressum.html" class="footer-link">Выходные данные</a>
+            </div>
+
+            <div class="back-link">
+                <a href="/index.html">← Вернуться на главную</a>
             </div>
         </div>
 
         <!-- Conversion Section -->
         <div class="conversion-section">
             <div class="conversion-header">
-                <h2>Wo ist das Risiko? Es gibt keins!</h2>
-                <p>Über 2.000 Menschen haben bereits ihre perfekte Analyse erhalten - komplett risikofrei</p>
+                <h2>Где риск? Его нет!</h2>
+                <p>Более 1.500 человек уже получили свою персональную инструкцию по получению разрешения на работу - полностью без риска</p>
             </div>
             
             <div class="conversion-body">
                 <div class="benefits-grid">
                     <div class="benefit-item">
                         <div class="benefit-icon">⚡</div>
-                        <h4>Schnelle Lieferung</h4>
-                        <p>Ihre Analyse in nur 10 Stunden</p>
+                        <h4>Быстрая доставка</h4>
+                        <p>Ваша инструкция уже через 24 часа по электронной почте</p>
                     </div>
                     <div class="benefit-item">
                         <div class="benefit-icon">🎯</div>
-                        <h4>100% Personalisiert</h4>
-                        <p>Maßgeschneidert für Ihren Typ</p>
+                        <h4>100% персонализация</h4>
+                        <p>Адаптировано под Вашу ситуацию</p>
                     </div>
                     <div class="benefit-item">
                         <div class="benefit-icon">🔒</div>
-                        <h4>Risikofrei</h4>
-                        <p>14 Tage Geld-zurück-Garantie</p>
+                        <h4>Без риска</h4>
+                        <p>30-дневная гарантия возврата денег</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🔗</div>
+                        <h4>Прямые ссылки</h4>
+                        <p>Все ссылки на ведомства для Вашего региона</p>
                     </div>
                 </div>
 
                 <div class="pricing-highlight">
                     <div class="price-comparison">
-                        <span class="old-price">89,00€</span>
-                        <span class="new-price">Nur 39,99€</span>
+                        <span class="old-price">€49,99</span>
+                        <span class="new-price">Всего €24,99</span>
                     </div>
                     
-                    <a href="/step2.html" class="cta-button-main">Jetzt Clara's Analyse starten</a>
+                    <a href="/step1.html" class="cta-button-main">Получить инструкцию по разрешению на работу</a>
                     
                     <div class="trust-indicators">
-                        <div class="trust-item">🔒 Sichere Zahlung</div>
+                        <div class="trust-item">🔒 Безопасная оплата</div>
                         <div class="trust-item">🇩🇪 Made in Germany</div>
-                        <div class="trust-item">❌ Keine Abos</div>
+                        <div class="trust-item">❌ Никаких подписок</div>
+                        <div class="trust-item">📧 Поддержка по email 24 часа</div>
                     </div>
                 </div>
             </div>
@@ -566,25 +633,37 @@
     </div>
 
     <script>
-        // Mobile menu toggle
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const navMenu = document.getElementById('nav-menu');
+        // Page Load Tracking
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'page_view', {
+                'page_title': 'Russian Money Back Guarantee',
+                'page_location': window.location.href,
+                'content_category': 'guarantee_page',
+                'language': 'russian'
+            });
+        }
 
-        mobileMenuToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-        });
-
-        navMenu.addEventListener('click', (e) => {
-            if (e.target.tagName === 'A') {
-                navMenu.classList.remove('active');
+        // Track CTA clicks
+        document.querySelector('.cta-button-main').addEventListener('click', function() {
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'click', {
+                    'event_category': 'conversion',
+                    'event_label': 'russian_guarantee_page_cta',
+                    'value': 24.99,
+                    'language': 'russian'
+                });
             }
         });
 
-        document.addEventListener('click', (e) => {
-            if (!mobileMenuToggle.contains(e.target) && !navMenu.contains(e.target)) {
-                navMenu.classList.remove('active');
-            }
-        });
+        // Scroll to hash if present
+        if (window.location.hash) {
+            setTimeout(() => {
+                const element = document.querySelector(window.location.hash);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 100);
+        }
     </script>
 </body>
 </html>
