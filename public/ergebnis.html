@@ -1053,7 +1053,7 @@
                     Получить мою инструкцию сейчас
                 </a>
                 
-                
+               
                 
                 <div class="payment-providers">
                     <div class="payment-info">Или платите в 3 рассрочки с <span class="klarna-badge">Klarna</span></div>
@@ -1106,9 +1106,9 @@
                     <p>Мы не являемся государственным учреждением</p>
                     <p>Поддержка: <a href="mailto:support@germany-start.de">support@germany-start.de</a></p>
                     <div class="footer-links">
-                        <a href="#impressum">Выходные данные</a>
-                        <a href="#agb">Условия использования</a>
-                        <a href="#datenschutz">Защита данных</a>
+                        <a href="/impressum.html">Выходные данные</a>
+                        <a href="/agb.html">Условия использования</a>
+                        <a href="/datenschutz.html">Защита данных</a>
                     </div>
                 </div>
             </div>
@@ -1138,31 +1138,32 @@
             'sonstige': 'С правильными шагами Вы найдете хорошие возможности и в Вашей желаемой сфере.'
         };
 
-        // Datensammlung für arbeitserlaubnis_leads Tabelle
+        // Datensammlung mit KORREKTEN localStorage-Schlüsseln
         function collectDataBeforeRedirect() {
             console.log('=== COLLECTING DATA FOR ARBEITSERLAUBNIS_LEADS ===');
             
             try {
-                // Sammle alle Daten aus localStorage
+                // Sammle alle Daten mit den RICHTIGEN localStorage-Schlüsseln
                 const quizAnswers = {
                     vorname: localStorage.getItem('Vorname') || '',
-                    nachname: localStorage.getItem('Nachname') || '',
                     email: localStorage.getItem('E_Mail') || '',
-                    herkunftsland: localStorage.getItem('Herkunftsland') || '',
+                    // Keine nachname oder herkunftsland im Quiz
                     deutschkenntnisse: localStorage.getItem('Deutschkenntnisse') || '',
                     arbeitsbereich: localStorage.getItem('Arbeitsbereich') || '',
-                    wunschbereich: localStorage.getItem('Neuer_Wunschbereich') || '',
-                    arbeitserlaubnis: localStorage.getItem('Arbeitserlaubnis') || '',
-                    unterkunft: localStorage.getItem('Unterkunft') || '',
-                    familie: localStorage.getItem('Familie') || '',
-                    bereitschaft: localStorage.getItem('Bereitschaft') || '',
-                    zeitplan: localStorage.getItem('Zeitplan_Deutschland') || '',
                     arbeitsbereich_custom: localStorage.getItem('Arbeitsbereich_Custom') || '',
+                    bereitschaft: localStorage.getItem('Bereitschaft') || '',
+                    gleicher_bereich: localStorage.getItem('Gleicher_Bereich_Deutschland') || '',
+                    wunschbereich: localStorage.getItem('Neuer_Wunschbereich') || '',
                     wunschbereich_custom: localStorage.getItem('Neuer_Wunschbereich_Custom') || '',
+                    unterkunft: localStorage.getItem('Unterkunft_Deutschland') || '',
+                    familie: localStorage.getItem('Familie_Deutschland') || '',
+                    arbeitserlaubnis: localStorage.getItem('Arbeitserlaubnis_Vorhanden') || '',
+                    zeitplan: localStorage.getItem('Zeitplan_Deutschland') || '',
+                    fuehrerschein: localStorage.getItem('Fuehrerschein_Ukraine') || '',
                     userId: localStorage.getItem('userId') || `user_${Date.now()}`
                 };
 
-                // Direkt an Supabase senden (wie vorher)
+                // Direkt an Supabase senden
                 const supabaseUrl = 'https://xomsibpyksrzrnixbdwf.supabase.co';
                 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjY2MzEyMiwiZXhwIjoyMDcyMjM5MTIyfQ.35zRO5wy3_fSGPGpuBm-aqskHOGqxODLtxEQzRFxXAc';
 
@@ -1177,30 +1178,30 @@
                     currency: 'EUR',
                     price_uah: 1050,
                     vorname: quizAnswers.vorname || '',
-                    nachname: quizAnswers.nachname || '',
-                    herkunftsland: quizAnswers.herkunftsland || '',
+                    nachname: '', // Nicht im Quiz vorhanden
+                    herkunftsland: '', // Nicht im Quiz vorhanden
                     deutschkenntnisse: quizAnswers.deutschkenntnisse || '',
                     arbeitsbereich: quizAnswers.arbeitsbereich || '',
                     json_answers: {
                         personal_info: {
                             vorname: quizAnswers.vorname,
-                            nachname: quizAnswers.nachname,
                             email: quizAnswers.email,
-                            herkunftsland: quizAnswers.herkunftsland,
                             userId: quizAnswers.userId
                         },
                         work_situation: {
                             deutschkenntnisse: quizAnswers.deutschkenntnisse,
                             arbeitsbereich: quizAnswers.arbeitsbereich,
-                            wunschbereich: quizAnswers.wunschbereich,
                             arbeitsbereich_custom: quizAnswers.arbeitsbereich_custom,
+                            bereitschaft: quizAnswers.bereitschaft,
+                            gleicher_bereich: quizAnswers.gleicher_bereich,
+                            wunschbereich: quizAnswers.wunschbereich,
                             wunschbereich_custom: quizAnswers.wunschbereich_custom,
-                            arbeitserlaubnis: quizAnswers.arbeitserlaubnis
+                            arbeitserlaubnis: quizAnswers.arbeitserlaubnis,
+                            fuehrerschein: quizAnswers.fuehrerschein
                         },
                         living_situation: {
                             unterkunft: quizAnswers.unterkunft,
                             familie: quizAnswers.familie,
-                            bereitschaft: quizAnswers.bereitschaft,
                             zeitplan: quizAnswers.zeitplan
                         },
                         metadata: {
@@ -1216,7 +1217,7 @@
                     }
                 };
 
-                console.log('=== DATA TO SEND TO ARBEITSERLAUBNIS_LEADS ===', dataToSend);
+                console.log('=== CORRECTED DATA TO SEND ===', dataToSend);
 
                 // Direkt an Supabase arbeitserlaubnis_leads Tabelle
                 fetch(`${supabaseUrl}/rest/v1/arbeitserlaubnis_leads`, {
@@ -1234,6 +1235,9 @@
                         console.log('✅ Data sent to arbeitserlaubnis_leads:', response.status);
                     } else {
                         console.error('❌ Error sending to arbeitserlaubnis_leads:', response.status);
+                        return response.text().then(text => {
+                            console.error('Error details:', text);
+                        });
                     }
                 }).catch(error => {
                     console.error('❌ Network error:', error);
