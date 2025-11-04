@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arbeitserlaubnis Analyse: Frage 1</title>
+    <title>Анализ разрешения на работу: Вопрос 1</title>
     <style>
         * {
             margin: 0;
@@ -225,7 +225,7 @@
         <!-- PROGRESS BAR -->
         <div class="progress-container">
             <div class="progress-label">
-                <span>Frage 1 von 10</span>
+                <span>Вопрос 1 из 10</span>
                 <span>10%</span>
             </div>
             <div class="progress-bar">
@@ -235,52 +235,52 @@
         
         <!-- MAIN CONTENT -->
         <div class="container">
-            <h1>In welchem Bereich hast du zuletzt gearbeitet?</h1>
+            <h1>В какой сфере Вы работали в последний раз?</h1>
             
             <div class="option-container">
                 <div class="option-button" data-value="bau" onclick="selectOption(this, 'bau')">
-                    Bau
+                    Строительство
                 </div>
                 
                 <div class="option-button" data-value="pflege" onclick="selectOption(this, 'pflege')">
-                    Pflege
+                    Уход и медицина
                 </div>
                 
                 <div class="option-button" data-value="gastronomie" onclick="selectOption(this, 'gastronomie')">
-                    Gastronomie
+                    Гастрономия и ресторанный бизнес
                 </div>
                 
                 <div class="option-button" data-value="it" onclick="selectOption(this, 'it')">
-                    IT
+                    IT и технологии
                 </div>
                 
                 <div class="option-button" data-value="handwerk" onclick="selectOption(this, 'handwerk')">
-                    Handwerk
+                    Ремесло и мастерство
                 </div>
                 
                 <div class="option-button" data-value="transport" onclick="selectOption(this, 'transport')">
-                    Transport & Logistik
+                    Транспорт и логистика
                 </div>
                 
                 <div class="option-button" data-value="sonstige" onclick="selectOption(this, 'sonstige')">
-                    Sonstige
+                    Другое
                 </div>
             </div>
             
-            <!-- Popup für Sonstige -->
+            <!-- Popup для Другое -->
             <div id="sonstigePopup" class="popup-overlay" style="display: none;">
                 <div class="popup-content">
-                    <h3>In welchem Bereich hast du gearbeitet?</h3>
-                    <input type="text" id="sonstigeInput" placeholder="Bitte gib deinen Arbeitsbereich ein..." maxlength="100">
+                    <h3>В какой сфере Вы работали?</h3>
+                    <input type="text" id="sonstigeInput" placeholder="Пожалуйста, укажите Вашу сферу деятельности..." maxlength="100">
                     <div class="popup-buttons">
-                        <button onclick="submitSonstige()" class="submit-btn">Bestätigen</button>
-                        <button onclick="closeSonstigePopup()" class="cancel-btn">Abbrechen</button>
+                        <button onclick="submitSonstige()" class="submit-btn">Подтвердить</button>
+                        <button onclick="closeSonstigePopup()" class="cancel-btn">Отменить</button>
                     </div>
                 </div>
             </div>
             
             <div class="security-note">
-                🔒 Ihre Daten sind sicher und werden vertraulich behandelt
+                🔒 Ваши данные в безопасности и обрабатываются конфиденциально
             </div>
         </div>
     </div>
@@ -302,7 +302,7 @@
         }
 
         function selectOption(element, value) {
-            // Wenn "Sonstige" ausgewählt wird, öffne Popup
+            // Wenn "Другое" ausgewählt wird, öffne Popup
             if (value === 'sonstige') {
                 document.getElementById('sonstigePopup').style.display = 'flex';
                 setTimeout(() => {
@@ -330,11 +330,11 @@
             const customValue = document.getElementById('sonstigeInput').value.trim();
             
             if (customValue === '') {
-                alert('Bitte gib deinen Arbeitsbereich ein.');
+                alert('Пожалуйста, укажите Вашу сферу деятельности.');
                 return;
             }
             
-            // Markiere Sonstige Button als ausgewählt
+            // Markiere Другое Button als ausgewählt
             document.querySelectorAll('.option-button').forEach(btn => {
                 btn.classList.remove('selected');
             });
