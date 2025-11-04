@@ -1042,7 +1042,7 @@
                     <li>✓ Рекомендации работы на основе Ваших ответов</li>
                 </ul>
                 
-                <button class="price-button" onclick="requestGuidance()">
+                <button class="price-button" id="checkout-button">
                     Получить мою инструкцию сейчас
                 </button>
                 
@@ -1068,7 +1068,7 @@
                 <small>Если Вы не будете удовлетворены</small>
             </div>
             
-            <a href="#" class="cta-button" onclick="requestGuidance()">Начать сейчас</a>
+            <a href="#" class="cta-button" id="cta-checkout-button">Начать сейчас</a>
         </div>
 
         <div class="section">
@@ -1388,180 +1388,225 @@
 
         function requestGuidance() {
         function requestGuidance() {
-            // Verwende die verbesserte loadUserData Funktion
-            const userData = loadUserData();
-            
-            // Sammle alle Quiz-Antworten aus localStorage mit verbesserter Logik
-            const quizAnswers = {
-                vorname: userData.vorname || '',
-                nachname: userData.nachname || '',
-                email: userData.email || '',
-                herkunftsland: userData.herkunftsland || '',
-                deutschkenntnisse: userData.deutschkenntnisse || 'a1',
-                arbeitsbereich: userData.arbeitsbereich || 'sonstige',
-                wunschbereich: userData.wunschbereich || userData.arbeitsbereich || 'sonstige',
-                arbeitserlaubnis: userData.arbeitserlaubnis || 'nein',
-                unterkunft: userData.unterkunft || 'nein_suche',
-                familie: userData.familie || 'allein',
-                bereitschaft: userData.bereitschaft || 'ja_bereit',
-                zeitplan: userData.zeitplan || 'spaeter',
-                arbeitsbereich_custom: userData.arbeitsbereich_custom || '',
-                wunschbereich_custom: userData.wunschbereich_custom || '',
-                fuehrerschein: userData.fuehrerschein || 'nein',
-                userId: userData.userId || `user_${Date.now()}`
-            };
+            try {
+                console.log('=== STARTING CHECKOUT PROCESS ===');
+                
+                // Deaktiviere Buttons um Doppelklicks zu vermeiden
+                const checkoutButton = document.getElementById('checkout-button');
+                const ctaButton = document.getElementById('cta-checkout-button');
+                
+                if (checkoutButton) {
+                    checkoutButton.disabled = true;
+                    checkoutButton.textContent = 'Обрабатывается...';
+                }
+                if (ctaButton) {
+                    ctaButton.style.pointerEvents = 'none';
+                    ctaButton.textContent = 'Обрабатывается...';
+                }
+                
+                // Verwende die verbesserte loadUserData Funktion
+                const userData = loadUserData();
+                
+                // Sammle alle Quiz-Antworten aus localStorage mit verbesserter Logik
+                const quizAnswers = {
+                    vorname: userData.vorname || '',
+                    nachname: userData.nachname || '',
+                    email: userData.email || '',
+                    herkunftsland: userData.herkunftsland || '',
+                    deutschkenntnisse: userData.deutschkenntnisse || 'a1',
+                    arbeitsbereich: userData.arbeitsbereich || 'sonstige',
+                    wunschbereich: userData.wunschbereich || userData.arbeitsbereich || 'sonstige',
+                    arbeitserlaubnis: userData.arbeitserlaubnis || 'nein',
+                    unterkunft: userData.unterkunft || 'nein_suche',
+                    familie: userData.familie || 'allein',
+                    bereitschaft: userData.bereitschaft || 'ja_bereit',
+                    zeitplan: userData.zeitplan || 'spaeter',
+                    arbeitsbereich_custom: userData.arbeitsbereich_custom || '',
+                    wunschbereich_custom: userData.wunschbereich_custom || '',
+                    fuehrerschein: userData.fuehrerschein || 'nein',
+                    userId: userData.userId || `user_${Date.now()}`
+                };
 
-            console.log('=== QUIZ ANSWERS COLLECTED ===');
-            console.log('Quiz Antworten:', quizAnswers);
+                console.log('=== QUIZ ANSWERS COLLECTED ===');
+                console.log('Quiz Antworten:', quizAnswers);
 
-            // Erstelle Datenstruktur für arbeitserlaubnis_leads Tabelle
-            const completeResults = {
-                // Basis-Spalten
-                user_id: quizAnswers.userId,
-                email: quizAnswers.email || '',
-                
-                // Status & Tracking
-                source: 'ergebnis_premium_russian_formal_complete',
-                language: 'russian_formal',
-                checkout_clicked: true,
-                payment_completed: false, // wird später von Stripe Webhook gesetzt
-                
-                // Pricing
-                price: 24.99,
-                currency: 'EUR',
-                price_uah: 1050,
-                
-                // Oft gebrauchte Felder für schnelle Queries
-                vorname: quizAnswers.vorname || '',
-                nachname: quizAnswers.nachname || '',
-                herkunftsland: quizAnswers.herkunftsland || '',
-                deutschkenntnisse: quizAnswers.deutschkenntnisse || '',
-                arbeitsbereich: quizAnswers.arbeitsbereich || '',
-                
-                // Alle Quiz-Daten als JSON
-                json_answers: {
-                    personal_info: {
-                        vorname: quizAnswers.vorname || '',
-                        nachname: quizAnswers.nachname || '',
-                        email: quizAnswers.email || '',
-                        herkunftsland: quizAnswers.herkunftsland || '',
-                        userId: quizAnswers.userId
-                    },
-                    work_situation: {
-                        deutschkenntnisse: quizAnswers.deutschkenntnisse || '',
-                        arbeitsbereich: quizAnswers.arbeitsbereich || '',
-                        wunschbereich: quizAnswers.wunschbereich || '',
-                        arbeitsbereich_custom: quizAnswers.arbeitsbereich_custom || '',
-                        wunschbereich_custom: quizAnswers.wunschbereich_custom || '',
-                        arbeitserlaubnis: quizAnswers.arbeitserlaubnis || ''
-                    },
-                    living_situation: {
-                        unterkunft: quizAnswers.unterkunft || '',
-                        familie: quizAnswers.familie || '',
-                        bereitschaft: quizAnswers.bereitschaft || '',
-                        zeitplan: quizAnswers.zeitplan || ''
-                    },
-                    additional_info: {
-                        fuehrerschein: quizAnswers.fuehrerschein || ''
-                    },
-                    metadata: {
-                        analysis_type: 'arbeitserlaubnis_beratung',
-                        quiz_completed: true,
-                        results_page_visited: true,
-                        checkout_timestamp: new Date().toISOString(),
-                        page_source: 'russian_formal_complete_with_verification',
-                        browser_info: {
-                            user_agent: navigator.userAgent,
-                            language: navigator.language,
-                            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                // Erstelle Datenstruktur für arbeitserlaubnis_leads Tabelle
+                const completeResults = {
+                    // Basis-Spalten
+                    user_id: quizAnswers.userId,
+                    email: quizAnswers.email || '',
+                    
+                    // Status & Tracking
+                    source: 'ergebnis_premium_russian_formal_complete',
+                    language: 'russian_formal',
+                    checkout_clicked: true,
+                    payment_completed: false, // wird später von Stripe Webhook gesetzt
+                    
+                    // Pricing
+                    price: 24.99,
+                    currency: 'EUR',
+                    price_uah: 1050,
+                    
+                    // Oft gebrauchte Felder für schnelle Queries
+                    vorname: quizAnswers.vorname || '',
+                    nachname: quizAnswers.nachname || '',
+                    herkunftsland: quizAnswers.herkunftsland || '',
+                    deutschkenntnisse: quizAnswers.deutschkenntnisse || '',
+                    arbeitsbereich: quizAnswers.arbeitsbereich || '',
+                    
+                    // Alle Quiz-Daten als JSON
+                    json_answers: {
+                        personal_info: {
+                            vorname: quizAnswers.vorname || '',
+                            nachname: quizAnswers.nachname || '',
+                            email: quizAnswers.email || '',
+                            herkunftsland: quizAnswers.herkunftsland || '',
+                            userId: quizAnswers.userId
                         },
-                        data_completeness: {
-                            has_email: !!quizAnswers.email,
-                            has_name: !!quizAnswers.vorname,
-                            has_country: !!quizAnswers.herkunftsland,
-                            missing_fields: Object.entries(quizAnswers)
-                                .filter(([key, value]) => !value || value === '')
-                                .map(([key]) => key)
+                        work_situation: {
+                            deutschkenntnisse: quizAnswers.deutschkenntnisse || '',
+                            arbeitsbereich: quizAnswers.arbeitsbereich || '',
+                            wunschbereich: quizAnswers.wunschbereich || '',
+                            arbeitsbereich_custom: quizAnswers.arbeitsbereich_custom || '',
+                            wunschbereich_custom: quizAnswers.wunschbereich_custom || '',
+                            arbeitserlaubnis: quizAnswers.arbeitserlaubnis || ''
+                        },
+                        living_situation: {
+                            unterkunft: quizAnswers.unterkunft || '',
+                            familie: quizAnswers.familie || '',
+                            bereitschaft: quizAnswers.bereitschaft || '',
+                            zeitplan: quizAnswers.zeitplan || ''
+                        },
+                        additional_info: {
+                            fuehrerschein: quizAnswers.fuehrerschein || ''
+                        },
+                        metadata: {
+                            analysis_type: 'arbeitserlaubnis_beratung',
+                            quiz_completed: true,
+                            results_page_visited: true,
+                            checkout_timestamp: new Date().toISOString(),
+                            page_source: 'russian_formal_complete_with_verification',
+                            browser_info: {
+                                user_agent: navigator.userAgent,
+                                language: navigator.language,
+                                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                            },
+                            data_completeness: {
+                                has_email: !!quizAnswers.email,
+                                has_name: !!quizAnswers.vorname,
+                                has_country: !!quizAnswers.herkunftsland,
+                                missing_fields: Object.entries(quizAnswers)
+                                    .filter(([key, value]) => !value || value === '')
+                                    .map(([key]) => key)
+                            }
                         }
                     }
+                };
+
+                console.log('=== COMPLETE RESULTS FOR SUPABASE ===');
+                console.log('Vollständige Daten:', completeResults);
+                
+                // Zeige Datenqualität
+                const missingFields = completeResults.json_answers.metadata.data_completeness.missing_fields;
+                if (missingFields.length > 0) {
+                    console.warn('⚠️ Fehlende Felder:', missingFields);
+                } else {
+                    console.log('✅ Alle Daten vollständig');
                 }
-            };
 
-            console.log('=== COMPLETE RESULTS FOR SUPABASE ===');
-            console.log('Vollständige Daten:', completeResults);
-            
-            // Zeige Datenqualität
-            const missingFields = completeResults.json_answers.metadata.data_completeness.missing_fields;
-            if (missingFields.length > 0) {
-                console.warn('⚠️ Fehlende Felder:', missingFields);
-            } else {
-                console.log('✅ Alle Daten vollständig');
-            }
+                // Sende Daten an Supabase
+                sendToSupabase(completeResults);
 
-            // Sende Daten an Supabase
-            sendToSupabase(completeResults);
+                // Speichere lokale Backup-Daten
+                localStorage.setItem('arbeitserlaubnisResults', JSON.stringify(completeResults));
+                localStorage.setItem('quizCompleted', 'true');
+                localStorage.setItem('checkoutClicked', 'true');
+                localStorage.setItem('lastInteraction', new Date().toISOString());
 
-            // Speichere lokale Backup-Daten
-            localStorage.setItem('arbeitserlaubnisResults', JSON.stringify(completeResults));
-            localStorage.setItem('quizCompleted', 'true');
-            localStorage.setItem('checkoutClicked', 'true');
-            localStorage.setItem('lastInteraction', new Date().toISOString());
-
-            // Tracking Events
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'begin_checkout', {
-                    'currency': 'EUR',
-                    'value': 24.99,
-                    'item_category': 'arbeitserlaubnis_beratung',
-                    'item_name': 'Russian Formal Personalized Work Permit Guide Complete with UAH pricing',
-                    'language': 'russian_formal',
-                    'custom_parameters': {
-                        'data_completeness': missingFields.length === 0 ? 'complete' : 'partial',
-                        'missing_fields_count': missingFields.length
-                    }
-                });
-            }
-
-            if (typeof fbq !== 'undefined') {
-                fbq('track', 'InitiateCheckout', {
-                    value: 24.99,
-                    currency: 'EUR',
-                    content_category: 'arbeitserlaubnis_service_russian_formal_complete',
-                    content_name: 'UAH_pricing_included_formal',
-                    custom_data: {
-                        'data_quality': missingFields.length === 0 ? 'complete' : 'partial'
-                    }
-                });
-            }
-
-            if (typeof pintrk !== 'undefined') {
-                pintrk('track', 'checkout', {
-                    value: 24.99,
-                    currency: 'EUR',
-                    custom_parameters: {
+                // Tracking Events
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'begin_checkout', {
+                        'currency': 'EUR',
+                        'value': 24.99,
+                        'item_category': 'arbeitserlaubnis_beratung',
+                        'item_name': 'Russian Formal Personalized Work Permit Guide Complete with UAH pricing',
                         'language': 'russian_formal',
-                        'price_uah': '1050',
-                        'verification': 'included',
-                        'data_complete': missingFields.length === 0
-                    }
-                });
-            }
+                        'custom_parameters': {
+                            'data_completeness': missingFields.length === 0 ? 'complete' : 'partial',
+                            'missing_fields_count': missingFields.length
+                        }
+                    });
+                } else {
+                    console.warn('⚠️ Google Analytics nicht verfügbar');
+                }
 
-            if (typeof ttq !== 'undefined') {
-                ttq.track('InitiateCheckout', {
-                    value: 24.99,
-                    currency: 'EUR',
-                    content_type: 'product',
-                    content_name: 'Russian Formal Work Permit Complete Consultation with UAH and Verification'
-                });
-            }
+                if (typeof fbq !== 'undefined') {
+                    fbq('track', 'InitiateCheckout', {
+                        value: 24.99,
+                        currency: 'EUR',
+                        content_category: 'arbeitserlaubnis_service_russian_formal_complete',
+                        content_name: 'UAH_pricing_included_formal',
+                        custom_data: {
+                            'data_quality': missingFields.length === 0 ? 'complete' : 'partial'
+                        }
+                    });
+                } else {
+                    console.warn('⚠️ Facebook Pixel nicht verfügbar');
+                }
 
-            console.log('=== RUSSIAN FORMAL COMPLETE CHECKOUT WITH IMPROVED DATA COLLECTION ===');
-            
-            // Redirect zu Stripe Checkout nach kurzer Verzögerung
-            setTimeout(() => {
-                window.location.href = 'https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07';
-            }, 1000); // Erhöht auf 1000ms für bessere Datenübertragung
+                if (typeof pintrk !== 'undefined') {
+                    pintrk('track', 'checkout', {
+                        value: 24.99,
+                        currency: 'EUR',
+                        custom_parameters: {
+                            'language': 'russian_formal',
+                            'price_uah': '1050',
+                            'verification': 'included',
+                            'data_complete': missingFields.length === 0
+                        }
+                    });
+                } else {
+                    console.warn('⚠️ Pinterest Tracking nicht verfügbar');
+                }
+
+                if (typeof ttq !== 'undefined') {
+                    ttq.track('InitiateCheckout', {
+                        value: 24.99,
+                        currency: 'EUR',
+                        content_type: 'product',
+                        content_name: 'Russian Formal Work Permit Complete Consultation with UAH and Verification'
+                    });
+                } else {
+                    console.warn('⚠️ TikTok Tracking nicht verfügbar');
+                }
+
+                console.log('=== RUSSIAN FORMAL COMPLETE CHECKOUT WITH IMPROVED DATA COLLECTION ===');
+                
+                // Redirect zu Stripe Checkout nach Verzögerung
+                setTimeout(() => {
+                    console.log('🚀 Redirecting to Stripe...');
+                    window.location.href = 'https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07';
+                }, 1500); // 1.5 Sekunden für bessere UX
+                
+            } catch (error) {
+                console.error('❌ FEHLER beim Checkout:', error);
+                
+                // Reaktiviere Buttons bei Fehler
+                const checkoutButton = document.getElementById('checkout-button');
+                const ctaButton = document.getElementById('cta-checkout-button');
+                
+                if (checkoutButton) {
+                    checkoutButton.disabled = false;
+                    checkoutButton.textContent = 'Получить мою инструкцию сейчас';
+                }
+                if (ctaButton) {
+                    ctaButton.style.pointerEvents = 'auto';
+                    ctaButton.textContent = 'Начать сейчас';
+                }
+                
+                // Zeige Benutzer-freundliche Fehlermeldung
+                alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie unseren Support.');
+            }
         }
         }
 
@@ -1651,20 +1696,51 @@
         window.addEventListener('load', function() {
             console.log('=== RUSSIAN FORMAL COMPLETE ARBEITSERLAUBNIS RESULTS PAGE WITH SUPABASE LOADED ===');
             
-            const userData = loadUserData();
-            generatePersonalizedContent(userData);
-            
-            // Initialisiere Retry-Mechanismus für Supabase
-            retryFailedSubmissions();
-            
-            // Markiere Seite als besucht
-            localStorage.setItem('resultsPageVisited', 'true');
-            localStorage.setItem('lastPageVisit', new Date().toISOString());
-            localStorage.setItem('currencyDisplayed', 'EUR_UAH');
-            localStorage.setItem('russianVersion', 'formal_complete_verification_supabase');
-            
-            console.log('User Data:', userData);
-            console.log('Supabase Integration: Ready');
+            try {
+                const userData = loadUserData();
+                generatePersonalizedContent(userData);
+                
+                // Initialisiere Retry-Mechanismus für Supabase
+                retryFailedSubmissions();
+                
+                // Event Listener für Checkout-Buttons
+                const checkoutButton = document.getElementById('checkout-button');
+                const ctaButton = document.getElementById('cta-checkout-button');
+                
+                if (checkoutButton) {
+                    checkoutButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('=== CHECKOUT BUTTON CLICKED ===');
+                        requestGuidance();
+                    });
+                } else {
+                    console.error('❌ Checkout button nicht gefunden!');
+                }
+                
+                if (ctaButton) {
+                    ctaButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('=== CTA CHECKOUT BUTTON CLICKED ===');
+                        requestGuidance();
+                    });
+                } else {
+                    console.error('❌ CTA button nicht gefunden!');
+                }
+                
+                // Markiere Seite als besucht
+                localStorage.setItem('resultsPageVisited', 'true');
+                localStorage.setItem('lastPageVisit', new Date().toISOString());
+                localStorage.setItem('currencyDisplayed', 'EUR_UAH');
+                localStorage.setItem('russianVersion', 'formal_complete_verification_supabase');
+                
+                console.log('✅ Seite vollständig geladen');
+                console.log('✅ Event Listener registriert');
+                console.log('User Data:', userData);
+                console.log('Supabase Integration: Ready');
+                
+            } catch (error) {
+                console.error('❌ Fehler beim Laden der Seite:', error);
+            }
         });
     </script>
 </body>
