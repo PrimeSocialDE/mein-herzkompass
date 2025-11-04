@@ -964,7 +964,7 @@
                     <p>Более 1000 успешных заявлений</p>
                 </div>
                 <div class="verification-item">
-                    <img src="icon-stern.png" alt="Высокое качество" class="verification-img">
+                    <img src="Stern.png" alt="Высокое качество" class="verification-img">
                     <h4>5-звездочное качество</h4>
                     <p>98% довольных клиентов</p>
                 </div>
@@ -1336,18 +1336,31 @@
                 userId: localStorage.getItem('userId') || `user_${Date.now()}`
             };
 
-            // Erstelle komplette Ergebnisse für Tracking und Supabase
+            // Erstelle Datenstruktur für arbeitserlaubnis_leads Tabelle
             const completeResults = {
+                // Basis-Spalten
                 user_id: quizAnswers.userId,
-                email: quizAnswers.email,
+                email: quizAnswers.email || '',
+                
+                // Status & Tracking
                 source: 'ergebnis_premium_russian_formal_complete',
-                conversion_step: 'checkout_initiated',
-                price: '24.99',
-                currency: 'EUR',
-                price_uah: '1050',
                 language: 'russian_formal',
-                created_at: new Date().toISOString(),
                 checkout_clicked: true,
+                payment_completed: false, // wird später von Stripe Webhook gesetzt
+                
+                // Pricing
+                price: 24.99,
+                currency: 'EUR',
+                price_uah: 1050,
+                
+                // Oft gebrauchte Felder für schnelle Queries
+                vorname: quizAnswers.vorname || '',
+                nachname: quizAnswers.nachname || '',
+                herkunftsland: quizAnswers.herkunftsland || '',
+                deutschkenntnisse: quizAnswers.deutschkenntnisse || '',
+                arbeitsbereich: quizAnswers.arbeitsbereich || '',
+                
+                // Alle Quiz-Daten als JSON
                 json_answers: {
                     personal_info: {
                         vorname: quizAnswers.vorname,
@@ -1374,8 +1387,13 @@
                         analysis_type: 'arbeitserlaubnis_beratung',
                         quiz_completed: true,
                         results_page_visited: true,
-                        timestamp: new Date().toISOString(),
-                        page_source: 'russian_formal_complete_with_verification'
+                        checkout_timestamp: new Date().toISOString(),
+                        page_source: 'russian_formal_complete_with_verification',
+                        browser_info: {
+                            user_agent: navigator.userAgent,
+                            language: navigator.language,
+                            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                        }
                     }
                 }
             };
@@ -1441,12 +1459,12 @@
         // Supabase Integration
         async function sendToSupabase(data) {
             try {
-                console.log('=== SENDING DATA TO SUPABASE ===', data);
+                console.log('=== SENDING DATA TO SUPABASE arbeitserlaubnis_leads TABLE ===', data);
                 
                 // Supabase API Configuration
                 const supabaseUrl = 'https://xomsibpyksrzrnixbdwf.supabase.co';
                 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjY2MzEyMiwiZXhwIjoyMDcyMjM5MTIyfQ.35zRO5wy3_fSGPGpuBm-aqskHOGqxODLtxEQzRFxXAc';
-                const tableName = 'orders';
+                const tableName = 'arbeitserlaubnis_leads';
 
                 const response = await fetch(`${supabaseUrl}/rest/v1/${tableName}`, {
                     method: 'POST',
@@ -1460,23 +1478,25 @@
                 });
 
                 if (response.ok) {
-                    console.log('✅ Data successfully sent to Supabase orders table');
+                    console.log('✅ Data successfully sent to Supabase arbeitserlaubnis_leads table');
                     
                     // Markiere als erfolgreich gesendet
                     localStorage.setItem('supabaseSuccess', 'true');
                     localStorage.setItem('supabaseSentAt', new Date().toISOString());
+                    localStorage.setItem('supabaseTable', 'arbeitserlaubnis_leads');
                     
                     // Optional: Tracking für erfolgreiche Datenübertragung
                     if (typeof gtag !== 'undefined') {
                         gtag('event', 'supabase_success', {
                             'user_id': data.user_id,
                             'email': data.email,
-                            'table': 'orders'
+                            'table': 'arbeitserlaubnis_leads',
+                            'language': data.language
                         });
                     }
                 } else {
                     const errorText = await response.text();
-                    console.error('❌ Failed to send data to Supabase orders table:', response.status, response.statusText, errorText);
+                    console.error('❌ Failed to send data to Supabase arbeitserlaubnis_leads table:', response.status, response.statusText, errorText);
                     
                     // Speichere Fehler für späteren Retry
                     localStorage.setItem('supabaseError', JSON.stringify({
@@ -1484,16 +1504,18 @@
                         status: response.status,
                         errorDetails: errorText,
                         timestamp: new Date().toISOString(),
+                        table: 'arbeitserlaubnis_leads',
                         data: data
                     }));
                 }
             } catch (error) {
-                console.error('❌ Error sending data to Supabase orders table:', error);
+                console.error('❌ Error sending data to Supabase arbeitserlaubnis_leads table:', error);
                 
                 // Speichere Fehler für späteren Retry
                 localStorage.setItem('supabaseError', JSON.stringify({
                     error: error.message,
                     timestamp: new Date().toISOString(),
+                    table: 'arbeitserlaubnis_leads',
                     data: data
                 }));
                 
@@ -1502,7 +1524,7 @@
                     gtag('event', 'supabase_error', {
                         'error_message': error.message,
                         'user_id': data.user_id,
-                        'table': 'orders'
+                        'table': 'arbeitserlaubnis_leads'
                     });
                 }
             }
