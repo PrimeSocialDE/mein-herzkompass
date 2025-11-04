@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Impressum - Claras Farb-Analyse</title>
+    <title>Impressum - Arbeitserlaubnis Hilfe</title>
     <style>
         * {
             margin: 0;
@@ -12,125 +12,131 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
-            color: #333;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #ffffff;
+            color: #2c3e50;
             line-height: 1.6;
         }
 
-        .navbar {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        /* Top Header */
+        .top-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
             padding: 15px 0;
-            box-shadow: 0 2px 10px rgba(103, 126, 234, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
-
-        .nav-container {
+        
+        .header-content {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
         }
-
-        .logo {
-            color: white;
-            font-size: 24px;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .nav-menu {
+        
+        .logo-placeholder {
             display: flex;
-            list-style: none;
-            gap: 30px;
+            align-items: center;
         }
-
-        .nav-menu a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 16px;
-            transition: opacity 0.3s ease;
+        
+        .logo-box {
+            width: 120px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
         }
-
-        .nav-menu a:hover {
-            opacity: 0.8;
-        }
-
-        .mobile-menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
+        
+        .logo-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 60px 20px;
         }
 
         .impressum-card {
             background: white;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid #1e3c72;
             margin-bottom: 30px;
         }
 
         h1 {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 30px;
+            color: #1e3c72;
+            margin-bottom: 40px;
             text-align: center;
+            letter-spacing: -0.5px;
         }
 
         h2 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 600;
-            color: #2c3e50;
+            color: #1e3c72;
             margin-bottom: 20px;
-            margin-top: 30px;
+            margin-top: 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f1f3f4;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
         }
 
         .company-info {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%);
             padding: 25px;
             border-radius: 10px;
             margin-bottom: 25px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #1e3c72;
         }
 
         .company-name {
             font-size: 20px;
             font-weight: 700;
-            color: #2c3e50;
+            color: #1e3c72;
             margin-bottom: 15px;
         }
 
         .address {
             margin-bottom: 20px;
             line-height: 1.8;
+            color: #2c3e50;
         }
 
         .contact-info {
             margin-bottom: 15px;
+            line-height: 1.8;
         }
 
         .contact-info strong {
-            color: #2c3e50;
+            color: #1e3c72;
+            font-weight: 600;
         }
 
         .contact-info a {
-            color: #667eea;
+            color: #1e3c72;
             text-decoration: none;
+            font-weight: 500;
         }
 
         .contact-info a:hover {
@@ -138,109 +144,159 @@
         }
 
         .tax-info {
-            background: #e8f5e8;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #27ae60;
-        }
-
-        .dispute-resolution {
-            background: #fff3cd;
+            background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%);
             padding: 20px;
             border-radius: 8px;
             margin: 20px 0;
-            border-left: 4px solid #ffc107;
+            border-left: 4px solid #27ae60;
+            font-weight: 500;
+            color: #155724;
+        }
+
+        .dispute-resolution {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+            border-left: 4px solid #f39c12;
+        }
+
+        .dispute-resolution p {
+            margin-bottom: 15px;
+            color: #856404;
+            font-weight: 500;
+        }
+
+        .dispute-resolution p:last-child {
+            margin-bottom: 0;
         }
 
         .dispute-resolution a {
-            color: #667eea;
+            color: #1e3c72;
             text-decoration: none;
+            font-weight: 600;
         }
 
         .dispute-resolution a:hover {
             text-decoration: underline;
         }
 
+        .footer-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #f1f3f4;
+        }
+
         .footer-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%);
+            border: 2px solid #1e3c72;
+            color: #1e3c72;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        .back-link {
             text-align: center;
             margin-top: 30px;
         }
 
-        .footer-link a {
-            color: #667eea;
+        .back-link a {
+            display: inline-block;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
         }
 
-        .footer-link a:hover {
-            text-decoration: underline;
+        .back-link a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+        }
+
+        .disclaimer {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+            border-left: 4px solid #6c757d;
+            font-size: 14px;
+            color: #6c757d;
         }
 
         @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: linear-gradient(135deg, #667eea, #764ba2);
-                flex-direction: column;
-                padding: 20px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            }
-
-            .nav-menu.active {
-                display: flex;
-            }
-
-            .mobile-menu-toggle {
-                display: block;
-            }
-
-            .nav-container {
-                position: relative;
-            }
-
-            h1 {
-                font-size: 28px;
+            .container {
+                padding: 30px 15px;
             }
 
             .impressum-card {
                 padding: 25px;
             }
 
-            .container {
-                padding: 20px 15px;
+            h1 {
+                font-size: 26px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .footer-navigation {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+
+            .footer-link {
+                text-align: center;
             }
         }
     </style>
-  <script src="/tracking.js" defer></script>
-  <script src="/utm-make.js" defer></script>
+    <script src="/tracking.js" defer></script>
+    <script src="/utm-make.js" defer></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/index.html" class="logo">Clara's Herzkompass</a>
-            <ul class="nav-menu" id="nav-menu">
-                <li><a href="/index.html">Startseite</a></li>
-                <li><a href="/datenschutz.html">Datenschutz</a></li>
-                <li><a href="/impressum.html">Impressum</a></li>
-                <li><a href="/agb.html">AGB</a></li>
-                <li><a href="#guarantee" style="color: #22C55E; font-weight: 600;">14 Tage Geld-zurück</a></li>
-            </ul>
-            <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰</button>
+    <!-- Top Header Bar -->
+    <header class="top-header">
+        <div class="header-content">
+            <div class="logo-placeholder">
+                <div class="logo-box">
+                    <img src="LogoGer.png" alt="Logo" class="logo-img">
+                </div>
+            </div>
         </div>
-    </nav>
+    </header>
 
     <div class="container">
         <div class="impressum-card">
             <h1>Impressum</h1>
 
-            <h2>Angaben gemäß § 5 TMG</h2>
+            <h2>
+                <div class="section-icon">🏢</div>
+                Angaben gemäß § 5 TMG
+            </h2>
             
             <div class="company-info">
-                <div class="company-name">PrimeSocial GbR</div>
+                <div class="company-name">Debkowski & Moritz GbR</div>
                 <div class="address">
                     Maximilian Debowski<br>
                     Rosenbohmsweg 28a<br>
@@ -249,55 +305,70 @@
                 </div>
             </div>
 
-            <h2>Kontakt</h2>
+            <h2>
+                <div class="section-icon">📞</div>
+                Kontakt
+            </h2>
             <div class="contact-info">
                 <strong>Telefon:</strong> 0178 5772525<br>
-                <strong>E-Mail:</strong> <a href="mailto:clara@mein-herzkompass.de">clara@mein-herzkompass.de</a>
+                <strong>E-Mail:</strong> <a href="mailto:support@germany-start.de">support@germany-start.de</a>
             </div>
 
-            <h2>Umsatzsteuer</h2>
+            <h2>
+                <div class="section-icon">💰</div>
+                Umsatzsteuer
+            </h2>
             <div class="tax-info">
-                Umsatzsteuerbefreit (Kleinunternehmerregelung)
+                <strong>USt-IdNr.:</strong> DE353303833
             </div>
 
-            <h2>Online-Streitbeilegung</h2>
+            <h2>
+                <div class="section-icon">⚖️</div>
+                Online-Streitbeilegung
+            </h2>
             <div class="dispute-resolution">
                 <p><strong>Plattform der EU-Kommission zur Online-Streitbeilegung:</strong><br>
                 <a href="https://ec.europa.eu/odr" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/odr</a></p>
                 
-                <p style="margin-top: 15px;">
+                <p>
                 Wir sind zur Teilnahme an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle weder verpflichtet noch bereit.
                 </p>
             </div>
 
-            <div class="footer-link">
+            <div class="disclaimer">
+                <strong>Hinweis:</strong> Wir sind keine staatliche Behörde und erbringen keine Rechtsberatung. Unsere Dienstleistung umfasst die Bereitstellung von Informationen und praktischen Anleitungen zur Navigation durch behördliche Verfahren.
+            </div>
+
+            <div class="footer-navigation">
+                <a href="/datenschutz.html" class="footer-link">Datenschutz</a>
+                <a href="/agb.html" class="footer-link">AGB</a>
+                <a href="/widerruf.html" class="footer-link">Widerrufsrecht</a>
+            </div>
+
+            <div class="back-link">
                 <a href="/index.html">← Zurück zur Startseite</a>
             </div>
         </div>
     </div>
 
     <script>
-        // Mobile menu toggle
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const navMenu = document.getElementById('nav-menu');
+        // Page Load Tracking
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'page_view', {
+                'page_title': 'Impressum',
+                'page_location': window.location.href
+            });
+        }
 
-        mobileMenuToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-        });
-
-        // Close mobile menu when clicking on a link
-        navMenu.addEventListener('click', (e) => {
-            if (e.target.tagName === 'A') {
-                navMenu.classList.remove('active');
-            }
-        });
-
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!mobileMenuToggle.contains(e.target) && !navMenu.contains(e.target)) {
-                navMenu.classList.remove('active');
-            }
-        });
+        // Scroll to hash if present
+        if (window.location.hash) {
+            setTimeout(() => {
+                const element = document.querySelector(window.location.hash);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 100);
+        }
     </script>
 </body>
 </html>
