@@ -274,12 +274,16 @@
             }
         }
 
-        // Form submission
+        // Form submission - KORRIGIERT
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const vorname = document.getElementById('vorname').value.trim();
             const email = document.getElementById('email').value.trim();
+            
+            console.log('=== FORM SUBMISSION ===');
+            console.log('Vorname:', vorname);
+            console.log('Email:', email);
             
             // Validation
             if (!vorname || !email) {
@@ -287,16 +291,20 @@
                 return;
             }
             
-            // Email validation
+            // Email validation - KORRIGIERT: email statt E_Mail
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 alert('Пожалуйста, введите действительный адрес электронной почты.');
                 return;
             }
             
-            // Save contact data
+            // Save contact data - KORRIGIERT: 'E_Mail' Schlüssel und email Variable
             saveAnswer('Vorname', vorname);
-            saveAnswer('Email', E_Mail);
+            saveAnswer('E_Mail', email);
+            
+            console.log('✅ Daten gespeichert');
+            console.log('LocalStorage Vorname:', localStorage.getItem('Vorname'));
+            console.log('LocalStorage E_Mail:', localStorage.getItem('E_Mail'));
             
             // Disable button and show loading
             const submitBtn = document.getElementById('submitBtn');
@@ -305,7 +313,7 @@
             
             // Get all quiz answers
             const allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
-            console.log('Alle Antworten:', allAnswers);
+            console.log('Alle Quiz-Antworten:', allAnswers);
             
             // Simulate sending data (replace with actual API call)
             setTimeout(() => {
@@ -314,7 +322,7 @@
             }, 1500);
         });
 
-        // Auto-fill from localStorage if available
+        // Auto-fill from localStorage if available - KORRIGIERT
         window.addEventListener('load', function() {
             const container = document.querySelector('.container');
             container.style.opacity = '0';
@@ -326,9 +334,13 @@
                 container.style.transform = 'translateY(0)';
             }, 100);
             
-            // Load saved values if available
+            // Load saved values if available - KORRIGIERT: 'E_Mail' statt 'Email'
             const savedVorname = localStorage.getItem('Vorname');
-            const savedEmail = localStorage.getItem('Email');
+            const savedEmail = localStorage.getItem('E_Mail');
+            
+            console.log('=== LOADING SAVED VALUES ===');
+            console.log('Saved Vorname:', savedVorname);
+            console.log('Saved E_Mail:', savedEmail);
             
             if (savedVorname) document.getElementById('vorname').value = savedVorname;
             if (savedEmail) document.getElementById('email').value = savedEmail;
