@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arbeitserlaubnis Analyse: Frage 3</title>
+    <title>Анализ разрешения на работу: Вопрос 3</title>
     <style>
         * {
             margin: 0;
@@ -266,7 +266,7 @@
         <!-- PROGRESS BAR -->
         <div class="progress-container">
             <div class="progress-label">
-                <span>Frage 3 von 10</span>
+                <span>Вопрос 3 из 10</span>
                 <span>30%</span>
             </div>
             <div class="progress-bar">
@@ -276,70 +276,70 @@
         
         <!-- MAIN CONTENT -->
         <div class="container">
-            <h1>Möchtest du in deinem aktuellen Bereich auch in Deutschland arbeiten?</h1>
+            <h1>Хотите ли Вы работать в Германии в Вашей текущей сфере?</h1>
             
             <div class="option-container">
                 <div class="option-button" data-value="ja" onclick="selectOption(this, 'ja')">
-                    Ja
+                    Да
                 </div>
                 
                 <div class="option-button" data-value="nein" onclick="selectOption(this, 'nein')">
-                    Nein
+                    Нет
                 </div>
                 
                 <div class="option-button" data-value="weiss_nicht" onclick="selectOption(this, 'weiss_nicht')">
-                    Weiß noch nicht
+                    Пока не знаю
                 </div>
             </div>
 
-            <!-- Follow-up question for "Nein" -->
+            <!-- Follow-up question for "Нет" -->
             <div id="followupContainer" class="followup-container">
-                <h2 class="followup-title">Welcher Bereich interessiert dich stattdessen?</h2>
+                <h2 class="followup-title">Какая сфера Вас интересует вместо этого?</h2>
                 <div class="option-container">
                     <div class="option-button" data-value="bau" onclick="selectFollowup(this, 'bau')">
-                        Bau
+                        Строительство
                     </div>
                     
                     <div class="option-button" data-value="pflege" onclick="selectFollowup(this, 'pflege')">
-                        Pflege
+                        Уход и медицина
                     </div>
                     
                     <div class="option-button" data-value="gastronomie" onclick="selectFollowup(this, 'gastronomie')">
-                        Gastronomie
+                        Гастрономия и ресторанный бизнес
                     </div>
                     
                     <div class="option-button" data-value="it" onclick="selectFollowup(this, 'it')">
-                        IT
+                        IT и технологии
                     </div>
                     
                     <div class="option-button" data-value="handwerk" onclick="selectFollowup(this, 'handwerk')">
-                        Handwerk
+                        Ремесло и мастерство
                     </div>
                     
                     <div class="option-button" data-value="transport" onclick="selectFollowup(this, 'transport')">
-                        Transport & Logistik
+                        Транспорт и логистика
                     </div>
                     
                     <div class="option-button" data-value="sonstige_neu" onclick="selectFollowup(this, 'sonstige_neu')">
-                        Sonstige
+                        Другое
                     </div>
                 </div>
             </div>
             
-            <!-- Popup für Sonstige bei Follow-up -->
+            <!-- Popup для Другое bei Follow-up -->
             <div id="sonstigePopup" class="popup-overlay" style="display: none;">
                 <div class="popup-content">
-                    <h3>Welcher Bereich interessiert dich?</h3>
-                    <input type="text" id="sonstigeInput" placeholder="Bitte gib den gewünschten Bereich ein..." maxlength="100">
+                    <h3>Какая сфера Вас интересует?</h3>
+                    <input type="text" id="sonstigeInput" placeholder="Пожалуйста, укажите желаемую сферу..." maxlength="100">
                     <div class="popup-buttons">
-                        <button onclick="submitSonstige()" class="submit-btn">Bestätigen</button>
-                        <button onclick="closeSonstigePopup()" class="cancel-btn">Abbrechen</button>
+                        <button onclick="submitSonstige()" class="submit-btn">Подтвердить</button>
+                        <button onclick="closeSonstigePopup()" class="cancel-btn">Отменить</button>
                     </div>
                 </div>
             </div>
             
             <div class="security-note">
-                🔒 Ihre Daten sind sicher und werden vertraulich behandelt
+                🔒 Ваши данные в безопасности и обрабатываются конфиденциально
             </div>
         </div>
     </div>
@@ -378,7 +378,7 @@
                 // Zeige Follow-up Frage
                 document.getElementById('followupContainer').classList.add('show');
             } else {
-                // Bei "Ja" oder "Weiß nicht" - direkt weiter
+                // Bei "Да" oder "Пока не знаю" - direkt weiter
                 setTimeout(() => {
                     window.location.href = '/step5.html';
                 }, 500);
@@ -386,7 +386,7 @@
         }
 
         function selectFollowup(element, value) {
-            // Wenn "Sonstige" ausgewählt wird, öffne Popup
+            // Wenn "Другое" ausgewählt wird, öffne Popup
             if (value === 'sonstige_neu') {
                 document.getElementById('sonstigePopup').style.display = 'flex';
                 setTimeout(() => {
@@ -414,11 +414,11 @@
             const customValue = document.getElementById('sonstigeInput').value.trim();
             
             if (customValue === '') {
-                alert('Bitte gib einen Bereich ein.');
+                alert('Пожалуйста, укажите сферу деятельности.');
                 return;
             }
             
-            // Markiere Sonstige Button als ausgewählt
+            // Markiere Другое Button als ausgewählt
             document.querySelectorAll('#followupContainer .option-button').forEach(btn => {
                 btn.classList.remove('selected');
             });
