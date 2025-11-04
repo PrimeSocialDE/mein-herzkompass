@@ -199,7 +199,7 @@
             element.classList.add('selected');
             
             // Speichere Antwort mit Tracking
-            saveAnswer('Bereitschaft_Deutschland', value);
+            saveAnswer('Bereitschaft', value);
             
             setTimeout(() => {
                 window.location.href = '/step4.html';
@@ -218,7 +218,7 @@
             }, 100);
             
             // Lade vorherige Auswahl wenn vorhanden
-            const savedValue = localStorage.getItem('Bereitschaft_Deutschland');
+            const savedValue = localStorage.getItem('Bereitschaft');
             if (savedValue) {
                 const button = document.querySelector(`[data-value="${savedValue}"]`);
                 if (button) button.classList.add('selected');
