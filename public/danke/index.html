@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vielen Dank für Ihre Bestellung - Clara's Herzkompass</title>
+    <title>Спасибо за Ваш заказ - Разрешение на работу в Германии</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #2D3748;
             background-color: #FFFFFF;
@@ -43,13 +43,13 @@
         .success-icon {
             width: 120px;
             height: 120px;
-            background: linear-gradient(135deg, #22C55E, #16A085);
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 40px;
-            box-shadow: 0 20px 40px rgba(34, 197, 94, 0.3);
+            box-shadow: 0 20px 40px rgba(30, 60, 114, 0.3);
             animation: successPulse 2s ease-in-out infinite;
         }
 
@@ -72,12 +72,13 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
             margin: 40px auto;
             max-width: 700px;
+            border: 2px solid #1e3c72;
         }
 
         h1 {
             font-size: 36px;
             font-weight: 700;
-            color: #2D3748;
+            color: #1e3c72;
             margin-bottom: 20px;
         }
 
@@ -90,7 +91,7 @@
 
         /* SECURITY INFO */
         .security-info {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
             padding: 30px;
             border-radius: 15px;
@@ -122,7 +123,7 @@
         .next-steps h3 {
             font-size: 24px;
             font-weight: 700;
-            color: #2D3748;
+            color: #1e3c72;
             margin-bottom: 25px;
             text-align: center;
         }
@@ -136,10 +137,11 @@
             background: white;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(30, 60, 114, 0.1);
         }
 
         .step-number {
-            background: #667eea;
+            background: #1e3c72;
             color: white;
             width: 35px;
             height: 35px;
@@ -155,7 +157,7 @@
         .step-content h4 {
             font-size: 18px;
             font-weight: 600;
-            color: #2D3748;
+            color: #1e3c72;
             margin-bottom: 8px;
         }
 
@@ -167,7 +169,7 @@
 
         /* GUARANTEE SECTION */
         .guarantee-section {
-            background: #22C55E;
+            background: linear-gradient(135deg, #22C55E, #16A085);
             color: white;
             padding: 40px;
             border-radius: 15px;
@@ -210,15 +212,15 @@
         }
 
         .info-box {
-            background: #e3f2fd;
-            border: 2px solid #2196f3;
+            background: linear-gradient(135deg, #e8f4fd 0%, #f0f8ff 100%);
+            border: 2px solid #1e3c72;
             padding: 25px;
             border-radius: 12px;
             margin: 25px 0;
         }
 
         .info-box h3 {
-            color: #1976d2;
+            color: #1e3c72;
             margin-top: 0;
             margin-bottom: 15px;
             font-size: 20px;
@@ -226,7 +228,74 @@
         }
 
         .info-box p {
-            color: #1976d2;
+            color: #1e3c72;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* CONTACT SECTION */
+        .contact-section {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .contact-section h3 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .contact-section p {
+            font-size: 18px;
+            color: #718096;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .contact-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(30, 60, 114, 0.3);
+        }
+
+        .contact-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(30, 60, 114, 0.4);
+        }
+
+        /* CURRENCY INFO */
+        .currency-info {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #f39c12;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .currency-info h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .currency-info p {
+            color: #856404;
             font-size: 16px;
             line-height: 1.6;
             margin-bottom: 0;
@@ -239,7 +308,7 @@
         }
 
         .footer-link a {
-            color: #667eea;
+            color: #1e3c72;
             text-decoration: none;
             font-weight: 500;
             font-size: 16px;
@@ -269,13 +338,13 @@
                 gap: 15px;
             }
 
-            .guarantee-section {
+            .guarantee-section, .contact-section {
                 padding: 30px 20px;
             }
         }
     </style>
-  <script src="/tracking.js" defer></script>
-  <script src="/utm-make.js" defer></script>
+    <script src="/tracking.js" defer></script>
+    <script src="/utm-make.js" defer></script>
 </head>
 <body>
     <section class="thank-you-section">
@@ -288,58 +357,134 @@
             </div>
 
             <div class="thank-you-card">
-                <h1>Vielen Dank für deine Bestellung!</h1>
-                <p class="subtitle">Der beste Schritt wurde getan - du investierst in deine Zukunft! Deine Zahlung wurde erfolgreich verarbeitet und Clara arbeitet so schnell es geht an deiner persönlichen Analyse.</p>
+                <h1>Спасибо за Ваш заказ!</h1>
+                <p class="subtitle">Вы сделали самый важный шаг - Вы инвестируете в своё будущее в Германии! Ваш платеж успешно обработан, и мы уже работаем над Вашей персональной инструкцией по получению разрешения на работу.</p>
+
+                <div class="currency-info">
+                    <h3>💰 Информация о платеже</h3>
+                    <p>Ваш платеж: €24,99 (≈ 1.050 ₴)<br>Все налоги включены • Без скрытых платежей</p>
+                </div>
 
                 <div class="security-info">
-                    <h3>Deine Daten sind sicher</h3>
-                    <p>Deine Daten werden zu 100% sicher an Clara weitergegeben. Sie wird sich ungefähr in 10 Stunden bei dir melden.</p>
+                    <h3>🔒 Ваши данные в безопасности</h3>
+                    <p>Ваша персональная информация обрабатывается на 100% безопасно. Вы получите Вашу персонализированную инструкцию в течение следующих 24 часов по электронной почте.</p>
                 </div>
 
                 <div class="next-steps">
-                    <h3>Das passiert jetzt</h3>
+                    <h3>Что происходит сейчас</h3>
                     
                     <div class="step">
                         <div class="step-number">1</div>
                         <div class="step-content">
-                            <h4>Bestätigungs-E-Mail erhalten</h4>
-                            <p>Du erhältst in wenigen Minuten eine Bestätigungs-E-Mail mit allen Details zu deiner Bestellung.</p>
+                            <h4>📧 Получение письма-подтверждения</h4>
+                            <p>Вы получите в течение нескольких минут письмо-подтверждение со всеми деталями Вашего заказа и счёт.</p>
                         </div>
                     </div>
 
                     <div class="step">
                         <div class="step-number">2</div>
                         <div class="step-content">
-                            <h4>Clara erstellt deine Analyse</h4>
-                            <p>Clara arbeitet an deiner persönlichen Analyse. Sie meldet sich in ca. 10 Stunden.</p>
+                            <h4>⚙️ Создание Вашей инструкции</h4>
+                            <p>Наша команда экспертов создаёт на основе Ваших ответов индивидуальную пошаговую инструкцию для получения разрешения на работу.</p>
                         </div>
                     </div>
 
                     <div class="step">
                         <div class="step-number">3</div>
                         <div class="step-content">
-                            <h4>Deine Transformation beginnen</h4>
-                            <p>Nutze Claras Erkenntnisse, um bewusstere Entscheidungen zu treffen.</p>
+                            <h4>📋 Инструкция по электронной почте (24ч)</h4>
+                            <p>Вы получите Вашу полную персонализированную инструкцию со всеми формами, контактами ведомств и следующими шагами по электронной почте.</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>🇩🇪 Ваш путь в Германию начинается</h4>
+                            <p>Используйте нашу профессиональную инструкцию, чтобы успешно подать заявление на разрешение на работу и осуществить Вашу мечту.</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="info-box">
-                    <h3>Wichtiger Hinweis</h3>
-                    <p>Falls du deine Analyse nicht innerhalb von 24 Stunden erhältst, prüfe bitte deinen Spam-Ordner. Claras Nachrichten kommen manchmal dort an!</p>
+                    <h3>⚠️ Важное примечание</h3>
+                    <p>Если Вы не получите Вашу инструкцию в течение 24 часов, пожалуйста, проверьте папку "Спам". Если у Вас есть вопросы, свяжитесь с нами в любое время по адресу support@germany-start.de</p>
+                </div>
+
+                <div class="contact-section">
+                    <h3>💬 Есть вопросы?</h3>
+                    <p>Наша служба поддержки всегда к Вашим услугам и с радостью поможет при любых вопросах относительно Вашего разрешения на работу.</p>
+                    <a href="mailto:support@germany-start.de" class="contact-button">📧 Связаться с поддержкой</a>
                 </div>
 
                 <div class="guarantee-section">
-                    <h3>14 Tage Geld-zurück-Garantie</h3>
-                    <p>Solltest du mit deiner Analyse nicht zufrieden sein, erhältst du innerhalb von 14 Tagen dein Geld vollständig zurück. Keine Fragen, keine Bedingungen.</p>
-                    <a href="/geld-zurueck.html" class="guarantee-button">Mehr zur Garantie</a>
+                    <h3>✅ 30-дневная гарантия возврата денег</h3>
+                    <p>Если Вы не будете удовлетворены Вашей персонализированной инструкцией, Вы получите в течение 30 дней полный возврат Ваших денег. Никаких вопросов, никаких условий.</p>
+                    <a href="/geld-zurueck.html" class="guarantee-button">Подробнее о гарантии</a>
                 </div>
             </div>
 
             <div class="footer-link">
-                <a href="/landing.html">← Zurück zur Startseite</a>
+                <a href="/">← Вернуться на главную страницу</a>
             </div>
         </div>
     </section>
+
+    <script>
+        // Track successful purchase with Russian language
+        window.addEventListener('load', function() {
+            // Google Analytics
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'purchase_success', {
+                    'event_category': 'ecommerce',
+                    'event_label': 'arbeitserlaubnis_guide_russian_formal',
+                    'value': 24.99,
+                    'currency': 'EUR',
+                    'custom_parameters': {
+                        'language': 'russian_formal',
+                        'price_uah': '1050'
+                    }
+                });
+            }
+
+            // Facebook Pixel
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'Purchase', {
+                    value: 24.99,
+                    currency: 'EUR',
+                    content_name: 'Arbeitserlaubnis Guide Russian Formal',
+                    content_category: 'digital_guide',
+                    custom_data: {
+                        'language': 'russian_formal',
+                        'price_uah': 1050
+                    }
+                });
+            }
+
+            // Pinterest
+            if (typeof pintrk !== 'undefined') {
+                pintrk('track', 'purchase', {
+                    value: 24.99,
+                    currency: 'EUR',
+                    custom_parameters: {
+                        'language': 'russian_formal',
+                        'price_uah': '1050'
+                    }
+                });
+            }
+
+            // TikTok
+            if (typeof ttq !== 'undefined') {
+                ttq.track('CompletePayment', {
+                    value: 24.99,
+                    currency: 'EUR',
+                    content_type: 'product',
+                    content_name: 'Arbeitserlaubnis Guide Russian Formal UAH Pricing'
+                });
+            }
+
+            console.log('=== PURCHASE SUCCESS PAGE LOADED - RUSSIAN FORMAL WITH UAH ===');
+        });
+    </script>
 </body>
 </html>
