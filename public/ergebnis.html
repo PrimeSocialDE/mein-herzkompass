@@ -584,6 +584,10 @@
             margin: 20px 0;
             box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
             letter-spacing: 0.3px;
+            /* DEBUG: Make sure pointer events work */
+            pointer-events: auto !important;
+            position: relative !important;
+            z-index: 999 !important;
         }
 
         .price-button:hover {
@@ -1042,9 +1046,19 @@
                     <li>✓ Рекомендации работы на основе Ваших ответов</li>
                 </ul>
                 
-                <a href="https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07" class="price-button" style="display: inline-block; text-decoration: none; text-align: center;">
+                <a href="https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07" 
+                   class="price-button" 
+                   style="display: inline-block; text-decoration: none; text-align: center;"
+                   onclick="collectDataBeforeRedirect(); return true;">
                     Получить мою инструкцию сейчас
                 </a>
+                
+                <!-- DEBUG: Test if any link works -->
+                <div style="text-align: center; margin: 20px 0;">
+                    <a href="https://google.com" style="background: red; color: white; padding: 10px; text-decoration: none; display: inline-block;">
+                        🔴 TEST LINK - Should go to Google
+                    </a>
+                </div>
                 
                 <div class="payment-providers">
                     <div class="payment-info">Или платите в 3 рассрочки с <span class="klarna-badge">Klarna</span></div>
@@ -1068,7 +1082,9 @@
                 <small>Если Вы не будете удовлетворены</small>
             </div>
             
-            <a href="https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07" class="cta-button">Начать сейчас</a>
+            <a href="https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07" 
+               class="cta-button" 
+               onclick="collectDataBeforeRedirect(); return true;">Начать сейчас</a>
         </div>
 
         <div class="section">
@@ -1127,7 +1143,127 @@
             'sonstige': 'С правильными шагами Вы найдете хорошие возможности и в Вашей желаемой сфере.'
         };
 
-        // Einfache, funktionierende Lösung
+        // Datensammlung für arbeitserlaubnis_leads Tabelle
+        function collectDataBeforeRedirect() {
+            console.log('=== COLLECTING DATA FOR ARBEITSERLAUBNIS_LEADS ===');
+            
+            try {
+                // Sammle alle Daten aus localStorage
+                const quizAnswers = {
+                    vorname: localStorage.getItem('Vorname') || '',
+                    nachname: localStorage.getItem('Nachname') || '',
+                    email: localStorage.getItem('E_Mail') || '',
+                    herkunftsland: localStorage.getItem('Herkunftsland') || '',
+                    deutschkenntnisse: localStorage.getItem('Deutschkenntnisse') || '',
+                    arbeitsbereich: localStorage.getItem('Arbeitsbereich') || '',
+                    wunschbereich: localStorage.getItem('Neuer_Wunschbereich') || '',
+                    arbeitserlaubnis: localStorage.getItem('Arbeitserlaubnis') || '',
+                    unterkunft: localStorage.getItem('Unterkunft') || '',
+                    familie: localStorage.getItem('Familie') || '',
+                    bereitschaft: localStorage.getItem('Bereitschaft') || '',
+                    zeitplan: localStorage.getItem('Zeitplan_Deutschland') || '',
+                    arbeitsbereich_custom: localStorage.getItem('Arbeitsbereich_Custom') || '',
+                    wunschbereich_custom: localStorage.getItem('Neuer_Wunschbereich_Custom') || '',
+                    userId: localStorage.getItem('userId') || `user_${Date.now()}`
+                };
+
+                // Direkt an Supabase senden (wie vorher)
+                const supabaseUrl = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjY2MzEyMiwiZXhwIjoyMDcyMjM5MTIyfQ.35zRO5wy3_fSGPGpuBm-aqskHOGqxODLtxEQzRFxXAc';
+
+                const dataToSend = {
+                    user_id: quizAnswers.userId,
+                    email: quizAnswers.email || '',
+                    source: 'ergebnis_premium_russian_formal_complete',
+                    language: 'russian_formal',
+                    checkout_clicked: true,
+                    payment_completed: false,
+                    price: 24.99,
+                    currency: 'EUR',
+                    price_uah: 1050,
+                    vorname: quizAnswers.vorname || '',
+                    nachname: quizAnswers.nachname || '',
+                    herkunftsland: quizAnswers.herkunftsland || '',
+                    deutschkenntnisse: quizAnswers.deutschkenntnisse || '',
+                    arbeitsbereich: quizAnswers.arbeitsbereich || '',
+                    json_answers: {
+                        personal_info: {
+                            vorname: quizAnswers.vorname,
+                            nachname: quizAnswers.nachname,
+                            email: quizAnswers.email,
+                            herkunftsland: quizAnswers.herkunftsland,
+                            userId: quizAnswers.userId
+                        },
+                        work_situation: {
+                            deutschkenntnisse: quizAnswers.deutschkenntnisse,
+                            arbeitsbereich: quizAnswers.arbeitsbereich,
+                            wunschbereich: quizAnswers.wunschbereich,
+                            arbeitsbereich_custom: quizAnswers.arbeitsbereich_custom,
+                            wunschbereich_custom: quizAnswers.wunschbereich_custom,
+                            arbeitserlaubnis: quizAnswers.arbeitserlaubnis
+                        },
+                        living_situation: {
+                            unterkunft: quizAnswers.unterkunft,
+                            familie: quizAnswers.familie,
+                            bereitschaft: quizAnswers.bereitschaft,
+                            zeitplan: quizAnswers.zeitplan
+                        },
+                        metadata: {
+                            analysis_type: 'arbeitserlaubnis_beratung',
+                            checkout_timestamp: new Date().toISOString(),
+                            page_source: 'russian_formal_complete_with_verification',
+                            browser_info: {
+                                user_agent: navigator.userAgent,
+                                language: navigator.language,
+                                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                            }
+                        }
+                    }
+                };
+
+                console.log('=== DATA TO SEND TO ARBEITSERLAUBNIS_LEADS ===', dataToSend);
+
+                // Direkt an Supabase arbeitserlaubnis_leads Tabelle
+                fetch(`${supabaseUrl}/rest/v1/arbeitserlaubnis_leads`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': supabaseKey,
+                        'Authorization': `Bearer ${supabaseKey}`,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(dataToSend),
+                    keepalive: true
+                }).then(response => {
+                    if (response.ok) {
+                        console.log('✅ Data sent to arbeitserlaubnis_leads:', response.status);
+                    } else {
+                        console.error('❌ Error sending to arbeitserlaubnis_leads:', response.status);
+                    }
+                }).catch(error => {
+                    console.error('❌ Network error:', error);
+                });
+
+                // Tracking
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'begin_checkout', {
+                        'currency': 'EUR',
+                        'value': 24.99,
+                        'language': 'russian_formal',
+                        'table': 'arbeitserlaubnis_leads'
+                    });
+                }
+
+                console.log('=== DATA SENT TO ARBEITSERLAUBNIS_LEADS - LINK WILL PROCEED ===');
+                
+            } catch (error) {
+                console.error('❌ Error in data collection:', error);
+            }
+            
+            // Lasse den normalen Link-Klick durch
+            return true;
+        }
+
         function sendDataAndRedirect(button) {
             console.log('=== BUTTON CLICKED - STARTING PROCESS ===');
             
