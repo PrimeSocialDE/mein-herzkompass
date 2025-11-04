@@ -857,7 +857,7 @@
     <div class="main-container">
         <div class="header">
             <h1 class="greeting" id="greeting">Hallo!</h1>
-            <p class="subtitle">Deine persönliche Roadmap für Deutschland wartet auf dich</p>
+            <p class="subtitle">Dein persönlicher Plan für Deutschland wartet auf dich</p>
         </div>
 
         <div class="story-section">
@@ -914,7 +914,7 @@
                         <img src="government-navigator.png" alt="Behörden-Navigator" class="benefit-img">
                     </div>
                     <h4>Behörden-Navigator</h4>
-                    <p>Alle zuständigen Ämter, Ansprechpartner und Öffnungszeiten in Ihrer Region</p>
+                    <p>Alle direkten Links zu den Ämtern für die Formulare - Sie erhalten diese innerhalb von 24h per E-Mail</p>
                 </div>
                 
                 <div class="benefit-card">
@@ -1199,7 +1199,7 @@
             salaryAmountElement.textContent = `${salaryInfo.min.toLocaleString()} - ${salaryInfo.max.toLocaleString()} €`;
             salaryElement.style.display = 'block';
 
-            // Empathy section
+            // Empathy section with warning
             const empathyElement = document.getElementById('empathy-section');
             let empathyText = 'Wir wissen, dass es gerade nicht leicht ist, in einem neuen Land neu anzufangen. ';
             
@@ -1214,6 +1214,18 @@
             }
 
             empathyText += 'Jeder Schritt, den du jetzt gehst, bringt dich deinem Ziel näher.';
+
+            // Add warning about going alone
+            empathyText += `
+                <div class="highlight-text" style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-left: 4px solid #dc3545; margin: 25px 0;">
+                    <strong style="color: #dc3545; font-size: 18px;">⚠️ ACHTUNG: Ohne professionelle Hilfe passieren diese Fehler:</strong><br><br>
+                    <strong style="color: #dc3545;">• Sie schreiben die falschen Behörden an</strong> und verlieren wertvolle Zeit<br>
+                    <strong style="color: #dc3545;">• Sie beantragen die falschen Dokumente</strong> und müssen alles wiederholen<br>
+                    <strong style="color: #dc3545;">• Sie verpassen wichtige Fristen</strong> und gefährden Ihre Chancen<br>
+                    <strong style="color: #dc3545;">• Sie zahlen unnötige Gebühren</strong> für falsche Anträge<br><br>
+                    <strong style="color: #1e3c72;">Sparen Sie sich Monate der Frustration mit unserem erprobten System!</strong>
+                </div>
+            `;
 
             empathyElement.innerHTML = `<p>${empathyText}</p>`;
         }
