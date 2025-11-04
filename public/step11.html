@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arbeitserlaubnis Analyse: Kontaktdaten</title>
+    <title>Анализ разрешения на работу: Контактные данные</title>
     <style>
         * {
             margin: 0;
@@ -213,7 +213,7 @@
         <!-- PROGRESS BAR -->
         <div class="progress-container">
             <div class="progress-label">
-                <span>Frage 10 von 10</span>
+                <span>Вопрос 10 из 10</span>
                 <span>100%</span>
             </div>
             <div class="progress-bar">
@@ -223,39 +223,39 @@
         
         <!-- MAIN CONTENT -->
         <div class="container">
-            <h1>Fast geschafft!</h1>
-            <p class="subtitle">Gib deine Kontaktdaten ein, um deine persönliche Arbeitserlaubnis-Analyse zu erhalten.</p>
+            <h1>Почти готово!</h1>
+            <p class="subtitle">Введите Ваши контактные данные, чтобы получить персональный анализ разрешения на работу.</p>
             
             <div class="benefits-preview">
-                <h3>Das bekommst du:</h3>
+                <h3>Что Вы получите:</h3>
                 <ul>
-                    <li>Maßgeschneiderte Schritt-für-Schritt-Anleitung</li>
-                    <li>Übersicht über erforderliche Dokumente</li>
-                    <li>Informationen zu Fördermöglichkeiten</li>
-                    <li>Zuständige Behörden und Ansprechpartner</li>
+                    <li>Индивидуальная пошаговая инструкция</li>
+                    <li>Обзор необходимых документов</li>
+                    <li>Информация о возможностях финансирования</li>
+                    <li>Ответственные ведомства и контактные лица</li>
                 </ul>
             </div>
 
             <div class="form-container">
                 <form id="contactForm">
                     <div class="form-group">
-                        <label for="vorname">Vorname <span class="required">*</span></label>
-                        <input type="text" id="vorname" name="vorname" required placeholder="Dein Vorname">
+                        <label for="vorname">Имя <span class="required">*</span></label>
+                        <input type="text" id="vorname" name="vorname" required placeholder="Ваше имя">
                     </div>
 
                     <div class="form-group">
-                        <label for="email">E-Mail-Adresse <span class="required">*</span></label>
-                        <input type="email" id="email" name="email" required placeholder="deine@email.de">
+                        <label for="email">Адрес электронной почты <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required placeholder="ваш@email.ru">
                     </div>
 
                     <button type="submit" class="submit-button" id="submitBtn">
-                        Jetzt meine Analyse erhalten
+                        Получить мой анализ сейчас
                     </button>
                 </form>
             </div>
             
             <div class="security-note">
-                🔒 Ihre Daten sind sicher und werden vertraulich behandelt
+                🔒 Ваши данные в безопасности и обрабатываются конфиденциально
             </div>
         </div>
     </div>
@@ -283,14 +283,14 @@
             
             // Validation
             if (!vorname || !email) {
-                alert('Bitte fülle alle Pflichtfelder aus.');
+                alert('Пожалуйста, заполните все обязательные поля.');
                 return;
             }
             
             // Email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
-                alert('Bitte gib eine gültige E-Mail-Adresse ein.');
+                alert('Пожалуйста, введите действительный адрес электронной почты.');
                 return;
             }
             
@@ -301,7 +301,7 @@
             // Disable button and show loading
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Wird gesendet...';
+            submitBtn.textContent = 'Отправляется...';
             
             // Get all quiz answers
             const allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
