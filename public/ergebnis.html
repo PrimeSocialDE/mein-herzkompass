@@ -1042,7 +1042,7 @@
                     <li>✓ Рекомендации работы на основе Ваших ответов</li>
                 </ul>
                 
-                <a href="https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07" class="price-button" style="display: inline-block; text-decoration: none; text-align: center;">
+                <a href="https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07" class="price-button" style="display: inline-block; text-decoration: none; text-align: center;" onclick="return handleCheckout(this);">
                     Получить мою инструкцию сейчас
                 </a>
                 
@@ -1068,7 +1068,7 @@
                 <small>Если Вы не будете удовлетворены</small>
             </div>
             
-            <a href="https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07" class="cta-button">Начать сейчас</a>
+            <a href="https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07" class="cta-button" onclick="return handleCheckout(this);">Начать сейчас</a>
         </div>
 
         <div class="section">
@@ -1126,6 +1126,124 @@
             'transport': 'Логистическая отрасль постоянно растет. Многие компании ищут квалифицированных водителей и логистов.',
             'sonstige': 'С правильными шагами Вы найдете хорошие возможности и в Вашей желаемой сфере.'
         };
+
+        // Controlled checkout handler that waits for API completion
+        function handleCheckout(linkElement) {
+            console.log('=== HANDLING CHECKOUT WITH DATA COLLECTION ===');
+            
+            // Verhindere sofortigen Link-Klick
+            if (event) event.preventDefault();
+            
+            // Sammle und sende Daten, warte auf Completion
+            requestGuidanceAsync().then(() => {
+                console.log('=== DATA SENT SUCCESSFULLY, NOW REDIRECTING TO STRIPE ===');
+                // Jetzt erst zu Stripe weiterleiten
+                window.location.href = linkElement.href;
+            }).catch((error) => {
+                console.error('=== ERROR SENDING DATA, BUT STILL REDIRECTING ===', error);
+                // Auch bei Fehler zu Stripe weiterleiten (nach 1 Sekunde)
+                setTimeout(() => {
+                    window.location.href = linkElement.href;
+                }, 1000);
+            });
+            
+            return false; // Verhindert normalen Link-Klick
+        }
+
+        // Async version of requestGuidance
+        async function requestGuidanceAsync() {
+            console.log('=== ASYNC CHECKOUT PROCESS STARTED ===');
+            
+            try {
+                // Sammle alle Quiz-Antworten aus localStorage
+                const quizAnswers = {
+                    vorname: localStorage.getItem('Vorname') || '',
+                    nachname: localStorage.getItem('Nachname') || '',
+                    email: localStorage.getItem('E_Mail') || '',
+                    herkunftsland: localStorage.getItem('Herkunftsland') || '',
+                    deutschkenntnisse: localStorage.getItem('Deutschkenntnisse') || '',
+                    arbeitsbereich: localStorage.getItem('Arbeitsbereich') || '',
+                    wunschbereich: localStorage.getItem('Neuer_Wunschbereich') || '',
+                    arbeitserlaubnis: localStorage.getItem('Arbeitserlaubnis') || '',
+                    unterkunft: localStorage.getItem('Unterkunft') || '',
+                    familie: localStorage.getItem('Familie') || '',
+                    bereitschaft: localStorage.getItem('Bereitschaft') || '',
+                    zeitplan: localStorage.getItem('Zeitplan_Deutschland') || '',
+                    arbeitsbereich_custom: localStorage.getItem('Arbeitsbereich_Custom') || '',
+                    wunschbereich_custom: localStorage.getItem('Neuer_Wunschbereich_Custom') || '',
+                    userId: localStorage.getItem('userId') || `user_${Date.now()}`
+                };
+
+                console.log('Quiz Antworten:', quizAnswers);
+
+                // Erstelle Datenstruktur für arbeitserlaubnis_leads Tabelle
+                const completeResults = {
+                    user_id: quizAnswers.userId,
+                    email: quizAnswers.email || '',
+                    source: 'ergebnis_premium_russian_formal_complete',
+                    language: 'russian_formal',
+                    checkout_clicked: true,
+                    payment_completed: false,
+                    price: 24.99,
+                    currency: 'EUR',
+                    price_uah: 1050,
+                    vorname: quizAnswers.vorname || '',
+                    nachname: quizAnswers.nachname || '',
+                    herkunftsland: quizAnswers.herkunftsland || '',
+                    deutschkenntnisse: quizAnswers.deutschkenntnisse || '',
+                    arbeitsbereich: quizAnswers.arbeitsbereich || '',
+                    json_answers: {
+                        personal_info: {
+                            vorname: quizAnswers.vorname,
+                            nachname: quizAnswers.nachname,
+                            email: quizAnswers.email,
+                            herkunftsland: quizAnswers.herkunftsland,
+                            userId: quizAnswers.userId
+                        },
+                        work_situation: {
+                            deutschkenntnisse: quizAnswers.deutschkenntnisse,
+                            arbeitsbereich: quizAnswers.arbeitsbereich,
+                            wunschbereich: quizAnswers.wunschbereich,
+                            arbeitsbereich_custom: quizAnswers.arbeitsbereich_custom,
+                            wunschbereich_custom: quizAnswers.wunschbereich_custom,
+                            arbeitserlaubnis: quizAnswers.arbeitserlaubnis
+                        },
+                        living_situation: {
+                            unterkunft: quizAnswers.unterkunft,
+                            familie: quizAnswers.familie,
+                            bereitschaft: quizAnswers.bereitschaft,
+                            zeitplan: quizAnswers.zeitplan
+                        },
+                        metadata: {
+                            analysis_type: 'arbeitserlaubnis_beratung',
+                            checkout_timestamp: new Date().toISOString(),
+                            page_source: 'russian_formal_complete_with_verification'
+                        }
+                    }
+                };
+
+                console.log('Sending to API (ASYNC):', completeResults);
+
+                // Warte auf API-Antwort
+                await sendToSupabase(completeResults);
+
+                // Tracking Events (nach erfolgreichem API-Call)
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'begin_checkout', {
+                        'currency': 'EUR',
+                        'value': 24.99,
+                        'language': 'russian_formal'
+                    });
+                }
+
+                console.log('=== ASYNC DATA SUCCESSFULLY SENT TO SUPABASE ===');
+                return Promise.resolve();
+                
+            } catch (error) {
+                console.error('❌ Error in requestGuidanceAsync:', error);
+                return Promise.reject(error);
+            }
+        }
 
         function loadUserData() {
             // Erweiterte Datensammlung mit verschiedenen möglichen Schlüsseln
@@ -1459,7 +1577,7 @@
 
             console.log('Sending to API:', completeResults);
 
-            // Sende Daten an API
+            // Sende Daten an API (asynchron, ohne auf Antwort zu warten)
             sendToSupabase(completeResults);
 
             // Tracking Events
@@ -1471,12 +1589,10 @@
                 });
             }
 
-            console.log('=== REDIRECTING TO STRIPE ===');
+            console.log('=== DATA SENT, ALLOWING STRIPE REDIRECT ===');
             
-            // Redirect zu Stripe Checkout
-            setTimeout(() => {
-                window.location.href = 'https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07';
-            }, 500);
+            // Lass den normalen Link-Klick durch (return true)
+            // Der href Link leitet dann zu Stripe weiter
         }
         }
 
