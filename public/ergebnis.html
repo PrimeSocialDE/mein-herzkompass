@@ -964,7 +964,7 @@
                     <p>Более 1000 успешных заявлений</p>
                 </div>
                 <div class="verification-item">
-                    <img src="Stern.png" alt="Высокое качество" class="verification-img">
+                    <img src="icon-stern.png" alt="Высокое качество" class="verification-img">
                     <h4>5-звездочное качество</h4>
                     <p>98% довольных клиентов</p>
                 </div>
@@ -1339,21 +1339,7 @@
             // Erstelle komplette Ergebnisse für Tracking und Supabase
             const completeResults = {
                 user_id: quizAnswers.userId,
-                vorname: quizAnswers.vorname,
-                nachname: quizAnswers.nachname,
                 email: quizAnswers.email,
-                herkunftsland: quizAnswers.herkunftsland,
-                deutschkenntnisse: quizAnswers.deutschkenntnisse,
-                arbeitsbereich: quizAnswers.arbeitsbereich,
-                wunschbereich: quizAnswers.wunschbereich,
-                arbeitserlaubnis: quizAnswers.arbeitserlaubnis,
-                unterkunft: quizAnswers.unterkunft,
-                familie: quizAnswers.familie,
-                bereitschaft: quizAnswers.bereitschaft,
-                zeitplan: quizAnswers.zeitplan,
-                arbeitsbereich_custom: quizAnswers.arbeitsbereich_custom,
-                wunschbereich_custom: quizAnswers.wunschbereich_custom,
-                analysis_type: 'arbeitserlaubnis_beratung',
                 source: 'ergebnis_premium_russian_formal_complete',
                 conversion_step: 'checkout_initiated',
                 price: '24.99',
@@ -1361,8 +1347,37 @@
                 price_uah: '1050',
                 language: 'russian_formal',
                 created_at: new Date().toISOString(),
-                quiz_completed: true,
-                checkout_clicked: true
+                checkout_clicked: true,
+                json_answers: {
+                    personal_info: {
+                        vorname: quizAnswers.vorname,
+                        nachname: quizAnswers.nachname,
+                        email: quizAnswers.email,
+                        herkunftsland: quizAnswers.herkunftsland,
+                        userId: quizAnswers.userId
+                    },
+                    work_situation: {
+                        deutschkenntnisse: quizAnswers.deutschkenntnisse,
+                        arbeitsbereich: quizAnswers.arbeitsbereich,
+                        wunschbereich: quizAnswers.wunschbereich,
+                        arbeitsbereich_custom: quizAnswers.arbeitsbereich_custom,
+                        wunschbereich_custom: quizAnswers.wunschbereich_custom,
+                        arbeitserlaubnis: quizAnswers.arbeitserlaubnis
+                    },
+                    living_situation: {
+                        unterkunft: quizAnswers.unterkunft,
+                        familie: quizAnswers.familie,
+                        bereitschaft: quizAnswers.bereitschaft,
+                        zeitplan: quizAnswers.zeitplan
+                    },
+                    metadata: {
+                        analysis_type: 'arbeitserlaubnis_beratung',
+                        quiz_completed: true,
+                        results_page_visited: true,
+                        timestamp: new Date().toISOString(),
+                        page_source: 'russian_formal_complete_with_verification'
+                    }
+                }
             };
 
             // Sende Daten an Supabase
