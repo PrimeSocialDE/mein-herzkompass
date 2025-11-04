@@ -1317,7 +1317,7 @@
         }
 
         function requestGuidance() {
-            // Sammle alle Quiz-Antworten
+            // Sammle alle Quiz-Antworten aus localStorage
             const quizAnswers = {
                 vorname: localStorage.getItem('Vorname') || '',
                 nachname: localStorage.getItem('Nachname') || '',
@@ -1336,19 +1336,39 @@
                 userId: localStorage.getItem('userId') || `user_${Date.now()}`
             };
 
-            // Erstelle komplette Ergebnisse für Tracking
+            // Erstelle komplette Ergebnisse für Tracking und Supabase
             const completeResults = {
-                userProfile: quizAnswers,
-                analysisType: 'arbeitserlaubnis_beratung',
-                timestamp: new Date().toISOString(),
+                user_id: quizAnswers.userId,
+                vorname: quizAnswers.vorname,
+                nachname: quizAnswers.nachname,
+                email: quizAnswers.email,
+                herkunftsland: quizAnswers.herkunftsland,
+                deutschkenntnisse: quizAnswers.deutschkenntnisse,
+                arbeitsbereich: quizAnswers.arbeitsbereich,
+                wunschbereich: quizAnswers.wunschbereich,
+                arbeitserlaubnis: quizAnswers.arbeitserlaubnis,
+                unterkunft: quizAnswers.unterkunft,
+                familie: quizAnswers.familie,
+                bereitschaft: quizAnswers.bereitschaft,
+                zeitplan: quizAnswers.zeitplan,
+                arbeitsbereich_custom: quizAnswers.arbeitsbereich_custom,
+                wunschbereich_custom: quizAnswers.wunschbereich_custom,
+                analysis_type: 'arbeitserlaubnis_beratung',
                 source: 'ergebnis_premium_russian_formal_complete',
-                conversionStep: 'checkout_initiated',
+                conversion_step: 'checkout_initiated',
                 price: '24.99',
                 currency: 'EUR',
-                priceUAH: '1050'
+                price_uah: '1050',
+                language: 'russian_formal',
+                created_at: new Date().toISOString(),
+                quiz_completed: true,
+                checkout_clicked: true
             };
 
-            // Speichere Ergebnisse für Checkout
+            // Sende Daten an Supabase
+            sendToSupabase(completeResults);
+
+            // Speichere lokale Backup-Daten
             localStorage.setItem('arbeitserlaubnisResults', JSON.stringify(completeResults));
             localStorage.setItem('quizCompleted', 'true');
             localStorage.setItem('checkoutClicked', 'true');
@@ -1395,26 +1415,121 @@
                 });
             }
 
-            console.log('=== RUSSIAN FORMAL COMPLETE CHECKOUT WITH UAH AND VERIFICATION INITIATED ===', completeResults);
+            console.log('=== RUSSIAN FORMAL COMPLETE CHECKOUT WITH SUPABASE INITIATED ===', completeResults);
             
-            // Redirect zu Stripe Checkout
-            window.location.href = 'https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07';
+            // Redirect zu Stripe Checkout nach kurzer Verzögerung
+            setTimeout(() => {
+                window.location.href = 'https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07';
+            }, 500);
+        }
+
+        // Supabase Integration
+        async function sendToSupabase(data) {
+            try {
+                console.log('=== SENDING DATA TO SUPABASE ===', data);
+                
+                // Supabase API Configuration
+                const supabaseUrl = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjY2MzEyMiwiZXhwIjoyMDcyMjM5MTIyfQ.35zRO5wy3_fSGPGpuBm-aqskHOGqxODLtxEQzRFxXAc';
+                const tableName = 'orders';
+
+                const response = await fetch(`${supabaseUrl}/rest/v1/${tableName}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': supabaseKey,
+                        'Authorization': `Bearer ${supabaseKey}`,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    console.log('✅ Data successfully sent to Supabase orders table');
+                    
+                    // Markiere als erfolgreich gesendet
+                    localStorage.setItem('supabaseSuccess', 'true');
+                    localStorage.setItem('supabaseSentAt', new Date().toISOString());
+                    
+                    // Optional: Tracking für erfolgreiche Datenübertragung
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'supabase_success', {
+                            'user_id': data.user_id,
+                            'email': data.email,
+                            'table': 'orders'
+                        });
+                    }
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Failed to send data to Supabase orders table:', response.status, response.statusText, errorText);
+                    
+                    // Speichere Fehler für späteren Retry
+                    localStorage.setItem('supabaseError', JSON.stringify({
+                        error: response.statusText,
+                        status: response.status,
+                        errorDetails: errorText,
+                        timestamp: new Date().toISOString(),
+                        data: data
+                    }));
+                }
+            } catch (error) {
+                console.error('❌ Error sending data to Supabase orders table:', error);
+                
+                // Speichere Fehler für späteren Retry
+                localStorage.setItem('supabaseError', JSON.stringify({
+                    error: error.message,
+                    timestamp: new Date().toISOString(),
+                    data: data
+                }));
+                
+                // Optional: Tracking für Fehler
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'supabase_error', {
+                        'error_message': error.message,
+                        'user_id': data.user_id,
+                        'table': 'orders'
+                    });
+                }
+            }
+        }
+
+        // Retry-Mechanismus für failed Supabase submissions
+        function retryFailedSubmissions() {
+            const errorData = localStorage.getItem('supabaseError');
+            if (errorData) {
+                try {
+                    const parsedError = JSON.parse(errorData);
+                    console.log('=== RETRYING FAILED SUPABASE SUBMISSION ===');
+                    
+                    // Retry nach 1 Minute
+                    setTimeout(() => {
+                        sendToSupabase(parsedError.data);
+                        localStorage.removeItem('supabaseError'); // Entferne nach Retry
+                    }, 60000);
+                } catch (e) {
+                    console.error('Error parsing retry data:', e);
+                }
+            }
         }
 
         // Initialize page
         window.addEventListener('load', function() {
-            console.log('=== RUSSIAN FORMAL COMPLETE ARBEITSERLAUBNIS RESULTS PAGE WITH UAH AND VERIFICATION LOADED ===');
+            console.log('=== RUSSIAN FORMAL COMPLETE ARBEITSERLAUBNIS RESULTS PAGE WITH SUPABASE LOADED ===');
             
             const userData = loadUserData();
             generatePersonalizedContent(userData);
+            
+            // Initialisiere Retry-Mechanismus für Supabase
+            retryFailedSubmissions();
             
             // Markiere Seite als besucht
             localStorage.setItem('resultsPageVisited', 'true');
             localStorage.setItem('lastPageVisit', new Date().toISOString());
             localStorage.setItem('currencyDisplayed', 'EUR_UAH');
-            localStorage.setItem('russianVersion', 'formal_complete_verification');
+            localStorage.setItem('russianVersion', 'formal_complete_verification_supabase');
             
             console.log('User Data:', userData);
+            console.log('Supabase Integration: Ready');
         });
     </script>
 </body>
