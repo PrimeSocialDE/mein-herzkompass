@@ -1128,18 +1128,88 @@
         };
 
         function loadUserData() {
-            const data = {
-                vorname: localStorage.getItem('Vorname') || 'Уважаемый пользователь',
-                arbeitsbereich: localStorage.getItem('Arbeitsbereich') || 'sonstige',
-                wunschbereich: localStorage.getItem('Neuer_Wunschbereich') || localStorage.getItem('Arbeitsbereich') || 'sonstige',
-                deutschkenntnisse: localStorage.getItem('Deutschkenntnisse') || 'a1',
-                bereitschaft: localStorage.getItem('Bereitschaft_Deutschland') || 'ja_bereit',
-                unterkunft: localStorage.getItem('Unterkunft_Deutschland') || 'nein_suche',
-                familie: localStorage.getItem('Familie_Deutschland') || 'allein',
-                arbeitserlaubnis: localStorage.getItem('Arbeitserlaubnis_Vorhanden') || 'nein',
-                fuehrerschein: localStorage.getItem('Fuehrerschein_Ukraine') || 'nein',
-                zeitplan: localStorage.getItem('Zeitplan_Deutschland') || 'spaeter'
+            // Erweiterte Datensammlung mit verschiedenen möglichen Schlüsseln
+            const possibleKeys = {
+                // Persönliche Daten
+                vorname: ['Vorname', 'vorname', 'firstName', 'first_name'],
+                nachname: ['Nachname', 'nachname', 'lastName', 'last_name'],
+                email: ['E_Mail', 'email', 'Email', 'e_mail', 'userEmail'],
+                herkunftsland: ['Herkunftsland', 'herkunftsland', 'country', 'land'],
+                
+                // Arbeitssituation
+                deutschkenntnisse: ['Deutschkenntnisse', 'deutschkenntnisse', 'german_level', 'deutsch'],
+                arbeitsbereich: ['Arbeitsbereich', 'arbeitsbereich', 'current_job', 'job_area'],
+                wunschbereich: ['Neuer_Wunschbereich', 'Wunschbereich', 'wunschbereich', 'desired_job'],
+                arbeitserlaubnis: ['Arbeitserlaubnis_Vorhanden', 'Arbeitserlaubnis', 'arbeitserlaubnis', 'work_permit'],
+                
+                // Custom Felder
+                arbeitsbereich_custom: ['Arbeitsbereich_Custom', 'arbeitsbereich_custom', 'custom_job'],
+                wunschbereich_custom: ['Neuer_Wunschbereich_Custom', 'wunschbereich_custom', 'custom_desired_job'],
+                
+                // Wohnsituation
+                unterkunft: ['Unterkunft_Deutschland', 'Unterkunft', 'unterkunft', 'housing'],
+                familie: ['Familie_Deutschland', 'Familie', 'familie', 'family'],
+                bereitschaft: ['Bereitschaft_Deutschland', 'Bereitschaft', 'bereitschaft', 'readiness'],
+                zeitplan: ['Zeitplan_Deutschland', 'Zeitplan', 'zeitplan', 'timeline'],
+                
+                // Weitere
+                fuehrerschein: ['Fuehrerschein_Ukraine', 'Fuehrerschein', 'fuehrerschein', 'drivers_license'],
+                userId: ['userId', 'user_id', 'userID']
             };
+
+            // Funktion um Werte aus localStorage zu holen
+            function getStorageValue(keyArray) {
+                for (let key of keyArray) {
+                    const value = localStorage.getItem(key);
+                    if (value && value !== '' && value !== 'undefined' && value !== 'null') {
+                        return value;
+                    }
+                }
+                return '';
+            }
+
+            const data = {
+                vorname: getStorageValue(possibleKeys.vorname),
+                nachname: getStorageValue(possibleKeys.nachname),
+                email: getStorageValue(possibleKeys.email),
+                herkunftsland: getStorageValue(possibleKeys.herkunftsland),
+                deutschkenntnisse: getStorageValue(possibleKeys.deutschkenntnisse),
+                arbeitsbereich: getStorageValue(possibleKeys.arbeitsbereich),
+                wunschbereich: getStorageValue(possibleKeys.wunschbereich),
+                arbeitserlaubnis: getStorageValue(possibleKeys.arbeitserlaubnis),
+                unterkunft: getStorageValue(possibleKeys.unterkunft),
+                familie: getStorageValue(possibleKeys.familie),
+                bereitschaft: getStorageValue(possibleKeys.bereitschaft),
+                zeitplan: getStorageValue(possibleKeys.zeitplan),
+                arbeitsbereich_custom: getStorageValue(possibleKeys.arbeitsbereich_custom),
+                wunschbereich_custom: getStorageValue(possibleKeys.wunschbereich_custom),
+                fuehrerschein: getStorageValue(possibleKeys.fuehrerschein),
+                userId: getStorageValue(possibleKeys.userId) || `user_${Date.now()}`
+            };
+
+            // Debug: Zeige alle localStorage Schlüssel
+            console.log('=== LOCALSTORAGE DEBUG ===');
+            console.log('Alle localStorage Schlüssel:', Object.keys(localStorage));
+            
+            // Zeige alle Werte im localStorage
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                console.log(`${key}: "${value}"`);
+            }
+            
+            console.log('=== GESAMMELTE DATEN ===');
+            console.log('Finale Daten:', data);
+            
+            // Zeige fehlende Daten
+            const missingData = Object.entries(data).filter(([key, value]) => !value || value === '');
+            if (missingData.length > 0) {
+                console.warn('=== FEHLENDE DATEN ===');
+                missingData.forEach(([key, value]) => {
+                    console.warn(`Fehlend: ${key} (Wert: "${value}")`);
+                });
+            }
+            
             return data;
         }
 
@@ -1317,24 +1387,32 @@
         }
 
         function requestGuidance() {
-            // Sammle alle Quiz-Antworten aus localStorage
+        function requestGuidance() {
+            // Verwende die verbesserte loadUserData Funktion
+            const userData = loadUserData();
+            
+            // Sammle alle Quiz-Antworten aus localStorage mit verbesserter Logik
             const quizAnswers = {
-                vorname: localStorage.getItem('Vorname') || '',
-                nachname: localStorage.getItem('Nachname') || '',
-                email: localStorage.getItem('E_Mail') || '',
-                herkunftsland: localStorage.getItem('Herkunftsland') || '',
-                deutschkenntnisse: localStorage.getItem('Deutschkenntnisse') || '',
-                arbeitsbereich: localStorage.getItem('Arbeitsbereich') || '',
-                wunschbereich: localStorage.getItem('Neuer_Wunschbereich') || '',
-                arbeitserlaubnis: localStorage.getItem('Arbeitserlaubnis') || '',
-                unterkunft: localStorage.getItem('Unterkunft') || '',
-                familie: localStorage.getItem('Familie') || '',
-                bereitschaft: localStorage.getItem('Bereitschaft') || '',
-                zeitplan: localStorage.getItem('Zeitplan_Deutschland') || '',
-                arbeitsbereich_custom: localStorage.getItem('Arbeitsbereich_Custom') || '',
-                wunschbereich_custom: localStorage.getItem('Neuer_Wunschbereich_Custom') || '',
-                userId: localStorage.getItem('userId') || `user_${Date.now()}`
+                vorname: userData.vorname || '',
+                nachname: userData.nachname || '',
+                email: userData.email || '',
+                herkunftsland: userData.herkunftsland || '',
+                deutschkenntnisse: userData.deutschkenntnisse || 'a1',
+                arbeitsbereich: userData.arbeitsbereich || 'sonstige',
+                wunschbereich: userData.wunschbereich || userData.arbeitsbereich || 'sonstige',
+                arbeitserlaubnis: userData.arbeitserlaubnis || 'nein',
+                unterkunft: userData.unterkunft || 'nein_suche',
+                familie: userData.familie || 'allein',
+                bereitschaft: userData.bereitschaft || 'ja_bereit',
+                zeitplan: userData.zeitplan || 'spaeter',
+                arbeitsbereich_custom: userData.arbeitsbereich_custom || '',
+                wunschbereich_custom: userData.wunschbereich_custom || '',
+                fuehrerschein: userData.fuehrerschein || 'nein',
+                userId: userData.userId || `user_${Date.now()}`
             };
+
+            console.log('=== QUIZ ANSWERS COLLECTED ===');
+            console.log('Quiz Antworten:', quizAnswers);
 
             // Erstelle Datenstruktur für arbeitserlaubnis_leads Tabelle
             const completeResults = {
@@ -1363,25 +1441,28 @@
                 // Alle Quiz-Daten als JSON
                 json_answers: {
                     personal_info: {
-                        vorname: quizAnswers.vorname,
-                        nachname: quizAnswers.nachname,
-                        email: quizAnswers.email,
-                        herkunftsland: quizAnswers.herkunftsland,
+                        vorname: quizAnswers.vorname || '',
+                        nachname: quizAnswers.nachname || '',
+                        email: quizAnswers.email || '',
+                        herkunftsland: quizAnswers.herkunftsland || '',
                         userId: quizAnswers.userId
                     },
                     work_situation: {
-                        deutschkenntnisse: quizAnswers.deutschkenntnisse,
-                        arbeitsbereich: quizAnswers.arbeitsbereich,
-                        wunschbereich: quizAnswers.wunschbereich,
-                        arbeitsbereich_custom: quizAnswers.arbeitsbereich_custom,
-                        wunschbereich_custom: quizAnswers.wunschbereich_custom,
-                        arbeitserlaubnis: quizAnswers.arbeitserlaubnis
+                        deutschkenntnisse: quizAnswers.deutschkenntnisse || '',
+                        arbeitsbereich: quizAnswers.arbeitsbereich || '',
+                        wunschbereich: quizAnswers.wunschbereich || '',
+                        arbeitsbereich_custom: quizAnswers.arbeitsbereich_custom || '',
+                        wunschbereich_custom: quizAnswers.wunschbereich_custom || '',
+                        arbeitserlaubnis: quizAnswers.arbeitserlaubnis || ''
                     },
                     living_situation: {
-                        unterkunft: quizAnswers.unterkunft,
-                        familie: quizAnswers.familie,
-                        bereitschaft: quizAnswers.bereitschaft,
-                        zeitplan: quizAnswers.zeitplan
+                        unterkunft: quizAnswers.unterkunft || '',
+                        familie: quizAnswers.familie || '',
+                        bereitschaft: quizAnswers.bereitschaft || '',
+                        zeitplan: quizAnswers.zeitplan || ''
+                    },
+                    additional_info: {
+                        fuehrerschein: quizAnswers.fuehrerschein || ''
                     },
                     metadata: {
                         analysis_type: 'arbeitserlaubnis_beratung',
@@ -1393,10 +1474,29 @@
                             user_agent: navigator.userAgent,
                             language: navigator.language,
                             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                        },
+                        data_completeness: {
+                            has_email: !!quizAnswers.email,
+                            has_name: !!quizAnswers.vorname,
+                            has_country: !!quizAnswers.herkunftsland,
+                            missing_fields: Object.entries(quizAnswers)
+                                .filter(([key, value]) => !value || value === '')
+                                .map(([key]) => key)
                         }
                     }
                 }
             };
+
+            console.log('=== COMPLETE RESULTS FOR SUPABASE ===');
+            console.log('Vollständige Daten:', completeResults);
+            
+            // Zeige Datenqualität
+            const missingFields = completeResults.json_answers.metadata.data_completeness.missing_fields;
+            if (missingFields.length > 0) {
+                console.warn('⚠️ Fehlende Felder:', missingFields);
+            } else {
+                console.log('✅ Alle Daten vollständig');
+            }
 
             // Sende Daten an Supabase
             sendToSupabase(completeResults);
@@ -1414,7 +1514,11 @@
                     'value': 24.99,
                     'item_category': 'arbeitserlaubnis_beratung',
                     'item_name': 'Russian Formal Personalized Work Permit Guide Complete with UAH pricing',
-                    'language': 'russian_formal'
+                    'language': 'russian_formal',
+                    'custom_parameters': {
+                        'data_completeness': missingFields.length === 0 ? 'complete' : 'partial',
+                        'missing_fields_count': missingFields.length
+                    }
                 });
             }
 
@@ -1423,7 +1527,10 @@
                     value: 24.99,
                     currency: 'EUR',
                     content_category: 'arbeitserlaubnis_service_russian_formal_complete',
-                    content_name: 'UAH_pricing_included_formal'
+                    content_name: 'UAH_pricing_included_formal',
+                    custom_data: {
+                        'data_quality': missingFields.length === 0 ? 'complete' : 'partial'
+                    }
                 });
             }
 
@@ -1434,7 +1541,8 @@
                     custom_parameters: {
                         'language': 'russian_formal',
                         'price_uah': '1050',
-                        'verification': 'included'
+                        'verification': 'included',
+                        'data_complete': missingFields.length === 0
                     }
                 });
             }
@@ -1448,100 +1556,90 @@
                 });
             }
 
-            console.log('=== RUSSIAN FORMAL COMPLETE CHECKOUT WITH SUPABASE INITIATED ===', completeResults);
+            console.log('=== RUSSIAN FORMAL COMPLETE CHECKOUT WITH IMPROVED DATA COLLECTION ===');
             
             // Redirect zu Stripe Checkout nach kurzer Verzögerung
             setTimeout(() => {
                 window.location.href = 'https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07';
-            }, 500);
+            }, 1000); // Erhöht auf 1000ms für bessere Datenübertragung
+        }
         }
 
-        // Supabase Integration
+        // API Integration über Ihr Backend
         async function sendToSupabase(data) {
             try {
-                console.log('=== SENDING DATA TO SUPABASE arbeitserlaubnis_leads TABLE ===', data);
+                console.log('=== SENDING DATA TO YOUR CHECKOUT API ===', data);
                 
-                // Supabase API Configuration
-                const supabaseUrl = 'https://xomsibpyksrzrnixbdwf.supabase.co';
-                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjY2MzEyMiwiZXhwIjoyMDcyMjM5MTIyfQ.35zRO5wy3_fSGPGpuBm-aqskHOGqxODLtxEQzRFxXAc';
-                const tableName = 'arbeitserlaubnis_leads';
-
-                const response = await fetch(`${supabaseUrl}/rest/v1/${tableName}`, {
+                // Verwende Ihre eigene API Route
+                const response = await fetch('/api/checkout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'apikey': supabaseKey,
-                        'Authorization': `Bearer ${supabaseKey}`,
-                        'Prefer': 'return=minimal'
                     },
                     body: JSON.stringify(data)
                 });
 
                 if (response.ok) {
-                    console.log('✅ Data successfully sent to Supabase arbeitserlaubnis_leads table');
+                    const result = await response.json();
+                    console.log('✅ Data successfully sent to your API and saved to arbeitserlaubnis_leads');
                     
                     // Markiere als erfolgreich gesendet
-                    localStorage.setItem('supabaseSuccess', 'true');
-                    localStorage.setItem('supabaseSentAt', new Date().toISOString());
-                    localStorage.setItem('supabaseTable', 'arbeitserlaubnis_leads');
+                    localStorage.setItem('apiSuccess', 'true');
+                    localStorage.setItem('apiSentAt', new Date().toISOString());
                     
                     // Optional: Tracking für erfolgreiche Datenübertragung
                     if (typeof gtag !== 'undefined') {
-                        gtag('event', 'supabase_success', {
+                        gtag('event', 'api_success', {
                             'user_id': data.user_id,
                             'email': data.email,
-                            'table': 'arbeitserlaubnis_leads',
-                            'language': data.language
+                            'backend': 'checkout_api'
                         });
                     }
                 } else {
                     const errorText = await response.text();
-                    console.error('❌ Failed to send data to Supabase arbeitserlaubnis_leads table:', response.status, response.statusText, errorText);
+                    console.error('❌ Failed to send data to your checkout API:', response.status, response.statusText, errorText);
                     
                     // Speichere Fehler für späteren Retry
-                    localStorage.setItem('supabaseError', JSON.stringify({
+                    localStorage.setItem('apiError', JSON.stringify({
                         error: response.statusText,
                         status: response.status,
                         errorDetails: errorText,
                         timestamp: new Date().toISOString(),
-                        table: 'arbeitserlaubnis_leads',
                         data: data
                     }));
                 }
             } catch (error) {
-                console.error('❌ Error sending data to Supabase arbeitserlaubnis_leads table:', error);
+                console.error('❌ Error sending data to your checkout API:', error);
                 
                 // Speichere Fehler für späteren Retry
-                localStorage.setItem('supabaseError', JSON.stringify({
+                localStorage.setItem('apiError', JSON.stringify({
                     error: error.message,
                     timestamp: new Date().toISOString(),
-                    table: 'arbeitserlaubnis_leads',
                     data: data
                 }));
                 
                 // Optional: Tracking für Fehler
                 if (typeof gtag !== 'undefined') {
-                    gtag('event', 'supabase_error', {
+                    gtag('event', 'api_error', {
                         'error_message': error.message,
-                        'user_id': data.user_id,
-                        'table': 'arbeitserlaubnis_leads'
+                        'user_id': data.user_id
                     });
                 }
             }
         }
 
-        // Retry-Mechanismus für failed Supabase submissions
+        // Retry-Mechanismus für failed API submissions
         function retryFailedSubmissions() {
-            const errorData = localStorage.getItem('supabaseError');
+            const errorData = localStorage.getItem('apiError');
             if (errorData) {
                 try {
                     const parsedError = JSON.parse(errorData);
-                    console.log('=== RETRYING FAILED SUPABASE SUBMISSION ===');
+                    console.log('=== RETRYING FAILED API SUBMISSION ===');
                     
                     // Retry nach 1 Minute
                     setTimeout(() => {
                         sendToSupabase(parsedError.data);
-                        localStorage.removeItem('supabaseError'); // Entferne nach Retry
+                        localStorage.removeItem('apiError'); // Entferne nach Retry
                     }, 60000);
                 } catch (e) {
                     console.error('Error parsing retry data:', e);
