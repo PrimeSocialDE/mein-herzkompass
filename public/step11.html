@@ -289,14 +289,14 @@
             
             // Email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
+            if (!emailRegex.test(E_Mail)) {
                 alert('Пожалуйста, введите действительный адрес электронной почты.');
                 return;
             }
             
             // Save contact data
             saveAnswer('Vorname', vorname);
-            saveAnswer('Email', email);
+            saveAnswer('E_Mail', E_Mail);
             
             // Disable button and show loading
             const submitBtn = document.getElementById('submitBtn');
