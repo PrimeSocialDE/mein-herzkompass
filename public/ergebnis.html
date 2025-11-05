@@ -261,9 +261,21 @@
             transition: all 0.2s ease;
         }
 
+        .status-item.status-problem {
+            border: 2px solid #dc3545;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.15);
+        }
+
         .status-item:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-item.status-problem:hover {
+            transform: scale(1.02) translateY(-1px);
+            box-shadow: 0 6px 25px rgba(220, 53, 69, 0.2);
         }
 
         .status-label {
@@ -275,10 +287,31 @@
             margin-bottom: 8px;
         }
 
+        .status-problem .status-label {
+            color: #dc3545;
+            font-weight: 700;
+        }
+
         .status-value {
             font-size: 16px;
             font-weight: 600;
             color: #1e3c72;
+        }
+
+        .status-problem .status-value {
+            color: #dc3545;
+        }
+
+        .status-note {
+            font-size: 12px;
+            color: #dc3545;
+            font-weight: 600;
+            margin-top: 8px;
+            padding: 4px 8px;
+            background: rgba(220, 53, 69, 0.1);
+            border-radius: 4px;
+            display: inline-block;
+            border: 1px solid rgba(220, 53, 69, 0.2);
         }
 
         .salary-estimate {
@@ -1053,7 +1086,7 @@
                     Получить мою инструкцию сейчас
                 </a>
                 
-               
+
                 
                 <div class="payment-providers">
                     <div class="payment-info">Или платите в 3 рассрочки с <span class="klarna-badge">Klarna</span></div>
@@ -1576,16 +1609,21 @@
                 </div>
             `;
 
-            // Status grid
+            // Status grid with §24 painpoint detection
             const statusGrid = document.getElementById('status-grid');
+            
+            // Check if §24 is a problem
+            const needs24Permit = data.arbeitserlaubnis === 'nein' || data.arbeitserlaubnis === 'weiss_nicht';
+            
             statusGrid.innerHTML = `
                 <div class="status-item">
                     <div class="status-label">Знание немецкого</div>
                     <div class="status-value">${getGermanLevel(data.deutschkenntnisse)}</div>
                 </div>
-                <div class="status-item">
-                    <div class="status-label">Разрешение на работу</div>
+                <div class="status-item ${needs24Permit ? 'status-problem' : ''}">
+                    <div class="status-label">Разрешение на работу (§24)</div>
                     <div class="status-value">${data.arbeitserlaubnis === 'ja' ? 'Имеется' : 'Требуется'}</div>
+                    ${needs24Permit ? '<div class="status-note">❗ Важный шаг</div>' : ''}
                 </div>
                 <div class="status-item">
                     <div class="status-label">Жилье</div>
@@ -1599,6 +1637,43 @@
                     }</div>
                 </div>
             `;
+
+            // Add §24 painpoint section if needed
+            if (needs24Permit) {
+                statusGrid.innerHTML += `
+                    <div class="section-24-problem" style="
+                        grid-column: 1 / -1; 
+                        background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%); 
+                        border: 2px solid #dc3545; 
+                        border-radius: 8px; 
+                        padding: 20px; 
+                        margin-top: 20px;
+                        text-align: left;
+                    ">
+                        <div style="color: #dc3545; font-size: 18px; font-weight: 600; margin-bottom: 15px;">
+                            🚨 ГЛАВНАЯ ПРОБЛЕМА: Разрешение на работу (§24)
+                        </div>
+                        <div style="color: #721c24; font-size: 16px; line-height: 1.6; margin-bottom: 15px;">
+                            Без действующего разрешения на работу по §24 Вы <strong>НЕ СМОЖЕТЕ</strong> официально работать в Германии. 
+                            Многие теряют месяцы времени, потому что подают документы неправильно или в неправильные ведомства.
+                        </div>
+                        <div style="
+                            background: linear-gradient(135deg, #e8f5e8 0%, #d4f1d4 100%); 
+                            border-left: 4px solid #28a745; 
+                            padding: 15px; 
+                            border-radius: 6px;
+                        ">
+                            <div style="color: #28a745; font-weight: 600; margin-bottom: 8px;">
+                                ✅ НАШЕ РЕШЕНИЕ:
+                            </div>
+                            <div style="color: #155724; font-size: 15px; line-height: 1.5;">
+                                Мы покажем Вам <strong>точно</strong>, как получить разрешение на работу по §24 
+                                без ошибок и в кратчайшие сроки. Пошагово с правильными документами и нужными ведомствами.
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
 
             // Job prospects
             const targetField = data.wunschbereich !== data.arbeitsbereich ? data.wunschbereich : data.arbeitsbereich;
