@@ -744,10 +744,10 @@
         }
 
         .cta-button {
-            background: white;
-            color: #1e3c72;
-            padding: 15px 35px;
-            font-size: 16px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 18px 35px;
+            font-size: 18px;
             font-weight: 600;
             border: none;
             border-radius: 8px;
@@ -755,13 +755,27 @@
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
             letter-spacing: 0.3px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .cta-button:hover {
+        .cta-button:hover,
+        .cta-button-early:hover,
+        .cta-button-salary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 20px rgba(30, 60, 114, 0.4);
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+        }
+
+        .final-cta-emphasis {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
         }
 
         /* Footer */
@@ -1085,8 +1099,6 @@
                    onclick="collectDataBeforeRedirect(); return true;">
                     Получить мою инструкцию сейчас
                 </a>
-                
-                
                 
                 <div class="payment-providers">
                     <div class="payment-info">Или платите в 3 рассрочки с <span class="klarna-badge">Klarna</span></div>
@@ -1683,6 +1695,42 @@
                         </div>
                     </div>
                 `;
+                
+                // Early CTA Button direkt nach §24 Problem
+                statusGrid.innerHTML += `
+                    <div class="early-cta-section" style="
+                        grid-column: 1 / -1; 
+                        text-align: center;
+                        margin-top: 25px;
+                        padding: 25px;
+                        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+                        border-radius: 8px;
+                        border: 1px solid #e9ecef;
+                    ">
+                        <div style="color: #1e3c72; font-size: 16px; font-weight: 500; margin-bottom: 15px;">
+                            Немедленное решение Вашей проблемы с §24
+                        </div>
+                        <a href="https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07" 
+                           class="cta-button-early" 
+                           onclick="collectDataBeforeRedirect(); return true;"
+                           style="
+                               background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                               color: white;
+                               padding: 15px 30px;
+                               font-size: 16px;
+                               font-weight: 600;
+                               border: none;
+                               border-radius: 8px;
+                               cursor: pointer;
+                               text-decoration: none;
+                               display: inline-block;
+                               box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+                               transition: all 0.3s ease;
+                           ">
+                            Получить инструкцию сейчас - 24,99€
+                        </a>
+                    </div>
+                `;
             }
 
             // Job prospects
@@ -1697,6 +1745,50 @@
             
             salaryAmountElement.textContent = `${salaryInfo.min.toLocaleString()} - ${salaryInfo.max.toLocaleString()} €`;
             salaryElement.style.display = 'block';
+
+            // Mid-Page CTA Button nach Gehalts-Information
+            const midPageCTA = document.createElement('div');
+            midPageCTA.className = 'mid-page-cta-section';
+            midPageCTA.style.cssText = `
+                text-align: center;
+                margin: 40px 0;
+                padding: 30px;
+                background: linear-gradient(135deg, #e8f5e8 0%, #d4f1d4 100%);
+                border: 2px solid #28a745;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(40, 167, 69, 0.15);
+            `;
+            
+            midPageCTA.innerHTML = `
+                <div style="color: #1e3c72; font-size: 18px; font-weight: 600; margin-bottom: 15px;">
+                    Ваш потенциал заработка: ${salaryInfo.min.toLocaleString()} - ${salaryInfo.max.toLocaleString()} € в месяц
+                </div>
+                <div style="color: #6c757d; font-size: 16px; margin-bottom: 20px;">
+                    Получите Вашу персональную стратегию получения разрешения на работу
+                </div>
+                <a href="https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07" 
+                   class="cta-button-salary" 
+                   onclick="collectDataBeforeRedirect(); return true;"
+                   style="
+                       background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                       color: white;
+                       padding: 18px 35px;
+                       font-size: 16px;
+                       font-weight: 600;
+                       border: none;
+                       border-radius: 8px;
+                       cursor: pointer;
+                       text-decoration: none;
+                       display: inline-block;
+                       box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+                       transition: all 0.3s ease;
+                   ">
+                    Получить мою персональную инструкцию
+                </a>
+            `;
+            
+            // Füge den Mid-Page CTA nach dem Salary Element ein
+            salaryElement.parentNode.insertBefore(midPageCTA, salaryElement.nextSibling);
 
             // Empathy section with formal warning in Russian
             const empathyElement = document.getElementById('empathy-section');
