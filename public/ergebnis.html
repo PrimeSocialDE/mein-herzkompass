@@ -5,24 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ваша персональная стратегия получения разрешения на работу</title>
     <meta name="p:domain_verify" content="0a3c93425f1ae13c5eb76120a1066e35"/>
-
-    <!-- Meta Pixel Code -->
-    <script>
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '1209936897673430');
-        fbq('track', 'PageView');
-        </script>
-        <noscript><img height="1" width="1" style="display:none"
-        src="https://www.facebook.com/tr?id=1209936897673430&ev=PageView&noscript=1"
-        /></noscript>
-        <!-- End Meta Pixel Code -->
     
     <!-- TikTok Pixel Code -->
     <script>
@@ -1104,7 +1086,7 @@
                     Получить мою инструкцию сейчас
                 </a>
                 
-              
+                
                 
                 <div class="payment-providers">
                     <div class="payment-info">Или платите в 3 рассрочки с <span class="klarna-badge">Klarna</span></div>
@@ -1294,13 +1276,23 @@
                     console.error('❌ Network error:', error);
                 });
 
-                // Tracking
+                // Tracking - Geändert zu add_to_cart für Meta
                 if (typeof gtag !== 'undefined') {
-                    gtag('event', 'begin_checkout', {
+                    gtag('event', 'add_to_cart', {
                         'currency': 'EUR',
                         'value': 24.99,
                         'language': 'russian_formal',
                         'table': 'arbeitserlaubnis_leads'
+                    });
+                }
+
+                // Meta/Facebook Pixel - AddToCart Event
+                if (typeof fbq !== 'undefined') {
+                    fbq('track', 'AddToCart', {
+                        value: 24.99,
+                        currency: 'EUR',
+                        content_category: 'arbeitserlaubnis_service_russian_formal_complete',
+                        content_name: 'UAH_pricing_included_formal'
                     });
                 }
 
