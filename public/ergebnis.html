@@ -1086,7 +1086,7 @@
                     Получить мою инструкцию сейчас
                 </a>
                 
-
+              
                 
                 <div class="payment-providers">
                     <div class="payment-info">Или платите в 3 рассрочки с <span class="klarna-badge">Klarna</span></div>
@@ -1612,7 +1612,7 @@
             // Status grid with §24 painpoint detection
             const statusGrid = document.getElementById('status-grid');
             
-            // Check if §24 is a problem
+            // Check if §24 is a problem - only when they DON'T have it
             const needs24Permit = data.arbeitserlaubnis === 'nein' || data.arbeitserlaubnis === 'weiss_nicht';
             
             statusGrid.innerHTML = `
@@ -1621,7 +1621,7 @@
                     <div class="status-value">${getGermanLevel(data.deutschkenntnisse)}</div>
                 </div>
                 <div class="status-item ${needs24Permit ? 'status-problem' : ''}">
-                    <div class="status-label">Разрешение на работу (§24)</div>
+                    <div class="status-label">Разрешение на работу</div>
                     <div class="status-value">${data.arbeitserlaubnis === 'ja' ? 'Имеется' : 'Требуется'}</div>
                     ${needs24Permit ? '<div class="status-note">❗ Важный шаг</div>' : ''}
                 </div>
@@ -1638,7 +1638,7 @@
                 </div>
             `;
 
-            // Add §24 painpoint section if needed
+            // Add §24 painpoint section ONLY if they don't have permit
             if (needs24Permit) {
                 statusGrid.innerHTML += `
                     <div class="section-24-problem" style="
