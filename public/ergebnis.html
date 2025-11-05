@@ -49,14 +49,6 @@
     </script>
     <!-- End TikTok Pixel Code -->
 
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "u1bdqt1zrn");
-    </script>
-
     <!-- Pinterest Tag -->
     <script>
         !function(e){if(!window.pintrk){window.pintrk = function () {
@@ -1234,6 +1226,18 @@
                 const supabaseUrl = 'https://xomsibpyksrzrnixbdwf.supabase.co';
                 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjY2MzEyMiwiZXhwIjoyMDcyMjM5MTIyfQ.35zRO5wy3_fSGPGpuBm-aqskHOGqxODLtxEQzRFxXAc';
 
+                // Sammle UTM-Parameter und Facebook-Pixel-Parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const utmParams = {
+                    utm_source: urlParams.get('utm_source') || '',
+                    utm_medium: urlParams.get('utm_medium') || '',
+                    utm_campaign: urlParams.get('utm_campaign') || '',
+                    utm_term: urlParams.get('utm_term') || '',
+                    utm_content: urlParams.get('utm_content') || '',
+                    fcb: urlParams.get('fcb') || '',
+                    fbp: urlParams.get('fbp') || ''
+                };
+
                 const dataToSend = {
                     user_id: quizAnswers.userId,
                     email: quizAnswers.email || '',
@@ -1249,6 +1253,14 @@
                     herkunftsland: '', // Nicht im Quiz vorhanden
                     deutschkenntnisse: quizAnswers.deutschkenntnisse || '',
                     arbeitsbereich: quizAnswers.arbeitsbereich || '',
+                    // UTM und Facebook-Parameter hinzufügen
+                    utm_source: utmParams.utm_source,
+                    utm_medium: utmParams.utm_medium,
+                    utm_campaign: utmParams.utm_campaign,
+                    utm_term: utmParams.utm_term,
+                    utm_content: utmParams.utm_content,
+                    fcb: utmParams.fcb,
+                    fbp: utmParams.fbp,
                     json_answers: {
                         personal_info: {
                             vorname: quizAnswers.vorname,
@@ -1275,6 +1287,7 @@
                             analysis_type: 'arbeitserlaubnis_beratung',
                             checkout_timestamp: new Date().toISOString(),
                             page_source: 'russian_formal_complete_with_verification',
+                            utm_parameters: utmParams,
                             browser_info: {
                                 user_agent: navigator.userAgent,
                                 language: navigator.language,
