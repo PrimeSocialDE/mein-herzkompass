@@ -43,6 +43,15 @@
     </script>
     <!-- TikTok Pixel Code End -->
 
+    <script>
+        function trackButtonClick(eventName) {
+          if (window.ttq) {
+            ttq.track(eventName); // TikTok-Tracking
+          }
+          // Optional: Weitere Logik (z. B. Google Analytics etc.)
+        }
+      </script>
+
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
