@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>§24 Разрешение на работу для украинцев - Пошаговая инструкция</title>
+    <title>§24 Razrешение на работу для украинцев - Пошаговая инструкция</title>
     
     <!-- Meta Pixel Code -->
     <script>
@@ -22,17 +22,7 @@
     src="https://www.facebook.com/tr?id=1209936897673430&ev=PageView&noscript=1"
     /></noscript>
     <!-- End Meta Pixel Code -->
-
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "u1bdqt1zrn");
-    </script>
     
-    <script src="/ab-test.js"></script>
-
     <!-- Favicon -->
     <link rel="shortcut icon" href="/webicon.png" type="image/png">
     <link rel="apple-touch-icon" href="/webicon.png">
@@ -92,6 +82,30 @@
             text-align: center;
         }
 
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-text {
+            text-align: left;
+        }
+
+        .hero-image {
+            text-align: center;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
         .hero h1 {
             font-size: 42px;
             font-weight: 700;
@@ -105,6 +119,11 @@
             color: #718096;
             margin-bottom: 30px;
             line-height: 1.4;
+        }
+
+        .hero .subtitle strong {
+            color: #1e3c72;
+            font-weight: 700;
         }
 
         .hero-cta {
@@ -281,19 +300,53 @@
         }
 
         .stars {
-            color: #f6ad55;
+            color: #fbbf24;
             font-size: 18px;
             margin-bottom: 10px;
         }
 
         /* RESPONSIVE */
         @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .hero {
+                padding: 40px 0;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .hero-text {
+                text-align: center;
+                order: 2;
+            }
+
+            .hero-image {
+                order: 1;
+            }
+
+            .hero-image img {
+                max-width: 100%;
+                height: auto;
+            }
+
             .hero h1 {
                 font-size: 32px;
             }
 
             .hero .subtitle {
                 font-size: 18px;
+            }
+
+            .hero-cta {
+                padding: 15px 30px;
+                font-size: 16px;
+                width: 100%;
+                text-align: center;
             }
 
             .service-features {
@@ -315,6 +368,19 @@
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
+
+            .service-section, .social-proof, .trust-section {
+                padding: 40px 0;
+            }
+
+            .service-header h2 {
+                font-size: 28px;
+                margin-bottom: 15px;
+            }
+
+            .hero-cta:hover {
+                transform: none;
+            }
         }
     </style>
 </head>
@@ -326,7 +392,7 @@
                 <div class="logo">
                     <img src="LogoGer.png" alt="Germany Start Logo" style="height: 40px; width: auto;">
                 </div>
-                <div class="official-badge">Официальная консультация и поддержка</div>
+                <div class="official-badge">Heute bereits 57+ Leuten geholfen</div>
             </div>
         </div>
     </header>
@@ -334,9 +400,18 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <h1>Получите за 2 минуты от нас все документы, которые вам нужны для начала в Германии.</h1>
-            <p class="subtitle">От разрешения на работу §24 через подходящие вакансии до поиска жилья и всех необходимых документов. Ваш полный гид как украинца в Германии.</p>
-            <a href="/step2.html" class="hero-cta" onclick="trackCTAClick('Hero CTA - Анализ вакансий')">Проанализировать мои шансы на работу →</a>
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Получите за 2 минуты от нас все документы, которые вам нужны для начала в Германии.</h1>
+                    <p class="subtitle">От <strong>разрешения на работу §24</strong> через <strong>подходящие вакансии</strong> до поиска жилья и всех необходимых документов. Ваш полный гид как украинца в Германии.</p>
+                    
+                    <a href="/step2.html" class="hero-cta" onclick="trackCTAClick('Hero CTA - Анализ вакансий')">Проанализировать мои шансы на работу →</a>
+                </div>
+                
+                <div class="hero-image">
+                    <img src="HeroUkr.png" alt="Украинские документы для работы в Германии" loading="eager">
+                </div>
+            </div>
         </div>
     </section>
 
@@ -442,8 +517,6 @@
         </div>
     </section>
 
-
-
     <!-- Footer CTA Section -->
     <section style="background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%); padding: 60px 0; text-align: center; color: white;">
         <div class="container">
@@ -495,17 +568,21 @@
         const userId = localStorage.getItem('userId') || `user_${Date.now()}`;
         localStorage.setItem('userId', userId);
 
+        // Store A/B test variant
+        localStorage.setItem('abTestVariant', 'documents_focused_with_image');
+
         window.addEventListener('load', function() {
-            console.log('=== LANDING PAGE LOADED - RUSSIAN ===');
+            console.log('=== DOCUMENTS-FOCUSED LANDING PAGE WITH IMAGE LOADED ===');
             console.log('UTM Parameters:', utmParams);
             console.log('User ID:', userId);
 
             // Google Analytics - Page View
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'page_view', {
-                    'event_category': 'landing_page',
-                    'event_label': 'arbeitserlaubnis_russian_optimized',
+                    'event_category': 'ab_test',
+                    'event_label': 'documents_focused_with_image',
                     'custom_parameters': {
+                        'ab_test_variant': 'documents_focused_with_image',
                         'language': 'russian',
                         'utm_source': utmParams.utm_source
                     }
@@ -515,9 +592,10 @@
             // Facebook Pixel - ViewContent
             if (typeof fbq !== 'undefined') {
                 fbq('track', 'ViewContent', {
-                    content_category: 'arbeitserlaubnis_ukraine_landing_russian',
-                    content_name: 'Index Page Russian Optimized',
+                    content_category: 'arbeitserlaubnis_ukraine_landing_documents_image',
+                    content_name: 'Index Page Documents Focused With Image',
                     custom_data: {
+                        'ab_test_variant': 'documents_focused_with_image',
                         'language': 'russian',
                         'utm_source': utmParams.utm_source,
                         'user_id': userId
@@ -529,20 +607,21 @@
             if (typeof ttq !== 'undefined') {
                 ttq.track('ViewContent', {
                     content_type: 'service',
-                    content_name: 'Arbeitserlaubnis Landing Russian'
+                    content_name: 'Arbeitserlaubnis Landing Documents With Image'
                 });
             }
         });
 
         // Track CTA button clicks
         function trackCTAClick(buttonText) {
-            console.log('=== CTA BUTTON CLICKED ===', buttonText);
+            console.log('=== CTA BUTTON CLICKED - DOCUMENTS WITH IMAGE ===', buttonText);
             
             // Google Analytics
             if (typeof gtag !== 'undefined') {
-                gtag('event', 'cta_click', {
-                    'event_category': 'engagement',
+                gtag('event', 'ab_test_cta_click', {
+                    'event_category': 'ab_test',
                     'event_label': buttonText,
+                    'ab_test_variant': 'documents_focused_with_image',
                     'button_position': buttonText.includes('Hero') ? 'hero' : 'footer'
                 });
             }
@@ -550,19 +629,20 @@
             // Facebook Pixel
             if (typeof fbq !== 'undefined') {
                 fbq('track', 'Lead', {
-                    content_category: 'arbeitserlaubnis_cta_russian',
-                    content_name: buttonText
+                    content_category: 'arbeitserlaubnis_cta_documents_image',
+                    content_name: buttonText,
+                    custom_data: {
+                        'ab_test_variant': 'documents_focused_with_image'
+                    }
                 });
             }
         }
 
-
-        
         // Add click tracking to CTA buttons
         document.addEventListener('DOMContentLoaded', function() {
             const ctaButtons = document.querySelectorAll('.hero-cta');
             ctaButtons.forEach(button => {
-                if (!button.onclick) { // Only add if not already defined
+                if (!button.onclick) {
                     button.addEventListener('click', function() {
                         trackCTAClick(this.textContent.trim());
                     });
