@@ -23,14 +23,6 @@
     /></noscript>
     <!-- End Meta Pixel Code -->
     
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "u1bdqt1zrn");
-    </script>
-
     <!-- Favicon -->
     <link rel="shortcut icon" href="/webicon.png" type="image/png">
     <link rel="apple-touch-icon" href="/webicon.png">
@@ -88,6 +80,30 @@
             background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
             padding: 60px 0;
             text-align: center;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-text {
+            text-align: left;
+        }
+
+        .hero-image {
+            text-align: center;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
         }
 
         .urgency-badge {
@@ -636,6 +652,26 @@
                 border-color: transparent;
             }
 
+            /* Hero section mobile */
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .hero-text {
+                text-align: center;
+                order: 2;
+            }
+
+            .hero-image {
+                order: 1;
+            }
+
+            .hero-image img {
+                max-width: 100%;
+                height: auto;
+            }
+
             /* Better spacing for mobile */
             footer {
                 padding: 30px 0 !important;
@@ -690,10 +726,18 @@
                 🚨 Более 15.000 открытых вакансий в Германии
             </div>
             
-            <h1>Обеспечь себе рабочее место в Германии всего за 4-6 недель</h1>
-            <p class="subtitle">Получи <strong>разрешение на работу §24</strong> + профессиональные <strong>документы для трудоустройства</strong> + <strong>контакты немецких работодателей</strong> 🇺🇦 ➔ 🇩🇪</p>
-            
-            <a href="/step2.html" class="hero-cta" onclick="trackCTAClick('Hero CTA - Анализ шансов на трудоустройство')">Проанализировать мои шансы на работу →</a>
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Обеспечь себе рабочее место в Германии всего за 4-6 недель</h1>
+                    <p class="subtitle">Получи <strong>разрешение на работу §24</strong> + профессиональные <strong>документы для трудоустройства</strong> + <strong>контакты немецких работодателей</strong> 🇺🇦 ➔ 🇩🇪</p>
+                    
+                    <a href="/step2.html" class="hero-cta" onclick="trackCTAClick('Hero CTA - Анализ шансов на трудоустройство')">Проанализировать мои шансы на работу →</a>
+                </div>
+                
+                <div class="hero-image">
+                    <img src="HeroUkr.png" alt="Украинские работники в Германии - Успешная интеграция" loading="eager">
+                </div>
+            </div>
         </div>
     </section>
 
@@ -822,7 +866,22 @@
         </div>
     </section>
 
-    
+    <!-- Pricing -->
+    <section class="pricing-section">
+        <div class="container">
+            <div class="pricing-card">
+                <h3>Комплектный пакет: Разрешение на работу + Резюме + Контакты работодателей</h3>
+                <div class="price">24,99€</div>
+                <div class="price-note">Вместо 280€+ по отдельности - все в одном пакете</div>
+                <a href="/step2.html" class="hero-cta" style="background: white; color: #1e3c72; font-weight: 700;" onclick="trackCTAClick('Pricing CTA - Получить пакет')">
+                    Получить пакет и найти работу →
+                </a>
+                <div style="margin-top: 20px; font-size: 14px; opacity: 0.8;">
+                    ✓ 30-дневная гарантия возврата денег ✓ Мгновенная загрузка ✓ Гарантия собеседования
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer CTA Section -->
     <section style="background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%); padding: 60px 0; text-align: center; color: white;">
