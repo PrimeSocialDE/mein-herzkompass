@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Компактный Cookie-баннер</title>
+    <title>Bottom Cookie-баннер</title>
     <style>
         * {
             box-sizing: border-box;
@@ -20,7 +20,7 @@
         .demo-content {
             text-align: center;
             color: white;
-            padding: 80px 20px;
+            padding: 80px 20px 200px 20px; /* Extra bottom padding for banner */
         }
         
         .demo-content h1 {
@@ -34,12 +34,12 @@
         .demo-content p {
             font-size: 1.3rem;
             opacity: 0.85;
-            max-width: 700px;
+            max-width: 800px;
             margin: 0 auto;
             line-height: 1.6;
         }
         
-        /* Cookie Banner - Bottom Bar Style */
+        /* Bottom Cookie Banner */
         #cookie-banner {
             position: fixed;
             left: 0;
@@ -48,10 +48,9 @@
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(12px);
             z-index: 99999;
-            box-shadow: 
-                0 -8px 32px rgba(15, 23, 42, 0.15),
-                0 -2px 8px rgba(30, 64, 175, 0.08);
-            border-top: 3px solid #1e40af;
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 -8px 32px rgba(15, 23, 42, 0.2);
             animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
@@ -67,29 +66,15 @@
         }
         
         .cookie-container {
-            max-width: 1200px;
+            max-width: 600px;
             margin: 0 auto;
-            padding: 20px 24px;
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            flex-wrap: wrap;
-        }
-        
-        .cookie-logo {
-            flex-shrink: 0;
-        }
-        
-        .cookie-logo img {
-            height: 40px;
-            width: auto;
-            filter: drop-shadow(0 2px 4px rgba(30, 64, 175, 0.15));
         }
         
         .logo-text {
-            font-size: 20px;
+            font-size: 32px;
             font-weight: 700;
             color: #1e40af;
+            margin-bottom: 20px;
             letter-spacing: -0.02em;
             background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
             -webkit-background-clip: text;
@@ -97,31 +82,19 @@
             background-clip: text;
         }
         
-        .logo-text-small {
-            font-size: 16px;
-            font-weight: 700;
-            color: #1e40af;
-            letter-spacing: -0.02em;
-        }
-        
-        .cookie-content {
-            flex: 1;
-            min-width: 280px;
-        }
-        
         .cookie-title {
-            font-size: 18px;
+            font-size: 24px;
             font-weight: 700;
             color: #1e40af;
-            margin: 0 0 6px 0;
+            margin: 0 0 12px 0;
             letter-spacing: -0.01em;
         }
         
         .cookie-text {
-            color: #475569;
-            font-size: 14px;
+            color: #64748b;
+            font-size: 16px;
             line-height: 1.5;
-            margin: 0;
+            margin: 0 0 32px 0;
         }
         
         .cookie-link {
@@ -138,62 +111,65 @@
         
         .cookie-buttons {
             display: flex;
-            gap: 12px;
-            flex-shrink: 0;
+            gap: 16px;
+            justify-content: center;
             flex-wrap: wrap;
         }
         
         .btn {
-            padding: 12px 20px;
+            padding: 16px 32px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 16px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             letter-spacing: 0.01em;
+            min-width: 140px;
         }
         
         .btn-accept {
             background: #1e40af;
             color: white;
-            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
+            box-shadow: 0 8px 25px rgba(30, 64, 175, 0.3);
         }
         
         .btn-accept:hover {
             background: #1d4ed8;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(30, 64, 175, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(30, 64, 175, 0.4);
         }
         
         .btn-customize {
             background: rgba(30, 64, 175, 0.08);
             color: #1e40af;
-            border: 1px solid rgba(30, 64, 175, 0.2);
+            border: 2px solid rgba(30, 64, 175, 0.2);
         }
         
         .btn-customize:hover {
             background: rgba(30, 64, 175, 0.12);
             border-color: rgba(30, 64, 175, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.15);
         }
         
         .btn-reject {
             background: rgba(100, 116, 139, 0.08);
             color: #64748b;
-            border: 1px solid rgba(100, 116, 139, 0.2);
+            border: 2px solid rgba(100, 116, 139, 0.2);
         }
         
         .btn-reject:hover {
             background: rgba(100, 116, 139, 0.12);
             color: #475569;
+            border-color: rgba(100, 116, 139, 0.3);
         }
         
         /* Cookie Settings Modal */
         #cookie-modal {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(12px);
             display: none;
             z-index: 100000;
@@ -209,7 +185,7 @@
         .modal-content {
             background: white;
             max-width: 520px;
-            margin: 10vh auto;
+            margin: 8vh auto;
             padding: 32px;
             border-radius: 16px;
             box-shadow: 
@@ -231,23 +207,23 @@
         }
         
         .modal-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            text-align: center;
             margin-bottom: 24px;
             padding-bottom: 16px;
             border-bottom: 2px solid rgba(30, 64, 175, 0.1);
         }
         
-        .modal-header .logo-text-small {
-            height: auto;
-            width: auto;
+        .modal-logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 8px;
         }
         
         .modal-content h3 {
             margin: 0;
             color: #1e40af;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
             letter-spacing: -0.01em;
         }
@@ -358,25 +334,31 @@
         
         /* Responsive Design */
         @media (max-width: 768px) {
-            .cookie-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 16px;
-                padding: 16px 20px;
+            #cookie-banner {
+                padding: 16px 16px;
             }
             
-            .cookie-content {
-                min-width: auto;
+            .cookie-title {
+                font-size: 18px;
+                margin-bottom: 8px;
+            }
+            
+            .cookie-text {
+                font-size: 14px;
+                margin-bottom: 20px;
             }
             
             .cookie-buttons {
-                justify-content: center;
-                width: 100%;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
             }
             
             .btn {
-                flex: 1;
-                min-width: 100px;
+                width: 100%;
+                max-width: 280px;
+                padding: 12px 24px;
+                font-size: 14px;
             }
             
             .modal-content {
@@ -394,40 +376,46 @@
         }
         
         @media (max-width: 480px) {
-            .cookie-buttons {
-                flex-direction: column;
+            #cookie-banner {
+                padding: 12px 12px;
             }
-        }
-        
-        /* Show banner for demo */
-        #cookie-banner {
-            display: block;
+            
+            .cookie-title {
+                font-size: 16px;
+                margin-bottom: 6px;
+            }
+            
+            .cookie-text {
+                font-size: 13px;
+                margin-bottom: 16px;
+            }
+            
+            .cookie-buttons {
+                gap: 8px;
+            }
+            
+            .btn {
+                padding: 10px 16px;
+                font-size: 13px;
+                max-width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Demo Content -->
     <div class="demo-content">
-        <h1>Компактный Cookie-баннер</h1>
-        <p>Профессиональный и ненавязчивый баннер для файлов cookie, который не закрывает весь экран. Расположен внизу страницы с вашим логотипом.</p>
+        <h1>Профессиональный Cookie-баннер</h1>
+        <p>который не закрывает весь экран. Расположен внизу страницы с вашим логотипом.</p>
     </div>
 
-    <!-- Cookie Banner - Bottom Bar -->
+    <!-- Bottom Cookie Banner -->
     <div id="cookie-banner">
         <div class="cookie-container">
-            <div class="cookie-logo">
-                <!-- Professioneller Text-Platzhalter statt Logo -->
-                <div class="logo-text">LogoGer</div>
-                <!-- Auskommentiert: Logo-Bild für später
-                <img src="LogoGer.png" alt="Logo" onerror="this.style.display='none'">
-                -->
-            </div>
-            <div class="cookie-content">
-                <div class="cookie-title">Настройки конфиденциальности</div>
-                <div class="cookie-text">
-                    Мы используем файлы cookie для улучшения работы сайта. 
-                    <a href="/privacy.html" class="cookie-link">Подробнее</a>
-                </div>
+            <div class="cookie-title">Настройки конфиденциальности</div>
+            <div class="cookie-text">
+                Мы используем файлы cookie для улучшения работы сайта. 
+                <a href="/privacy.html" class="cookie-link">Подробнее</a>
             </div>
             <div class="cookie-buttons">
                 <button id="accept-cookies" class="btn btn-accept">Принять все</button>
@@ -441,10 +429,6 @@
     <div id="cookie-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="logo-text-small">LogoGer</div>
-                <!-- Auskommentiert: Logo für später
-                <img src="LogoGer.png" alt="Logo" onerror="this.style.display='none'">
-                -->
                 <h3>Настройки файлов cookie</h3>
             </div>
             <div class="checkbox-group">
