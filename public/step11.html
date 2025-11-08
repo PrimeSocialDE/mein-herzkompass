@@ -324,12 +324,12 @@
             }, 1500);
         });
 
-        // Datensammlung und Supabase-Übertragung
+        // Send data to Supabase - WORKING VERSION
         function sendDataToSupabase(vorname, email, quizAnswers) {
-            console.log('=== SENDING DATA TO SUPABASE ===');
+            console.log('=== SENDING DATA TO SUPABASE FROM STEP2 ===');
             
             try {
-                // UTM-Parameter und Facebook-Pixel-Parameter sammeln
+                // UTM-Parameter sammeln
                 const urlParams = new URLSearchParams(window.location.search);
                 const utmParams = {
                     utm_source: urlParams.get('utm_source') || '',
@@ -343,22 +343,23 @@
 
                 const userId = localStorage.getItem('userId') || `user_${Date.now()}`;
                 
+                // EXAKT wie ergebnis.html - gleiche Struktur
                 const dataToSend = {
                     user_id: userId,
                     email: email || '',
-                    source: 'step2_russian_formal_contact',
+                    source: 'step2_russian_formal_contact',  // ← Unterschied zu ergebnis.html
                     language: 'russian_formal',
-                    checkout_clicked: false,
+                    checkout_clicked: false,  // ← Noch nicht geklickt
                     payment_completed: false,
                     price: 24.99,
                     currency: 'EUR',
                     price_uah: 1050,
                     vorname: vorname || '',
-                    nachname: '', 
-                    herkunftsland: '', 
+                    nachname: '',
+                    herkunftsland: '',
                     deutschkenntnisse: quizAnswers.Deutschkenntnisse || '',
                     arbeitsbereich: quizAnswers.Arbeitsbereich || '',
-                    // UTM und Facebook-Parameter hinzufügen
+                    // UTM Parameter
                     utm_source: utmParams.utm_source,
                     utm_medium: utmParams.utm_medium,
                     utm_campaign: utmParams.utm_campaign,
@@ -402,9 +403,9 @@
                     }
                 };
 
-                console.log('=== DATA TO SEND ===', dataToSend);
+                console.log('=== STEP2 DATA TO SEND ===', dataToSend);
 
-                // Direkt an Supabase arbeitserlaubnis_leads Tabelle
+                // EXAKT wie ergebnis.html
                 const supabaseUrl = 'https://xomsibpyksrzrnixbdwf.supabase.co';
                 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjY2MzEyMiwiZXhwIjoyMDcyMjM5MTIyfQ.35zRO5wy3_fSGPGpuBm-aqskHOGqxODLtxEQzRFxXAc';
 
@@ -419,42 +420,34 @@
                     body: JSON.stringify(dataToSend),
                     keepalive: true
                 }).then(response => {
+                    console.log('=== STEP2 SUPABASE RESPONSE ===');
+                    console.log('Status:', response.status);
                     if (response.ok) {
-                        console.log('✅ Data sent to arbeitserlaubnis_leads:', response.status);
+                        console.log('✅ STEP2 Data sent to arbeitserlaubnis_leads!');
                     } else {
-                        console.error('❌ Error sending to arbeitserlaubnis_leads:', response.status);
+                        console.error('❌ STEP2 Error:', response.status);
                         return response.text().then(text => {
                             console.error('Error details:', text);
                         });
                     }
                 }).catch(error => {
-                    console.error('❌ Network error:', error);
+                    console.error('❌ STEP2 Network error:', error);
                 });
 
-                // Tracking - Lead Event für Meta
-                if (typeof gtag !== 'undefined') {
-                    gtag('event', 'generate_lead', {
-                        'currency': 'EUR',
-                        'value': 24.99,
-                        'language': 'russian_formal',
-                        'source': 'step2_contact_form'
-                    });
-                }
-
-                // Meta/Facebook Pixel - Lead Event
+                // Tracking
                 if (typeof fbq !== 'undefined') {
                     fbq('track', 'Lead', {
                         value: 24.99,
                         currency: 'EUR',
-                        content_category: 'arbeitserlaubnis_service_russian_formal',
+                        content_category: 'arbeitserlaubnis_step2_russian',
                         content_name: 'contact_form_submitted'
                     });
                 }
 
-                console.log('=== DATA SENT TO SUPABASE - REDIRECTING TO RESULTS ===');
+                console.log('=== STEP2 DATA SENT - WILL REDIRECT ===');
                 
             } catch (error) {
-                console.error('❌ Error in data collection:', error);
+                console.error('❌ STEP2 Error in data collection:', error);
             }
         }
 
