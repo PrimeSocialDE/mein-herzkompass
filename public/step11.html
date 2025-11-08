@@ -249,7 +249,7 @@
         <!-- MAIN CONTENT -->
         <div class="container">
             <h1>Почти готово!</h1>
-            <p class="subtitle">Введите Ваши контактные данные, чтобы получить персональный анализ разрешения на работу.</p>
+            <p class="subtitle">Введите Ваши данные, чтобы получить персональный анализ разрешения на работу.</p>
             
             <div class="benefits-preview">
                 <h3>Что Вы получите:</h3>
@@ -265,13 +265,13 @@
             <div class="form-container">
                 <form id="contactForm">
                     <div class="form-group">
-                        <label for="vorname">Имя <span class="required">*</span></label>
-                        <input type="text" id="vorname" name="vorname" required placeholder="Ваше имя">
+                        <label for="vorname">Ваше имя <span class="required">*</span></label>
+                        <input type="text" id="vorname" name="vorname" required placeholder="Введите Ваше имя">
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Адрес электронной почты <span class="required">*</span></label>
-                        <input type="email" id="email" name="email" required placeholder="ваш@email.ru">
+                        <label for="alter">Возраст <span class="required">*</span></label>
+                        <input type="number" id="alter" name="alter" required placeholder="Ваш возраст" min="18" max="99">
                     </div>
 
                     <button type="submit" class="submit-button" id="submitBtn">
@@ -310,32 +310,32 @@
             e.preventDefault();
             
             const vorname = document.getElementById('vorname').value.trim();
-            const email = document.getElementById('email').value.trim();
+            const alter = document.getElementById('alter').value.trim();
             
             console.log('=== FORM SUBMISSION ===');
             console.log('Vorname:', vorname);
-            console.log('Email:', email);
+            console.log('Alter:', alter);
             
             // Validation
-            if (!vorname || !email) {
+            if (!vorname || !alter) {
                 alert('Пожалуйста, заполните все обязательные поля.');
                 return;
             }
             
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Пожалуйста, введите действительный адрес электронной почты.');
+            // Age validation
+            const ageNum = parseInt(alter);
+            if (isNaN(ageNum) || ageNum < 18 || ageNum > 99) {
+                alert('Пожалуйста, введите действительный возраст (18-99 лет).');
                 return;
             }
             
             // Save contact data
             saveAnswer('Vorname', vorname);
-            saveAnswer('E_Mail', email);
+            saveAnswer('Alter', alter);
             
             console.log('✅ Daten gespeichert');
             console.log('LocalStorage Vorname:', localStorage.getItem('Vorname'));
-            console.log('LocalStorage E_Mail:', localStorage.getItem('E_Mail'));
+            console.log('LocalStorage Alter:', localStorage.getItem('Alter'));
             
             // Disable button and show loading
             const submitBtn = document.getElementById('submitBtn');
@@ -347,7 +347,7 @@
             console.log('Alle Quiz-Antworten:', allAnswers);
             
             // Send data to Supabase
-            sendDataToSupabase(vorname, email, allAnswers);
+            sendDataToSupabase(vorname, alter, allAnswers);
             
             // Redirect to results page
             setTimeout(() => {
@@ -356,7 +356,7 @@
         });
 
         // Send data to Supabase - WORKING VERSION
-        function sendDataToSupabase(vorname, email, quizAnswers) {
+        function sendDataToSupabase(vorname, alter, quizAnswers) {
             console.log('=== SENDING DATA TO SUPABASE FROM STEP11 ===');
             
             try {
@@ -377,8 +377,8 @@
                 // EXAKT wie ergebnis.html - gleiche Struktur
                 const dataToSend = {
                     user_id: userId,
-                    email: email || '',
-                    source: 'step11_contact_form_russian',  // ← Klar identifizierbar
+                    email: '',  // No email collected
+                    source: 'step11_contact_form_russian_nameage',  // ← Klar identifizierbar
                     language: 'russian_formal',
                     checkout_clicked: false,  // ← Noch nicht geklickt
                     payment_completed: false,
@@ -388,6 +388,7 @@
                     vorname: vorname || '',
                     nachname: '',
                     herkunftsland: '',
+                    alter: alter || '',
                     deutschkenntnisse: quizAnswers.Deutschkenntnisse || '',
                     arbeitsbereich: quizAnswers.Arbeitsbereich || '',
                     // UTM Parameter
@@ -401,7 +402,8 @@
                     json_answers: {
                         personal_info: {
                             vorname: vorname,
-                            email: email,
+                            alter: alter,
+                            email: '',  // No email
                             userId: userId
                         },
                         work_situation: {
@@ -423,7 +425,7 @@
                         metadata: {
                             analysis_type: 'arbeitserlaubnis_beratung',
                             form_submitted_timestamp: new Date().toISOString(),
-                            page_source: 'step11_contact_form_russian',
+                            page_source: 'step11_contact_form_russian_nameage',
                             utm_parameters: utmParams,
                             browser_info: {
                                 user_agent: navigator.userAgent,
@@ -470,7 +472,7 @@
                     fbq('track', 'Lead', {
                         value: 24.99,
                         currency: 'EUR',
-                        content_category: 'arbeitserlaubnis_step11_russian',
+                        content_category: 'arbeitserlaubnis_step11_russian_nameage',
                         content_name: 'contact_form_submitted'
                     });
                 }
@@ -496,14 +498,14 @@
             
             // Load saved values if available
             const savedVorname = localStorage.getItem('Vorname');
-            const savedEmail = localStorage.getItem('E_Mail');
+            const savedAlter = localStorage.getItem('Alter');
             
             console.log('=== LOADING SAVED VALUES ===');
             console.log('Saved Vorname:', savedVorname);
-            console.log('Saved E_Mail:', savedEmail);
+            console.log('Saved Alter:', savedAlter);
             
             if (savedVorname) document.getElementById('vorname').value = savedVorname;
-            if (savedEmail) document.getElementById('email').value = savedEmail;
+            if (savedAlter) document.getElementById('alter').value = savedAlter;
         });
     </script>
 </body>
