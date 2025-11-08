@@ -4,6 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Анализ разрешения на работу: Контактные данные</title>
+    
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1209936897673430');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1209936897673430&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    
     <style>
         * {
             margin: 0;
@@ -205,8 +224,6 @@
             }
         }
     </style>
-    <script src="/tracking.js" defer></script>
-    <script src="/utm-make.js" defer></script>
 </head>
 <body>
     <div class="main-container">
@@ -230,6 +247,7 @@
                 <h3>Что Вы получите:</h3>
                 <ul>
                     <li>Индивидуальная пошаговая инструкция</li>
+                    <li>Готовые к подаче заполненные документы</li>
                     <li>Обзор необходимых документов</li>
                     <li>Информация о возможностях финансирования</li>
                     <li>Ответственные ведомства и контактные лица</li>
@@ -261,6 +279,11 @@
     </div>
 
     <script>
+        // Generate unique user ID if not exists
+        if (!localStorage.getItem('userId')) {
+            localStorage.setItem('userId', `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+        }
+
         // Tracking-Funktion für Antworten
         function saveAnswer(question, answer) {
             if (typeof(Storage) !== "undefined") {
@@ -320,13 +343,13 @@
             
             // Redirect to results page
             setTimeout(() => {
-                window.location.href = '/analyse.html';
+                window.location.href = 'arbeitserlaubnis-ergebnis-russian-formal-complete.html';
             }, 1500);
         });
 
         // Send data to Supabase - WORKING VERSION
         function sendDataToSupabase(vorname, email, quizAnswers) {
-            console.log('=== SENDING DATA TO SUPABASE FROM STEP2 ===');
+            console.log('=== SENDING DATA TO SUPABASE FROM STEP11 ===');
             
             try {
                 // UTM-Parameter sammeln
@@ -347,7 +370,7 @@
                 const dataToSend = {
                     user_id: userId,
                     email: email || '',
-                    source: 'step2_russian_formal_contact',  // ← Unterschied zu ergebnis.html
+                    source: 'step11_contact_form_russian',  // ← Klar identifizierbar
                     language: 'russian_formal',
                     checkout_clicked: false,  // ← Noch nicht geklickt
                     payment_completed: false,
@@ -392,7 +415,7 @@
                         metadata: {
                             analysis_type: 'arbeitserlaubnis_beratung',
                             form_submitted_timestamp: new Date().toISOString(),
-                            page_source: 'step2_russian_formal_contact',
+                            page_source: 'step11_contact_form_russian',
                             utm_parameters: utmParams,
                             browser_info: {
                                 user_agent: navigator.userAgent,
@@ -403,7 +426,7 @@
                     }
                 };
 
-                console.log('=== STEP2 DATA TO SEND ===', dataToSend);
+                console.log('=== STEP11 DATA TO SEND ===', dataToSend);
 
                 // EXAKT wie ergebnis.html
                 const supabaseUrl = 'https://xomsibpyksrzrnixbdwf.supabase.co';
@@ -420,18 +443,18 @@
                     body: JSON.stringify(dataToSend),
                     keepalive: true
                 }).then(response => {
-                    console.log('=== STEP2 SUPABASE RESPONSE ===');
+                    console.log('=== STEP11 SUPABASE RESPONSE ===');
                     console.log('Status:', response.status);
                     if (response.ok) {
-                        console.log('✅ STEP2 Data sent to arbeitserlaubnis_leads!');
+                        console.log('✅ STEP11 Data sent to arbeitserlaubnis_leads!');
                     } else {
-                        console.error('❌ STEP2 Error:', response.status);
+                        console.error('❌ STEP11 Error:', response.status);
                         return response.text().then(text => {
                             console.error('Error details:', text);
                         });
                     }
                 }).catch(error => {
-                    console.error('❌ STEP2 Network error:', error);
+                    console.error('❌ STEP11 Network error:', error);
                 });
 
                 // Tracking
@@ -439,15 +462,15 @@
                     fbq('track', 'Lead', {
                         value: 24.99,
                         currency: 'EUR',
-                        content_category: 'arbeitserlaubnis_step2_russian',
+                        content_category: 'arbeitserlaubnis_step11_russian',
                         content_name: 'contact_form_submitted'
                     });
                 }
 
-                console.log('=== STEP2 DATA SENT - WILL REDIRECT ===');
+                console.log('=== STEP11 DATA SENT - WILL REDIRECT ===');
                 
             } catch (error) {
-                console.error('❌ STEP2 Error in data collection:', error);
+                console.error('❌ STEP11 Error in data collection:', error);
             }
         }
 
