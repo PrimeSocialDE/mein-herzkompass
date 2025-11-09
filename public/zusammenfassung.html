@@ -1,22 +1,11 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zusammenfassung §24-Antrag</title>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <title>Проверка данных - Разрешение на работу в Германии</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f8fafc;
@@ -217,88 +206,6 @@
                 margin-bottom: 10px;
             }
         }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            .header {
-                padding: 15px;
-                margin-bottom: 20px;
-            }
-
-            .logo img {
-                height: 35px;
-            }
-
-            .header h1 {
-                font-size: 20px;
-                margin-bottom: 6px;
-            }
-
-            .header p {
-                font-size: 12px;
-            }
-
-            .sections-grid {
-                grid-template-columns: 1fr !important;
-            }
-
-            .section {
-                border-right: none;
-                border-bottom: 1px solid #e2e8f0;
-            }
-
-            .section:last-child {
-                border-bottom: none;
-            }
-
-            .section-header {
-                padding: 12px 15px;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .section-title {
-                flex-direction: row;
-                gap: 8px;
-            }
-
-            .section-title h2 {
-                font-size: 14px;
-            }
-
-            .section-title .icon {
-                font-size: 18px;
-            }
-
-            .edit-button {
-                padding: 6px 12px;
-                font-size: 11px;
-            }
-
-            .section-content {
-                padding: 15px;
-            }
-
-            .data-item {
-                padding: 10px;
-            }
-
-            .data-item-label {
-                font-size: 10px;
-            }
-
-            .data-item-value {
-                font-size: 12px;
-            }
-
-            .status-badge {
-                margin-bottom: 10px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -307,18 +214,18 @@
             <div class="logo">
                 <img src="LogoGer.png" alt="Germany Start Logo">
             </div>
-            <div class="status-badge">Antrag fast vollständig</div>
-            <h1>Zusammenfassung prüfen</h1>
-            <p>Kontrollieren Sie Ihre Angaben und bearbeiten Sie bei Bedarf</p>
+            <div class="status-badge">Заявление почти готово</div>
+            <h1>Проверьте данные</h1>
+            <p>Проверьте Ваши данные и отредактируйте при необходимости</p>
         </div>
 
         <div class="summary-sections">
             <!-- Section 1: Personal Data -->
             <div class="section-card">
                 <div class="section-header">
-                    <h3 class="section-title">1. Persönliche Daten</h3>
+                    <h3 class="section-title">1. Личные данные</h3>
                     <button class="edit-button" onclick="editSection(1)">
-                        Bearbeiten
+                        Редактировать
                     </button>
                 </div>
                 <div class="data-table" id="personalDataTable">
@@ -329,9 +236,9 @@
             <!-- Section 2: Family & Entry -->
             <div class="section-card">
                 <div class="section-header">
-                    <h3 class="section-title">2. Familie & Einreise</h3>
+                    <h3 class="section-title">2. Семья и въезд</h3>
                     <button class="edit-button" onclick="editSection(2)">
-                        Bearbeiten
+                        Редактировать
                     </button>
                 </div>
                 <div class="data-table" id="familyDataTable">
@@ -342,9 +249,9 @@
             <!-- Section 3: Goals & Final -->
             <div class="section-card">
                 <div class="section-header">
-                    <h3 class="section-title">3. Ziele & Bestätigung</h3>
+                    <h3 class="section-title">3. Цели и подтверждение</h3>
                     <button class="edit-button" onclick="editSection(3)">
-                        Bearbeiten
+                        Редактировать
                     </button>
                 </div>
                 <div class="data-table" id="finalDataTable">
@@ -354,139 +261,125 @@
         </div>
 
         <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
-            <h3 style="font-size: 18px; font-weight: 700; color: #1e3c72; margin-bottom: 20px;">Zustimmung erforderlich</h3>
+            <h3 style="font-size: 18px; font-weight: 700; color: #1e3c72; margin-bottom: 20px;">Требуется согласие</h3>
             
             <div style="display: flex; flex-direction: column; gap: 15px;">
                 <div style="display: flex; align-items: flex-start; gap: 12px;">
                     <input type="checkbox" id="data_consent" required style="margin-top: 4px; transform: scale(1.2);">
                     <label for="data_consent" style="font-size: 14px; color: #2d3748; line-height: 1.5; cursor: pointer;">
-                        <span style="color: #e53e3e;">*</span> Ich bestätige, dass meine eingegebenen Daten für die professionelle Bearbeitung meiner §24-Anträge verwendet werden dürfen. Die Daten werden vertraulich behandelt und ausschließlich für die Antragstellung genutzt.
+                        <span style="color: #e53e3e;">*</span> Я подтверждаю, что мои введенные данные могут быть использованы для профессиональной обработки моих заявлений по §24. Данные обрабатываются конфиденциально и используются исключительно для подачи заявления.
                     </label>
                 </div>
                 
                 <div style="display: flex; align-items: flex-start; gap: 12px;">
                     <input type="checkbox" id="fee_consent" required style="margin-top: 4px; transform: scale(1.2);">
                     <label for="fee_consent" style="font-size: 14px; color: #2d3748; line-height: 1.5; cursor: pointer;">
-                        <span style="color: #e53e3e;">*</span> Ich bin damit einverstanden, dass für die professionelle Bearbeitung meiner Anträge eine <strong>einmalige Bearbeitungsgebühr von 24,99 Euro</strong> berechnet wird. Diese beinhaltet die vollständige Bearbeitung aller erforderlichen Formulare und Dokumente.
+                        <span style="color: #e53e3e;">*</span> Я согласен с тем, что за профессиональную обработку моих заявлений взимается <strong>единовременная плата за обработку в размере 1.050 ₴ (24,99 €)</strong>. Она включает полную обработку всех необходимых форм и документов.
                     </label>
                 </div>
             </div>
 
             <div id="consent-error" style="color: #e53e3e; font-size: 12px; margin-top: 10px; display: none;">
-                Bitte bestätigen Sie beide Punkte, um fortzufahren.
+                Пожалуйста, подтвердите оба пункта для продолжения.
             </div>
             
             <!-- What happens next -->
             <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #1e3c72;">
-                <h4 style="font-size: 14px; font-weight: 700; color: #1e3c72; margin-bottom: 8px;">📧 Was passiert nach der Bestätigung?</h4>
+                <h4 style="font-size: 14px; font-weight: 700; color: #1e3c72; margin-bottom: 8px;">📧 Что происходит после подтверждения?</h4>
                 <p style="font-size: 13px; color: #4a5568; margin: 0; line-height: 1.4;">
-                    Sie erhalten innerhalb von 24h alle ausgefüllten Formulare per E-Mail + genaue Adressen der Behörden + was Sie dort sagen sollen. Einfach ausdrucken und abgeben.
+                    В течение 24 часов Вы получите все заполненные формы по электронной почте + точные адреса ведомств + что там говорить. Просто распечатайте и подайте.
                 </p>
             </div>
         </div>
 
         <button class="continue-button" onclick="submitApplication()">
-            Bestätigen und fortfahren
+            Подтвердить и продолжить
         </button>
     </div>
 
     <script>
-        // Field translations for display
+        // Russian field translations using German localStorage keys
         const fieldTranslations = {
-            // Personal Data
-            'vorname': 'Vorname',
-            'nachname': 'Nachname',
-            'geburtsdatum': 'Geburtsdatum',
-            'geburtsort': 'Geburtsort',
-            'staatsangehoerigkeit': 'Staatsangehörigkeit',
-            'geschlecht': 'Geschlecht',
-            'familienstand': 'Familienstand',
-            'passnummer': 'Passnummer',
-            'ausstellungsort': 'Ausstellungsort',
-            'ausstellungsdatum': 'Ausstellungsdatum',
-            'gueltig_bis': 'Gültig bis',
-            'telefon': 'Telefon',
-            'email': 'E-Mail',
+            // Personal data
+            vorname: 'Имя',
+            nachname: 'Фамилия',
+            geburtsdatum: 'Дата рождения',
+            geburtsort: 'Место рождения',
+            staatsangehoerigkeit: 'Гражданство',
+            geschlecht: 'Пол',
+            familienstand: 'Семейное положение',
+            passnummer: 'Номер паспорта',
+            ausstellungsort: 'Место выдачи',
+            ausstellungsdatum: 'Дата выдачи',
+            gueltig_bis: 'Действителен до',
+            telefon: 'Телефон',
+            email: 'Электронная почта',
             
-            // Family Data
-            'ehepartner_vorhanden': 'Ehepartner vorhanden',
-            'ehepartner_name': 'Name des Ehepartners',
-            'kinder_vorhanden': 'Kinder vorhanden',
-            'kinder_namen_alter': 'Namen und Alter der Kinder',
-            'einreisedatum': 'Einreisedatum',
-            'einreiseweg': 'Einreiseweg',
-            'reiseart': 'Reiseart',
-            'familie_allein': 'Mit Familie oder allein',
-            'unterkunft_vorhanden': 'Unterkunft vorhanden',
-            'wunsch_stadt': 'Gewünschte Stadt',
-            'adresse': 'Adresse',
-            'verwandte_freunde': 'Verwandte/Freunde in Deutschland',
+            // Family data
+            ehepartner_vorhanden: 'Есть супруг(а)',
+            ehepartner_name: 'Имя супруга(и)',
+            kinder_vorhanden: 'Есть дети',
+            kinder_namen_alter: 'Имена и возраст детей',
+            einreisedatum: 'Дата въезда',
+            einreiseweg: 'Способ въезда',
+            reiseart: 'Тип поездки',
+            familie_allein: 'Семья въезжает вместе',
+            unterkunft_vorhanden: 'Жилье имеется',
+            wunsch_stadt: 'Желаемый город',
+            adresse: 'Адрес',
+            verwandte_freunde: 'Родственники/друзья',
             
-            // Final Data
-            'deutschkenntnisse': 'Deutschkenntnisse',
-            'beruf_ukraine': 'Beruf in der Ukraine',
-            'arbeiten_deutschland': 'Arbeiten in Deutschland',
-            'einkommen_aktuell': 'Aktuelles Einkommen',
-            'ersparnisse': 'Ersparnisse',
-            'finanzielle_unterstuetzung': 'Finanzielle Unterstützung benötigt',
-            'grund_deutschland': 'Grund für Deutschland',
-            'dauerhaft_bleiben': 'Dauerhaft bleiben',
-            'kriegsnachweis': 'Kriegsnachweis (2022)',
-            'vollstaendiger_name': 'Vollständiger Name',
-            'datum_heute': 'Datum',
-            'datenverarbeitung_zustimmung': 'Datenverarbeitung zugestimmt'
+            // Final data
+            deutschkenntnisse: 'Знание немецкого',
+            beruf_ukraine: 'Профессия в Украине',
+            arbeiten_deutschland: 'Работа в Германии',
+            einkommen_aktuell: 'Текущий доход',
+            ersparnisse: 'Сбережения',
+            finanzielle_unterstuetzung: 'Финансовая поддержка',
+            grund_deutschland: 'Причина приезда в Германию',
+            dauerhaft_bleiben: 'Остаться навсегда',
+            kriegsnachweis: 'Документ о войне',
+            vollstaendiger_name: 'Полное имя для подписи',
+            datum_heute: 'Сегодняшняя дата',
+            datenverarbeitung_zustimmung: 'Согласие на обработку данных'
         };
 
-        // Value translations
+        // Russian value translations
         const valueTranslations = {
-            'ja': 'Ja',
-            'nein': 'Nein',
-            'ukraine': 'Ukraine',
-            'russland': 'Russland',
-            'belarus': 'Belarus',
-            'sonstige': 'Sonstige',
-            'weiblich': 'Weiblich',
-            'maennlich': 'Männlich',
-            'divers': 'Divers',
-            'ledig': 'Ledig',
-            'verheiratet': 'Verheiratet',
-            'geschieden': 'Geschieden',
-            'verwitwet': 'Verwitwet',
-            'polen': 'über Polen',
-            'rumaenien': 'über Rumänien',
-            'slowakei': 'über Slowakei',
-            'andere': 'andere Route',
-            'bus': 'Bus',
-            'zug': 'Zug',
-            'auto': 'Auto',
-            'familie': 'mit Familie',
-            'allein': 'allein',
-            'berlin': 'Berlin',
-            'hamburg': 'Hamburg',
-            'muenchen': 'München',
-            'koeln': 'Köln',
-            'frankfurt': 'Frankfurt',
-            'stuttgart': 'Stuttgart',
-            'duesseldorf': 'Düsseldorf',
-            'keine': 'Keine',
-            'basis': 'Basis',
-            'mittel': 'Mittel',
-            'gut': 'Gut',
-            'kein_einkommen': 'Kein Einkommen',
-            'bis_500': 'bis 500 EUR',
-            '500_1000': '500-1000 EUR',
-            '1000_2000': '1000-2000 EUR',
-            'ueber_2000': 'über 2000 EUR',
-            'unsicher': 'Noch unsicher',
-            'ja_ausreisestempel': 'Ja, Ausreisestempel im Pass',
-            'ja_zugticket': 'Ja, Zug-/Busticket',
-            'ja_sonstiges': 'Ja, andere Belege',
-            'nein_beschaffe': 'Nein, werde ich noch beschaffen',
-            'nein_unsicher': 'Nein, bin unsicher',
-            'on': 'Ja'
+            'ja': 'Да',
+            'nein': 'Нет',
+            'weiss_nicht': 'Не знаю',
+            'maennlich': 'Мужской',
+            'weiblich': 'Женский',
+            'ledig': 'Холост/Не замужем',
+            'verheiratet': 'Женат/Замужем',
+            'geschieden': 'Разведен(а)',
+            'verwitwet': 'Вдовец/Вдова',
+            'kein_deutsch': 'Не говорю по-немецки',
+            'a1': 'A1 (базовый)',
+            'a2': 'A2 (базовый)',
+            'b1': 'B1 (средний)',
+            'b2': 'B2 (продвинутый)',
+            'c1': 'C1 (свободный)',
+            'c2': 'C2 (родной)',
+            'flugzeug': 'Самолет',
+            'auto': 'Автомобиль',
+            'zug': 'Поезд',
+            'bus': 'Автобус',
+            'zu_fuss': 'Пешком',
+            'mit_familie': 'С семьей',
+            'allein': 'Один/Одна',
+            'tourismus': 'Туризм',
+            'geschaeft': 'Бизнес',
+            'familie_besuch': 'Семейный визит',
+            'umzug': 'Переезд',
+            'sicher': 'Безопасность',
+            'arbeitsmoeglichkeiten': 'Возможности работы',
+            'bessere_zukunft': 'Лучшее будущее',
+            'familie_hier': 'Семья здесь'
         };
 
-        // Load data and populate sections
+        // Load data and populate sections - using German localStorage keys
         document.addEventListener('DOMContentLoaded', function() {
             loadPersonalData();
             loadFamilyData();
@@ -539,7 +432,7 @@
             let displayValue = value;
             
             if (!value) {
-                displayValue = '<span class="empty-value">Nicht ausgefüllt</span>';
+                displayValue = '<span class="empty-value">Не заполнено</span>';
             } else {
                 displayValue = valueTranslations[value] || value;
             }
@@ -552,18 +445,16 @@
             `;
         }
 
-        function toggleSection(sectionNumber) {
-            // No longer needed with always-visible table layout
-        }
-
         function editSection(sectionNumber) {
+            // Redirect to appropriate form step
             const urls = {
-                1: '/schritt1-personal.html',
-                2: '/schritt2-familie.html',
-                3: '/schritt3-final.html'
+                1: '/step1.html', 
+                2: '/step2.html',
+                3: '/step3.html'
             };
-            
-            window.location.href = urls[sectionNumber];
+            if (urls[sectionNumber]) {
+                window.location.href = urls[sectionNumber];
+            }
         }
 
         function submitApplication() {
@@ -587,7 +478,7 @@
             errorDiv.style.display = 'none';
             console.log('CONSENT VALIDATION PASSED');
             
-            // Collect all data
+            // Collect all data - using German localStorage keys
             const personalData = JSON.parse(localStorage.getItem('personalData') || '{}');
             const familyData = JSON.parse(localStorage.getItem('familyData') || '{}');
             const finalData = JSON.parse(localStorage.getItem('finalData') || '{}');
@@ -605,7 +496,7 @@
                 ...finalData,
                 ...utmParams,
                 submission_timestamp: Date.now(),
-                language: 'german',
+                language: 'russian',
                 summary_confirmed: true,
                 data_consent: true,
                 fee_consent: true,
@@ -656,13 +547,13 @@
                 const dataToSend = {
                     user_id: `user_${Date.now()}`,
                     email: data.email || '',
-                    source: 'german_formal_comprehensive_summary',
-                    language: 'german',
+                    source: 'russian_formal_comprehensive_summary',
+                    language: 'russian',
                     checkout_clicked: true,
                     payment_completed: false,
                     price: 24.99,
                     currency: 'EUR',
-                    price_uah: null,
+                    price_uah: 1050,
                     vorname: data.vorname || '',
                     nachname: data.nachname || '',
                     herkunftsland: '',
@@ -727,7 +618,8 @@
                         metadata: {
                             submission_timestamp: new Date().toISOString(),
                             processing_fee: data.processing_fee,
-                            page_source: 'german_summary_page'
+                            page_source: 'russian_summary_page',
+                            interface_language: 'russian'
                         }
                     }
                 };
