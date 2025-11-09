@@ -610,50 +610,74 @@
         }
 
         async function sendToSupabase(data) {
+            console.log('=== SENDE DATEN AN SUPABASE ===', data);
+            
             try {
+                // Direkt an Supabase senden
                 const supabaseUrl = 'https://xomsibpyksrzrnixbdwf.supabase.co';
-                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA3Mjk1OTEsImV4cCI6MjA0NjMwNTU5MX0.YJjOL8CqNWS-xqfHKVT1y8i9s8VyP5QfHUFMYbcwH8I'; // Sie müssen diesen Key durch Ihren echten anon key ersetzen
-                
-                const response = await fetch(`${supabaseUrl}/rest/v1/arbeitserlaubnis_leads`, {
-                    method: 'POST',
-                    headers: {
-                        'apikey': supabaseKey,
-                        'Authorization': `Bearer ${supabaseKey}`,
-                        'Content-Type': 'application/json',
-                        'Prefer': 'return=minimal'
-                    },
-                    body: JSON.stringify({
-                        // Mapping to actual database columns from screenshots
-                        user_id: `user_${Date.now()}`,
-                        email: data.email || '',
-                        source: 'german_formal_comprehensive',
-                        language: data.language || 'german',
-                        
-                        // Personal data as JSONB
-                        json_answers: {
-                            // Personal info
+                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjY2MzEyMiwiZXhwIjoyMDcyMjM5MTIyfQ.35zRO5wy3_fSGPGpuBm-aqskHOGqxODLtxEQzRFxXAc';
+
+                console.log('Supabase URL:', supabaseUrl);
+                console.log('Using Service Role Key (ersten 20 Zeichen):', supabaseKey.substring(0, 20) + '...');
+
+                // Sammle UTM-Parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const utmParams = {
+                    utm_source: urlParams.get('utm_source') || '',
+                    utm_medium: urlParams.get('utm_medium') || '',
+                    utm_campaign: urlParams.get('utm_campaign') || '',
+                    utm_term: urlParams.get('utm_term') || '',
+                    utm_content: urlParams.get('utm_content') || '',
+                    fcb: urlParams.get('fcb') || '',
+                    fbp: urlParams.get('fbp') || ''
+                };
+
+                const dataToSend = {
+                    user_id: `user_${Date.now()}`,
+                    email: data.email || '',
+                    source: 'german_formal_comprehensive_summary',
+                    language: 'german',
+                    checkout_clicked: true,
+                    payment_completed: false,
+                    price: 24.99,
+                    currency: 'EUR',
+                    price_uah: null,
+                    vorname: data.vorname || '',
+                    nachname: data.nachname || '',
+                    herkunftsland: '', // Nicht im deutschen Formular
+                    deutschkenntnisse: data.deutschkenntnisse || '',
+                    arbeitsbereich: data.beruf_ukraine || '',
+                    // UTM und Facebook-Parameter hinzufügen
+                    utm_source: utmParams.utm_source,
+                    utm_medium: utmParams.utm_medium,
+                    utm_campaign: utmParams.utm_campaign,
+                    utm_term: utmParams.utm_term,
+                    utm_content: utmParams.utm_content,
+                    fcb: utmParams.fcb,
+                    fbp: utmParams.fbp,
+                    json_answers: {
+                        personal_info: {
                             vorname: data.vorname,
                             nachname: data.nachname,
+                            email: data.email,
+                            telefon: data.telefon,
                             geburtsdatum: data.geburtsdatum,
                             geburtsort: data.geburtsort,
                             staatsangehoerigkeit: data.staatsangehoerigkeit,
                             geschlecht: data.geschlecht,
-                            familienstand: data.familienstand,
-                            telefon: data.telefon,
-                            
-                            // Passport data
+                            familienstand: data.familienstand
+                        },
+                        passport_data: {
                             passnummer: data.passnummer,
                             ausstellungsort: data.ausstellungsort,
                             ausstellungsdatum: data.ausstellungsdatum,
-                            gueltig_bis: data.gueltig_bis,
-                            
-                            // Family data
+                            gueltig_bis: data.gueltig_bis
+                        },
+                        family_entry: {
                             ehepartner_vorhanden: data.ehepartner_vorhanden,
                             ehepartner_name: data.ehepartner_name,
                             kinder_vorhanden: data.kinder_vorhanden,
                             kinder_namen_alter: data.kinder_namen_alter,
-                            
-                            // Entry info
                             einreisedatum: data.einreisedatum,
                             einreiseweg: data.einreiseweg,
                             reiseart: data.reiseart,
@@ -661,90 +685,95 @@
                             unterkunft_vorhanden: data.unterkunft_vorhanden,
                             wunsch_stadt: data.wunsch_stadt,
                             adresse: data.adresse,
-                            verwandte_freunde: data.verwandte_freunde,
-                            
-                            // Language and work
+                            verwandte_freunde: data.verwandte_freunde
+                        },
+                        work_goals: {
                             deutschkenntnisse: data.deutschkenntnisse,
                             beruf_ukraine: data.beruf_ukraine,
                             arbeiten_deutschland: data.arbeiten_deutschland,
-                            
-                            // Financial
                             einkommen_aktuell: data.einkommen_aktuell,
                             ersparnisse: data.ersparnisse,
                             finanzielle_unterstuetzung: data.finanzielle_unterstuetzung,
-                            
-                            // Goals and motivation
                             grund_deutschland: data.grund_deutschland,
                             dauerhaft_bleiben: data.dauerhaft_bleiben,
-                            kriegsnachweis: data.kriegsnachweis,
-                            
-                            // Signature
+                            kriegsnachweis: data.kriegsnachweis
+                        },
+                        signature_consent: {
                             vollstaendiger_name: data.vollstaendiger_name,
                             datum_heute: data.datum_heute,
-                            
-                            // Consent
                             data_consent: data.data_consent,
-                            fee_consent: data.fee_consent,
-                            
-                            // UTM data
-                            utm_source: data.utm_source,
-                            utm_medium: data.utm_medium,
-                            utm_campaign: data.utm_campaign,
-                            utm_term: data.utm_term,
-                            utm_content: data.utm_content,
-                            
-                            // Meta
+                            fee_consent: data.fee_consent
+                        },
+                        metadata: {
                             submission_timestamp: new Date().toISOString(),
                             processing_fee: data.processing_fee,
-                            page_source: 'german_summary_page'
-                        },
-                        
-                        // Additional columns from screenshots
-                        checkout_clicked: true,
-                        payment_completed: false,
-                        price: 24.99,
-                        currency: 'EUR',
-                        price_uah: null, // Not applicable for German version
-                        
-                        // Timestamps will be handled by Supabase automatically
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString()
-                    })
+                            page_source: 'german_summary_page',
+                            utm_parameters: utmParams,
+                            browser_info: {
+                                user_agent: navigator.userAgent,
+                                language: navigator.language,
+                                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                            }
+                        }
+                    }
+                };
+                
+                console.log('=== PAYLOAD FÜR SUPABASE ===', dataToSend);
+                
+                // Direkt an Supabase arbeitserlaubnis_leads Tabelle
+                const response = await fetch(`${supabaseUrl}/rest/v1/arbeitserlaubnis_leads`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': supabaseKey,
+                        'Authorization': `Bearer ${supabaseKey}`,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(dataToSend),
+                    keepalive: true
                 });
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                console.log('Response Status:', response.status);
                 
-                console.log('=== DATEN ERFOLGREICH AN SUPABASE GESENDET ===');
-                
-                // Track successful submission
-                if (typeof gtag !== 'undefined') {
-                    gtag('event', 'form_submit', {
-                        'event_category': 'arbeitserlaubnis_german',
-                        'event_label': 'summary_confirmed_to_payment'
-                    });
-                }
-                
-                if (typeof fbq !== 'undefined') {
-                    fbq('track', 'InitiateCheckout', {
-                        content_category: 'arbeitserlaubnis_german_payment',
-                        content_name: 'German Summary to Stripe Payment',
-                        value: 24.99,
-                        currency: 'EUR'
-                    });
+                if (response.ok) {
+                    console.log('✅ Data sent to arbeitserlaubnis_leads:', response.status);
+                    console.log('=== DATEN ERFOLGREICH AN SUPABASE GESENDET ===');
+                    
+                    // Track successful submission
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'add_to_cart', {
+                            'currency': 'EUR',
+                            'value': 24.99,
+                            'language': 'german',
+                            'table': 'arbeitserlaubnis_leads'
+                        });
+                    }
+
+                    if (typeof fbq !== 'undefined') {
+                        fbq('track', 'AddToCart', {
+                            value: 24.99,
+                            currency: 'EUR',
+                            content_category: 'arbeitserlaubnis_service_german_complete',
+                            content_name: 'German_Summary_Confirmed'
+                        });
+                    }
+                    
+                    return true;
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Error sending to arbeitserlaubnis_leads:', response.status);
+                    console.error('Error details:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
                 }
                 
             } catch (error) {
-                console.error('=== FEHLER BEIM SENDEN AN SUPABASE ===', error);
+                console.error('=== FEHLER BEIM SENDEN AN SUPABASE ===');
+                console.error('Error Type:', error.name);
+                console.error('Error Message:', error.message);
+                console.error('Full Error:', error);
+                
                 // Continue to payment even if Supabase fails
-                // Log error but don't block user flow
-                if (typeof gtag !== 'undefined') {
-                    gtag('event', 'supabase_error', {
-                        'event_category': 'error',
-                        'event_label': error.message
-                    });
-                }
+                return false;
             }
         }
     </script>
