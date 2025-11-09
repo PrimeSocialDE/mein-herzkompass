@@ -668,11 +668,6 @@
                     herkunftsland: '',
                     deutschkenntnisse: data.deutschkenntnisse || '',
                     arbeitsbereich: data.beruf_ukraine || '',
-                    utm_source: utmParams.utm_source,
-                    utm_medium: utmParams.utm_medium,
-                    utm_campaign: utmParams.utm_campaign,
-                    utm_term: utmParams.utm_term,
-                    utm_content: utmParams.utm_content,
                     json_answers: {
                         personal_info: {
                             vorname: data.vorname,
@@ -721,6 +716,13 @@
                             datum_heute: data.datum_heute,
                             data_consent: data.data_consent,
                             fee_consent: data.fee_consent
+                        },
+                        utm_data: {
+                            utm_source: utmParams.utm_source,
+                            utm_medium: utmParams.utm_medium,
+                            utm_campaign: utmParams.utm_campaign,
+                            utm_term: utmParams.utm_term,
+                            utm_content: utmParams.utm_content
                         },
                         metadata: {
                             submission_timestamp: new Date().toISOString(),
