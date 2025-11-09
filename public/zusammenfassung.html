@@ -567,24 +567,37 @@
         }
 
         function submitApplication() {
+            console.log('SUBMIT APPLICATION BUTTON CLICKED');
+            
             // Validate consent checkboxes
             const dataConsent = document.getElementById('data_consent');
             const feeConsent = document.getElementById('fee_consent');
             const errorDiv = document.getElementById('consent-error');
             
+            console.log('Data consent checked:', dataConsent ? dataConsent.checked : 'element not found');
+            console.log('Fee consent checked:', feeConsent ? feeConsent.checked : 'element not found');
+            
             if (!dataConsent.checked || !feeConsent.checked) {
+                console.log('VALIDATION FAILED - MISSING CONSENT');
                 errorDiv.style.display = 'block';
                 errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
             
             errorDiv.style.display = 'none';
+            console.log('CONSENT VALIDATION PASSED');
             
             // Collect all data
             const personalData = JSON.parse(localStorage.getItem('personalData') || '{}');
             const familyData = JSON.parse(localStorage.getItem('familyData') || '{}');
             const finalData = JSON.parse(localStorage.getItem('finalData') || '{}');
             const utmParams = JSON.parse(localStorage.getItem('utmParams') || '{}');
+            
+            console.log('COLLECTED DATA');
+            console.log('Personal Data:', personalData);
+            console.log('Family Data:', familyData);
+            console.log('Final Data:', finalData);
+            console.log('UTM Params:', utmParams);
             
             const completeApplication = {
                 ...personalData,
@@ -600,17 +613,28 @@
             };
             
             localStorage.setItem('completeApplication', JSON.stringify(completeApplication));
-            console.log('=== ANTRAG BESTÄTIGT - SENDE AN SUPABASE UND WEITERLEITUNG ZU STRIPE ===', completeApplication);
+            console.log('COMPLETE APPLICATION DATA', completeApplication);
             
-            // Send to Supabase
-            sendToSupabase(completeApplication);
+            console.log('STARTING SUPABASE SEND');
             
-            // Redirect to Stripe payment
-            window.location.href = 'https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07';
+            // Send to Supabase (wait for it to complete)
+            sendToSupabase(completeApplication).then((success) => {
+                console.log('SUPABASE SEND COMPLETED', success ? 'SUCCESS' : 'FAILED');
+                
+                // Always redirect to Stripe after attempting to send
+                console.log('REDIRECTING TO STRIPE');
+                window.location.href = 'https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07';
+            }).catch((error) => {
+                console.error('SUPABASE SEND ERROR', error);
+                
+                // Still redirect to Stripe even on error
+                console.log('REDIRECTING TO STRIPE AFTER ERROR');
+                window.location.href = 'https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07';
+            });
         }
 
         async function sendToSupabase(data) {
-            console.log('=== SENDE DATEN AN SUPABASE ===', data);
+            console.log('SENDE DATEN AN SUPABASE', data);
             
             try {
                 // Direkt an Supabase senden
@@ -618,7 +642,6 @@
                 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjY2MzEyMiwiZXhwIjoyMDcyMjM5MTIyfQ.35zRO5wy3_fSGPGpuBm-aqskHOGqxODLtxEQzRFxXAc';
 
                 console.log('Supabase URL:', supabaseUrl);
-                console.log('Using Service Role Key (ersten 20 Zeichen):', supabaseKey.substring(0, 20) + '...');
 
                 // Sammle UTM-Parameter
                 const urlParams = new URLSearchParams(window.location.search);
@@ -627,9 +650,7 @@
                     utm_medium: urlParams.get('utm_medium') || '',
                     utm_campaign: urlParams.get('utm_campaign') || '',
                     utm_term: urlParams.get('utm_term') || '',
-                    utm_content: urlParams.get('utm_content') || '',
-                    fcb: urlParams.get('fcb') || '',
-                    fbp: urlParams.get('fbp') || ''
+                    utm_content: urlParams.get('utm_content') || ''
                 };
 
                 const dataToSend = {
@@ -644,17 +665,14 @@
                     price_uah: null,
                     vorname: data.vorname || '',
                     nachname: data.nachname || '',
-                    herkunftsland: '', // Nicht im deutschen Formular
+                    herkunftsland: '',
                     deutschkenntnisse: data.deutschkenntnisse || '',
                     arbeitsbereich: data.beruf_ukraine || '',
-                    // UTM und Facebook-Parameter hinzufügen
                     utm_source: utmParams.utm_source,
                     utm_medium: utmParams.utm_medium,
                     utm_campaign: utmParams.utm_campaign,
                     utm_term: utmParams.utm_term,
                     utm_content: utmParams.utm_content,
-                    fcb: utmParams.fcb,
-                    fbp: utmParams.fbp,
                     json_answers: {
                         personal_info: {
                             vorname: data.vorname,
@@ -707,18 +725,12 @@
                         metadata: {
                             submission_timestamp: new Date().toISOString(),
                             processing_fee: data.processing_fee,
-                            page_source: 'german_summary_page',
-                            utm_parameters: utmParams,
-                            browser_info: {
-                                user_agent: navigator.userAgent,
-                                language: navigator.language,
-                                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-                            }
+                            page_source: 'german_summary_page'
                         }
                     }
                 };
                 
-                console.log('=== PAYLOAD FÜR SUPABASE ===', dataToSend);
+                console.log('PAYLOAD FÜR SUPABASE', dataToSend);
                 
                 // Direkt an Supabase arbeitserlaubnis_leads Tabelle
                 const response = await fetch(`${supabaseUrl}/rest/v1/arbeitserlaubnis_leads`, {
@@ -736,43 +748,21 @@
                 console.log('Response Status:', response.status);
                 
                 if (response.ok) {
-                    console.log('✅ Data sent to arbeitserlaubnis_leads:', response.status);
-                    console.log('=== DATEN ERFOLGREICH AN SUPABASE GESENDET ===');
-                    
-                    // Track successful submission
-                    if (typeof gtag !== 'undefined') {
-                        gtag('event', 'add_to_cart', {
-                            'currency': 'EUR',
-                            'value': 24.99,
-                            'language': 'german',
-                            'table': 'arbeitserlaubnis_leads'
-                        });
-                    }
-
-                    if (typeof fbq !== 'undefined') {
-                        fbq('track', 'AddToCart', {
-                            value: 24.99,
-                            currency: 'EUR',
-                            content_category: 'arbeitserlaubnis_service_german_complete',
-                            content_name: 'German_Summary_Confirmed'
-                        });
-                    }
-                    
+                    console.log('Data sent to arbeitserlaubnis_leads SUCCESS');
+                    console.log('DATEN ERFOLGREICH AN SUPABASE GESENDET');
                     return true;
                 } else {
                     const errorText = await response.text();
-                    console.error('❌ Error sending to arbeitserlaubnis_leads:', response.status);
+                    console.error('Error sending to arbeitserlaubnis_leads:', response.status);
                     console.error('Error details:', errorText);
                     throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`);
                 }
                 
             } catch (error) {
-                console.error('=== FEHLER BEIM SENDEN AN SUPABASE ===');
+                console.error('FEHLER BEIM SENDEN AN SUPABASE');
                 console.error('Error Type:', error.name);
                 console.error('Error Message:', error.message);
                 console.error('Full Error:', error);
-                
-                // Continue to payment even if Supabase fails
                 return false;
             }
         }
