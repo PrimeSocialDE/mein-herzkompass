@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schritt 2: Familie und Einreise</title>
+    
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1209936897673430');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1209936897673430&ev=PageView&noscript=1"
+    /></noscript>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #2D3748;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .progress-container {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e3c72;
+        }
+
+        .progress-step {
+            background: #f0f9ff;
+            color: #1e3c72;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            height: 100%;
+            width: 67%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #1a202c;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #4a5568;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-info {
+            color: #718096;
+            font-size: 13px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+            background: #ffffff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .next-button {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .next-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.3);
+        }
+
+        .next-button:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .security-note {
+            text-align: center;
+            color: #718096;
+            font-size: 12px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-group.error input,
+        .form-group.error select {
+            border-color: #e53e3e;
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        .back-button {
+            background: none;
+            color: #718096;
+            border: 1px solid #e2e8f0;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            border-color: #cbd5e0;
+            background: #f7fafc;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .form-container {
+                padding: 25px 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Progress -->
+        <div class="progress-container">
+            <div class="progress-header">
+                <div class="progress-title">Optimiertes Datenset (für Antragstellung aus der Ukraine)</div>
+                <div class="progress-step">Schritt 2 von 3</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="form-container">
+            <a href="/schritt2.html" class="back-button">← Zurück zu Schritt 1</a>
+            
+            <h1>Familie und Einreise</h1>
+            <p class="subtitle">Angaben zu Ihrer Familie und Ihrem Weg nach Deutschland</p>
+
+            <form id="familyDataForm">
+                <!-- Familie -->
+                <div class="form-section">
+                    <div class="section-title">👨‍👩‍👧‍👦 1. Familienmitglieder</div>
+                    <p class="section-info">Diese Angaben helfen uns bei Familienleistungen und Kindergeld-Anträgen</p>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ehepartner_vorhanden">Ehepartner vorhanden? <span class="required">*</span></label>
+                            <select id="ehepartner_vorhanden" name="ehepartner_vorhanden" required onchange="toggleEhepartnerFields()">
+                                <option value="">Bitte wählen</option>
+                                <option value="ja">Ja</option>
+                                <option value="nein">Nein</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie eine Option</div>
+                        </div>
+                        <div class="form-group" id="ehepartner_name_group" style="display: none;">
+                            <label for="ehepartner_name">Name des Ehepartners</label>
+                            <input type="text" id="ehepartner_name" name="ehepartner_name" placeholder="z.B. Ivan Ivanov">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="kinder_vorhanden">Kinder vorhanden? <span class="required">*</span></label>
+                            <select id="kinder_vorhanden" name="kinder_vorhanden" required onchange="toggleKinderFields()">
+                                <option value="">Bitte wählen</option>
+                                <option value="ja">Ja</option>
+                                <option value="nein">Nein</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie eine Option</div>
+                        </div>
+                        <div class="form-group" id="kinder_details_group" style="display: none;">
+                            <label for="kinder_namen_alter">Namen und Alter der Kinder</label>
+                            <input type="text" id="kinder_namen_alter" name="kinder_namen_alter" placeholder="z.B. Maria, 7 / Nikita, 3">
+                            <div class="help-text">Format: Name, Alter / Name, Alter</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Einreise -->
+                <div class="form-section">
+                    <div class="section-title">✈️ 2. Einreiseinformationen</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="einreisedatum">Geplantes Einreisedatum nach Deutschland <span class="required">*</span></label>
+                            <input type="date" id="einreisedatum" name="einreisedatum" required>
+                            <div class="error-message">Bitte geben Sie das geplante Einreisedatum ein</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="einreiseweg">Einreiseweg <span class="required">*</span></label>
+                            <select id="einreiseweg" name="einreiseweg" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="polen">über Polen</option>
+                                <option value="rumaenien">über Rumänien</option>
+                                <option value="slowakei">über Slowakei</option>
+                                <option value="andere">andere Route</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie den Einreiseweg</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reiseart">Reiseart</label>
+                            <select id="reiseart" name="reiseart">
+                                <option value="">Bitte wählen</option>
+                                <option value="bus">Bus</option>
+                                <option value="zug">Zug</option>
+                                <option value="auto">Auto</option>
+                                <option value="andere">andere</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="familie_allein">Reist du allein oder mit Familie? <span class="required">*</span></label>
+                            <select id="familie_allein" name="familie_allein" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="familie">mit Familie</option>
+                                <option value="allein">allein</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie eine Option</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unterkunft & Deutschland -->
+                <div class="form-section">
+                    <div class="section-title">🏠 3. Unterkunft / geplanter Aufenthalt in Deutschland</div>
+                    
+                    <div class="form-group">
+                        <label for="unterkunft_vorhanden">Hast du bereits eine Unterkunft in Deutschland? <span class="required">*</span></label>
+                        <select id="unterkunft_vorhanden" name="unterkunft_vorhanden" required onchange="toggleUnterkunftFields()">
+                            <option value="">Bitte wählen</option>
+                            <option value="ja">Ja</option>
+                            <option value="nein">Nein</option>
+                        </select>
+                        <div class="error-message">Bitte wählen Sie eine Option</div>
+                    </div>
+
+                    <div id="wunsch_stadt_field" style="display: none;">
+                        <div class="form-group">
+                            <label for="wunsch_stadt">Wo möchtest du zuerst ankommen? <span class="required">*</span></label>
+                            <select id="wunsch_stadt" name="wunsch_stadt">
+                                <option value="">Bitte wählen</option>
+                                <option value="berlin">Berlin</option>
+                                <option value="hamburg">Hamburg</option>
+                                <option value="muenchen">München</option>
+                                <option value="koeln">Köln</option>
+                                <option value="frankfurt">Frankfurt</option>
+                                <option value="stuttgart">Stuttgart</option>
+                                <option value="duesseldorf">Düsseldorf</option>
+                                <option value="andere">andere Stadt</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie eine Stadt</div>
+                        </div>
+                    </div>
+
+                    <div id="adresse_field" style="display: none;">
+                        <div class="form-group">
+                            <label for="adresse">Wenn ja: Adresse (sofern bekannt)</label>
+                            <input type="text" id="adresse" name="adresse" placeholder="Musterstraße 12, Berlin">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="verwandte_freunde">Gibt es Verwandte / Freunde in Deutschland?</label>
+                        <select id="verwandte_freunde" name="verwandte_freunde">
+                            <option value="">Bitte wählen</option>
+                            <option value="ja">Ja</option>
+                            <option value="nein">Nein</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="next-button">Weiter zu Schritt 3 →</button>
+
+                <div class="security-note">
+                    🔒 Ihre Daten sind sicher und werden vertraulich behandelt
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Check if step 1 was completed
+        window.addEventListener('load', function() {
+            console.log('=== SCHRITT 2 - FAMILIE & EINREISE GELADEN ===');
+            
+            if (!localStorage.getItem('step1_completed')) {
+                console.log('Schritt 1 nicht abgeschlossen, weiterleiten...');
+                window.location.href = '/schritt2.html';
+                return;
+            }
+
+            // Load saved personal data
+            const personalData = localStorage.getItem('personalData');
+            if (personalData) {
+                console.log('Persönliche Daten geladen:', JSON.parse(personalData));
+            }
+
+            // Track page load
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'checkout_progress', {
+                    'event_category': 'form_filling',
+                    'checkout_step': 2,
+                    'checkout_option': 'family_entry'
+                });
+            }
+
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'AddToCart', {
+                    content_category: 'arbeitserlaubnis_step2',
+                    content_name: 'Family Entry Step 2'
+                });
+            }
+        });
+
+        // Form validation and submission
+        document.getElementById('familyDataForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Save form data
+            const formData = new FormData(this);
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            
+            localStorage.setItem('familyData', JSON.stringify(data));
+            localStorage.setItem('step2_completed', 'true');
+            
+            console.log('=== SCHRITT 2 ABGESCHLOSSEN ===', data);
+            
+            // Track completion
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'checkout_progress', {
+                    'event_category': 'form_filling',
+                    'checkout_step': 2,
+                    'checkout_option': 'family_completed'
+                });
+            }
+
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'AddToCart', {
+                    content_category: 'arbeitserlaubnis_step2',
+                    content_name: 'Family Entry Completed'
+                });
+            }
+            
+            // Redirect to step 3
+            setTimeout(() => {
+                window.location.href = '/schritt4.html';
+            }, 200);
+        });
+
+        function validateForm() {
+            let isValid = true;
+            
+            // Remove previous error states
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+            
+            // Check required fields
+            const requiredFields = ['ehepartner_vorhanden', 'kinder_vorhanden', 'einreisedatum', 'einreiseweg', 'familie_allein', 'unterkunft_vorhanden'];
+            
+            // Conditional required fields
+            const unterkunftVorhanden = document.getElementById('unterkunft_vorhanden').value;
+            if (unterkunftVorhanden === 'nein') {
+                requiredFields.push('wunsch_stadt');
+            }
+            
+            requiredFields.forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                const group = field?.closest('.form-group');
+                
+                if (field && !field.value.trim()) {
+                    group?.classList.add('error');
+                    isValid = false;
+                }
+            });
+            
+            return isValid;
+        }
+
+        // Toggle functions for dynamic fields
+        function toggleEhepartnerFields() {
+            const value = document.getElementById('ehepartner_vorhanden').value;
+            const nameGroup = document.getElementById('ehepartner_name_group');
+            if (value === 'ja') {
+                nameGroup.style.display = 'block';
+            } else {
+                nameGroup.style.display = 'none';
+                document.getElementById('ehepartner_name').value = '';
+            }
+        }
+
+        function toggleKinderFields() {
+            const value = document.getElementById('kinder_vorhanden').value;
+            const detailsGroup = document.getElementById('kinder_details_group');
+            if (value === 'ja') {
+                detailsGroup.style.display = 'block';
+            } else {
+                detailsGroup.style.display = 'none';
+                document.getElementById('kinder_namen_alter').value = '';
+            }
+        }
+
+        function toggleUnterkunftFields() {
+            const value = document.getElementById('unterkunft_vorhanden').value;
+            const adresseField = document.getElementById('adresse_field');
+            const wunschStadtField = document.getElementById('wunsch_stadt_field');
+            
+            if (value === 'ja') {
+                adresseField.style.display = 'block';
+                wunschStadtField.style.display = 'none';
+                // Reset wunsch_stadt when not needed
+                document.getElementById('wunsch_stadt').value = '';
+            } else if (value === 'nein') {
+                adresseField.style.display = 'none';
+                wunschStadtField.style.display = 'block';
+                // Reset address when not needed
+                document.getElementById('adresse').value = '';
+            } else {
+                adresseField.style.display = 'none';
+                wunschStadtField.style.display = 'none';
+            }
+        }
+
+        // Auto-save and restore form data
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedData = localStorage.getItem('familyData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                Object.keys(data).forEach(key => {
+                    const field = document.getElementById(key);
+                    if (field) {
+                        field.value = data[key];
+                        
+                        // Trigger change events for dynamic fields
+                        if (key === 'ehepartner_vorhanden') toggleEhepartnerFields();
+                        if (key === 'kinder_vorhanden') toggleKinderFields();
+                        if (key === 'unterkunft_vorhanden') toggleUnterkunftFields();
+                    }
+                });
+                console.log('=== FAMILIEN-DATEN WIEDERHERGESTELLT ===', data);
+            }
+        });
+
+        // Auto-save on input
+        document.querySelectorAll('input, select').forEach(field => {
+            field.addEventListener('input', function() {
+                // Remove error state when user starts typing
+                this.closest('.form-group').classList.remove('error');
+                
+                // Auto-save immediately
+                saveAllFormData();
+            });
+        });
+
+        function saveAllFormData() {
+            const formData = new FormData(document.getElementById('familyDataForm'));
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            localStorage.setItem('familyData', JSON.stringify(data));
+            localStorage.setItem('familyData_timestamp', Date.now());
+            console.log('=== AUTO-SPEICHERUNG FAMILIEN-DATEN ===', data);
+        }
+
+        // Save on page unload as backup
+        window.addEventListener('beforeunload', function() {
+            saveAllFormData();
+        });
+    </script>
+</body>
+</html>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #2D3748;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .progress-container {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e3c72;
+        }
+
+        .progress-step {
+            background: #f0f9ff;
+            color: #1e3c72;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            height: 100%;
+            width: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #1a202c;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #4a5568;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-info {
+            color: #718096;
+            font-size: 13px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+            background: #ffffff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .next-button {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .next-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.3);
+        }
+
+        .next-button:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .security-note {
+            text-align: center;
+            color: #718096;
+            font-size: 12px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-group.error input,
+        .form-group.error select,
+        .form-group.error textarea {
+            border-color: #e53e3e;
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        .back-button {
+            background: none;
+            color: #718096;
+            border: 1px solid #e2e8f0;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            border-color: #cbd5e0;
+            background: #f7fafc;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .form-container {
+                padding: 25px 20px;
+            }
+
+            .form-row,
+            .form-row-3 {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Progress -->
+        <div class="progress-container">
+            <div class="progress-header">
+                <div class="progress-title">Optimiertes Datenset (für Antragstellung aus der Ukraine)</div>
+                <div class="progress-step">Schritt 2 von 2</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="form-container">
+            <a href="/schritt2.html" class="back-button">← Zurück zu Schritt 1</a>
+            
+            <h1>Adresse und Situationsdetails</h1>
+            <p class="subtitle">Vervollständigen Sie Ihre Angaben für die optimale Beratung</p>
+
+            <form id="addressDataForm">
+                <!-- Familie -->
+                <div class="form-section">
+                    <div class="section-title">👨‍👩‍👧‍👦 1. Familie</div>
+                    <p class="section-info">Diese Angaben helfen uns bei Familienleistungen und Kindergeld-Anträgen</p>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ehepartner_vorhanden">Ehepartner vorhanden? <span class="required">*</span></label>
+                            <select id="ehepartner_vorhanden" name="ehepartner_vorhanden" required onchange="toggleEhepartnerFields()">
+                                <option value="">Bitte wählen</option>
+                                <option value="ja">Ja</option>
+                                <option value="nein">Nein</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie eine Option</div>
+                        </div>
+                        <div class="form-group" id="ehepartner_name_group" style="display: none;">
+                            <label for="ehepartner_name">Name des Ehepartners</label>
+                            <input type="text" id="ehepartner_name" name="ehepartner_name" placeholder="z.B. Ivan Ivanov">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="kinder_vorhanden">Kinder vorhanden? <span class="required">*</span></label>
+                            <select id="kinder_vorhanden" name="kinder_vorhanden" required onchange="toggleKinderFields()">
+                                <option value="">Bitte wählen</option>
+                                <option value="ja">Ja</option>
+                                <option value="nein">Nein</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie eine Option</div>
+                        </div>
+                        <div class="form-group" id="kinder_details_group" style="display: none;">
+                            <label for="kinder_namen_alter">Namen und Alter der Kinder</label>
+                            <input type="text" id="kinder_namen_alter" name="kinder_namen_alter" placeholder="z.B. Maria, 7 / Nikita, 3">
+                            <div class="help-text">Format: Name, Alter / Name, Alter</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Einreise -->
+                <div class="form-section">
+                    <div class="section-title">✈️ 2. Einreise nach Deutschland</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="einreisedatum">Einreisedatum <span class="required">*</span></label>
+                            <input type="date" id="einreisedatum" name="einreisedatum" required>
+                            <div class="error-message">Bitte geben Sie Ihr Einreisedatum ein</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="einreiseweg">Einreiseweg <span class="required">*</span></label>
+                            <select id="einreiseweg" name="einreiseweg" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="polen">über Polen</option>
+                                <option value="rumaenien">über Rumänien</option>
+                                <option value="slowakei">über Slowakei</option>
+                                <option value="andere">andere Route</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie Ihren Einreiseweg</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reiseart">Reiseart</label>
+                            <select id="reiseart" name="reiseart">
+                                <option value="">Bitte wählen</option>
+                                <option value="bus">Bus</option>
+                                <option value="zug">Zug</option>
+                                <option value="auto">Auto</option>
+                                <option value="andere">andere</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="familie_allein">Reisen Sie allein oder mit Familie? <span class="required">*</span></label>
+                            <select id="familie_allein" name="familie_allein" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="familie">mit Familie</option>
+                                <option value="allein">allein</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie eine Option</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wohnsituation -->
+                <div class="form-section">
+                    <div class="section-title">🏠 3. Unterkunft in Deutschland</div>
+                    
+                    <div class="form-group">
+                        <label for="unterkunft_vorhanden">Haben Sie bereits eine Unterkunft? <span class="required">*</span></label>
+                        <select id="unterkunft_vorhanden" name="unterkunft_vorhanden" required onchange="toggleUnterkunftFields()">
+                            <option value="">Bitte wählen</option>
+                            <option value="ja">Ja</option>
+                            <option value="nein">Nein</option>
+                        </select>
+                        <div class="error-message">Bitte wählen Sie eine Option</div>
+                    </div>
+
+                    <div id="adresse_fields" style="display: none;">
+                        <div class="form-row-3">
+                            <div class="form-group">
+                                <label for="strasse">Straße & Hausnummer</label>
+                                <input type="text" id="strasse" name="strasse" placeholder="z.B. Musterstraße 12">
+                            </div>
+                            <div class="form-group">
+                                <label for="plz">PLZ</label>
+                                <input type="text" id="plz" name="plz" placeholder="12345">
+                            </div>
+                            <div class="form-group">
+                                <label for="stadt">Stadt</label>
+                                <input type="text" id="stadt" name="stadt" placeholder="z.B. Berlin">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="wunsch_stadt_field" style="display: none;">
+                        <div class="form-group">
+                            <label for="wunsch_stadt">In welche Stadt möchten Sie? <span class="required">*</span></label>
+                            <select id="wunsch_stadt" name="wunsch_stadt">
+                                <option value="">Bitte wählen</option>
+                                <option value="berlin">Berlin</option>
+                                <option value="hamburg">Hamburg</option>
+                                <option value="muenchen">München</option>
+                                <option value="koeln">Köln</option>
+                                <option value="frankfurt">Frankfurt</option>
+                                <option value="stuttgart">Stuttgart</option>
+                                <option value="duesseldorf">Düsseldorf</option>
+                                <option value="andere">andere Stadt</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="verwandte_freunde">Gibt es Verwandte/Freunde in Deutschland?</label>
+                        <select id="verwandte_freunde" name="verwandte_freunde">
+                            <option value="">Bitte wählen</option>
+                            <option value="ja">Ja</option>
+                            <option value="nein">Nein</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Sprache & Beruf -->
+                <div class="form-section">
+                    <div class="section-title">💼 4. Sprache & Beruf</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="deutsch">Deutschkenntnisse <span class="required">*</span></label>
+                            <select id="deutsch" name="deutsch" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="keine">Keine</option>
+                                <option value="basis">Basis</option>
+                                <option value="mittel">Mittel</option>
+                                <option value="gut">Gut</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie Ihre Deutschkenntnisse</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="arbeiten_wunsch">Möchten Sie in Deutschland arbeiten? <span class="required">*</span></label>
+                            <select id="arbeiten_wunsch" name="arbeiten_wunsch" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="ja">Ja</option>
+                                <option value="nein">Nein</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie eine Option</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="beruf_ukraine">Beruf/Ausbildung in der Ukraine <span class="required">*</span></label>
+                        <input type="text" id="beruf_ukraine" name="beruf_ukraine" placeholder="z.B. Lehrerin / Elektriker / Student" required>
+                        <div class="error-message">Bitte geben Sie Ihren Beruf/Ausbildung ein</div>
+                    </div>
+                </div>
+
+                <!-- Finanzielle Situation -->
+                <div class="form-section">
+                    <div class="section-title">💰 5. Finanzielle Situation</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="einkommen">Monatliches Einkommen aktuell <span class="required">*</span></label>
+                            <select id="einkommen" name="einkommen" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="kein">Kein Einkommen</option>
+                                <option value="unter500">unter 500€</option>
+                                <option value="500-1000">500€ - 1.000€</option>
+                                <option value="ueber1000">über 1.000€</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie Ihr aktuelles Einkommen</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ersparnisse">Haben Sie Ersparnisse?</label>
+                            <select id="ersparnisse" name="ersparnisse">
+                                <option value="">Bitte wählen</option>
+                                <option value="ja">Ja</option>
+                                <option value="nein">Nein</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="finanzielle_hilfe">Benötigen Sie finanzielle Unterstützung? <span class="required">*</span></label>
+                        <select id="finanzielle_hilfe" name="finanzielle_hilfe" required>
+                            <option value="">Bitte wählen</option>
+                            <option value="ja">Ja</option>
+                            <option value="nein">Nein</option>
+                        </select>
+                        <div class="error-message">Bitte wählen Sie eine Option</div>
+                    </div>
+                </div>
+
+                <!-- Motivation -->
+                <div class="form-section">
+                    <div class="section-title">🎯 6. Ihre Ziele</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="grund_deutschland">Warum möchten Sie nach Deutschland? <span class="required">*</span></label>
+                            <select id="grund_deutschland" name="grund_deutschland" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="sicherheit">Sicherheit</option>
+                                <option value="arbeit">Arbeit</option>
+                                <option value="familie">Familie</option>
+                                <option value="studium">Studium</option>
+                                <option value="mehrere">Mehrere Gründe</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie einen Grund</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="dauerhaft_bleiben">Planen Sie dauerhaft zu bleiben? <span class="required">*</span></label>
+                            <select id="dauerhaft_bleiben" name="dauerhaft_bleiben" required>
+                                <option value="">Bitte wählen</option>
+                                <option value="ja">Ja</option>
+                                <option value="nein">Nein</option>
+                                <option value="unsicher">Noch unsicher</option>
+                            </select>
+                            <div class="error-message">Bitte wählen Sie eine Option</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Besonderheiten -->
+                <div class="form-section">
+                    <div class="section-title">📝 7. Zusätzliche Informationen</div>
+                    
+                    <div class="form-group">
+                        <label for="besonderheiten">Besondere Umstände oder spezielle Bedürfnisse</label>
+                        <textarea id="besonderheiten" name="besonderheiten" rows="3" placeholder="z.B. Behinderung, chronische Krankheit, besondere familiäre Situation..."></textarea>
+                        <div class="help-text">Diese Angaben helfen uns, Sie besser zu beraten</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="next-button">Zur Bezahlung →</button>
+
+                <div class="security-note">
+                    🔒 Ihre Daten sind sicher und werden vertraulich behandelt
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Check if step 1 was completed
+        window.addEventListener('load', function() {
+            console.log('=== SCHRITT 2 - ADRESSE & DETAILS GELADEN ===');
+            
+            if (!localStorage.getItem('step1_completed')) {
+                console.log('Schritt 1 nicht abgeschlossen, weiterleiten...');
+                window.location.href = '/schritt2.html';
+                return;
+            }
+
+            // Load saved personal data
+            const personalData = localStorage.getItem('personalData');
+            if (personalData) {
+                console.log('Persönliche Daten geladen:', JSON.parse(personalData));
+            }
+
+            // Track page load
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'checkout_progress', {
+                    'event_category': 'form_filling',
+                    'checkout_step': 2,
+                    'checkout_option': 'address_details'
+                });
+            }
+
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'AddPaymentInfo', {
+                    content_category: 'arbeitserlaubnis_checkout',
+                    content_name: 'Address Details Step 2',
+                    value: 24.99,
+                    currency: 'EUR'
+                });
+            }
+        });
+
+        // Form validation and submission
+        document.getElementById('addressDataForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Save form data
+            const formData = new FormData(this);
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            
+            localStorage.setItem('addressData', JSON.stringify(data));
+            localStorage.setItem('step2_completed', 'true');
+            
+            console.log('=== SCHRITT 2 ABGESCHLOSSEN ===', data);
+            
+            // Track completion
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'checkout_progress', {
+                    'event_category': 'form_filling',
+                    'checkout_step': 2,
+                    'checkout_option': 'address_completed'
+                });
+            }
+
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'Purchase', {
+                    content_category: 'arbeitserlaubnis_service',
+                    content_name: 'Address Details Completed',
+                    value: 24.99,
+                    currency: 'EUR'
+                });
+            }
+            
+            // Redirect to payment (or success page in demo)
+            setTimeout(() => {
+                window.location.href = '/danke.html';
+            }, 200);
+        });
+
+        function validateForm() {
+            let isValid = true;
+            
+            // Remove previous error states
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+            
+            // Check required fields
+            const requiredFields = [
+                'ehepartner_vorhanden', 'kinder_vorhanden', 'einreisedatum', 'einreiseweg', 
+                'familie_allein', 'unterkunft_vorhanden', 'deutsch', 'arbeiten_wunsch', 
+                'beruf_ukraine', 'einkommen', 'finanzielle_hilfe', 'grund_deutschland', 
+                'dauerhaft_bleiben'
+            ];
+            
+            // Conditional required fields
+            const unterkunftVorhanden = document.getElementById('unterkunft_vorhanden').value;
+            if (unterkunftVorhanden === 'nein') {
+                requiredFields.push('wunsch_stadt');
+            }
+            
+            requiredFields.forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                const group = field?.closest('.form-group');
+                
+                if (field && !field.value.trim()) {
+                    group?.classList.add('error');
+                    isValid = false;
+                }
+            });
+            
+            return isValid;
+        }
+
+        // Toggle functions for dynamic fields
+        function toggleEhepartnerFields() {
+            const value = document.getElementById('ehepartner_vorhanden').value;
+            const nameGroup = document.getElementById('ehepartner_name_group');
+            if (value === 'ja') {
+                nameGroup.style.display = 'block';
+            } else {
+                nameGroup.style.display = 'none';
+                document.getElementById('ehepartner_name').value = '';
+            }
+        }
+
+        function toggleKinderFields() {
+            const value = document.getElementById('kinder_vorhanden').value;
+            const detailsGroup = document.getElementById('kinder_details_group');
+            if (value === 'ja') {
+                detailsGroup.style.display = 'block';
+            } else {
+                detailsGroup.style.display = 'none';
+                document.getElementById('kinder_namen_alter').value = '';
+            }
+        }
+
+        function toggleUnterkunftFields() {
+            const value = document.getElementById('unterkunft_vorhanden').value;
+            const adresseFields = document.getElementById('adresse_fields');
+            const wunschStadtField = document.getElementById('wunsch_stadt_field');
+            
+            if (value === 'ja') {
+                adresseFields.style.display = 'block';
+                wunschStadtField.style.display = 'none';
+                // Reset wunsch_stadt when not needed
+                document.getElementById('wunsch_stadt').value = '';
+            } else if (value === 'nein') {
+                adresseFields.style.display = 'none';
+                wunschStadtField.style.display = 'block';
+                // Reset address fields when not needed
+                document.getElementById('strasse').value = '';
+                document.getElementById('plz').value = '';
+                document.getElementById('stadt').value = '';
+            } else {
+                adresseFields.style.display = 'none';
+                wunschStadtField.style.display = 'none';
+            }
+        }
+
+        // Auto-save and restore form data
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedData = localStorage.getItem('addressData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                Object.keys(data).forEach(key => {
+                    const field = document.getElementById(key);
+                    if (field) {
+                        field.value = data[key];
+                        
+                        // Trigger change events for dynamic fields
+                        if (key === 'ehepartner_vorhanden') toggleEhepartnerFields();
+                        if (key === 'kinder_vorhanden') toggleKinderFields();
+                        if (key === 'unterkunft_vorhanden') toggleUnterkunftFields();
+                    }
+                });
+                console.log('=== ADRESS-DATEN WIEDERHERGESTELLT ===', data);
+            }
+        });
+
+        // Auto-save on input
+        document.querySelectorAll('input, select, textarea').forEach(field => {
+            field.addEventListener('input', function() {
+                // Remove error state when user starts typing
+                this.closest('.form-group').classList.remove('error');
+                
+                // Auto-save immediately
+                saveAllFormData();
+            });
+        });
+
+        function saveAllFormData() {
+            const formData = new FormData(document.getElementById('addressDataForm'));
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            localStorage.setItem('addressData', JSON.stringify(data));
+            localStorage.setItem('addressData_timestamp', Date.now());
+            console.log('=== AUTO-SPEICHERUNG ADRESS-DATEN ===', data);
+        }
+
+        // Save on page unload as backup
+        window.addEventListener('beforeunload', function() {
+            saveAllFormData();
+        });
+    </script>
+</body>
+</html>
