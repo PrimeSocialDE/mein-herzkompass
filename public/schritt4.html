@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шаг 3: Язык, работа и цели</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #2D3748;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .progress-container {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e3c72;
+        }
+
+        .progress-step {
+            background: #f0f9ff;
+            color: #1e3c72;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            height: 100%;
+            width: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #1a202c;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #4a5568;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-info {
+            color: #718096;
+            font-size: 13px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+
+        .optional {
+            color: #718096;
+            font-weight: 400;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+            background: #ffffff;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.3);
+        }
+
+        .security-note {
+            text-align: center;
+            color: #718096;
+            font-size: 12px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-group.error input,
+        .form-group.error select,
+        .form-group.error textarea {
+            border-color: #e53e3e;
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        .back-button {
+            background: none;
+            color: #718096;
+            border: 1px solid #e2e8f0;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            border-color: #cbd5e0;
+            background: #f7fafc;
+        }
+
+        .signature-section {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px dashed #cbd5e0;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.4;
+            cursor: pointer;
+        }
+
+        .signature-preview {
+            margin-top: 15px;
+            padding: 20px;
+            background: #fdfdfd;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .signature-text {
+            font-family: "Dancing Script", "Brush Script MT", cursive;
+            font-size: 32px;
+            color: #2d3748;
+            font-weight: 400;
+            letter-spacing: 1px;
+            transform: rotate(-2deg);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .signature-placeholder {
+            color: #a0aec0;
+            font-style: italic;
+            font-size: 14px;
+            font-family: "Inter", sans-serif;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .form-container {
+                padding: 25px 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Progress -->
+        <div class="progress-container">
+            <div class="progress-header">
+                <div class="progress-title">Сервис заявлений §24</div>
+                <div class="progress-step">Шаг 3 из 3</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="form-container">
+            <a href="/schritt3.html" class="back-button">← Назад к шагу 2</a>
+            
+            <h1>Язык, работа и цели</h1>
+            <p class="subtitle">Заключительная информация для вашего заявления</p>
+
+            <form id="finalDataForm">
+                <!-- Языковая и трудовая ситуация -->
+                <div class="form-section">
+                    <div class="section-title">💬 6. Языковая и трудовая ситуация</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="deutschkenntnisse">Знание немецкого языка <span class="required">*</span></label>
+                            <select id="deutschkenntnisse" name="deutschkenntnisse" required>
+                                <option value="">Пожалуйста, выберите</option>
+                                <option value="keine">Отсутствует</option>
+                                <option value="basis">Базовый</option>
+                                <option value="mittel">Средний</option>
+                                <option value="gut">Хороший</option>
+                            </select>
+                            <div class="error-message">Пожалуйста, выберите ваш уровень знания немецкого</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="arbeiten_deutschland">Хотите ли вы работать в Германии? <span class="required">*</span></label>
+                            <select id="arbeiten_deutschland" name="arbeiten_deutschland" required>
+                                <option value="">Пожалуйста, выберите</option>
+                                <option value="ja">Да</option>
+                                <option value="nein">Нет</option>
+                            </select>
+                            <div class="error-message">Пожалуйста, выберите опцию</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="beruf_ukraine">Профессия или образование в Украине</label>
+                        <input type="text" id="beruf_ukraine" name="beruf_ukraine" placeholder="например, учительница / электрик / студент">
+                        <div class="help-text">Если есть - поможет при трудоустройстве</div>
+                    </div>
+                </div>
+
+                <!-- Финансовое положение -->
+                <div class="form-section">
+                    <div class="section-title">💰 7. Финансовое положение</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="einkommen_aktuell">Текущий месячный доход</label>
+                            <select id="einkommen_aktuell" name="einkommen_aktuell">
+                                <option value="">Пожалуйста, выберите</option>
+                                <option value="kein_einkommen">Нет дохода</option>
+                                <option value="bis_20000">до 20 000 грн</option>
+                                <option value="20000_40000">20 000-40 000 грн</option>
+                                <option value="40000_80000">40 000-80 000 грн</option>
+                                <option value="ueber_80000">свыше 80 000 грн</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ersparnisse">Есть ли у вас сбережения? <span class="optional">(необязательно)</span></label>
+                            <select id="ersparnisse" name="ersparnisse">
+                                <option value="">Пожалуйста, выберите</option>
+                                <option value="ja">Да</option>
+                                <option value="nein">Нет</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="finanzielle_unterstuetzung">Нужна ли вам финансовая поддержка в Германии? <span class="required">*</span></label>
+                        <select id="finanzielle_unterstuetzung" name="finanzielle_unterstuetzung" required>
+                            <option value="">Пожалуйста, выберите</option>
+                            <option value="ja">Да</option>
+                            <option value="nein">Нет</option>
+                        </select>
+                        <div class="error-message">Пожалуйста, выберите опцию</div>
+                    </div>
+                </div>
+
+                <!-- Цель и мотивация -->
+                <div class="form-section">
+                    <div class="section-title">🎯 8. Цель и мотивация</div>
+                    
+                    <div class="form-group">
+                        <label for="grund_deutschland">Почему вы хотите приехать в Германию? <span class="required">*</span></label>
+                        <textarea id="grund_deutschland" name="grund_deutschland" placeholder="например, безопасность / работа / семья / учеба" required></textarea>
+                        <div class="error-message">Пожалуйста, опишите вашу мотивацию</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dauerhaft_bleiben">Планируете ли вы остаться в Германии навсегда? <span class="required">*</span></label>
+                        <select id="dauerhaft_bleiben" name="dauerhaft_bleiben" required>
+                            <option value="">Пожалуйста, выберите</option>
+                            <option value="ja">Да</option>
+                            <option value="nein">Нет</option>
+                            <option value="unsicher">Пока не уверен(а)</option>
+                        </select>
+                        <div class="error-message">Пожалуйста, выберите опцию</div>
+                    </div>
+                </div>
+
+                <!-- Документы о войне -->
+                <div class="form-section">
+                    <div class="section-title">📋 9. Документы о войне (2022)</div>
+                    
+                    <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                        <div style="color: #92400e; font-size: 14px; font-weight: 600; margin-bottom: 8px;">⚠️ Важное уведомление</div>
+                        <div style="color: #92400e; font-size: 13px; line-height: 1.4;">
+                            Для заявлений по §24 требуется доказательство того, что вы находились в Украине с начала войны (февраль 2022). Это может быть штамп о выезде, билет на поезд или другой документ.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kriegsnachweis">Есть ли у вас доказательство пребывания в Украине с февраля 2022? <span class="required">*</span></label>
+                        <select id="kriegsnachweis" name="kriegsnachweis" required>
+                            <option value="">Пожалуйста, выберите</option>
+                            <option value="ja_ausreisestempel">Да, штамп о выезде в паспорте</option>
+                            <option value="ja_zugticket">Да, билет на поезд/автобус</option>
+                            <option value="ja_sonstiges">Да, другие документы</option>
+                            <option value="nein_beschaffe">Нет, но получу</option>
+                            <option value="nein_unsicher">Нет, не уверен(а)</option>
+                        </select>
+                        <div class="error-message">Пожалуйста, выберите опцию</div>
+                        <div class="help-text">Без этого документа заявление по §24 не может быть обработано</div>
+                    </div>
+                </div>
+
+                <!-- Согласие и подпись -->
+                <div class="form-section">
+                    <div class="section-title signature-section">✍️ 10. Согласие и подпись</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="vollstaendiger_name">Полное имя для подписи <span class="required">*</span></label>
+                            <input type="text" id="vollstaendiger_name" name="vollstaendiger_name" placeholder="Олена Иванова" required>
+                            <div class="error-message">Пожалуйста, введите ваше полное имя</div>
+                            
+                            <!-- Signature Preview -->
+                            <div class="signature-preview">
+                                <div id="signature-display" class="signature-placeholder">Ваша подпись будет отображена здесь...</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="datum_heute">Дата (автоматически)</label>
+                            <input type="text" id="datum_heute" name="datum_heute" readonly>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="datenverarbeitung_zustimmung" name="datenverarbeitung_zustimmung" required>
+                        <label for="datenverarbeitung_zustimmung">
+                            <span class="required">*</span> Я согласен(согласна) на обработку моих персональных данных для рассмотрения моего заявления по §24. Мои данные будут обрабатываться конфиденциально и не будут переданы третьим лицам.
+                        </label>
+                        <div class="error-message">Пожалуйста, дайте согласие на обработку данных</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">К резюме →</button>
+
+                <div class="security-note">
+                    🔒 Ваши данные в безопасности и обрабатываются конфиденциально
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Set today's date automatically
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toLocaleDateString('ru-RU');
+            document.getElementById('datum_heute').value = today;
+        });
+
+        // Live signature preview
+        document.getElementById('vollstaendiger_name').addEventListener('input', function() {
+            const signatureDisplay = document.getElementById('signature-display');
+            const name = this.value.trim();
+            
+            if (name) {
+                signatureDisplay.textContent = name;
+                signatureDisplay.className = 'signature-text';
+            } else {
+                signatureDisplay.textContent = 'Ваша подпись будет отображена здесь...';
+                signatureDisplay.className = 'signature-placeholder';
+            }
+        });
+
+        // Form validation and submission
+        document.getElementById('finalDataForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Save form data
+            const formData = new FormData(this);
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            
+            localStorage.setItem('finalData', JSON.stringify(data));
+            localStorage.setItem('application_completed', 'true');
+            
+            console.log('=== ШАГ 3 ЗАВЕРШЕН - ЗАЯВЛЕНИЕ ПОЛНОСТЬЮ ГОТОВО ===', data);
+            
+            // Collect all data
+            const personalData = JSON.parse(localStorage.getItem('personalData') || '{}');
+            const familyData = JSON.parse(localStorage.getItem('familyData') || '{}');
+            const utmParams = JSON.parse(localStorage.getItem('utmParams') || '{}');
+            
+            const completeApplication = {
+                ...personalData,
+                ...familyData,
+                ...data,
+                ...utmParams,
+                submission_timestamp: Date.now(),
+                language: 'russian'
+            };
+            
+            localStorage.setItem('completeApplication', JSON.stringify(completeApplication));
+            console.log('=== ПОЛНОЕ ЗАЯВЛЕНИЕ ===', completeApplication);
+            
+            // Redirect to summary page
+            setTimeout(() => {
+                window.location.href = '/summary-ru.html';
+            }, 500);
+        });
+
+        function validateForm() {
+            let isValid = true;
+            
+            // Remove previous error states
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+            
+            // Check required fields
+            const requiredFields = [
+                'deutschkenntnisse', 
+                'arbeiten_deutschland', 
+                'finanzielle_unterstuetzung', 
+                'grund_deutschland', 
+                'dauerhaft_bleiben', 
+                'kriegsnachweis',
+                'vollstaendiger_name'
+            ];
+            
+            requiredFields.forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                const group = field?.closest('.form-group');
+                
+                if (field && !field.value.trim()) {
+                    group?.classList.add('error');
+                    isValid = false;
+                }
+            });
+            
+            // Check checkbox
+            const checkbox = document.getElementById('datenverarbeitung_zustimmung');
+            if (!checkbox.checked) {
+                checkbox.closest('.form-section').classList.add('error');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+
+        // Auto-save and restore form data
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedData = localStorage.getItem('finalData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                Object.keys(data).forEach(key => {
+                    const field = document.getElementById(key);
+                    if (field) {
+                        if (field.type === 'checkbox') {
+                            field.checked = data[key] === 'on';
+                        } else {
+                            field.value = data[key];
+                        }
+                    }
+                });
+                console.log('=== ФИНАЛЬНЫЕ ДАННЫЕ ВОССТАНОВЛЕНЫ ===', data);
+            }
+        });
+
+        // Auto-save on input
+        document.querySelectorAll('input, select, textarea').forEach(field => {
+            field.addEventListener('input', function() {
+                // Remove error state when user starts typing
+                this.closest('.form-group').classList.remove('error');
+                
+                // Auto-save immediately
+                saveAllFormData();
+            });
+        });
+
+        function saveAllFormData() {
+            const formData = new FormData(document.getElementById('finalDataForm'));
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            localStorage.setItem('finalData', JSON.stringify(data));
+            localStorage.setItem('finalData_timestamp', Date.now());
+            console.log('=== АВТОСОХРАНЕНИЕ ФИНАЛЬНЫХ ДАННЫХ ===', data);
+        }
+
+        // Save on page unload as backup
+        window.addEventListener('beforeunload', function() {
+            saveAllFormData();
+        });
+    </script>
+</body>
+</html>
