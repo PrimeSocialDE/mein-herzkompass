@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zusammenfassung §24-Antrag</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #2D3748;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .logo {
+            margin-bottom: 15px;
+        }
+
+        .logo img {
+            height: 45px;
+            width: auto;
+        }
+
+        .status-badge {
+            background: #22c55e;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #4a5568;
+            margin: 0;
+        }
+
+        .summary-sections {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #1e3c72;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .edit-button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .edit-button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .data-table {
+            width: 100%;
+        }
+
+        .data-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .field-label {
+            padding: 12px 15px;
+            background: #f8fafc;
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5568;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .field-value {
+            padding: 12px 15px;
+            font-size: 13px;
+            color: #2d3748;
+            word-break: break-word;
+        }
+
+        .empty-value {
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        .continue-button {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .continue-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .logo img {
+                height: 35px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+                margin-bottom: 6px;
+            }
+
+            .header p {
+                font-size: 12px;
+            }
+
+            .summary-sections {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .section-header {
+                padding: 12px 15px;
+            }
+
+            .section-title {
+                font-size: 14px;
+            }
+
+            .field-label, .field-value {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+
+            .status-badge {
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .logo img {
+                height: 35px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+                margin-bottom: 6px;
+            }
+
+            .header p {
+                font-size: 12px;
+            }
+
+            .sections-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .section {
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .section:last-child {
+                border-bottom: none;
+            }
+
+            .section-header {
+                padding: 12px 15px;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .section-title {
+                flex-direction: row;
+                gap: 8px;
+            }
+
+            .section-title h2 {
+                font-size: 14px;
+            }
+
+            .section-title .icon {
+                font-size: 18px;
+            }
+
+            .edit-button {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+
+            .section-content {
+                padding: 15px;
+            }
+
+            .data-item {
+                padding: 10px;
+            }
+
+            .data-item-label {
+                font-size: 10px;
+            }
+
+            .data-item-value {
+                font-size: 12px;
+            }
+
+            .status-badge {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="LogoGer.png" alt="Germany Start Logo">
+            </div>
+            <div class="status-badge">Antrag fast vollständig</div>
+            <h1>Zusammenfassung prüfen</h1>
+            <p>Kontrollieren Sie Ihre Angaben und bearbeiten Sie bei Bedarf</p>
+        </div>
+
+        <div class="summary-sections">
+            <!-- Section 1: Personal Data -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">1. Persönliche Daten</h3>
+                    <button class="edit-button" onclick="editSection(1)">
+                        Bearbeiten
+                    </button>
+                </div>
+                <div class="data-table" id="personalDataTable">
+                    <!-- Personal data will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Section 2: Family & Entry -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">2. Familie & Einreise</h3>
+                    <button class="edit-button" onclick="editSection(2)">
+                        Bearbeiten
+                    </button>
+                </div>
+                <div class="data-table" id="familyDataTable">
+                    <!-- Family data will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Section 3: Goals & Final -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">3. Ziele & Bestätigung</h3>
+                    <button class="edit-button" onclick="editSection(3)">
+                        Bearbeiten
+                    </button>
+                </div>
+                <div class="data-table" id="finalDataTable">
+                    <!-- Final data will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 20px;">
+            <h3 style="font-size: 18px; font-weight: 700; color: #1e3c72; margin-bottom: 20px;">Zustimmung erforderlich</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <input type="checkbox" id="data_consent" required style="margin-top: 4px; transform: scale(1.2);">
+                    <label for="data_consent" style="font-size: 14px; color: #2d3748; line-height: 1.5; cursor: pointer;">
+                        <span style="color: #e53e3e;">*</span> Ich bestätige, dass meine eingegebenen Daten für die professionelle Bearbeitung meiner §24-Anträge verwendet werden dürfen. Die Daten werden vertraulich behandelt und ausschließlich für die Antragstellung genutzt.
+                    </label>
+                </div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <input type="checkbox" id="fee_consent" required style="margin-top: 4px; transform: scale(1.2);">
+                    <label for="fee_consent" style="font-size: 14px; color: #2d3748; line-height: 1.5; cursor: pointer;">
+                        <span style="color: #e53e3e;">*</span> Ich bin damit einverstanden, dass für die professionelle Bearbeitung meiner Anträge eine <strong>einmalige Bearbeitungsgebühr von 24,99 Euro</strong> berechnet wird. Diese beinhaltet die vollständige Bearbeitung aller erforderlichen Formulare und Dokumente.
+                    </label>
+                </div>
+            </div>
+
+            <div id="consent-error" style="color: #e53e3e; font-size: 12px; margin-top: 10px; display: none;">
+                Bitte bestätigen Sie beide Punkte, um fortzufahren.
+            </div>
+            
+            <!-- What happens next -->
+            <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #1e3c72;">
+                <h4 style="font-size: 14px; font-weight: 700; color: #1e3c72; margin-bottom: 8px;">📧 Was passiert nach der Bestätigung?</h4>
+                <p style="font-size: 13px; color: #4a5568; margin: 0; line-height: 1.4;">
+                    Sie erhalten innerhalb von 24h alle ausgefüllten Formulare per E-Mail + genaue Adressen der Behörden + was Sie dort sagen sollen. Einfach ausdrucken und abgeben.
+                </p>
+            </div>
+        </div>
+
+        <button class="continue-button" onclick="submitApplication()">
+            Bestätigen und fortfahren
+        </button>
+    </div>
+
+    <script>
+        // Field translations for display
+        const fieldTranslations = {
+            // Personal Data
+            'vorname': 'Vorname',
+            'nachname': 'Nachname',
+            'geburtsdatum': 'Geburtsdatum',
+            'geburtsort': 'Geburtsort',
+            'staatsangehoerigkeit': 'Staatsangehörigkeit',
+            'geschlecht': 'Geschlecht',
+            'familienstand': 'Familienstand',
+            'passnummer': 'Passnummer',
+            'ausstellungsort': 'Ausstellungsort',
+            'ausstellungsdatum': 'Ausstellungsdatum',
+            'gueltig_bis': 'Gültig bis',
+            'telefon': 'Telefon',
+            'email': 'E-Mail',
+            
+            // Family Data
+            'ehepartner_vorhanden': 'Ehepartner vorhanden',
+            'ehepartner_name': 'Name des Ehepartners',
+            'kinder_vorhanden': 'Kinder vorhanden',
+            'kinder_namen_alter': 'Namen und Alter der Kinder',
+            'einreisedatum': 'Einreisedatum',
+            'einreiseweg': 'Einreiseweg',
+            'reiseart': 'Reiseart',
+            'familie_allein': 'Mit Familie oder allein',
+            'unterkunft_vorhanden': 'Unterkunft vorhanden',
+            'wunsch_stadt': 'Gewünschte Stadt',
+            'adresse': 'Adresse',
+            'verwandte_freunde': 'Verwandte/Freunde in Deutschland',
+            
+            // Final Data
+            'deutschkenntnisse': 'Deutschkenntnisse',
+            'beruf_ukraine': 'Beruf in der Ukraine',
+            'arbeiten_deutschland': 'Arbeiten in Deutschland',
+            'einkommen_aktuell': 'Aktuelles Einkommen',
+            'ersparnisse': 'Ersparnisse',
+            'finanzielle_unterstuetzung': 'Finanzielle Unterstützung benötigt',
+            'grund_deutschland': 'Grund für Deutschland',
+            'dauerhaft_bleiben': 'Dauerhaft bleiben',
+            'kriegsnachweis': 'Kriegsnachweis (2022)',
+            'vollstaendiger_name': 'Vollständiger Name',
+            'datum_heute': 'Datum',
+            'datenverarbeitung_zustimmung': 'Datenverarbeitung zugestimmt'
+        };
+
+        // Value translations
+        const valueTranslations = {
+            'ja': 'Ja',
+            'nein': 'Nein',
+            'ukraine': 'Ukraine',
+            'russland': 'Russland',
+            'belarus': 'Belarus',
+            'sonstige': 'Sonstige',
+            'weiblich': 'Weiblich',
+            'maennlich': 'Männlich',
+            'divers': 'Divers',
+            'ledig': 'Ledig',
+            'verheiratet': 'Verheiratet',
+            'geschieden': 'Geschieden',
+            'verwitwet': 'Verwitwet',
+            'polen': 'über Polen',
+            'rumaenien': 'über Rumänien',
+            'slowakei': 'über Slowakei',
+            'andere': 'andere Route',
+            'bus': 'Bus',
+            'zug': 'Zug',
+            'auto': 'Auto',
+            'familie': 'mit Familie',
+            'allein': 'allein',
+            'berlin': 'Berlin',
+            'hamburg': 'Hamburg',
+            'muenchen': 'München',
+            'koeln': 'Köln',
+            'frankfurt': 'Frankfurt',
+            'stuttgart': 'Stuttgart',
+            'duesseldorf': 'Düsseldorf',
+            'keine': 'Keine',
+            'basis': 'Basis',
+            'mittel': 'Mittel',
+            'gut': 'Gut',
+            'kein_einkommen': 'Kein Einkommen',
+            'bis_500': 'bis 500 EUR',
+            '500_1000': '500-1000 EUR',
+            '1000_2000': '1000-2000 EUR',
+            'ueber_2000': 'über 2000 EUR',
+            'unsicher': 'Noch unsicher',
+            'ja_ausreisestempel': 'Ja, Ausreisestempel im Pass',
+            'ja_zugticket': 'Ja, Zug-/Busticket',
+            'ja_sonstiges': 'Ja, andere Belege',
+            'nein_beschaffe': 'Nein, werde ich noch beschaffen',
+            'nein_unsicher': 'Nein, bin unsicher',
+            'on': 'Ja'
+        };
+
+        // Load data and populate sections
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPersonalData();
+            loadFamilyData();
+            loadFinalData();
+        });
+
+        function loadPersonalData() {
+            const data = JSON.parse(localStorage.getItem('personalData') || '{}');
+            const table = document.getElementById('personalDataTable');
+            
+            const fields = [
+                'vorname', 'nachname', 'geburtsdatum', 'geburtsort', 
+                'staatsangehoerigkeit', 'geschlecht', 'familienstand',
+                'passnummer', 'ausstellungsort', 'ausstellungsdatum', 'gueltig_bis',
+                'telefon', 'email'
+            ];
+            
+            table.innerHTML = fields.map(field => createTableRow(field, data[field])).join('');
+        }
+
+        function loadFamilyData() {
+            const data = JSON.parse(localStorage.getItem('familyData') || '{}');
+            const table = document.getElementById('familyDataTable');
+            
+            const fields = [
+                'ehepartner_vorhanden', 'ehepartner_name', 'kinder_vorhanden', 'kinder_namen_alter',
+                'einreisedatum', 'einreiseweg', 'reiseart', 'familie_allein',
+                'unterkunft_vorhanden', 'wunsch_stadt', 'adresse', 'verwandte_freunde'
+            ];
+            
+            table.innerHTML = fields.map(field => createTableRow(field, data[field])).join('');
+        }
+
+        function loadFinalData() {
+            const data = JSON.parse(localStorage.getItem('finalData') || '{}');
+            const table = document.getElementById('finalDataTable');
+            
+            const fields = [
+                'deutschkenntnisse', 'beruf_ukraine', 'arbeiten_deutschland',
+                'einkommen_aktuell', 'ersparnisse', 'finanzielle_unterstuetzung',
+                'grund_deutschland', 'dauerhaft_bleiben', 'kriegsnachweis',
+                'vollstaendiger_name', 'datum_heute', 'datenverarbeitung_zustimmung'
+            ];
+            
+            table.innerHTML = fields.map(field => createTableRow(field, data[field])).join('');
+        }
+
+        function createTableRow(field, value) {
+            const label = fieldTranslations[field] || field;
+            let displayValue = value;
+            
+            if (!value) {
+                displayValue = '<span class="empty-value">Nicht ausgefüllt</span>';
+            } else {
+                displayValue = valueTranslations[value] || value;
+            }
+            
+            return `
+                <div class="data-row">
+                    <div class="field-label">${label}</div>
+                    <div class="field-value">${displayValue}</div>
+                </div>
+            `;
+        }
+
+        function toggleSection(sectionNumber) {
+            // No longer needed with always-visible table layout
+        }
+
+        function editSection(sectionNumber) {
+            const urls = {
+                1: '/schritt1-personal.html',
+                2: '/schritt2-familie.html',
+                3: '/schritt3-final.html'
+            };
+            
+            window.location.href = urls[sectionNumber];
+        }
+
+        function submitApplication() {
+            // Validate consent checkboxes
+            const dataConsent = document.getElementById('data_consent');
+            const feeConsent = document.getElementById('fee_consent');
+            const errorDiv = document.getElementById('consent-error');
+            
+            if (!dataConsent.checked || !feeConsent.checked) {
+                errorDiv.style.display = 'block';
+                errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+            
+            errorDiv.style.display = 'none';
+            
+            // Collect all data
+            const personalData = JSON.parse(localStorage.getItem('personalData') || '{}');
+            const familyData = JSON.parse(localStorage.getItem('familyData') || '{}');
+            const finalData = JSON.parse(localStorage.getItem('finalData') || '{}');
+            const utmParams = JSON.parse(localStorage.getItem('utmParams') || '{}');
+            
+            const completeApplication = {
+                ...personalData,
+                ...familyData,
+                ...finalData,
+                ...utmParams,
+                submission_timestamp: Date.now(),
+                language: 'german',
+                summary_confirmed: true,
+                data_consent: true,
+                fee_consent: true,
+                processing_fee: '24.99 EUR'
+            };
+            
+            localStorage.setItem('completeApplication', JSON.stringify(completeApplication));
+            console.log('=== ANTRAG BESTÄTIGT - SENDE AN SUPABASE UND WEITERLEITUNG ZU STRIPE ===', completeApplication);
+            
+            // Send to Supabase
+            sendToSupabase(completeApplication);
+            
+            // Redirect to Stripe payment
+            window.location.href = 'https://buy.stripe.com/6oU9ASdmKaWT5ek1FJ1VK07';
+        }
+
+        async function sendToSupabase(data) {
+            try {
+                const supabaseUrl = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA3Mjk1OTEsImV4cCI6MjA0NjMwNTU5MX0.YJjOL8CqNWS-xqfHKVT1y8i9s8VyP5QfHUFMYbcwH8I'; // Sie müssen diesen Key durch Ihren echten anon key ersetzen
+                
+                const response = await fetch(`${supabaseUrl}/rest/v1/arbeitserlaubnis_leads`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': supabaseKey,
+                        'Authorization': `Bearer ${supabaseKey}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({
+                        // Mapping to actual database columns from screenshots
+                        user_id: `user_${Date.now()}`,
+                        email: data.email || '',
+                        source: 'german_formal_comprehensive',
+                        language: data.language || 'german',
+                        
+                        // Personal data as JSONB
+                        json_answers: {
+                            // Personal info
+                            vorname: data.vorname,
+                            nachname: data.nachname,
+                            geburtsdatum: data.geburtsdatum,
+                            geburtsort: data.geburtsort,
+                            staatsangehoerigkeit: data.staatsangehoerigkeit,
+                            geschlecht: data.geschlecht,
+                            familienstand: data.familienstand,
+                            telefon: data.telefon,
+                            
+                            // Passport data
+                            passnummer: data.passnummer,
+                            ausstellungsort: data.ausstellungsort,
+                            ausstellungsdatum: data.ausstellungsdatum,
+                            gueltig_bis: data.gueltig_bis,
+                            
+                            // Family data
+                            ehepartner_vorhanden: data.ehepartner_vorhanden,
+                            ehepartner_name: data.ehepartner_name,
+                            kinder_vorhanden: data.kinder_vorhanden,
+                            kinder_namen_alter: data.kinder_namen_alter,
+                            
+                            // Entry info
+                            einreisedatum: data.einreisedatum,
+                            einreiseweg: data.einreiseweg,
+                            reiseart: data.reiseart,
+                            familie_allein: data.familie_allein,
+                            unterkunft_vorhanden: data.unterkunft_vorhanden,
+                            wunsch_stadt: data.wunsch_stadt,
+                            adresse: data.adresse,
+                            verwandte_freunde: data.verwandte_freunde,
+                            
+                            // Language and work
+                            deutschkenntnisse: data.deutschkenntnisse,
+                            beruf_ukraine: data.beruf_ukraine,
+                            arbeiten_deutschland: data.arbeiten_deutschland,
+                            
+                            // Financial
+                            einkommen_aktuell: data.einkommen_aktuell,
+                            ersparnisse: data.ersparnisse,
+                            finanzielle_unterstuetzung: data.finanzielle_unterstuetzung,
+                            
+                            // Goals and motivation
+                            grund_deutschland: data.grund_deutschland,
+                            dauerhaft_bleiben: data.dauerhaft_bleiben,
+                            kriegsnachweis: data.kriegsnachweis,
+                            
+                            // Signature
+                            vollstaendiger_name: data.vollstaendiger_name,
+                            datum_heute: data.datum_heute,
+                            
+                            // Consent
+                            data_consent: data.data_consent,
+                            fee_consent: data.fee_consent,
+                            
+                            // UTM data
+                            utm_source: data.utm_source,
+                            utm_medium: data.utm_medium,
+                            utm_campaign: data.utm_campaign,
+                            utm_term: data.utm_term,
+                            utm_content: data.utm_content,
+                            
+                            // Meta
+                            submission_timestamp: new Date().toISOString(),
+                            processing_fee: data.processing_fee,
+                            page_source: 'german_summary_page'
+                        },
+                        
+                        // Additional columns from screenshots
+                        checkout_clicked: true,
+                        payment_completed: false,
+                        price: 24.99,
+                        currency: 'EUR',
+                        price_uah: null, // Not applicable for German version
+                        
+                        // Timestamps will be handled by Supabase automatically
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                console.log('=== DATEN ERFOLGREICH AN SUPABASE GESENDET ===');
+                
+                // Track successful submission
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'form_submit', {
+                        'event_category': 'arbeitserlaubnis_german',
+                        'event_label': 'summary_confirmed_to_payment'
+                    });
+                }
+                
+                if (typeof fbq !== 'undefined') {
+                    fbq('track', 'InitiateCheckout', {
+                        content_category: 'arbeitserlaubnis_german_payment',
+                        content_name: 'German Summary to Stripe Payment',
+                        value: 24.99,
+                        currency: 'EUR'
+                    });
+                }
+                
+            } catch (error) {
+                console.error('=== FEHLER BEIM SENDEN AN SUPABASE ===', error);
+                // Continue to payment even if Supabase fails
+                // Log error but don't block user flow
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'supabase_error', {
+                        'event_category': 'error',
+                        'event_label': error.message
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>
