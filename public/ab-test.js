@@ -1,12 +1,12 @@
-// ab-test.js - Simple 50/50 A/B Test
+// ab-test.js - 20/80 A/B Test (20% A, 80% B)
 (function() {
     const TEST_CONFIG = {
         testName: 'landing_documents_vs_job_focused',
         variants: {
-            A: '/index.html',              // Original (dokumente-fokussiert)
-            B: '/index_job_fokus.html'     // Job-fokussiert
+            A: '/index.html',              // Original (dokumente-fokussiert) - 20%
+            B: '/index_job_fokus.html'     // Job-fokussiert - 80%
         },
-        trafficSplit: 50 // 50/50 split
+        trafficSplit: 20 // 20% für A, 80% für B
     };
 
     function getVariant() {
@@ -14,14 +14,14 @@
         let variant = localStorage.getItem('abTestVariant');
         
         if (!variant) {
-            // 50/50 random assignment
-            variant = Math.random() < 0.5 ? 'A' : 'B';
+            // 20/80 random assignment
+            variant = Math.random() < 0.2 ? 'A' : 'B';
             
             // Store assignment
             localStorage.setItem('abTestVariant', variant);
             localStorage.setItem('abTestAssigned', new Date().toISOString());
             
-            console.log('=== A/B TEST ASSIGNMENT ===', variant);
+            console.log('=== A/B TEST ASSIGNMENT (20/80) ===', variant);
         }
         
         return variant;
@@ -40,7 +40,8 @@
                     fbq('track', 'ABTestView', {
                         test_name: TEST_CONFIG.testName,
                         variant: variant,
-                        page: targetPath === '/index.html' ? 'documents_focused' : 'job_focused'
+                        page: targetPath === '/index.html' ? 'documents_focused' : 'job_focused',
+                        traffic_split: '20_80'
                     });
                 }
                 
@@ -48,7 +49,8 @@
                     gtag('event', 'ab_test_view', {
                         'test_name': TEST_CONFIG.testName,
                         'variant': variant,
-                        'page_type': targetPath === '/index.html' ? 'documents_focused' : 'job_focused'
+                        'page_type': targetPath === '/index.html' ? 'documents_focused' : 'job_focused',
+                        'traffic_split': '20_80'
                     });
                 }
                 
