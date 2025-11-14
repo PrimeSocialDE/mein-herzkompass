@@ -118,6 +118,126 @@
             33%, 100% { opacity: 0; }
         }
 
+        /* BENEFITS SECTION */
+        .benefits-section {
+            margin: 50px auto 0;
+            max-width: 600px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.1);
+            border: 2px solid #e2e8f0;
+        }
+
+        .benefits-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 30px;
+        }
+
+        .benefits-hero-image {
+            margin-bottom: 30px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 3px solid #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .benefits-container {
+            display: grid;
+            gap: 20px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: transparent;
+            padding: 0;
+        }
+
+        .benefit-check {
+            width: 30px;
+            height: 30px;
+            background: #10B981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .benefit-text {
+            font-size: 18px;
+            font-weight: 500;
+            color: #2d3748;
+            line-height: 1.4;
+        }
+
+        /* SOCIAL PROOF SECTION */
+        .social-proof-section {
+            margin: 60px auto 0;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .social-proof-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 30px;
+            line-height: 1.2;
+        }
+
+        .social-proof-number {
+            color: #667eea;
+            font-size: 36px;
+        }
+
+        .social-proof-avatars {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 0 auto;
+            max-width: 500px;
+        }
+
+        .avatar-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid #667eea;
+            overflow: hidden;
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .avatar-circle:nth-child(2n) {
+            animation-delay: -1s;
+        }
+
+        .avatar-circle:nth-child(3n) {
+            animation-delay: -2s;
+        }
+
+        .avatar-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
         /* HERO SECTION - ELEGANT DESIGN */
         .hero {
             background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%) !important;
@@ -590,6 +710,55 @@
             .main-cta-button {
                 padding: 20px 35px;
                 font-size: 18px;
+            }
+            
+            .benefits-section {
+                margin: 40px 15px 0;
+                padding: 30px 20px;
+            }
+            
+            .benefits-title {
+                font-size: 20px;
+                margin-bottom: 25px;
+            }
+            
+            .benefit-item {
+                padding: 12px 15px;
+                gap: 12px;
+            }
+            
+            .benefit-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
+            
+            .benefit-text {
+                font-size: 14px;
+            }
+            
+            .social-proof-section {
+                margin: 40px 15px 0;
+            }
+            
+            .social-proof-title {
+                font-size: 24px;
+                margin-bottom: 25px;
+            }
+            
+            .social-proof-number {
+                font-size: 28px;
+            }
+            
+            .social-proof-avatars {
+                gap: 10px;
+                max-width: 300px;
+            }
+            
+            .avatar-circle {
+                width: 45px;
+                height: 45px;
+                border-width: 2px;
             }
             
             .cta-subtext {
@@ -1672,7 +1841,58 @@
             <!-- MAIN CTA DIRECTLY UNDER IMAGE -->
             <div class="main-cta-section">
                 <a href="#quiz-start" class="main-cta-button" onclick="fbq('track', 'Lead', {content_name: 'Button Oben'});">Meine Farbberatung starten →</a>
-                <p class="cta-subtext">✓ Professionelle Analyse ✓ Sofort verfügbar ✓ 100% Geld-zurück-Garantie</p>
+                <p class="cta-subtext">✓ Professionelle Analyse ✓ Sofort verfügbar ✓ Individuell erstellt</p>
+            </div>
+
+            <!-- WAS DU ERHÄLTST SECTION -->
+            <div class="benefits-section">
+                <h3 class="benefits-title">Was du erhältst</h3>
+                
+                <!-- HERO IMAGE WITH FRAME -->
+                <div class="benefits-hero-image">
+                    <img src="MainFoto5.png" alt="Professionelle Farbberatung" style="width: 100%; height: 250px; object-fit: cover; border-radius: 16px;">
+                </div>
+                
+                <div class="benefits-container">
+                    <div class="benefit-item">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-text">10+ Outfits die perfekt zu deinem Farbtyp passen</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-text">Deine persönliche Farbpalette mit über 30 Farben</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-text">Make-Up Farben die dich zum Strahlen bringen</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-text">Farben die du meiden solltest (und warum)</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-text">Ein problemloses und stilvolles Leben mit deinen Farben</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOCIAL PROOF SECTION -->
+            <div class="social-proof-section">
+                <h3 class="social-proof-title">Vertraut von <span class="social-proof-number">2,300+</span><br>Frauen</h3>
+                <div class="social-proof-avatars">
+                    <div class="avatar-circle"><img src="Kundin1.png" alt="Kundin"></div>
+                    <div class="avatar-circle"><img src="Kundin2.png" alt="Kundin"></div>
+                    <div class="avatar-circle"><img src="Kundin3.png" alt="Kundin"></div>
+                    <div class="avatar-circle"><img src="Kundin4.png" alt="Kundin"></div>
+                    <div class="avatar-circle"><img src="Kundin5.png" alt="Kundin"></div>
+                    <div class="avatar-circle"><img src="Kundin6.png" alt="Kundin"></div>
+                    <div class="avatar-circle"><img src="Kundin7.png" alt="Kundin"></div>
+                    <div class="avatar-circle"><img src="Kundin8.png" alt="Kundin"></div>
+                    <div class="avatar-circle"><img src="Kundin9.png" alt="Kundin"></div>
+                    <div class="avatar-circle"><img src="Kundin10.png" alt="Kundin"></div>
+                    <div class="avatar-circle"><img src="Kundin11.png" alt="Kundin"></div>
+                </div>
             </div>
 
             <!-- SOLUTION PROMISE -->
@@ -1749,50 +1969,7 @@
         </div>
     </section>
 
-    <!-- PREVIEW SECTION -->
-    <section class="preview-section">
-        <div class="container">
-            <div class="preview-card animate-on-scroll">
-                <h3 class="preview-title">Das bekommst du in deiner persönlichen Farbanalyse</h3>
-                <p class="preview-subtitle">Eine 19-seitige, individuell auf dich abgestimmte Analyse mit praktischen Tipps für den Alltag</p>
-                
-                <!-- PACKAGE PREVIEW SLIDERS -->
-                <div class="package-sliders-section">
-                    <div class="package-slider-grid">
-                        <!-- Premium Package Slider -->
-                        <div class="package-slider-container">
-                            <h4 class="slider-title">Deine persönliche Farbpalette</h4>
-                            <div class="slider-wrapper premium-slider">
-                                <div class="slide active">
-                                    <img src="premium-slide1.png" alt="Farbpalette Beispiel 1" class="slider-image" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #667eea20, #764ba220)'; this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:#667eea;font-weight:600;\'>Farbpalette Beispiel 1</div>';">
-                                </div>
-                                <div class="slide">
-                                    <img src="premium-slide2.png" alt="Farbpalette Beispiel 2" class="slider-image" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #667eea20, #764ba220)'; this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:#667eea;font-weight:600;\'>Farbpalette Beispiel 2</div>';">
-                                </div>
-                                <div class="slide">
-                                    <img src="premium-slide3.png" alt="Farbpalette Beispiel 3" class="slider-image" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #667eea20, #764ba220)'; this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:#667eea;font-weight:600;\'>Farbpalette Beispiel 3</div>';">
-                                </div>
-                                <div class="slide">
-                                    <img src="premium-slide4.png" alt="Farbpalette Beispiel 4" class="slider-image" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #667eea20, #764ba220)'; this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:#667eea;font-weight:600;\'>Farbpalette Beispiel 4</div>';">
-                                </div>
-                                <div class="slide">
-                                    <img src="standard-slide2.png" alt="Analyse Beispiel 2" class="slider-image" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #667eea20, #764ba220)'; this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:#667eea;font-weight:600;\'>Analyse Beispiel 2</div>';">
-                                </div>
-                                <div class="slide">
-                                    <img src="standard-slide3.png" alt="Analyse Beispiel 3" class="slider-image" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #667eea20, #764ba220)'; this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:#667eea;font-weight:600;\'>Analyse Beispiel 3</div>';">
-                                </div>
-                            </div>
-                            <div class="slider-dots">
-                                <span class="dot active" onclick="currentSlide(1, 'premium')"></span>
-                                <span class="dot" onclick="currentSlide(2, 'premium')"></span>
-                                <span class="dot" onclick="currentSlide(3, 'premium')"></span>
-                                <span class="dot" onclick="currentSlide(4, 'premium')"></span>
-                                <span class="dot" onclick="currentSlide(5, 'premium')"></span>
-                                <span class="dot" onclick="currentSlide(6, 'premium')"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+   
 
                 <!-- CLARA SLIDER SECTION -->
                 <div class="clara-slider-section">
@@ -1967,15 +2144,7 @@
         </div>
     </section>
 
-    <!-- EMOTIONALER CTA VOR FINAL -->
-    <section style="padding: 60px 0; background: linear-gradient(135deg, #667eea, #764ba2); text-align: center; color: white;">
-        <div class="container">
-            <h3 style="font-size: 32px; font-weight: 800; margin-bottom: 20px; line-height: 1.2;">Über 2.300 Frauen können nicht irren...</h3>
-            <p style="font-size: 20px; margin-bottom: 32px; opacity: 0.95; max-width: 600px; margin-left: auto; margin-right: auto;">Werde auch du eine von ihnen, die endlich weiß, welche Farben sie perfekt zur Geltung bringen!</p>
-            <a href="#quiz-start" style="display: inline-block; background: white; color: #667eea; padding: 22px 50px; border: none; border-radius: 60px; font-size: 20px; font-weight: 700; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">Jetzt durchstarten und Farben entdecken! →</a>
-            <p style="font-size: 14px; margin-top: 16px; opacity: 0.9;">⚡ Nur noch heute: Sofort verfügbar</p>
-        </div>
-    </section>
+    
 
     <section class="final-cta">
         <div class="container">
