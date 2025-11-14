@@ -1,18 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "u1bdqt1zrn");
-    </script>
-    
-    <title>Анализ разрешения на работу: Вопрос 1</title>
+    <title>Farbanalyse - Frage 1</title>
     <style>
         * {
             margin: 0;
@@ -21,11 +12,10 @@
         }
 
         body {
-            font-family: "Inter", Arial, sans-serif;
-            background: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
             min-height: 100vh;
             padding: 20px;
-            color: #333;
         }
 
         .main-container {
@@ -37,9 +27,8 @@
             background: white;
             padding: 20px;
             margin-bottom: 30px;
-            border-radius: 8px;
+            border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border: 1px solid #e0e0e0;
         }
 
         .progress-label {
@@ -59,156 +48,86 @@
         }
 
         .progress-fill {
-            background: #1e3c72;
+            background: linear-gradient(90deg, #667eea, #764ba2);
             height: 100%;
-            width: 10%;
+            width: 14.3%;
             border-radius: 4px;
             transition: width 0.3s ease;
         }
 
         .container {
             background: white;
-            border-radius: 8px;
+            border-radius: 20px;
             padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border: 1px solid #e0e0e0;
         }
 
         h1 {
-            font-size: 28px;
-            color: #000;
-            margin-bottom: 40px;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 15px;
             font-weight: 600;
-            line-height: 1.2;
         }
 
-        .option-container {
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .example-image {
+            background: linear-gradient(135deg, #f8f9ff, #e8efff);
+            height: 200px;
+            border-radius: 15px;
+            margin-bottom: 30px;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            font-weight: 500;
+            border: 2px solid #e8efff;
+        }
+
+        .options-grid {
+            display: grid;
             gap: 15px;
             margin-bottom: 30px;
         }
 
         .option-button {
-            background: white;
-            border: 2px solid #ddd;
-            border-radius: 4px;
             padding: 20px;
+            border: 2px solid #e8e9ea;
+            border-radius: 12px;
+            background: white;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 16px;
-            font-weight: 500;
-            color: #333;
             text-align: left;
+            font-size: 16px;
+            color: #333;
         }
 
         .option-button:hover {
-            border-color: #1e3c72;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.15);
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.1);
         }
 
         .option-button.selected {
-            border-color: #1e3c72;
-            background: #1e3c72;
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
         }
 
         .security-note {
-            margin-top: 30px;
-            color: #666;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
-            border-left: 4px solid #1e3c72;
-        }
-
-        /* Popup Styles */
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .popup-content {
-            background: white;
-            border-radius: 8px;
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid #e0e0e0;
-        }
-
-        .popup-content h3 {
-            color: #000;
-            margin-bottom: 20px;
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 12px;
+            color: #999;
             text-align: center;
-        }
-
-        .popup-content input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            margin-bottom: 20px;
-            transition: border-color 0.3s ease;
-        }
-
-        .popup-content input:focus {
-            outline: none;
-            border-color: #1e3c72;
-        }
-
-        .popup-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .submit-btn, .cancel-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .submit-btn {
-            background: #1e3c72;
-            color: white;
-        }
-
-        .submit-btn:hover {
-            background: #162e57;
-        }
-
-        .cancel-btn {
-            background: #f8f9fa;
-            color: #666;
-            border: 1px solid #ddd;
-        }
-
-        .cancel-btn:hover {
-            background: #e9ecef;
+            margin-top: 20px;
         }
 
         @media (max-width: 480px) {
@@ -217,79 +136,64 @@
             }
             
             h1 {
-                font-size: 24px;
+                font-size: 20px;
             }
             
             .option-button {
                 padding: 15px;
-                font-size: 15px;
+                font-size: 14px;
+            }
+            
+            .example-image {
+                height: 150px;
             }
         }
     </style>
-    <script src="/tracking.js" defer></script>
-    <script src="/utm-make.js" defer></script>
 </head>
 <body>
     <div class="main-container">
-        <!-- PROGRESS BAR -->
         <div class="progress-container">
             <div class="progress-label">
-                <span>Вопрос 1 из 10</span>
-                <span>10%</span>
+                <span>Frage 1 von 7</span>
+                <span>14%</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
         </div>
-        
-        <!-- MAIN CONTENT -->
+
         <div class="container">
-            <h1>В какой сфере Вы работали в последний раз?</h1>
+            <h1>Welche Augenfarbe hast du?</h1>
+            <p class="subtitle">Deine Augenfarbe hilft uns bei der perfekten Farbberatung</p>
             
-            <div class="option-container">
-                <div class="option-button" data-value="bau" onclick="selectOption(this, 'bau')">
-                    Строительство
-                </div>
-                
-                <div class="option-button" data-value="pflege" onclick="selectOption(this, 'pflege')">
-                    Уход и медицина
-                </div>
-                
-                <div class="option-button" data-value="gastronomie" onclick="selectOption(this, 'gastronomie')">
-                    Гастрономия и ресторанный бизнес
-                </div>
-                
-                <div class="option-button" data-value="it" onclick="selectOption(this, 'it')">
-                    IT и технологии
-                </div>
-                
-                <div class="option-button" data-value="handwerk" onclick="selectOption(this, 'handwerk')">
-                    Ремесло и мастерство
-                </div>
-                
-                <div class="option-button" data-value="transport" onclick="selectOption(this, 'transport')">
-                    Транспорт и логистика
-                </div>
-                
-                <div class="option-button" data-value="sonstige" onclick="selectOption(this, 'sonstige')">
-                    Другое
-                </div>
+            <div class="example-image">
+                <img src="Augenfarben.png" alt="Verschiedene Augenfarben" style="width: 100%; height: 100%; object-fit: contain; border-radius: 15px;">
             </div>
             
-            <!-- Popup для Другое -->
-            <div id="sonstigePopup" class="popup-overlay" style="display: none;">
-                <div class="popup-content">
-                    <h3>В какой сфере Вы работали?</h3>
-                    <input type="text" id="sonstigeInput" placeholder="Пожалуйста, укажите Вашу сферу деятельности..." maxlength="100">
-                    <div class="popup-buttons">
-                        <button onclick="submitSonstige()" class="submit-btn">Подтвердить</button>
-                        <button onclick="closeSonstigePopup()" class="cancel-btn">Отменить</button>
-                    </div>
+            <div class="options-grid">
+                <div class="option-button" data-value="braun" onclick="selectOption(this, 'braun')">
+                    Braun (dunkel bis hellbraun)
+                </div>
+                
+                <div class="option-button" data-value="blau" onclick="selectOption(this, 'blau')">
+                    Blau (hellblau bis dunkelblau)
+                </div>
+                
+                <div class="option-button" data-value="gruen" onclick="selectOption(this, 'gruen')">
+                    Grün (grün bis grün-braun)
+                </div>
+                
+                <div class="option-button" data-value="grau" onclick="selectOption(this, 'grau')">
+                    Grau (grau bis blau-grau)
+                </div>
+                
+                <div class="option-button" data-value="haselnuss" onclick="selectOption(this, 'haselnuss')">
+                    Haselnuss (braun-grün gemischt)
                 </div>
             </div>
             
             <div class="security-note">
-                🔒 Ваши данные в безопасности и обрабатываются конфиденциально
+                🔒 Deine Daten sind sicher und werden vertraulich behandelt
             </div>
         </div>
     </div>
@@ -302,85 +206,53 @@
                 localStorage.setItem(question, answer);
                 
                 // Speichere auch in einem Gesamt-Objekt für späteres Versenden
-                let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
+                let allAnswers = JSON.parse(localStorage.getItem('quizAnswers')) || {};
                 allAnswers[question] = answer;
+                allAnswers.timestamp = new Date().toISOString();
                 localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
                 
                 console.log('Gespeichert:', question, '=', answer);
+                console.log('Alle Antworten:', allAnswers);
             }
         }
 
         function selectOption(element, value) {
-            // Wenn "Другое" ausgewählt wird, öffne Popup
-            if (value === 'sonstige') {
-                document.getElementById('sonstigePopup').style.display = 'flex';
-                setTimeout(() => {
-                    document.getElementById('sonstigeInput').focus();
-                }, 100);
-                return;
-            }
-            
-            // Normale Verarbeitung für andere Optionen
             document.querySelectorAll('.option-button').forEach(btn => {
                 btn.classList.remove('selected');
             });
             
             element.classList.add('selected');
             
-            // Speichere Antwort mit Tracking
-            saveAnswer('Arbeitsbereich', value);
+            // Speichere die Antwort mit Tracking
+            saveAnswer('eyeColor', value);
+            saveAnswer('step2_answer', value);
+            saveAnswer('question1', value);
+            saveAnswer('augenfarbe', value);
             
-            setTimeout(() => {
-                window.location.href = '/step3.html';
-            }, 500);
-        }
-
-        function submitSonstige() {
-            const customValue = document.getElementById('sonstigeInput').value.trim();
-            
-            if (customValue === '') {
-                alert('Пожалуйста, укажите Вашу сферу деятельности.');
-                return;
-            }
-            
-            // Markiere Другое Button als ausgewählt
-            document.querySelectorAll('.option-button').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            document.querySelector('[data-value="sonstige"]').classList.add('selected');
-            
-            // Speichere sowohl "sonstige" als auch den custom Wert
-            saveAnswer('Arbeitsbereich', 'sonstige');
-            saveAnswer('Arbeitsbereich_Custom', customValue);
-            
-            // Schließe Popup
-            document.getElementById('sonstigePopup').style.display = 'none';
-            
-            setTimeout(() => {
-                window.location.href = '/step3.html';
-            }, 500);
-        }
-
-        function closeSonstigePopup() {
-            document.getElementById('sonstigePopup').style.display = 'none';
-            document.getElementById('sonstigeInput').value = '';
-        }
-
-        // Enter-Taste im Input-Feld
-        document.addEventListener('DOMContentLoaded', function() {
-            const input = document.getElementById('sonstigeInput');
-            if (input) {
-                input.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        submitSonstige();
-                    }
-                    if (e.key === 'Escape') {
-                        closeSonstigePopup();
-                    }
+            // TikTok Pixel Event (falls vorhanden)
+            if (typeof ttq !== 'undefined') {
+                ttq.track('CompleteRegistration', {
+                    content_type: 'quiz_step',
+                    content_id: 'step2_eye_color',
+                    value: value
                 });
             }
-        });
+            
+            // Meta Pixel Event (falls vorhanden)
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'CompleteRegistration', {
+                    content_name: 'Quiz Step 2',
+                    content_category: 'Eye Color',
+                    value: value
+                });
+            }
+            
+            setTimeout(() => {
+                window.location.href = 'step3.html';
+            }, 500);
+        }
 
+        // Lade-Animation
         window.addEventListener('load', function() {
             const container = document.querySelector('.container');
             container.style.opacity = '0';
@@ -391,14 +263,11 @@
                 container.style.opacity = '1';
                 container.style.transform = 'translateY(0)';
             }, 100);
-            
-            // Lade vorherige Auswahl wenn vorhanden
-            const savedValue = localStorage.getItem('Arbeitsbereich');
-            if (savedValue) {
-                const button = document.querySelector(`[data-value="${savedValue}"]`);
-                if (button) button.classList.add('selected');
-            }
         });
+        
+        // Log beim Seitenladen für Debugging
+        console.log('Step 2 geladen - Augenfarben-Frage');
+        console.log('Aktuelle gespeicherte Daten:', localStorage.getItem('quizAnswers'));
     </script>
 </body>
 </html>
