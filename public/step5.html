@@ -1,17 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Анализ разрешения на работу: Вопрос 4</title>
-
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "u1bdqt1zrn");
-    </script>
+    <title>Body-Typing Analyse - Frage 4</title>
     <style>
         * {
             margin: 0;
@@ -20,11 +12,10 @@
         }
 
         body {
-            font-family: "Inter", Arial, sans-serif;
-            background: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
             min-height: 100vh;
             padding: 20px;
-            color: #333;
         }
 
         .main-container {
@@ -36,9 +27,8 @@
             background: white;
             padding: 20px;
             margin-bottom: 30px;
-            border-radius: 8px;
+            border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border: 1px solid #e0e0e0;
         }
 
         .progress-label {
@@ -58,28 +48,44 @@
         }
 
         .progress-fill {
-            background: #1e3c72;
+            background: linear-gradient(90deg, #667eea, #764ba2);
             height: 100%;
-            width: 40%;
+            width: 57.2%;
             border-radius: 4px;
             transition: width 0.3s ease;
         }
 
         .container {
             background: white;
-            border-radius: 8px;
+            border-radius: 15px;
             padding: 40px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #764ba2;
+        }
+
+        .example-image {
+            width: 100%;
+            max-width: 500px;
+            height: 280px;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            border-radius: 15px;
+            margin: 0 auto 30px;
+            overflow: hidden;
+        }
+
+        .example-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         h1 {
             font-size: 28px;
-            color: #000;
+            color: #333;
             margin-bottom: 40px;
             font-weight: 600;
-            line-height: 1.2;
         }
 
         .option-container {
@@ -91,8 +97,8 @@
 
         .option-button {
             background: white;
-            border: 2px solid #ddd;
-            border-radius: 4px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
             padding: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -103,14 +109,14 @@
         }
 
         .option-button:hover {
-            border-color: #1e3c72;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.15);
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
         }
 
         .option-button.selected {
-            border-color: #1e3c72;
-            background: #1e3c72;
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
@@ -122,10 +128,6 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
-            border-left: 4px solid #1e3c72;
         }
 
         @media (max-width: 480px) {
@@ -141,6 +143,10 @@
                 padding: 15px;
                 font-size: 15px;
             }
+
+            .example-image {
+                height: 200px;
+            }
         }
     </style>
     <script src="/tracking.js" defer></script>
@@ -151,8 +157,8 @@
         <!-- PROGRESS BAR -->
         <div class="progress-container">
             <div class="progress-label">
-                <span>Вопрос 4 из 10</span>
-                <span>40%</span>
+                <span>Frage 4 von 7</span>
+                <span>57%</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
@@ -161,24 +167,32 @@
         
         <!-- MAIN CONTENT -->
         <div class="container">
-            <h1>Есть ли у Вас уже жилье в Германии?</h1>
+            <div class="example-image">
+                <img src="/Schmuck.png" alt="Schmuck-Vergleich">
+            </div>
+            
+            <h1>Welche Aussage trifft auf dich zu?</h1>
             
             <div class="option-container">
-                <div class="option-button" data-value="ja" onclick="selectOption(this, 'ja')">
-                    Да
+                <div class="option-button" data-value="gold" onclick="selectOption(this, 'gold')">
+                    Goldener Schmuck steht mir besser (warmer Hautunterton)
                 </div>
                 
-                <div class="option-button" data-value="nein_suche" onclick="selectOption(this, 'nein_suche')">
-                    Нет, я еще ищу
+                <div class="option-button" data-value="silber" onclick="selectOption(this, 'silber')">
+                    Silberner Schmuck steht mir besser (kühler Hautunterton)
                 </div>
                 
-                <div class="option-button" data-value="weiss_nicht" onclick="selectOption(this, 'weiss_nicht')">
-                    Я пока не знаю
+                <div class="option-button" data-value="beides" onclick="selectOption(this, 'beides')">
+                    Beides steht mir gleich gut (neutraler Hautunterton)
+                </div>
+                
+                <div class="option-button" data-value="unsicher" onclick="selectOption(this, 'unsicher')">
+                    Ich bin mir unsicher
                 </div>
             </div>
             
             <div class="security-note">
-                🔒 Ваши данные в безопасности и обрабатываются конфиденциально
+                🔒 Deine Daten sind sicher und werden vertraulich behandelt
             </div>
         </div>
     </div>
@@ -187,10 +201,8 @@
         // Tracking-Funktion für Antworten
         function saveAnswer(question, answer) {
             if (typeof(Storage) !== "undefined") {
-                // Speichere einzelne Antwort
                 localStorage.setItem(question, answer);
                 
-                // Speichere auch in einem Gesamt-Objekt für späteres Versenden
                 let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
                 allAnswers[question] = answer;
                 localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
@@ -206,8 +218,7 @@
             
             element.classList.add('selected');
             
-            // Speichere Antwort mit Tracking
-            saveAnswer('Unterkunft_Deutschland', value);
+            saveAnswer('skinUndertone', value);
             
             setTimeout(() => {
                 window.location.href = '/step6.html';
@@ -225,8 +236,7 @@
                 container.style.transform = 'translateY(0)';
             }, 100);
             
-            // Lade vorherige Auswahl wenn vorhanden
-            const savedValue = localStorage.getItem('Unterkunft_Deutschland');
+            const savedValue = localStorage.getItem('skinUndertone');
             if (savedValue) {
                 const button = document.querySelector(`[data-value="${savedValue}"]`);
                 if (button) button.classList.add('selected');
