@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farbanalyse - Frage 1</title>
+    <title>Body-Typing Analyse - Frage 1</title>
     <style>
         * {
             margin: 0;
@@ -57,77 +57,77 @@
 
         .container {
             background: white;
-            border-radius: 20px;
+            border-radius: 15px;
             padding: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             text-align: center;
-        }
-
-        h1 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .subtitle {
-            color: #666;
-            font-size: 16px;
-            margin-bottom: 30px;
-            line-height: 1.5;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #764ba2;
         }
 
         .example-image {
-            background: linear-gradient(135deg, #f8f9ff, #e8efff);
-            height: 200px;
+            width: 100%;
+            max-width: 500px;
+            height: 280px;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
             border-radius: 15px;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #667eea;
-            font-weight: 500;
-            border: 2px solid #e8efff;
+            margin: 0 auto 30px;
+            overflow: hidden;
         }
 
-        .options-grid {
-            display: grid;
+        .example-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .option-container {
+            display: flex;
+            flex-direction: column;
             gap: 15px;
             margin-bottom: 30px;
         }
 
         .option-button {
-            padding: 20px;
-            border: 2px solid #e8e9ea;
-            border-radius: 12px;
             background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-align: left;
             font-size: 16px;
+            font-weight: 500;
             color: #333;
+            text-align: left;
         }
 
         .option-button:hover {
             border-color: #667eea;
-            background: #f8f9ff;
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
         }
 
         .option-button.selected {
             border-color: #667eea;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
         }
 
         .security-note {
-            font-size: 12px;
-            color: #999;
-            text-align: center;
-            margin-top: 20px;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         @media (max-width: 480px) {
@@ -136,22 +136,25 @@
             }
             
             h1 {
-                font-size: 20px;
+                font-size: 24px;
             }
             
             .option-button {
                 padding: 15px;
-                font-size: 14px;
+                font-size: 15px;
             }
-            
+
             .example-image {
                 height: 150px;
             }
         }
     </style>
+    <script src="/tracking.js" defer></script>
+    <script src="/utm-make.js" defer></script>
 </head>
 <body>
     <div class="main-container">
+        <!-- PROGRESS BAR -->
         <div class="progress-container">
             <div class="progress-label">
                 <span>Frage 1 von 7</span>
@@ -161,34 +164,34 @@
                 <div class="progress-fill"></div>
             </div>
         </div>
-
+        
+        <!-- MAIN CONTENT -->
         <div class="container">
-            <h1>Welche Augenfarbe hast du?</h1>
-            <p class="subtitle">Deine Augenfarbe hilft uns bei der perfekten Farbberatung</p>
-            
             <div class="example-image">
-                <img src="Augenfarben.png" alt="Verschiedene Augenfarben" style="width: 100%; height: 100%; object-fit: contain; border-radius: 15px;">
+                <img src="/Augen.png" alt="Augenfarbe">
             </div>
             
-            <div class="options-grid">
-                <div class="option-button" data-value="braun" onclick="selectOption(this, 'braun')">
-                    Braun (dunkel bis hellbraun)
-                </div>
-                
+            <h1>Welche Augenfarbe hast du?</h1>
+            
+            <div class="option-container">
                 <div class="option-button" data-value="blau" onclick="selectOption(this, 'blau')">
-                    Blau (hellblau bis dunkelblau)
+                    Blau
                 </div>
                 
                 <div class="option-button" data-value="gruen" onclick="selectOption(this, 'gruen')">
-                    Grün (grün bis grün-braun)
+                    Grün
+                </div>
+                
+                <div class="option-button" data-value="braun" onclick="selectOption(this, 'braun')">
+                    Braun
                 </div>
                 
                 <div class="option-button" data-value="grau" onclick="selectOption(this, 'grau')">
-                    Grau (grau bis blau-grau)
+                    Grau
                 </div>
                 
-                <div class="option-button" data-value="haselnuss" onclick="selectOption(this, 'haselnuss')">
-                    Haselnuss (braun-grün gemischt)
+                <div class="option-button" data-value="misch" onclick="selectOption(this, 'misch')">
+                    Mischfarbe
                 </div>
             </div>
             
@@ -206,13 +209,11 @@
                 localStorage.setItem(question, answer);
                 
                 // Speichere auch in einem Gesamt-Objekt für späteres Versenden
-                let allAnswers = JSON.parse(localStorage.getItem('quizAnswers')) || {};
+                let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
                 allAnswers[question] = answer;
-                allAnswers.timestamp = new Date().toISOString();
                 localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
                 
                 console.log('Gespeichert:', question, '=', answer);
-                console.log('Alle Antworten:', allAnswers);
             }
         }
 
@@ -223,36 +224,14 @@
             
             element.classList.add('selected');
             
-            // Speichere die Antwort mit Tracking
-            saveAnswer('eyeColor', value);
-            saveAnswer('step2_answer', value);
-            saveAnswer('question1', value);
-            saveAnswer('augenfarbe', value);
-            
-            // TikTok Pixel Event (falls vorhanden)
-            if (typeof ttq !== 'undefined') {
-                ttq.track('CompleteRegistration', {
-                    content_type: 'quiz_step',
-                    content_id: 'step2_eye_color',
-                    value: value
-                });
-            }
-            
-            // Meta Pixel Event (falls vorhanden)
-            if (typeof fbq !== 'undefined') {
-                fbq('track', 'CompleteRegistration', {
-                    content_name: 'Quiz Step 2',
-                    content_category: 'Eye Color',
-                    value: value
-                });
-            }
+            // Speichere Antwort mit Tracking
+            saveAnswer('bodyShape', value);
             
             setTimeout(() => {
-                window.location.href = 'step3.html';
+                window.location.href = '/step3.html';
             }, 500);
         }
 
-        // Lade-Animation
         window.addEventListener('load', function() {
             const container = document.querySelector('.container');
             container.style.opacity = '0';
@@ -263,11 +242,14 @@
                 container.style.opacity = '1';
                 container.style.transform = 'translateY(0)';
             }, 100);
+            
+            // Lade vorherige Auswahl wenn vorhanden
+            const savedValue = localStorage.getItem('bodyShape');
+            if (savedValue) {
+                const button = document.querySelector(`[data-value="${savedValue}"]`);
+                if (button) button.classList.add('selected');
+            }
         });
-        
-        // Log beim Seitenladen für Debugging
-        console.log('Step 2 geladen - Augenfarben-Frage');
-        console.log('Aktuelle gespeicherte Daten:', localStorage.getItem('quizAnswers'));
     </script>
 </body>
 </html>
