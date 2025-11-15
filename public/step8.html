@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Анализ разрешения на работу: Вопрос 7</title>
+    <title>Farbanalyse: Foto Upload</title>
     <style>
         * {
             margin: 0;
@@ -12,11 +12,10 @@
         }
 
         body {
-            font-family: "Inter", Arial, sans-serif;
-            background: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
             min-height: 100vh;
             padding: 20px;
-            color: #333;
         }
 
         .main-container {
@@ -24,100 +23,232 @@
             margin: 0 auto;
         }
 
-        .progress-container {
-            background: white;
-            padding: 20px;
-            margin-bottom: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border: 1px solid #e0e0e0;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
-            color: #666;
-            font-weight: 600;
-        }
-
-        .progress-bar {
-            background: #f0f0f0;
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            background: #1e3c72;
-            height: 100%;
-            width: 70%;
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
-        .container {
-            background: white;
-            border-radius: 8px;
-            padding: 40px;
+        .header {
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border: 1px solid #e0e0e0;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
 
         h1 {
             font-size: 28px;
-            color: #000;
-            margin-bottom: 40px;
-            font-weight: 600;
-            line-height: 1.2;
-        }
-
-        .option-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .option-button {
-            background: white;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 16px;
-            font-weight: 500;
             color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            border: 2px solid #667eea20;
+        }
+
+        .example-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
             text-align: left;
         }
 
-        .option-button:hover {
-            border-color: #1e3c72;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.15);
+        .good-example, .bad-example {
+            padding: 20px;
+            border-radius: 15px;
         }
 
-        .option-button.selected {
-            border-color: #1e3c72;
-            background: #1e3c72;
-            color: white;
+        .good-example {
+            background: linear-gradient(135deg, #f0fff4, #dcfce7);
+            border: 2px solid #22c55e20;
         }
 
-        .security-note {
-            margin-top: 30px;
-            color: #666;
+        .bad-example {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            border: 2px solid #ef444420;
+        }
+
+        .example-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .good-example .example-title {
+            color: #22C55E;
+        }
+
+        .bad-example .example-title {
+            color: #EF4444;
+        }
+
+        .example-text {
             font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .example-image {
+            width: 100%;
+            height: 120px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .example-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 20px;
+            padding: 50px 30px;
+            margin: 30px 0;
+            background: linear-gradient(135deg, #f8f9ff, #f0f2ff);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: linear-gradient(135deg, #f0f2ff, #e8ebff);
+            transform: translateY(-2px);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+            60% { transform: translateY(-4px); }
+        }
+
+        .upload-text {
+            font-size: 20px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .uploaded-photo {
+            display: none;
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 3px solid #667eea;
+        }
+
+        .uploaded-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-photo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            background: #f8f9fa;
+        }
+
+        .continue-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .continue-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .continue-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .privacy-note {
+            margin-top: 20px;
             padding: 15px;
-            border-radius: 4px;
-            border-left: 4px solid #1e3c72;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .processing-message {
+            color: #667eea;
+            font-weight: 600;
+            margin-top: 15px;
+            display: none;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
         }
 
         @media (max-width: 480px) {
@@ -128,109 +259,243 @@
             h1 {
                 font-size: 24px;
             }
+
+            .example-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
             
-            .option-button {
-                padding: 15px;
-                font-size: 15px;
+            .upload-area {
+                padding: 40px 20px;
+            }
+
+            .upload-icon {
+                font-size: 40px;
+            }
+
+            .upload-text {
+                font-size: 18px;
             }
         }
     </style>
-    <script src="/tracking.js" defer></script>
-    <script src="/utm-make.js" defer></script>
 </head>
 <body>
     <div class="main-container">
-        <!-- PROGRESS BAR -->
-        <div class="progress-container">
-            <div class="progress-label">
-                <span>Вопрос 7 из 10</span>
-                <span>70%</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
-            </div>
+        <div class="header">
+            <div class="logo">📸</div>
+            <h1>Ein Foto für deine perfekte Farbpalette</h1>
+            <p class="subtitle">Optional: Lade ein Foto hoch oder überspringe diesen Schritt</p>
         </div>
-        
-        <!-- MAIN CONTENT -->
+
         <div class="container">
-            <h1>Насколько хорошо Вы говорите по-немецки?</h1>
-            
-            <div class="option-container">
-                <div class="option-button" data-value="a1" onclick="selectOption(this, 'a1')">
-                    A1 (базовые знания)
+            <div class="example-section">
+                <div class="good-example">
+                    <div class="example-title">✅ Gutes Foto</div>
+                    <div class="example-text">Natürliches Licht, gerade fotografiert</div>
+                    <div class="example-image">
+                        <img src="/Foto-Gut-2.jpg" alt="Gutes Beispiel">
+                    </div>
                 </div>
-                
-                <div class="option-button" data-value="a2" onclick="selectOption(this, 'a2')">
-                    A2
-                </div>
-                
-                <div class="option-button" data-value="b1" onclick="selectOption(this, 'b1')">
-                    B1
-                </div>
-                
-                <div class="option-button" data-value="b2" onclick="selectOption(this, 'b2')">
-                    B2 или лучше
-                </div>
-                
-                <div class="option-button" data-value="kein_deutsch" onclick="selectOption(this, 'kein_deutsch')">
-                    Я не говорю по-немецки
+
+                <div class="bad-example">
+                    <div class="example-title">❌ Schlecht</div>
+                    <div class="example-text">Zu dunkel, Filter, direktes Sonnenlicht</div>
+                    <div class="example-image">
+                        <img src="/Foto-Schlecht-2.jpg" alt="Schlechtes Beispiel">
+                    </div>
                 </div>
             </div>
-            
-            <div class="security-note">
-                🔒 Ваши данные в безопасности и обрабатываются конфиденциально
+
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📷</div>
+                <div class="upload-text">Foto hochladen</div>
+                <div class="upload-subtext">Klicke hier oder ziehe ein Foto hierher</div>
+            </div>
+
+            <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFiles(this.files)">
+
+            <div class="uploaded-photo" id="uploadedPhoto">
+                <img id="previewImage" src="" alt="Hochgeladenes Foto">
+                <button class="remove-photo" onclick="removePhoto()">×</button>
+            </div>
+
+            <button class="continue-btn" id="continueBtn" onclick="submitData()">
+                Meine Analyse sichern
+            </button>
+
+            <div class="processing-message" id="processingMessage">
+                Daten werden verarbeitet...
+            </div>
+
+            <div class="privacy-note">
+                <span>🔒</span>
+                <span>Dein Foto wird nur für die Analyse verwendet und nach 24h automatisch gelöscht</span>
             </div>
         </div>
     </div>
 
     <script>
-        // Tracking-Funktion für Antworten
-        function saveAnswer(question, answer) {
-            if (typeof(Storage) !== "undefined") {
-                // Speichere einzelne Antwort
-                localStorage.setItem(question, answer);
-                
-                // Speichere auch in einem Gesamt-Objekt für späteres Versenden
-                let allAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
-                allAnswers[question] = answer;
-                localStorage.setItem('quizAnswers', JSON.stringify(allAnswers));
-                
-                console.log('Gespeichert:', question, '=', answer);
+        let uploadedFile = null;
+
+        function handleFiles(files) {
+            const file = files[0];
+            if (file && file.type.startsWith('image/')) {
+                uploadedFile = file;
+                displayPhoto(file);
             }
         }
 
-        function selectOption(element, value) {
-            document.querySelectorAll('.option-button').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            
-            element.classList.add('selected');
-            
-            // Speichere Antwort mit Tracking
-            saveAnswer('Deutschkenntnisse', value);
-            
-            setTimeout(() => {
-                window.location.href = '/step9.html';
-            }, 500);
+        function displayPhoto(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('previewImage').src = e.target.result;
+                document.getElementById('uploadedPhoto').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
         }
 
+        function removePhoto() {
+            uploadedFile = null;
+            document.getElementById('uploadedPhoto').style.display = 'none';
+        }
+
+        // Base64 Konvertierung mit Komprimierung
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                img.onload = function() {
+                    // Maximale Größe festlegen
+                    const maxSize = 800;
+                    let { width, height } = img;
+                    
+                    if (width > height) {
+                        if (width > maxSize) {
+                            height = (height * maxSize) / width;
+                            width = maxSize;
+                        }
+                    } else {
+                        if (height > maxSize) {
+                            width = (width * maxSize) / height;
+                            height = maxSize;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const base64 = canvas.toDataURL('image/jpeg', 0.8);
+                    resolve(base64);
+                };
+                
+                img.onerror = () => reject(new Error('Bildkonvertierung fehlgeschlagen'));
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        async function submitData() {
+            const btn = document.getElementById('continueBtn');
+            const processingMsg = document.getElementById('processingMessage');
+            
+            btn.disabled = true;
+            btn.textContent = 'Verarbeitung läuft...';
+            processingMsg.style.display = 'block';
+
+            try {
+                const photoDataArray = [];
+                
+                // Foto konvertieren falls vorhanden
+                if (uploadedFile) {
+                    const base64Data = await fileToBase64(uploadedFile);
+                    photoDataArray.push({
+                        data: base64Data,
+                        name: uploadedFile.name,
+                        type: uploadedFile.type,
+                        size: uploadedFile.size
+                    });
+                }
+
+                // Alle Daten sammeln
+                const allQuizAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
+                const userId = localStorage.getItem('userId') || `user_${Date.now()}`;
+                
+                const completeData = {
+                    ...allQuizAnswers,
+                    userId,
+                    photoCount: photoDataArray.length,
+                    timestamp: new Date().toISOString(),
+                    step: 'photo_upload_completed'
+                };
+
+                // Upload zu Backend
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        temp_photo_data: photoDataArray,
+                        userId,
+                        quizAnswers: completeData,
+                        createStripeSession: true
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Upload failed: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                // Daten speichern
+                localStorage.setItem('orderId', result.orderId || '');
+                localStorage.setItem('photosUploaded', photoDataArray.length > 0 ? 'true' : 'false');
+                
+                // Zur Analyse-Seite weiterleiten
+                btn.textContent = 'Weiterleitung zur Analyse...';
+                setTimeout(() => {
+                    window.location.href = '/analyse.html';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Fehler:', error);
+                alert('Fehler bei der Verarbeitung. Bitte versuche es erneut.');
+                btn.disabled = false;
+                btn.textContent = 'Zur Bezahlung (24,99€)';
+                processingMsg.style.display = 'none';
+            }
+        }
+
+        // Drag & Drop
+        const uploadArea = document.querySelector('.upload-area');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#764ba2';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#667eea';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#667eea';
+            handleFiles(e.dataTransfer.files);
+        });
+
+        // Animation beim Laden
         window.addEventListener('load', function() {
             const container = document.querySelector('.container');
             container.style.opacity = '0';
-            container.style.transform = 'translateY(30px)';
+            container.style.transform = 'translateY(20px)';
             container.style.transition = 'all 0.6s ease';
             
             setTimeout(() => {
                 container.style.opacity = '1';
                 container.style.transform = 'translateY(0)';
-            }, 100);
-            
-            // Lade vorherige Auswahl wenn vorhanden
-            const savedValue = localStorage.getItem('Deutschkenntnisse');
-            if (savedValue) {
-                const button = document.querySelector(`[data-value="${savedValue}"]`);
-                if (button) button.classList.add('selected');
-            }
+            }, 200);
         });
     </script>
 </body>
