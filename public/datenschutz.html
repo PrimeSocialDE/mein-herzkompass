@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Datenschutzerklärung - Germany Start</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Datenschutzerklärung - mein-herzkompass.de</title>
     <style>
         * {
             margin: 0;
@@ -12,18 +11,32 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #00d4aa;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --shadow-light: 0 2px 10px rgba(0,0,0,0.05);
+            --shadow-medium: 0 8px 30px rgba(0,0,0,0.12);
+            --border-radius: 16px;
+            --border-radius-small: 8px;
+        }
+
         body {
-            font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
-            color: #2D3748;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f1f3ff 0%, var(--bg-light) 100%);
+            color: var(--text-dark);
             line-height: 1.6;
         }
 
         .header {
-            background: white;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
             padding: 20px 0;
-            border-bottom: 1px solid #e2e8f0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-medium);
         }
 
         .header-container {
@@ -38,36 +51,45 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
             text-decoration: none;
+            color: var(--white);
         }
 
-        .logo img {
+        .logo-icon {
+            width: 40px;
             height: 40px;
-            width: auto;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
         }
 
         .logo-text {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
-            color: #1e3c72;
         }
 
         .nav-links {
             display: flex;
-            gap: 30px;
+            gap: 25px;
             align-items: center;
         }
 
         .nav-links a {
-            color: #4a5568;
+            color: rgba(255,255,255,0.9);
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.2s ease;
+            padding: 8px 16px;
+            border-radius: var(--border-radius-small);
+            transition: all 0.3s ease;
         }
 
         .nav-links a:hover {
-            color: #1e3c72;
+            background: rgba(255,255,255,0.2);
+            color: var(--white);
         }
 
         .container {
@@ -77,23 +99,23 @@
         }
 
         .main-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
             overflow: hidden;
-            border: 1px solid #e2e8f0;
+            border: 2px solid var(--primary-color);
         }
 
         .hero-section {
-            background: #1e3c72;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 50px 40px;
             text-align: center;
         }
 
         .hero-title {
-            font-size: 36px;
-            font-weight: 700;
+            font-size: 42px;
+            font-weight: 800;
             margin-bottom: 15px;
         }
 
@@ -119,24 +141,25 @@
         .section-title {
             font-size: 24px;
             font-weight: 700;
-            color: #1e3c72;
+            color: var(--primary-color);
             margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
         }
 
         .section-number {
-            background: #1e3c72;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .section-content {
@@ -158,77 +181,103 @@
         }
 
         .info-box {
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            border: 1px solid #0ea5e9;
-            border-left: 4px solid #1e3c72;
-            padding: 25px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%);
+            border: 2px solid var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+            padding: 30px;
+            border-radius: var(--border-radius-small);
             margin: 25px 0;
+            box-shadow: var(--shadow-light);
         }
 
         .info-box h3 {
-            color: #1e3c72;
+            color: var(--primary-color);
             margin-bottom: 15px;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .info-box p {
-            color: #0c4a6e;
+            color: var(--text-dark);
             margin-bottom: 10px;
         }
 
         .info-box ul {
-            color: #0c4a6e;
+            color: var(--text-dark);
         }
 
         .highlight-box {
-            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-            border: 1px solid #10b981;
-            border-left: 4px solid #059669;
-            padding: 25px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #f1f3ff 100%);
+            border: 1px solid var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+            padding: 30px;
+            border-radius: var(--border-radius-small);
             margin: 25px 0;
+            box-shadow: var(--shadow-light);
         }
 
         .highlight-box h3 {
-            color: #059669;
+            color: var(--primary-color);
             margin-bottom: 15px;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .highlight-box p, .highlight-box ul {
-            color: #065f46;
+            color: var(--text-dark);
         }
 
         .warning-box {
-            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-            border: 1px solid #f59e0b;
-            border-left: 4px solid #d97706;
-            padding: 25px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
+            border: 1px solid var(--text-light);
+            border-left: 4px solid var(--text-light);
+            padding: 30px;
+            border-radius: var(--border-radius-small);
             margin: 25px 0;
+            box-shadow: var(--shadow-light);
         }
 
         .warning-box h3 {
-            color: #d97706;
+            color: var(--text-dark);
             margin-bottom: 15px;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .warning-box p, .warning-box ul {
-            color: #92400e;
+            color: var(--text-dark);
+        }
+
+        .clara-notice {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f1f3ff 100%);
+            border: 1px solid var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+            padding: 30px;
+            border-radius: var(--border-radius-small);
+            margin: 30px 0;
+            box-shadow: var(--shadow-light);
+        }
+
+        .clara-notice h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .clara-notice p {
+            color: var(--text-dark);
+            margin-bottom: 10px;
         }
 
         .contact-section {
-            background: #1e3c72;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 40px;
-            border-radius: 12px;
+            border-radius: var(--border-radius-small);
             margin: 40px 0;
             text-align: center;
+            box-shadow: var(--shadow-medium);
         }
 
         .contact-section h3 {
@@ -244,12 +293,13 @@
         }
 
         .contact-section a {
-            color: #93c5fd;
+            color: #ddd6fe;
             font-weight: 600;
             text-decoration: none;
         }
 
         .contact-section a:hover {
+            color: white;
             text-decoration: underline;
         }
 
@@ -259,14 +309,21 @@
         }
 
         .back-link a {
-            color: #1e3c72;
+            color: var(--primary-color);
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 16px;
+            padding: 12px 30px;
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius-small);
+            transition: all 0.3s ease;
         }
 
         .back-link a:hover {
-            text-decoration: underline;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
 
         .data-table {
@@ -274,17 +331,17 @@
             border-collapse: collapse;
             margin: 20px 0;
             background: white;
-            border-radius: 8px;
+            border-radius: var(--border-radius-small);
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-light);
         }
 
         .data-table th {
-            background: #1e3c72;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 15px;
             text-align: left;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .data-table td {
@@ -297,25 +354,28 @@
         }
 
         .tag {
-            background: #e2e8f0;
-            color: #1e3c72;
-            padding: 4px 8px;
-            border-radius: 4px;
+            background: #f1f3f4;
+            color: var(--text-dark);
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
             display: inline-block;
             margin-right: 8px;
             margin-bottom: 4px;
+            border: 1px solid #e2e8f0;
         }
 
         .tag.required {
-            background: #fee2e2;
-            color: #dc2626;
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
         }
 
         .tag.optional {
-            background: #f0fdf4;
-            color: #059669;
+            background: var(--text-light);
+            color: white;
+            border-color: var(--text-light);
         }
 
         @media (max-width: 768px) {
@@ -343,7 +403,7 @@
             }
 
             .hero-title {
-                font-size: 28px;
+                font-size: 32px;
             }
 
             .hero-subtitle {
@@ -352,9 +412,12 @@
 
             .section-title {
                 font-size: 20px;
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
             }
 
-            .info-box, .highlight-box, .warning-box {
+            .info-box, .highlight-box, .warning-box, .clara-notice {
                 padding: 20px;
             }
 
@@ -368,11 +431,11 @@
     <div class="header">
         <div class="header-container">
             <a href="/" class="logo">
-                <img src="LogoGer.png" alt="Germany Start Logo">
+                <div class="logo-icon">💖</div>
+                <div class="logo-text">mein-herzkompass.de</div>
             </a>
             <div class="nav-links">
                 <a href="/">Startseite</a>
-                <a href="/datenschutz.html">Datenschutz</a>
                 <a href="/impressum.html">Impressum</a>
                 <a href="/agb.html">AGB</a>
             </div>
@@ -387,6 +450,12 @@
             </div>
 
             <div class="content">
+                <div class="clara-notice">
+                    <h3>💜 Hinweis zu "Clara"</h3>
+                    <p><strong>Clara ist eine fiktive Marketing-Persona</strong> für unsere Farb- und Style-Beratungsdienstleistung. Alle Kommunikation erfolgt durch qualifizierte Mitarbeiter der Debkowski & Moritz GbR. Der Name "Clara" dient ausschließlich der einheitlichen Markenführung und Kundenkommunikation.</p>
+                    <p><em>Verantwortlich für alle Inhalte und Dienstleistungen ist ausschließlich die im Impressum genannte Debkowski & Moritz GbR.</em></p>
+                </div>
+
                 <div class="section">
                     <h2 class="section-title">
                         <span class="section-number">1</span>
@@ -394,10 +463,10 @@
                     </h2>
                     <div class="section-content">
                         <div class="info-box">
-                            <h3>Kontaktdaten</h3>
-                            <p>Gemäß den Angaben im <a href="/impressum.html" style="color: #1e3c72; font-weight: 600;">Impressum</a></p>
+                            <h3>💼 Kontaktdaten</h3>
+                            <p>Gemäß den Angaben im <a href="/impressum.html" style="color: #667eea; font-weight: 600;">Impressum</a></p>
                             <p><strong>Datenschutzanfragen:</strong><br>
-                            <a href="mailto:support@germany-start.de" style="color: #1e3c72;">support@germany-start.de</a></p>
+                            <a href="mailto:clara@mein-herzkompass.de" style="color: #667eea;">clara@mein-herzkompass.de</a></p>
                             <p><em>Ein externer Datenschutzbeauftragter ist gemäß Art. 37 DSGVO nicht erforderlich, da keine gesetzliche Verpflichtung besteht.</em></p>
                         </div>
                     </div>
@@ -411,12 +480,13 @@
                     <div class="section-content">
                         <p>Wir verarbeiten Ihre personenbezogenen Daten zu folgenden Zwecken:</p>
                         <ul>
-                            <li>Bereitstellung unserer Beratungsleistungen für die Arbeitserlaubnis nach §24</li>
-                            <li>Erstellung personalisierter Dokumente und Formulare</li>
-                            <li>Kommunikation per E-Mail und Telefon</li>
-                            <li>Bestellabwicklung und Zahlungsverarbeitung über Stripe</li>
-                            <li>Erfüllung gesetzlicher Aufbewahrungspflichten</li>
-                            <li>Marketing und Verbesserung unseres Service</li>
+                            <li>💅 Bereitstellung personalisierter Farb- und Style-Beratungen</li>
+                            <li>🎨 Erstellung individueller Farbpaletten und Style-Empfehlungen</li>
+                            <li>📧 Kommunikation per E-Mail bezüglich Ihrer Beratung</li>
+                            <li>💳 Bestellabwicklung und Zahlungsverarbeitung über Stripe</li>
+                            <li>📋 Erfüllung gesetzlicher Aufbewahrungspflichten</li>
+                            <li>📈 Verbesserung unserer Beratungsleistungen</li>
+                            <li>💌 Marketing und Newsletter (nur mit Einwilligung)</li>
                         </ul>
                     </div>
                 </div>
@@ -428,7 +498,7 @@
                     </h2>
                     <div class="section-content">
                         <div class="info-box">
-                            <h3>Welche Daten wir sammeln</h3>
+                            <h3>📊 Welche Daten wir sammeln</h3>
                             <table class="data-table">
                                 <tr>
                                     <th>Datenart</th>
@@ -437,28 +507,28 @@
                                 </tr>
                                 <tr>
                                     <td><strong>Persönliche Daten</strong></td>
-                                    <td>Vor-/Nachname, Geburtsdatum, Geburtsort, Staatsangehörigkeit</td>
+                                    <td>Vor-/Nachname, E-Mail-Adresse</td>
                                     <td><span class="tag required">Erforderlich</span></td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Kontaktdaten</strong></td>
-                                    <td>E-Mail-Adresse, Telefonnummer, Adresse</td>
+                                    <td><strong>Style-Präferenzen</strong></td>
+                                    <td>Farb-Quiz-Antworten, Style-Vorlieben, Körpertyp</td>
                                     <td><span class="tag required">Erforderlich</span></td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Passdaten</strong></td>
-                                    <td>Passnummer, Ausstellungsort, Gültigkeitsdatum</td>
-                                    <td><span class="tag required">Erforderlich</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Familiendaten</strong></td>
-                                    <td>Familienstand, Kinder, Ehepartner</td>
+                                    <td><strong>Fotos (optional)</strong></td>
+                                    <td>Gesichtsfotos für Farbtyp-Analyse</td>
                                     <td><span class="tag optional">Optional</span></td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Berufsdaten</strong></td>
-                                    <td>Qualifikation, Berufserfahrung, Sprachkenntnisse</td>
+                                    <td><strong>Kontaktdaten</strong></td>
+                                    <td>E-Mail-Adresse, optional Telefonnummer</td>
                                     <td><span class="tag required">Erforderlich</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Zahlungsdaten</strong></td>
+                                    <td>Stripe-Checkout-Daten (extern verarbeitet)</td>
+                                    <td><span class="tag">Automatisch</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Technische Daten</strong></td>
@@ -478,9 +548,10 @@
                     <div class="section-content">
                         <p>Für die Zahlungsabwicklung nutzen wir <strong>Stripe Payments Europe Ltd., Dublin, Irland</strong>.</p>
                         <div class="info-box">
-                            <h3>Stripe-Datenverarbeitung</h3>
+                            <h3>🔒 Stripe-Datenverarbeitung</h3>
                             <p>Stripe verarbeitet Zahlungsdaten eigenverantwortlich nach strengen Sicherheitsstandards (PCI DSS Level 1).</p>
                             <p><strong>Weitere Informationen:</strong> <a href="https://stripe.com/de/privacy" target="_blank">https://stripe.com/de/privacy</a></p>
+                            <p><em>Wir erhalten nur bestätigte Transaktionsdaten, aber keine Kreditkarten- oder Bankdaten.</em></p>
                         </div>
                     </div>
                 </div>
@@ -493,13 +564,14 @@
                     <div class="section-content">
                         <p>Wir verwenden verschiedene Arten von Cookies und Tracking-Technologien:</p>
                         <div class="warning-box">
-                            <h3>Cookie-Kategorien</h3>
+                            <h3>🍪 Cookie-Kategorien</h3>
                             <ul>
-                                <li><strong>Technisch notwendige Cookies:</strong> Für den Betrieb der Website erforderlich</li>
+                                <li><strong>Technisch notwendige Cookies:</strong> Für den Betrieb der Website und Quiz-Funktionalität</li>
                                 <li><strong>Analyse-Cookies:</strong> Google Analytics, Microsoft Clarity für Nutzungsanalyse</li>
-                                <li><strong>Marketing-Cookies:</strong> Facebook Pixel, Google Ads für Werbung</li>
+                                <li><strong>Marketing-Cookies:</strong> TikTok Pixel, Facebook Pixel für Werbung</li>
+                                <li><strong>localStorage:</strong> Speicherung Ihrer Quiz-Antworten zwischen Seiten</li>
                             </ul>
-                            <p>Die Nutzung erfolgt auf Basis Ihrer Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO.</p>
+                            <p><em>Die Nutzung erfolgt auf Basis Ihrer Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO.</em></p>
                         </div>
                     </div>
                 </div>
@@ -511,10 +583,11 @@
                     </h2>
                     <div class="section-content">
                         <ul>
-                            <li><strong>Formulardaten:</strong> Bis zur vollständigen Bearbeitung Ihres Antrags, maximal 2 Jahre</li>
-                            <li><strong>Rechnungsdaten:</strong> 10 Jahre (steuerrechtliche Aufbewahrungspflicht)</li>
-                            <li><strong>E-Mail-Kommunikation:</strong> 3 Jahre für Nachweis- und Beratungszwecke</li>
-                            <li><strong>Tracking-Daten:</strong> Entsprechend Cookie-Einstellungen, maximal 26 Monate</li>
+                            <li><strong>🎨 Quiz-Daten und Farb-Analysen:</strong> Bis zur Vollendung Ihrer Beratung, maximal 2 Jahre</li>
+                            <li><strong>📷 Hochgeladene Fotos:</strong> 24 Stunden nach Upload, dann automatische Löschung</li>
+                            <li><strong>💳 Rechnungsdaten:</strong> 10 Jahre (steuerrechtliche Aufbewahrungspflicht)</li>
+                            <li><strong>📧 E-Mail-Kommunikation:</strong> 3 Jahre für Support- und Beratungszwecke</li>
+                            <li><strong>🍪 Tracking-Daten:</strong> Entsprechend Cookie-Einstellungen, maximal 26 Monate</li>
                         </ul>
                     </div>
                 </div>
@@ -526,12 +599,12 @@
                     </h2>
                     <div class="section-content">
                         <div class="info-box">
-                            <h3>DSGVO-Rechtsgrundlagen</h3>
+                            <h3>⚖️ DSGVO-Rechtsgrundlagen</h3>
                             <ul>
-                                <li><strong>Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung):</strong> Bearbeitung Ihrer Anträge, Dokumentenerstellung</li>
-                                <li><strong>Art. 6 Abs. 1 lit. a DSGVO (Einwilligung):</strong> Newsletter, Cookies, Marketing</li>
-                                <li><strong>Art. 6 Abs. 1 lit. c DSGVO (Rechtliche Verpflichtung):</strong> Aufbewahrungsfristen</li>
-                                <li><strong>Art. 6 Abs. 1 lit. f DSGVO (Berechtigtes Interesse):</strong> Sicherheit, Betrugsschutz</li>
+                                <li><strong>Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung):</strong> Farb-Beratung, Style-Empfehlungen, Dokumentenerstellung</li>
+                                <li><strong>Art. 6 Abs. 1 lit. a DSGVO (Einwilligung):</strong> Newsletter, Cookies, Marketing, Foto-Upload</li>
+                                <li><strong>Art. 6 Abs. 1 lit. c DSGVO (Rechtliche Verpflichtung):</strong> Rechnungs-Aufbewahrungsfristen</li>
+                                <li><strong>Art. 6 Abs. 1 lit. f DSGVO (Berechtigtes Interesse):</strong> Website-Sicherheit, Betrugsschutz</li>
                             </ul>
                         </div>
                     </div>
@@ -544,7 +617,7 @@
                     </h2>
                     <div class="section-content">
                         <div class="highlight-box">
-                            <h3>Diese Rechte stehen Ihnen zu</h3>
+                            <h3>✅ Diese Rechte stehen Ihnen zu</h3>
                             <ul>
                                 <li><strong>Auskunft (Art. 15 DSGVO):</strong> Welche Daten wir über Sie gespeichert haben</li>
                                 <li><strong>Berichtigung (Art. 16 DSGVO):</strong> Korrektur falscher oder unvollständiger Daten</li>
@@ -565,13 +638,14 @@
                     </h2>
                     <div class="section-content">
                         <div class="warning-box">
-                            <h3>Übermittlung in Drittländer</h3>
-                            <p>Einige unserer Dienstleister haben ihren Sitz außerhalb der EU (z.B. Google, Meta). Die Übermittlung erfolgt auf Basis von:</p>
+                            <h3>🌍 Übermittlung in Drittländer</h3>
+                            <p>Einige unserer Dienstleister haben ihren Sitz außerhalb der EU (z.B. Google, Meta, TikTok). Die Übermittlung erfolgt auf Basis von:</p>
                             <ul>
                                 <li>Standardvertragsklauseln (SCC) der EU-Kommission</li>
                                 <li>Angemessenheitsbeschlüssen nach Art. 45 DSGVO</li>
                                 <li>Zertifizierungen wie dem EU-US Data Privacy Framework</li>
                             </ul>
+                            <p><em>Alle Übermittlungen erfolgen unter Einhaltung der DSGVO-Anforderungen.</em></p>
                         </div>
                     </div>
                 </div>
@@ -584,33 +658,35 @@
                     <div class="section-content">
                         <p>Wir setzen umfassende technische und organisatorische Maßnahmen ein:</p>
                         <ul>
-                            <li>SSL-Verschlüsselung für alle Datenübertragungen</li>
-                            <li>Sichere Server in deutschen Rechenzentren</li>
-                            <li>Regelmäßige Sicherheitsaudits und Updates</li>
-                            <li>Zugriffskontrollen und Mitarbeiterschulungen</li>
-                            <li>Backup-Systeme und Notfallpläne</li>
+                            <li>🔒 SSL-Verschlüsselung für alle Datenübertragungen</li>
+                            <li>🇩🇪 Sichere Server in deutschen Rechenzentren</li>
+                            <li>🔄 Regelmäßige Sicherheitsaudits und Updates</li>
+                            <li>👥 Zugriffskontrollen und Mitarbeiterschulungen</li>
+                            <li>💾 Backup-Systeme und Notfallpläne</li>
+                            <li>🗑️ Automatische Löschung sensibler Daten nach Beratungsende</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="contact-section">
-                    <h3>Fragen zum Datenschutz?</h3>
+                    <h3>💌 Fragen zum Datenschutz?</h3>
                     <p>Bei Fragen zur Verarbeitung Ihrer personenbezogenen Daten oder zur Ausübung Ihrer Rechte wenden Sie sich gerne an uns:</p>
                     <p>
-                        <strong>E-Mail:</strong> <a href="mailto:support@germany-start.de">support@germany-start.de</a><br>
+                        <strong>E-Mail:</strong> <a href="mailto:clara@mein-herzkompass.de">clara@mein-herzkompass.de</a><br>
+                        <strong>Support:</strong> <a href="mailto:support@mein-herzkompass.de">support@mein-herzkompass.de</a><br>
                         <strong>Weitere Kontaktdaten:</strong> <a href="/impressum.html">Siehe Impressum</a>
                     </p>
                     <p><em>Sie haben auch das Recht, sich bei der zuständigen Aufsichtsbehörde (Landesbeauftragte für den Datenschutz Niedersachsen) zu beschweren.</em></p>
                 </div>
 
                 <div class="info-box">
-                    <h3>Stand der Datenschutzerklärung</h3>
+                    <h3>📅 Stand der Datenschutzerklärung</h3>
                     <p>Diese Datenschutzerklärung ist aktuell gültig und hat den Stand: <strong>November 2025</strong>.</p>
                     <p>Wir behalten uns vor, diese Erklärung zu aktualisieren, um den aktuellen rechtlichen Anforderungen zu entsprechen oder Änderungen unserer Leistungen umzusetzen.</p>
                 </div>
 
                 <div class="back-link">
-                    <a href="/">← Zurück zur Startseite</a>
+                    <a href="/">💖 Zurück zu Clara's Herzkompass</a>
                 </div>
             </div>
         </div>
