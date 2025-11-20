@@ -99,6 +99,14 @@
             line-height: 1.1;
         }
 
+        .name-highlight {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
         .hero-subtitle {
             font-size: 16px;
             color: var(--text-light);
@@ -215,7 +223,7 @@
             font-size: clamp(32px, 4vw, 48px);
             font-weight: 800;
             color: var(--text-dark);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             text-align: center;
         }
 
@@ -223,7 +231,7 @@
             font-size: 18px;
             color: var(--text-light);
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 40px;
         }
 
         .slider-container {
@@ -411,12 +419,6 @@
             object-fit: cover;
         }
 
-        .before-after-placeholder {
-            color: var(--text-light);
-            font-weight: 600;
-            font-size: 16px;
-        }
-
         .testimonial-header {
             display: flex;
             align-items: center;
@@ -485,19 +487,24 @@
         .pricing-plan.most-popular {
             border-color: var(--primary-color);
             background: linear-gradient(135deg, #f8f9ff, var(--white));
+            padding-top: 35px;
         }
 
         .plan-badge {
             position: absolute;
-            top: -10px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: var(--white);
-            padding: 5px 20px;
-            border-radius: 15px;
-            font-size: 12px;
+            padding: 8px 30px;
+            border-radius: 20px;
+            font-size: 14px;
             font-weight: 700;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            z-index: 10;
         }
 
         .plan-header {
@@ -711,6 +718,17 @@
                 justify-content: center;
             }
 
+            .plan-badge {
+                min-width: 280px;
+                padding: 10px 40px;
+                font-size: 15px;
+                top: -18px;
+            }
+
+            .pricing-plan.most-popular {
+                padding-top: 40px;
+            }
+
             .slider-wrapper {
                 height: 450px;
             }
@@ -824,7 +842,7 @@
             <div class="slider-container">
                 <div class="slider-wrapper">
                     <div class="slide active" id="slide-1">
-                        <img src="Slide1.png" alt="Persönliche Farbpalette" class="slide-image">
+                        <img src="premium-slide1.png" alt="Persönliche Farbpalette" class="slide-image">
                         <div class="slide-content">
                             <h3>Deine persönliche Farbpalette</h3>
                             <p>Über 50 perfekt abgestimmte Farben für deinen Typ</p>
@@ -832,7 +850,7 @@
                     </div>
                     
                     <div class="slide" id="slide-2">
-                        <img src="Slide2.png" alt="Style Empfehlungen" class="slide-image">
+                        <img src="premium-slide2.png" alt="Style Empfehlungen" class="slide-image">
                         <div class="slide-content">
                             <h3>Maßgeschneiderte Style-Empfehlungen</h3>
                             <p>Konkrete Outfit-Ideen für jeden Anlass</p>
@@ -840,7 +858,7 @@
                     </div>
                     
                     <div class="slide" id="slide-3">
-                        <img src="Slide3.png" alt="Make-Up Guide" class="slide-image">
+                        <img src="premium-slide3.png" alt="Make-Up Guide" class="slide-image">
                         <div class="slide-content">
                             <h3>Professioneller Make-Up Guide</h3>
                             <p>Step-by-step Anleitungen für deinen perfekten Look</p>
@@ -848,7 +866,7 @@
                     </div>
                     
                     <div class="slide" id="slide-4">
-                        <img src="Slide4.png" alt="Shopping Guide" class="slide-image">
+                        <img src="premium-slide4.png" alt="Shopping Guide" class="slide-image">
                         <div class="slide-content">
                             <h3>Personalisierter Shopping-Guide</h3>
                             <p>Direkte Links zu deinen perfekten Pieces</p>
@@ -876,6 +894,8 @@
         </div>
     </section>
 
+ 
+
     <!-- PRICING -->
     <section class="pricing-section" id="pricing">
         <div class="container">
@@ -902,8 +922,6 @@
                     </div>
                 </div>
 
-               
-
                 <!-- MONTHLY STYLE CLUB -->
                 <div class="pricing-plan" id="plan-monthly">
                     <div class="plan-header">
@@ -922,10 +940,6 @@
                     </div>
                 </div>
             </div>
-
-            <button class="main-cta" onclick="startCheckout()" id="main-cta-btn">
-                Meine Farbberatung sichern
-            </button>
 
             <!-- PLAN BENEFITS -->
             <div class="benefits-section">
@@ -953,17 +967,19 @@
                         <div class="benefit">✓ Shopping-Links für alle empfohlenen Teile</div>
                         <div class="benefit">✓ Trend-Updates und Style-Tipps</div>
                         <div class="benefit">✓ Jederzeit kündbar - keine Mindestlaufzeit</div>
-                        <div class="benefit premium">✓ Nur 13 Cent pro Tag für endlose Inspiration</div>
+                        <div class="benefit premium">✓ Nur 63 Cent pro Tag für endlose Inspiration</div>
                     </div>
                 </div>
             </div>
             
-
+            <button class="main-cta" onclick="startCheckout()" id="main-cta-btn">
+                Meine Farbberatung sichern
+            </button>
         </div>
     </section>
 
-    <!-- TESTIMONIALS -->
-    <section class="testimonials-section">
+       <!-- TESTIMONIALS -->
+       <section class="testimonials-section">
         <div class="container">
             <h2 class="section-title">Echte Ergebnisse nach der Analyse</h2>
             
@@ -1046,9 +1062,29 @@
     </footer>
 
     <script>
-        // Timer functionality
-        let timeLeft = 10 * 60; // 10 minutes
+        // Timer functionality mit localStorage persistence
+        let timeLeft;
         let timerExpired = false;
+        
+        function initializeTimer() {
+            const savedStartTime = localStorage.getItem('timerStartTime');
+            const timerDuration = 10 * 60; // 10 minutes in seconds
+            
+            if (savedStartTime) {
+                // Calculate how much time has passed since the timer started
+                const startTime = parseInt(savedStartTime);
+                const currentTime = Date.now();
+                const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+                
+                timeLeft = Math.max(0, timerDuration - elapsedSeconds);
+            } else {
+                // First time - start new timer
+                timeLeft = timerDuration;
+                localStorage.setItem('timerStartTime', Date.now().toString());
+            }
+            
+            console.log(`Timer initialized with ${timeLeft} seconds remaining`);
+        }
         
         function updateTimer() {
             const timerElement = document.getElementById('timer');
@@ -1087,10 +1123,15 @@
                 el.style.display = 'none';
             });
             
-            // Setze normale Preise
-            document.getElementById('monthly-new').textContent = '€1,33';
-            document.getElementById('quarterly-new').textContent = '€1,32';
-            document.getElementById('halfyear-new').textContent = '€1,31';
+            // Setze normale Preise (Tagespreise)
+            document.getElementById('onetime-new').textContent = '€0,20';
+            document.getElementById('monthly-new').textContent = '€0,97';
+            
+            // Update auch die Kleingedruckten Preise
+            const onetimeExtras = document.querySelector('#plan-onetime .price-extras');
+            if (onetimeExtras) {
+                onetimeExtras.textContent = '*bei 300 Tagen Nutzung • Einmalig €59,99 • Farbkreis + 5 individuelle Outfits';
+            }
             
             // Update button text
             document.getElementById('main-cta-btn').textContent = 'Normale Preise - Meine Farbberatung sichern';
@@ -1227,51 +1268,6 @@
             }
         }
 
-        function switchToNormalPrices() {
-            console.log('Switching to normal prices...');
-            
-            // Verstecke durchgestrichene Preise
-            document.querySelectorAll('.price-old').forEach(el => {
-                el.style.display = 'none';
-            });
-            
-            // Setze normale Preise (Tagespreise)
-            document.getElementById('onetime-new').textContent = '€0,20';
-            document.getElementById('monthly-new').textContent = '€0,97';
-            
-            // Update auch die Kleingedruckten Preise
-            document.querySelector('#plan-onetime .price-extras').textContent = '*bei 300 Tagen Nutzung • Einmalig €59,99 • Farbkreis + 5 individuelle Outfits';
-            
-            // Update button text
-            document.getElementById('main-cta-btn').textContent = 'Normale Preise - Meine Farbberatung sichern';
-        }
-        
-        // Start everything when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Starting timer, slider and personalization...');
-            
-            // Initialize personalization first
-            personalizeResults();
-            
-            updateTimer();
-            initializeSlider();
-            setupPlanSelection();
-            
-            // Pause auto-play when hovering over slider
-            const sliderContainer = document.querySelector('.slider-container');
-            if (sliderContainer) {
-                sliderContainer.addEventListener('mouseenter', () => {
-                    clearInterval(slideInterval);
-                });
-                
-                sliderContainer.addEventListener('mouseleave', () => {
-                    slideInterval = setInterval(() => {
-                        changeSlide(1);
-                    }, 4000);
-                });
-            }
-        });
-
         // FARB-ANALYSE PERSONALISIERUNG
         function personalizeResults() {
             console.log('=== FARB-ANALYSE PERSONALISIERUNG ===');
@@ -1395,6 +1391,35 @@
                 console.error(`❌ Element nicht gefunden: ${elementId}`);
             }
         }
+        
+        // Start everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Starting timer, slider and personalization...');
+            
+            // Initialize personalization first
+            personalizeResults();
+            
+            // Initialize persistent timer
+            initializeTimer();
+            updateTimer();
+            
+            initializeSlider();
+            setupPlanSelection();
+            
+            // Pause auto-play when hovering over slider
+            const sliderContainer = document.querySelector('.slider-container');
+            if (sliderContainer) {
+                sliderContainer.addEventListener('mouseenter', () => {
+                    clearInterval(slideInterval);
+                });
+                
+                sliderContainer.addEventListener('mouseleave', () => {
+                    slideInterval = setInterval(() => {
+                        changeSlide(1);
+                    }, 4000);
+                });
+            }
+        });
     </script>
 </body>
 </html>
