@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Allgemeine Geschäftsbedingungen - Arbeitserlaubnis Hilfe</title>
+    <title>Allgemeine Geschäftsbedingungen - mein-herzkompass.de</title>
     <style>
         * {
             margin: 0;
@@ -11,101 +11,144 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #00d4aa;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --shadow-light: 0 2px 10px rgba(0,0,0,0.05);
+            --shadow-medium: 0 8px 30px rgba(0,0,0,0.12);
+            --border-radius: 16px;
+            --border-radius-small: 8px;
+        }
+
         body {
-            font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #ffffff;
-            color: #2c3e50;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f1f3ff 0%, var(--bg-light) 100%);
+            color: var(--text-dark);
             line-height: 1.6;
         }
 
-        /* Top Header */
-        .top-header {
-            background: #ffffff;
-            border-bottom: 1px solid #e0e0e0;
-            padding: 15px 0;
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 20px 0;
+            box-shadow: var(--shadow-medium);
         }
-        
-        .header-content {
+
+        .header-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
         }
-        
-        .logo-placeholder {
+
+        .logo {
             display: flex;
             align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: var(--white);
         }
-        
-        .logo-box {
-            width: 120px;
+
+        .logo-icon {
+            width: 40px;
             height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 4px;
+            font-size: 20px;
         }
-        
-        .logo-img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: var(--border-radius-small);
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+            color: var(--white);
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 60px 20px;
+            padding: 40px 20px;
         }
 
         .agb-card {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 2px solid #1e3c72;
-            margin-bottom: 30px;
+            background: var(--white);
+            padding: 50px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
+            border: 2px solid var(--primary-color);
         }
 
         h1 {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1e3c72;
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
             margin-bottom: 40px;
             text-align: center;
             letter-spacing: -0.5px;
         }
 
         h2 {
-            font-size: 24px;
-            font-weight: 600;
-            color: #1e3c72;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
             margin-bottom: 20px;
             margin-top: 40px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #f1f3f4;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
         }
 
         .section-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 18px;
             color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         h3 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1e3c72;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-color);
             margin-bottom: 15px;
             margin-top: 25px;
         }
@@ -123,21 +166,22 @@
 
         li {
             margin-bottom: 8px;
-            line-height: 1.6;
+            line-height: 1.7;
         }
 
         .highlight-box {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 30px;
-            border-radius: 12px;
+            padding: 35px;
+            border-radius: var(--border-radius-small);
             margin: 30px 0;
-            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.2);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
 
         .highlight-box h3 {
             color: white;
             margin-top: 0;
+            font-size: 24px;
         }
 
         .highlight-box ul {
@@ -146,45 +190,61 @@
         }
 
         .highlight-box li::before {
-            content: "✓ ";
-            color: white;
-            font-weight: bold;
+            content: "💜 ";
             margin-right: 8px;
         }
 
         .info-box {
-            background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%);
-            padding: 25px;
-            border-radius: 12px;
-            border-left: 4px solid #1e3c72;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%);
+            padding: 30px;
+            border-radius: var(--border-radius-small);
+            border-left: 4px solid var(--primary-color);
             margin: 25px 0;
+            box-shadow: var(--shadow-light);
         }
 
         .warning-box {
-            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-            border: 2px solid #f39c12;
-            padding: 25px;
-            border-radius: 12px;
+            background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
+            border: 1px solid var(--text-light);
+            padding: 30px;
+            border-radius: var(--border-radius-small);
             margin: 25px 0;
-            border-left: 4px solid #f39c12;
+            border-left: 4px solid var(--text-light);
+            box-shadow: var(--shadow-light);
         }
 
         .warning-box h3 {
-            color: #856404;
+            color: var(--text-dark);
             margin-top: 0;
         }
 
-        .warning-box p {
-            color: #856404;
+        .clara-notice {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f1f3ff 100%);
+            border: 2px solid var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+            padding: 30px;
+            border-radius: var(--border-radius-small);
+            margin: 30px 0;
+            box-shadow: var(--shadow-light);
+        }
+
+        .clara-notice h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .clara-notice p {
+            color: var(--text-dark);
         }
 
         .danger-box {
-            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
             border: 2px solid #dc3545;
-            padding: 25px;
-            border-radius: 12px;
+            padding: 30px;
+            border-radius: var(--border-radius-small);
             margin: 25px 0;
             border-left: 4px solid #dc3545;
+            box-shadow: var(--shadow-light);
         }
 
         .danger-box h3 {
@@ -193,7 +253,7 @@
         }
 
         .danger-box p {
-            color: #856404;
+            color: var(--text-dark);
         }
 
         .danger-box strong {
@@ -211,29 +271,30 @@
         }
 
         .contact-section {
-            background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%);
-            border: 2px solid #1e3c72;
-            color: #1e3c72;
-            padding: 30px;
-            border-radius: 12px;
-            margin: 30px 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px;
+            border-radius: var(--border-radius-small);
+            margin: 40px 0;
             text-align: center;
+            box-shadow: var(--shadow-medium);
         }
 
         .contact-section h3 {
-            color: #1e3c72;
+            color: white;
             margin-top: 0;
+            font-size: 24px;
         }
 
         .contact-section a {
-            color: #1e3c72;
+            color: #ddd6fe;
             font-weight: 600;
             text-decoration: none;
-            border-bottom: 2px solid #1e3c72;
         }
 
         .contact-section a:hover {
-            opacity: 0.8;
+            color: white;
+            text-decoration: underline;
         }
 
         .footer-navigation {
@@ -242,16 +303,17 @@
             gap: 20px;
             margin-top: 40px;
             padding-top: 30px;
-            border-top: 2px solid #f1f3f4;
+            border-top: 2px solid #e2e8f0;
+            flex-wrap: wrap;
         }
 
         .footer-link {
             display: inline-block;
-            background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%);
-            border: 2px solid #1e3c72;
-            color: #1e3c72;
-            padding: 12px 25px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%);
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 15px 25px;
+            border-radius: var(--border-radius-small);
             text-decoration: none;
             font-weight: 600;
             font-size: 14px;
@@ -259,10 +321,10 @@
         }
 
         .footer-link:hover {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
 
         .back-link {
@@ -272,33 +334,51 @@
 
         .back-link a {
             display: inline-block;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 15px 35px;
-            border-radius: 8px;
+            padding: 18px 40px;
+            border-radius: var(--border-radius-small);
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 16px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .back-link a:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 30px 15px;
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
             }
 
-            h1 {
-                font-size: 26px;
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .container {
+                padding: 20px 15px;
             }
 
             .agb-card {
-                padding: 25px;
+                padding: 30px 25px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            h2 {
+                font-size: 22px;
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
             }
 
             .footer-navigation {
@@ -306,30 +386,44 @@
                 gap: 15px;
                 align-items: center;
             }
+
+            .footer-link {
+                text-align: center;
+                width: 100%;
+                max-width: 300px;
+            }
         }
     </style>
-    <script src="/tracking.js" defer></script>
-    <script src="/utm-make.js" defer></script>
 </head>
 <body>
-    <!-- Top Header Bar -->
-    <header class="top-header">
-        <div class="header-content">
-            <div class="logo-placeholder">
-                <div class="logo-box">
-                    <img src="LogoGer.png" alt="Logo" class="logo-img">
-                </div>
+    <div class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">💖</div>
+                <div class="logo-text">mein-herzkompass.de</div>
+            </a>
+            <div class="nav-links">
+                <a href="/">Startseite</a>
+                <a href="/datenschutz.html">Datenschutz</a>
+                <a href="/impressum.html">Impressum</a>
             </div>
         </div>
-    </header>
+    </div>
 
     <div class="container">
         <div class="agb-card">
             <h1>Allgemeine Geschäftsbedingungen</h1>
 
+            <div class="clara-notice">
+                <h3>💜 Wichtiger Hinweis zu "Clara"</h3>
+                <p><strong>Clara ist eine fiktive Marketing-Persona</strong> für unsere Farb- und Style-Beratungsdienstleistung. Alle Kommunikation und Beratung erfolgt durch qualifizierte Mitarbeiter der Debkowski & Moritz GbR. Der Name "Clara" dient ausschließlich der einheitlichen Markenführung und Kundenkommunikation.</p>
+                <p><em>Verantwortlich für alle Inhalte, Dienstleistungen und rechtliche Belange ist ausschließlich die im Impressum genannte Debkowski & Moritz GbR.</em></p>
+            </div>
+
             <div class="info-box">
-                <p><strong>Stand:</strong> November 2024<br>
-                <strong>Gültig für:</strong> Debkowski & Moritz GbR, Maximilian Debowski</p>
+                <p><strong>Stand:</strong> November 2025<br>
+                <strong>Gültig für:</strong> Debkowski & Moritz GbR, Maximilian Debowski<br>
+                <strong>Marke:</strong> mein-herzkompass.de</p>
             </div>
 
             <h2>
@@ -344,12 +438,13 @@
                 Rosenbohmsweg 28a<br>
                 26135 Oldenburg<br>
                 Deutschland<br>
-                E-Mail: support@germany-start.de</p>
+                E-Mail: clara@mein-herzkompass.de<br>
+                Support: support@mein-herzkompass.de</p>
                 <p><strong>USt-IdNr.:</strong> DE353303833</p>
             </div>
 
             <h3>§ 2 Geltungsbereich</h3>
-            <p>Diese AGB gelten für alle Verträge zwischen dem Anbieter und Kunden über die auf unseren Webseiten oder verlinkten Zahlungsseiten angebotenen Leistungen. Maßgeblich ist die zum Zeitpunkt des Vertragsschlusses veröffentlichte Fassung dieser AGB.</p>
+            <p>Diese AGB gelten für alle Verträge zwischen dem Anbieter und Kunden über die auf mein-herzkompass.de oder verlinkten Zahlungsseiten angebotenen Farb- und Style-Beratungsleistungen. Maßgeblich ist die zum Zeitpunkt des Vertragsschlusses veröffentlichte Fassung dieser AGB.</p>
 
             <h3>§ 3 Begriffe</h3>
             <p><strong>Verbraucher</strong> ist jede natürliche Person, die ein Rechtsgeschäft zu Zwecken abschließt, die überwiegend weder ihrer gewerblichen noch ihrer selbstständigen beruflichen Tätigkeit zugerechnet werden können.</p>
@@ -357,14 +452,14 @@
 
             <div class="warning-box">
                 <h3>§ 4 Mindestalter und Geschäftsfähigkeit</h3>
-                <p>Unsere Leistungen richten sich ausschließlich an volljährige Personen. Mit der Bestellung bestätigt der Kunde, dass er das 18. Lebensjahr vollendet hat und voll geschäftsfähig ist. Erlangen wir Kenntnis von einer Minderjährigkeit, können wir den Vertrag kündigen und bereits erhaltene Zahlungen erstatten.</p>
+                <p>Unsere Farb- und Style-Beratungen richten sich ausschließlich an volljährige Personen. Mit der Bestellung bestätigt der Kunde, dass er das 18. Lebensjahr vollendet hat und voll geschäftsfähig ist. Bei Kenntnis von Minderjährigkeit können wir den Vertrag kündigen und bereits erhaltene Zahlungen erstatten.</p>
             </div>
 
             <h3>§ 5 Abweichende Bedingungen</h3>
             <p>Abweichende Geschäftsbedingungen des Kunden werden nicht Vertragsbestandteil. Etwas anderes gilt nur, wenn wir deren Geltung ausdrücklich schriftlich zustimmen.</p>
 
             <h2>
-                <div class="section-icon">📋</div>
+                <div class="section-icon">🎨</div>
                 Teil 2. Vertragsgegenstand und Vertragsschluss
             </h2>
 
@@ -373,44 +468,43 @@
             <div class="highlight-box">
                 <h3>Das bieten wir</h3>
                 <ul>
-                    <li><strong>Personalisierte Arbeitserlaubnis-Anleitung</strong> auf Grundlage eines Fragebogens zu Ihrer individuellen Situation</li>
-                    <li><strong>Schritt-für-Schritt-Fahrplan</strong> mit allen nötigen Dokumenten und Verfahren</li>
-                    <li><strong>Behörden-Navigator</strong> mit direkten Links zu zuständigen Ämtern in Ihrer Region</li>
-                    <li><strong>Förderungen und Zuschüsse</strong> die für Ihre Situation verfügbar sind</li>
-                    <li><strong>Job-Empfehlungen</strong> basierend auf Ihren Qualifikationen und Deutschkenntnissen</li>
-                    <li><strong>Schnelle digitale Lieferung</strong> (innerhalb 24 Stunden per E-Mail)</li>
-                    <li><strong>30-Tage-Geld-zurück-Garantie</strong></li>
+                    <li><strong>Personalisierte Farbtyp-Analyse</strong> basierend auf Ihren Quiz-Antworten und optional hochgeladenen Fotos</li>
+                    <li><strong>Individueller Farbkreis</strong> mit allen für Sie passenden Farben</li>
+                    <li><strong>Maßgeschneiderte Style-Empfehlungen</strong> für Kleidung, Schnitte und Accessoires</li>
+                    <li><strong>Make-Up Ratgeber</strong> abgestimmt auf Ihren Farbtyp</li>
+                    <li><strong>Shopping-Guide</strong> mit konkreten Produktempfehlungen und Links</li>
+                    <li><strong>Digitale Lieferung</strong> als PDF und Online-Zugang</li>
+                    <li><strong>Geld-zurück-Garantie</strong> bei Unzufriedenheit</li>
                 </ul>
             </div>
 
             <div class="danger-box">
                 <h3>Das ist es NICHT</h3>
                 <ul>
-                    <li><strong>Keine Rechtsberatung:</strong> Wir sind keine Anwälte oder Rechtsberater</li>
-                    <li><strong>Keine staatliche Behörde</strong> und kein amtlicher Service</li>
-                    <li><strong>Keine Garantie für Erfolg</strong> bei Behörden oder Arbeitsplatzsuche</li>
-                    <li><strong>Kein Ersatz für professionelle Rechtsberatung</strong></li>
-                    <li><strong>Keine Bearbeitung von Anträgen</strong> durch uns</li>
-                    <li><strong>Kein Anspruch auf das Eintreten bestimmter Erfolge</strong></li>
-                    <li><strong>Keine Vermittlung von Arbeitsplätzen</strong></li>
+                    <li><strong>Keine persönliche Vor-Ort-Beratung</strong></li>
+                    <li><strong>Keine Garantie für bestimmte ästhetische Ergebnisse</strong></li>
+                    <li><strong>Keine medizinische oder therapeutische Beratung</strong></li>
+                    <li><strong>Keine Garantie für Farbwirkung bei jedem Hauttyp</strong></li>
+                    <li><strong>Kein Ersatz für professionelle Styling-Beratung vor Ort</strong></li>
+                    <li><strong>Keine Verpflichtung zum Kauf empfohlener Produkte</strong></li>
                 </ul>
             </div>
 
             <div class="warning-box">
                 <h3>Wichtiger Hinweis</h3>
-                <p>Die Leistungen dienen der Information und praktischen Anleitung. Alle Entscheidungen und Anträge müssen vom Kunden selbst getroffen und gestellt werden. Wir empfehlen bei komplexen rechtlichen Fragen die Konsultation eines Fachanwalts für Ausländerrecht.</p>
+                <p>Farb- und Style-Empfehlungen basieren auf bewährten Methoden der Farbtypanalyse und persönlichen Präferenzen. Geschmack und Ästhetik sind subjektiv. Bei besonderen Hauterkrankungen oder Allergien empfehlen wir die Rücksprache mit einem Dermatologen vor Anwendung neuer Kosmetikprodukte.</p>
             </div>
 
             <h3>§ 7 Vertragsschluss</h3>
             <ol>
                 <li>Die Darstellung unserer Leistungen ist eine unverbindliche Aufforderung zur Abgabe einer Bestellung.</li>
-                <li>Der Kunde führt den Fragebogen aus, wählt sein Paket und gibt durch Klicken auf eine entsprechend bezeichnete Schaltfläche eine verbindliche Bestellung ab.</li>
+                <li>Der Kunde führt das Farb-Quiz aus, wählt sein gewünschtes Paket und gibt durch Klicken auf "Jetzt kaufen" oder eine entsprechend bezeichnete Schaltfläche eine verbindliche Bestellung ab.</li>
                 <li>Die Zahlung erfolgt über den Zahlungsdienstleister Stripe. Mit erfolgreichem Zahlungseingang kommt der Vertrag zustande.</li>
                 <li>Der Vertragstext wird gespeichert. Die Vertragsbestimmungen einschließlich dieser AGB werden dem Kunden per E-Mail übermittelt.</li>
             </ol>
 
             <h3>§ 8 Korrektur und technische Voraussetzungen</h3>
-            <p>Vor Absenden der Bestellung kann der Kunde seine Eingaben jederzeit prüfen und ändern. Für den Vertragsschluss und die Leistungserbringung sind erforderlich: eine gültige E-Mail-Adresse, die Möglichkeit PDF-Dateien zu empfangen, Internetzugang sowie ein von Stripe akzeptiertes Zahlungsmittel. Der Kunde stellt sicher, dass E-Mails des Anbieters nicht durch Spamfilter blockiert werden.</p>
+            <p>Vor Absenden der Bestellung kann der Kunde seine Eingaben jederzeit prüfen und ändern. Für den Vertragsschluss und die Leistungserbringung sind erforderlich: eine gültige E-Mail-Adresse, die Möglichkeit PDF-Dateien zu empfangen und zu öffnen, Internetzugang sowie ein von Stripe akzeptiertes Zahlungsmittel. Der Kunde stellt sicher, dass E-Mails des Anbieters nicht durch Spamfilter blockiert werden.</p>
 
             <h2>
                 <div class="section-icon">💰</div>
@@ -420,48 +514,49 @@
             <h3>§ 9 Preise und Zahlung</h3>
             <ol>
                 <li>Es gelten die im Bestellzeitpunkt angezeigten Endpreise inklusive der gesetzlichen Umsatzsteuer.</li>
-                <li>Die Zahlung erfolgt ausschließlich über Stripe. Zahlungsdaten werden auf Systemen von Stripe verarbeitet.</li>
+                <li>Die Zahlung erfolgt ausschließlich über Stripe. Zahlungsdaten werden sicher auf Systemen von Stripe verarbeitet.</li>
                 <li>Der Kaufpreis ist sofort fällig. Die Leistungserbringung beginnt erst nach erfolgreichem Zahlungseingang.</li>
-                <li>Bei fehlgeschlagener Zahlung oder unberechtigtem Chargeback sind wir berechtigt, die Leistung zu verweigern, vom Vertrag zurückzutreten und entstandene Mehrkosten zu berechnen.</li>
+                <li>Bei fehlgeschlagener Zahlung oder unberechtigtem Chargeback sind wir berechtigt, die Leistung zu verweigern und entstandene Mehrkosten zu berechnen.</li>
             </ol>
 
             <div class="info-box">
-                <h3>Akzeptierte Zahlungsmittel (über Stripe)</h3>
+                <h3>💳 Akzeptierte Zahlungsmittel (über Stripe)</h3>
                 <ul>
-                    <li>Kreditkarte (Visa, Mastercard)</li>
+                    <li>Kreditkarte (Visa, Mastercard, American Express)</li>
                     <li>PayPal</li>
                     <li>SEPA-Lastschrift</li>
                     <li>Klarna (Ratenzahlung)</li>
+                    <li>Apple Pay / Google Pay</li>
                 </ul>
             </div>
 
             <h3>§ 10 Lieferung und Leistungserbringung</h3>
             <ol>
-                <li>Die Bereitstellung erfolgt ausschließlich digital per E-Mail. Der Kunde erhält die Arbeitserlaubnis-Anleitung als PDF-Dokument und alle relevanten Links per E-Mail.</li>
-                <li><strong>Standardlieferung innerhalb von 24 Stunden</strong> nach Zahlungseingang.</li>
+                <li>Die Bereitstellung erfolgt ausschließlich digital per E-Mail. Der Kunde erhält seine personalisierte Farb- und Style-Analyse als PDF-Dokument per E-Mail.</li>
+                <li><strong>Lieferung innerhalb von 24 Stunden</strong> nach Zahlungseingang an Werktagen.</li>
                 <li>Mit dem Versand an die angegebene E-Mail-Adresse gilt die Leistung als vollständig erbracht. Der Anbieter dokumentiert den Versand technisch.</li>
-                <li>Erhält der Kunde keine E-Mail, prüft er Spamordner, Filtereinstellungen und die Richtigkeit seiner Adresse und kontaktiert den Support. Bei nachgewiesener Nichtzustellung erfolgt ein erneuter Versand.</li>
-                <li>Ereignisse höherer Gewalt und vergleichbare Störungen befreien uns für deren Dauer von der Leistungspflicht.</li>
+                <li>Optional hochgeladene Fotos werden ausschließlich zur Farbtyp-Bestimmung verwendet und automatisch nach 24 Stunden gelöscht.</li>
+                <li>Bei Nichtzustellung prüft der Kunde Spamordner und Filtereinstellungen und kontaktiert den Support. Bei nachgewiesener Nichtzustellung erfolgt ein erneuter Versand.</li>
             </ol>
 
-            <h3>§ 11 Widerrufsrecht und freiwillige Geld-zurück-Garantie</h3>
+            <h3>§ 11 Widerrufsrecht und Geld-zurück-Garantie</h3>
 
-            <h4>Widerrufsbelehrung für Verbraucher</h4>
+            <h4>🔄 Widerrufsbelehrung für Verbraucher</h4>
             <div class="info-box">
                 <p><strong>Widerrufsrecht:</strong> Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
                 <p><strong>Widerrufsfrist:</strong> Die Frist beginnt mit Vertragsschluss.</p>
-                <p><strong>Widerrufsform:</strong> Zur Ausübung genügt eine eindeutige Erklärung per E-Mail an support@germany-start.de</p>
+                <p><strong>Widerrufsform:</strong> Zur Ausübung genügt eine eindeutige Erklärung per E-Mail an clara@mein-herzkompass.de</p>
             </div>
 
             <div class="warning-box">
-                <h3>Vorzeitiges Erlöschen des Widerrufsrechts</h3>
+                <h3>⏰ Vorzeitiges Erlöschen des Widerrufsrechts</h3>
                 <p>Das Widerrufsrecht erlischt bei einem Vertrag über die Lieferung digitaler Inhalte, die nicht auf einem körperlichen Datenträger geliefert werden, wenn wir mit der Ausführung begonnen haben, nachdem der Verbraucher ausdrücklich zugestimmt hat, dass wir vor Ablauf der Widerrufsfrist mit der Ausführung beginnen und er seine Kenntnis vom Verlust des Widerrufsrechts bestätigt hat.</p>
             </div>
 
             <div class="highlight-box">
-                <h3>Freiwillige 30-Tage-Geld-zurück-Garantie</h3>
-                <p>Unabhängig von gesetzlichen Rechten gewähren wir innerhalb von 30 Tagen nach Bereitstellung der Inhalte eine kulante Erstattung des Kaufpreises. Zur Inanspruchnahme genügt eine E-Mail mit dem Betreff "Stornierung" an support@germany-start.de. Die Erstattung erfolgt in der Regel binnen fünf bis sieben Werktagen.</p>
-                <p><strong>Hinweis:</strong> Diese Garantie ist freiwillig, kann missbrauchsvermeidend eingeschränkt oder beendet werden und lässt gesetzliche Rechte unberührt.</p>
+                <h3>💖 Freiwillige Geld-zurück-Garantie</h3>
+                <p>Unabhängig von gesetzlichen Rechten gewähren wir innerhalb von 30 Tagen nach Bereitstellung der Farbanalyse eine kulante Erstattung des Kaufpreises bei Unzufriedenheit. Zur Inanspruchnahme genügt eine E-Mail an clara@mein-herzkompass.de. Die Erstattung erfolgt in der Regel binnen 5-7 Werktagen auf das ursprüngliche Zahlungsmittel.</p>
+                <p><strong>Hinweis:</strong> Diese Garantie ist freiwillig und lässt gesetzliche Rechte unberührt.</p>
             </div>
 
             <h2>
@@ -471,11 +566,11 @@
 
             <h3>§ 12 Rechte an den Inhalten</h3>
             <ol>
-                <li>Alle im Rahmen der Leistung erstellten Inhalte einschließlich Auswahl, Zusammenstellung, Layout und finaler Ausgestaltung stehen im geistigen Eigentum des Anbieters.</li>
-                <li>Der Kunde erhält ein einfaches, nicht ausschließliches, nicht übertragbares, zeitlich unbeschränktes Nutzungsrecht zur privaten Nutzung der Arbeitserlaubnis-Anleitung.</li>
-                <li><strong>Nicht gestattet sind:</strong> kommerzielle Nutzung, Verkauf, Weiterlizenzierung, öffentliche Zugänglichmachung zu Erwerbszwecken, Upload auf Plattformen zur Verwertung von Inhalten, Anmeldung von Schutzrechten sowie die Behauptung eigener Urheberschaft.</li>
-                <li>Bei ähnlichen Fällen können ähnliche Anleitungen erstellt werden. Einzigartigkeit wird nicht garantiert.</li>
-                <li>Dateien können digitale Wasserzeichen enthalten. Deren Entfernung ist unzulässig. Bei rechtswidriger Nutzung können Nutzungsrechte widerrufen werden.</li>
+                <li>Alle im Rahmen der Farb- und Style-Beratung erstellten Inhalte einschließlich Farbpaletten, Style-Guides und individueller Empfehlungen stehen im geistigen Eigentum des Anbieters.</li>
+                <li>Der Kunde erhält ein einfaches, nicht ausschließliches, nicht übertragbares Nutzungsrecht zur privaten Nutzung seiner personalisierten Farb-Analyse.</li>
+                <li><strong>Nicht gestattet sind:</strong> kommerzielle Nutzung, Weiterverkauf, öffentliche Zugänglichmachung zu Erwerbszwecken, Upload auf Plattformen zur gewerblichen Verwertung sowie die Behauptung eigener Urheberschaft.</li>
+                <li>Bei ähnlichen Quiz-Antworten können ähnliche Empfehlungen erstellt werden. Absolute Einzigartigkeit wird nicht garantiert.</li>
+                <li>Dateien können digitale Wasserzeichen enthalten. Deren Entfernung ist unzulässig.</li>
             </ol>
 
             <h2>
@@ -484,69 +579,60 @@
             </h2>
 
             <h3>§ 13 Pflichten des Kunden</h3>
-            <p>Der Kunde macht wahrheitsgemäße Angaben, hält seine E-Mail-Adresse aktuell, nutzt die Inhalte verantwortungsvoll ausschließlich zu Informationszwecken und unternimmt keine missbräuchliche Inanspruchnahme der Geld-zurück-Garantie.</p>
+            <p>Der Kunde macht wahrheitsgemäße Angaben im Quiz, hält seine E-Mail-Adresse aktuell, nutzt die Inhalte verantwortungsvoll ausschließlich zu privaten Zwecken und unternimmt keine missbräuchliche Inanspruchnahme der Geld-zurück-Garantie.</p>
 
             <h3>§ 14 Haftung</h3>
             
             <div class="danger-box">
-                <h3>Haftungsausschluss</h3>
-                <p>Es wird keine Haftung für das Eintreten, die Richtigkeit, die Vollständigkeit oder die Verwendbarkeit der Inhalte übernommen. Keine Haftung für Fehlinterpretationen, behördliche Entscheidungen oder entscheidungsbedingte Schäden. Keine Garantie für erfolgreiche Arbeitsplatzsuche oder Behördentermine.</p>
+                <h3>🚫 Haftungsausschluss</h3>
+                <p>Es wird keine Haftung für bestimmte ästhetische Ergebnisse, Farbwirkung bei individuellen Hauttypen oder subjektive Zufriedenheit mit Style-Empfehlungen übernommen. Farb- und Style-Beratung basiert auf allgemeinen Prinzipien und kann individuelle Besonderheiten nicht vollständig erfassen.</p>
             </div>
 
             <ol>
-                <li><strong>Unbeschränkte Haftung:</strong> Wir haften unbeschränkt bei Vorsatz, grober Fahrlässigkeit, Verletzung von Leben, Körper oder Gesundheit, nach dem Produkthaftungsgesetz sowie bei übernommener Garantie.</li>
+                <li><strong>Unbeschränkte Haftung:</strong> Wir haften unbeschränkt bei Vorsatz, grober Fahrlässigkeit, Verletzung von Leben, Körper oder Gesundheit sowie bei übernommener Garantie.</li>
                 <li><strong>Beschränkte Haftung:</strong> Bei einfacher Fahrlässigkeit haften wir nur bei Verletzung wesentlicher Vertragspflichten, beschränkt auf den vertragstypischen, vorhersehbaren Schaden.</li>
-                <li><strong>Ausgeschlossen:</strong> Haftung für Störungen bei Zahlungsdienstleistern, E-Mail-Providern, Internet-Diensten, Behörden-Websites sowie bei höherer Gewalt.</li>
-                <li><strong>Verjährung:</strong> Vertragliche Schadensersatzansprüche verjähren innerhalb eines Jahres ab gesetzlichem Verjährungsbeginn, soweit kein Vorsatz vorliegt und keine zwingenden längeren Fristen gelten.</li>
+                <li><strong>Ausgeschlossen:</strong> Haftung für Störungen bei Zahlungsdienstleistern, E-Mail-Providern oder höhere Gewalt.</li>
+                <li><strong>Verjährung:</strong> Schadensersatzansprüche verjähren innerhalb eines Jahres, soweit kein Vorsatz vorliegt.</li>
             </ol>
 
             <h3>§ 15 Datenschutz</h3>
             <ol>
-                <li>Personenbezogene Daten werden gemäß DSGVO und BDSG verarbeitet. Einzelheiten ergeben sich aus der Datenschutzerklärung auf der Bestellseite.</li>
-                <li>Verarbeitet werden insbesondere Fragebogenangaben, Transaktionsdaten über Stripe sowie technische Nutzungsdaten. Soweit möglich erfolgt eine pseudonyme Verarbeitung.</li>
-                <li>Der Kunde hat Rechte auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit, Widerspruch sowie Widerruf von Einwilligungen mit Wirkung für die Zukunft.</li>
-                <li><strong>Datenschutzkontakt:</strong> support@germany-start.de</li>
+                <li>Personenbezogene Daten werden gemäß DSGVO verarbeitet. Details in der Datenschutzerklärung.</li>
+                <li>Verarbeitet werden Quiz-Antworten, optional hochgeladene Fotos (24h Speicherung), Transaktionsdaten und technische Nutzungsdaten.</li>
+                <li>Der Kunde hat umfassende Betroffenenrechte nach DSGVO.</li>
+                <li><strong>Datenschutzkontakt:</strong> clara@mein-herzkompass.de</li>
             </ol>
 
             <h2>
                 <div class="section-icon">🚨</div>
-                Teil 6. Besondere Hinweise, Streitbeilegung, Schluss
+                Teil 6. Streitbeilegung und Schlussbestimmungen
             </h2>
 
-            <div class="danger-box">
-                <h3>§ 16 Rechtlicher Hinweis</h3>
-                <p><strong>Wichtig:</strong> Wir sind keine staatliche Behörde und erbringen keine Rechtsberatung im Sinne des Rechtsdienstleistungsgesetzes.</p>
-                <p><strong>Bei komplexen rechtlichen Fragen:</strong> Konsultieren Sie einen Fachanwalt für Ausländerrecht<br>
-                <strong>Für offizielle Auskünfte:</strong> Wenden Sie sich an die zuständigen Behörden</p>
-            </div>
-
-            <h3>§ 17 Jugendschutz</h3>
-            <p>Das Angebot richtet sich ausschließlich an Personen ab 18 Jahren. Wir behalten uns Stichprobenprüfungen vor.</p>
-
-            <h3>§ 18 Streitbeilegung</h3>
-            <p>Verbraucher können die OS-Plattform der EU nutzen: <a href="https://ec.europa.eu/odr" target="_blank" style="color: #1e3c72;">https://ec.europa.eu/odr</a></p>
+            <h3>§ 16 Streitbeilegung</h3>
+            <p>Verbraucher können die OS-Plattform der EU nutzen: <a href="https://ec.europa.eu/odr" target="_blank" style="color: #667eea;">https://ec.europa.eu/odr</a></p>
             <p>Wir sind zur Teilnahme an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle weder verpflichtet noch bereit. Wir bevorzugen die direkte Klärung über den Kundenservice.</p>
 
-            <h3>§ 19 Anwendbares Recht, Sprache, Änderungen</h3>
-            <p>Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts. Vertragssprache ist Deutsch. Änderungen dieser AGB können erfolgen. Für bereits geschlossene Verträge gelten die bei Vertragsschluss maßgeblichen AGB.</p>
+            <h3>§ 17 Anwendbares Recht und Änderungen</h3>
+            <p>Es gilt das Recht der Bundesrepublik Deutschland. Vertragssprache ist Deutsch. Änderungen dieser AGB werden per E-Mail mitgeteilt. Für bereits geschlossene Verträge gelten die bei Vertragsschluss maßgeblichen AGB.</p>
 
-            <h3>§ 20 Salvatorische Klausel, Übertragung</h3>
+            <h3>§ 18 Salvatorische Klausel</h3>
             <p>Sollten einzelne Bestimmungen unwirksam sein, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt. Der Kunde darf Rechte und Pflichten aus diesem Vertrag nicht ohne unsere Zustimmung übertragen.</p>
 
             <div class="contact-section">
-                <h3>Fragen zu den AGB?</h3>
+                <h3>💌 Fragen zu den AGB?</h3>
                 <p>Kontaktieren Sie uns gerne:</p>
-                <p><a href="mailto:support@germany-start.de">support@germany-start.de</a></p>
+                <p><a href="mailto:clara@mein-herzkompass.de">clara@mein-herzkompass.de</a><br>
+                <a href="mailto:support@mein-herzkompass.de">support@mein-herzkompass.de</a></p>
             </div>
 
             <div class="footer-navigation">
-                <a href="/datenschutz.html" class="footer-link">Datenschutz</a>
-                <a href="/impressum.html" class="footer-link">Impressum</a>
-                <a href="/geld-zurueck.html" class="footer-link">Geld-zurück-Garantie</a>
+                <a href="/datenschutz.html" class="footer-link">📋 Datenschutz</a>
+                <a href="/impressum.html" class="footer-link">🏢 Impressum</a>
+                <a href="/geld-zurueck.html" class="footer-link">💰 Geld-zurück-Garantie</a>
             </div>
 
             <div class="back-link">
-                <a href="/index.html">← Zurück zur Startseite</a>
+                <a href="/">💖 Zurück zu Clara's Herzkompass</a>
             </div>
         </div>
     </div>
@@ -555,7 +641,7 @@
         // Page Load Tracking
         if (typeof gtag !== 'undefined') {
             gtag('event', 'page_view', {
-                'page_title': 'AGB',
+                'page_title': 'AGB - mein-herzkompass.de',
                 'page_location': window.location.href,
                 'content_category': 'legal_page'
             });
@@ -570,6 +656,21 @@
                 }
             }, 100);
         }
+
+        // Add interactive hover effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.info-box, .highlight-box, .warning-box, .clara-notice');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
     </script>
 </body>
 </html>
