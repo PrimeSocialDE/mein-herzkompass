@@ -902,6 +902,10 @@
                     </div>
                 </div>
 
+                <button class="main-cta" onclick="startCheckout()" id="main-cta-btn">
+                    Meine Farbberatung sichern
+                </button>
+
                 <!-- MONTHLY STYLE CLUB -->
                 <div class="pricing-plan" id="plan-monthly">
                     <div class="plan-header">
@@ -921,10 +925,6 @@
                 </div>
             </div>
 
-            <button class="main-cta" onclick="startCheckout()" id="main-cta-btn">
-                Meine Farbberatung sichern
-            </button>
-
             <!-- PLAN BENEFITS -->
             <div class="benefits-section">
                 <h3 class="benefits-title">Das bekommst du mit deiner Wahl:</h3>
@@ -941,8 +941,6 @@
                         <div class="benefit">✓ E-Mail Support bei Fragen</div>
                     </div>
                 </div>
-
-                
 
                 <!-- MONTHLY STYLE CLUB BENEFITS -->
                 <div class="plan-benefits hidden" id="monthly-club-benefits">
@@ -1099,29 +1097,38 @@
         function startCheckout() {
             const selectedPlan = document.querySelector('input[name="plan"]:checked')?.value || 'onetime';
             
-            let message;
+            // Demo Stripe Links für alle Szenarien
+            const stripeLinks = {
+                // Timer-Rabatte (während Timer läuft)
+                discount: {
+                    onetime: 'https://buy.stripe.com/test_demo_onetime_39_99', // €39,99 einmalig
+                    'monthly-club': 'https://buy.stripe.com/test_demo_monthly_19' // €19/Monat
+                },
+                // Normale Preise (Timer abgelaufen)
+                normal: {
+                    onetime: 'https://buy.stripe.com/test_demo_onetime_59_99', // €59,99 einmalig
+                    'monthly-club': 'https://buy.stripe.com/test_demo_monthly_29' // €29/Monat
+                }
+            };
+            
+            let targetLink;
+            let priceType;
+            
             if (timerExpired) {
-                message = `Weiterleitung zu normalen Preisen für ${selectedPlan} Plan`;
+                targetLink = stripeLinks.normal[selectedPlan];
+                priceType = 'normalen Preisen';
             } else {
-                message = `Weiterleitung zu Rabatt-Preisen für ${selectedPlan} Plan`;
+                targetLink = stripeLinks.discount[selectedPlan];
+                priceType = 'Rabatt-Preisen';
             }
             
-            alert(message);
+            console.log(`Weiterleitung zu ${priceType} für ${selectedPlan}:`, targetLink);
             
-            // Hier würdest du zu den entsprechenden Stripe-Links weiterleiten:
-            // if (timerExpired) {
-            //     if (selectedPlan === 'onetime') {
-            //         window.location.href = 'stripe-link-onetime-normal';
-            //     } else {
-            //         window.location.href = 'stripe-link-monthly-normal';
-            //     }
-            // } else {
-            //     if (selectedPlan === 'onetime') {
-            //         window.location.href = 'stripe-link-onetime-discount';
-            //     } else {
-            //         window.location.href = 'stripe-link-monthly-discount';
-            //     }
-            // }
+            // Demo: Zeige Link in Alert statt direkter Weiterleitung
+            alert(`Demo: Weiterleitung zu ${priceType} für ${selectedPlan} Plan\n\nStripe Link: ${targetLink}`);
+            
+            // In Production würdest du direkt weiterleiten:
+            // window.location.href = targetLink;
         }
         
         function scrollToCheckout() {
