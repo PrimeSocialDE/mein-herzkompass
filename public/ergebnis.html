@@ -1186,43 +1186,54 @@
         
         async function saveToSupabaseDirect(quizAnswers, selectedPlan, priceType, stripeUrl, buttonElement) {
             try {
-                console.log('💾 Sende direkt an Supabase...');
+                console.log('💾 Sende an quiz_submissions Tabelle...');
+                
+                // Extrahiere spezifische Quiz-Felder
+                const submissionData = {
+                    email: quizAnswers.email || quizAnswers.userEmail || null,
+                    name: quizAnswers.name || quizAnswers.userName || null,
+                    
+                    // KORRIGIERTE KEYS basierend auf den echten Quiz-Seiten:
+                    eye_color: quizAnswers.bodyShape || null,        // step1 speichert Augenfarbe als 'bodyShape'  
+                    skin_tone: quizAnswers.waistDefinition || null,  // step2 speichert Hauttyp als 'waistDefinition'
+                    personal_style: quizAnswers.stylingChallenge || null, // step3 speichert Style als 'stylingChallenge'
+                    hair_color: quizAnswers.hairColor || null,       // step6 speichert als 'hairColor' ✅
+                    age_range: quizAnswers.age || null,
+                    body_shape: quizAnswers.skinUndertone || null,   // step5 speichert Schmuck-Präferenz als 'skinUndertone'
+                    waist_definition: quizAnswers.waistDefinition || null,
+                    styling_challenge: quizAnswers.stylingChallenge || null,
+                    
+                    selected_plan: selectedPlan,
+                    price_type: priceType,
+                    all_answers: quizAnswers, // Backup aller Daten
+                    status: 'submitted'
+                };
+                
+                console.log('📋 Submission Data:', submissionData);
                 
                 // Direkte Supabase REST API Call
-                const response = await fetch('https://xomsibpyksrzrnixbdwf.supabase.co/rest/v1/orders', {
+                const response = await fetch('https://xomsibpyksrzrnixbdwf.supabase.co/rest/v1/quiz_submissions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3Nyem5peGJkd2YiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczMjIwNzc5MSwiZXhwIjoyMDQ3NzgzNzkxfQ.k8mINOa0WgJnuLfBmCFdFDa1HOQWlr2LN4VeVJpSzIo',
                         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3Nyem5peGJkd2YiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczMjIwNzc5MSwiZXhwIjoyMDQ3NzgzNzkxfQ.k8mINOa0WgJnuLfBmCFdFDa1HOQWlr2LN4VeVJpSzIo'
                     },
-                    body: JSON.stringify({
-                        email: quizAnswers.email || quizAnswers.userEmail || 'clara-kunde@mein-herzkompass.de',
-                        name: quizAnswers.name || quizAnswers.userName || 'Clara Kunde',
-                        status: 'pending',
-                        answers: quizAnswers,
-                        stripe_session_id: null,
-                        answers_raw: quizAnswers,
-                        photo_urls: [],
-                        photo_count: 0,
-                        user_email: quizAnswers.email || quizAnswers.userEmail || null,
-                        created_at: new Date().toISOString(),
-                        due_at: new Date(Date.now() + 24*60*60*1000).toISOString()
-                    })
+                    body: JSON.stringify(submissionData)
                 });
                 
                 if (!response.ok) {
                     const errorData = await response.text();
                     console.error('❌ Supabase Error Response:', errorData);
-                    throw new Error(`Supabase error: ${response.status}`);
+                    throw new Error(`Supabase error: ${response.status} - ${errorData}`);
                 }
                 
                 const result = await response.json();
-                console.log('✅ Daten erfolgreich in Supabase gespeichert:', result);
+                console.log('✅ Quiz-Submission erfolgreich gespeichert:', result);
                 
-                // Order ID für später speichern
+                // Submission ID für später speichern
                 if (result && result.length > 0) {
-                    localStorage.setItem('current_order_id', result[0].id);
+                    localStorage.setItem('quiz_submission_id', result[0].id);
                 }
                 
                 // Erfolg - weiter zu Stripe
@@ -1235,14 +1246,14 @@
                 console.error('❌ Fehler beim Speichern in Supabase:', error);
                 
                 // Fallback: Direkt zu Stripe auch ohne Speicherung
-                buttonElement.textContent = 'Direkt zu Bezahlung...';
+                buttonElement.textContent = 'Direkt zu Bezahlung (ohne Speicherung)';
                 buttonElement.disabled = false;
                 
                 // Kurze Info, aber trotzdem weiterleiten
                 console.log('⚠️ Fahre ohne Datenspeicherung fort...');
                 setTimeout(() => {
                     window.location.href = stripeUrl;
-                }, 1000);
+                }, 1500);
             }
         }
         
@@ -1354,16 +1365,18 @@
         function personalizeResults() {
             console.log('=== FARB-ANALYSE PERSONALISIERUNG ===');
             
-            // Load real data from localStorage
+            // Load real data from localStorage - KORRIGIERTE KEYS
             const quizData = {
-                bodyShape: localStorage.getItem('bodyShape') || '',
+                eyeColor: localStorage.getItem('bodyShape') || '',        // step1 speichert Augenfarbe als 'bodyShape'
+                skinTone: localStorage.getItem('waistDefinition') || '',  // step2 speichert Hauttyp als 'waistDefinition'  
+                personalStyle: localStorage.getItem('stylingChallenge') || '', // step3 speichert Style als 'stylingChallenge'
+                hairColor: localStorage.getItem('hairColor') || '',       // step6 speichert als 'hairColor'
+                age: localStorage.getItem('age') || '',
+                bodyShape: localStorage.getItem('skinUndertone') || '',   // step5 speichert Schmuck-Präferenz
+                
+                // Fallbacks für alternative Speicherorte
                 waistDefinition: localStorage.getItem('waistDefinition') || '',
-                stylingChallenge: localStorage.getItem('stylingChallenge') || '',
-                eyeColor: localStorage.getItem('eyeColor') || '',
-                skinTone: localStorage.getItem('skinTone') || '',
-                personalStyle: localStorage.getItem('personalStyle') || '',
-                hairColor: localStorage.getItem('hairColor') || '',
-                age: localStorage.getItem('age') || ''
+                stylingChallenge: localStorage.getItem('stylingChallenge') || ''
             };
             
             console.log('Echte Quiz-Daten aus localStorage:', quizData);
