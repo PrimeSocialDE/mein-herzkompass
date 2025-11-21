@@ -12,7 +12,7 @@
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         })(window, document, "clarity", "script", "te5set74fl");
     </script>
-    
+
     <style>
         * {
             margin: 0;
@@ -430,6 +430,21 @@
                 img.src = URL.createObjectURL(file);
             });
         }
+
+        function savePhotoToLocalStorage(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const photoData = JSON.parse(localStorage.getItem('uploadedPhotos') || '[]');
+        photoData.push({
+            data: e.target.result, // "data:image/jpeg;base64,..."
+            name: file.name,
+            timestamp: Date.now()
+        });
+        localStorage.setItem('uploadedPhotos', JSON.stringify(photoData));
+        console.log('📸 Foto gespeichert:', file.name);
+    };
+    reader.readAsDataURL(file);
+}
 
         async function submitData() {
             const btn = document.getElementById('continueBtn');
