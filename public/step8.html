@@ -446,76 +446,42 @@
     reader.readAsDataURL(file);
 }
 
-        async function submitData() {
-            const btn = document.getElementById('continueBtn');
-            const processingMsg = document.getElementById('processingMessage');
+async function submitData() {
+    const btn = document.getElementById('continueBtn');
+    const processingMsg = document.getElementById('processingMessage');
+    
+    btn.disabled = true;
+    btn.textContent = 'Speichere Foto...';
+    processingMsg.style.display = 'block';
+
+    try {
+        if (uploadedFile) {
+            const base64Data = await fileToBase64(uploadedFile);
+            const photoData = [{
+                data: base64Data,
+                name: uploadedFile.name,
+                timestamp: Date.now()
+            }];
             
-            btn.disabled = true;
-            btn.textContent = 'Verarbeitung läuft...';
-            processingMsg.style.display = 'block';
-
-            try {
-                const photoDataArray = [];
-                
-                // Foto konvertieren falls vorhanden
-                if (uploadedFile) {
-                    const base64Data = await fileToBase64(uploadedFile);
-                    photoDataArray.push({
-                        data: base64Data,
-                        name: uploadedFile.name,
-                        type: uploadedFile.type,
-                        size: uploadedFile.size
-                    });
-                }
-
-                // Alle Daten sammeln
-                const allQuizAnswers = JSON.parse(localStorage.getItem('quizAnswers') || '{}');
-                const userId = localStorage.getItem('userId') || `user_${Date.now()}`;
-                
-                const completeData = {
-                    ...allQuizAnswers,
-                    userId,
-                    photoCount: photoDataArray.length,
-                    timestamp: new Date().toISOString(),
-                    step: 'photo_upload_completed'
-                };
-
-                // Upload zu Backend
-                const response = await fetch('/api/checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        temp_photo_data: photoDataArray,
-                        userId,
-                        quizAnswers: completeData,
-                        createStripeSession: true
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Upload failed: ${response.status}`);
-                }
-
-                const result = await response.json();
-                
-                // Daten speichern
-                localStorage.setItem('orderId', result.orderId || '');
-                localStorage.setItem('photosUploaded', photoDataArray.length > 0 ? 'true' : 'false');
-                
-                // Zur Analyse-Seite weiterleiten
-                btn.textContent = 'Weiterleitung zur Analyse...';
-                setTimeout(() => {
-                    window.location.href = '/analyse.html';
-                }, 1000);
-                
-            } catch (error) {
-                console.error('Fehler:', error);
-                alert('Fehler bei der Verarbeitung. Bitte versuche es erneut.');
-                btn.disabled = false;
-                btn.textContent = 'Meine Analyse sichern';
-                processingMsg.style.display = 'none';
-            }
+            localStorage.setItem('uploadedPhotos', JSON.stringify(photoData));
+            localStorage.setItem('photosUploaded', 'true');
+            console.log('✅ Foto gespeichert');
+        } else {
+            localStorage.setItem('photosUploaded', 'false');
         }
+
+        btn.textContent = 'Weiter zur Analyse...';
+        setTimeout(() => {
+            window.location.href = '/ergebnisse.html';
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Fehler:', error);
+        btn.disabled = false;
+        btn.textContent = 'Meine Analyse sichern';
+        processingMsg.style.display = 'none';
+    }
+}
 
         // Drag & Drop
         const uploadArea = document.querySelector('.upload-area');
