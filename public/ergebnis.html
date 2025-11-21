@@ -1188,6 +1188,29 @@
             try {
                 console.log('💾 Sende an clara_orders Tabelle...');
                 
+                // Check für hochgeladene Fotos aus localStorage
+                const photoData = JSON.parse(localStorage.getItem('uploadedPhotos') || '[]');
+                let photoUrls = [];
+                
+                if (photoData.length > 0) {
+                    console.log('📸 Fotos gefunden, konvertiere zu URLs...');
+                    buttonElement.textContent = 'Verarbeite Fotos...';
+                    
+                    // Konvertiere Base64-Daten zu Data-URLs (wie früher)
+                    photoUrls = photoData.map((photo, index) => {
+                        // Falls schon Data-URL, direkt verwenden
+                        if (photo.data && photo.data.startsWith('data:')) {
+                            return photo.data;
+                        }
+                        // Falls nur Base64, Data-URL erstellen
+                        return `data:image/jpeg;base64,${photo.data}`;
+                    });
+                    
+                    console.log(`✅ ${photoUrls.length} Fotos als URLs konvertiert`);
+                }
+                
+                buttonElement.textContent = 'Speichere Analyse-Daten...';
+                
                 // Extrahiere spezifische Quiz-Felder
                 const submissionData = {
                     email: quizAnswers.email || quizAnswers.userEmail || null,
@@ -1203,10 +1226,10 @@
                     waist_definition: quizAnswers.waistDefinition || null,
                     styling_challenge: quizAnswers.stylingChallenge || null,
                     
-                    // FOTO-DATEN:
-                    photo_urls: quizAnswers.uploadedPhotoUrls || [],  // Array von Photo-URLs
-                    photo_count: quizAnswers.photoCount || 0,         // Anzahl hochgeladener Fotos
-                    photo_upload_completed: (quizAnswers.photoCount || 0) > 0,
+                    // FOTO-DATEN (wie früher - direkt als URLs):
+                    photo_urls: photoUrls,                           // ✅ Data-URLs (data:image/jpeg;base64,...)
+                    photo_count: photoUrls.length,                   // ✅ Anzahl hochgeladener Fotos
+                    photo_upload_completed: photoUrls.length > 0,    // ✅ Boolean ob Fotos vorhanden
                     
                     selected_plan: selectedPlan,
                     price_type: priceType,
@@ -1215,6 +1238,7 @@
                 };
                 
                 console.log('📋 Submission Data:', submissionData);
+                console.log('📸 Photo URLs Beispiel:', photoUrls.length > 0 ? photoUrls[0].substring(0, 50) + '...' : 'Keine Fotos');
                 
                 // Direkte Supabase REST API Call
                 const response = await fetch('https://xomsibpyksrzrnixbdwf.supabase.co/rest/v1/clara_orders', {
