@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deine persönliche Farbanalyse ist fast fertig</title>
+    <title>Deine persönliche Farbanalyse ist fast fertig - mein-herzkompass.de</title>
 
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
@@ -38,7 +38,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-light);
+            background: linear-gradient(135deg, #f1f3ff 0%, var(--bg-light) 100%);
             color: var(--text-dark);
             line-height: 1.6;
             font-size: 16px;
@@ -1064,7 +1064,7 @@
                 <div class="footer-section">
                     <h4>Support</h4>
                     <ul>
-                        <li><a href="/geld-zurueck">Geld-zurück-Garantie</a></li>
+                        <li><a href="/geld-zurueck.html">Geld-zurück-Garantie</a></li>
                     </ul>
                 </div>
             </div>
@@ -1154,38 +1154,113 @@
         function startCheckout() {
             const selectedPlan = document.querySelector('input[name="plan"]:checked')?.value || 'onetime';
             
-            // Demo Stripe Links für alle Szenarien
+            // Alle Quiz-Daten aus localStorage sammeln
+            const quizAnswers = {
+                // Basis-Daten
+                eyeColor: localStorage.getItem('eyeColor'),
+                skinTone: localStorage.getItem('skinTone'),
+                personalStyle: localStorage.getItem('personalStyle'),
+                hairColor: localStorage.getItem('hairColor'),
+                age: localStorage.getItem('age'),
+                bodyShape: localStorage.getItem('bodyShape'),
+                waistDefinition: localStorage.getItem('waistDefinition'),
+                stylingChallenge: localStorage.getItem('stylingChallenge'),
+                
+                // Alle anderen möglichen Quiz-Felder
+                name: localStorage.getItem('name') || localStorage.getItem('userName'),
+                email: localStorage.getItem('email') || localStorage.getItem('userEmail'),
+                
+                // Zusätzliche Meta-Daten
+                quiz_completed_at: localStorage.getItem('quizCompletedAt'),
+                user_agent: navigator.userAgent,
+                referrer: document.referrer,
+                
+                // Alle localStorage-Keys für Vollständigkeit
+                all_storage: getAllLocalStorageData()
+            };
+            
+            console.log('📊 Quiz-Daten gesammelt:', quizAnswers);
+            
+            // Stripe Links basierend auf Plan und Timer
             const stripeLinks = {
-                // Timer-Rabatte (während Timer läuft)
                 discount: {
-                    onetime: 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04', // €39,99 einmalig
-                    'monthly-club': 'https://buy.stripe.com/fZubJ02I62qneOU5VZ1VK08' // €19/Monat
+                    onetime: 'https://buy.stripe.com/8x25kCdmK8OL6io2JN1VK04',
+                    'monthly-club': 'https://buy.stripe.com/fZubJ02I62qneOU5VZ1VK08'
                 },
-                // Normale Preise (Timer abgelaufen)
                 normal: {
-                    onetime: 'https://buy.stripe.com/3cI6oG6YmaWTcGMckn1VK0a', // €59,99 einmalig
-                    'monthly-club': 'https://buy.stripe.com/3cIfZgbeC3ureOU98b1VK09' // €29/Monat
+                    onetime: 'https://buy.stripe.com/3cI6oG6YmaWTcGMckn1VK0a',
+                    'monthly-club': 'https://buy.stripe.com/3cIfZgbeC3ureOU98b1VK09'
                 }
             };
             
-            let targetLink;
-            let priceType;
+            const priceType = timerExpired ? 'normal' : 'discount';
+            const targetLink = stripeLinks[priceType][selectedPlan];
             
-            if (timerExpired) {
-                targetLink = stripeLinks.normal[selectedPlan];
-                priceType = 'normalen Preisen';
-            } else {
-                targetLink = stripeLinks.discount[selectedPlan];
-                priceType = 'Rabatt-Preisen';
+            // Button State ändern
+            const btn = document.getElementById('main-cta-btn');
+            btn.disabled = true;
+            btn.textContent = 'Speichere Daten...';
+            
+            // Daten an Backend senden
+            saveToSupabaseAndRedirect(quizAnswers, selectedPlan, priceType, targetLink, btn);
+        }
+        
+        function getAllLocalStorageData() {
+            const allData = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                allData[key] = localStorage.getItem(key);
             }
-            
-            console.log(`Weiterleitung zu ${priceType} für ${selectedPlan}:`, targetLink);
-            
-            // Demo: Zeige Link in Alert statt direkter Weiterleitung
-            alert(`Demo: Weiterleitung zu ${priceType} für ${selectedPlan} Plan\n\nStripe Link: ${targetLink}`);
-            
-            // In Production würdest du direkt weiterleiten:
-            // window.location.href = targetLink;
+            return allData;
+        }
+        
+        async function saveToSupabaseAndRedirect(quizAnswers, selectedPlan, priceType, stripeUrl, buttonElement) {
+            try {
+                console.log('💾 Sende Daten an Backend...');
+                
+                const response = await fetch('/api/save-order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        plan_type: selectedPlan,
+                        price_type: priceType,
+                        answers: quizAnswers,
+                        stripe_url: stripeUrl,
+                        user_email: quizAnswers.email || null,
+                        name: quizAnswers.name || 'Unbekannt'
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('✅ Daten erfolgreich gespeichert:', result);
+                
+                // Order ID für später speichern
+                localStorage.setItem('current_order_id', result.order_id);
+                
+                // Kurz warten, dann zu Stripe weiterleiten
+                buttonElement.textContent = 'Weiterleitung zu Bezahlung...';
+                setTimeout(() => {
+                    window.location.href = stripeUrl;
+                }, 500);
+                
+            } catch (error) {
+                console.error('❌ Fehler beim Speichern:', error);
+                
+                // Fallback: Direkt zu Stripe ohne Backend
+                buttonElement.textContent = 'Direkt zu Bezahlung...';
+                buttonElement.disabled = false;
+                
+                alert('Daten konnten nicht gespeichert werden. Du wirst trotzdem zur Bezahlung weitergeleitet.');
+                setTimeout(() => {
+                    window.location.href = stripeUrl;
+                }, 1000);
+            }
         }
         
         function scrollToCheckout() {
