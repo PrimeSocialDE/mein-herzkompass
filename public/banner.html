@@ -1,39 +1,57 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bottom Cookie-баннер</title>
+    <title>Cookie Banner - mein-herzkompass.de</title>
     <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #00d4aa;
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --shadow-light: 0 2px 10px rgba(0,0,0,0.05);
+            --shadow-medium: 0 8px 30px rgba(0,0,0,0.12);
+            --border-radius: 16px;
+            --border-radius-small: 8px;
+        }
+        
         * {
             box-sizing: border-box;
         }
         
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 50%, #1e2a69 100%);
+            background: linear-gradient(135deg, #f1f3ff 0%, var(--bg-light) 100%);
             padding: 20px;
         }
         
         .demo-content {
             text-align: center;
-            color: white;
-            padding: 80px 20px 200px 20px; /* Extra bottom padding for banner */
+            color: var(--text-dark);
+            padding: 80px 20px 200px 20px;
         }
         
         .demo-content h1 {
             font-size: 3rem;
             margin-bottom: 1.5rem;
-            opacity: 0.95;
-            font-weight: 700;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
             letter-spacing: -0.02em;
         }
         
         .demo-content p {
             font-size: 1.3rem;
-            opacity: 0.85;
+            color: var(--text-light);
             max-width: 800px;
             margin: 0 auto;
             line-height: 1.6;
@@ -50,7 +68,8 @@
             z-index: 99999;
             padding: 24px 20px;
             text-align: center;
-            box-shadow: 0 -8px 32px rgba(15, 23, 42, 0.2);
+            box-shadow: 0 -8px 32px rgba(102, 126, 234, 0.15);
+            border-top: 2px solid rgba(102, 126, 234, 0.1);
             animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
@@ -70,106 +89,92 @@
             margin: 0 auto;
         }
         
-        .logo-text {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1e40af;
-            margin-bottom: 20px;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
         .cookie-title {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            color: #1e40af;
+            color: var(--primary-color);
             margin: 0 0 12px 0;
             letter-spacing: -0.01em;
         }
         
         .cookie-text {
-            color: #64748b;
-            font-size: 16px;
+            color: var(--text-light);
+            font-size: 15px;
             line-height: 1.5;
-            margin: 0 0 32px 0;
+            margin: 0 0 24px 0;
         }
         
         .cookie-link {
-            color: #1e40af;
+            color: var(--primary-color);
             text-decoration: none;
             font-weight: 600;
             transition: all 0.2s ease;
         }
         
         .cookie-link:hover {
-            color: #1d4ed8;
+            color: var(--secondary-color);
             text-decoration: underline;
         }
         
         .cookie-buttons {
             display: flex;
-            gap: 16px;
+            gap: 12px;
             justify-content: center;
             flex-wrap: wrap;
         }
         
         .btn {
-            padding: 16px 32px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 12px;
+            border-radius: var(--border-radius-small);
             font-weight: 600;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             letter-spacing: 0.01em;
-            min-width: 140px;
+            min-width: 120px;
         }
         
         .btn-accept {
-            background: #1e40af;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            box-shadow: 0 8px 25px rgba(30, 64, 175, 0.3);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
         
         .btn-accept:hover {
-            background: #1d4ed8;
             transform: translateY(-2px);
-            box-shadow: 0 12px 35px rgba(30, 64, 175, 0.4);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
         
         .btn-customize {
-            background: rgba(30, 64, 175, 0.08);
-            color: #1e40af;
-            border: 2px solid rgba(30, 64, 175, 0.2);
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary-color);
+            border: 1px solid rgba(102, 126, 234, 0.2);
         }
         
         .btn-customize:hover {
-            background: rgba(30, 64, 175, 0.12);
-            border-color: rgba(30, 64, 175, 0.3);
+            background: rgba(102, 126, 234, 0.15);
+            border-color: rgba(102, 126, 234, 0.3);
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.15);
         }
         
         .btn-reject {
-            background: rgba(100, 116, 139, 0.08);
-            color: #64748b;
-            border: 2px solid rgba(100, 116, 139, 0.2);
+            background: rgba(108, 117, 125, 0.1);
+            color: var(--text-light);
+            border: 1px solid rgba(108, 117, 125, 0.2);
         }
         
         .btn-reject:hover {
-            background: rgba(100, 116, 139, 0.12);
-            color: #475569;
-            border-color: rgba(100, 116, 139, 0.3);
+            background: rgba(108, 117, 125, 0.15);
+            color: var(--text-dark);
+            border-color: rgba(108, 117, 125, 0.3);
         }
         
         /* Cookie Settings Modal */
         #cookie-modal {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(44, 62, 80, 0.7);
             backdrop-filter: blur(12px);
             display: none;
             z-index: 100000;
@@ -187,12 +192,12 @@
             max-width: 520px;
             margin: 8vh auto;
             padding: 32px;
-            border-radius: 16px;
+            border-radius: var(--border-radius);
             box-shadow: 
-                0 25px 50px rgba(15, 23, 42, 0.25),
-                0 8px 32px rgba(30, 64, 175, 0.15);
+                0 25px 50px rgba(44, 62, 80, 0.25),
+                0 8px 32px rgba(102, 126, 234, 0.15);
             animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 1px solid rgba(30, 64, 175, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.1);
         }
         
         @keyframes modalSlideIn {
@@ -210,19 +215,34 @@
             text-align: center;
             margin-bottom: 24px;
             padding-bottom: 16px;
-            border-bottom: 2px solid rgba(30, 64, 175, 0.1);
+            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+        }
+        
+        .modal-logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .modal-logo-icon {
+            font-size: 20px;
         }
         
         .modal-logo {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 700;
-            color: #1e40af;
-            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
         }
         
         .modal-content h3 {
             margin: 0;
-            color: #1e40af;
+            color: var(--primary-color);
             font-size: 20px;
             font-weight: 700;
             letter-spacing: -0.01em;
@@ -237,20 +257,20 @@
             align-items: flex-start;
             padding: 16px;
             margin: 10px 0;
-            background: rgba(30, 64, 175, 0.02);
-            border-radius: 12px;
-            border: 1px solid rgba(30, 64, 175, 0.08);
+            background: rgba(102, 126, 234, 0.03);
+            border-radius: var(--border-radius-small);
+            border: 1px solid rgba(102, 126, 234, 0.1);
             transition: all 0.2s ease;
         }
         
         .checkbox-item:hover {
-            background: rgba(30, 64, 175, 0.05);
-            border-color: rgba(30, 64, 175, 0.15);
+            background: rgba(102, 126, 234, 0.05);
+            border-color: rgba(102, 126, 234, 0.2);
         }
         
         .checkbox-item.disabled {
-            background: rgba(100, 116, 139, 0.05);
-            border-color: rgba(100, 116, 139, 0.1);
+            background: rgba(108, 117, 125, 0.05);
+            border-color: rgba(108, 117, 125, 0.1);
         }
         
         .checkbox-item input[type="checkbox"] {
@@ -259,7 +279,7 @@
             margin-right: 12px;
             margin-top: 2px;
             cursor: pointer;
-            accent-color: #1e40af;
+            accent-color: var(--primary-color);
         }
         
         .checkbox-item input[type="checkbox"]:disabled {
@@ -268,17 +288,17 @@
         
         .checkbox-label {
             flex: 1;
-            color: #374151;
+            color: var(--text-dark);
             cursor: pointer;
         }
         
         .checkbox-label.disabled {
-            color: #9ca3af;
+            color: var(--text-light);
             cursor: not-allowed;
         }
         
         .checkbox-label strong {
-            color: #1e40af;
+            color: var(--primary-color);
             font-weight: 600;
             display: block;
             margin-bottom: 4px;
@@ -286,7 +306,7 @@
         }
         
         .checkbox-label small {
-            color: #64748b;
+            color: var(--text-light);
             font-size: 13px;
             line-height: 1.4;
         }
@@ -302,7 +322,7 @@
         .btn-modal {
             padding: 12px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--border-radius-small);
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -310,26 +330,25 @@
         }
         
         .btn-cancel {
-            background: rgba(100, 116, 139, 0.1);
-            color: #64748b;
-            border: 1px solid rgba(100, 116, 139, 0.2);
+            background: rgba(108, 117, 125, 0.1);
+            color: var(--text-light);
+            border: 1px solid rgba(108, 117, 125, 0.2);
         }
         
         .btn-cancel:hover {
-            background: rgba(100, 116, 139, 0.15);
-            color: #475569;
+            background: rgba(108, 117, 125, 0.15);
+            color: var(--text-dark);
         }
         
         .btn-save {
-            background: #1e40af;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
         }
         
         .btn-save:hover {
-            background: #1d4ed8;
             transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(30, 64, 175, 0.3);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
         }
         
         /* Responsive Design */
@@ -405,22 +424,22 @@
 <body>
     <!-- Demo Content -->
     <div class="demo-content">
-        <h1>Профессиональный Cookie-баннер</h1>
-        <p>который не закрывает весь экран. Расположен внизу страницы с вашим логотипом.</p>
+        <h1>💖 Clara's Herzkompass</h1>
+        <p>Professioneller Cookie-Banner im eleganten Herzkompass-Design. Perfekt integriert für maximale Conversion und DSGVO-Konformität.</p>
     </div>
 
     <!-- Bottom Cookie Banner -->
     <div id="cookie-banner">
         <div class="cookie-container">
-            <div class="cookie-title">Настройки конфиденциальности</div>
+            <div class="cookie-title">Cookie-Einstellungen</div>
             <div class="cookie-text">
-                Мы используем файлы cookie для улучшения работы сайта. 
-                <a href="/privacy.html" class="cookie-link">Подробнее</a>
+                Wir verwenden Cookies, um deine Farb-Analyse zu speichern und unsere Website zu verbessern. 
+                <a href="/datenschutz.html" class="cookie-link">Datenschutzerklärung</a>
             </div>
             <div class="cookie-buttons">
-                <button id="accept-cookies" class="btn btn-accept">Принять все</button>
-                <button id="customize-cookies" class="btn btn-customize">Настроить</button>
-                <button id="reject-cookies" class="btn btn-reject">Отклонить</button>
+                <button id="accept-cookies" class="btn btn-accept">💜 Alle akzeptieren</button>
+                <button id="customize-cookies" class="btn btn-customize">⚙️ Anpassen</button>
+                <button id="reject-cookies" class="btn btn-reject">❌ Ablehnen</button>
             </div>
         </div>
     </div>
@@ -429,41 +448,41 @@
     <div id="cookie-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Настройки файлов cookie</h3>
+                <h3>Cookie-Einstellungen verwalten</h3>
             </div>
             <div class="checkbox-group">
                 <div class="checkbox-item disabled">
                     <input type="checkbox" id="cons-necessary" checked disabled>
                     <label for="cons-necessary" class="checkbox-label disabled">
-                        <strong>Необходимые</strong>
-                        <small>Обязательные для работы сайта</small>
+                        <strong>🔧 Technisch notwendig</strong>
+                        <small>Erforderlich für Farb-Quiz und Website-Funktionen</small>
                     </label>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="cons-stat">
                     <label for="cons-stat" class="checkbox-label">
-                        <strong>Аналитические</strong>
-                        <small>Помогают улучшить сайт, анонимная статистика</small>
+                        <strong>📊 Analyse & Verbesserung</strong>
+                        <small>Google Analytics, Microsoft Clarity - helfen uns die Website zu optimieren</small>
                     </label>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="cons-mark">
                     <label for="cons-mark" class="checkbox-label">
-                        <strong>Маркетинговые</strong>
-                        <small>Персонализация и реклама (Meta, TikTok, Clarity)</small>
+                        <strong>🎯 Marketing & Personalisierung</strong>
+                        <small>TikTok Pixel, Facebook Pixel - für personalisierte Werbung und bessere Empfehlungen</small>
                     </label>
                 </div>
             </div>
             <div class="modal-buttons">
-                <button id="modal-cancel" class="btn-modal btn-cancel">Отменить</button>
-                <button id="modal-save" class="btn-modal btn-save">Сохранить</button>
+                <button id="modal-cancel" class="btn-modal btn-cancel">Abbrechen</button>
+                <button id="modal-save" class="btn-modal btn-save">💖 Einstellungen speichern</button>
             </div>
         </div>
     </div>
 
     <script>
     (function(){
-        const KEY = 'consent_v1';
+        const KEY = 'herzkompass_consent_v1';
         const elBanner = document.getElementById('cookie-banner');
         const elModal = document.getElementById('cookie-modal');
         
@@ -477,7 +496,15 @@
         
         function setConsent(obj){
             localStorage.setItem(KEY, JSON.stringify({ ...obj, ts: Date.now() }));
-            console.log('Cookie consent updated:', obj);
+            console.log('🍪 Cookie consent updated:', obj);
+            
+            // Trigger consent change event for analytics
+            if (window.gtag) {
+                gtag('consent', 'update', {
+                    analytics_storage: obj.statistics ? 'granted' : 'denied',
+                    ad_storage: obj.marketing ? 'granted' : 'denied'
+                });
+            }
         }
         
         function hasAnyDecision(){
@@ -528,14 +555,19 @@
         };
         
         document.getElementById('modal-save').onclick = function(){
-            setConsent({
+            const newConsent = {
                 necessary: true,
                 statistics: document.getElementById('cons-stat').checked,
                 marketing: document.getElementById('cons-mark').checked
-            });
+            };
+            
+            setConsent(newConsent);
             hideModal();
             hideBanner();
             window.dispatchEvent(new Event('consentchange'));
+            
+            // Show thank you message
+            console.log('💜 Danke für deine Auswahl! Clara freut sich über dein Vertrauen.');
         };
         
         // Close modal when clicking outside
@@ -547,18 +579,22 @@
         
         // Make labels clickable
         document.querySelector('label[for="cons-stat"]').onclick = function(e){
-            e.preventDefault();
-            const checkbox = document.getElementById('cons-stat');
-            checkbox.checked = !checkbox.checked;
+            if (!this.classList.contains('disabled')) {
+                e.preventDefault();
+                const checkbox = document.getElementById('cons-stat');
+                checkbox.checked = !checkbox.checked;
+            }
         };
         
         document.querySelector('label[for="cons-mark"]').onclick = function(e){
-            e.preventDefault();
-            const checkbox = document.getElementById('cons-mark');
-            checkbox.checked = !checkbox.checked;
+            if (!this.classList.contains('disabled')) {
+                e.preventDefault();
+                const checkbox = document.getElementById('cons-mark');
+                checkbox.checked = !checkbox.checked;
+            }
         };
         
-        // Function to open cookie settings later
+        // Global function to open cookie settings
         window.openCookieSettings = function(){ 
             showModal(); 
         };
@@ -572,7 +608,27 @@
             }
         });
         
-        // Initialize: Always show banner for demo
+        // Initialize consent
+        function initializeCookieConsent() {
+            if (!hasAnyDecision()) {
+                // First time visitor - show banner
+                setTimeout(showBanner, 1000); // Small delay for better UX
+            } else {
+                // Returning visitor - apply existing consent
+                const consent = getConsent();
+                if (window.gtag) {
+                    gtag('consent', 'update', {
+                        analytics_storage: consent.statistics ? 'granted' : 'denied',
+                        ad_storage: consent.marketing ? 'granted' : 'denied'
+                    });
+                }
+            }
+        }
+        
+        // Start consent management
+        document.addEventListener('DOMContentLoaded', initializeCookieConsent);
+        
+        // For demo purposes, always show banner
         showBanner();
     })();
     </script>
