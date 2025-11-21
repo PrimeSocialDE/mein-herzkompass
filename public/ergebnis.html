@@ -1154,32 +1154,9 @@
         function startCheckout() {
             const selectedPlan = document.querySelector('input[name="plan"]:checked')?.value || 'onetime';
             
-            // Alle Quiz-Daten aus localStorage sammeln
-            const quizAnswers = {
-                // Basis-Daten
-                eyeColor: localStorage.getItem('eyeColor'),
-                skinTone: localStorage.getItem('skinTone'),
-                personalStyle: localStorage.getItem('personalStyle'),
-                hairColor: localStorage.getItem('hairColor'),
-                age: localStorage.getItem('age'),
-                bodyShape: localStorage.getItem('bodyShape'),
-                waistDefinition: localStorage.getItem('waistDefinition'),
-                stylingChallenge: localStorage.getItem('stylingChallenge'),
-                
-                // Alle anderen möglichen Quiz-Felder
-                name: localStorage.getItem('name') || localStorage.getItem('userName'),
-                email: localStorage.getItem('email') || localStorage.getItem('userEmail'),
-                
-                // Zusätzliche Meta-Daten
-                quiz_completed_at: localStorage.getItem('quizCompletedAt'),
-                user_agent: navigator.userAgent,
-                referrer: document.referrer,
-                
-                // Alle localStorage-Keys für Vollständigkeit
-                all_storage: getAllLocalStorageData()
-            };
-            
-            console.log('📊 Quiz-Daten gesammelt:', quizAnswers);
+            // Alle Quiz-Daten aus localStorage sammeln (für später)
+            const quizAnswers = getAllLocalStorageData();
+            console.log('📊 Quiz-Daten gesammelt (für später):', quizAnswers);
             
             // Stripe Links basierend auf Plan und Timer
             const stripeLinks = {
@@ -1196,13 +1173,16 @@
             const priceType = timerExpired ? 'normal' : 'discount';
             const targetLink = stripeLinks[priceType][selectedPlan];
             
-            // Button State ändern
-            const btn = document.getElementById('main-cta-btn');
-            btn.disabled = true;
-            btn.textContent = 'Speichere Daten...';
+            console.log(`🚀 Direkte Weiterleitung zu ${priceType} für ${selectedPlan}`);
+            console.log('🔗 Stripe Link:', targetLink);
             
-            // Daten an Backend senden
-            saveToSupabaseAndRedirect(quizAnswers, selectedPlan, priceType, targetLink, btn);
+            // Speichere Plan-Info für später
+            localStorage.setItem('selectedPlan', selectedPlan);
+            localStorage.setItem('priceType', priceType);
+            localStorage.setItem('checkoutStarted', Date.now());
+            
+            // Direkt zu Stripe weiterleiten
+            window.location.href = targetLink;
         }
         
         function getAllLocalStorageData() {
@@ -1213,55 +1193,7 @@
             }
             return allData;
         }
-        
-        async function saveToSupabaseAndRedirect(quizAnswers, selectedPlan, priceType, stripeUrl, buttonElement) {
-            try {
-                console.log('💾 Sende Daten an Backend...');
-                
-                const response = await fetch('/api/save-order', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        plan_type: selectedPlan,
-                        price_type: priceType,
-                        answers: quizAnswers,
-                        stripe_url: stripeUrl,
-                        user_email: quizAnswers.email || null,
-                        name: quizAnswers.name || 'Unbekannt'
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                console.log('✅ Daten erfolgreich gespeichert:', result);
-                
-                // Order ID für später speichern
-                localStorage.setItem('current_order_id', result.order_id);
-                
-                // Kurz warten, dann zu Stripe weiterleiten
-                buttonElement.textContent = 'Weiterleitung zu Bezahlung...';
-                setTimeout(() => {
-                    window.location.href = stripeUrl;
-                }, 500);
-                
-            } catch (error) {
-                console.error('❌ Fehler beim Speichern:', error);
-                
-                // Fallback: Direkt zu Stripe ohne Backend
-                buttonElement.textContent = 'Direkt zu Bezahlung...';
-                buttonElement.disabled = false;
-                
-                alert('Daten konnten nicht gespeichert werden. Du wirst trotzdem zur Bezahlung weitergeleitet.');
-                setTimeout(() => {
-                    window.location.href = stripeUrl;
-                }, 1000);
-            }
-        }
+
         
         function scrollToCheckout() {
             document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
