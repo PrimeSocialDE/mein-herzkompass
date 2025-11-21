@@ -3,7 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ihre Antworten werden analysiert...</title>
+    <title>Deine Antworten werden analysiert...</title>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '804110612194796');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=804110612194796&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
     <style>
         * {
             margin: 0;
@@ -354,14 +373,14 @@
     
     <div class="page-wrapper">
         <div class="analysis-container">
-            <h1 class="main-title">Ihre Antworten werden analysiert</h1>
-            <p class="subtitle">Clara erstellt Ihr vorläufigen Farbtyp<span class="loading-dots"></span></p>
+            <h1 class="main-title">Deine Antworten werden analysiert</h1>
+            <p class="subtitle">Clara erstellt deinen vorläufigen Farbtyp<span class="loading-dots"></span></p>
             
             <div class="chart-container">
                 <div class="chart-title">Analysierte Bereiche</div>
                 <div class="bar-chart">
                     <div class="bar-item">
-                        <div class="bar-label">Körpertyp-Analyse</div>
+                        <div class="bar-label">Augentyp-Analyse</div>
                         <div class="bar-background">
                             <div class="bar-fill" data-bar="1"></div>
                         </div>
@@ -377,7 +396,7 @@
                     </div>
                     
                     <div class="bar-item">
-                        <div class="bar-label">Ihr vorläufiger Farbtyp wird erstellt</div>
+                        <div class="bar-label">Dein vorläufiger Farbtyp wird erstellt</div>
                         <div class="bar-background">
                             <div class="bar-fill" data-bar="3"></div>
                         </div>
@@ -405,7 +424,7 @@
         
             
             <div class="completion-message">
-                🔒 Ihre Daten werden sicher gespeichert
+                🔒 Deine Daten werden sicher gespeichert
             </div>
             
             <div class="testimonials-container">
@@ -467,12 +486,17 @@
 
         function checkAllBarsComplete() {
             if (completedBars === 5) {
+                // Track completion event
+                if (typeof fbq !== 'undefined') {
+                    fbq('track', 'CompleteRegistration');
+                }
+                
                 setTimeout(() => {
                     try {
                         if (heartInterval) clearInterval(heartInterval);
                         barIntervals.forEach(interval => clearInterval(interval));
                         
-                        window.location.href = 'ergebnis.html';
+                        window.location.href = '/ergebnis.html';
                     } catch (e) {}
                 }, 2000);
             }
@@ -531,7 +555,7 @@
                     if (completedBars < 5) {
                         if (heartInterval) clearInterval(heartInterval);
                         barIntervals.forEach(interval => clearInterval(interval));
-                        window.location.href = 'ergebnis.html';
+                        window.location.href = '/ergebnisse.html';
                     }
                 }, 13000);
             } catch (e) {}
