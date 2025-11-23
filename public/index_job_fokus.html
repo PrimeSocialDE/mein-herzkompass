@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clara's Hundeschule - Individueller Trainingsplan für deinen Hund</title>
+    <title>WauWerk - Individueller Trainingsplan für deinen Hund</title>
     <meta name="description" content="Löse die Verhaltensprobleme deines Hundes mit einem personalisierten 30-60 Tage Trainingsplan. Professionelle Hundeerziehung online.">
     
     <style>
@@ -99,6 +99,14 @@
             box-shadow: var(--shadow-light);
         }
 
+        .logo-image {
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            object-fit: cover;
+            box-shadow: var(--shadow-light);
+        }
+
         .nav-links {
             display: flex;
             gap: 35px;
@@ -164,13 +172,13 @@
         /* Hero Image Placeholder */
         .hero-image {
             width: 100%;
-            max-width: 600px;
-            height: 350px;
+            max-width: 500px;
+            height: 280px;
             background: linear-gradient(135deg, var(--accent-brown), var(--warm-brown));
             border-radius: var(--border-radius-large);
-            margin: 40px auto 30px;
+            margin: 30px auto 25px;
             box-shadow: var(--shadow-heavy);
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 350"><rect width="600" height="350" fill="%23E6D2C1"/><text x="300" y="160" text-anchor="middle" font-size="24" fill="%238B7355" font-weight="600">Glücklicher Hund</text><text x="300" y="190" text-anchor="middle" font-size="24" fill="%238B7355" font-weight="600">mit Familie</text><text x="300" y="220" text-anchor="middle" font-size="16" fill="%23A68B5B">600x350 Pixel</text></svg>');
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 280"><rect width="500" height="280" fill="%23E6D2C1"/><text x="250" y="130" text-anchor="middle" font-size="20" fill="%238B7355" font-weight="600">Glücklicher Hund</text><text x="250" y="155" text-anchor="middle" font-size="20" fill="%238B7355" font-weight="600">mit Familie</text><text x="250" y="180" text-anchor="middle" font-size="14" fill="%23A68B5B">500x280 Pixel</text></svg>');
             background-size: cover;
             background-position: center;
             position: relative;
@@ -372,6 +380,28 @@
             overflow: hidden;
             box-shadow: var(--shadow-light);
             background: var(--accent-brown);
+            animation: avatarFloat 4s ease-in-out infinite;
+        }
+
+        .avatar-circle:nth-child(1) { animation-delay: 0s; }
+        .avatar-circle:nth-child(2) { animation-delay: 0.5s; }
+        .avatar-circle:nth-child(3) { animation-delay: 1s; }
+        .avatar-circle:nth-child(4) { animation-delay: 1.5s; }
+        .avatar-circle:nth-child(5) { animation-delay: 2s; }
+        .avatar-circle:nth-child(6) { animation-delay: 2.5s; }
+        .avatar-circle:nth-child(7) { animation-delay: 3s; }
+        .avatar-circle:nth-child(8) { animation-delay: 3.5s; }
+        .avatar-circle:nth-child(9) { animation-delay: 0.3s; }
+        .avatar-circle:nth-child(10) { animation-delay: 0.8s; }
+        .avatar-circle:nth-child(11) { animation-delay: 1.3s; }
+
+        @keyframes avatarFloat {
+            0%, 100% { 
+                transform: translateY(0px) scale(1); 
+            }
+            50% { 
+                transform: translateY(-8px) scale(1.05); 
+            }
         }
 
         .avatar-circle img {
@@ -799,8 +829,8 @@
             }
 
             .hero-image {
-                height: 250px;
-                margin: 30px auto 25px;
+                height: 200px;
+                margin: 25px auto 20px;
             }
 
             .trustshops-container {
@@ -892,14 +922,10 @@
     <nav class="nav">
         <div class="nav-container">
             <a href="#" class="logo">
-                <div class="logo-icon">🐕</div>
-                Clara's Hundeschule
+                <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+                WauWerk
             </a>
             <ul class="nav-links">
-                <li><a href="#start">Startseite</a></li>
-                <li><a href="#training">Training</a></li>
-                <li><a href="#methoden">Methoden</a></li>
-                <li><a href="#kontakt">Kontakt</a></li>
             </ul>
             <a href="#quiz" class="cta-button-nav">Quiz starten</a>
         </div>
@@ -961,7 +987,7 @@
             <div class="statistics-content">
                 <div class="main-stat">
                     <div class="stat-number">86%</div>
-                    <p class="stat-text">Hundebesitzer steigern das Gehorsamsniveau ihres Hundes im Durchschnitt um 74% mit unserem persönlichen PawChamp</p>
+                    <p class="stat-text">Hundebesitzer steigern das Gehorsamsniveau ihres Hundes im Durchschnitt um 74% mit unserem persönlichen Trainingsplan</p>
                 </div>
             </div>
         </div>
@@ -972,17 +998,17 @@
         <div class="container">
             <h3 class="social-proof-title">Vertraut von <span class="social-proof-number">3,400+</span><br>Hundebesitzern</h3>
             <div class="social-proof-avatars">
-                <div class="avatar-circle"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><circle cx='30' cy='30' r='30' fill='%23E6D2C1'/><circle cx='30' cy='25' r='8' fill='%23D4B996'/><circle cx='25' cy='30' r='2' fill='%23000'/><circle cx='35' cy='30' r='2' fill='%23000'/><ellipse cx='30' cy='35' rx='2' ry='1' fill='%23000'/><path d='M 22 40 Q 30 46 38 40' stroke='%23000' stroke-width='1.5' fill='none'/></svg>" alt="Hundebesitzer"></div>
-                <div class="avatar-circle"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><circle cx='30' cy='30' r='30' fill='%23F7F0E8'/><circle cx='30' cy='25' r='8' fill='%23E6D2C1'/><circle cx='25' cy='30' r='2' fill='%23000'/><circle cx='35' cy='30' r='2' fill='%23000'/><ellipse cx='30' cy='35' rx='2' ry='1' fill='%23000'/><path d='M 22 40 Q 30 46 38 40' stroke='%23000' stroke-width='1.5' fill='none'/></svg>" alt="Hundebesitzer"></div>
-                <div class="avatar-circle"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><circle cx='30' cy='30' r='30' fill='%23D4B996'/><circle cx='30' cy='25' r='8' fill='%23E6D2C1'/><circle cx='25' cy='30' r='2' fill='%23000'/><circle cx='35' cy='30' r='2' fill='%23000'/><ellipse cx='30' cy='35' rx='2' ry='1' fill='%23000'/><path d='M 22 40 Q 30 46 38 40' stroke='%23000' stroke-width='1.5' fill='none'/></svg>" alt="Hundebesitzer"></div>
-                <div class="avatar-circle"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><circle cx='30' cy='30' r='30' fill='%23E6D2C1'/><circle cx='30' cy='25' r='8' fill='%23D4B996'/><circle cx='25' cy='30' r='2' fill='%23000'/><circle cx='35' cy='30' r='2' fill='%23000'/><ellipse cx='30' cy='35' rx='2' ry='1' fill='%23000'/><path d='M 22 40 Q 30 46 38 40' stroke='%23000' stroke-width='1.5' fill='none'/></svg>" alt="Hundebesitzer"></div>
-                <div class="avatar-circle"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><circle cx='30' cy='30' r='30' fill='%23F7F0E8'/><circle cx='30' cy='25' r='8' fill='%23D4B996'/><circle cx='25' cy='30' r='2' fill='%23000'/><circle cx='35' cy='30' r='2' fill='%23000'/><ellipse cx='30' cy='35' rx='2' ry='1' fill='%23000'/><path d='M 22 40 Q 30 46 38 40' stroke='%23000' stroke-width='1.5' fill='none'/></svg>" alt="Hundebesitzer"></div>
-                <div class="avatar-circle"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><circle cx='30' cy='30' r='30' fill='%23E6D2C1'/><circle cx='30' cy='25' r='8' fill='%23F7F0E8'/><circle cx='25' cy='30' r='2' fill='%23000'/><circle cx='35' cy='30' r='2' fill='%23000'/><ellipse cx='30' cy='35' rx='2' ry='1' fill='%23000'/><path d='M 22 40 Q 30 46 38 40' stroke='%23000' stroke-width='1.5' fill='none'/></svg>" alt="Hundebesitzer"></div>
-                <div class="avatar-circle"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><circle cx='30' cy='30' r='30' fill='%23D4B996'/><circle cx='30' cy='25' r='8' fill='%23E6D2C1'/><circle cx='25' cy='30' r='2' fill='%23000'/><circle cx='35' cy='30' r='2' fill='%23000'/><ellipse cx='30' cy='35' rx='2' ry='1' fill='%23000'/><path d='M 22 40 Q 30 46 38 40' stroke='%23000' stroke-width='1.5' fill='none'/></svg>" alt="Hundebesitzer"></div>
-                <div class="avatar-circle"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><circle cx='30' cy='30' r='30' fill='%23F7F0E8'/><circle cx='30' cy='25' r='8' fill='%23D4B996'/><circle cx='25' cy='30' r='2' fill='%23000'/><circle cx='35' cy='30' r='2' fill='%23000'/><ellipse cx='30' cy='35' rx='2' ry='1' fill='%23000'/><path d='M 22 40 Q 30 46 38 40' stroke='%23000' stroke-width='1.5' fill='none'/></svg>" alt="Hundebesitzer"></div>
-                <div class="avatar-circle"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><circle cx='30' cy='30' r='30' fill='%23E6D2C1'/><circle cx='30' cy='25' r='8' fill='%23D4B996'/><circle cx='25' cy='30' r='2' fill='%23000'/><circle cx='35' cy='30' r='2' fill='%23000'/><ellipse cx='30' cy='35' rx='2' ry='1' fill='%23000'/><path d='M 22 40 Q 30 46 38 40' stroke='%23000' stroke-width='1.5' fill='none'/></svg>" alt="Hundebesitzer"></div>
-                <div class="avatar-circle"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><circle cx='30' cy='30' r='30' fill='%23F7F0E8'/><circle cx='30' cy='25' r='8' fill='%23E6D2C1'/><circle cx='25' cy='30' r='2' fill='%23000'/><circle cx='35' cy='30' r='2' fill='%23000'/><ellipse cx='30' cy='35' rx='2' ry='1' fill='%23000'/><path d='M 22 40 Q 30 46 38 40' stroke='%23000' stroke-width='1.5' fill='none'/></svg>" alt="Hundebesitzer"></div>
-                <div class="avatar-circle"><img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><circle cx='30' cy='30' r='30' fill='%23D4B996'/><circle cx='30' cy='25' r='8' fill='%23F7F0E8'/><circle cx='25' cy='30' r='2' fill='%23000'/><circle cx='35' cy='30' r='2' fill='%23000'/><ellipse cx='30' cy='35' rx='2' ry='1' fill='%23000'/><path d='M 22 40 Q 30 46 38 40' stroke='%23000' stroke-width='1.5' fill='none'/></svg>" alt="Hundebesitzer"></div>
+                <div class="avatar-circle"><img src="Kundin1.png" alt="Hundebesitzer"></div>
+                <div class="avatar-circle"><img src="Kundin2.png" alt="Hundebesitzer"></div>
+                <div class="avatar-circle"><img src="Kundin3.png" alt="Hundebesitzer"></div>
+                <div class="avatar-circle"><img src="Kundin4.png" alt="Hundebesitzer"></div>
+                <div class="avatar-circle"><img src="Kundin5.png" alt="Hundebesitzer"></div>
+                <div class="avatar-circle"><img src="Kundin6.png" alt="Hundebesitzer"></div>
+                <div class="avatar-circle"><img src="Kundin7.png" alt="Hundebesitzer"></div>
+                <div class="avatar-circle"><img src="Kundin8.png" alt="Hundebesitzer"></div>
+                <div class="avatar-circle"><img src="Kundin9.png" alt="Hundebesitzer"></div>
+                <div class="avatar-circle"><img src="Kundin10.png" alt="Hundebesitzer"></div>
+                <div class="avatar-circle"><img src="Kundin11.png" alt="Hundebesitzer"></div>
             </div>
         </div>
     </div>
@@ -1210,7 +1236,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2024 Clara's Hundeschule. Alle Rechte vorbehalten. | Professionelle Online-Hundeerziehung seit 2020</p>
+                <p>&copy; 2024 WauWerk. Alle Rechte vorbehalten. | Professionelle Online-Hundeerziehung seit 2020</p>
             </div>
         </div>
     </footer>
