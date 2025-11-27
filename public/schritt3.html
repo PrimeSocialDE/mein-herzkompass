@@ -1,18 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Шаг 2: Семья и въезд</title>
-
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "u1bdqt1zrn");
-    </script>
-    
+    <title>WauWerk - Hundetraining Quiz Schritt 3</title>
     <style>
         * {
             margin: 0;
@@ -20,563 +11,652 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-orange: #FF8A50;
+            --orange-hover: #FF7A40;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+
         body {
-            font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
-            min-height: 100vh;
-            color: #2D3748;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.5;
         }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-light);
+            text-align: center;
         }
 
-        .progress-container {
-            background: white;
-            padding: 20px;
-            margin-bottom: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
+        .logo {
+            display: inline-flex;
             align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Header Text */
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .quiz-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
             margin-bottom: 15px;
         }
 
-        .progress-title {
+        .quiz-subtitle {
             font-size: 18px;
-            font-weight: 700;
-            color: #1e3c72;
+            color: var(--text-medium);
+            margin-bottom: 30px;
         }
 
-        .progress-step {
-            background: #f0f9ff;
-            color: #1e3c72;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 50px;
         }
 
         .progress-bar {
-            background: #e2e8f0;
+            width: 100%;
             height: 8px;
+            background: var(--border-light);
             border-radius: 4px;
             overflow: hidden;
         }
 
         .progress-fill {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            width: 15%;
             height: 100%;
-            width: 67%;
-            border-radius: 4px;
+            background: var(--light-brown);
             transition: width 0.3s ease;
         }
 
-        .form-container {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border: 1px solid #e0e0e0;
-        }
-
-        h1 {
-            font-size: 28px;
-            color: #1a202c;
-            margin-bottom: 10px;
-            font-weight: 700;
-            text-align: center;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #4a5568;
-            font-size: 16px;
-            margin-bottom: 30px;
-            line-height: 1.5;
-        }
-
-        .form-section {
-            margin-bottom: 30px;
-            padding-bottom: 30px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .form-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1a202c;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .section-info {
-            color: #718096;
-            font-size: 13px;
-            margin-bottom: 15px;
-            font-style: italic;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2d3748;
-            font-size: 14px;
-        }
-
-        .required {
-            color: #e53e3e;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.2s ease;
-            background: #ffffff;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #1e3c72;
-            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
-        }
-
-        .form-row {
+        /* Breed Buttons Grid */
+        .breed-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
+            margin-bottom: 30px;
         }
 
-        .help-text {
-            font-size: 12px;
-            color: #718096;
-            margin-top: 4px;
-            font-style: italic;
-        }
-
-        .next-button {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 15px 30px;
-            border: none;
+        .breed-button {
+            background: var(--white);
+            border: 1px solid var(--border-light);
             border-radius: 8px;
+            padding: 15px 20px;
             font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .next-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(30, 60, 114, 0.3);
-        }
-
-        .security-note {
-            text-align: center;
-            color: #718096;
-            font-size: 12px;
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .error-message {
-            color: #e53e3e;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .form-group.error input,
-        .form-group.error select {
-            border-color: #e53e3e;
-        }
-
-        .form-group.error .error-message {
-            display: block;
-        }
-
-        .back-button {
-            background: none;
-            color: #718096;
-            border: 1px solid #e2e8f0;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-dark);
             cursor: pointer;
             transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-light);
         }
 
-        .back-button:hover {
-            border-color: #cbd5e0;
-            background: #f7fafc;
+        .breed-button:hover {
+            border-color: var(--light-brown);
+            background: rgba(212, 185, 150, 0.05);
+            transform: translateY(-1px);
         }
 
+        .breed-button.selected {
+            border-color: var(--light-brown);
+            background: var(--light-brown);
+            color: var(--white);
+        }
+
+        /* Other Breed Section */
+        .other-breed-section {
+            margin-top: 30px;
+        }
+
+        .other-breed-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        /* Search Input */
+        .search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .breed-search {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            background: var(--white);
+            color: var(--text-dark);
+            transition: border-color 0.2s ease;
+        }
+
+        .breed-search:focus {
+            outline: none;
+            border-color: var(--light-brown);
+        }
+
+        .breed-search::placeholder {
+            color: var(--text-medium);
+        }
+
+        /* Search Results */
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-top: none;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .search-result-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-light);
+            transition: background-color 0.2s ease;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item:hover {
+            background: rgba(212, 185, 150, 0.1);
+        }
+
+        .search-result-item.highlighted {
+            background: var(--light-brown);
+            color: var(--white);
+        }
+
+        /* Dropdown */
+        .breed-dropdown {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            background: var(--white);
+            color: var(--text-dark);
+            cursor: pointer;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%236B6B6B" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+        }
+
+        .breed-dropdown:focus {
+            outline: none;
+            border-color: var(--light-brown);
+        }
+
+        .breed-dropdown option {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        /* Terms Footer */
+        .terms-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             .container {
-                padding: 15px;
+                padding: 30px 15px;
             }
 
-            .form-container {
-                padding: 25px 20px;
+            .quiz-title {
+                font-size: 26px;
             }
 
-            .form-row {
-                grid-template-columns: 1fr;
-                gap: 10px;
+            .quiz-subtitle {
+                font-size: 16px;
             }
 
-            h1 {
+            .breed-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 12px;
+            }
+
+            .breed-button {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+        }
+
+        /* Extra small mobile devices */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 12px;
+            }
+
+            .quiz-title {
                 font-size: 24px;
             }
 
-            .subtitle {
-                font-size: 14px;
+            .breed-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .breed-button {
+                padding: 10px 12px;
+                font-size: 13px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Header -->
+    <header class="header">
+        <a href="schritt2.html" class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">WauWerk</span>
+        </a>
+    </header>
+
+    <!-- Main Content -->
     <div class="container">
-        <!-- Progress -->
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+            <h1 class="quiz-title">Wähle die Rasse deines Hundes</h1>
+        </div>
+
+        <!-- Progress Bar -->
         <div class="progress-container">
-            <div class="progress-header">
-                <div class="progress-title">Сервис для заявлений по §24</div>
-                <div class="progress-step">Шаг 2 из 3</div>
-            </div>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
         </div>
 
-        <!-- Form -->
-        <div class="form-container">
-            <a href="/schritt2.html" class="back-button">← Назад к шагу 1</a>
+        <!-- Popular Breeds Grid -->
+        <div class="breed-grid">
+            <button class="breed-button" data-breed="Mischling">Mischling</button>
+            <button class="breed-button" data-breed="Labrador">Labrador</button>
+            <button class="breed-button" data-breed="Deutscher Schäferhund">Deutscher Schäferhund</button>
+            <button class="breed-button" data-breed="Golden Retriever">Golden Retriever</button>
+            <button class="breed-button" data-breed="Französische Bulldogge">Französische Bulldogge</button>
+            <button class="breed-button" data-breed="Chihuahua">Chihuahua</button>
+            <button class="breed-button" data-breed="Border Collie">Border Collie</button>
+            <button class="breed-button" data-breed="Yorkshire Terrier">Yorkshire Terrier</button>
+            <button class="breed-button" data-breed="Jack Russell Terrier">Jack Russell Terrier</button>
+        </div>
+
+        <!-- Other Breed Section -->
+        <div class="other-breed-section">
+            <h3 class="other-breed-title">Andere Rasse</h3>
             
-            <h1>Семья и въезд</h1>
-            <p class="subtitle">Информация о вашей семье и пути в Германию</p>
+            <!-- Search Input -->
+            <div class="search-container">
+                <input type="text" 
+                       class="breed-search" 
+                       id="breedSearch" 
+                       placeholder="Rasse suchen..."
+                       autocomplete="off">
+                <div class="search-results" id="searchResults"></div>
+            </div>
+            
+            <!-- Dropdown for browsing -->
+            <select class="breed-dropdown" id="breedDropdown">
+                <option value="" disabled selected>Oder aus Liste auswählen</option>
+                <optgroup label="A">
+                    <option value="Afghane">Afghanischer Windhund</option>
+                    <option value="Akita">Akita Inu</option>
+                    <option value="Alaskan Malamute">Alaskan Malamute</option>
+                    <option value="American Bulldog">American Bulldog</option>
+                    <option value="American Pit Bull Terrier">American Pit Bull Terrier</option>
+                    <option value="American Staffordshire Terrier">American Staffordshire Terrier</option>
+                    <option value="Australian Cattle Dog">Australian Cattle Dog</option>
+                    <option value="Australian Shepherd">Australian Shepherd</option>
+                </optgroup>
+                <optgroup label="B">
+                    <option value="Basenji">Basenji</option>
+                    <option value="Basset Hound">Basset Hound</option>
+                    <option value="Bearded Collie">Bearded Collie</option>
+                    <option value="Belgischer Schäferhund">Belgischer Schäferhund</option>
+                    <option value="Berner Sennenhund">Berner Sennenhund</option>
+                    <option value="Bernhardiner">Bernhardiner</option>
+                    <option value="Bichon Frisé">Bichon Frisé</option>
+                    <option value="Bloodhound">Bloodhound</option>
+                    <option value="Bobtail">Bobtail (Old English Sheepdog)</option>
+                    <option value="Bolonka Zwetna">Bolonka Zwetna</option>
+                    <option value="Bordeaux Dogge">Bordeaux Dogge</option>
+                    <option value="Boston Terrier">Boston Terrier</option>
+                    <option value="Bouvier des Flandres">Bouvier des Flandres</option>
+                    <option value="Briard">Briard</option>
+                    <option value="Bullmastiff">Bullmastiff</option>
+                    <option value="Bull Terrier">Bull Terrier</option>
+                </optgroup>
+                <optgroup label="C">
+                    <option value="Cairn Terrier">Cairn Terrier</option>
+                    <option value="Cane Corso">Cane Corso</option>
+                    <option value="Cavalier King Charles Spaniel">Cavalier King Charles Spaniel</option>
+                    <option value="Chesapeake Bay Retriever">Chesapeake Bay Retriever</option>
+                    <option value="Chow Chow">Chow Chow</option>
+                    <option value="Collie">Collie</option>
+                    <option value="Curly Coated Retriever">Curly Coated Retriever</option>
+                </optgroup>
+                <optgroup label="D">
+                    <option value="Dalmatiner">Dalmatiner</option>
+                    <option value="Deutsch Drahthaar">Deutsch Drahthaar</option>
+                    <option value="Deutscher Jagdterrier">Deutscher Jagdterrier</option>
+                    <option value="Deutscher Pinscher">Deutscher Pinscher</option>
+                    <option value="Deutscher Spitz">Deutscher Spitz</option>
+                    <option value="Dobermann">Dobermann</option>
+                    <option value="Dogge">Deutsche Dogge</option>
+                    <option value="Dogo Argentino">Dogo Argentino</option>
+                </optgroup>
+                <optgroup label="E-F">
+                    <option value="English Bulldog">English Bulldog</option>
+                    <option value="English Cocker Spaniel">English Cocker Spaniel</option>
+                    <option value="English Setter">English Setter</option>
+                    <option value="English Springer Spaniel">English Springer Spaniel</option>
+                    <option value="Flat Coated Retriever">Flat Coated Retriever</option>
+                    <option value="Fox Terrier">Fox Terrier</option>
+                </optgroup>
+                <optgroup label="G">
+                    <option value="Gordon Setter">Gordon Setter</option>
+                    <option value="Great Dane">Great Dane</option>
+                    <option value="Greyhound">Greyhound</option>
+                    <option value="Großer Schweizer Sennenhund">Großer Schweizer Sennenhund</option>
+                </optgroup>
+                <optgroup label="H">
+                    <option value="Havaneser">Havaneser</option>
+                    <option value="Hovawart">Hovawart</option>
+                    <option value="Irischer Setter">Irish Setter</option>
+                    <option value="Irischer Wolfshund">Irish Wolfhound</option>
+                </optgroup>
+                <optgroup label="I-K">
+                    <option value="Isländischer Schäferhund">Isländischer Schäferhund</option>
+                    <option value="Italian Greyhound">Italian Greyhound</option>
+                    <option value="Kaukasischer Ovtcharka">Kaukasischer Ovtcharka</option>
+                    <option value="Kerry Blue Terrier">Kerry Blue Terrier</option>
+                    <option value="King Charles Spaniel">King Charles Spaniel</option>
+                    <option value="Komondor">Komondor</option>
+                </optgroup>
+                <optgroup label="L">
+                    <option value="Lagotto Romagnolo">Lagotto Romagnolo</option>
+                    <option value="Leonberger">Leonberger</option>
+                    <option value="Lhasa Apso">Lhasa Apso</option>
+                </optgroup>
+                <optgroup label="M">
+                    <option value="Magyar Vizsla">Magyar Vizsla</option>
+                    <option value="Malinois">Malinois</option>
+                    <option value="Malteser">Malteser</option>
+                    <option value="Mastiff">Mastiff</option>
+                    <option value="Miniature Pinscher">Zwergpinscher</option>
+                    <option value="Mittelschnauzer">Mittelschnauzer</option>
+                    <option value="Mops">Mops</option>
+                </optgroup>
+                <optgroup label="N-O">
+                    <option value="Neufundländer">Neufundländer</option>
+                    <option value="Norfolk Terrier">Norfolk Terrier</option>
+                    <option value="Norwich Terrier">Norwich Terrier</option>
+                    <option value="Nova Scotia Duck Tolling Retriever">Nova Scotia Duck Tolling Retriever</option>
+                </optgroup>
+                <optgroup label="P">
+                    <option value="Papillon">Papillon</option>
+                    <option value="Pekinese">Pekinese</option>
+                    <option value="Pharaoh Hound">Pharaoh Hound</option>
+                    <option value="Pointer">Pointer</option>
+                    <option value="Pomeranian">Zwergspitz (Pomeranian)</option>
+                    <option value="Portugiesischer Wasserhund">Portugiesischer Wasserhund</option>
+                    <option value="Puli">Puli</option>
+                    <option value="Pyrenäenberghund">Pyrenäenberghund</option>
+                </optgroup>
+                <optgroup label="R">
+                    <option value="Rhodesian Ridgeback">Rhodesian Ridgeback</option>
+                    <option value="Riesenschnauzer">Riesenschnauzer</option>
+                </optgroup>
+                <optgroup label="S">
+                    <option value="Saluki">Saluki</option>
+                    <option value="Samoyed">Samojede</option>
+                    <option value="Scottish Terrier">Scottish Terrier</option>
+                    <option value="Shar Pei">Shar Pei</option>
+                    <option value="Shiba Inu">Shiba Inu</option>
+                    <option value="Shih Tzu">Shih Tzu</option>
+                    <option value="Staffordshire Bull Terrier">Staffordshire Bull Terrier</option>
+                    <option value="Standard Poodle">Großpudel</option>
+                </optgroup>
+                <optgroup label="T">
+                    <option value="Tervueren">Tervueren</option>
+                    <option value="Tibetan Mastiff">Tibetan Mastiff</option>
+                    <option value="Toy Poodle">Toypudel</option>
+                </optgroup>
+                <optgroup label="V-W">
+                    <option value="Vizsla">Vizsla</option>
+                    <option value="Weimaraner">Weimaraner</option>
+                    <option value="Welsh Corgi Cardigan">Welsh Corgi Cardigan</option>
+                    <option value="Welsh Corgi Pembroke">Welsh Corgi Pembroke</option>
+                    <option value="Welsh Springer Spaniel">Welsh Springer Spaniel</option>
+                    <option value="Welsh Terrier">Welsh Terrier</option>
+                    <option value="West Highland White Terrier">West Highland White Terrier</option>
+                    <option value="Whippet">Whippet</option>
+                    <option value="Wolfspitz">Wolfspitz</option>
+                </optgroup>
+                <optgroup label="X-Z">
+                    <option value="Xolo">Xoloitzcuintli</option>
+                    <option value="Yorkshire Terrier">Yorkshire Terrier</option>
+                    <option value="Zwergpudel">Zwergpudel</option>
+                    <option value="Zwergschnauzer">Zwergschnauzer</option>
+                    <option value="Zwergspitz">Zwergspitz</option>
+                </optgroup>
+            </select>
+        </div>
 
-            <form id="familyDataForm">
-                <!-- Familie -->
-                <div class="form-section">
-                    <div class="section-title">👨‍👩‍👧‍👦 4. Члены семьи</div>
-                    <p class="section-info">Эта информация поможет нам с семейными пособиями и заявлениями на детские деньги</p>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="ehepartner_vorhanden">Есть ли супруг(а)? <span class="required">*</span></label>
-                            <select id="ehepartner_vorhanden" name="ehepartner_vorhanden" required onchange="toggleEhepartnerFields()">
-                                <option value="">Пожалуйста, выберите</option>
-                                <option value="ja">Да</option>
-                                <option value="nein">Нет</option>
-                            </select>
-                            <div class="error-message">Пожалуйста, выберите опцию</div>
-                        </div>
-                        <div class="form-group" id="ehepartner_name_group" style="display: none;">
-                            <label for="ehepartner_name">Имя супруга(и)</label>
-                            <input type="text" id="ehepartner_name" name="ehepartner_name" placeholder="например, Иван Иванов">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="kinder_vorhanden">Есть ли дети? <span class="required">*</span></label>
-                            <select id="kinder_vorhanden" name="kinder_vorhanden" required onchange="toggleKinderFields()">
-                                <option value="">Пожалуйста, выберите</option>
-                                <option value="ja">Да</option>
-                                <option value="nein">Нет</option>
-                            </select>
-                            <div class="error-message">Пожалуйста, выберите опцию</div>
-                        </div>
-                        <div class="form-group" id="kinder_details_group" style="display: none;">
-                            <label for="kinder_namen_alter">Имена и возраст детей</label>
-                            <input type="text" id="kinder_namen_alter" name="kinder_namen_alter" placeholder="например, Мария, 7 / Никита, 3">
-                            <div class="help-text">Формат: Имя, Возраст / Имя, Возраст</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Einreise -->
-                <div class="form-section">
-                    <div class="section-title">✈️ 5. Информация о въезде</div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="einreisedatum">Планируемая дата въезда в Германию <span class="required">*</span></label>
-                            <input type="date" id="einreisedatum" name="einreisedatum" required>
-                            <div class="error-message">Пожалуйста, укажите планируемую дату въезда</div>
-                        </div>
-                        <div class="form-group">
-                            <label for="einreiseweg">Путь въезда <span class="required">*</span></label>
-                            <select id="einreiseweg" name="einreiseweg" required>
-                                <option value="">Пожалуйста, выберите</option>
-                                <option value="polen">через Польшу</option>
-                                <option value="rumaenien">через Румынию</option>
-                                <option value="slowakei">через Словакию</option>
-                                <option value="andere">другой маршрут</option>
-                            </select>
-                            <div class="error-message">Пожалуйста, выберите путь въезда</div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="reiseart">Способ передвижения</label>
-                            <select id="reiseart" name="reiseart">
-                                <option value="">Пожалуйста, выберите</option>
-                                <option value="bus">Автобус</option>
-                                <option value="zug">Поезд</option>
-                                <option value="auto">Автомобиль</option>
-                                <option value="andere">другое</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="familie_allein">Путешествуете одни или с семьей? <span class="required">*</span></label>
-                            <select id="familie_allein" name="familie_allein" required>
-                                <option value="">Пожалуйста, выберите</option>
-                                <option value="familie">с семьей</option>
-                                <option value="allein">один(на)</option>
-                            </select>
-                            <div class="error-message">Пожалуйста, выберите опцию</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Unterkunft -->
-                <div class="form-section">
-                    <div class="section-title">🏠 6. Жилье / планируемое пребывание в Германии</div>
-                    
-                    <div class="form-group">
-                        <label for="unterkunft_vorhanden">Есть ли у вас уже жилье в Германии? <span class="required">*</span></label>
-                        <select id="unterkunft_vorhanden" name="unterkunft_vorhanden" required onchange="toggleUnterkunftFields()">
-                            <option value="">Пожалуйста, выберите</option>
-                            <option value="ja">Да</option>
-                            <option value="nein">Нет</option>
-                        </select>
-                        <div class="error-message">Пожалуйста, выберите опцию</div>
-                    </div>
-
-                    <div id="wunsch_stadt_field" style="display: none;">
-                        <div class="form-group">
-                            <label for="wunsch_stadt">В какой город вы хотите поехать сначала? <span class="required">*</span></label>
-                            <select id="wunsch_stadt" name="wunsch_stadt">
-                                <option value="">Пожалуйста, выберите</option>
-                                <option value="berlin">Берлин</option>
-                                <option value="hamburg">Гамбург</option>
-                                <option value="muenchen">Мюнхен</option>
-                                <option value="koeln">Кельн</option>
-                                <option value="frankfurt">Франкфурт</option>
-                                <option value="stuttgart">Штутгарт</option>
-                                <option value="duesseldorf">Дюссельдорф</option>
-                                <option value="andere">другой город</option>
-                            </select>
-                            <div class="error-message">Пожалуйста, выберите город</div>
-                        </div>
-                    </div>
-
-                    <div id="adresse_field" style="display: none;">
-                        <div class="form-group">
-                            <label for="adresse">Если да: Адрес (если известен)</label>
-                            <input type="text" id="adresse" name="adresse" placeholder="ул. Примерная 12, Берлин">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="verwandte_freunde">Есть ли родственники / друзья в Германии?</label>
-                        <select id="verwandte_freunde" name="verwandte_freunde">
-                            <option value="">Пожалуйста, выберите</option>
-                            <option value="ja">Да</option>
-                            <option value="nein">Нет</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button type="submit" class="next-button">Перейти к шагу 3 →</button>
-
-                <div class="security-note">
-                    🔒 Ваши данные в безопасности и обрабатываются конфиденциально
-                </div>
-            </form>
+        <!-- Terms Footer -->
+        <div class="terms-footer">
         </div>
     </div>
 
     <script>
-        // Form validation and submission
-        document.getElementById('familyDataForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Validate form
-            if (!validateForm()) {
+        // All available breeds for search
+        const allBreeds = [
+            'Mischling', 'Labrador', 'Deutscher Schäferhund', 'Golden Retriever', 'Französische Bulldogge',
+            'Chihuahua', 'Border Collie', 'Yorkshire Terrier', 'Jack Russell Terrier',
+            'Afghanischer Windhund', 'Akita Inu', 'Alaskan Malamute', 'American Bulldog', 'American Pit Bull Terrier',
+            'American Staffordshire Terrier', 'Australian Cattle Dog', 'Australian Shepherd', 'Basenji',
+            'Basset Hound', 'Beagle', 'Bearded Collie', 'Belgischer Schäferhund', 'Berner Sennenhund',
+            'Bernhardiner', 'Bichon Frisé', 'Bloodhound', 'Bobtail', 'Bolonka Zwetna', 'Bordeaux Dogge',
+            'Boston Terrier', 'Bouvier des Flandres', 'Boxer', 'Briard', 'Bullmastiff', 'Bull Terrier',
+            'Cairn Terrier', 'Cane Corso', 'Cavalier King Charles Spaniel', 'Chesapeake Bay Retriever',
+            'Chow Chow', 'Cocker Spaniel', 'Collie', 'Curly Coated Retriever', 'Dackel', 'Dalmatiner',
+            'Deutsch Drahthaar', 'Deutscher Jagdterrier', 'Deutscher Pinscher', 'Deutscher Spitz',
+            'Dobermann', 'Deutsche Dogge', 'Dogo Argentino', 'English Bulldog', 'English Cocker Spaniel',
+            'English Setter', 'English Springer Spaniel', 'Flat Coated Retriever', 'Fox Terrier',
+            'Gordon Setter', 'Great Dane', 'Greyhound', 'Großer Schweizer Sennenhund', 'Havaneser',
+            'Hovawart', 'Sibirischer Husky', 'Irish Setter', 'Irish Wolfhound', 'Isländischer Schäferhund',
+            'Italian Greyhound', 'Kaukasischer Ovtcharka', 'Kerry Blue Terrier', 'King Charles Spaniel',
+            'Komondor', 'Lagotto Romagnolo', 'Leonberger', 'Lhasa Apso', 'Magyar Vizsla', 'Malinois',
+            'Malteser', 'Mastiff', 'Zwergpinscher', 'Mittelschnauzer', 'Mops', 'Neufundländer',
+            'Norfolk Terrier', 'Norwich Terrier', 'Nova Scotia Duck Tolling Retriever', 'Papillon',
+            'Pekinese', 'Pharaoh Hound', 'Pointer', 'Zwergspitz', 'Portugiesischer Wasserhund', 'Pudel',
+            'Puli', 'Pyrenäenberghund', 'Rhodesian Ridgeback', 'Riesenschnauzer', 'Rottweiler', 'Saluki',
+            'Samojede', 'Scottish Terrier', 'Shar Pei', 'Shiba Inu', 'Shih Tzu', 'Staffordshire Bull Terrier',
+            'Großpudel', 'Tervueren', 'Tibetan Mastiff', 'Toypudel', 'Vizsla', 'Weimaraner',
+            'Welsh Corgi Cardigan', 'Welsh Corgi Pembroke', 'Welsh Springer Spaniel', 'Welsh Terrier',
+            'West Highland White Terrier', 'Whippet', 'Wolfspitz', 'Xoloitzcuintli', 'Zwergpudel',
+            'Zwergschnauzer'
+        ];
+
+        // DOM elements
+        const breedButtons = document.querySelectorAll('.breed-button');
+        const breedDropdown = document.getElementById('breedDropdown');
+        const breedSearch = document.getElementById('breedSearch');
+        const searchResults = document.getElementById('searchResults');
+        let selectedBreed = null;
+
+        // Search functionality
+        let currentSearchResults = [];
+        let highlightedIndex = -1;
+
+        function showSearchResults(results) {
+            if (results.length === 0) {
+                searchResults.style.display = 'none';
                 return;
             }
-            
-            // Save form data
-            const formData = new FormData(this);
-            const data = {};
-            for (let [key, value] of formData.entries()) {
-                data[key] = value;
-            }
-            
-            localStorage.setItem('familyData', JSON.stringify(data));
-            console.log('=== ШАГ 2 ЗАВЕРШЕН ===', data);
-            
-            // Redirect to step 3
+
+            searchResults.innerHTML = '';
+            results.forEach((breed, index) => {
+                const item = document.createElement('div');
+                item.className = 'search-result-item';
+                item.textContent = breed;
+                item.addEventListener('click', () => selectBreed(breed));
+                searchResults.appendChild(item);
+            });
+
+            searchResults.style.display = 'block';
+            highlightedIndex = -1;
+        }
+
+        function hideSearchResults() {
             setTimeout(() => {
-                window.location.href = '/schritt4.html';
+                searchResults.style.display = 'none';
             }, 200);
+        }
+
+        function selectBreed(breed) {
+            selectedBreed = breed;
+            localStorage.setItem('dogBreed', selectedBreed);
+            window.location.href = 'schritt4.html';
+        }
+
+        // Search input handling
+        breedSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            if (query.length === 0) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            currentSearchResults = allBreeds.filter(breed => 
+                breed.toLowerCase().includes(query)
+            ).slice(0, 8); // Show max 8 results
+
+            showSearchResults(currentSearchResults);
         });
 
-        function validateForm() {
-            let isValid = true;
+        // Keyboard navigation
+        breedSearch.addEventListener('keydown', (e) => {
+            if (currentSearchResults.length === 0) return;
+
+            const items = searchResults.querySelectorAll('.search-result-item');
             
-            // Remove previous error states
-            document.querySelectorAll('.form-group').forEach(group => {
-                group.classList.remove('error');
-            });
-            
-            // Check required fields
-            const requiredFields = ['ehepartner_vorhanden', 'kinder_vorhanden', 'einreisedatum', 'einreiseweg', 'familie_allein', 'unterkunft_vorhanden'];
-            
-            // Conditional required fields
-            const unterkunftVorhanden = document.getElementById('unterkunft_vorhanden').value;
-            if (unterkunftVorhanden === 'nein') {
-                requiredFields.push('wunsch_stadt');
-            }
-            
-            requiredFields.forEach(fieldName => {
-                const field = document.getElementById(fieldName);
-                const group = field?.closest('.form-group');
-                
-                if (field && !field.value.trim()) {
-                    group?.classList.add('error');
-                    isValid = false;
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                highlightedIndex = Math.min(highlightedIndex + 1, items.length - 1);
+                updateHighlight(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                highlightedIndex = Math.max(highlightedIndex - 1, -1);
+                updateHighlight(items);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (highlightedIndex >= 0) {
+                    selectBreed(currentSearchResults[highlightedIndex]);
                 }
-            });
-            
-            return isValid;
-        }
-
-        // Toggle functions for dynamic fields
-        function toggleEhepartnerFields() {
-            const value = document.getElementById('ehepartner_vorhanden').value;
-            const nameGroup = document.getElementById('ehepartner_name_group');
-            if (value === 'ja') {
-                nameGroup.style.display = 'block';
-            } else {
-                nameGroup.style.display = 'none';
-                document.getElementById('ehepartner_name').value = '';
-            }
-        }
-
-        function toggleKinderFields() {
-            const value = document.getElementById('kinder_vorhanden').value;
-            const detailsGroup = document.getElementById('kinder_details_group');
-            if (value === 'ja') {
-                detailsGroup.style.display = 'block';
-            } else {
-                detailsGroup.style.display = 'none';
-                document.getElementById('kinder_namen_alter').value = '';
-            }
-        }
-
-        function toggleUnterkunftFields() {
-            const value = document.getElementById('unterkunft_vorhanden').value;
-            const adresseField = document.getElementById('adresse_field');
-            const wunschStadtField = document.getElementById('wunsch_stadt_field');
-            
-            if (value === 'ja') {
-                adresseField.style.display = 'block';
-                wunschStadtField.style.display = 'none';
-                // Reset wunsch_stadt when not needed
-                document.getElementById('wunsch_stadt').value = '';
-            } else if (value === 'nein') {
-                adresseField.style.display = 'none';
-                wunschStadtField.style.display = 'block';
-                // Reset address when not needed
-                document.getElementById('adresse').value = '';
-            } else {
-                adresseField.style.display = 'none';
-                wunschStadtField.style.display = 'none';
-            }
-        }
-
-        // Auto-save and restore form data
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedData = localStorage.getItem('familyData');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                Object.keys(data).forEach(key => {
-                    const field = document.getElementById(key);
-                    if (field) {
-                        field.value = data[key];
-                        
-                        // Trigger change events for dynamic fields
-                        if (key === 'ehepartner_vorhanden') toggleEhepartnerFields();
-                        if (key === 'kinder_vorhanden') toggleKinderFields();
-                        if (key === 'unterkunft_vorhanden') toggleUnterkunftFields();
-                    }
-                });
-                console.log('=== СЕМЕЙНЫЕ ДАННЫЕ ВОССТАНОВЛЕНЫ ===', data);
             }
         });
 
-        // Auto-save on input
-        document.querySelectorAll('input, select').forEach(field => {
-            field.addEventListener('input', function() {
-                // Remove error state when user starts typing
-                this.closest('.form-group').classList.remove('error');
-                
-                // Auto-save immediately
-                saveAllFormData();
+        function updateHighlight(items) {
+            items.forEach((item, index) => {
+                item.classList.toggle('highlighted', index === highlightedIndex);
+            });
+        }
+
+        breedSearch.addEventListener('blur', hideSearchResults);
+        breedSearch.addEventListener('focus', (e) => {
+            if (currentSearchResults.length > 0) {
+                searchResults.style.display = 'block';
+            }
+        });
+
+        // Handle button clicks
+        breedButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                breedDropdown.value = '';
+                breedSearch.value = '';
+                selectBreed(button.dataset.breed);
             });
         });
 
-        function saveAllFormData() {
-            const formData = new FormData(document.getElementById('familyDataForm'));
-            const data = {};
-            for (let [key, value] of formData.entries()) {
-                data[key] = value;
+        // Handle dropdown selection
+        breedDropdown.addEventListener('change', () => {
+            if (breedDropdown.value) {
+                breedButtons.forEach(btn => btn.classList.remove('selected'));
+                breedSearch.value = '';
+                selectBreed(breedDropdown.value);
             }
-            localStorage.setItem('familyData', JSON.stringify(data));
-            localStorage.setItem('familyData_timestamp', Date.now());
-            console.log('=== АВТОСОХРАНЕНИЕ СЕМЕЙНЫХ ДАННЫХ ===', data);
-        }
-
-        // Save on page unload as backup
-        window.addEventListener('beforeunload', function() {
-            saveAllFormData();
         });
+
+        // Load previous selection if available
+        const savedBreed = localStorage.getItem('dogBreed');
+        if (savedBreed) {
+            const savedButton = document.querySelector(`[data-breed="${savedBreed}"]`);
+            if (savedButton) {
+                savedButton.classList.add('selected');
+                selectedBreed = savedBreed;
+            } else {
+                const dropdownOption = Array.from(breedDropdown.options).find(option => option.value === savedBreed);
+                if (dropdownOption) {
+                    breedDropdown.value = savedBreed;
+                    selectedBreed = savedBreed;
+                }
+            }
+        }
     </script>
 </body>
 </html>
