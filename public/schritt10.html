@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WauWerk - Hundetraining Quiz Schritt 10</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-orange: #FF8A50;
+            --orange-hover: #FF7A40;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-light);
+            text-align: center;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Header Text */
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .quiz-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .quiz-subtitle {
+            font-size: 18px;
+            color: var(--text-medium);
+            margin-bottom: 40px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 50px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 50%;
+            height: 100%;
+            background: var(--light-brown);
+            transition: width 0.3s ease;
+        }
+
+        /* Options List */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .option-card {
+            background: var(--white);
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 20px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .option-card:hover {
+            border-color: var(--light-brown);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .option-card.selected {
+            border-color: var(--light-brown);
+            background: linear-gradient(135deg, rgba(212, 185, 150, 0.05), rgba(212, 185, 150, 0.1));
+        }
+
+        .option-image {
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+            background: var(--border-light);
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-medium);
+            text-align: center;
+        }
+
+        .option-image.energy {
+            background-image: url('dog-energy.jpg');
+        }
+
+        .option-image.aggression {
+            background-image: url('dog-aggression.jpg');
+        }
+
+        .option-image.pulling {
+            background-image: url('dog-pulling.jpg');
+        }
+
+        .option-image.anxiety {
+            background-image: url('dog-anxiety.jpg');
+        }
+
+        .option-image.barking {
+            background-image: url('dog-barking.jpg');
+        }
+
+        .option-image.destructive {
+            background-image: url('dog-destructive.jpg');
+        }
+
+        .option-image.soiling {
+            background-image: url('dog-soiling.jpg');
+        }
+
+        /* Fallback for missing images */
+        .option-image:not([style*="background-image"]):before {
+            content: 'Hunde-bild';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 11px;
+            color: var(--text-medium);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .option-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            flex: 1;
+        }
+
+        /* Continue Button */
+        .continue-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .continue-button {
+            background: var(--light-brown);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            pointer-events: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .continue-button.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .continue-button.active:hover {
+            background: #C4A586;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* Terms Footer */
+        .terms-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 15px;
+            }
+
+            .quiz-title {
+                font-size: 26px;
+            }
+
+            .quiz-subtitle {
+                font-size: 16px;
+            }
+
+            .option-card {
+                padding: 18px 20px;
+                gap: 15px;
+            }
+
+            .option-image {
+                width: 70px;
+                height: 70px;
+            }
+
+            .option-text {
+                font-size: 16px;
+            }
+
+            .continue-button {
+                width: 100%;
+                max-width: 300px;
+                padding: 14px 32px;
+                font-size: 16px;
+            }
+        }
+
+        /* Extra small mobile devices */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 12px;
+            }
+
+            .quiz-title {
+                font-size: 22px;
+            }
+
+            .option-card {
+                padding: 15px 18px;
+                gap: 12px;
+            }
+
+            .option-image {
+                width: 60px;
+                height: 60px;
+                font-size: 10px;
+            }
+
+            .option-text {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="schritt9.html" class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">WauWerk</span>
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+            <h1 class="quiz-title">Welche Verhaltensprobleme möchtest du zuerst lösen?</h1>
+            <p class="quiz-subtitle">Wähle alle zutreffenden Probleme aus:</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Options List -->
+        <div class="options-list">
+            <div class="option-card" data-behavior="energy">
+                <div class="option-image energy"></div>
+                <div class="option-text">Übermäßige Energie und mangelnde Kontrolle</div>
+            </div>
+
+            <div class="option-card" data-behavior="aggression">
+                <div class="option-image aggression"></div>
+                <div class="option-text">Aggression gegenüber Menschen oder anderen Tieren</div>
+            </div>
+
+            <div class="option-card" data-behavior="pulling">
+                <div class="option-image pulling"></div>
+                <div class="option-text">An der Leine ziehen</div>
+            </div>
+
+            <div class="option-card" data-behavior="anxiety">
+                <div class="option-image anxiety"></div>
+                <div class="option-text">Trennungsangst</div>
+            </div>
+
+            <div class="option-card" data-behavior="barking">
+                <div class="option-image barking"></div>
+                <div class="option-text">Übermäßiges Bellen</div>
+            </div>
+
+            <div class="option-card" data-behavior="destructive">
+                <div class="option-image destructive"></div>
+                <div class="option-text">Zerstörerisches Verhalten</div>
+            </div>
+
+            <div class="option-card" data-behavior="soiling">
+                <div class="option-image soiling"></div>
+                <div class="option-text">In die Wohnung machen</div>
+            </div>
+        </div>
+
+        <!-- Continue Button -->
+        <div class="continue-container">
+            <a href="schritt11.html" class="continue-button" id="continueBtn">Weiter</a>
+        </div>
+
+        <!-- Terms Footer -->
+        <div class="terms-footer">
+        </div>
+    </div>
+
+    <script>
+        // Option selection handling - Multiple selection with continue button
+        const optionCards = document.querySelectorAll('.option-card');
+        const continueBtn = document.getElementById('continueBtn');
+        let selectedBehaviors = [];
+
+        optionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const behavior = card.dataset.behavior;
+                
+                // Toggle selection
+                if (selectedBehaviors.includes(behavior)) {
+                    // Remove from selection
+                    selectedBehaviors = selectedBehaviors.filter(b => b !== behavior);
+                    card.classList.remove('selected');
+                } else {
+                    // Add to selection
+                    selectedBehaviors.push(behavior);
+                    card.classList.add('selected');
+                }
+                
+                // Update continue button state
+                if (selectedBehaviors.length > 0) {
+                    continueBtn.classList.add('active');
+                } else {
+                    continueBtn.classList.remove('active');
+                }
+                
+                // Store selections in localStorage
+                localStorage.setItem('dogBehaviors', JSON.stringify(selectedBehaviors));
+            });
+        });
+
+        // Continue button click handler
+        continueBtn.addEventListener('click', (e) => {
+            if (selectedBehaviors.length === 0) {
+                e.preventDefault();
+                alert('Bitte wähle mindestens ein Verhaltensproblem aus.');
+                return;
+            }
+            
+            // Continue to next step
+            console.log('Selected behaviors:', selectedBehaviors);
+        });
+
+        // Load previous selections if available
+        const savedBehaviors = localStorage.getItem('dogBehaviors');
+        if (savedBehaviors) {
+            try {
+                selectedBehaviors = JSON.parse(savedBehaviors);
+                selectedBehaviors.forEach(behavior => {
+                    const card = document.querySelector(`[data-behavior="${behavior}"]`);
+                    if (card) {
+                        card.classList.add('selected');
+                    }
+                });
+                
+                if (selectedBehaviors.length > 0) {
+                    continueBtn.classList.add('active');
+                }
+            } catch (e) {
+                console.log('Error loading saved behaviors');
+            }
+        }
+    </script>
+</body>
+</html>
