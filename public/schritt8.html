@@ -152,6 +152,39 @@
             flex: 1;
         }
 
+        /* Continue Button */
+        .continue-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .continue-button {
+            background: var(--light-brown);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            pointer-events: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .continue-button.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .continue-button.active:hover {
+            background: #C4A586;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
         /* Terms Footer */
         .terms-footer {
             text-align: center;
@@ -185,6 +218,13 @@
 
             .option-text {
                 font-size: 18px;
+            }
+
+            .continue-button {
+                width: 100%;
+                max-width: 300px;
+                padding: 14px 32px;
+                font-size: 16px;
             }
         }
 
@@ -260,30 +300,21 @@
             </div>
         </div>
 
+        <!-- Continue Button -->
+        <div class="continue-container">
+            <a href="schritt9.html" class="continue-button" id="continueBtn">Weiter</a>
+        </div>
+
         <!-- Terms Footer -->
         <div class="terms-footer">
         </div>
     </div>
 
     <script>
-        // Option selection handling - Multiple selection with auto-advance
+        // Option selection handling - Multiple selection with continue button
         const optionCards = document.querySelectorAll('.option-card');
+        const continueBtn = document.getElementById('continueBtn');
         let selectedPottyIssues = [];
-        let autoAdvanceTimer = null;
-
-        function autoAdvance() {
-            if (selectedPottyIssues.length > 0) {
-                // Clear any existing timer
-                if (autoAdvanceTimer) {
-                    clearTimeout(autoAdvanceTimer);
-                }
-                
-                // Set timer to advance after 2 seconds
-                autoAdvanceTimer = setTimeout(() => {
-                    window.location.href = 'schritt9.html';
-                }, 2000);
-            }
-        }
 
         optionCards.forEach(card => {
             card.addEventListener('click', () => {
@@ -300,12 +331,28 @@
                     card.classList.add('selected');
                 }
                 
+                // Update continue button state
+                if (selectedPottyIssues.length > 0) {
+                    continueBtn.classList.add('active');
+                } else {
+                    continueBtn.classList.remove('active');
+                }
+                
                 // Store selections in localStorage
                 localStorage.setItem('dogPottyIssues', JSON.stringify(selectedPottyIssues));
-                
-                // Auto-advance if any selection is made
-                autoAdvance();
             });
+        });
+
+        // Continue button click handler
+        continueBtn.addEventListener('click', (e) => {
+            if (selectedPottyIssues.length === 0) {
+                e.preventDefault();
+                alert('Bitte wähle mindestens ein Problem aus oder "Alles perfekt".');
+                return;
+            }
+            
+            // Continue to next step
+            console.log('Selected potty issues:', selectedPottyIssues);
         });
 
         // Load previous selections if available
@@ -319,6 +366,10 @@
                         card.classList.add('selected');
                     }
                 });
+                
+                if (selectedPottyIssues.length > 0) {
+                    continueBtn.classList.add('active');
+                }
             } catch (e) {
                 console.log('Error loading saved potty issues');
             }
