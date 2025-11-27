@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WauWerk - Hundetraining Quiz Schritt 11</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-orange: #FF8A50;
+            --orange-hover: #FF7A40;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --text-light: #999999;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --slider-brown: #D4B996;
+            --slider-gradient-start: #E8D5B7;
+            --slider-gradient-end: #B8966D;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-light);
+            text-align: center;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Header Text */
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .quiz-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 40px;
+            line-height: 1.3;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 50px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 55%;
+            height: 100%;
+            background: var(--light-brown);
+            transition: width 0.3s ease;
+        }
+
+        /* Rating Section */
+        .rating-section {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        /* Big Number Display */
+        .rating-display {
+            margin-bottom: 60px;
+        }
+
+        .rating-number {
+            font-size: 120px;
+            font-weight: 800;
+            color: var(--slider-brown);
+            text-shadow: 2px 2px 8px rgba(212, 185, 150, 0.3);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* Slider Container */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        /* Custom Slider */
+        .rating-slider {
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(to right, var(--slider-gradient-start) 0%, var(--slider-gradient-end) 100%);
+            border-radius: 6px;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+            position: relative;
+            box-shadow: var(--shadow-light);
+        }
+
+        .rating-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            background: var(--white);
+            border: 4px solid var(--slider-brown);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--shadow-medium);
+            transition: all 0.3s ease;
+        }
+
+        .rating-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(212, 185, 150, 0.4);
+        }
+
+        .rating-slider::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            background: var(--white);
+            border: 4px solid var(--slider-brown);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: var(--shadow-medium);
+            transition: all 0.3s ease;
+        }
+
+        /* Slider Labels */
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding: 0 20px;
+        }
+
+        .slider-label {
+            font-size: 14px;
+            color: var(--text-light);
+            text-align: center;
+            min-width: 20px;
+        }
+
+        /* Slider Scale */
+        .slider-scale {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding: 0 20px;
+        }
+
+        .scale-description {
+            font-size: 16px;
+            color: var(--text-medium);
+            font-weight: 500;
+        }
+
+        .scale-description.left {
+            text-align: left;
+        }
+
+        .scale-description.right {
+            text-align: right;
+        }
+
+        /* Slide Instructions */
+        .slide-instruction {
+            margin-top: 30px;
+            font-size: 16px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Continue Button */
+        .continue-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .continue-button {
+            background: var(--light-brown);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            opacity: 1;
+        }
+
+        .continue-button:hover {
+            background: #C4A586;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* Terms Footer */
+        .terms-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 15px;
+            }
+
+            .quiz-title {
+                font-size: 26px;
+            }
+
+            .rating-number {
+                font-size: 100px;
+            }
+
+            .slider-container {
+                padding: 30px 0;
+            }
+
+            .rating-slider::-webkit-slider-thumb {
+                width: 35px;
+                height: 35px;
+            }
+
+            .rating-slider::-moz-range-thumb {
+                width: 35px;
+                height: 35px;
+            }
+
+            .scale-description {
+                font-size: 14px;
+            }
+
+            .continue-button {
+                width: 100%;
+                max-width: 300px;
+                padding: 14px 32px;
+                font-size: 16px;
+            }
+        }
+
+        /* Extra small mobile devices */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 12px;
+            }
+
+            .quiz-title {
+                font-size: 22px;
+            }
+
+            .rating-number {
+                font-size: 80px;
+            }
+
+            .slider-labels {
+                padding: 0 15px;
+            }
+
+            .slider-scale {
+                padding: 0 15px;
+            }
+
+            .scale-description {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="schritt10.html" class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">WauWerk</span>
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+            <h1 class="quiz-title">Wie wichtig ist dir Gehorsamkeit?</h1>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Rating Section -->
+        <div class="rating-section">
+            <!-- Big Number Display -->
+            <div class="rating-display">
+                <div class="rating-number" id="ratingNumber">5</div>
+            </div>
+
+            <!-- Slider Container -->
+            <div class="slider-container">
+                <!-- Custom Slider -->
+                <input type="range" 
+                       min="1" 
+                       max="10" 
+                       value="5" 
+                       class="rating-slider" 
+                       id="obedienceSlider">
+
+                <!-- Slider Labels -->
+                <div class="slider-labels">
+                    <span class="slider-label">1</span>
+                    <span class="slider-label">2</span>
+                    <span class="slider-label">3</span>
+                    <span class="slider-label">4</span>
+                    <span class="slider-label">5</span>
+                    <span class="slider-label">6</span>
+                    <span class="slider-label">7</span>
+                    <span class="slider-label">8</span>
+                    <span class="slider-label">9</span>
+                    <span class="slider-label">10</span>
+                </div>
+
+                <!-- Slider Scale -->
+                <div class="slider-scale">
+                    <div class="scale-description left">Unwichtig</div>
+                    <div class="scale-description right">Extrem wichtig</div>
+                </div>
+
+                <!-- Slide Instructions -->
+                <div class="slide-instruction">
+                    <span>←</span> Schieben <span>→</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Continue Button -->
+        <div class="continue-container">
+            <a href="schritt12.html" class="continue-button" id="continueBtn">Weiter</a>
+        </div>
+
+        <!-- Terms Footer -->
+        <div class="terms-footer">
+        </div>
+    </div>
+
+    <script>
+        // Slider handling
+        const slider = document.getElementById('obedienceSlider');
+        const ratingNumber = document.getElementById('ratingNumber');
+        const continueBtn = document.getElementById('continueBtn');
+        let selectedObedienceRating = 5;
+
+        // Update display when slider changes
+        slider.addEventListener('input', (e) => {
+            selectedObedienceRating = parseInt(e.target.value);
+            ratingNumber.textContent = selectedObedienceRating;
+            
+            // Add some visual feedback
+            ratingNumber.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                ratingNumber.style.transform = 'scale(1)';
+            }, 200);
+            
+            // Store selection in localStorage
+            localStorage.setItem('dogObedienceRating', selectedObedienceRating);
+        });
+
+        // Continue button click handler
+        continueBtn.addEventListener('click', (e) => {
+            // Continue to next step
+            console.log('Selected obedience rating:', selectedObedienceRating);
+        });
+
+        // Load previous selection if available
+        const savedRating = localStorage.getItem('dogObedienceRating');
+        if (savedRating) {
+            selectedObedienceRating = parseInt(savedRating);
+            slider.value = selectedObedienceRating;
+            ratingNumber.textContent = selectedObedienceRating;
+        }
+
+        // Touch support for mobile
+        let isDragging = false;
+
+        slider.addEventListener('touchstart', () => {
+            isDragging = true;
+        });
+
+        slider.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Smooth value updates
+        slider.addEventListener('change', (e) => {
+            selectedObedienceRating = parseInt(e.target.value);
+            localStorage.setItem('dogObedienceRating', selectedObedienceRating);
+        });
+    </script>
+</body>
+</html>
