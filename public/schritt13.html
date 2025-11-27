@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WauWerk - Trainingsplan wird erstellt</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-orange: #FF8A50;
+            --orange-hover: #FF7A40;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --success-color: #D4B996;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-light);
+            text-align: center;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        /* Cool Title */
+        .cool-title {
+            font-size: 60px;
+            font-weight: 800;
+            color: var(--success-color);
+            margin-bottom: 50px;
+            animation: bounceIn 1.5s ease-out;
+        }
+
+        /* Calendar Animation */
+        .calendar-container {
+            margin: 0 auto 60px;
+            position: relative;
+        }
+
+        .calendar {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow-medium);
+            max-width: 400px;
+            margin: 0 auto;
+            animation: slideInUp 1s ease-out 0.5s both;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-day {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-day.completed {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            animation: completeDayAnimation 0.8s ease-out forwards;
+        }
+
+        .calendar-day.active {
+            background: var(--light-brown);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .calendar-day.future {
+            background: var(--border-light);
+            color: var(--text-medium);
+        }
+
+        /* Success Icons */
+        .success-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .success-icon {
+            width: 40px;
+            height: 40px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            animation: popIn 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .success-icon:nth-child(1) { animation-delay: 2s; }
+        .success-icon:nth-child(2) { animation-delay: 2.3s; }
+        .success-icon:nth-child(3) { animation-delay: 2.6s; }
+
+        .medal {
+            font-size: 50px;
+            margin-top: 10px;
+            animation: rotate 2s ease-in-out infinite;
+        }
+
+        /* Content Text */
+        .content-text {
+            margin-bottom: 60px;
+            animation: fadeInUp 1s ease-out 1.5s both;
+        }
+
+        .main-headline {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            line-height: 1.3;
+        }
+
+        .sub-text {
+            font-size: 18px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .dynamic-breed {
+            color: var(--light-brown);
+            font-weight: 700;
+        }
+
+        /* Continue Button */
+        .continue-container {
+            animation: fadeInUp 1s ease-out 2.5s both;
+        }
+
+        .continue-button {
+            background: var(--success-color);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 18px 50px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: var(--shadow-medium);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .continue-button:hover {
+            background: #C4A586;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212, 185, 150, 0.4);
+        }
+
+        /* Animations */
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            0% { transform: translateY(30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes completeDayAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 50px 15px;
+            }
+
+            .cool-title {
+                font-size: 48px;
+            }
+
+            .main-headline {
+                font-size: 26px;
+            }
+
+            .sub-text {
+                font-size: 16px;
+            }
+
+            .calendar-day {
+                width: 35px;
+                height: 35px;
+                font-size: 12px;
+            }
+
+            .continue-button {
+                width: 100%;
+                max-width: 350px;
+                padding: 16px 40px;
+                font-size: 18px;
+            }
+        }
+
+        /* Extra small mobile devices */
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 12px;
+            }
+
+            .cool-title {
+                font-size: 36px;
+            }
+
+            .main-headline {
+                font-size: 22px;
+            }
+
+            .calendar-day {
+                width: 30px;
+                height: 30px;
+                font-size: 11px;
+            }
+
+            .calendar {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="schritt12.html" class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">WauWerk</span>
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Cool Title -->
+        <div class="cool-title">Cool!</div>
+
+        <!-- Calendar Animation -->
+        <div class="calendar-container">
+            <div class="calendar">
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Days will be generated by JavaScript -->
+                </div>
+                <div class="success-icons">
+                    <div class="success-icon">✓</div>
+                    <div class="success-icon">✓</div>
+                    <div class="success-icon">✓</div>
+                </div>
+                <div class="medal">🏆</div>
+            </div>
+        </div>
+
+        <!-- Content Text -->
+        <div class="content-text">
+            <h1 class="main-headline">Jetzt wissen wir, welche Grundlagen dein Hund lernen sollte!</h1>
+            <p class="sub-text">
+                Basierend auf deinen Antworten erstellen wir gerade ein Trainingsprogramm, das perfekt für deinen 
+                <span class="dynamic-breed" id="dynamicBreed">Hund</span> geeignet ist!
+            </p>
+        </div>
+
+        <!-- Continue Button -->
+        <div class="continue-container">
+            <a href="schritt14.html" class="continue-button" id="continueBtn">Weiter</a>
+        </div>
+    </div>
+
+    <script>
+        // Generate calendar
+        function generateCalendar() {
+            const calendarGrid = document.getElementById('calendarGrid');
+            
+            for (let i = 1; i <= 30; i++) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day';
+                day.textContent = i;
+                
+                if (i <= 20) {
+                    day.classList.add('completed');
+                    day.style.animationDelay = `${1 + (i * 0.05)}s`;
+                } else if (i === 21) {
+                    day.classList.add('active');
+                } else {
+                    day.classList.add('future');
+                }
+                
+                calendarGrid.appendChild(day);
+            }
+        }
+
+        // Load user's breed dynamically
+        function loadUserBreed() {
+            const savedBreed = localStorage.getItem('dogBreed');
+            const dynamicBreed = document.getElementById('dynamicBreed');
+            
+            if (savedBreed && savedBreed !== 'Mischling') {
+                dynamicBreed.textContent = savedBreed;
+            } else {
+                dynamicBreed.textContent = 'Hund';
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            generateCalendar();
+            loadUserBreed();
+            
+            // Add some extra sparkle effects
+            setTimeout(() => {
+                document.querySelector('.cool-title').style.textShadow = '0 0 20px rgba(212, 185, 150, 0.5)';
+            }, 1500);
+        });
+
+        // Continue button click
+        document.getElementById('continueBtn').addEventListener('click', () => {
+            console.log('Proceeding to next step');
+        });
+    </script>
+</body>
+</html>
