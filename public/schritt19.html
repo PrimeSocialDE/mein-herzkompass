@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WauWerk - Hundetraining Quiz Schritt 19</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-light);
+            text-align: center;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 95%;
+            height: 100%;
+            background: var(--light-brown);
+            transition: width 0.3s ease;
+        }
+
+        /* Hero Image Placeholder */
+        .hero-section {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            background: var(--border-light);
+            border: 2px dashed #CCCCCC;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-placeholder-text {
+            color: var(--text-medium);
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* Options List */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-card {
+            background: var(--white);
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 24px 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+            text-align: center;
+        }
+
+        .option-card:hover {
+            border-color: var(--light-brown);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .option-card.selected {
+            border-color: var(--light-brown);
+            background: linear-gradient(135deg, rgba(212, 185, 150, 0.05), rgba(212, 185, 150, 0.1));
+        }
+
+        .option-text {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .option-text span {
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 15px;
+            }
+
+            .hero-section {
+                height: 280px;
+            }
+
+            .hero-question {
+                padding: 20px 25px;
+                max-width: 240px;
+            }
+
+            .hero-question h1 {
+                font-size: 20px;
+            }
+
+            .option-card {
+                padding: 20px 25px;
+            }
+
+            .option-text {
+                font-size: 22px;
+            }
+
+            .option-text span {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 12px;
+            }
+
+            .hero-section {
+                height: 240px;
+            }
+
+            .hero-question {
+                padding: 15px 20px;
+                max-width: 200px;
+            }
+
+            .hero-question h1 {
+                font-size: 18px;
+            }
+
+            .option-card {
+                padding: 18px 20px;
+            }
+
+            .option-text {
+                font-size: 20px;
+            }
+
+            .option-text span {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="schritt18.html" class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">WauWerk</span>
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Hero Section Placeholder -->
+        <div class="hero-section">
+            <span class="hero-placeholder-text">[Platzhalter für Hundebild mit Frage]</span>
+        </div>
+
+        <!-- Options List -->
+        <div class="options-list">
+            <div class="option-card" data-answer="5">
+                <div class="option-text">5 <span>min/Tag</span></div>
+            </div>
+
+            <div class="option-card" data-answer="10">
+                <div class="option-text">10 <span>min/Tag</span></div>
+            </div>
+
+            <div class="option-card" data-answer="15">
+                <div class="option-text">15 <span>min/Tag</span></div>
+            </div>
+
+            <div class="option-card" data-answer="20">
+                <div class="option-text">20 <span>min/Tag</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const optionCards = document.querySelectorAll('.option-card');
+        let selectedAnswer = null;
+
+        optionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                selectedAnswer = card.dataset.answer;
+                
+                // Store selection in localStorage
+                localStorage.setItem('trainingTime', selectedAnswer);
+                
+                // Redirect to next step
+                window.location.href = 'schritt20.html';
+            });
+        });
+
+        // Load previous selection if available
+        const savedAnswer = localStorage.getItem('trainingTime');
+        if (savedAnswer) {
+            const savedCard = document.querySelector(`[data-answer="${savedAnswer}"]`);
+            if (savedCard) {
+                savedCard.classList.add('selected');
+                selectedAnswer = savedAnswer;
+            }
+        }
+    </script>
+</body>
+</html>
