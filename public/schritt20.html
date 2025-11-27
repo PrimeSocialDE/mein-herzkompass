@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WauWerk - Hundetraining Quiz Schritt 20</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-light);
+            text-align: center;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 40px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 100%;
+            height: 100%;
+            background: var(--light-brown);
+            transition: width 0.3s ease;
+        }
+
+        /* Quiz Header */
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .quiz-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        /* Input Section */
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .name-input {
+            width: 100%;
+            padding: 20px 25px;
+            font-size: 20px;
+            font-weight: 500;
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            background: var(--white);
+            color: var(--text-dark);
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+        }
+
+        .name-input:focus {
+            outline: none;
+            border-color: var(--light-brown);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .name-input::placeholder {
+            color: var(--text-medium);
+            font-weight: 400;
+        }
+
+        .continue-button {
+            background: var(--light-brown);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .continue-button:hover {
+            background: #C4A586;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .continue-button:disabled {
+            background: var(--border-light);
+            color: var(--text-medium);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 15px;
+            }
+
+            .quiz-title {
+                font-size: 26px;
+            }
+
+            .image-placeholder {
+                width: 220px;
+                height: 220px;
+            }
+
+            .name-input {
+                padding: 18px 20px;
+                font-size: 18px;
+            }
+
+            .continue-button {
+                padding: 16px 30px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 12px;
+            }
+
+            .quiz-title {
+                font-size: 24px;
+            }
+
+            .image-placeholder {
+                width: 180px;
+                height: 180px;
+            }
+
+            .name-input {
+                padding: 16px 18px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="schritt19.html" class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">WauWerk</span>
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+            <h1 class="quiz-title">Wie heißt dein Hund?</h1>
+        </div>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <input type="text" class="name-input" id="dogName" placeholder="Name deines Hundes" autocomplete="off">
+            <button class="continue-button" id="continueBtn" disabled>Weiter</button>
+        </div>
+    </div>
+
+    <script>
+        const nameInput = document.getElementById('dogName');
+        const continueBtn = document.getElementById('continueBtn');
+
+        // Enable/disable button based on input
+        nameInput.addEventListener('input', () => {
+            const hasValue = nameInput.value.trim().length > 0;
+            continueBtn.disabled = !hasValue;
+        });
+
+        // Handle continue button click
+        continueBtn.addEventListener('click', () => {
+            const dogName = nameInput.value.trim();
+            if (dogName) {
+                localStorage.setItem('dogName', dogName);
+                window.location.href = 'schritt21.html';
+            }
+        });
+
+        // Handle Enter key
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && nameInput.value.trim()) {
+                localStorage.setItem('dogName', nameInput.value.trim());
+                window.location.href = 'schritt21.html';
+            }
+        });
+
+        // Load previous value if available
+        const savedName = localStorage.getItem('dogName');
+        if (savedName) {
+            nameInput.value = savedName;
+            continueBtn.disabled = false;
+        }
+    </script>
+</body>
+</html>
