@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WauWerk - Hundetraining Quiz Schritt 23</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-light);
+            text-align: center;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 50px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 95%;
+            height: 100%;
+            background: var(--light-brown);
+            transition: width 0.3s ease;
+        }
+
+        /* Header Text */
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--light-brown);
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .quiz-subtitle {
+            font-size: 18px;
+            color: var(--text-medium);
+        }
+
+        /* Options List */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-card {
+            background: var(--white);
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 20px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .option-card:hover {
+            border-color: var(--light-brown);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .option-card.selected {
+            border-color: var(--light-brown);
+            background: linear-gradient(135deg, rgba(212, 185, 150, 0.05), rgba(212, 185, 150, 0.1));
+        }
+
+        .option-emoji {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+
+        .option-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+            flex: 1;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 15px;
+            }
+
+            .quiz-title {
+                font-size: 26px;
+            }
+
+            .quiz-subtitle {
+                font-size: 16px;
+            }
+
+            .option-card {
+                padding: 18px 20px;
+                gap: 15px;
+            }
+
+            .option-emoji {
+                font-size: 40px;
+            }
+
+            .option-text {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 12px;
+            }
+
+            .quiz-title {
+                font-size: 22px;
+            }
+
+            .option-card {
+                padding: 15px 18px;
+                gap: 12px;
+            }
+
+            .option-emoji {
+                font-size: 36px;
+            }
+
+            .option-text {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="schritt22.html" class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">WauWerk</span>
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+            <span class="badge">Letzte Frage</span>
+            <h1 class="quiz-title">Wann steht das an?</h1>
+            <p class="quiz-subtitle">Wähle den Zeitraum</p>
+        </div>
+
+        <!-- Options List -->
+        <div class="options-list">
+            <div class="option-card" data-answer="1-woche">
+                <div class="option-emoji">⚡</div>
+                <div class="option-text">In weniger als 1 Woche</div>
+            </div>
+
+            <div class="option-card" data-answer="1-monat">
+                <div class="option-emoji">📅</div>
+                <div class="option-text">In 1-4 Wochen</div>
+            </div>
+
+            <div class="option-card" data-answer="2-3-monate">
+                <div class="option-emoji">🗓️</div>
+                <div class="option-text">In 1-3 Monaten</div>
+            </div>
+
+            <div class="option-card" data-answer="spaeter">
+                <div class="option-emoji">🌅</div>
+                <div class="option-text">Später oder unbestimmt</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const optionCards = document.querySelectorAll('.option-card');
+
+        optionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const answer = card.dataset.answer;
+                localStorage.setItem('eventTiming', answer);
+                window.location.href = 'schritt24.html';
+            });
+        });
+
+        // Load previous selection
+        const saved = localStorage.getItem('eventTiming');
+        if (saved) {
+            const savedCard = document.querySelector(`[data-answer="${saved}"]`);
+            if (savedCard) savedCard.classList.add('selected');
+        }
+    </script>
+</body>
+</html>
