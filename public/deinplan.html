@@ -753,7 +753,7 @@
 
     <!-- Timer Bar -->
     <div class="timer-bar">
-        Preis reserviert für: <span id="timer">10:00</span>
+        Preis reduziert für: <span id="timer">10:00</span>
     </div>
 
     <!-- Hero Comparison -->
@@ -1056,6 +1056,8 @@
 
         // Timer
         let timeLeft = 10 * 60;
+        let timerExpired = false;
+        
         function updateTimer() {
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
@@ -1065,8 +1067,36 @@
             if (timeLeft > 0) {
                 timeLeft--;
                 setTimeout(updateTimer, 1000);
+            } else {
+                // Timer abgelaufen - Preise umschalten
+                timerExpired = true;
+                document.getElementById('timer').textContent = 'ABGELAUFEN';
+                switchToNormalPrices();
             }
         }
+        
+        function switchToNormalPrices() {
+            // Durchgestrichene Preise verstecken
+            document.querySelectorAll('.price-old').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Neue Preise setzen (normale Preise ohne Rabatt)
+            const pricingCards = document.querySelectorAll('.pricing-card');
+            
+            // 1-Monat: 0,67 → 1,67
+            pricingCards[0].querySelector('.price-amount').textContent = '1';
+            pricingCards[0].querySelector('.price-cents').textContent = ',67';
+            
+            // 3-Monat: 0,36 → 0,89
+            pricingCards[1].querySelector('.price-amount').textContent = '0';
+            pricingCards[1].querySelector('.price-cents').textContent = ',89';
+            
+            // 6-Monat: 0,27 → 0,67
+            pricingCards[2].querySelector('.price-amount').textContent = '0';
+            pricingCards[2].querySelector('.price-cents').textContent = ',67';
+        }
+        
         updateTimer();
 
         // Plan selection
@@ -1083,14 +1113,21 @@
 
         // Get plan button
         function getMyPlan() {
-            // Stripe Demo Links
-            const stripeLinks = {
-                '1month': 'https://buy.stripe.com/test_demo1month',
-                '3month': 'https://buy.stripe.com/test_demo3month',
-                '6month': 'https://buy.stripe.com/test_demo6month'
+            // Stripe Links - Rabatt vs Normal
+            const stripeLinksDiscount = {
+                '1month': 'https://buy.stripe.com/test_discount_1month',
+                '3month': 'https://buy.stripe.com/test_discount_3month',
+                '6month': 'https://buy.stripe.com/test_discount_6month'
             };
             
-            window.location.href = stripeLinks[selectedPlan] || stripeLinks['1month'];
+            const stripeLinksNormal = {
+                '1month': 'https://buy.stripe.com/test_normal_1month',
+                '3month': 'https://buy.stripe.com/test_normal_3month',
+                '6month': 'https://buy.stripe.com/test_normal_6month'
+            };
+            
+            const links = timerExpired ? stripeLinksNormal : stripeLinksDiscount;
+            window.location.href = links[selectedPlan] || links['1month'];
         }
     </script>
 </body>
