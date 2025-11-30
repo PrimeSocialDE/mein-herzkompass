@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WauWerk - Dein Trainingsplan ist fertig</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --text-light: #999999;
+            --background: #FFFFFF;
+            --white: #FFFFFF;
+            --border-light: #E8E4DF;
+            --light-brown: #D4B996;
+            --warm-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --accent-brown: #D4B996;
+            --accent-red: #E8A598;
+            --accent-green: #A8C5A0;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 16px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-image {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* Timer Bar */
+        .timer-bar {
+            background: var(--dark-brown);
+            color: var(--white);
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .timer-bar span {
+            font-weight: 700;
+            color: #F5E6D3;
+        }
+
+        /* Hero Comparison */
+        .hero-section {
+            background: linear-gradient(180deg, #F5EDE3 0%, #FFFFFF 100%);
+            padding: 30px 20px 40px;
+        }
+
+        .comparison-container {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            position: relative;
+        }
+
+        .comparison-side {
+            flex: 1;
+            text-align: center;
+        }
+
+        .comparison-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .badge-now {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+        }
+
+        .badge-goal {
+            background: var(--warm-brown);
+            color: var(--white);
+        }
+
+        .comparison-image {
+            width: 100%;
+            height: 320px;
+            background: var(--border-light);
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-now {
+            background: linear-gradient(135deg, #F0DED0 0%, #F5E8DD 100%);
+        }
+
+        .image-goal {
+            background: linear-gradient(135deg, #E8DCCC 0%, #F0E6DA 100%);
+        }
+
+        .comparison-arrows {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            color: var(--border-light);
+            z-index: 10;
+        }
+
+        .stat-box {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            color: var(--text-medium);
+        }
+
+        .stat-bar {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .stat-bar-segment {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border-light);
+        }
+
+        .stat-bar-segment.active-red {
+            background: var(--accent-red);
+        }
+
+        .stat-bar-segment.active-blue {
+            background: var(--warm-brown);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Title Section */
+        .title-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .main-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .goal-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .goal-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--white);
+            padding: 12px 18px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-light);
+        }
+
+        .goal-badge-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .icon-blue {
+            background: #F5EDE3;
+            color: var(--dark-brown);
+        }
+
+        .icon-orange {
+            background: #F5E6D8;
+            color: var(--warm-brown);
+        }
+
+        .goal-badge-text {
+            text-align: left;
+        }
+
+        .goal-badge-label {
+            font-size: 11px;
+            color: var(--text-light);
+            text-transform: uppercase;
+        }
+
+        .goal-badge-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            margin-bottom: 30px;
+        }
+
+        .pricing-card {
+            background: var(--white);
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            border-color: var(--light-brown);
+        }
+
+        .pricing-card.selected {
+            border-color: var(--light-brown);
+            background: linear-gradient(135deg, #FAF6F1 0%, var(--white) 100%);
+        }
+
+        .pricing-card.popular {
+            padding-top: 35px;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--warm-brown);
+            color: var(--white);
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .pricing-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .pricing-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .pricing-radio {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .pricing-card.selected .pricing-radio {
+            border-color: var(--warm-brown);
+            background: var(--warm-brown);
+        }
+
+        .pricing-card.selected .pricing-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--white);
+            border-radius: 50%;
+        }
+
+        .pricing-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .pricing-right {
+            text-align: center;
+        }
+
+        .pricing-price {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .price-currency {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .price-amount {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1;
+        }
+
+        .price-cents {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .price-period {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .price-old {
+            font-size: 14px;
+            color: var(--accent-red);
+            text-decoration: line-through;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            width: 100%;
+            background: linear-gradient(135deg, var(--warm-brown) 0%, var(--dark-brown) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 115, 85, 0.4);
+        }
+
+        .cta-button.glow {
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(196, 165, 118, 0.4), 0 0 15px rgba(196, 165, 118, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(196, 165, 118, 0.6), 0 0 40px rgba(196, 165, 118, 0.4);
+            }
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: #F9F7F5;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .disclaimer strong {
+            color: var(--text-dark);
+        }
+
+        .disclaimer a {
+            color: var(--text-medium);
+            text-decoration: underline;
+        }
+
+        .disclaimer a:hover {
+            color: var(--dark-brown);
+        }
+
+        /* Guarantee */
+        .guarantee {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--text-medium);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        /* Payment Logos */
+        .payment-logos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .payment-logos img {
+            height: 28px;
+            width: auto;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+            border-radius: 6px;
+        }
+
+        .payment-logos img:hover {
+            opacity: 1;
+        }
+
+        .guarantee svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--warm-brown);
+        }
+
+        /* Testimonials Section */
+        .testimonials-section {
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: var(--warm-brown);
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-light);
+        }
+
+        .testimonial-images {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-image {
+            flex: 1;
+            height: 120px;
+            background: var(--border-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 12px;
+            position: relative;
+        }
+
+        .testimonial-image-label {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-style: italic;
+            font-size: 12px;
+            color: var(--text-medium);
+        }
+
+        .testimonial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .testimonial-name {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .testimonial-problem {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .testimonial-problem span {
+            color: var(--warm-brown);
+            font-weight: 600;
+        }
+
+        .testimonial-text {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .faq-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+        }
+
+        .faq-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-question {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .faq-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--warm-brown);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .faq-icon svg {
+            width: 14px;
+            height: 14px;
+            fill: var(--white);
+        }
+
+        .faq-question-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .faq-answer {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            padding-left: 36px;
+        }
+
+        /* Guarantee Box */
+        .guarantee-box {
+            background: var(--white);
+            border: 2px solid var(--light-brown);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .guarantee-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .guarantee-text {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .guarantee-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--warm-brown);
+        }
+
+        .guarantee-badge svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--warm-brown);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--text-light);
+            text-decoration: underline;
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+            .comparison-container {
+                flex-direction: row;
+                gap: 10px;
+            }
+
+            .comparison-image {
+                height: 200px;
+            }
+
+            .comparison-arrows {
+                display: none;
+            }
+
+            .main-title {
+                font-size: 24px;
+            }
+
+            .goal-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .pricing-header {
+                gap: 12px;
+            }
+
+            .pricing-left {
+                justify-content: center;
+            }
+
+            .pricing-right {
+                text-align: center;
+            }
+
+            .pricing-price {
+                justify-content: center;
+            }
+
+            .stat-box {
+                padding: 10px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .stat-value {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">WauWerk</span>
+        </div>
+    </header>
+
+    <!-- Timer Bar -->
+    <div class="timer-bar">
+        Preis reserviert für: <span id="timer">10:00</span>
+    </div>
+
+    <!-- Hero Comparison -->
+    <section class="hero-section">
+        <div class="comparison-container">
+            <div class="comparison-side">
+                <span class="comparison-badge badge-now">Jetzt</span>
+                <div class="comparison-image image-now">[Bild: Vorher]</div>
+                <div class="stat-box">
+                    <div class="stat-label"><span id="dogName1">Dein Hund</span> – Gehorsam</div>
+                    <div class="stat-value">Niedrig</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-segment active-red"></div>
+                        <div class="stat-bar-segment"></div>
+                        <div class="stat-bar-segment"></div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Trainingslevel</div>
+                    <div class="stat-value">Anfänger</div>
+                </div>
+            </div>
+
+            <div class="comparison-arrows">››</div>
+
+            <div class="comparison-side">
+                <span class="comparison-badge badge-goal">Dein Ziel</span>
+                <div class="comparison-image image-goal">[Bild: Nachher]</div>
+                <div class="stat-box">
+                    <div class="stat-label"><span id="dogName2">Dein Hund</span> – Gehorsam</div>
+                    <div class="stat-value">Normal</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-segment active-blue"></div>
+                        <div class="stat-bar-segment active-blue"></div>
+                        <div class="stat-bar-segment active-blue"></div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Trainingslevel</div>
+                    <div class="stat-value">Fortgeschritten</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Title Section -->
+        <div class="title-section">
+            <h1 class="main-title">Dein personalisierter Trainingsplan für <span id="dogName3">deinen Hund</span> ist fertig!</h1>
+            
+            <div class="goal-badges">
+                <div class="goal-badge">
+                    <div class="goal-badge-icon icon-blue">🎯</div>
+                    <div class="goal-badge-text">
+                        <div class="goal-badge-label">Ziel</div>
+                        <div class="goal-badge-value" id="userGoal">Gehorsam verbessern</div>
+                    </div>
+                </div>
+                <div class="goal-badge">
+                    <div class="goal-badge-icon icon-orange">⚠️</div>
+                    <div class="goal-badge-text">
+                        <div class="goal-badge-label">Verhaltensproblem</div>
+                        <div class="goal-badge-value" id="userProblem">Trennungsangst</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Section -->
+        <div class="pricing-section">
+            <div class="pricing-card popular selected" data-plan="1month" data-price="19.99">
+                <div class="popular-badge">👍 Am beliebtesten</div>
+                <div class="pricing-header">
+                    <div class="pricing-left">
+                        <div class="pricing-radio"></div>
+                        <span class="pricing-name">1-MONATS-PLAN</span>
+                    </div>
+                    <div class="pricing-right">
+                        <div class="pricing-price">
+                            <span class="price-currency">€</span>
+                            <span class="price-amount">0</span>
+                            <span class="price-cents">,67</span>
+                            <span class="price-period">pro Tag</span>
+                        </div>
+                        <div class="price-old">€1,67</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pricing-card" data-plan="3month" data-price="29.99">
+                <div class="pricing-header">
+                    <div class="pricing-left">
+                        <div class="pricing-radio"></div>
+                        <span class="pricing-name">3-MONATS-PLAN</span>
+                    </div>
+                    <div class="pricing-right">
+                        <div class="pricing-price">
+                            <span class="price-currency">€</span>
+                            <span class="price-amount">0</span>
+                            <span class="price-cents">,36</span>
+                            <span class="price-period">pro Tag</span>
+                        </div>
+                        <div class="price-old">€0,89</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pricing-card" data-plan="6month" data-price="39.99">
+                <div class="pricing-header">
+                    <div class="pricing-left">
+                        <div class="pricing-radio"></div>
+                        <span class="pricing-name">6-MONATS-PLAN</span>
+                    </div>
+                    <div class="pricing-right">
+                        <div class="pricing-price">
+                            <span class="price-currency">€</span>
+                            <span class="price-amount">0</span>
+                            <span class="price-cents">,27</span>
+                            <span class="price-period">pro Tag</span>
+                        </div>
+                        <div class="price-old">€0,67</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            Mit Klick auf den Button zahle ich <strong>€17,99</strong> für den 1-Monats-Plan. Das Abo verlängert sich automatisch, bis ich kündige. Jederzeit kündbar unter <a href="mailto:support@wauwerk.de">support@wauwerk.de</a>. <a href="agb.html">AGB</a>
+        </div>
+
+        <!-- CTA Button -->
+        <button class="cta-button glow" onclick="getMyPlan()">Jetzt Plan sichern</button>
+
+        <!-- Payment Logos -->
+        <div class="payment-logos">
+            <img src="sepa-logo.png" alt="SEPA">
+            <img src="paypal-logo.png" alt="PayPal">
+            <img src="visa-logo.png" alt="Visa">
+            <img src="klarna-logo.png" alt="Klarna">
+            <img src="mastercard-logo.png" alt="Mastercard">
+        </div>
+
+        <!-- Guarantee -->
+        <div class="guarantee">
+            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+            30-Tage Geld-zurück-Garantie
+        </div>
+
+        <!-- Testimonials -->
+        <div class="testimonials-section">
+            <div class="section-header">
+                <h2 class="section-title">Echte Erfolgsgeschichten</h2>
+                <p class="section-subtitle">mit unserem Trainingsplan</p>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-images">
+                    <div class="testimonial-image">
+                        <span class="testimonial-image-label">Vorher</span>
+                    </div>
+                    <div class="testimonial-image">
+                        <span class="testimonial-image-label">Nachher</span>
+                    </div>
+                </div>
+                <div class="testimonial-header">
+                    <div>
+                        <div class="testimonial-name">Bella</div>
+                        <div class="testimonial-problem">Problem: <span>Leinenaggression</span></div>
+                    </div>
+                </div>
+                <p class="testimonial-text">Mein Hund hat früher jeden anderen Hund angebellt. Nach 3 Wochen mit dem Plan können wir endlich entspannt spazieren gehen. Die Übungen sind einfach und effektiv!</p>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-images">
+                    <div class="testimonial-image">
+                        <span class="testimonial-image-label">Vorher</span>
+                    </div>
+                    <div class="testimonial-image">
+                        <span class="testimonial-image-label">Nachher</span>
+                    </div>
+                </div>
+                <div class="testimonial-header">
+                    <div>
+                        <div class="testimonial-name">Max</div>
+                        <div class="testimonial-problem">Problem: <span>Hyperaktivität</span></div>
+                    </div>
+                </div>
+                <p class="testimonial-text">Max war ständig aufgedreht und konnte nicht stillsitzen. Die täglichen 10-Minuten-Übungen haben wahre Wunder gewirkt. Jetzt ist er viel ausgeglichener!</p>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2 class="faq-title">Häufige Fragen</h2>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Wie bekomme ich meinen Trainingsplan?</span>
+                </div>
+                <p class="faq-answer">Du erhältst deinen personalisierten Trainingsplan sofort per E-Mail nach dem Kauf. Innerhalb weniger Minuten hast du Zugang zu allen Übungen und kannst direkt loslegen!</p>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Wie unterscheidet sich das von anderen Trainings?</span>
+                </div>
+                <p class="faq-answer">Unser Ansatz basiert auf positiver Verstärkung und ist wissenschaftlich fundiert. Keine Stachelhalsbänder, kein Anschreien - nur Methoden, die wirklich funktionieren und deinem Hund nicht schaden.</p>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Wie viel Zeit brauche ich täglich?</span>
+                </div>
+                <p class="faq-answer">Unsere Trainingseinheiten sind kurz und effektiv – nur 10 bis 15 Minuten am Tag. Perfekt für jeden Alltag!</p>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Funktioniert das auch bei meinem Hund?</span>
+                </div>
+                <p class="faq-answer">Ja! Unser Plan ist personalisiert auf Alter, Rasse und Verhaltensprobleme deines Hundes. Falls du keine Verbesserung siehst, bekommst du dein Geld zurück.</p>
+            </div>
+        </div>
+
+        <!-- Guarantee Box -->
+        <div class="guarantee-box">
+            <h3 class="guarantee-title">30-Tage Geld-zurück-Garantie</h3>
+            <p class="guarantee-text">Wir sind überzeugt, dass unser Plan funktioniert und du innerhalb von 4 Wochen sichtbare Ergebnisse siehst. Falls nicht, erstatten wir dir den vollen Betrag zurück – ohne Wenn und Aber.</p>
+            <div class="guarantee-badge">
+                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+            </div>
+        </div>
+
+        <!-- Final CTA -->
+        <button class="cta-button glow" onclick="getMyPlan()">Jetzt Plan sichern</button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 WauWerk. Alle Rechte vorbehalten.</p>
+        <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
+    </footer>
+
+    <script>
+        // Load dog name and quiz data
+        const dogName = localStorage.getItem('dogName') || 'deinen Hund';
+        const dogGoal = localStorage.getItem('dogGoal') || 'obedience';
+        const dogProblem = localStorage.getItem('dogProblem') || '';
+        const hadTraining = localStorage.getItem('hadTraining') || '';
+        const territorialAggression = localStorage.getItem('territorialAggression') || '';
+
+        document.getElementById('dogName1').textContent = dogName;
+        document.getElementById('dogName2').textContent = dogName;
+        document.getElementById('dogName3').textContent = dogName;
+
+        // Map goals
+        const goalMap = {
+            'basics': 'Grundlagen lernen',
+            'obedience': 'Gehorsam verbessern',
+            'commands': 'Kommandos beibringen',
+            'bond': 'Bindung stärken'
+        };
+        document.getElementById('userGoal').textContent = goalMap[dogGoal] || 'Gehorsam verbessern';
+
+        // Map problems - basierend auf Quiz-Antworten
+        let problemText = 'Ungehorsam';
+        
+        // Wenn territoriale Aggression bejaht wurde
+        if (territorialAggression === 'yes') {
+            problemText = 'Territoriale Aggression';
+        } else if (dogProblem) {
+            // Falls ein spezifisches Problem gespeichert wurde
+            const problemMap = {
+                'pulling': 'Leinenziehen',
+                'barking': 'Übermäßiges Bellen',
+                'aggression': 'Aggression',
+                'anxiety': 'Trennungsangst',
+                'jumping': 'Anspringen',
+                'recall': 'Kommt nicht zurück'
+            };
+            problemText = problemMap[dogProblem] || dogProblem;
+        }
+        
+        document.getElementById('userProblem').textContent = problemText;
+
+        // Timer
+        let timeLeft = 10 * 60;
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft > 0) {
+                timeLeft--;
+                setTimeout(updateTimer, 1000);
+            }
+        }
+        updateTimer();
+
+        // Plan selection
+        const pricingCards = document.querySelectorAll('.pricing-card');
+        let selectedPlan = '1month';
+
+        pricingCards.forEach(card => {
+            card.addEventListener('click', () => {
+                pricingCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedPlan = card.dataset.plan;
+            });
+        });
+
+        // Get plan button
+        function getMyPlan() {
+            // Stripe Demo Links
+            const stripeLinks = {
+                '1month': 'https://buy.stripe.com/test_demo1month',
+                '3month': 'https://buy.stripe.com/test_demo3month',
+                '6month': 'https://buy.stripe.com/test_demo6month'
+            };
+            
+            window.location.href = stripeLinks[selectedPlan] || stripeLinks['1month'];
+        }
+    </script>
+</body>
+</html>
