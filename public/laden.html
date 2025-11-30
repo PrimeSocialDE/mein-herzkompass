@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WauWerk - Plan wird erstellt</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --text-light: #999999;
+            --background: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E8E8E8;
+            --light-brown: #D4B996;
+            --trustpilot-green: #00B67A;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-dark);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-light);
+            text-align: center;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-image {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* Container */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Loading Text */
+        .loading-text {
+            text-align: center;
+            font-size: 18px;
+            color: var(--text-medium);
+            margin-bottom: 30px;
+        }
+
+        .loading-text span {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* Progress Bars */
+        .progress-section {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .progress-item {
+            margin-bottom: 20px;
+        }
+
+        .progress-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .progress-label span:first-child {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .progress-label span:last-child {
+            color: var(--text-medium);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--light-brown);
+            border-radius: 4px;
+            transition: width 0.1s linear;
+        }
+
+        /* Trustpilot Slider */
+        .testimonials-section {
+            margin-bottom: 24px;
+        }
+
+        .testimonials-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .trustpilot-logo {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .trustpilot-stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .star-box {
+            width: 20px;
+            height: 20px;
+            background: var(--trustpilot-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .star-box svg {
+            width: 14px;
+            height: 14px;
+            fill: white;
+        }
+
+        /* Slider */
+        .slider-container {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slider-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+
+        .testimonial-card {
+            min-width: 100%;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+        }
+
+        .testimonial-stars {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 12px;
+        }
+
+        .testimonial-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .testimonial-text {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .testimonial-author {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border-light);
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .dot.active {
+            background: var(--light-brown);
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Modal */
+        .modal {
+            background: var(--white);
+            border-radius: 20px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            overflow: hidden;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-content {
+            padding: 30px 25px 20px;
+        }
+
+        .modal-image {
+            width: 220px;
+            height: 160px;
+            background: var(--border-light);
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .modal-text {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-dark);
+            line-height: 1.4;
+        }
+
+        .modal-buttons {
+            display: flex;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            color: var(--text-dark);
+        }
+
+        .modal-btn:first-child {
+            border-right: 1px solid var(--border-light);
+        }
+
+        .modal-btn:hover {
+            background: var(--background);
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">WauWerk</span>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div class="container">
+        <p class="loading-text">Erstelle einen personalisierten Trainingsplan für <span id="dogNameText">deinen Hund</span>...</p>
+
+        <!-- Progress Bars -->
+        <div class="progress-section">
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Verhaltensmuster analysieren</span>
+                    <span id="progress1Percent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress1"></div>
+                </div>
+            </div>
+
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Trainingsplan erstellen</span>
+                    <span id="progress2Percent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress2"></div>
+                </div>
+            </div>
+
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Personalisierung abschließen</span>
+                    <span id="progress3Percent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trustpilot Testimonials -->
+        <div class="testimonials-section">
+            <div class="testimonials-header">
+                <div class="trustpilot-stars">
+                    <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                    <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                    <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                    <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                    <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                </div>
+            </div>
+
+            <div class="slider-container">
+                <div class="slider-track" id="sliderTrack">
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars">
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                        </div>
+                        <h3 class="testimonial-title">Endlich Ruhe beim Spaziergang!</h3>
+                        <p class="testimonial-text">Mein Hund hat früher an der Leine gezogen wie verrückt. Nach nur 2 Wochen mit dem Trainingsplan läuft er entspannt neben mir. Absolut empfehlenswert!</p>
+                        <p class="testimonial-author">Sandra M. - vor 3 Tagen</p>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars">
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                        </div>
+                        <h3 class="testimonial-title">Besser als jede Hundeschule</h3>
+                        <p class="testimonial-text">Wir haben schon so viel Geld für Hundeschulen ausgegeben. Der personalisierte Plan von WauWerk hat endlich funktioniert. Unser Bello hört jetzt auf Kommandos!</p>
+                        <p class="testimonial-author">Thomas K. - vor 1 Woche</p>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars">
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                            <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                        </div>
+                        <h3 class="testimonial-title">Einfach und effektiv</h3>
+                        <p class="testimonial-text">Die täglichen Übungen sind kurz und knackig. Perfekt für meinen vollen Terminkalender. Nach einem Monat ist meine Luna wie ausgewechselt!</p>
+                        <p class="testimonial-author">Julia R. - vor 5 Tagen</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slider-dots">
+                <div class="dot active" data-index="0"></div>
+                <div class="dot" data-index="1"></div>
+                <div class="dot" data-index="2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 1 -->
+    <div class="modal-overlay" id="modal1">
+        <div class="modal">
+            <div class="modal-content">
+                <div class="modal-image">[Bild: Hunde mit Besitzern]</div>
+                <p class="modal-text">Hat <span id="modal1DogName">dein Hund</span> schon mal ein Gehorsamkeitstraining gemacht?</p>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn" onclick="closeModal(1, 'no')">Nein</button>
+                <button class="modal-btn" onclick="closeModal(1, 'yes')">Ja</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2 -->
+    <div class="modal-overlay" id="modal2">
+        <div class="modal">
+            <div class="modal-content">
+                <div class="modal-image">[Bild: Spielende Hunde]</div>
+                <p class="modal-text"><span id="ageText">Junge Hunde</span> können manchmal territoriale Aggression zeigen. Hattest du dieses Problem schon mal?</p>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn" onclick="closeModal(2, 'no')">Nein</button>
+                <button class="modal-btn" onclick="closeModal(2, 'yes')">Ja</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load dog name
+        const dogName = localStorage.getItem('dogName') || 'deinen Hund';
+        const dogAge = localStorage.getItem('dogAge') || 'erwachsen';
+        
+        document.getElementById('dogNameText').textContent = dogName;
+        document.getElementById('modal1DogName').textContent = dogName;
+
+        // Age text
+        const ageTexts = {
+            'welpe': 'Welpen',
+            'junghund': 'Junge Hunde',
+            'erwachsen': 'Erwachsene Hunde',
+            'senior': 'Ältere Hunde'
+        };
+        document.getElementById('ageText').textContent = ageTexts[dogAge] || 'Hunde';
+
+        // Progress Animation
+        let progressState = 0; // 0 = erste Phase, 1 = nach Modal 1, 2 = nach Modal 2
+
+        function animateProgress(element, percentElement, startPercent, targetPercent, duration, callback) {
+            let current = startPercent;
+            const increment = (targetPercent - startPercent) / (duration / 30);
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= targetPercent) {
+                    current = targetPercent;
+                    clearInterval(timer);
+                    if (callback) callback();
+                }
+                element.style.width = current + '%';
+                percentElement.textContent = Math.round(current) + '%';
+            }, 30);
+        }
+
+        // Phase 1: Balken gehen 3 Sek bis ~50%
+        setTimeout(() => {
+            animateProgress(
+                document.getElementById('progress1'),
+                document.getElementById('progress1Percent'),
+                0, 100, 1500
+            );
+        }, 200);
+
+        setTimeout(() => {
+            animateProgress(
+                document.getElementById('progress2'),
+                document.getElementById('progress2Percent'),
+                0, 60, 2000
+            );
+        }, 800);
+
+        setTimeout(() => {
+            animateProgress(
+                document.getElementById('progress3'),
+                document.getElementById('progress3Percent'),
+                0, 30, 1500,
+                () => {
+                    // Modal 1 sofort wenn Balken stoppt
+                    document.getElementById('modal1').classList.add('active');
+                }
+            );
+        }, 1200);
+
+        // Slider
+        let currentSlide = 0;
+        const track = document.getElementById('sliderTrack');
+        const dots = document.querySelectorAll('.dot');
+
+        function goToSlide(index) {
+            currentSlide = index;
+            track.style.transform = `translateX(-${index * 100}%)`;
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                goToSlide(parseInt(dot.dataset.index));
+            });
+        });
+
+        // Auto slide
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % 3;
+            goToSlide(currentSlide);
+        }, 4000);
+
+        // Modal functions
+        function closeModal(modalNum, answer) {
+            const modal = document.getElementById('modal' + modalNum);
+            modal.classList.remove('active');
+            
+            if (modalNum === 1) {
+                localStorage.setItem('hadTraining', answer);
+                
+                // 4 Sek weiter laden, dann Modal 2
+                animateProgress(
+                    document.getElementById('progress2'),
+                    document.getElementById('progress2Percent'),
+                    60, 100, 2000
+                );
+                animateProgress(
+                    document.getElementById('progress3'),
+                    document.getElementById('progress3Percent'),
+                    30, 60, 3500,
+                    () => {
+                        // Modal 2 sofort wenn Balken stoppt
+                        document.getElementById('modal2').classList.add('active');
+                    }
+                );
+                
+            } else if (modalNum === 2) {
+                localStorage.setItem('territorialAggression', answer);
+                
+                // 3 Sek bis 100%, dann weiterleiten
+                animateProgress(
+                    document.getElementById('progress3'),
+                    document.getElementById('progress3Percent'),
+                    60, 100, 2500,
+                    () => {
+                        setTimeout(() => {
+                            window.location.href = 'deinplan.html';
+                        }, 500);
+                    }
+                );
+            }
+        }
+    </script>
+</body>
+</html>
