@@ -9,19 +9,19 @@
     <style>
         :root {
             --primary-cream: #FDF8F3;
-            --secondary-cream: #F7F0E8;
-            --accent-brown: #E6D2C1;
-            --warm-brown: #D4B996;
-            --light-brown: #F2E6D9;
+            --secondary-cream: #F5EDE3;
+            --accent-brown: #D4B996;
+            --warm-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --light-brown: #E8DCCC;
             --text-brown: #8B7355;
             --text-light: #A68B5B;
             --text-dark: #6B5B47;
             --white: #FFFFFF;
-            --accent-green: #48bb78;
-            --accent-orange: #FF8A50;
-            --shadow-light: 0 4px 20px rgba(0,0,0,0.08);
-            --shadow-medium: 0 12px 40px rgba(0,0,0,0.15);
-            --shadow-heavy: 0 20px 60px rgba(0,0,0,0.2);
+            --accent-green: #4CAF50;
+            --shadow-light: 0 4px 20px rgba(139, 115, 85, 0.08);
+            --shadow-medium: 0 12px 40px rgba(139, 115, 85, 0.15);
+            --shadow-heavy: 0 20px 60px rgba(139, 115, 85, 0.2);
             --border-radius: 20px;
             --border-radius-large: 28px;
         }
@@ -81,22 +81,8 @@
             gap: 15px;
             font-weight: 800;
             font-size: 22px;
-            color: var(--text-brown);
+            color: var(--text-dark);
             text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, var(--warm-brown), var(--accent-brown));
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-weight: 900;
-            font-size: 20px;
-            box-shadow: var(--shadow-light);
         }
 
         .logo-image {
@@ -122,11 +108,11 @@
         }
 
         .nav-links a:hover {
-            color: var(--accent-orange);
+            color: var(--warm-brown);
         }
 
         .cta-button-nav {
-            background: linear-gradient(135deg, var(--accent-orange), #FF7A40);
+            background: var(--warm-brown);
             color: var(--white);
             padding: 14px 28px;
             border: none;
@@ -136,29 +122,20 @@
             text-decoration: none;
             transition: all 0.3s ease;
             box-shadow: var(--shadow-light);
+            line-height: 1.1;
         }
 
         .cta-button-nav:hover {
+            background: var(--dark-brown);
             transform: translateY(-2px);
             box-shadow: var(--shadow-medium);
         }
 
-        /* Hero Section - Clean */
+        /* Hero Section */
         .hero {
             background: linear-gradient(135deg, var(--primary-cream) 0%, var(--white) 100%);
             padding: 80px 0 60px;
             position: relative;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1.5" fill="%23D4B996" opacity="0.04"/><circle cx="80" cy="40" r="1.5" fill="%23E6D2C1" opacity="0.04"/><circle cx="40" cy="80" r="1.5" fill="%23D4B996" opacity="0.04"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            pointer-events: none;
         }
 
         .hero-content {
@@ -169,32 +146,26 @@
             z-index: 2;
         }
 
-        /* Hero Image Placeholder */
         .hero-image {
             width: 100%;
             max-width: 500px;
-            height: 280px;
+            aspect-ratio: 1875 / 1563;
             background: linear-gradient(135deg, var(--accent-brown), var(--warm-brown));
             border-radius: var(--border-radius-large);
             margin: 30px auto 25px;
             box-shadow: var(--shadow-heavy);
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 280"><rect width="500" height="280" fill="%23E6D2C1"/><text x="250" y="130" text-anchor="middle" font-size="20" fill="%238B7355" font-weight="600">Glücklicher Hund</text><text x="250" y="155" text-anchor="middle" font-size="20" fill="%238B7355" font-weight="600">mit Familie</text><text x="250" y="180" text-anchor="middle" font-size="14" fill="%23A68B5B">500x280 Pixel</text></svg>');
-            background-size: cover;
-            background-position: center;
-            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-brown);
+            font-weight: 600;
             overflow: hidden;
         }
 
-        .hero-image::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 49%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 51%, transparent 52%);
-            background-size: 20px 20px;
-            pointer-events: none;
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .hero-title {
@@ -202,7 +173,7 @@
             font-size: clamp(40px, 6vw, 60px);
             font-weight: 700;
             margin-bottom: 20px;
-            color: var(--text-brown);
+            color: var(--text-dark);
             line-height: 1.1;
         }
 
@@ -218,7 +189,7 @@
 
         .main-cta-button {
             display: inline-block;
-            background: linear-gradient(135deg, var(--accent-orange), #FF7A40);
+            background: var(--warm-brown);
             color: white;
             padding: 22px 45px;
             border: none;
@@ -228,13 +199,15 @@
             text-decoration: none;
             cursor: pointer;
             transition: all 0.4s ease;
-            box-shadow: 0 12px 40px rgba(255, 138, 80, 0.4);
+            box-shadow: 0 12px 40px rgba(139, 115, 85, 0.4);
             margin-bottom: 15px;
+            line-height: 1.1;
         }
 
         .main-cta-button:hover {
+            background: var(--dark-brown);
             transform: translateY(-4px);
-            box-shadow: 0 16px 50px rgba(255, 138, 80, 0.5);
+            box-shadow: 0 16px 50px rgba(139, 115, 85, 0.5);
         }
 
         .cta-subtext {
@@ -260,7 +233,7 @@
             font-family: Georgia, serif;
             font-size: clamp(24px, 4vw, 32px);
             font-weight: 700;
-            color: var(--text-brown);
+            color: var(--text-dark);
             margin-bottom: 30px;
         }
 
@@ -279,7 +252,7 @@
             padding: 18px 25px;
             background: var(--secondary-cream);
             border-radius: var(--border-radius);
-            border-left: 4px solid var(--accent-orange);
+            border-left: 4px solid var(--warm-brown);
             transition: transform 0.3s ease;
         }
 
@@ -326,13 +299,13 @@
             padding: 50px 40px;
             border-radius: var(--border-radius-large);
             box-shadow: var(--shadow-heavy);
-            border-left: 6px solid var(--accent-orange);
+            border-left: 6px solid var(--warm-brown);
         }
 
         .stat-number {
             font-size: clamp(48px, 8vw, 72px);
             font-weight: 900;
-            color: var(--accent-orange);
+            color: var(--warm-brown);
             margin-bottom: 20px;
             font-family: Georgia, serif;
         }
@@ -355,12 +328,12 @@
         .social-proof-title {
             font-size: clamp(28px, 4vw, 36px);
             font-weight: 700;
-            color: var(--text-brown);
+            color: var(--text-dark);
             margin-bottom: 30px;
         }
 
         .social-proof-number {
-            color: var(--accent-orange);
+            color: var(--warm-brown);
         }
 
         .social-proof-avatars {
@@ -396,12 +369,8 @@
         .avatar-circle:nth-child(11) { animation-delay: 1.3s; }
 
         @keyframes avatarFloat {
-            0%, 100% { 
-                transform: translateY(0px) scale(1); 
-            }
-            50% { 
-                transform: translateY(-8px) scale(1.05); 
-            }
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-8px) scale(1.05); }
         }
 
         .avatar-circle img {
@@ -410,7 +379,7 @@
             object-fit: cover;
         }
 
-        /* Compact Comparison Section */
+        /* Comparison Section */
         .comparison-section {
             padding: 60px 0;
             background: var(--white);
@@ -425,7 +394,7 @@
             font-family: Georgia, serif;
             font-size: clamp(28px, 4vw, 40px);
             font-weight: 700;
-            color: var(--text-brown);
+            color: var(--text-dark);
             margin-bottom: 15px;
         }
 
@@ -434,7 +403,6 @@
             color: var(--text-light);
         }
 
-        /* Horizontal Swipeable Comparison */
         .comparison-container {
             position: relative;
             overflow: hidden;
@@ -476,8 +444,8 @@
             border-right: none;
         }
 
-        .clara-card {
-            background: linear-gradient(135deg, rgba(212, 185, 150, 0.1), rgba(230, 210, 193, 0.1));
+        .wauwerk-card {
+            background: linear-gradient(135deg, rgba(212, 185, 150, 0.15), rgba(196, 165, 118, 0.1));
         }
 
         .card-header {
@@ -488,7 +456,7 @@
         .card-icon {
             width: 60px;
             height: 60px;
-            background: var(--accent-orange);
+            background: var(--text-light);
             border-radius: 15px;
             display: flex;
             align-items: center;
@@ -498,24 +466,24 @@
             margin: 0 auto 15px;
         }
 
-        .clara-card .card-icon {
+        .wauwerk-card .card-icon {
             background: var(--warm-brown);
         }
 
         .card-title {
             font-size: 18px;
             font-weight: 700;
-            color: var(--text-brown);
+            color: var(--text-dark);
             margin-bottom: 8px;
         }
 
         .card-price {
             font-size: 16px;
             font-weight: 600;
-            color: var(--accent-orange);
+            color: var(--text-light);
         }
 
-        .clara-card .card-price {
+        .wauwerk-card .card-price {
             color: var(--warm-brown);
         }
 
@@ -557,7 +525,7 @@
             color: white;
         }
 
-        /* Quiz CTA - Compact */
+        /* Quiz CTA */
         .quiz-cta-section {
             padding: 60px 0;
             background: linear-gradient(135deg, var(--secondary-cream) 0%, var(--light-brown) 100%);
@@ -569,7 +537,7 @@
             font-size: clamp(28px, 4vw, 36px);
             font-weight: 700;
             margin-bottom: 18px;
-            color: var(--text-brown);
+            color: var(--text-dark);
         }
 
         .quiz-subtitle {
@@ -582,7 +550,7 @@
         }
 
         .quiz-button {
-            background: var(--accent-orange);
+            background: var(--warm-brown);
             color: var(--white);
             padding: 20px 40px;
             border: none;
@@ -592,16 +560,18 @@
             text-decoration: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(255, 138, 80, 0.4);
+            box-shadow: 0 10px 30px rgba(139, 115, 85, 0.4);
             display: inline-block;
+            line-height: 1.1;
         }
 
         .quiz-button:hover {
+            background: var(--dark-brown);
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(255, 138, 80, 0.5);
+            box-shadow: 0 15px 40px rgba(139, 115, 85, 0.5);
         }
 
-        /* Benefits - Compact Grid */
+        /* Benefits Grid */
         .benefits-section {
             padding: 60px 0;
             background: var(--white);
@@ -611,7 +581,7 @@
             font-family: Georgia, serif;
             font-size: clamp(28px, 4vw, 36px);
             font-weight: 700;
-            color: var(--text-brown);
+            color: var(--text-dark);
             text-align: center;
             margin-bottom: 40px;
         }
@@ -646,7 +616,7 @@
         .benefit-title {
             font-size: 16px;
             font-weight: 700;
-            color: var(--text-brown);
+            color: var(--text-dark);
             margin-bottom: 8px;
         }
 
@@ -656,34 +626,34 @@
             line-height: 1.5;
         }
 
-        /* Trustshops Rating Section */
-        .trustshops-section {
+        /* Trustpilot Section */
+        .trustpilot-section {
             padding: 80px 0;
             background: var(--white);
             text-align: center;
         }
 
-        .trustshops-container {
+        .trustpilot-container {
             max-width: 700px;
             margin: 0 auto;
             padding: 50px;
-            background: linear-gradient(135deg, rgba(212, 185, 150, 0.1), rgba(230, 210, 193, 0.1));
+            background: linear-gradient(135deg, rgba(212, 185, 150, 0.1), rgba(196, 165, 118, 0.1));
             border-radius: var(--border-radius-large);
             box-shadow: var(--shadow-medium);
         }
 
-        .trustshops-header {
+        .trustpilot-header {
             margin-bottom: 30px;
         }
 
-        .trustshops-logo {
+        .trustpilot-logo {
             font-size: 24px;
             font-weight: 800;
-            color: var(--text-brown);
+            color: var(--text-dark);
             margin-bottom: 15px;
         }
 
-        .trustshops-text {
+        .trustpilot-text {
             font-size: 18px;
             color: var(--text-light);
             margin-bottom: 20px;
@@ -704,44 +674,39 @@
         }
 
         .star {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             background: #00B67A;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 900;
-            border-radius: 2px;
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
         }
 
         .rating-score {
             font-size: 24px;
             font-weight: 700;
-            color: var(--text-brown);
+            color: var(--text-dark);
         }
 
-        .rating-text {
-            font-size: 14px;
-            color: var(--text-light);
-        }
-
-        .trustshops-stats {
+        .trustpilot-stats {
             font-weight: 600;
             color: var(--text-brown);
             font-size: 16px;
             margin-bottom: 25px;
         }
 
-        .rating-text {
+        .rating-subtext {
             font-size: 14px;
             color: var(--text-light);
         }
+
+        /* Final CTA */
         .final-cta {
             padding: 60px 0;
-            background: linear-gradient(135deg, var(--warm-brown), var(--accent-brown));
+            background: var(--warm-brown);
             color: var(--white);
             text-align: center;
         }
@@ -761,7 +726,7 @@
 
         .final-button {
             background: var(--white);
-            color: var(--warm-brown);
+            color: var(--dark-brown);
             padding: 20px 45px;
             border: none;
             border-radius: 50px;
@@ -771,6 +736,7 @@
             display: inline-block;
             transition: all 0.3s ease;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            line-height: 1.1;
         }
 
         .final-button:hover {
@@ -779,9 +745,69 @@
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
         }
 
+        /* About Section */
+        .about-section {
+            padding: 80px 0;
+            background: var(--secondary-cream);
+        }
+
+        .about-container {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .about-image {
+            flex: 0 0 350px;
+            aspect-ratio: 1875 / 1563;
+            border-radius: var(--border-radius-large);
+            overflow: hidden;
+            box-shadow: var(--shadow-heavy);
+            background: var(--accent-brown);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .about-content {
+            flex: 1;
+        }
+
+        .about-title {
+            font-family: Georgia, serif;
+            font-size: clamp(28px, 4vw, 36px);
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .about-text {
+            font-size: 16px;
+            color: var(--text-brown);
+            line-height: 1.7;
+        }
+
+        @media (max-width: 768px) {
+            .about-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .about-image {
+                flex: 0 0 auto;
+                width: 100%;
+                max-width: 350px;
+            }
+        }
+
         /* Footer */
         .footer {
-            background: var(--text-brown);
+            background: var(--dark-brown);
             color: var(--secondary-cream);
             padding: 60px 0 30px;
         }
@@ -811,7 +837,7 @@
         }
 
         .footer-section a:hover {
-            color: var(--accent-orange);
+            color: var(--accent-brown);
         }
 
         .footer-bottom {
@@ -829,28 +855,17 @@
             }
 
             .hero-image {
-                height: 200px;
+                max-width: 100%;
                 margin: 25px auto 20px;
             }
 
-            .trustshops-container {
+            .trustpilot-container {
                 padding: 35px 25px;
             }
 
             .rating-display {
                 flex-direction: column;
                 gap: 10px;
-            }
-
-            .star {
-                width: 18px;
-                height: 18px;
-                font-size: 10px;
-                clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            }
-
-            .rating-score {
-                font-size: 20px;
             }
 
             .social-proof-avatars {
@@ -893,16 +908,12 @@
 
         @media (max-width: 480px) {
             .hero-image {
-                height: 200px;
+                max-width: 100%;
                 margin: 25px auto 20px;
             }
 
-            .trustshops-container {
+            .trustpilot-container {
                 padding: 30px 20px;
-            }
-
-            .rating-stars {
-                font-size: 20px;
             }
 
             .comparison-card {
@@ -931,20 +942,21 @@
         </div>
     </nav>
 
-    <!-- Hero Section - Clean -->
+    <!-- Hero Section -->
     <section class="hero" id="start">
         <div class="container">
             <div class="hero-content">
                 <h1 class="hero-title">Moderne Online Hundeschule</h1>
                 
-                <!-- Hero Image -->
-                <div class="hero-image"></div>
+                <div class="hero-image">
+                    <img src="HeroBild1.png" alt="Glücklicher Hund mit Familie">
+                </div>
                 
                 <p class="hero-subtitle">
                     Löse die Verhaltensprobleme deines Hundes mit einem personalisierten 30-60 Tage Trainingsplan. Professionelle Hundeerziehung für ein harmonisches Zusammenleben.
                 </p>
                 
-                <a href="#quiz" class="main-cta-button">Kostenloses Verhalten-Quiz starten →</a>
+                <a href="#quiz" class="main-cta-button">Kostenloses Verhaltens-Quiz starten →</a>
                 <p class="cta-subtext">✓ Individueller Trainingsplan ✓ Sofort verfügbar ✓ 30-60 Tage Programm</p>
             </div>
         </div>
@@ -996,7 +1008,7 @@
     <!-- Social Proof Section -->
     <div class="social-proof-section">
         <div class="container">
-            <h3 class="social-proof-title">Vertraut von <span class="social-proof-number">3,400+</span><br>Hundebesitzern</h3>
+            <h3 class="social-proof-title">Vertraut von <span class="social-proof-number">3.400+</span><br>Hundebesitzern</h3>
             <div class="social-proof-avatars">
                 <div class="avatar-circle"><img src="Kundin1.png" alt="Hundebesitzer"></div>
                 <div class="avatar-circle"><img src="Kundin2.png" alt="Hundebesitzer"></div>
@@ -1013,22 +1025,22 @@
         </div>
     </div>
 
-    <!-- Horizontal Swipeable Comparison -->
+    <!-- Comparison Section -->
     <section class="comparison-section">
         <div class="container">
             <div class="comparison-header">
-                <h2 class="comparison-title">Clara's vs Traditionelle Hundeschulen</h2>
+                <h2 class="comparison-title">WauWerk vs Traditionelle Hundeschulen</h2>
                 <p class="comparison-subtitle">Swipe nach rechts für den Vergleich →</p>
             </div>
             
             <div class="comparison-container">
                 <div class="comparison-scroll">
-                    <!-- Clara's Card -->
-                    <div class="comparison-card clara-card">
+                    <!-- WauWerk Card -->
+                    <div class="comparison-card wauwerk-card">
                         <div class="card-header">
                             <div class="card-icon">🐕</div>
-                            <div class="card-title">Clara's Hundeschule</div>
-                            <div class="card-price">ab €49.99/Plan</div>
+                            <div class="card-title">WauWerk</div>
+                            <div class="card-price">ab €17,99/Plan</div>
                         </div>
                         <ul class="feature-list">
                             <li class="feature-item">
@@ -1037,7 +1049,7 @@
                             </li>
                             <li class="feature-item">
                                 <span class="feature-icon feature-yes">✓</span>
-                                <span>24/7 Online-Support</span>
+                                <span>E-Mail Support</span>
                             </li>
                             <li class="feature-item">
                                 <span class="feature-icon feature-yes">✓</span>
@@ -1132,7 +1144,22 @@
         </div>
     </section>
 
-    <!-- Quiz CTA - Compact -->
+    <!-- About Us Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-container">
+                <div class="about-image">
+                    <img src="team.png" alt="Das WauWerk Team">
+                </div>
+                <div class="about-content">
+                    <h2 class="about-title">Das sind wir</h2>
+                    <p class="about-text">Wir sind ein Team aus leidenschaftlichen Hundetrainern und Verhaltensexperten. Mit über 10 Jahren Erfahrung haben wir tausenden Hundebesitzern geholfen, eine harmonische Beziehung zu ihrem Vierbeiner aufzubauen. Unser Ziel: Praktische, wissenschaftlich fundierte Trainingsmethoden für jeden Hundebesitzer zugänglich machen.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz CTA -->
     <section class="quiz-cta-section" id="quiz">
         <div class="container">
             <h2 class="quiz-title">Kostenloses Verhaltens-Quiz für deinen Hund</h2>
@@ -1141,7 +1168,7 @@
         </div>
     </section>
 
-    <!-- Benefits - Compact Grid -->
+    <!-- Benefits Grid -->
     <section class="benefits-section">
         <div class="container">
             <h2 class="benefits-title">Was du erhältst</h2>
@@ -1164,7 +1191,7 @@
                 <div class="benefit-card">
                     <div class="benefit-icon">🎓</div>
                     <div class="benefit-title">Expertenunterstützung</div>
-                    <div class="benefit-description">24/7 Support und Antworten auf alle deine Fragen zum Hundetraining</div>
+                    <div class="benefit-description">E-Mail Support und Antworten auf alle deine Fragen zum Hundetraining</div>
                 </div>
                 <div class="benefit-card">
                     <div class="benefit-icon">❤️</div>
@@ -1180,13 +1207,13 @@
         </div>
     </section>
 
-    <!-- Trustshops Rating Section -->
-    <section class="trustshops-section">
+    <!-- Trustpilot Section -->
+    <section class="trustpilot-section">
         <div class="container">
-            <div class="trustshops-container">
-                <div class="trustshops-header">
-                    <div class="trustshops-logo">Trustshops</div>
-                    <p class="trustshops-text">Sieh dir unsere <strong>4.255</strong> Bewertungen an</p>
+            <div class="trustpilot-container">
+                <div class="trustpilot-header">
+                    <div class="trustpilot-logo">Bewertungen</div>
+                    <p class="trustpilot-text">Sieh dir unsere <strong>4.255</strong> Bewertungen an</p>
                     
                     <div class="rating-display">
                         <div class="rating-stars">
@@ -1199,8 +1226,8 @@
                         <div class="rating-score">4.8/5</div>
                     </div>
                     
-                    <p class="trustshops-stats">Basierend auf 4.255 verifizierten Bewertungen</p>
-                    <div class="rating-text">Letzte Bewertung: vor 2 Stunden</div>
+                    <p class="trustpilot-stats">Basierend auf 4.255 verifizierten Bewertungen</p>
+                    <div class="rating-subtext">Letzte Bewertung: vor 2 Stunden</div>
                 </div>
             </div>
         </div>
@@ -1227,22 +1254,21 @@
                 
                 <div class="footer-section">
                     <h3>Rechtliches</h3>
-                    <a href="#">Impressum</a>
-                    <a href="#">Datenschutz</a>
-                    <a href="#">AGB</a>
-                    <a href="#">Widerrufsrecht</a>
-                    <a href="#">Kontakt</a>
+                    <a href="impressum.html">Impressum</a>
+                    <a href="datenschutz.html">Datenschutz</a>
+                    <a href="agb.html">AGB</a>
+                    <a href="widerruf.html">Widerrufsrecht</a>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2024 WauWerk. Alle Rechte vorbehalten. | Professionelle Online-Hundeerziehung seit 2020</p>
+                <p>&copy; 2025 WauWerk. Alle Rechte vorbehalten.</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Quiz button click handlers - direct redirect without scroll
+        // Quiz button click handlers - direct redirect
         document.querySelectorAll('.quiz-button, .cta-button-nav, .final-button, .main-cta-button').forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
