@@ -12,6 +12,8 @@
         }
 
         :root {
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
             --text-dark: #2C2C2E;
             --text-medium: #6B6B6B;
             --background-light: #FAFAFA;
@@ -30,7 +32,6 @@
             line-height: 1.5;
         }
 
-        /* Header */
         .header {
             background: var(--white);
             padding: 20px 0;
@@ -59,14 +60,12 @@
             color: var(--text-dark);
         }
 
-        /* Main Container */
         .container {
             max-width: 700px;
             margin: 0 auto;
             padding: 40px 20px;
         }
 
-        /* Progress Bar */
         .progress-container {
             margin-bottom: 30px;
         }
@@ -86,27 +85,27 @@
             transition: width 0.3s ease;
         }
 
-        /* Hero Image Placeholder */
         .hero-section {
             position: relative;
             width: 100%;
-            height: 320px;
+            aspect-ratio: 1875 / 1563;
             background: var(--border-light);
-            border: 2px dashed #CCCCCC;
             border-radius: var(--border-radius);
             margin-bottom: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            box-shadow: var(--shadow-medium);
         }
 
-        .hero-placeholder-text {
-            color: var(--text-medium);
-            font-size: 14px;
-            text-align: center;
+        .hero-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--border-radius);
         }
 
-        /* Options List */
         .options-list {
             display: flex;
             flex-direction: column;
@@ -146,94 +145,40 @@
             font-weight: 400;
         }
 
-        /* Mobile Responsive */
         @media (max-width: 768px) {
-            .container {
-                padding: 30px 15px;
-            }
-
-            .hero-section {
-                height: 280px;
-            }
-
-            .hero-question {
-                padding: 20px 25px;
-                max-width: 240px;
-            }
-
-            .hero-question h1 {
-                font-size: 20px;
-            }
-
-            .option-card {
-                padding: 20px 25px;
-            }
-
-            .option-text {
-                font-size: 22px;
-            }
-
-            .option-text span {
-                font-size: 16px;
-            }
+            .container { padding: 30px 15px; }
+            .option-card { padding: 20px 25px; }
+            .option-text { font-size: 22px; }
+            .option-text span { font-size: 16px; }
         }
 
         @media (max-width: 480px) {
-            .container {
-                padding: 20px 12px;
-            }
-
-            .hero-section {
-                height: 240px;
-            }
-
-            .hero-question {
-                padding: 15px 20px;
-                max-width: 200px;
-            }
-
-            .hero-question h1 {
-                font-size: 18px;
-            }
-
-            .option-card {
-                padding: 18px 20px;
-            }
-
-            .option-text {
-                font-size: 20px;
-            }
-
-            .option-text span {
-                font-size: 14px;
-            }
+            .container { padding: 20px 12px; }
+            .option-card { padding: 18px 20px; }
+            .option-text { font-size: 20px; }
+            .option-text span { font-size: 14px; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
-        <a href="schritt18.html" class="logo">
+        <a href="index.html" class="logo">
             <img src="logo.png" alt="WauWerk Logo" class="logo-image">
             <span class="logo-text">WauWerk</span>
         </a>
     </header>
 
-    <!-- Main Content -->
     <div class="container">
-        <!-- Progress Bar -->
         <div class="progress-container">
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
         </div>
 
-        <!-- Hero Section Placeholder -->
         <div class="hero-section">
-            <span class="hero-placeholder-text">[Platzhalter für Hundebild mit Frage]</span>
+            <img src="zeit.png" alt="Wie viel Zeit hast du?">
         </div>
 
-        <!-- Options List -->
         <div class="options-list">
             <div class="option-card" data-answer="5">
                 <div class="option-text">5 <span>min/Tag</span></div>
@@ -260,16 +205,11 @@
         optionCards.forEach(card => {
             card.addEventListener('click', () => {
                 selectedAnswer = card.dataset.answer;
-                
-                // Store selection in localStorage
                 localStorage.setItem('trainingTime', selectedAnswer);
-                
-                // Redirect to next step
                 window.location.href = 'schritt20.html';
             });
         });
 
-        // Load previous selection if available
         const savedAnswer = localStorage.getItem('trainingTime');
         if (savedAnswer) {
             const savedCard = document.querySelector(`[data-answer="${savedAnswer}"]`);
