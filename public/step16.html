@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dating-Analyse - Schritt 14</title>
+    <title>WauWerk - Hundetraining Quiz Schritt 16</title>
     <style>
         * {
             margin: 0;
@@ -11,281 +11,425 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
-            min-height: 100vh;
-            padding: 20px;
+            background: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.5;
         }
 
-        .main-container {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .countdown-box {
-            background: white;
-            border: 1px solid #764ba2;
-            border-radius: 15px;
-            padding: 6px 12px;
-            margin-bottom: 15px;
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-light);
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: inline-block;
-            margin-left: 50%;
-            transform: translateX(-50%);
-            visibility: hidden;
         }
 
-        .countdown-time {
-            font-size: 12px;
-            font-weight: 600;
-            color: #333;
-            min-width: 35px;
-            display: inline-block;
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-dark);
         }
 
-        .progress-container {
-            background: white;
-            padding: 20px;
-            margin-bottom: 30px;
+        .logo-image {
+            width: 40px;
+            height: 40px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Header Text */
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .quiz-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .quiz-subtitle {
+            font-size: 18px;
+            color: var(--text-medium);
+            margin-bottom: 40px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 50px;
         }
 
         .progress-bar {
-            background: #f0f0f0;
+            width: 100%;
             height: 8px;
+            background: var(--border-light);
             border-radius: 4px;
             overflow: hidden;
         }
 
         .progress-fill {
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 80%;
             height: 100%;
-            width: 49.5%;
-            border-radius: 4px;
+            background: var(--light-brown);
             transition: width 0.3s ease;
         }
 
-        .container {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
+        /* Dog Image */
+        .dog-image-container {
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid #764ba2;
+            margin-bottom: 50px;
         }
 
-        h1 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 40px;
-            font-weight: 600;
+        .dog-image {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            background: var(--border-light);
+            border-radius: var(--border-radius);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-medium);
+            border: 1px solid var(--border-light);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-medium);
         }
 
-        .option-container {
+        .dog-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+        }
+
+        /* Options List */
+        .options-list {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
-        .option-button {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            padding: 20px;
+        .option-card {
+            background: var(--white);
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 20px 25px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 16px;
-            font-weight: 500;
-            color: #333;
+            box-shadow: var(--shadow-light);
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 15px;
+            gap: 20px;
         }
 
-        .option-button:hover {
-            border-color: #667eea;
+        .option-card:hover {
+            border-color: var(--light-brown);
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            box-shadow: var(--shadow-medium);
         }
 
-        .option-button.selected {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .option-card.selected {
+            border-color: var(--light-brown);
+            background: linear-gradient(135deg, rgba(212, 185, 150, 0.05), rgba(212, 185, 150, 0.1));
         }
 
-        .option-icon {
-            font-size: 24px;
+        .option-emoji {
+            font-size: 48px;
+            flex-shrink: 0;
         }
 
-        .security-note {
+        .option-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+            flex: 1;
+        }
+
+        /* Continue Button */
+        .continue-container {
+            text-align: center;
             margin-top: 30px;
-            color: #666;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        .continue-button {
+            background: var(--primary-brown);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            pointer-events: none;
+            text-decoration: none;
+            display: inline-block;
+            line-height: 1.1;
         }
 
+        .continue-button.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .continue-button.active:hover {
+            background: var(--brown-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        /* Terms Footer */
+        .terms-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 15px;
+            }
+
+            .quiz-title {
+                font-size: 26px;
+            }
+
+            .quiz-subtitle {
+                font-size: 16px;
+            }
+
+            .dog-image {
+                height: 180px;
+                max-width: 280px;
+            }
+
+            .option-card {
+                padding: 18px 20px;
+                gap: 15px;
+            }
+
+            .option-emoji {
+                font-size: 40px;
+            }
+
+            .option-text {
+                font-size: 18px;
+            }
+
+            .continue-button {
+                width: 100%;
+                max-width: 300px;
+                padding: 14px 32px;
+                font-size: 16px;
+            }
+        }
+
+        /* Extra small mobile devices */
         @media (max-width: 480px) {
             .container {
-                padding: 30px 20px;
+                padding: 20px 12px;
             }
-            
-            h1 {
-                font-size: 24px;
+
+            .quiz-title {
+                font-size: 22px;
             }
-            
-            .option-button {
-                padding: 15px;
-                font-size: 15px;
+
+            .dog-image {
+                height: 160px;
+                max-width: 250px;
+            }
+
+            .option-card {
+                padding: 15px 18px;
+                gap: 12px;
+            }
+
+            .option-emoji {
+                font-size: 36px;
+            }
+
+            .option-text {
+                font-size: 16px;
             }
         }
     </style>
-  <script src="/tracking.js" defer></script>
-  <script src="/utm-make.js" defer></script>
 </head>
 <body>
-    <div class="main-container">
-        <!-- COUNTDOWN -->
-        <div class="countdown-box" id="countdown-box">
-            <span class="countdown-time" id="countdown"></span>
+    <!-- Header -->
+    <header class="header">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">WauWerk</span>
+        </a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+            <h1 class="quiz-title">Zeigt dein Hund Stress in diesen Situationen?</h1>
+            <p class="quiz-subtitle">Wähle alle zutreffenden aus:</p>
         </div>
 
-        <!-- PROGRESS BAR -->
+        <!-- Progress Bar -->
         <div class="progress-container">
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
         </div>
-        
-        <!-- MAIN CONTENT -->
-        <div class="container">
-            <h1>Wie wichtig ist dir Nähe im Alltag?</h1>
-            
-            <div class="option-container">
-                <div class="option-button" data-value="sehr-wichtig" onclick="selectOption(this, 'sehr-wichtig')">
-                    <span class="option-icon">🥰</span>
-                    <span>Sehr wichtig, ich brauche sie ständig</span>
-                </div>
-                
-                <div class="option-button" data-value="mittelmäßig" onclick="selectOption(this, 'mittelmäßig')">
-                    <span class="option-icon">⚖️</span>
-                    <span>Mittelmäßig, ich brauche auch Freiraum</span>
-                </div>
-                
-                <div class="option-button" data-value="weniger-wichtig" onclick="selectOption(this, 'weniger-wichtig')">
-                    <span class="option-icon">🙋‍♀️</span>
-                    <span>Weniger wichtig</span>
-                </div>
+
+        <!-- Dog Image -->
+        <div class="dog-image-container">
+            <div class="dog-image">
+                <img src="ueberfordert.png" alt="Gestresster Hund">
             </div>
-            
-            <div class="security-note">
-                🔒 Deine Daten sind sicher und werden vertraulich behandelt
+        </div>
+
+        <!-- Options List -->
+        <div class="options-list">
+            <div class="option-card" data-stress="animals">
+                <div class="option-emoji">🐱</div>
+                <div class="option-text">Bei anderen Tieren</div>
             </div>
+
+            <div class="option-card" data-stress="strangers">
+                <div class="option-emoji">👥</div>
+                <div class="option-text">Bei fremden Menschen</div>
+            </div>
+
+            <div class="option-card" data-stress="alone">
+                <div class="option-emoji">🏠</div>
+                <div class="option-text">Allein zu Hause</div>
+            </div>
+
+            <div class="option-card" data-stress="noises">
+                <div class="option-emoji">🔊</div>
+                <div class="option-text">Bei lauten Geräuschen</div>
+            </div>
+
+            <div class="option-card" data-stress="traveling">
+                <div class="option-emoji">✈️</div>
+                <div class="option-text">Beim Reisen</div>
+            </div>
+
+            <div class="option-card" data-stress="vet">
+                <div class="option-emoji">👩‍⚕️</div>
+                <div class="option-text">Beim Tierarzt</div>
+            </div>
+        </div>
+
+        <!-- Continue Button -->
+        <div class="continue-container">
+            <a href="schritt17.html" class="continue-button" id="continueBtn">Weiter</a>
+        </div>
+
+        <!-- Terms Footer -->
+        <div class="terms-footer">
         </div>
     </div>
 
     <script>
-        // Initialize countdown immediately when script loads
-        (function() {
-            const countdownElement = document.getElementById('countdown');
-            const countdownBox = document.getElementById('countdown-box');
-            
-            let startTime = localStorage.getItem('countdownStart');
-            
-            if (!startTime) {
-                startTime = Date.now();
-                localStorage.setItem('countdownStart', startTime.toString());
-            }
-            
-            // Calculate current time immediately
-            const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
-            const totalTime = 25 * 60;
-            let timeLeft = Math.max(0, totalTime - elapsed);
-            
-            // Set the correct time immediately
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            
-            // Make countdown visible now that it has correct content
-            countdownBox.style.visibility = 'visible';
-            
-            // Set color
-            if (timeLeft < 5 * 60 && timeLeft > 0) {
-                countdownElement.style.color = '#ff4757';
-            } else {
-                countdownElement.style.color = '#333';
-            }
-            
-            // Continue countdown
-            function updateTime() {
-                timeLeft--;
+        // Option selection handling - Multiple selection with continue button
+        const optionCards = document.querySelectorAll('.option-card');
+        const continueBtn = document.getElementById('continueBtn');
+        let selectedStressSituations = [];
+
+        optionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const stress = card.dataset.stress;
                 
-                if (timeLeft < 0) return;
-                
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                if (timeLeft < 5 * 60 && timeLeft > 0) {
-                    countdownElement.style.color = '#ff4757';
-                    countdownElement.style.animation = 'pulse 1s infinite';
-                } else if (timeLeft === 0) {
-                    countdownElement.textContent = "0:00";
-                    countdownElement.style.color = '#ff4757';
-                    return;
+                // Toggle selection
+                if (selectedStressSituations.includes(stress)) {
+                    // Remove from selection
+                    selectedStressSituations = selectedStressSituations.filter(s => s !== stress);
+                    card.classList.remove('selected');
                 } else {
-                    countdownElement.style.color = '#333';
-                    countdownElement.style.animation = 'none';
+                    // Add to selection
+                    selectedStressSituations.push(stress);
+                    card.classList.add('selected');
                 }
                 
-                setTimeout(updateTime, 1000);
-            }
-            
-            setTimeout(updateTime, 1000);
-        })();
-
-        function selectOption(element, value) {
-            document.querySelectorAll('.option-button').forEach(btn => {
-                btn.classList.remove('selected');
+                // Update continue button state
+                if (selectedStressSituations.length > 0) {
+                    continueBtn.classList.add('active');
+                } else {
+                    continueBtn.classList.remove('active');
+                }
+                
+                // Store selections in localStorage
+                localStorage.setItem('dogStressSituations', JSON.stringify(selectedStressSituations));
             });
-            
-            element.classList.add('selected');
-            
-            if (typeof(Storage) !== "undefined") {
-                localStorage.setItem('dailyClosenessImportance', value);
-            }
-            
-            setTimeout(() => {
-                window.location.href = '/step17.html';
-            }, 500);
-        }
-
-        window.addEventListener('load', function() {
-            const container = document.querySelector('.container');
-            container.style.opacity = '0';
-            container.style.transform = 'translateY(30px)';
-            container.style.transition = 'all 0.6s ease';
-            
-            setTimeout(() => {
-                container.style.opacity = '1';
-                container.style.transform = 'translateY(0)';
-            }, 100);
         });
+
+        // Continue button click handler
+        continueBtn.addEventListener('click', (e) => {
+            if (selectedStressSituations.length === 0) {
+                e.preventDefault();
+                alert('Bitte wähle mindestens eine Stress-Situation aus.');
+                return;
+            }
+        });
+
+        // Load previous selections if available
+        const savedStress = localStorage.getItem('dogStressSituations');
+        if (savedStress) {
+            try {
+                selectedStressSituations = JSON.parse(savedStress);
+                selectedStressSituations.forEach(stress => {
+                    const card = document.querySelector(`[data-stress="${stress}"]`);
+                    if (card) {
+                        card.classList.add('selected');
+                    }
+                });
+                
+                if (selectedStressSituations.length > 0) {
+                    continueBtn.classList.add('active');
+                }
+            } catch (e) {
+                console.log('Error loading saved stress situations');
+            }
+        }
     </script>
 </body>
 </html>
