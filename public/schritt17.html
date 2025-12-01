@@ -12,6 +12,8 @@
         }
 
         :root {
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
             --text-dark: #2C2C2E;
             --text-medium: #6B6B6B;
             --background-light: #FAFAFA;
@@ -30,7 +32,6 @@
             line-height: 1.5;
         }
 
-        /* Header */
         .header {
             background: var(--white);
             padding: 20px 0;
@@ -59,14 +60,12 @@
             color: var(--text-dark);
         }
 
-        /* Main Container */
         .container {
             max-width: 700px;
             margin: 0 auto;
             padding: 60px 20px;
         }
 
-        /* Progress Bar */
         .progress-container {
             margin-bottom: 40px;
         }
@@ -86,7 +85,6 @@
             transition: width 0.3s ease;
         }
 
-        /* Quiz Header */
         .quiz-header {
             text-align: center;
             margin-bottom: 30px;
@@ -99,7 +97,6 @@
             line-height: 1.2;
         }
 
-        /* Image Placeholder */
         .image-container {
             display: flex;
             justify-content: center;
@@ -110,18 +107,20 @@
             width: 280px;
             height: 280px;
             background: var(--border-light);
-            border: 2px dashed #CCCCCC;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-medium);
-            font-size: 14px;
-            text-align: center;
-            padding: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-medium);
         }
 
-        /* Options List */
+        .image-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .options-list {
             display: flex;
             flex-direction: column;
@@ -156,85 +155,48 @@
             color: var(--text-dark);
         }
 
-        /* Mobile Responsive */
         @media (max-width: 768px) {
-            .container {
-                padding: 30px 15px;
-            }
-
-            .quiz-title {
-                font-size: 26px;
-            }
-
-            .image-placeholder {
-                width: 220px;
-                height: 220px;
-            }
-
-            .option-card {
-                padding: 20px 25px;
-            }
-
-            .option-text {
-                font-size: 18px;
-            }
+            .container { padding: 30px 15px; }
+            .quiz-title { font-size: 26px; }
+            .image-placeholder { width: 220px; height: 220px; }
+            .option-card { padding: 20px 25px; }
+            .option-text { font-size: 18px; }
         }
 
         @media (max-width: 480px) {
-            .container {
-                padding: 20px 12px;
-            }
-
-            .quiz-title {
-                font-size: 24px;
-            }
-
-            .image-placeholder {
-                width: 180px;
-                height: 180px;
-            }
-
-            .option-card {
-                padding: 18px 20px;
-            }
-
-            .option-text {
-                font-size: 16px;
-            }
+            .container { padding: 20px 12px; }
+            .quiz-title { font-size: 24px; }
+            .image-placeholder { width: 180px; height: 180px; }
+            .option-card { padding: 18px 20px; }
+            .option-text { font-size: 16px; }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
-        <a href="schritt16.html" class="logo">
+        <a href="index.html" class="logo">
             <img src="logo.png" alt="WauWerk Logo" class="logo-image">
             <span class="logo-text">WauWerk</span>
         </a>
     </header>
 
-    <!-- Main Content -->
     <div class="container">
-        <!-- Progress Bar -->
         <div class="progress-container">
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
         </div>
 
-        <!-- Quiz Header -->
         <div class="quiz-header">
             <h1 class="quiz-title">Will dein Hund ständig gestreichelt werden?</h1>
         </div>
 
-        <!-- Image Placeholder -->
         <div class="image-container">
             <div class="image-placeholder">
-                [Platzhalter für Bild]
+                <img src="streicheln.png" alt="Hund wird gestreichelt">
             </div>
         </div>
 
-        <!-- Options List -->
         <div class="options-list">
             <div class="option-card" data-answer="yes">
                 <div class="option-text">Ja, am liebsten 24/7</div>
@@ -257,16 +219,11 @@
         optionCards.forEach(card => {
             card.addEventListener('click', () => {
                 selectedAnswer = card.dataset.answer;
-                
-                // Store selection in localStorage
                 localStorage.setItem('dogPetting', selectedAnswer);
-                
-                // Redirect to next step
                 window.location.href = 'schritt18.html';
             });
         });
 
-        // Load previous selection if available
         const savedAnswer = localStorage.getItem('dogPetting');
         if (savedAnswer) {
             const savedCard = document.querySelector(`[data-answer="${savedAnswer}"]`);
