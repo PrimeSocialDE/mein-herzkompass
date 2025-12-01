@@ -12,8 +12,8 @@
         }
 
         :root {
-            --primary-orange: #FF8A50;
-            --orange-hover: #FF7A40;
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
             --text-dark: #2C2C2E;
             --text-medium: #6B6B6B;
             --background-light: #FAFAFA;
@@ -149,55 +149,16 @@
             border: 1px solid var(--border-light);
             position: relative;
             overflow: hidden;
-            background-size: cover;
-            background-position: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-            color: var(--text-medium);
-            text-align: center;
         }
 
-        .option-image.energy {
-            background-image: url('dog-energy.png');
-        }
-
-        .option-image.aggression {
-            background-image: url('dog-aggression.png');
-        }
-
-        .option-image.pulling {
-            background-image: url('dog-pulling.png');
-        }
-
-        .option-image.anxiety {
-            background-image: url('dog-anxiety.png');
-        }
-
-        .option-image.barking {
-            background-image: url('dog-barking.png');
-        }
-
-        .option-image.destructive {
-            background-image: url('dog-destructive.png');
-        }
-
-        .option-image.soiling {
-            background-image: url('dog-soiling.png');
-        }
-
-        /* Fallback for missing images */
-        .option-image:not([style*="background-image"]):before {
-            content: 'Hunde-bild';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 11px;
-            color: var(--text-medium);
-            text-align: center;
-            line-height: 1.2;
+        .option-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
         }
 
         .option-text {
@@ -214,7 +175,7 @@
         }
 
         .continue-button {
-            background: var(--light-brown);
+            background: var(--primary-brown);
             color: var(--white);
             border: none;
             border-radius: var(--border-radius);
@@ -227,6 +188,7 @@
             pointer-events: none;
             text-decoration: none;
             display: inline-block;
+            line-height: 1.1;
         }
 
         .continue-button.active {
@@ -235,7 +197,7 @@
         }
 
         .continue-button.active:hover {
-            background: #C4A586;
+            background: var(--brown-hover);
             transform: translateY(-2px);
             box-shadow: var(--shadow-medium);
         }
@@ -302,7 +264,6 @@
             .option-image {
                 width: 60px;
                 height: 60px;
-                font-size: 10px;
             }
 
             .option-text {
@@ -314,7 +275,7 @@
 <body>
     <!-- Header -->
     <header class="header">
-        <a href="schritt9.html" class="logo">
+        <a href="index.html" class="logo">
             <img src="logo.png" alt="WauWerk Logo" class="logo-image">
             <span class="logo-text">WauWerk</span>
         </a>
@@ -338,37 +299,51 @@
         <!-- Options List -->
         <div class="options-list">
             <div class="option-card" data-behavior="energy">
-                <div class="option-image energy"></div>
+                <div class="option-image">
+                    <img src="bsp1.png" alt="Übermäßige Energie">
+                </div>
                 <div class="option-text">Übermäßige Energie und mangelnde Kontrolle</div>
             </div>
 
             <div class="option-card" data-behavior="aggression">
-                <div class="option-image aggression"></div>
+                <div class="option-image">
+                    <img src="bsp2.png" alt="Aggression">
+                </div>
                 <div class="option-text">Aggression gegenüber Menschen oder anderen Tieren</div>
             </div>
 
             <div class="option-card" data-behavior="pulling">
-                <div class="option-image pulling"></div>
+                <div class="option-image">
+                    <img src="bsp3.png" alt="An der Leine ziehen">
+                </div>
                 <div class="option-text">An der Leine ziehen</div>
             </div>
 
             <div class="option-card" data-behavior="anxiety">
-                <div class="option-image anxiety"></div>
+                <div class="option-image">
+                    <img src="bsp4.png" alt="Trennungsangst">
+                </div>
                 <div class="option-text">Trennungsangst</div>
             </div>
 
             <div class="option-card" data-behavior="barking">
-                <div class="option-image barking"></div>
+                <div class="option-image">
+                    <img src="bsp5.png" alt="Übermäßiges Bellen">
+                </div>
                 <div class="option-text">Übermäßiges Bellen</div>
             </div>
 
             <div class="option-card" data-behavior="destructive">
-                <div class="option-image destructive"></div>
+                <div class="option-image">
+                    <img src="bsp6.png" alt="Zerstörerisches Verhalten">
+                </div>
                 <div class="option-text">Zerstörerisches Verhalten</div>
             </div>
 
             <div class="option-card" data-behavior="soiling">
-                <div class="option-image soiling"></div>
+                <div class="option-image">
+                    <img src="bsp7.png" alt="In die Wohnung machen">
+                </div>
                 <div class="option-text">In die Wohnung machen</div>
             </div>
         </div>
@@ -413,6 +388,7 @@
                 
                 // Store selections in localStorage
                 localStorage.setItem('dogBehaviors', JSON.stringify(selectedBehaviors));
+                localStorage.setItem('dogProblem', selectedBehaviors[0] || '');
             });
         });
 
@@ -423,9 +399,6 @@
                 alert('Bitte wähle mindestens ein Verhaltensproblem aus.');
                 return;
             }
-            
-            // Continue to next step
-            console.log('Selected behaviors:', selectedBehaviors);
         });
 
         // Load previous selections if available
