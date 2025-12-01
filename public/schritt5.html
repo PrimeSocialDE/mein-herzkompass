@@ -12,8 +12,8 @@
         }
 
         :root {
-            --primary-orange: #FF8A50;
-            --orange-hover: #FF7A40;
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
             --text-dark: #2C2C2E;
             --text-medium: #6B6B6B;
             --background-light: #FAFAFA;
@@ -78,7 +78,12 @@
             font-size: 32px;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 40px;
+            margin-bottom: 10px;
+        }
+
+        .quiz-subtitle {
+            font-size: 16px;
+            color: var(--text-medium);
         }
 
         /* Progress Bar */
@@ -145,6 +150,35 @@
             flex: 1;
         }
 
+        /* Continue Button */
+        .continue-btn {
+            width: 100%;
+            background: var(--primary-brown);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 18px 30px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+            opacity: 0.5;
+            pointer-events: none;
+            line-height: 1.1;
+        }
+
+        .continue-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .continue-btn.active:hover {
+            background: var(--brown-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
         /* Terms Footer */
         .terms-footer {
             text-align: center;
@@ -205,7 +239,7 @@
 <body>
     <!-- Header -->
     <header class="header">
-        <a href="schritt4.html" class="logo">
+        <a href="index.html" class="logo">
             <img src="logo.png" alt="WauWerk Logo" class="logo-image">
             <span class="logo-text">WauWerk</span>
         </a>
@@ -216,6 +250,7 @@
         <!-- Quiz Header -->
         <div class="quiz-header">
             <h1 class="quiz-title">Was möchtest du verbessern?</h1>
+            <p class="quiz-subtitle">Wähle alle zutreffenden Optionen</p>
         </div>
 
         <!-- Progress Bar -->
@@ -246,7 +281,20 @@
                 <div class="option-emoji">❤️</div>
                 <div class="option-text">Starke Bindung zum Hund aufbauen</div>
             </div>
+
+            <div class="option-card" data-goal="behavior">
+                <div class="option-emoji">🚫</div>
+                <div class="option-text">Unerwünschtes Verhalten abgewöhnen</div>
+            </div>
+
+            <div class="option-card" data-goal="anxiety">
+                <div class="option-emoji">😰</div>
+                <div class="option-text">Ängste und Unsicherheiten abbauen</div>
+            </div>
         </div>
+
+        <!-- Continue Button -->
+        <button class="continue-btn" id="continueBtn">Weiter</button>
 
         <!-- Terms Footer -->
         <div class="terms-footer">
@@ -254,29 +302,58 @@
     </div>
 
     <script>
-        // Option selection handling - Single selection with immediate redirect
+        // Multi-selection handling
         const optionCards = document.querySelectorAll('.option-card');
-        let selectedGoal = null;
+        const continueBtn = document.getElementById('continueBtn');
+        let selectedGoals = [];
 
         optionCards.forEach(card => {
             card.addEventListener('click', () => {
-                selectedGoal = card.dataset.goal;
+                const goal = card.dataset.goal;
                 
-                // Store selection in localStorage
-                localStorage.setItem('dogGoal', selectedGoal);
+                // Toggle selection
+                if (card.classList.contains('selected')) {
+                    card.classList.remove('selected');
+                    selectedGoals = selectedGoals.filter(g => g !== goal);
+                } else {
+                    card.classList.add('selected');
+                    selectedGoals.push(goal);
+                }
                 
-                // Redirect immediately to next step
-                window.location.href = 'schritt6.html';
+                // Update button state
+                if (selectedGoals.length > 0) {
+                    continueBtn.classList.add('active');
+                } else {
+                    continueBtn.classList.remove('active');
+                }
             });
         });
 
-        // Load previous selection if available (but don't redirect)
-        const savedGoal = localStorage.getItem('dogGoal');
-        if (savedGoal) {
-            const savedCard = document.querySelector(`[data-goal="${savedGoal}"]`);
-            if (savedCard) {
-                savedCard.classList.add('selected');
-                selectedGoal = savedGoal;
+        // Continue button click
+        continueBtn.addEventListener('click', () => {
+            if (selectedGoals.length > 0) {
+                // Store selections in localStorage
+                localStorage.setItem('dogGoals', JSON.stringify(selectedGoals));
+                localStorage.setItem('dogGoal', selectedGoals[0]); // Primary goal for compatibility
+                
+                // Redirect to next step
+                window.location.href = 'schritt6.html';
+            }
+        });
+
+        // Load previous selections if available
+        const savedGoals = localStorage.getItem('dogGoals');
+        if (savedGoals) {
+            const goals = JSON.parse(savedGoals);
+            goals.forEach(goal => {
+                const card = document.querySelector(`[data-goal="${goal}"]`);
+                if (card) {
+                    card.classList.add('selected');
+                    selectedGoals.push(goal);
+                }
+            });
+            if (selectedGoals.length > 0) {
+                continueBtn.classList.add('active');
             }
         }
     </script>
