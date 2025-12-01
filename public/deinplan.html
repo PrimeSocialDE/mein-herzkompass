@@ -1012,7 +1012,7 @@
 
         <!-- Disclaimer -->
         <div class="disclaimer">
-            Mit Klick auf den Button zahle ich <strong>€17,99</strong> für den 1-Monats-Plan. Das Abo verlängert sich automatisch, bis ich kündige. Jederzeit kündbar unter <a href="mailto:support@wauwerk.de">support@wauwerk.de</a>. <a href="agb.html">AGB</a>
+            Mit Klick auf den Button zahle ich <strong id="disclaimerPrice">€17,99</strong> für den <strong id="disclaimerPlan">1-Monats-Plan</strong>. Das Abo verlängert sich automatisch <strong id="disclaimerInterval">monatlich</strong>, bis ich kündige. Jederzeit kündbar unter <a href="mailto:support@wauwerk.de">support@wauwerk.de</a>. <a href="agb.html">AGB</a>
         </div>
 
         <!-- CTA Button -->
@@ -1274,6 +1274,9 @@
             // 6-Monat: 0,27 → 0,67
             pricingCards[2].querySelector('.price-amount').textContent = '0';
             pricingCards[2].querySelector('.price-cents').textContent = ',67';
+            
+            // Disclaimer updaten
+            updateDisclaimer();
         }
         
         updateTimer();
@@ -1282,11 +1285,42 @@
         const pricingCards = document.querySelectorAll('.pricing-card');
         let selectedPlan = '1month';
 
+        // Plan Details für Disclaimer
+        const planDetails = {
+            '1month': { 
+                price: '€17,99', 
+                priceNormal: '€49,99',
+                name: '1-Monats-Plan', 
+                interval: 'monatlich' 
+            },
+            '3month': { 
+                price: '€29,99', 
+                priceNormal: '€79,99',
+                name: '3-Monats-Plan', 
+                interval: 'alle 3 Monate' 
+            },
+            '6month': { 
+                price: '€49,99', 
+                priceNormal: '€119,99',
+                name: '6-Monats-Plan', 
+                interval: 'alle 6 Monate' 
+            }
+        };
+
+        function updateDisclaimer() {
+            const plan = planDetails[selectedPlan];
+            const price = timerExpired ? plan.priceNormal : plan.price;
+            document.getElementById('disclaimerPrice').textContent = price;
+            document.getElementById('disclaimerPlan').textContent = plan.name;
+            document.getElementById('disclaimerInterval').textContent = plan.interval;
+        }
+
         pricingCards.forEach(card => {
             card.addEventListener('click', () => {
                 pricingCards.forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
                 selectedPlan = card.dataset.plan;
+                updateDisclaimer();
             });
         });
 
