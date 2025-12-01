@@ -12,8 +12,8 @@
         }
 
         :root {
-            --primary-orange: #FF8A50;
-            --orange-hover: #FF7A40;
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
             --text-dark: #2C2C2E;
             --text-medium: #6B6B6B;
             --background-light: #FAFAFA;
@@ -123,24 +123,14 @@
             border: 1px solid var(--border-light);
             position: relative;
             overflow: hidden;
-            background-image: url('crate-dog.jpg');
-            background-size: cover;
-            background-position: center;
             box-shadow: var(--shadow-medium);
         }
 
-        .dog-image::before {
-            content: 'Hundekäfig Platzhalter';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 14px;
-            color: var(--text-medium);
-            text-align: center;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px;
-            border-radius: 8px;
+        .dog-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
         }
 
         /* Options List */
@@ -211,6 +201,10 @@
                 border-radius: 16px;
             }
 
+            .dog-image img {
+                border-radius: 16px;
+            }
+
             .option-card {
                 padding: 18px 20px;
                 gap: 15px;
@@ -241,9 +235,8 @@
                 border-radius: 12px;
             }
 
-            .dog-image::before {
-                font-size: 12px;
-                padding: 8px 16px;
+            .dog-image img {
+                border-radius: 12px;
             }
 
             .option-card {
@@ -266,7 +259,7 @@
 <body>
     <!-- Header -->
     <header class="header">
-        <a href="schritt8.html" class="logo">
+        <a href="index.html" class="logo">
             <img src="logo.png" alt="WauWerk Logo" class="logo-image">
             <span class="logo-text">WauWerk</span>
         </a>
@@ -288,7 +281,9 @@
 
         <!-- Dog Image -->
         <div class="dog-image-container">
-            <div class="dog-image"></div>
+            <div class="dog-image">
+                <img src="kaefig.png" alt="Hund im Käfig">
+            </div>
         </div>
 
         <!-- Options List -->
