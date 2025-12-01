@@ -12,8 +12,8 @@
         }
 
         :root {
-            --primary-orange: #FF8A50;
-            --orange-hover: #FF7A40;
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
             --text-dark: #2C2C2E;
             --text-medium: #6B6B6B;
             --background-light: #FAFAFA;
@@ -129,24 +129,14 @@
             border: 1px solid var(--border-light);
             position: relative;
             overflow: hidden;
-            background-image: url('stress-dog.png');
-            background-size: cover;
-            background-position: center;
             box-shadow: var(--shadow-medium);
         }
 
-        .dog-image::before {
-            content: 'Gestresster Hund';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 14px;
-            color: var(--text-medium);
-            text-align: center;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px;
-            border-radius: 8px;
+        .dog-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--border-radius);
         }
 
         /* Options List */
@@ -200,7 +190,7 @@
         }
 
         .continue-button {
-            background: var(--light-brown);
+            background: var(--primary-brown);
             color: var(--white);
             border: none;
             border-radius: var(--border-radius);
@@ -213,6 +203,7 @@
             pointer-events: none;
             text-decoration: none;
             display: inline-block;
+            line-height: 1.1;
         }
 
         .continue-button.active {
@@ -221,7 +212,7 @@
         }
 
         .continue-button.active:hover {
-            background: #C4A586;
+            background: var(--brown-hover);
             transform: translateY(-2px);
             box-shadow: var(--shadow-medium);
         }
@@ -289,11 +280,6 @@
                 max-width: 250px;
             }
 
-            .dog-image::before {
-                font-size: 12px;
-                padding: 8px 16px;
-            }
-
             .option-card {
                 padding: 15px 18px;
                 gap: 12px;
@@ -312,7 +298,7 @@
 <body>
     <!-- Header -->
     <header class="header">
-        <a href="schritt15.html" class="logo">
+        <a href="index.html" class="logo">
             <img src="logo.png" alt="WauWerk Logo" class="logo-image">
             <span class="logo-text">WauWerk</span>
         </a>
@@ -335,7 +321,9 @@
 
         <!-- Dog Image -->
         <div class="dog-image-container">
-            <div class="dog-image"></div>
+            <div class="dog-image">
+                <img src="ueberfordert.png" alt="Gestresster Hund">
+            </div>
         </div>
 
         <!-- Options List -->
@@ -373,7 +361,7 @@
 
         <!-- Continue Button -->
         <div class="continue-container">
-            <a href="plan.html" class="continue-button" id="continueBtn">Weiter</a>
+            <a href="schritt17.html" class="continue-button" id="continueBtn">Weiter</a>
         </div>
 
         <!-- Terms Footer -->
@@ -418,12 +406,9 @@
         continueBtn.addEventListener('click', (e) => {
             if (selectedStressSituations.length === 0) {
                 e.preventDefault();
-                alert('Bitte wähle mindestens eine Stress-Situation aus, oder überspringe diese Frage.');
+                alert('Bitte wähle mindestens eine Stress-Situation aus.');
                 return;
             }
-            
-            // Continue to next step
-            console.log('Selected stress situations:', selectedStressSituations);
         });
 
         // Load previous selections if available
