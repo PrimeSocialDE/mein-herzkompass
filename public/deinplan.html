@@ -1233,25 +1233,42 @@
         document.getElementById('userProblem').textContent = problemText;
         document.getElementById('userProblemBenefit').textContent = problemText;
 
-        // Timer
-        let timeLeft = 10 * 60;
+        // Timer mit localStorage persistence
+        let timeLeft;
         let timerExpired = false;
         
+        function initializeTimer() {
+            const savedStartTime = localStorage.getItem('wauwerk_timerStartTime');
+            const timerDuration = 10 * 60; // 10 Minuten
+            
+            if (savedStartTime) {
+                const startTime = parseInt(savedStartTime);
+                const currentTime = Date.now();
+                const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+                timeLeft = Math.max(0, timerDuration - elapsedSeconds);
+            } else {
+                timeLeft = timerDuration;
+                localStorage.setItem('wauwerk_timerStartTime', Date.now().toString());
+            }
+        }
+        
+        initializeTimer();
+        
         function updateTimer() {
+            if (timeLeft <= 0) {
+                timerExpired = true;
+                document.getElementById('timer').textContent = 'ABGELAUFEN';
+                switchToNormalPrices();
+                return;
+            }
+            
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
             document.getElementById('timer').textContent = 
                 `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             
-            if (timeLeft > 0) {
-                timeLeft--;
-                setTimeout(updateTimer, 1000);
-            } else {
-                // Timer abgelaufen - Preise umschalten
-                timerExpired = true;
-                document.getElementById('timer').textContent = 'ABGELAUFEN';
-                switchToNormalPrices();
-            }
+            timeLeft--;
+            setTimeout(updateTimer, 1000);
         }
         
         function switchToNormalPrices() {
