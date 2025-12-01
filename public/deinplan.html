@@ -183,8 +183,18 @@
             background: var(--accent-red);
         }
 
-        .stat-bar-segment.active-blue {
-            background: var(--warm-brown);
+        .stat-bar-segment.active-green {
+            background: #4CAF50;
+        }
+
+        .stat-bar {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            padding: 4px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            background: var(--white);
         }
 
         /* Main Content */
@@ -658,6 +668,111 @@
             margin-bottom: 30px;
         }
 
+        /* Benefits Box */
+        .benefits-box {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-light);
+        }
+
+        .benefits-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .benefits-list li {
+            padding: 10px 0;
+            font-size: 15px;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .benefits-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Trustpilot Slider */
+        .trustpilot-slider {
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .trustpilot-track {
+            display: flex;
+            transition: transform 0.4s ease;
+        }
+
+        .trustpilot-review {
+            min-width: 100%;
+            text-align: center;
+            padding: 20px;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-light);
+        }
+
+        .trustpilot-stars {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 12px;
+            justify-content: center;
+        }
+
+        .tp-star {
+            width: 22px;
+            height: 22px;
+            background: #00B67A;
+            color: white;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .trustpilot-text {
+            font-size: 15px;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .trustpilot-name {
+            font-size: 13px;
+            color: var(--text-medium);
+            font-weight: 600;
+        }
+
+        .trustpilot-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .tp-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border-light);
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .tp-dot.active {
+            background: var(--warm-brown);
+        }
+
         .guarantee-title {
             font-size: 20px;
             font-weight: 700;
@@ -800,9 +915,9 @@
                     <div class="stat-label"><span id="dogName2">Dein Hund</span> – Gehorsam</div>
                     <div class="stat-value">Normal</div>
                     <div class="stat-bar">
-                        <div class="stat-bar-segment active-blue"></div>
-                        <div class="stat-bar-segment active-blue"></div>
-                        <div class="stat-bar-segment active-blue"></div>
+                        <div class="stat-bar-segment active-green"></div>
+                        <div class="stat-bar-segment active-green"></div>
+                        <div class="stat-bar-segment active-green"></div>
                     </div>
                 </div>
                 <div class="stat-box">
@@ -952,6 +1067,64 @@
             </div>
         </div>
 
+        <!-- What You Get Section -->
+        <div class="benefits-box">
+            <h2 class="benefits-title">Das bekommst du</h2>
+            <ul class="benefits-list">
+                <li>✓ Schnell den Gehorsam verbessern</li>
+                <li>✓ Überschüssige Energie in den Griff bekommen</li>
+                <li>✓ Neue Trainingstechniken lernen</li>
+                <li>✓ <span id="userProblemBenefit">Verhaltensprobleme</span> lösen</li>
+                <li>✓ Dauerhaft hohes Gehorsamkeitslevel halten</li>
+                <li>✓ 50+ Spiele für <span id="dogName4">deinen Hund</span>s mentale Gesundheit als Bonus</li>
+                <li>✓ Glückliches Zusammenleben mit einem gehorsamen Hund genießen</li>
+            </ul>
+        </div>
+
+        <!-- Trustpilot Reviews Slider -->
+        <div class="trustpilot-slider">
+            <div class="trustpilot-track" id="tpTrack">
+                <div class="trustpilot-review">
+                    <div class="trustpilot-stars">
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                    </div>
+                    <p class="trustpilot-text">Sehr gut erklärt und schnell umsetzbar!</p>
+                    <p class="trustpilot-name">Sandra M.</p>
+                </div>
+                <div class="trustpilot-review">
+                    <div class="trustpilot-stars">
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                    </div>
+                    <p class="trustpilot-text">Tolle Beispiele, die wirklich funktionieren.</p>
+                    <p class="trustpilot-name">Thomas K.</p>
+                </div>
+                <div class="trustpilot-review">
+                    <div class="trustpilot-stars">
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                    </div>
+                    <p class="trustpilot-text">Einfache Anleitungen, schnelle Ergebnisse!</p>
+                    <p class="trustpilot-name">Julia R.</p>
+                </div>
+            </div>
+            <div class="trustpilot-dots">
+                <span class="tp-dot active" data-index="0"></span>
+                <span class="tp-dot" data-index="1"></span>
+                <span class="tp-dot" data-index="2"></span>
+            </div>
+        </div>
+
         <!-- FAQ Section -->
         <div class="faq-section">
             <h2 class="faq-title">Häufige Fragen</h2>
@@ -1027,6 +1200,7 @@
         document.getElementById('dogName1').textContent = dogName;
         document.getElementById('dogName2').textContent = dogName;
         document.getElementById('dogName3').textContent = dogName;
+        document.getElementById('dogName4').textContent = dogName;
 
         // Map goals
         const goalMap = {
@@ -1057,6 +1231,7 @@
         }
         
         document.getElementById('userProblem').textContent = problemText;
+        document.getElementById('userProblemBenefit').textContent = problemText;
 
         // Timer
         let timeLeft = 10 * 60;
@@ -1133,6 +1308,31 @@
             const links = timerExpired ? stripeLinksNormal : stripeLinksDiscount;
             window.location.href = links[selectedPlan] || links['1month'];
         }
+
+        // Trustpilot Slider
+        let tpCurrentSlide = 0;
+        const tpTrack = document.getElementById('tpTrack');
+        const tpDots = document.querySelectorAll('.tp-dot');
+
+        function goToTpSlide(index) {
+            tpCurrentSlide = index;
+            tpTrack.style.transform = `translateX(-${index * 100}%)`;
+            tpDots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        tpDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                goToTpSlide(parseInt(dot.dataset.index));
+            });
+        });
+
+        // Auto slide Trustpilot
+        setInterval(() => {
+            tpCurrentSlide = (tpCurrentSlide + 1) % 3;
+            goToTpSlide(tpCurrentSlide);
+        }, 4000);
     </script>
 </body>
 </html>
