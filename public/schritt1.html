@@ -12,8 +12,8 @@
         }
 
         :root {
-            --primary-orange: #FF8A50;
-            --orange-hover: #FF7A40;
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
             --text-dark: #2C2C2E;
             --text-medium: #6B6B6B;
             --background-light: #FAFAFA;
@@ -161,32 +161,11 @@
             background-position: center;
         }
 
-        .option-image.puppy {
-            background-image: url('puppy.png');
-        }
-
-        .option-image.young {
-            background-image: url('young-dog.png');
-        }
-
-        .option-image.adult {
-            background-image: url('adult-dog.png');
-        }
-
-        .option-image.senior {
-            background-image: url('senior-dog.png');
-        }
-
-        /* Fallback for missing images */
-        .option-image:not([style*="background-image"]):before {
-            content: 'Hundebild';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 12px;
-            color: var(--text-medium);
-            text-align: center;
+        .option-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
         }
 
         .option-title {
@@ -216,7 +195,7 @@
         }
 
         .terms-link {
-            color: var(--primary-orange);
+            color: var(--primary-brown);
             text-decoration: none;
         }
 
@@ -323,7 +302,7 @@
 <body>
     <!-- Header -->
     <header class="header">
-        <a href="hundeschule-compact.html" class="logo">
+        <a href="index.html" class="logo">
             <img src="logo.png" alt="WauWerk Logo" class="logo-image">
             <span class="logo-text">WauWerk</span>
         </a>
@@ -346,25 +325,33 @@
         <!-- Options Grid -->
         <div class="options-grid">
             <div class="option-card" data-age="puppy">
-                <div class="option-image puppy"></div>
+                <div class="option-image">
+                    <img src="Hund1.png" alt="Welpe">
+                </div>
                 <h3 class="option-title">Welpe</h3>
                 <p class="option-subtitle">Weniger als 6 Monate</p>
             </div>
 
             <div class="option-card" data-age="young">
-                <div class="option-image young"></div>
+                <div class="option-image">
+                    <img src="Hund2.png" alt="Junghund">
+                </div>
                 <h3 class="option-title">Junghund</h3>
                 <p class="option-subtitle">6-18 Monate</p>
             </div>
 
             <div class="option-card" data-age="adult">
-                <div class="option-image adult"></div>
+                <div class="option-image">
+                    <img src="Hund3.png" alt="Erwachsener Hund">
+                </div>
                 <h3 class="option-title">Erwachsener Hund</h3>
                 <p class="option-subtitle">1.5-7 Jahre</p>
             </div>
 
             <div class="option-card" data-age="senior">
-                <div class="option-image senior"></div>
+                <div class="option-image">
+                    <img src="Hund4.png" alt="Senior Hund">
+                </div>
                 <h3 class="option-title">Senior Hund</h3>
                 <p class="option-subtitle">Über 7 Jahre</p>
             </div>
