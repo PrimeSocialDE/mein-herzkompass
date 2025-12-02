@@ -1282,15 +1282,13 @@
         }
 
         async function saveToSupabase() {
-            const leadData = {
-                // Hund Basics
+            // Alle Quiz-Antworten sammeln
+            const answers = {
                 dog_name: localStorage.getItem('dogName'),
                 dog_age: localStorage.getItem('dogAge'),
                 dog_breed: localStorage.getItem('dogBreed'),
                 dog_gender: localStorage.getItem('dogGender'),
                 dog_castration: localStorage.getItem('dogCastration'),
-                
-                // Quiz-Antworten
                 dog_goals: parseJSON(localStorage.getItem('dogGoals')),
                 dog_goal: localStorage.getItem('dogGoal'),
                 dog_attention: localStorage.getItem('dogAttention'),
@@ -1301,8 +1299,6 @@
                 dog_petting: localStorage.getItem('dogPetting'),
                 dog_playing: localStorage.getItem('dogPlaying'),
                 training_time: localStorage.getItem('trainingTime'),
-                
-                // Zusätzliche Felder
                 dog_traits: parseJSON(localStorage.getItem('dogTraits')),
                 dog_commands: parseJSON(localStorage.getItem('dogCommands')),
                 dog_potty_issues: parseJSON(localStorage.getItem('dogPottyIssues')),
@@ -1311,15 +1307,16 @@
                 dog_socialization_rating: localStorage.getItem('dogSocializationRating'),
                 upcoming_event: localStorage.getItem('upcomingEvent'),
                 event_timing: localStorage.getItem('eventTiming'),
-                
-                // Laden-Modals
                 had_training: localStorage.getItem('hadTraining'),
-                territorial_aggression: localStorage.getItem('territorialAggression'),
-                
-                // Checkout-Daten
+                territorial_aggression: localStorage.getItem('territorialAggression')
+            };
+
+            const leadData = {
+                dog_name: localStorage.getItem('dogName'),
                 selected_plan: selectedPlan,
+                price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price,
                 timer_expired: timerExpired,
-                price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price
+                answers: answers
             };
 
             console.log('Sending to Supabase:', leadData);
