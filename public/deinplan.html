@@ -1273,27 +1273,56 @@
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.VWz5VGpR9sJgL-Y3SjPKS1bS4eT8kzbS8tPjBZJGTBo';
 
+        function parseJSON(str) {
+            try {
+                return JSON.parse(str || '[]');
+            } catch(e) {
+                return [];
+            }
+        }
+
         async function saveToSupabase() {
             const leadData = {
+                // Hund Basics
                 dog_name: localStorage.getItem('dogName'),
                 dog_age: localStorage.getItem('dogAge'),
                 dog_breed: localStorage.getItem('dogBreed'),
-                dog_goals: JSON.parse(localStorage.getItem('dogGoals') || '[]'),
+                dog_gender: localStorage.getItem('dogGender'),
+                dog_castration: localStorage.getItem('dogCastration'),
+                
+                // Quiz-Antworten
+                dog_goals: parseJSON(localStorage.getItem('dogGoals')),
                 dog_goal: localStorage.getItem('dogGoal'),
                 dog_attention: localStorage.getItem('dogAttention'),
                 dog_crate: localStorage.getItem('dogCrate'),
-                dog_behaviors: JSON.parse(localStorage.getItem('dogBehaviors') || '[]'),
+                dog_behaviors: parseJSON(localStorage.getItem('dogBehaviors')),
                 dog_problem: localStorage.getItem('dogProblem'),
-                dog_stress_situations: JSON.parse(localStorage.getItem('dogStressSituations') || '[]'),
+                dog_stress_situations: parseJSON(localStorage.getItem('dogStressSituations')),
                 dog_petting: localStorage.getItem('dogPetting'),
                 dog_playing: localStorage.getItem('dogPlaying'),
                 training_time: localStorage.getItem('trainingTime'),
+                
+                // Zusätzliche Felder
+                dog_traits: parseJSON(localStorage.getItem('dogTraits')),
+                dog_commands: parseJSON(localStorage.getItem('dogCommands')),
+                dog_potty_issues: parseJSON(localStorage.getItem('dogPottyIssues')),
+                dog_feeding: localStorage.getItem('dogFeeding'),
+                dog_obedience_rating: localStorage.getItem('dogObedienceRating'),
+                dog_socialization_rating: localStorage.getItem('dogSocializationRating'),
+                upcoming_event: localStorage.getItem('upcomingEvent'),
+                event_timing: localStorage.getItem('eventTiming'),
+                
+                // Laden-Modals
                 had_training: localStorage.getItem('hadTraining'),
                 territorial_aggression: localStorage.getItem('territorialAggression'),
+                
+                // Checkout-Daten
                 selected_plan: selectedPlan,
                 timer_expired: timerExpired,
                 price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price
             };
+
+            console.log('Sending to Supabase:', leadData);
 
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads`, {
@@ -1307,8 +1336,11 @@
                     body: JSON.stringify(leadData)
                 });
                 
+                console.log('Supabase response:', response.status);
+                
                 if (!response.ok) {
-                    console.error('Supabase error:', response.status);
+                    const errorText = await response.text();
+                    console.error('Supabase error:', response.status, errorText);
                 }
             } catch (error) {
                 console.error('Failed to save lead:', error);
