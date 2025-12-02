@@ -34,7 +34,6 @@
             line-height: 1.5;
         }
 
-        /* Header */
         .header {
             background: var(--white);
             padding: 16px 20px;
@@ -61,7 +60,6 @@
             color: var(--text-dark);
         }
 
-        /* Timer Bar */
         .timer-bar {
             background: var(--dark-brown);
             color: var(--white);
@@ -75,7 +73,6 @@
             color: #F5E6D3;
         }
 
-        /* Hero Comparison */
         .hero-section {
             background: linear-gradient(180deg, #F5EDE3 0%, #FFFFFF 100%);
             padding: 30px 20px 40px;
@@ -170,6 +167,10 @@
             display: flex;
             gap: 6px;
             margin-top: 8px;
+            padding: 4px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            background: var(--white);
         }
 
         .stat-bar-segment {
@@ -187,24 +188,12 @@
             background: #4CAF50;
         }
 
-        .stat-bar {
-            display: flex;
-            gap: 6px;
-            margin-top: 8px;
-            padding: 4px;
-            border: 1px solid var(--border-light);
-            border-radius: 6px;
-            background: var(--white);
-        }
-
-        /* Main Content */
         .container {
             max-width: 600px;
             margin: 0 auto;
             padding: 30px 20px;
         }
 
-        /* Title Section */
         .title-section {
             text-align: center;
             margin-bottom: 30px;
@@ -271,7 +260,6 @@
             color: var(--text-dark);
         }
 
-        /* Pricing Section */
         .pricing-section {
             margin-bottom: 30px;
         }
@@ -401,10 +389,9 @@
             text-decoration: line-through;
         }
 
-        /* CTA Button */
         .cta-button {
             width: 100%;
-            background: linear-gradient(135deg, var(--warm-brown) 0%, var(--dark-brown) 100%);
+            background: var(--warm-brown);
             color: var(--white);
             border: none;
             border-radius: var(--border-radius);
@@ -416,9 +403,11 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 15px;
+            line-height: 1.1;
         }
 
         .cta-button:hover {
+            background: var(--dark-brown);
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(139, 115, 85, 0.4);
         }
@@ -436,7 +425,6 @@
             }
         }
 
-        /* Disclaimer */
         .disclaimer {
             background: #F9F7F5;
             border-radius: var(--border-radius);
@@ -461,7 +449,6 @@
             color: var(--dark-brown);
         }
 
-        /* Guarantee */
         .guarantee {
             display: flex;
             align-items: center;
@@ -472,7 +459,6 @@
             margin-bottom: 30px;
         }
 
-        /* Payment Logos */
         .payment-logos {
             display: flex;
             align-items: center;
@@ -500,7 +486,6 @@
             fill: var(--warm-brown);
         }
 
-        /* Testimonials Section */
         .testimonials-section {
             margin-bottom: 30px;
         }
@@ -528,35 +513,6 @@
             padding: 20px;
             margin-bottom: 15px;
             border: 1px solid var(--border-light);
-        }
-
-        .testimonial-images {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .testimonial-image {
-            flex: 1;
-            height: 120px;
-            background: var(--border-light);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-light);
-            font-size: 12px;
-            position: relative;
-        }
-
-        .testimonial-image-label {
-            position: absolute;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-style: italic;
-            font-size: 12px;
-            color: var(--text-medium);
         }
 
         .testimonial-image-single {
@@ -597,7 +553,6 @@
             line-height: 1.6;
         }
 
-        /* FAQ Section */
         .faq-section {
             background: var(--white);
             border-radius: var(--border-radius);
@@ -658,7 +613,6 @@
             padding-left: 36px;
         }
 
-        /* Guarantee Box */
         .guarantee-box {
             background: var(--white);
             border: 2px solid var(--light-brown);
@@ -668,7 +622,6 @@
             margin-bottom: 30px;
         }
 
-        /* Benefits Box */
         .benefits-box {
             background: var(--white);
             border-radius: var(--border-radius);
@@ -702,7 +655,6 @@
             border-bottom: none;
         }
 
-        /* Trustpilot Slider */
         .trustpilot-slider {
             margin-bottom: 30px;
             overflow: hidden;
@@ -800,7 +752,6 @@
             fill: var(--warm-brown);
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             padding: 20px;
@@ -813,7 +764,6 @@
             text-decoration: underline;
         }
 
-        /* Mobile */
         @media (max-width: 480px) {
             .comparison-container {
                 flex-direction: row;
@@ -868,7 +818,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="logo">
             <img src="logo.png" alt="WauWerk Logo" class="logo-image">
@@ -876,12 +825,10 @@
         </div>
     </header>
 
-    <!-- Timer Bar -->
     <div class="timer-bar">
         Preis reduziert für: <span id="timer">10:00</span>
     </div>
 
-    <!-- Hero Comparison -->
     <section class="hero-section">
         <div class="comparison-container">
             <div class="comparison-side">
@@ -928,9 +875,7 @@
         </div>
     </section>
 
-    <!-- Main Content -->
     <div class="container">
-        <!-- Title Section -->
         <div class="title-section">
             <h1 class="main-title">Dein personalisierter Trainingsplan für <span id="dogName3">deinen Hund</span> ist fertig!</h1>
             
@@ -952,7 +897,6 @@
             </div>
         </div>
 
-        <!-- Pricing Section -->
         <div class="pricing-section">
             <div class="pricing-card popular selected" data-plan="1month" data-price="19.99">
                 <div class="popular-badge">👍 Am beliebtesten</div>
@@ -1010,15 +954,12 @@
             </div>
         </div>
 
-        <!-- Disclaimer -->
         <div class="disclaimer">
             Mit Klick auf den Button zahle ich <strong id="disclaimerPrice">€17,99</strong> für den <strong id="disclaimerPlan">1-Monats-Plan</strong>. Das Abo verlängert sich automatisch <strong id="disclaimerInterval">monatlich</strong>, bis ich kündige. Jederzeit kündbar unter <a href="mailto:support@wauwerk.de">support@wauwerk.de</a>. <a href="agb.html">AGB</a>
         </div>
 
-        <!-- CTA Button -->
         <button class="cta-button glow" onclick="getMyPlan()">Jetzt Plan sichern</button>
 
-        <!-- Payment Logos -->
         <div class="payment-logos">
             <img src="sepa-logo.png" alt="SEPA">
             <img src="paypal-logo.png" alt="PayPal">
@@ -1027,13 +968,11 @@
             <img src="mastercard-logo.png" alt="Mastercard">
         </div>
 
-        <!-- Guarantee -->
         <div class="guarantee">
             <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
             30-Tage Geld-zurück-Garantie
         </div>
 
-        <!-- Testimonials -->
         <div class="testimonials-section">
             <div class="section-header">
                 <h2 class="section-title">Echte Erfolgsgeschichten</h2>
@@ -1067,7 +1006,6 @@
             </div>
         </div>
 
-        <!-- What You Get Section -->
         <div class="benefits-box">
             <h2 class="benefits-title">Das bekommst du</h2>
             <ul class="benefits-list">
@@ -1081,7 +1019,6 @@
             </ul>
         </div>
 
-        <!-- Trustpilot Reviews Slider -->
         <div class="trustpilot-slider">
             <div class="trustpilot-track" id="tpTrack">
                 <div class="trustpilot-review">
@@ -1125,7 +1062,14 @@
             </div>
         </div>
 
-        <!-- FAQ Section -->
+        <div class="guarantee-box">
+            <h3 class="guarantee-title">30-Tage Geld-zurück-Garantie</h3>
+            <p class="guarantee-text">Wir sind überzeugt, dass unser Plan funktioniert und du innerhalb von 4 Wochen sichtbare Ergebnisse siehst. Falls nicht, erstatten wir dir den vollen Betrag zurück – ohne Wenn und Aber.</p>
+            <div class="guarantee-badge">
+                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+            </div>
+        </div>
+
         <div class="faq-section">
             <h2 class="faq-title">Häufige Fragen</h2>
 
@@ -1170,27 +1114,15 @@
             </div>
         </div>
 
-        <!-- Guarantee Box -->
-        <div class="guarantee-box">
-            <h3 class="guarantee-title">30-Tage Geld-zurück-Garantie</h3>
-            <p class="guarantee-text">Wir sind überzeugt, dass unser Plan funktioniert und du innerhalb von 4 Wochen sichtbare Ergebnisse siehst. Falls nicht, erstatten wir dir den vollen Betrag zurück – ohne Wenn und Aber.</p>
-            <div class="guarantee-badge">
-                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-            </div>
-        </div>
-
-        <!-- Final CTA -->
         <button class="cta-button glow" onclick="getMyPlan()">Jetzt Plan sichern</button>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">
         <p>&copy; 2025 WauWerk. Alle Rechte vorbehalten.</p>
         <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
     </footer>
 
     <script>
-        // Load dog name and quiz data
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         const dogGoal = localStorage.getItem('dogGoal') || 'obedience';
         const dogProblem = localStorage.getItem('dogProblem') || '';
@@ -1202,30 +1134,31 @@
         document.getElementById('dogName3').textContent = dogName;
         document.getElementById('dogName4').textContent = dogName;
 
-        // Map goals
         const goalMap = {
             'basics': 'Grundlagen lernen',
             'obedience': 'Gehorsam verbessern',
             'commands': 'Kommandos beibringen',
-            'bond': 'Bindung stärken'
+            'bond': 'Bindung stärken',
+            'behavior': 'Verhalten verbessern',
+            'anxiety': 'Ängste abbauen'
         };
         document.getElementById('userGoal').textContent = goalMap[dogGoal] || 'Gehorsam verbessern';
 
-        // Map problems - basierend auf Quiz-Antworten
         let problemText = 'Ungehorsam';
         
-        // Wenn territoriale Aggression bejaht wurde
         if (territorialAggression === 'yes') {
             problemText = 'Territoriale Aggression';
         } else if (dogProblem) {
-            // Falls ein spezifisches Problem gespeichert wurde
             const problemMap = {
                 'pulling': 'Leinenziehen',
                 'barking': 'Übermäßiges Bellen',
                 'aggression': 'Aggression',
                 'anxiety': 'Trennungsangst',
                 'jumping': 'Anspringen',
-                'recall': 'Kommt nicht zurück'
+                'recall': 'Kommt nicht zurück',
+                'energy': 'Übermäßige Energie',
+                'destructive': 'Zerstörerisches Verhalten',
+                'soiling': 'In die Wohnung machen'
             };
             problemText = problemMap[dogProblem] || dogProblem;
         }
@@ -1233,13 +1166,12 @@
         document.getElementById('userProblem').textContent = problemText;
         document.getElementById('userProblemBenefit').textContent = problemText;
 
-        // Timer mit localStorage persistence
         let timeLeft;
         let timerExpired = false;
         
         function initializeTimer() {
             const savedStartTime = localStorage.getItem('wauwerk_timerStartTime');
-            const timerDuration = 10 * 60; // 10 Minuten
+            const timerDuration = 10 * 60;
             
             if (savedStartTime) {
                 const startTime = parseInt(savedStartTime);
@@ -1271,38 +1203,9 @@
             setTimeout(updateTimer, 1000);
         }
         
-        function switchToNormalPrices() {
-            // Durchgestrichene Preise verstecken
-            document.querySelectorAll('.price-old').forEach(el => {
-                el.style.display = 'none';
-            });
-            
-            // Neue Preise setzen (normale Preise ohne Rabatt)
-            const pricingCards = document.querySelectorAll('.pricing-card');
-            
-            // 1-Monat: 0,67 → 1,67
-            pricingCards[0].querySelector('.price-amount').textContent = '1';
-            pricingCards[0].querySelector('.price-cents').textContent = ',67';
-            
-            // 3-Monat: 0,36 → 0,89
-            pricingCards[1].querySelector('.price-amount').textContent = '0';
-            pricingCards[1].querySelector('.price-cents').textContent = ',89';
-            
-            // 6-Monat: 0,27 → 0,67
-            pricingCards[2].querySelector('.price-amount').textContent = '0';
-            pricingCards[2].querySelector('.price-cents').textContent = ',67';
-            
-            // Disclaimer updaten
-            updateDisclaimer();
-        }
-        
-        updateTimer();
-
-        // Plan selection
         const pricingCards = document.querySelectorAll('.pricing-card');
         let selectedPlan = '1month';
 
-        // Plan Details für Disclaimer
         const planDetails = {
             '1month': { 
                 price: '€17,99', 
@@ -1332,18 +1235,91 @@
             document.getElementById('disclaimerInterval').textContent = plan.interval;
         }
 
+        function switchToNormalPrices() {
+            document.querySelectorAll('.price-old').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            const cards = document.querySelectorAll('.pricing-card');
+            
+            cards[0].querySelector('.price-amount').textContent = '1';
+            cards[0].querySelector('.price-cents').textContent = ',67';
+            
+            cards[1].querySelector('.price-amount').textContent = '0';
+            cards[1].querySelector('.price-cents').textContent = ',89';
+            
+            cards[2].querySelector('.price-amount').textContent = '0';
+            cards[2].querySelector('.price-cents').textContent = ',67';
+            
+            updateDisclaimer();
+        }
+        
+        updateTimer();
+
+        function selectPlan(card) {
+            pricingCards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedPlan = card.dataset.plan;
+            updateDisclaimer();
+        }
+
         pricingCards.forEach(card => {
-            card.addEventListener('click', () => {
-                pricingCards.forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-                selectedPlan = card.dataset.plan;
-                updateDisclaimer();
+            card.addEventListener('click', function() {
+                selectPlan(this);
             });
         });
 
-        // Get plan button
-        function getMyPlan() {
-            // Stripe Links - Rabatt vs Normal
+        // Supabase Config
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.VWz5VGpR9sJgL-Y3SjPKS1bS4eT8kzbS8tPjBZJGTBo';
+
+        async function saveToSupabase() {
+            const leadData = {
+                dog_name: localStorage.getItem('dogName'),
+                dog_age: localStorage.getItem('dogAge'),
+                dog_breed: localStorage.getItem('dogBreed'),
+                dog_goals: JSON.parse(localStorage.getItem('dogGoals') || '[]'),
+                dog_goal: localStorage.getItem('dogGoal'),
+                dog_attention: localStorage.getItem('dogAttention'),
+                dog_crate: localStorage.getItem('dogCrate'),
+                dog_behaviors: JSON.parse(localStorage.getItem('dogBehaviors') || '[]'),
+                dog_problem: localStorage.getItem('dogProblem'),
+                dog_stress_situations: JSON.parse(localStorage.getItem('dogStressSituations') || '[]'),
+                dog_petting: localStorage.getItem('dogPetting'),
+                dog_playing: localStorage.getItem('dogPlaying'),
+                training_time: localStorage.getItem('trainingTime'),
+                had_training: localStorage.getItem('hadTraining'),
+                territorial_aggression: localStorage.getItem('territorialAggression'),
+                selected_plan: selectedPlan,
+                timer_expired: timerExpired,
+                price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price
+            };
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(leadData)
+                });
+                
+                if (!response.ok) {
+                    console.error('Supabase error:', response.status);
+                }
+            } catch (error) {
+                console.error('Failed to save lead:', error);
+            }
+        }
+
+        async function getMyPlan() {
+            // Erst Daten speichern
+            await saveToSupabase();
+            
+            // Dann zu Stripe weiterleiten
             const stripeLinksDiscount = {
                 '1month': 'https://buy.stripe.com/test_discount_1month',
                 '3month': 'https://buy.stripe.com/test_discount_3month',
@@ -1360,7 +1336,6 @@
             window.location.href = links[selectedPlan] || links['1month'];
         }
 
-        // Trustpilot Slider
         let tpCurrentSlide = 0;
         const tpTrack = document.getElementById('tpTrack');
         const tpDots = document.querySelectorAll('.tp-dot');
@@ -1379,7 +1354,6 @@
             });
         });
 
-        // Auto slide Trustpilot
         setInterval(() => {
             tpCurrentSlide = (tpCurrentSlide + 1) % 3;
             goToTpSlide(tpCurrentSlide);
