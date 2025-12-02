@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Datenschutzerklärung - mein-herzkompass.de</title>
+    <title>Datenschutzerklärung - WauWerk</title>
+    <link rel="icon" type="image/png" href="favconHund.png">
     <style>
         * {
             margin: 0;
@@ -12,37 +13,35 @@
         }
 
         :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --success-color: #00d4aa;
-            --text-dark: #2c3e50;
-            --text-light: #6c757d;
-            --bg-light: #f8fafc;
-            --white: #ffffff;
-            --shadow-light: 0 2px 10px rgba(0,0,0,0.05);
-            --shadow-medium: 0 8px 30px rgba(0,0,0,0.12);
-            --border-radius: 16px;
-            --border-radius-small: 8px;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --text-light: #999999;
+            --background: #FFFFFF;
+            --white: #FFFFFF;
+            --border-light: #E8E4DF;
+            --light-brown: #D4B996;
+            --warm-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --accent-brown: #D4B996;
+            --border-radius: 12px;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f1f3ff 0%, var(--bg-light) 100%);
+            background: #FAF8F5;
             color: var(--text-dark);
             line-height: 1.6;
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: var(--white);
-            padding: 20px 0;
-            box-shadow: var(--shadow-medium);
+            background: var(--white);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
         }
 
-        .header-container {
-            max-width: 1200px;
+        .header-content {
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -51,44 +50,39 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
             text-decoration: none;
-            color: var(--white);
         }
 
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
+        .logo-image {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
         }
 
         .logo-text {
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
         }
 
         .nav-links {
             display: flex;
-            gap: 25px;
+            gap: 20px;
             align-items: center;
         }
 
         .nav-links a {
-            color: rgba(255,255,255,0.9);
+            color: var(--warm-brown);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             padding: 8px 16px;
-            border-radius: var(--border-radius-small);
+            border-radius: 8px;
             transition: all 0.3s ease;
         }
 
         .nav-links a:hover {
-            background: rgba(255,255,255,0.2);
+            background: var(--light-brown);
             color: var(--white);
         }
 
@@ -101,26 +95,25 @@
         .main-card {
             background: var(--white);
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow-medium);
+            border: 1px solid var(--border-light);
             overflow: hidden;
-            border: 2px solid var(--primary-color);
         }
 
         .hero-section {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             color: white;
             padding: 50px 40px;
             text-align: center;
         }
 
         .hero-title {
-            font-size: 42px;
+            font-size: 36px;
             font-weight: 800;
             margin-bottom: 15px;
         }
 
         .hero-subtitle {
-            font-size: 18px;
+            font-size: 16px;
             opacity: 0.9;
             max-width: 600px;
             margin: 0 auto;
@@ -139,9 +132,9 @@
         }
 
         .section-title {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--dark-brown);
             margin-bottom: 20px;
             display: flex;
             align-items: center;
@@ -149,21 +142,20 @@
         }
 
         .section-number {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--warm-brown);
             color: white;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 700;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .section-content {
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.7;
         }
 
@@ -181,19 +173,17 @@
         }
 
         .info-box {
-            background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%);
-            border: 2px solid var(--primary-color);
-            border-left: 4px solid var(--primary-color);
-            padding: 30px;
-            border-radius: var(--border-radius-small);
-            margin: 25px 0;
-            box-shadow: var(--shadow-light);
+            background: #FAF8F5;
+            border-left: 4px solid var(--warm-brown);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
         }
 
         .info-box h3 {
-            color: var(--primary-color);
+            color: var(--dark-brown);
             margin-bottom: 15px;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
         }
 
@@ -202,98 +192,89 @@
             margin-bottom: 10px;
         }
 
-        .info-box ul {
-            color: var(--text-dark);
+        .info-box a {
+            color: var(--warm-brown);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .info-box a:hover {
+            text-decoration: underline;
         }
 
         .highlight-box {
-            background: linear-gradient(135deg, #f8f9ff 0%, #f1f3ff 100%);
-            border: 1px solid var(--primary-color);
-            border-left: 4px solid var(--primary-color);
-            padding: 30px;
-            border-radius: var(--border-radius-small);
-            margin: 25px 0;
-            box-shadow: var(--shadow-light);
+            background: #FFF9F0;
+            border-left: 4px solid var(--accent-brown);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
         }
 
         .highlight-box h3 {
-            color: var(--primary-color);
+            color: var(--dark-brown);
             margin-bottom: 15px;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
         }
 
-        .highlight-box p, .highlight-box ul {
-            color: var(--text-dark);
-        }
-
         .warning-box {
-            background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
-            border: 1px solid var(--text-light);
+            background: #F8F8F8;
             border-left: 4px solid var(--text-light);
-            padding: 30px;
-            border-radius: var(--border-radius-small);
-            margin: 25px 0;
-            box-shadow: var(--shadow-light);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
         }
 
         .warning-box h3 {
             color: var(--text-dark);
             margin-bottom: 15px;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
         }
 
-        .warning-box p, .warning-box ul {
-            color: var(--text-dark);
+        .wauwerk-notice {
+            background: #FAF8F5;
+            border-left: 4px solid var(--warm-brown);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 25px 0;
         }
 
-        .clara-notice {
-            background: linear-gradient(135deg, #f8f9ff 0%, #f1f3ff 100%);
-            border: 1px solid var(--primary-color);
-            border-left: 4px solid var(--primary-color);
-            padding: 30px;
-            border-radius: var(--border-radius-small);
-            margin: 30px 0;
-            box-shadow: var(--shadow-light);
-        }
-
-        .clara-notice h3 {
-            color: var(--primary-color);
+        .wauwerk-notice h3 {
+            color: var(--dark-brown);
             margin-bottom: 15px;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
         }
 
-        .clara-notice p {
+        .wauwerk-notice p {
             color: var(--text-dark);
             margin-bottom: 10px;
         }
 
         .contact-section {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             color: white;
-            padding: 40px;
-            border-radius: var(--border-radius-small);
+            padding: 35px;
+            border-radius: var(--border-radius);
             margin: 40px 0;
             text-align: center;
-            box-shadow: var(--shadow-medium);
         }
 
         .contact-section h3 {
             color: white;
             margin-bottom: 20px;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
         }
 
         .contact-section p {
-            margin-bottom: 15px;
-            font-size: 16px;
+            margin-bottom: 12px;
+            font-size: 15px;
         }
 
         .contact-section a {
-            color: #ddd6fe;
+            color: #F5E6D3;
             font-weight: 600;
             text-decoration: none;
         }
@@ -309,21 +290,19 @@
         }
 
         .back-link a {
-            color: var(--primary-color);
+            display: inline-block;
+            background: var(--warm-brown);
+            color: white;
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
             text-decoration: none;
             font-weight: 700;
-            font-size: 16px;
-            padding: 12px 30px;
-            border: 2px solid var(--primary-color);
-            border-radius: var(--border-radius-small);
             transition: all 0.3s ease;
         }
 
         .back-link a:hover {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
+            background: var(--dark-brown);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
 
         .data-table {
@@ -331,13 +310,13 @@
             border-collapse: collapse;
             margin: 20px 0;
             background: white;
-            border-radius: var(--border-radius-small);
+            border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: var(--shadow-light);
+            border: 1px solid var(--border-light);
         }
 
         .data-table th {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--warm-brown);
             color: white;
             padding: 15px;
             text-align: left;
@@ -346,7 +325,7 @@
 
         .data-table td {
             padding: 15px;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--border-light);
         }
 
         .data-table tr:last-child td {
@@ -354,35 +333,41 @@
         }
 
         .tag {
-            background: #f1f3f4;
+            background: #f1f1f1;
             color: var(--text-dark);
-            padding: 6px 12px;
-            border-radius: 20px;
+            padding: 5px 10px;
+            border-radius: 15px;
             font-size: 12px;
             font-weight: 600;
             display: inline-block;
-            margin-right: 8px;
-            margin-bottom: 4px;
-            border: 1px solid #e2e8f0;
         }
 
         .tag.required {
-            background: var(--primary-color);
+            background: var(--warm-brown);
             color: white;
-            border-color: var(--primary-color);
         }
 
         .tag.optional {
             background: var(--text-light);
             color: white;
-            border-color: var(--text-light);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--text-light);
+            text-decoration: underline;
         }
 
         @media (max-width: 768px) {
-            .header-container {
+            .header-content {
                 flex-direction: column;
                 gap: 15px;
-                text-align: center;
             }
 
             .nav-links {
@@ -399,60 +384,64 @@
             }
 
             .hero-section {
-                padding: 40px 20px;
+                padding: 35px 20px;
             }
 
             .hero-title {
-                font-size: 32px;
-            }
-
-            .hero-subtitle {
-                font-size: 16px;
+                font-size: 28px;
             }
 
             .section-title {
-                font-size: 20px;
+                font-size: 18px;
                 flex-direction: column;
                 gap: 10px;
                 text-align: center;
             }
 
-            .info-box, .highlight-box, .warning-box, .clara-notice {
+            .info-box, .highlight-box, .warning-box, .wauwerk-notice {
                 padding: 20px;
             }
 
             .contact-section {
-                padding: 30px 20px;
+                padding: 25px 20px;
+            }
+
+            .data-table {
+                font-size: 14px;
+            }
+
+            .data-table th, .data-table td {
+                padding: 10px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-container">
-            <a href="/" class="logo">
-                <div class="logo-icon">💖</div>
-                <div class="logo-text">mein-herzkompass.de</div>
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+                <span class="logo-text">WauWerk</span>
             </a>
             <div class="nav-links">
-                <a href="/">Startseite</a>
-                <a href="/impressum.html">Impressum</a>
-                <a href="/agb.html">AGB</a>
+                <a href="index.html">Startseite</a>
+                <a href="impressum.html">Impressum</a>
+                <a href="agb.html">AGB</a>
             </div>
         </div>
-    </div>
+    </header>
 
     <div class="container">
         <div class="main-card">
             <div class="hero-section">
                 <h1 class="hero-title">Datenschutzerklärung</h1>
-                <p class="hero-subtitle">Ihre Daten sind bei uns sicher. Wir verarbeiten personenbezogene Daten ausschließlich im Rahmen der gesetzlichen Bestimmungen der DSGVO.</p>
+                <p class="hero-subtitle">Deine Daten sind bei uns sicher. Wir verarbeiten personenbezogene Daten ausschließlich im Rahmen der gesetzlichen Bestimmungen der DSGVO.</p>
             </div>
 
             <div class="content">
-                <div class="clara-notice">
-                    <h3>💜 Hinweis zu "Clara"</h3>
-                    <p><strong>Clara ist eine fiktive Marketing-Persona</strong> für unsere Farb- und Style-Beratungsdienstleistung. Alle Kommunikation erfolgt durch qualifizierte Mitarbeiter der Debkowski & Moritz GbR. Der Name "Clara" dient ausschließlich der einheitlichen Markenführung und Kundenkommunikation.</p>
+                <div class="wauwerk-notice">
+                    <h3>🐕 Hinweis zu WauWerk</h3>
+                    <p>WauWerk bietet personalisierte Hundetraining-Pläne basierend auf wissenschaftlich fundierten Methoden der positiven Verstärkung. Alle Dienstleistungen werden von der Debkowski & Moritz GbR bereitgestellt.</p>
                     <p><em>Verantwortlich für alle Inhalte und Dienstleistungen ist ausschließlich die im Impressum genannte Debkowski & Moritz GbR.</em></p>
                 </div>
 
@@ -464,9 +453,9 @@
                     <div class="section-content">
                         <div class="info-box">
                             <h3>💼 Kontaktdaten</h3>
-                            <p>Gemäß den Angaben im <a href="/impressum.html" style="color: #667eea; font-weight: 600;">Impressum</a></p>
+                            <p>Gemäß den Angaben im <a href="impressum.html">Impressum</a></p>
                             <p><strong>Datenschutzanfragen:</strong><br>
-                            <a href="mailto:clara@mein-herzkompass.de" style="color: #667eea;">clara@mein-herzkompass.de</a></p>
+                            <a href="mailto:support@wauwerk.de">support@wauwerk.de</a></p>
                             <p><em>Ein externer Datenschutzbeauftragter ist gemäß Art. 37 DSGVO nicht erforderlich, da keine gesetzliche Verpflichtung besteht.</em></p>
                         </div>
                     </div>
@@ -478,15 +467,14 @@
                         Zweck der Datenverarbeitung
                     </h2>
                     <div class="section-content">
-                        <p>Wir verarbeiten Ihre personenbezogenen Daten zu folgenden Zwecken:</p>
+                        <p>Wir verarbeiten deine personenbezogenen Daten zu folgenden Zwecken:</p>
                         <ul>
-                            <li>💅 Bereitstellung personalisierter Farb- und Style-Beratungen</li>
-                            <li>🎨 Erstellung individueller Farbpaletten und Style-Empfehlungen</li>
-                            <li>📧 Kommunikation per E-Mail bezüglich Ihrer Beratung</li>
+                            <li>🐕 Bereitstellung personalisierter Hundetraining-Pläne</li>
+                            <li>📋 Erstellung individueller Trainingsempfehlungen basierend auf Quiz-Antworten</li>
+                            <li>📧 Kommunikation per E-Mail bezüglich deines Trainingsplans</li>
                             <li>💳 Bestellabwicklung und Zahlungsverarbeitung über Stripe</li>
                             <li>📋 Erfüllung gesetzlicher Aufbewahrungspflichten</li>
-                            <li>📈 Verbesserung unserer Beratungsleistungen</li>
-                            <li>💌 Marketing und Newsletter (nur mit Einwilligung)</li>
+                            <li>📈 Verbesserung unserer Trainingsleistungen</li>
                         </ul>
                     </div>
                 </div>
@@ -506,23 +494,18 @@
                                     <th>Status</th>
                                 </tr>
                                 <tr>
-                                    <td><strong>Persönliche Daten</strong></td>
-                                    <td>Vor-/Nachname, E-Mail-Adresse</td>
+                                    <td><strong>Hunde-Daten</strong></td>
+                                    <td>Name, Alter, Rasse, Geschlecht</td>
                                     <td><span class="tag required">Erforderlich</span></td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Style-Präferenzen</strong></td>
-                                    <td>Farb-Quiz-Antworten, Style-Vorlieben, Körpertyp</td>
+                                    <td><strong>Trainings-Präferenzen</strong></td>
+                                    <td>Quiz-Antworten, Verhaltensprobleme, Trainingsziele</td>
                                     <td><span class="tag required">Erforderlich</span></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Fotos (optional)</strong></td>
-                                    <td>Gesichtsfotos für Farbtyp-Analyse</td>
-                                    <td><span class="tag optional">Optional</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Kontaktdaten</strong></td>
-                                    <td>E-Mail-Adresse, optional Telefonnummer</td>
+                                    <td>E-Mail-Adresse</td>
                                     <td><span class="tag required">Erforderlich</span></td>
                                 </tr>
                                 <tr>
@@ -567,11 +550,10 @@
                             <h3>🍪 Cookie-Kategorien</h3>
                             <ul>
                                 <li><strong>Technisch notwendige Cookies:</strong> Für den Betrieb der Website und Quiz-Funktionalität</li>
-                                <li><strong>Analyse-Cookies:</strong> Google Analytics, Microsoft Clarity für Nutzungsanalyse</li>
-                                <li><strong>Marketing-Cookies:</strong> TikTok Pixel, Facebook Pixel für Werbung</li>
-                                <li><strong>localStorage:</strong> Speicherung Ihrer Quiz-Antworten zwischen Seiten</li>
+                                <li><strong>localStorage:</strong> Speicherung deiner Quiz-Antworten zwischen Seiten</li>
+                                <li><strong>Analyse-Cookies:</strong> Zur Verbesserung unserer Dienste</li>
                             </ul>
-                            <p><em>Die Nutzung erfolgt auf Basis Ihrer Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO.</em></p>
+                            <p><em>Die Nutzung erfolgt auf Basis deiner Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO.</em></p>
                         </div>
                     </div>
                 </div>
@@ -583,11 +565,10 @@
                     </h2>
                     <div class="section-content">
                         <ul>
-                            <li><strong>🎨 Quiz-Daten und Farb-Analysen:</strong> Bis zur Vollendung Ihrer Beratung, maximal 2 Jahre</li>
-                            <li><strong>📷 Hochgeladene Fotos:</strong> 24 Stunden nach Upload, dann automatische Löschung</li>
+                            <li><strong>🐕 Quiz-Daten und Trainingspläne:</strong> Bis zur Kündigung deines Abos, maximal 2 Jahre</li>
                             <li><strong>💳 Rechnungsdaten:</strong> 10 Jahre (steuerrechtliche Aufbewahrungspflicht)</li>
                             <li><strong>📧 E-Mail-Kommunikation:</strong> 3 Jahre für Support- und Beratungszwecke</li>
-                            <li><strong>🍪 Tracking-Daten:</strong> Entsprechend Cookie-Einstellungen, maximal 26 Monate</li>
+                            <li><strong>🍪 localStorage-Daten:</strong> Bis zur manuellen Löschung im Browser</li>
                         </ul>
                     </div>
                 </div>
@@ -601,8 +582,8 @@
                         <div class="info-box">
                             <h3>⚖️ DSGVO-Rechtsgrundlagen</h3>
                             <ul>
-                                <li><strong>Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung):</strong> Farb-Beratung, Style-Empfehlungen, Dokumentenerstellung</li>
-                                <li><strong>Art. 6 Abs. 1 lit. a DSGVO (Einwilligung):</strong> Newsletter, Cookies, Marketing, Foto-Upload</li>
+                                <li><strong>Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung):</strong> Trainingsplan-Erstellung, Beratung</li>
+                                <li><strong>Art. 6 Abs. 1 lit. a DSGVO (Einwilligung):</strong> Newsletter, Cookies, Marketing</li>
                                 <li><strong>Art. 6 Abs. 1 lit. c DSGVO (Rechtliche Verpflichtung):</strong> Rechnungs-Aufbewahrungsfristen</li>
                                 <li><strong>Art. 6 Abs. 1 lit. f DSGVO (Berechtigtes Interesse):</strong> Website-Sicherheit, Betrugsschutz</li>
                             </ul>
@@ -613,17 +594,17 @@
                 <div class="section">
                     <h2 class="section-title">
                         <span class="section-number">8</span>
-                        Ihre Rechte
+                        Deine Rechte
                     </h2>
                     <div class="section-content">
                         <div class="highlight-box">
-                            <h3>✅ Diese Rechte stehen Ihnen zu</h3>
+                            <h3>✅ Diese Rechte stehen dir zu</h3>
                             <ul>
-                                <li><strong>Auskunft (Art. 15 DSGVO):</strong> Welche Daten wir über Sie gespeichert haben</li>
+                                <li><strong>Auskunft (Art. 15 DSGVO):</strong> Welche Daten wir über dich gespeichert haben</li>
                                 <li><strong>Berichtigung (Art. 16 DSGVO):</strong> Korrektur falscher oder unvollständiger Daten</li>
-                                <li><strong>Löschung (Art. 17 DSGVO):</strong> Entfernung Ihrer Daten unter bestimmten Voraussetzungen</li>
+                                <li><strong>Löschung (Art. 17 DSGVO):</strong> Entfernung deiner Daten unter bestimmten Voraussetzungen</li>
                                 <li><strong>Einschränkung (Art. 18 DSGVO):</strong> Beschränkung der Datenverarbeitung</li>
-                                <li><strong>Datenübertragbarkeit (Art. 20 DSGVO):</strong> Übertragung Ihrer Daten in maschinenlesbarem Format</li>
+                                <li><strong>Datenübertragbarkeit (Art. 20 DSGVO):</strong> Übertragung deiner Daten in maschinenlesbarem Format</li>
                                 <li><strong>Widerspruch (Art. 21 DSGVO):</strong> Widerspruch gegen bestimmte Verarbeitungen</li>
                                 <li><strong>Widerruf (Art. 7 DSGVO):</strong> Rücknahme erteilter Einwilligungen</li>
                             </ul>
@@ -634,25 +615,6 @@
                 <div class="section">
                     <h2 class="section-title">
                         <span class="section-number">9</span>
-                        Internationale Datenübermittlung
-                    </h2>
-                    <div class="section-content">
-                        <div class="warning-box">
-                            <h3>🌍 Übermittlung in Drittländer</h3>
-                            <p>Einige unserer Dienstleister haben ihren Sitz außerhalb der EU (z.B. Google, Meta, TikTok). Die Übermittlung erfolgt auf Basis von:</p>
-                            <ul>
-                                <li>Standardvertragsklauseln (SCC) der EU-Kommission</li>
-                                <li>Angemessenheitsbeschlüssen nach Art. 45 DSGVO</li>
-                                <li>Zertifizierungen wie dem EU-US Data Privacy Framework</li>
-                            </ul>
-                            <p><em>Alle Übermittlungen erfolgen unter Einhaltung der DSGVO-Anforderungen.</em></p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h2 class="section-title">
-                        <span class="section-number">10</span>
                         Datensicherheit
                     </h2>
                     <div class="section-content">
@@ -663,33 +625,36 @@
                             <li>🔄 Regelmäßige Sicherheitsaudits und Updates</li>
                             <li>👥 Zugriffskontrollen und Mitarbeiterschulungen</li>
                             <li>💾 Backup-Systeme und Notfallpläne</li>
-                            <li>🗑️ Automatische Löschung sensibler Daten nach Beratungsende</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="contact-section">
-                    <h3>💌 Fragen zum Datenschutz?</h3>
-                    <p>Bei Fragen zur Verarbeitung Ihrer personenbezogenen Daten oder zur Ausübung Ihrer Rechte wenden Sie sich gerne an uns:</p>
+                    <h3>📧 Fragen zum Datenschutz?</h3>
+                    <p>Bei Fragen zur Verarbeitung deiner personenbezogenen Daten oder zur Ausübung deiner Rechte wende dich gerne an uns:</p>
                     <p>
-                        <strong>E-Mail:</strong> <a href="mailto:clara@mein-herzkompass.de">clara@mein-herzkompass.de</a><br>
-                        <strong>Support:</strong> <a href="mailto:support@mein-herzkompass.de">support@mein-herzkompass.de</a><br>
-                        <strong>Weitere Kontaktdaten:</strong> <a href="/impressum.html">Siehe Impressum</a>
+                        <strong>E-Mail:</strong> <a href="mailto:support@wauwerk.de">support@wauwerk.de</a><br>
+                        <strong>Weitere Kontaktdaten:</strong> <a href="impressum.html">Siehe Impressum</a>
                     </p>
-                    <p><em>Sie haben auch das Recht, sich bei der zuständigen Aufsichtsbehörde (Landesbeauftragte für den Datenschutz Niedersachsen) zu beschweren.</em></p>
+                    <p><em>Du hast auch das Recht, dich bei der zuständigen Aufsichtsbehörde (Landesbeauftragte für den Datenschutz Niedersachsen) zu beschweren.</em></p>
                 </div>
 
                 <div class="info-box">
                     <h3>📅 Stand der Datenschutzerklärung</h3>
-                    <p>Diese Datenschutzerklärung ist aktuell gültig und hat den Stand: <strong>November 2025</strong>.</p>
+                    <p>Diese Datenschutzerklärung ist aktuell gültig und hat den Stand: <strong>Januar 2025</strong>.</p>
                     <p>Wir behalten uns vor, diese Erklärung zu aktualisieren, um den aktuellen rechtlichen Anforderungen zu entsprechen oder Änderungen unserer Leistungen umzusetzen.</p>
                 </div>
 
                 <div class="back-link">
-                    <a href="/">💖 Zurück zu Clara's Herzkompass</a>
+                    <a href="index.html">🐕 Zurück zu WauWerk</a>
                 </div>
             </div>
         </div>
     </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 WauWerk. Alle Rechte vorbehalten.</p>
+        <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
+    </footer>
 </body>
 </html>
