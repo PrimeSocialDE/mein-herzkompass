@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Allgemeine Geschäftsbedingungen - mein-herzkompass.de</title>
+    <title>Allgemeine Geschäftsbedingungen - WauWerk</title>
+    <link rel="icon" type="image/png" href="favconHund.png">
     <style>
         * {
             margin: 0;
@@ -12,37 +13,35 @@
         }
 
         :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --success-color: #00d4aa;
-            --text-dark: #2c3e50;
-            --text-light: #6c757d;
-            --bg-light: #f8fafc;
-            --white: #ffffff;
-            --shadow-light: 0 2px 10px rgba(0,0,0,0.05);
-            --shadow-medium: 0 8px 30px rgba(0,0,0,0.12);
-            --border-radius: 16px;
-            --border-radius-small: 8px;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --text-light: #999999;
+            --background: #FFFFFF;
+            --white: #FFFFFF;
+            --border-light: #E8E4DF;
+            --light-brown: #D4B996;
+            --warm-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --accent-brown: #D4B996;
+            --border-radius: 12px;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f1f3ff 0%, var(--bg-light) 100%);
+            background: #FAF8F5;
             color: var(--text-dark);
             line-height: 1.6;
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: var(--white);
-            padding: 20px 0;
-            box-shadow: var(--shadow-medium);
+            background: var(--white);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
         }
 
-        .header-container {
-            max-width: 1200px;
+        .header-content {
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -51,44 +50,39 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
             text-decoration: none;
-            color: var(--white);
         }
 
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
+        .logo-image {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
         }
 
         .logo-text {
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
         }
 
         .nav-links {
             display: flex;
-            gap: 25px;
+            gap: 20px;
             align-items: center;
         }
 
         .nav-links a {
-            color: rgba(255,255,255,0.9);
+            color: var(--warm-brown);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             padding: 8px 16px;
-            border-radius: var(--border-radius-small);
+            border-radius: 8px;
             transition: all 0.3s ease;
         }
 
         .nav-links a:hover {
-            background: rgba(255,255,255,0.2);
+            background: var(--light-brown);
             color: var(--white);
         }
 
@@ -102,66 +96,59 @@
             background: var(--white);
             padding: 50px;
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow-medium);
-            border: 2px solid var(--primary-color);
+            border: 1px solid var(--border-light);
         }
 
         h1 {
-            font-size: 42px;
+            font-size: 36px;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
+            color: var(--dark-brown);
             margin-bottom: 40px;
             text-align: center;
-            letter-spacing: -0.5px;
         }
 
         h2 {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--dark-brown);
             margin-bottom: 20px;
             margin-top: 40px;
             display: flex;
             align-items: center;
             gap: 15px;
             padding-bottom: 15px;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 2px solid var(--border-light);
         }
 
         .section-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            width: 36px;
+            height: 36px;
+            background: var(--warm-brown);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
             color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         h3 {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--warm-brown);
             margin-bottom: 15px;
             margin-top: 25px;
         }
 
         p {
             margin-bottom: 15px;
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.7;
         }
 
         ul, ol {
             margin-bottom: 15px;
-            padding-left: 30px;
+            padding-left: 25px;
         }
 
         li {
@@ -170,18 +157,17 @@
         }
 
         .highlight-box {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             color: white;
-            padding: 35px;
-            border-radius: var(--border-radius-small);
-            margin: 30px 0;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            margin: 25px 0;
         }
 
         .highlight-box h3 {
             color: white;
             margin-top: 0;
-            font-size: 24px;
+            font-size: 20px;
         }
 
         .highlight-box ul {
@@ -190,27 +176,29 @@
         }
 
         .highlight-box li::before {
-            content: "💜 ";
+            content: "🐕 ";
             margin-right: 8px;
         }
 
         .info-box {
-            background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%);
-            padding: 30px;
-            border-radius: var(--border-radius-small);
-            border-left: 4px solid var(--primary-color);
-            margin: 25px 0;
-            box-shadow: var(--shadow-light);
+            background: #FAF8F5;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--warm-brown);
+            margin: 20px 0;
+        }
+
+        .info-box h3 {
+            color: var(--dark-brown);
+            margin-top: 0;
         }
 
         .warning-box {
-            background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
-            border: 1px solid var(--text-light);
-            padding: 30px;
-            border-radius: var(--border-radius-small);
-            margin: 25px 0;
+            background: #F8F8F8;
             border-left: 4px solid var(--text-light);
-            box-shadow: var(--shadow-light);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
         }
 
         .warning-box h3 {
@@ -218,46 +206,30 @@
             margin-top: 0;
         }
 
-        .clara-notice {
-            background: linear-gradient(135deg, #f8f9ff 0%, #f1f3ff 100%);
-            border: 2px solid var(--primary-color);
-            border-left: 4px solid var(--primary-color);
-            padding: 30px;
-            border-radius: var(--border-radius-small);
-            margin: 30px 0;
-            box-shadow: var(--shadow-light);
+        .wauwerk-notice {
+            background: #FAF8F5;
+            border-left: 4px solid var(--warm-brown);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 25px 0;
         }
 
-        .clara-notice h3 {
-            color: var(--primary-color);
+        .wauwerk-notice h3 {
+            color: var(--dark-brown);
             margin-top: 0;
         }
 
-        .clara-notice p {
-            color: var(--text-dark);
-        }
-
         .danger-box {
-            background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
-            border: 2px solid #dc3545;
-            padding: 30px;
-            border-radius: var(--border-radius-small);
-            margin: 25px 0;
+            background: #FFF5F5;
             border-left: 4px solid #dc3545;
-            box-shadow: var(--shadow-light);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
         }
 
         .danger-box h3 {
             color: #dc3545;
             margin-top: 0;
-        }
-
-        .danger-box p {
-            color: var(--text-dark);
-        }
-
-        .danger-box strong {
-            color: #dc3545;
         }
 
         .danger-box ul {
@@ -271,23 +243,22 @@
         }
 
         .contact-section {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             color: white;
-            padding: 40px;
-            border-radius: var(--border-radius-small);
+            padding: 35px;
+            border-radius: var(--border-radius);
             margin: 40px 0;
             text-align: center;
-            box-shadow: var(--shadow-medium);
         }
 
         .contact-section h3 {
             color: white;
             margin-top: 0;
-            font-size: 24px;
+            font-size: 22px;
         }
 
         .contact-section a {
-            color: #ddd6fe;
+            color: #F5E6D3;
             font-weight: 600;
             text-decoration: none;
         }
@@ -300,20 +271,19 @@
         .footer-navigation {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid #e2e8f0;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-light);
             flex-wrap: wrap;
         }
 
         .footer-link {
-            display: inline-block;
-            background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%);
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-            padding: 15px 25px;
-            border-radius: var(--border-radius-small);
+            background: var(--white);
+            border: 2px solid var(--warm-brown);
+            color: var(--warm-brown);
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
             text-decoration: none;
             font-weight: 600;
             font-size: 14px;
@@ -321,10 +291,8 @@
         }
 
         .footer-link:hover {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            background: var(--warm-brown);
+            color: var(--white);
         }
 
         .back-link {
@@ -334,27 +302,40 @@
 
         .back-link a {
             display: inline-block;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--warm-brown);
             color: white;
-            padding: 18px 40px;
-            border-radius: var(--border-radius-small);
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
             text-decoration: none;
             font-weight: 700;
-            font-size: 16px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .back-link a:hover {
+            background: var(--dark-brown);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        a {
+            color: var(--warm-brown);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--text-light);
+            text-decoration: underline;
         }
 
         @media (max-width: 768px) {
-            .header-container {
+            .header-content {
                 flex-direction: column;
                 gap: 15px;
-                text-align: center;
             }
 
             .nav-links {
@@ -367,15 +348,15 @@
             }
 
             .agb-card {
-                padding: 30px 25px;
+                padding: 25px 20px;
             }
 
             h1 {
-                font-size: 32px;
+                font-size: 28px;
             }
 
             h2 {
-                font-size: 22px;
+                font-size: 20px;
                 flex-direction: column;
                 gap: 10px;
                 text-align: center;
@@ -383,47 +364,46 @@
 
             .footer-navigation {
                 flex-direction: column;
-                gap: 15px;
                 align-items: center;
             }
 
             .footer-link {
-                text-align: center;
                 width: 100%;
-                max-width: 300px;
+                max-width: 250px;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-container">
-            <a href="/" class="logo">
-                <div class="logo-icon">💖</div>
-                <div class="logo-text">mein-herzkompass.de</div>
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+                <span class="logo-text">WauWerk</span>
             </a>
             <div class="nav-links">
-                <a href="/">Startseite</a>
-                <a href="/datenschutz.html">Datenschutz</a>
-                <a href="/impressum.html">Impressum</a>
+                <a href="index.html">Startseite</a>
+                <a href="datenschutz.html">Datenschutz</a>
+                <a href="impressum.html">Impressum</a>
             </div>
         </div>
-    </div>
+    </header>
 
     <div class="container">
         <div class="agb-card">
             <h1>Allgemeine Geschäftsbedingungen</h1>
 
-            <div class="clara-notice">
-                <h3>💜 Wichtiger Hinweis zu "Clara"</h3>
-                <p><strong>Clara ist eine fiktive Marketing-Persona</strong> für unsere Farb- und Style-Beratungsdienstleistung. Alle Kommunikation und Beratung erfolgt durch qualifizierte Mitarbeiter der Debkowski & Moritz GbR. Der Name "Clara" dient ausschließlich der einheitlichen Markenführung und Kundenkommunikation.</p>
+            <div class="wauwerk-notice">
+                <h3>🐕 Über WauWerk</h3>
+                <p>WauWerk bietet personalisierte Hundetraining-Pläne basierend auf wissenschaftlich fundierten Methoden der positiven Verstärkung. Alle Dienstleistungen werden von der Debkowski & Moritz GbR bereitgestellt.</p>
                 <p><em>Verantwortlich für alle Inhalte, Dienstleistungen und rechtliche Belange ist ausschließlich die im Impressum genannte Debkowski & Moritz GbR.</em></p>
             </div>
 
             <div class="info-box">
-                <p><strong>Stand:</strong> November 2025<br>
+                <p><strong>Stand:</strong> Januar 2025<br>
                 <strong>Gültig für:</strong> Debkowski & Moritz GbR, Maximilian Debowski<br>
-                <strong>Marke:</strong> mein-herzkompass.de</p>
+                <strong>Marke:</strong> WauWerk</p>
             </div>
 
             <h2>
@@ -438,13 +418,13 @@
                 Rosenbohmsweg 28a<br>
                 26135 Oldenburg<br>
                 Deutschland<br>
-                E-Mail: clara@mein-herzkompass.de<br>
-                Support: support@mein-herzkompass.de</p>
+                E-Mail: hallo@wauwerk.de<br>
+                Support: support@wauwerk.de</p>
                 <p><strong>USt-IdNr.:</strong> DE353303833</p>
             </div>
 
             <h3>§ 2 Geltungsbereich</h3>
-            <p>Diese AGB gelten für alle Verträge zwischen dem Anbieter und Kunden über die auf mein-herzkompass.de oder verlinkten Zahlungsseiten angebotenen Farb- und Style-Beratungsleistungen. Maßgeblich ist die zum Zeitpunkt des Vertragsschlusses veröffentlichte Fassung dieser AGB.</p>
+            <p>Diese AGB gelten für alle Verträge zwischen dem Anbieter und Kunden über die auf wauwerk.de oder verlinkten Zahlungsseiten angebotenen Hundetraining-Leistungen. Maßgeblich ist die zum Zeitpunkt des Vertragsschlusses veröffentlichte Fassung dieser AGB.</p>
 
             <h3>§ 3 Begriffe</h3>
             <p><strong>Verbraucher</strong> ist jede natürliche Person, die ein Rechtsgeschäft zu Zwecken abschließt, die überwiegend weder ihrer gewerblichen noch ihrer selbstständigen beruflichen Tätigkeit zugerechnet werden können.</p>
@@ -452,14 +432,14 @@
 
             <div class="warning-box">
                 <h3>§ 4 Mindestalter und Geschäftsfähigkeit</h3>
-                <p>Unsere Farb- und Style-Beratungen richten sich ausschließlich an volljährige Personen. Mit der Bestellung bestätigt der Kunde, dass er das 18. Lebensjahr vollendet hat und voll geschäftsfähig ist. Bei Kenntnis von Minderjährigkeit können wir den Vertrag kündigen und bereits erhaltene Zahlungen erstatten.</p>
+                <p>Unsere Hundetraining-Pläne richten sich ausschließlich an volljährige Personen. Mit der Bestellung bestätigt der Kunde, dass er das 18. Lebensjahr vollendet hat und voll geschäftsfähig ist. Bei Kenntnis von Minderjährigkeit können wir den Vertrag kündigen und bereits erhaltene Zahlungen erstatten.</p>
             </div>
 
             <h3>§ 5 Abweichende Bedingungen</h3>
             <p>Abweichende Geschäftsbedingungen des Kunden werden nicht Vertragsbestandteil. Etwas anderes gilt nur, wenn wir deren Geltung ausdrücklich schriftlich zustimmen.</p>
 
             <h2>
-                <div class="section-icon">🎨</div>
+                <div class="section-icon">🐕</div>
                 Teil 2. Vertragsgegenstand und Vertragsschluss
             </h2>
 
@@ -468,37 +448,36 @@
             <div class="highlight-box">
                 <h3>Das bieten wir</h3>
                 <ul>
-                    <li><strong>Personalisierte Farbtyp-Analyse</strong> basierend auf Ihren Quiz-Antworten und optional hochgeladenen Fotos</li>
-                    <li><strong>Individueller Farbkreis</strong> mit allen für Sie passenden Farben</li>
-                    <li><strong>Maßgeschneiderte Style-Empfehlungen</strong> für Kleidung, Schnitte und Accessoires</li>
-                    <li><strong>Make-Up Ratgeber</strong> abgestimmt auf Ihren Farbtyp</li>
-                    <li><strong>Shopping-Guide</strong> mit konkreten Produktempfehlungen und Links</li>
-                    <li><strong>Digitale Lieferung</strong> als PDF und Online-Zugang</li>
-                    <li><strong>Geld-zurück-Garantie</strong> bei Unzufriedenheit</li>
+                    <li><strong>Personalisierter Trainingsplan</strong> basierend auf deinen Quiz-Antworten</li>
+                    <li><strong>Individuelle Übungen</strong> abgestimmt auf Alter, Rasse und Verhaltensprobleme deines Hundes</li>
+                    <li><strong>Schritt-für-Schritt Anleitungen</strong> für effektives Training</li>
+                    <li><strong>Tipps zur positiven Verstärkung</strong> für eine starke Bindung</li>
+                    <li><strong>50+ Spiele</strong> für die mentale Gesundheit deines Hundes</li>
+                    <li><strong>Digitale Lieferung</strong> per E-Mail</li>
+                    <li><strong>30-Tage Geld-zurück-Garantie</strong> bei Unzufriedenheit</li>
                 </ul>
             </div>
 
             <div class="danger-box">
                 <h3>Das ist es NICHT</h3>
                 <ul>
-                    <li><strong>Keine persönliche Vor-Ort-Beratung</strong></li>
-                    <li><strong>Keine Garantie für bestimmte ästhetische Ergebnisse</strong></li>
-                    <li><strong>Keine medizinische oder therapeutische Beratung</strong></li>
-                    <li><strong>Keine Garantie für Farbwirkung bei jedem Hauttyp</strong></li>
-                    <li><strong>Kein Ersatz für professionelle Styling-Beratung vor Ort</strong></li>
-                    <li><strong>Keine Verpflichtung zum Kauf empfohlener Produkte</strong></li>
+                    <li><strong>Keine persönliche Vor-Ort-Beratung durch Hundetrainer</strong></li>
+                    <li><strong>Keine Garantie für bestimmte Trainingsergebnisse</strong></li>
+                    <li><strong>Keine tierärztliche oder medizinische Beratung</strong></li>
+                    <li><strong>Kein Ersatz für professionelle Verhaltenstherapie bei schweren Verhaltensstörungen</strong></li>
+                    <li><strong>Keine Haftung für Verletzungen während des Trainings</strong></li>
                 </ul>
             </div>
 
             <div class="warning-box">
                 <h3>Wichtiger Hinweis</h3>
-                <p>Farb- und Style-Empfehlungen basieren auf bewährten Methoden der Farbtypanalyse und persönlichen Präferenzen. Geschmack und Ästhetik sind subjektiv. Bei besonderen Hauterkrankungen oder Allergien empfehlen wir die Rücksprache mit einem Dermatologen vor Anwendung neuer Kosmetikprodukte.</p>
+                <p>Unsere Trainingspläne basieren auf bewährten Methoden der positiven Verstärkung. Jeder Hund ist individuell – Trainingserfolge hängen von vielen Faktoren ab, einschließlich der konsequenten Umsetzung durch den Halter. Bei schweren Verhaltensproblemen, Aggression oder gesundheitlichen Einschränkungen empfehlen wir die Konsultation eines zertifizierten Hundetrainers oder Tierarztes.</p>
             </div>
 
             <h3>§ 7 Vertragsschluss</h3>
             <ol>
                 <li>Die Darstellung unserer Leistungen ist eine unverbindliche Aufforderung zur Abgabe einer Bestellung.</li>
-                <li>Der Kunde führt das Farb-Quiz aus, wählt sein gewünschtes Paket und gibt durch Klicken auf "Jetzt kaufen" oder eine entsprechend bezeichnete Schaltfläche eine verbindliche Bestellung ab.</li>
+                <li>Der Kunde führt das Hunde-Quiz aus, wählt seinen gewünschten Plan und gibt durch Klicken auf "Jetzt Plan sichern" eine verbindliche Bestellung ab.</li>
                 <li>Die Zahlung erfolgt über den Zahlungsdienstleister Stripe. Mit erfolgreichem Zahlungseingang kommt der Vertrag zustande.</li>
                 <li>Der Vertragstext wird gespeichert. Die Vertragsbestimmungen einschließlich dieser AGB werden dem Kunden per E-Mail übermittelt.</li>
             </ol>
@@ -525,27 +504,34 @@
                     <li>Kreditkarte (Visa, Mastercard, American Express)</li>
                     <li>PayPal</li>
                     <li>SEPA-Lastschrift</li>
-                    <li>Klarna (Ratenzahlung)</li>
+                    <li>Klarna</li>
                     <li>Apple Pay / Google Pay</li>
                 </ul>
             </div>
 
-            <h3>§ 10 Lieferung und Leistungserbringung</h3>
+            <h3>§ 10 Abo-Modell und Kündigung</h3>
             <ol>
-                <li>Die Bereitstellung erfolgt ausschließlich digital per E-Mail. Der Kunde erhält seine personalisierte Farb- und Style-Analyse als PDF-Dokument per E-Mail.</li>
+                <li>WauWerk wird als Abonnement angeboten. Die Laufzeit richtet sich nach dem gewählten Plan (1, 3 oder 6 Monate).</li>
+                <li>Das Abonnement verlängert sich automatisch um die jeweilige Laufzeit, wenn es nicht vor Ablauf gekündigt wird.</li>
+                <li><strong>Kündigung:</strong> Jederzeit möglich per E-Mail an support@wauwerk.de. Die Kündigung wird zum Ende der aktuellen Laufzeit wirksam.</li>
+                <li>Nach Kündigung bleibt der Zugang bis zum Ende der bezahlten Laufzeit bestehen.</li>
+            </ol>
+
+            <h3>§ 11 Lieferung und Leistungserbringung</h3>
+            <ol>
+                <li>Die Bereitstellung erfolgt ausschließlich digital per E-Mail. Der Kunde erhält seinen personalisierten Trainingsplan per E-Mail.</li>
                 <li><strong>Lieferung innerhalb von 24 Stunden</strong> nach Zahlungseingang an Werktagen.</li>
                 <li>Mit dem Versand an die angegebene E-Mail-Adresse gilt die Leistung als vollständig erbracht. Der Anbieter dokumentiert den Versand technisch.</li>
-                <li>Optional hochgeladene Fotos werden ausschließlich zur Farbtyp-Bestimmung verwendet und automatisch nach 24 Stunden gelöscht.</li>
                 <li>Bei Nichtzustellung prüft der Kunde Spamordner und Filtereinstellungen und kontaktiert den Support. Bei nachgewiesener Nichtzustellung erfolgt ein erneuter Versand.</li>
             </ol>
 
-            <h3>§ 11 Widerrufsrecht und Geld-zurück-Garantie</h3>
+            <h3>§ 12 Widerrufsrecht und Geld-zurück-Garantie</h3>
 
             <h4>🔄 Widerrufsbelehrung für Verbraucher</h4>
             <div class="info-box">
-                <p><strong>Widerrufsrecht:</strong> Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
+                <p><strong>Widerrufsrecht:</strong> Du hast das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
                 <p><strong>Widerrufsfrist:</strong> Die Frist beginnt mit Vertragsschluss.</p>
-                <p><strong>Widerrufsform:</strong> Zur Ausübung genügt eine eindeutige Erklärung per E-Mail an clara@mein-herzkompass.de</p>
+                <p><strong>Widerrufsform:</strong> Zur Ausübung genügt eine eindeutige Erklärung per E-Mail an support@wauwerk.de</p>
             </div>
 
             <div class="warning-box">
@@ -554,8 +540,8 @@
             </div>
 
             <div class="highlight-box">
-                <h3>💖 Freiwillige Geld-zurück-Garantie</h3>
-                <p>Unabhängig von gesetzlichen Rechten gewähren wir innerhalb von 30 Tagen nach Bereitstellung der Farbanalyse eine kulante Erstattung des Kaufpreises bei Unzufriedenheit. Zur Inanspruchnahme genügt eine E-Mail an clara@mein-herzkompass.de. Die Erstattung erfolgt in der Regel binnen 5-7 Werktagen auf das ursprüngliche Zahlungsmittel.</p>
+                <h3>🐕 30-Tage Geld-zurück-Garantie</h3>
+                <p>Unabhängig von gesetzlichen Rechten gewähren wir innerhalb von 30 Tagen nach Bereitstellung des Trainingsplans eine kulante Erstattung des Kaufpreises bei Unzufriedenheit. Zur Inanspruchnahme genügt eine E-Mail an support@wauwerk.de. Die Erstattung erfolgt in der Regel binnen 5-7 Werktagen auf das ursprüngliche Zahlungsmittel.</p>
                 <p><strong>Hinweis:</strong> Diese Garantie ist freiwillig und lässt gesetzliche Rechte unberührt.</p>
             </div>
 
@@ -564,13 +550,12 @@
                 Teil 4. Rechte an Inhalten und Nutzung
             </h2>
 
-            <h3>§ 12 Rechte an den Inhalten</h3>
+            <h3>§ 13 Rechte an den Inhalten</h3>
             <ol>
-                <li>Alle im Rahmen der Farb- und Style-Beratung erstellten Inhalte einschließlich Farbpaletten, Style-Guides und individueller Empfehlungen stehen im geistigen Eigentum des Anbieters.</li>
-                <li>Der Kunde erhält ein einfaches, nicht ausschließliches, nicht übertragbares Nutzungsrecht zur privaten Nutzung seiner personalisierten Farb-Analyse.</li>
-                <li><strong>Nicht gestattet sind:</strong> kommerzielle Nutzung, Weiterverkauf, öffentliche Zugänglichmachung zu Erwerbszwecken, Upload auf Plattformen zur gewerblichen Verwertung sowie die Behauptung eigener Urheberschaft.</li>
+                <li>Alle im Rahmen des Trainingsplans erstellten Inhalte einschließlich Übungen, Anleitungen und Empfehlungen stehen im geistigen Eigentum des Anbieters.</li>
+                <li>Der Kunde erhält ein einfaches, nicht ausschließliches, nicht übertragbares Nutzungsrecht zur privaten Nutzung seines personalisierten Trainingsplans.</li>
+                <li><strong>Nicht gestattet sind:</strong> kommerzielle Nutzung, Weiterverkauf, öffentliche Zugänglichmachung, Upload auf Plattformen sowie die Behauptung eigener Urheberschaft.</li>
                 <li>Bei ähnlichen Quiz-Antworten können ähnliche Empfehlungen erstellt werden. Absolute Einzigartigkeit wird nicht garantiert.</li>
-                <li>Dateien können digitale Wasserzeichen enthalten. Deren Entfernung ist unzulässig.</li>
             </ol>
 
             <h2>
@@ -578,14 +563,14 @@
                 Teil 5. Pflichten, Haftung, Datenschutz
             </h2>
 
-            <h3>§ 13 Pflichten des Kunden</h3>
+            <h3>§ 14 Pflichten des Kunden</h3>
             <p>Der Kunde macht wahrheitsgemäße Angaben im Quiz, hält seine E-Mail-Adresse aktuell, nutzt die Inhalte verantwortungsvoll ausschließlich zu privaten Zwecken und unternimmt keine missbräuchliche Inanspruchnahme der Geld-zurück-Garantie.</p>
 
-            <h3>§ 14 Haftung</h3>
+            <h3>§ 15 Haftung</h3>
             
             <div class="danger-box">
                 <h3>🚫 Haftungsausschluss</h3>
-                <p>Es wird keine Haftung für bestimmte ästhetische Ergebnisse, Farbwirkung bei individuellen Hauttypen oder subjektive Zufriedenheit mit Style-Empfehlungen übernommen. Farb- und Style-Beratung basiert auf allgemeinen Prinzipien und kann individuelle Besonderheiten nicht vollständig erfassen.</p>
+                <p>Es wird keine Haftung für bestimmte Trainingsergebnisse, Verhaltensänderungen des Hundes oder Verletzungen während des Trainings übernommen. Die Trainingspläne basieren auf allgemeinen Prinzipien und ersetzen keine professionelle Verhaltensberatung.</p>
             </div>
 
             <ol>
@@ -595,12 +580,12 @@
                 <li><strong>Verjährung:</strong> Schadensersatzansprüche verjähren innerhalb eines Jahres, soweit kein Vorsatz vorliegt.</li>
             </ol>
 
-            <h3>§ 15 Datenschutz</h3>
+            <h3>§ 16 Datenschutz</h3>
             <ol>
-                <li>Personenbezogene Daten werden gemäß DSGVO verarbeitet. Details in der Datenschutzerklärung.</li>
-                <li>Verarbeitet werden Quiz-Antworten, optional hochgeladene Fotos (24h Speicherung), Transaktionsdaten und technische Nutzungsdaten.</li>
+                <li>Personenbezogene Daten werden gemäß DSGVO verarbeitet. Details in der <a href="datenschutz.html">Datenschutzerklärung</a>.</li>
+                <li>Verarbeitet werden Quiz-Antworten, Hunde-Daten, Transaktionsdaten und technische Nutzungsdaten.</li>
                 <li>Der Kunde hat umfassende Betroffenenrechte nach DSGVO.</li>
-                <li><strong>Datenschutzkontakt:</strong> clara@mein-herzkompass.de</li>
+                <li><strong>Datenschutzkontakt:</strong> support@wauwerk.de</li>
             </ol>
 
             <h2>
@@ -608,69 +593,37 @@
                 Teil 6. Streitbeilegung und Schlussbestimmungen
             </h2>
 
-            <h3>§ 16 Streitbeilegung</h3>
-            <p>Verbraucher können die OS-Plattform der EU nutzen: <a href="https://ec.europa.eu/odr" target="_blank" style="color: #667eea;">https://ec.europa.eu/odr</a></p>
+            <h3>§ 17 Streitbeilegung</h3>
+            <p>Verbraucher können die OS-Plattform der EU nutzen: <a href="https://ec.europa.eu/odr" target="_blank">https://ec.europa.eu/odr</a></p>
             <p>Wir sind zur Teilnahme an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle weder verpflichtet noch bereit. Wir bevorzugen die direkte Klärung über den Kundenservice.</p>
 
-            <h3>§ 17 Anwendbares Recht und Änderungen</h3>
+            <h3>§ 18 Anwendbares Recht und Änderungen</h3>
             <p>Es gilt das Recht der Bundesrepublik Deutschland. Vertragssprache ist Deutsch. Änderungen dieser AGB werden per E-Mail mitgeteilt. Für bereits geschlossene Verträge gelten die bei Vertragsschluss maßgeblichen AGB.</p>
 
-            <h3>§ 18 Salvatorische Klausel</h3>
+            <h3>§ 19 Salvatorische Klausel</h3>
             <p>Sollten einzelne Bestimmungen unwirksam sein, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt. Der Kunde darf Rechte und Pflichten aus diesem Vertrag nicht ohne unsere Zustimmung übertragen.</p>
 
             <div class="contact-section">
-                <h3>💌 Fragen zu den AGB?</h3>
-                <p>Kontaktieren Sie uns gerne:</p>
-                <p><a href="mailto:clara@mein-herzkompass.de">clara@mein-herzkompass.de</a><br>
-                <a href="mailto:support@mein-herzkompass.de">support@mein-herzkompass.de</a></p>
+                <h3>📧 Fragen zu den AGB?</h3>
+                <p>Kontaktiere uns gerne:</p>
+                <p><a href="mailto:hallo@wauwerk.de">hallo@wauwerk.de</a><br>
+                <a href="mailto:support@wauwerk.de">support@wauwerk.de</a></p>
             </div>
 
             <div class="footer-navigation">
-                <a href="/datenschutz.html" class="footer-link">📋 Datenschutz</a>
-                <a href="/impressum.html" class="footer-link">🏢 Impressum</a>
-                <a href="/geld-zurueck.html" class="footer-link">💰 Geld-zurück-Garantie</a>
+                <a href="datenschutz.html" class="footer-link">📋 Datenschutz</a>
+                <a href="impressum.html" class="footer-link">🏢 Impressum</a>
             </div>
 
             <div class="back-link">
-                <a href="/">💖 Zurück zu Clara's Herzkompass</a>
+                <a href="index.html">🐕 Zurück zu WauWerk</a>
             </div>
         </div>
     </div>
 
-    <script>
-        // Page Load Tracking
-        if (typeof gtag !== 'undefined') {
-            gtag('event', 'page_view', {
-                'page_title': 'AGB - mein-herzkompass.de',
-                'page_location': window.location.href,
-                'content_category': 'legal_page'
-            });
-        }
-
-        // Scroll to hash if present
-        if (window.location.hash) {
-            setTimeout(() => {
-                const element = document.querySelector(window.location.hash);
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' });
-                }
-            }, 100);
-        }
-
-        // Add interactive hover effects
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.info-box, .highlight-box, .warning-box, .clara-notice');
-            
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-2px)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
-            });
-        });
-    </script>
+    <footer class="footer">
+        <p>&copy; 2025 WauWerk. Alle Rechte vorbehalten.</p>
+        <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
+    </footer>
 </body>
 </html>
