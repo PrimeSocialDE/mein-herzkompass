@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danke für deine Bestellung - mein-herzkompass.de</title>
+    <title>Danke für deine Bestellung - Mein WauWerk</title>
+    <link rel="icon" type="image/png" href="favconHund.png">
     
     <!-- Meta Pixel Code -->
     <script>
@@ -24,12 +25,11 @@
     <!-- End Meta Pixel Code -->
 
     <!-- TikTok Pixel Code Start -->
-<script>
+    <script>
     !function (w, d, t) {
       w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
     var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
     ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-    
     
       ttq.load('DEINE_TIKTOK_PIXEL_ID');
       ttq.page();
@@ -37,15 +37,6 @@
     </script>
     <!-- TikTok Pixel Code End -->
 
-    <script>
-        ttq.track('CompletePayment', {
-          value: 39.99,
-          currency: 'EUR',
-          content_type: 'product',
-          content_name: 'Clara Farbanalyse'
-        });
-      </script>
-    
     <style>
         * {
             margin: 0;
@@ -54,21 +45,22 @@
         }
 
         :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --success-color: #00d4aa;
-            --text-dark: #2c3e50;
-            --text-light: #6c757d;
-            --bg-light: #f8fafc;
-            --white: #ffffff;
-            --shadow-light: 0 2px 10px rgba(0,0,0,0.05);
-            --shadow-medium: 0 8px 30px rgba(0,0,0,0.12);
-            --border-radius: 16px;
-            --border-radius-small: 8px;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --text-light: #999999;
+            --background: #FFFFFF;
+            --white: #FFFFFF;
+            --border-light: #E8E4DF;
+            --light-brown: #D4B996;
+            --warm-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --accent-brown: #D4B996;
+            --success-color: #22C55E;
+            --border-radius: 12px;
         }
 
         html, body {
-            width: 100vw;
+            width: 100%;
             overflow-x: hidden;
             scroll-behavior: smooth;
             margin: 0;
@@ -79,7 +71,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: var(--text-dark);
-            background: linear-gradient(135deg, #f1f3ff 0%, var(--bg-light) 100%);
+            background: #FAF8F5;
         }
 
         .container {
@@ -90,21 +82,21 @@
 
         /* MAIN CONTENT */
         .thank-you-section {
-            padding: 80px 0 120px;
+            padding: 60px 0 100px;
             text-align: center;
             min-height: 100vh;
         }
 
         .success-icon {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 40px;
-            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+            margin: 0 auto 35px;
+            box-shadow: 0 15px 35px rgba(196, 165, 118, 0.3);
             animation: successPulse 2s ease-in-out infinite;
         }
 
@@ -114,75 +106,70 @@
         }
 
         .success-icon svg {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             stroke: white;
             stroke-width: 3;
         }
 
         .thank-you-card {
             background: var(--white);
-            padding: 60px 40px;
+            padding: 50px 40px;
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow-medium);
-            margin: 40px auto;
+            border: 1px solid var(--border-light);
+            margin: 30px auto;
             max-width: 700px;
-            border: 2px solid var(--primary-color);
         }
 
         h1 {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
+            color: var(--dark-brown);
             margin-bottom: 20px;
         }
 
         .subtitle {
-            font-size: 22px;
-            color: var(--text-light);
-            margin-bottom: 40px;
-            line-height: 1.4;
+            font-size: 18px;
+            color: var(--text-medium);
+            margin-bottom: 35px;
+            line-height: 1.5;
         }
 
         /* SECURITY INFO */
         .security-info {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             color: white;
-            padding: 30px;
-            border-radius: var(--border-radius-small);
-            margin: 30px 0;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 25px 0;
         }
 
         .security-info h3 {
             color: white;
-            margin-bottom: 15px;
-            font-size: 22px;
+            margin-bottom: 12px;
+            font-size: 20px;
             font-weight: 700;
         }
 
         .security-info p {
-            font-size: 18px;
+            font-size: 16px;
             line-height: 1.6;
             margin-bottom: 0;
         }
 
         /* NEXT STEPS */
         .next-steps {
-            background: linear-gradient(135deg, #f8f9ff 0%, #f1f3ff 100%);
-            padding: 40px;
-            border-radius: var(--border-radius-small);
-            margin: 40px 0;
+            background: #FAF8F5;
+            padding: 35px;
+            border-radius: var(--border-radius);
+            margin: 35px 0;
             text-align: left;
         }
 
         .next-steps h3 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--dark-brown);
             margin-bottom: 25px;
             text-align: center;
         }
@@ -190,215 +177,210 @@
         .step {
             display: flex;
             align-items: flex-start;
-            gap: 20px;
-            margin-bottom: 25px;
-            padding: 20px;
+            gap: 18px;
+            margin-bottom: 20px;
+            padding: 18px;
             background: var(--white);
-            border-radius: var(--border-radius-small);
-            box-shadow: var(--shadow-light);
-            border: 1px solid rgba(102, 126, 234, 0.1);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-light);
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
         }
 
         .step-number {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--warm-brown);
             color: white;
-            width: 35px;
-            height: 35px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 15px;
             flex-shrink: 0;
         }
 
         .step-content h4 {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark-brown);
+            margin-bottom: 6px;
         }
 
         .step-content p {
-            font-size: 16px;
-            color: var(--text-light);
+            font-size: 14px;
+            color: var(--text-medium);
             line-height: 1.5;
+            margin: 0;
         }
 
         /* GUARANTEE SECTION */
         .guarantee-section {
-            background: linear-gradient(135deg, var(--success-color), #00a085);
+            background: linear-gradient(135deg, var(--success-color), #1aa34a);
             color: white;
-            padding: 40px;
-            border-radius: var(--border-radius-small);
-            margin: 40px 0;
+            padding: 35px;
+            border-radius: var(--border-radius);
+            margin: 35px 0;
             text-align: center;
         }
 
         .guarantee-section h3 {
             color: white;
-            margin-bottom: 20px;
-            font-size: 24px;
+            margin-bottom: 15px;
+            font-size: 22px;
             font-weight: 700;
         }
 
         .guarantee-section p {
-            font-size: 18px;
+            font-size: 16px;
             line-height: 1.6;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .guarantee-button {
             display: inline-block;
             background: white;
             color: var(--success-color);
-            padding: 16px 32px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: 600;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 700;
             text-decoration: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .guarantee-button:hover {
             background: #f9f9f9;
             transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
         }
 
         .info-box {
-            background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%);
-            border: 2px solid var(--primary-color);
-            padding: 25px;
-            border-radius: var(--border-radius-small);
+            background: #FAF8F5;
+            border-left: 4px solid var(--warm-brown);
+            padding: 20px;
+            border-radius: var(--border-radius);
             margin: 25px 0;
+            text-align: left;
         }
 
         .info-box h3 {
-            color: var(--primary-color);
+            color: var(--dark-brown);
             margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 20px;
-            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 700;
         }
 
         .info-box p {
-            color: var(--primary-color);
-            font-size: 16px;
+            color: var(--text-medium);
+            font-size: 15px;
             line-height: 1.6;
             margin-bottom: 0;
         }
 
         /* CONTACT SECTION */
         .contact-section {
-            background: linear-gradient(135deg, #f8f9ff 0%, #f1f3ff 100%);
-            padding: 40px;
-            border-radius: var(--border-radius-small);
-            margin: 40px 0;
+            background: #FAF8F5;
+            padding: 35px;
+            border-radius: var(--border-radius);
+            margin: 35px 0;
             text-align: center;
         }
 
         .contact-section h3 {
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            font-size: 24px;
+            color: var(--dark-brown);
+            margin-bottom: 15px;
+            font-size: 22px;
             font-weight: 700;
         }
 
         .contact-section p {
-            font-size: 18px;
-            color: var(--text-light);
-            margin-bottom: 25px;
+            font-size: 16px;
+            color: var(--text-medium);
+            margin-bottom: 20px;
             line-height: 1.6;
         }
 
         .contact-button {
             display: inline-block;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--warm-brown);
             color: white;
-            padding: 16px 32px;
+            padding: 14px 28px;
             border: none;
-            border-radius: var(--border-radius-small);
-            font-size: 18px;
-            font-weight: 600;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 700;
             text-decoration: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
         }
 
         .contact-button:hover {
+            background: var(--dark-brown);
             transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        /* PRICE INFO */
-        .price-info {
-            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
-            border: 2px solid var(--primary-color);
-            padding: 25px;
-            border-radius: var(--border-radius-small);
-            margin: 25px 0;
-            text-align: center;
-        }
-
-        .price-info h3 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .price-info p {
-            color: var(--primary-color);
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 0;
         }
 
         /* FOOTER LINK */
         .footer-link {
             text-align: center;
-            margin-top: 50px;
+            margin-top: 40px;
         }
 
         .footer-link a {
-            color: var(--primary-color);
+            display: inline-block;
+            background: var(--warm-brown);
+            color: white;
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
             text-decoration: none;
-            font-weight: 500;
-            font-size: 16px;
+            font-weight: 700;
+            transition: all 0.3s ease;
         }
 
         .footer-link a:hover {
+            background: var(--dark-brown);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--text-light);
             text-decoration: underline;
         }
 
         /* RESPONSIVE */
         @media (max-width: 768px) {
             h1 {
-                font-size: 28px;
+                font-size: 26px;
             }
 
             .subtitle {
-                font-size: 18px;
+                font-size: 16px;
             }
 
             .thank-you-card {
-                padding: 40px 25px;
+                padding: 30px 20px;
             }
 
             .step {
                 flex-direction: column;
                 text-align: center;
-                gap: 15px;
+                gap: 12px;
             }
 
-            .guarantee-section, .contact-section {
-                padding: 30px 20px;
+            .guarantee-section, .contact-section, .next-steps {
+                padding: 25px 20px;
             }
         }
     </style>
@@ -414,12 +396,12 @@
             </div>
 
             <div class="thank-you-card">
-                <h1>💜 Danke für deine Bestellung!</h1>
-                <p class="subtitle">Du hast den wichtigsten Schritt gemacht - du investierst in deinen Style und Selbstbewusstsein! Deine Zahlung wurde erfolgreich verarbeitet und Clara arbeitet bereits an deiner persönlichen Farbanalyse.</p>
+                <h1>🐕 Danke für deine Bestellung!</h1>
+                <p class="subtitle">Du hast den wichtigsten Schritt gemacht – du investierst in eine glückliche Beziehung zu deinem Hund! Deine Zahlung wurde erfolgreich verarbeitet und wir arbeiten bereits an deinem persönlichen Trainingsplan.</p>
 
                 <div class="security-info">
                     <h3>🔒 Deine Daten sind sicher</h3>
-                    <p>Deine persönlichen Informationen werden 100% sicher verarbeitet. Du erhältst deine personalisierte Farbanalyse innerhalb der nächsten 24 Stunden per E-Mail.</p>
+                    <p>Deine persönlichen Informationen werden 100% sicher verarbeitet. Du erhältst deinen personalisierten Trainingsplan innerhalb der nächsten 24 Stunden per E-Mail.</p>
                 </div>
 
                 <div class="next-steps">
@@ -436,121 +418,106 @@
                     <div class="step">
                         <div class="step-number">2</div>
                         <div class="step-content">
-                            <h4>🎨 Clara erstellt deine Analyse</h4>
-                            <p>Clara analysiert deine Antworten und erstellt deine individuelle Farbpalette mit perfekt abgestimmten Outfit-Empfehlungen.</p>
+                            <h4>🐕 Wir erstellen deinen Plan</h4>
+                            <p>Wir analysieren deine Antworten und erstellen einen individuellen Trainingsplan, perfekt abgestimmt auf deinen Hund.</p>
                         </div>
                     </div>
 
                     <div class="step">
                         <div class="step-number">3</div>
                         <div class="step-content">
-                            <h4>💌 Farbanalyse per E-Mail (24h)</h4>
-                            <p>Du erhältst deine komplette personalisierte Farbanalyse mit Farbkreis, Style-Guide und Shopping-Links per E-Mail.</p>
+                            <h4>💌 Trainingsplan per E-Mail (24h)</h4>
+                            <p>Du erhältst deinen kompletten personalisierten Trainingsplan mit Übungen, Spielen und Schritt-für-Schritt Anleitungen per E-Mail.</p>
                         </div>
                     </div>
 
                     <div class="step">
                         <div class="step-number">4</div>
                         <div class="step-content">
-                            <h4>✨ Deine Style-Transformation beginnt</h4>
-                            <p>Nutze Clara's Empfehlungen, um deine perfekten Farben zu shoppen und dein Selbstbewusstsein zu stärken.</p>
+                            <h4>✨ Eure Transformation beginnt</h4>
+                            <p>Starte mit den ersten Übungen und beobachte, wie sich die Beziehung zu deinem Hund verbessert!</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="info-box">
                     <h3>⚠️ Wichtiger Hinweis</h3>
-                    <p>Falls du deine Farbanalyse nicht innerhalb von 24 Stunden erhältst, checke bitte deinen Spam-Ordner. Bei Fragen erreichst du uns jederzeit unter clara@mein-herzkompass.de</p>
+                    <p>Falls du deinen Trainingsplan nicht innerhalb von 24 Stunden erhältst, checke bitte deinen Spam-Ordner. Bei Fragen erreichst du uns jederzeit unter support@mein-wauwerk.de</p>
                 </div>
 
                 <div class="contact-section">
-                    <h3>💌 Fragen?</h3>
-                    <p>Clara's Support-Team ist jederzeit für dich da und hilft gerne bei allen Fragen rund um deine Farbanalyse.</p>
-                    <a href="mailto:clara@mein-herzkompass.de" class="contact-button">📧 Clara kontaktieren</a>
+                    <h3>📧 Fragen?</h3>
+                    <p>Unser Support-Team ist jederzeit für dich da und hilft gerne bei allen Fragen rund um deinen Trainingsplan.</p>
+                    <a href="mailto:support@mein-wauwerk.de" class="contact-button">📧 Support kontaktieren</a>
                 </div>
 
                 <div class="guarantee-section">
-                    <h3>✅ Geld-zurück-Garantie</h3>
-                    <p>Falls du nicht 100% zufrieden mit deiner Farbanalyse bist, bekommst du binnen 30 Tagen dein Geld vollständig zurück. Ohne Wenn und Aber.</p>
-                    <a href="/geld-zurueck.html" class="guarantee-button">Mehr zur Garantie</a>
+                    <h3>✅ 30-Tage Geld-zurück-Garantie</h3>
+                    <p>Falls du nicht 100% zufrieden mit deinem Trainingsplan bist, bekommst du binnen 30 Tagen dein Geld vollständig zurück. Ohne Wenn und Aber.</p>
+                    <a href="geld-zurueck.html" class="guarantee-button">Mehr zur Garantie</a>
                 </div>
             </div>
 
             <div class="footer-link">
-                <a href="/">💖 Zurück zu Clara's Herzkompass</a>
+                <a href="index.html">🐕 Zurück zu Mein WauWerk</a>
             </div>
         </div>
     </section>
 
+    <footer class="footer">
+        <p>&copy; 2025 Mein WauWerk. Alle Rechte vorbehalten.</p>
+        <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
+    </footer>
+
     <script>
         // Track successful purchase
         window.addEventListener('load', function() {
-            console.log('=== PURCHASE SUCCESS PAGE LOADED - CLARA HERZKOMPASS ===');
-            console.log('Clara Farbanalyse Purchase Completed');
+            console.log('=== PURCHASE SUCCESS PAGE LOADED - MEIN WAUWERK ===');
+            console.log('WauWerk Trainingsplan Purchase Completed');
+            
+            // Get price from URL or localStorage
+            const urlParams = new URLSearchParams(window.location.search);
+            const price = parseFloat(urlParams.get('price')) || parseFloat(localStorage.getItem('price')) || 17.99;
+            const plan = urlParams.get('plan') || localStorage.getItem('selectedPlan') || '1month';
             
             // Google Analytics
             if (typeof gtag !== 'undefined') {
-                gtag('event', 'purchase_success', {
+                gtag('event', 'purchase', {
                     'event_category': 'ecommerce',
-                    'event_label': 'clara_farbanalyse',
-                    'value': 39.99,
+                    'event_label': 'wauwerk_trainingsplan',
+                    'value': price,
                     'currency': 'EUR',
-                    'custom_parameters': {
-                        'product_type': 'color_analysis',
-                        'brand': 'clara_herzkompass'
-                    }
+                    'items': [{
+                        'item_name': 'WauWerk Trainingsplan',
+                        'item_category': 'dog_training',
+                        'price': price,
+                        'quantity': 1
+                    }]
                 });
-                console.log('✅ Google Analytics purchase_success event sent');
+                console.log('✅ Google Analytics purchase event sent');
             }
 
             // Facebook Pixel - Purchase Event
             if (typeof fbq !== 'undefined') {
                 fbq('track', 'Purchase', {
-                    value: 39.99,
+                    value: price,
                     currency: 'EUR',
-                    content_name: 'Clara Farbanalyse',
-                    content_category: 'style_analysis',
-                    custom_data: {
-                        'product_type': 'color_analysis',
-                        'brand': 'clara_herzkompass'
-                    }
+                    content_name: 'WauWerk Trainingsplan',
+                    content_category: 'dog_training',
+                    content_type: 'product'
                 });
                 console.log('✅ Meta Pixel Purchase event sent');
-            } else {
-                console.error('❌ Meta Pixel (fbq) not loaded!');
-            }
-
-            // Pinterest
-            if (typeof pintrk !== 'undefined') {
-                pintrk('track', 'purchase', {
-                    value: 39.99,
-                    currency: 'EUR',
-                    custom_parameters: {
-                        'product_type': 'color_analysis',
-                        'brand': 'clara_herzkompass'
-                    }
-                });
-                console.log('✅ Pinterest purchase event sent');
             }
 
             // TikTok
             if (typeof ttq !== 'undefined') {
                 ttq.track('CompletePayment', {
-                    value: 39.99,
+                    value: price,
                     currency: 'EUR',
                     content_type: 'product',
-                    content_name: 'Clara Farbanalyse Herzkompass'
+                    content_name: 'WauWerk Trainingsplan'
                 });
                 console.log('✅ TikTok CompletePayment event sent');
-            }
-
-            // Custom Clara tracking
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'clara_conversion', {
-                    'customer_type': 'new_customer',
-                    'analysis_type': 'color_analysis',
-                    'value': 39.99
-                });
             }
         });
     </script>
