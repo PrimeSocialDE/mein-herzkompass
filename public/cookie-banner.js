@@ -1,5 +1,5 @@
 (function () {
-  const CONSENT_KEY = 'consent_v1';     // bei Änderungen hochzählen
+  const CONSENT_KEY = 'wauwerk_consent_v1';
   const PATH_OK = location.pathname === '/' || location.pathname === '/index.html';
 
   function log(){ try{ console.log('[CookieBanner]', ...arguments); }catch(e){} }
@@ -40,7 +40,6 @@
           setConsent({ necessary: true, statistics: true, marketing: true });
           holder.remove();
           log('Consent: accept all');
-          // Optional: location.reload(); // falls du Tracking-Skripte neu initialisieren willst
         });
 
         reject.addEventListener('click', () => {
@@ -53,39 +52,36 @@
       })
       .catch(err => {
         log('Failed to load banner.html →', err.message);
-        // Fallback: Professioneller Banner mit blauem Branding
+        // Fallback: WauWerk Braun-Design
         const fallback = document.createElement('div');
         fallback.innerHTML = `
-          <div style="position:fixed;left:0;right:0;bottom:0;background:#ffffff;color:#334155;padding:20px;z-index:99999;font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;box-shadow:0 -4px 20px rgba(0,0,0,0.1);border-top:3px solid #1e40af">
-            <div style="max-width:1000px;margin:0 auto;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
-              <div style="flex:1;min-width:300px">
-                <div style="color:#1e40af;font-weight:600;margin-bottom:4px">🍪 Cookie-Einstellungen</div>
-                <div style="color:#64748b;font-size:14px">Wir verwenden Cookies, um Ihre Erfahrung zu verbessern und anonyme Statistiken zu erstellen. 
-                <a href="/datenschutz.html" style="color:#1e40af;text-decoration:none;font-weight:500">Datenschutzerklärung</a></div>
-              </div>
-              <div style="display:flex;gap:12px;flex-wrap:wrap">
-                <button id="cb-reject" style="background:#f8fafc;color:#475569;border:2px solid #e2e8f0;padding:12px 20px;border-radius:8px;cursor:pointer;font:14px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:500;transition:all 0.2s;white-space:nowrap">Nur notwendige</button>
-                <button id="cb-accept" style="background:#1e40af;color:#ffffff;border:2px solid #1e40af;padding:12px 20px;border-radius:8px;font-weight:600;cursor:pointer;font:14px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;transition:all 0.2s;white-space:nowrap">Alle akzeptieren</button>
+          <div style="position:fixed;left:0;right:0;bottom:0;background:#ffffff;color:#2C2C2E;padding:20px;z-index:99999;font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;box-shadow:0 -4px 20px rgba(0,0,0,0.1);border-top:3px solid #C4A576">
+            <div style="max-width:600px;margin:0 auto;text-align:center">
+              <div style="color:#8B7355;font-weight:700;margin-bottom:8px;font-size:18px">🍪 Cookie-Einstellungen</div>
+              <div style="color:#6B6B6B;font-size:14px;margin-bottom:20px">Wir verwenden Cookies, um deinen Trainingsplan zu speichern und unsere Website zu verbessern. 
+              <a href="/datenschutz.html" style="color:#C4A576;text-decoration:none;font-weight:600">Datenschutzerklärung</a></div>
+              <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+                <button id="cb-reject" style="background:#f8f8f8;color:#999;border:1px solid #E8E4DF;padding:12px 24px;border-radius:8px;cursor:pointer;font:14px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:600;transition:all 0.2s">Ablehnen</button>
+                <button id="cb-accept" style="background:linear-gradient(135deg,#C4A576,#8B7355);color:#ffffff;border:none;padding:12px 24px;border-radius:8px;font-weight:700;cursor:pointer;font:14px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;transition:all 0.2s;box-shadow:0 4px 15px rgba(196,165,118,0.3)">🐕 Alle akzeptieren</button>
               </div>
             </div>
           </div>`;
         
         document.body.appendChild(fallback);
         
-        // Hover-Effekte hinzufügen
         const acceptBtn = fallback.querySelector('#cb-accept');
         const rejectBtn = fallback.querySelector('#cb-reject');
         
-        acceptBtn.onmouseover = () => acceptBtn.style.background = '#1d4ed8';
-        acceptBtn.onmouseout = () => acceptBtn.style.background = '#1e40af';
+        acceptBtn.onmouseover = () => acceptBtn.style.transform = 'translateY(-2px)';
+        acceptBtn.onmouseout = () => acceptBtn.style.transform = 'translateY(0)';
         
         rejectBtn.onmouseover = () => {
-          rejectBtn.style.background = '#f1f5f9';
-          rejectBtn.style.borderColor = '#cbd5e1';
+          rejectBtn.style.background = '#f0f0f0';
+          rejectBtn.style.color = '#666';
         };
         rejectBtn.onmouseout = () => {
-          rejectBtn.style.background = '#f8fafc';
-          rejectBtn.style.borderColor = '#e2e8f0';
+          rejectBtn.style.background = '#f8f8f8';
+          rejectBtn.style.color = '#999';
         };
         
         acceptBtn.onclick = () => { 
