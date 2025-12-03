@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Widerrufsrecht - Clara's Herzkompass</title>
+    <title>Widerrufsrecht - Mein WauWerk</title>
+    <link rel="icon" type="image/png" href="favconHund.png">
     <style>
         * {
             margin: 0;
@@ -11,63 +12,78 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --text-light: #999999;
+            --background: #FFFFFF;
+            --white: #FFFFFF;
+            --border-light: #E8E4DF;
+            --light-brown: #D4B996;
+            --warm-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --accent-brown: #D4B996;
+            --border-radius: 12px;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
-            color: #333;
+            background: #FAF8F5;
+            color: var(--text-dark);
             line-height: 1.6;
         }
 
-        .navbar {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            padding: 15px 0;
-            box-shadow: 0 2px 10px rgba(103, 126, 234, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        .header {
+            background: var(--white);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
         }
 
-        .nav-container {
-            max-width: 1200px;
+        .header-content {
+            max-width: 800px;
             margin: 0 auto;
-            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .logo {
-            color: white;
-            font-size: 24px;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .nav-menu {
             display: flex;
-            list-style: none;
-            gap: 30px;
-        }
-
-        .nav-menu a {
-            color: white;
+            align-items: center;
+            gap: 10px;
             text-decoration: none;
-            font-weight: 500;
-            font-size: 16px;
-            transition: opacity 0.3s ease;
         }
 
-        .nav-menu a:hover {
-            opacity: 0.8;
+        .logo-image {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
         }
 
-        .mobile-menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
+        .logo-text {
             font-size: 24px;
-            cursor: pointer;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--warm-brown);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: var(--light-brown);
+            color: var(--white);
         }
 
         .container {
@@ -77,56 +93,60 @@
         }
 
         .widerruf-card {
-            background: white;
+            background: var(--white);
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-light);
             margin-bottom: 30px;
         }
 
         h1 {
             font-size: 32px;
-            font-weight: 700;
-            color: #2c3e50;
+            font-weight: 800;
+            color: var(--dark-brown);
             margin-bottom: 30px;
             text-align: center;
         }
 
         h2 {
-            font-size: 24px;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark-brown);
+            margin-bottom: 18px;
             margin-top: 35px;
         }
 
         h3 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--warm-brown);
+            margin-bottom: 12px;
             margin-top: 25px;
         }
 
         p {
             margin-bottom: 15px;
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.7;
         }
 
         .highlight-box {
-            background: #22C55E;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             color: white;
             padding: 25px;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             margin: 25px 0;
             text-align: center;
         }
 
         .highlight-box h3 {
             color: white;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             margin-top: 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 10px;
         }
 
         .highlight-box a {
@@ -136,35 +156,35 @@
         }
 
         .info-box {
-            background: #f8f9fa;
+            background: #FAF8F5;
             padding: 25px;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--warm-brown);
             margin: 25px 0;
         }
 
         .warning-box {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
+            background: #FFF9F0;
+            border-left: 4px solid var(--warm-brown);
             padding: 25px;
-            border-radius: 12px;
+            border-radius: var(--border-radius);
             margin: 25px 0;
         }
 
         .warning-box h3 {
-            color: #856404;
+            color: var(--dark-brown);
             margin-top: 0;
         }
 
         .warning-box p {
-            color: #856404;
+            color: var(--text-dark);
         }
 
         .contact-section {
-            background: #667eea;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             color: white;
             padding: 30px;
-            border-radius: 15px;
+            border-radius: var(--border-radius);
             margin: 30px 0;
             text-align: center;
         }
@@ -172,172 +192,203 @@
         .contact-section h3 {
             color: white;
             margin-top: 0;
+            font-size: 20px;
         }
 
         .contact-section a {
-            color: white;
+            color: #F5E6D3;
             font-weight: 600;
+            text-decoration: none;
+        }
+
+        .contact-section a:hover {
+            color: white;
             text-decoration: underline;
         }
 
         .form-section {
-            background: #f8f9fa;
+            background: #FAF8F5;
             padding: 30px;
-            border-radius: 15px;
+            border-radius: var(--border-radius);
             margin: 30px 0;
         }
 
         .form-section h3 {
             margin-top: 0;
+            color: var(--dark-brown);
         }
 
-        .form-field {
-            margin-bottom: 20px;
-        }
-
-        .form-field label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #2c3e50;
-        }
-
-        .form-field input,
-        .form-field textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
+        .form-template {
+            background: white;
+            padding: 20px;
             border-radius: 8px;
-            font-size: 16px;
-            font-family: inherit;
+            margin: 20px 0;
+            border: 1px solid var(--border-light);
         }
 
-        .form-field input:focus,
-        .form-field textarea:focus {
-            outline: none;
-            border-color: #667eea;
+        .form-template p {
+            margin-bottom: 12px;
         }
 
-        .form-field textarea {
-            height: 120px;
-            resize: vertical;
+        .footer-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-light);
+            flex-wrap: wrap;
         }
 
         .footer-link {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .footer-link a {
-            color: #667eea;
+            background: var(--white);
+            border: 2px solid var(--warm-brown);
+            color: var(--warm-brown);
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
         }
 
-        .footer-link a:hover {
+        .footer-link:hover {
+            background: var(--warm-brown);
+            color: var(--white);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .back-link a {
+            display: inline-block;
+            background: var(--warm-brown);
+            color: white;
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .back-link a:hover {
+            background: var(--dark-brown);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--text-light);
             text-decoration: underline;
         }
 
+        a {
+            color: var(--warm-brown);
+        }
+
         @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: linear-gradient(135deg, #667eea, #764ba2);
+            .header-content {
                 flex-direction: column;
-                padding: 20px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                gap: 15px;
             }
 
-            .nav-menu.active {
-                display: flex;
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
             }
 
-            .mobile-menu-toggle {
-                display: block;
+            .container {
+                padding: 20px 15px;
             }
 
-            .nav-container {
-                position: relative;
+            .widerruf-card {
+                padding: 25px 20px;
             }
 
             h1 {
                 font-size: 26px;
             }
 
-            .widerruf-card {
-                padding: 25px;
+            .footer-navigation {
+                flex-direction: column;
+                align-items: center;
             }
 
-            .container {
-                padding: 20px 15px;
+            .footer-link {
+                width: 100%;
+                max-width: 250px;
+                text-align: center;
             }
         }
     </style>
-  <script src="/tracking.js" defer></script>
-  <script src="/utm-make.js" defer></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/" class="logo">Clara's Herzkompass</a>
-            <ul class="nav-menu" id="nav-menu">
-                <li><a href="/landing.html">Startseite</a></li>
-                <li><a href="/datenschutz.html">Datenschutz</a></li>
-                <li><a href="/impressum.html">Impressum</a></li>
-                <li><a href="/agb.html">AGB</a></li>
-                <li><a href="/geld-zurueck.html" style="color: #22C55E; font-weight: 600;">14 Tage Geld-zurück</a></li>
-            </ul>
-            <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰</button>
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+                <span class="logo-text">Mein WauWerk</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Startseite</a>
+                <a href="impressum.html">Impressum</a>
+                <a href="agb.html">AGB</a>
+            </div>
         </div>
-    </nav>
+    </header>
 
     <div class="container">
         <div class="widerruf-card">
             <h1>Widerrufsrecht</h1>
 
             <div class="highlight-box">
-                <h3>Einfache Stornierung</h3>
-                <p>Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
-                <p><strong>E-Mail genügt:</strong> <a href="mailto:clara@mein-herkompass.de">clara@mein-herzkompass.de</a></p>
+                <h3>🐕 Einfache Stornierung</h3>
+                <p>Du hast das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
+                <p><strong>E-Mail genügt:</strong> <a href="mailto:support@wauwerk.de">support@wauwerk.de</a></p>
             </div>
 
             <h2>Widerrufsbelehrung</h2>
 
             <h3>Widerrufsrecht</h3>
-            <p>Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
+            <p>Du hast das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>
             
             <p>Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag des Vertragsabschlusses.</p>
 
             <h3>Ausübung des Widerrufsrechts</h3>
-            <p>Um Ihr Widerrufsrecht auszuüben, müssen Sie uns</p>
+            <p>Um dein Widerrufsrecht auszuüben, musst du uns</p>
 
             <div class="info-box">
-                <strong>PrimeSocial GbR<br>
+                <strong>Debkowski & Moritz GbR<br>
                 Maximilian Debowski<br>
                 Rosenbohmsweg 28a<br>
                 26135 Oldenburg<br>
                 Deutschland<br>
-                E-Mail: clara@mein-herzkompass.de<br>
+                E-Mail: support@wauwerk.de<br>
                 Tel.: 0178 5772525</strong>
             </div>
 
-            <p>mittels einer eindeutigen Erklärung (z.B. ein mit der Post versandter Brief, Telefax oder E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.</p>
+            <p>mittels einer eindeutigen Erklärung (z.B. ein mit der Post versandter Brief oder E-Mail) über deinen Entschluss, diesen Vertrag zu widerrufen, informieren.</p>
 
             <div class="form-section">
                 <h3>Muster-Widerrufsformular</h3>
-                <p>Sie können das untenstehende Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben ist:</p>
+                <p>Du kannst das untenstehende Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben ist:</p>
                 
-                <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #ddd;">
+                <div class="form-template">
                     <p><strong>An:</strong><br>
-                    PrimeSocial GbRl, Maximilian Debowski<br>
+                    Debkowski & Moritz GbR, Maximilian Debowski<br>
                     Rosenbohmsweg 28a, 26135 Oldenburg<br>
-                    E-Mail: clara@mein-herzkompass.de</p>
+                    E-Mail: support@wauwerk.de</p>
 
                     <p style="margin: 20px 0;">
-                        Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*) abgeschlossenen Vertrag über den Kauf der folgenden Waren (*)/die Erbringung der folgenden Dienstleistung (*)
+                        Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*) abgeschlossenen Vertrag über die Erbringung der folgenden Dienstleistung: WauWerk Hundetraining-Plan
                     </p>
 
                     <p>Bestellt am (*)/erhalten am (*): _______________</p>
@@ -346,59 +397,49 @@
                     <p>Unterschrift des/der Verbraucher(s) (nur bei Mitteilung auf Papier): _______________</p>
                     <p>Datum: _______________</p>
 
-                    <p style="font-size: 14px; color: #666; margin-top: 15px;">(*) Unzutreffendes streichen.</p>
+                    <p style="font-size: 13px; color: #999; margin-top: 15px;">(*) Unzutreffendes streichen.</p>
                 </div>
             </div>
 
             <h3>Widerrufsfrist</h3>
-            <p>Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.</p>
+            <p>Zur Wahrung der Widerrufsfrist reicht es aus, dass du die Mitteilung über die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absendest.</p>
 
             <h3>Folgen des Widerrufs</h3>
-            <p>Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von Ihnen erhalten haben, einschließlich der Lieferkosten (mit Ausnahme der zusätzlichen Kosten, die sich daraus ergeben, dass Sie eine andere Art der Lieferung als die von uns angebotene, günstigste Standardlieferung gewählt haben), unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses Vertrags bei uns eingegangen ist.</p>
+            <p>Wenn du diesen Vertrag widerrufst, haben wir dir alle Zahlungen, die wir von dir erhalten haben, unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über deinen Widerruf dieses Vertrags bei uns eingegangen ist.</p>
 
-            <p>Für diese Rückzahlung verwenden wir dasselbe Zahlungsmittel, das Sie bei der ursprünglichen Transaktion eingesetzt haben, es sei denn, mit Ihnen wurde ausdrücklich etwas anderes vereinbart; in keinem Fall werden Ihnen wegen dieser Rückzahlung Entgelte berechnet.</p>
+            <p>Für diese Rückzahlung verwenden wir dasselbe Zahlungsmittel, das du bei der ursprünglichen Transaktion eingesetzt hast, es sei denn, mit dir wurde ausdrücklich etwas anderes vereinbart; in keinem Fall werden dir wegen dieser Rückzahlung Entgelte berechnet.</p>
 
             <div class="warning-box">
-                <h3>Besonderheit bei digitalen Inhalten</h3>
-                <p><strong>Wichtiger Hinweis:</strong> Haben Sie ausdrücklich zugestimmt, dass wir mit der Ausführung der Dienstleistung vor Ablauf der Widerrufsfrist beginnen, und haben Sie zur Kenntnis genommen, dass Sie durch Ihre Zustimmung mit Beginn der Ausführung der Dienstleistung Ihr Widerrufsrecht verlieren, erlischt Ihr Widerrufsrecht mit vollständiger Erbringung der Dienstleistung durch uns.</p>
+                <h3>⚠️ Besonderheit bei digitalen Inhalten</h3>
+                <p><strong>Wichtiger Hinweis:</strong> Hast du ausdrücklich zugestimmt, dass wir mit der Ausführung der Dienstleistung vor Ablauf der Widerrufsfrist beginnen, und hast du zur Kenntnis genommen, dass du durch deine Zustimmung mit Beginn der Ausführung der Dienstleistung dein Widerrufsrecht verlierst, erlischt dein Widerrufsrecht mit vollständiger Erbringung der Dienstleistung durch uns.</p>
             </div>
 
-            <h2>Freiwillige Rückgabe</h2>
-            <p>Über das gesetzliche Widerrufsrecht hinaus bieten wir Ihnen eine <strong>14 Tage Geld-zurück-Garantie</strong> an. Details finden Sie auf unserer <a href="/geld-zurueck.html" style="color: #22C55E; font-weight: 600;">Garantie-Seite</a>.</p>
+            <h2>Freiwillige 30-Tage Geld-zurück-Garantie</h2>
+            <p>Über das gesetzliche Widerrufsrecht hinaus bieten wir dir eine <strong>30-Tage Geld-zurück-Garantie</strong> an. Details findest du auf unserer <a href="geld-zurueck.html">Garantie-Seite</a>.</p>
 
             <div class="contact-section">
-                <h3>Fragen zum Widerrufsrecht?</h3>
-                <p>Kontaktieren Sie uns gerne:</p>
-                <p><a href="mailto:clara@mein-herzkompass.de">clara@mein-herzkompass.de</a><br>
+                <h3>📧 Fragen zum Widerrufsrecht?</h3>
+                <p>Kontaktiere uns gerne:</p>
+                <p><a href="mailto:support@wauwerk.de">support@wauwerk.de</a><br>
                 Tel: 0178 5772525</p>
             </div>
 
-            <div class="footer-link">
-                <a href="/landing.html">← Zurück zur Startseite</a>
+            <div class="footer-navigation">
+                <a href="datenschutz.html" class="footer-link">📋 Datenschutz</a>
+                <a href="agb.html" class="footer-link">📄 AGB</a>
+                <a href="impressum.html" class="footer-link">🏢 Impressum</a>
+                <a href="geld-zurueck.html" class="footer-link">💰 Geld-zurück</a>
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">🐕 Zurück zu Mein WauWerk</a>
             </div>
         </div>
     </div>
 
-    <script>
-        // Mobile menu toggle
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const navMenu = document.getElementById('nav-menu');
-
-        mobileMenuToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-        });
-
-        navMenu.addEventListener('click', (e) => {
-            if (e.target.tagName === 'A') {
-                navMenu.classList.remove('active');
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!mobileMenuToggle.contains(e.target) && !navMenu.contains(e.target)) {
-                navMenu.classList.remove('active');
-            }
-        });
-    </script>
+    <footer class="footer">
+        <p>&copy; 2025 Mein WauWerk. Alle Rechte vorbehalten.</p>
+        <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
+    </footer>
 </body>
 </html>
