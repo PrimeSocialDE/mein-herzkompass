@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WauWerk - Dein Trainingsplan ist fertig</title>
+    <link rel="icon" type="image/png" href="favconHund.png">
     <style>
         * {
             margin: 0;
@@ -428,7 +429,7 @@
         .disclaimer {
             background: #F9F7F5;
             border-radius: var(--border-radius);
-            padding: 20px;
+            padding: 15px 20px;
             margin-bottom: 20px;
             font-size: 13px;
             color: var(--text-medium);
@@ -436,17 +437,14 @@
             text-align: center;
         }
 
-        .disclaimer strong {
-            color: var(--text-dark);
-        }
-
         .disclaimer a {
-            color: var(--text-medium);
-            text-decoration: underline;
+            color: var(--warm-brown);
+            text-decoration: none;
+            font-weight: 600;
         }
 
         .disclaimer a:hover {
-            color: var(--dark-brown);
+            text-decoration: underline;
         }
 
         .guarantee {
@@ -817,23 +815,22 @@
         }
     </style>
 <!-- Meta Pixel Code -->
-<!-- Meta Pixel Code -->
 <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '864109602683515');
-    fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel Code -->
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '864109602683515');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -841,8 +838,8 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "ufxcf43805");
 </script>
+<script src="cookie-banner.js" defer></script>
 </head>
-
 
 <body>
     <header class="header">
@@ -982,7 +979,7 @@
         </div>
 
         <div class="disclaimer">
-            Mit Klick auf den Button zahle ich <strong id="disclaimerPrice">€17,99</strong> für den <strong id="disclaimerPlan">1-Monats-Plan</strong>. Das Abo verlängert sich automatisch <strong id="disclaimerInterval">monatlich</strong>, bis ich kündige. Jederzeit kündbar unter <a href="mailto:support@wauwerk.de">support@wauwerk.de</a>. <a href="agb.html">AGB</a>
+            ✓ 30 Tage Geld-zurück-Garantie • Jederzeit kündbar • <a href="agb.html">AGB</a>
         </div>
 
         <button class="cta-button glow" onclick="getMyPlan()">Jetzt Plan sichern</button>
@@ -1145,7 +1142,7 @@
     </div>
 
     <footer class="footer">
-        <p>&copy; 2025 WauWerk. Alle Rechte vorbehalten.</p>
+        <p>&copy; 2025 Mein WauWerk. Alle Rechte vorbehalten.</p>
         <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
     </footer>
 
@@ -1167,7 +1164,9 @@
             'commands': 'Kommandos beibringen',
             'bond': 'Bindung stärken',
             'behavior': 'Verhalten verbessern',
-            'anxiety': 'Ängste abbauen'
+            'anxiety': 'Ängste abbauen',
+            'potty': 'Toiletten-Routine',
+            'none': 'Allgemeines Training'
         };
         document.getElementById('userGoal').textContent = goalMap[dogGoal] || 'Gehorsam verbessern';
 
@@ -1254,14 +1253,6 @@
             }
         };
 
-        function updateDisclaimer() {
-            const plan = planDetails[selectedPlan];
-            const price = timerExpired ? plan.priceNormal : plan.price;
-            document.getElementById('disclaimerPrice').textContent = price;
-            document.getElementById('disclaimerPlan').textContent = plan.name;
-            document.getElementById('disclaimerInterval').textContent = plan.interval;
-        }
-
         function switchToNormalPrices() {
             document.querySelectorAll('.price-old').forEach(el => {
                 el.style.display = 'none';
@@ -1277,8 +1268,6 @@
             
             cards[2].querySelector('.price-amount').textContent = '0';
             cards[2].querySelector('.price-cents').textContent = ',67';
-            
-            updateDisclaimer();
         }
         
         updateTimer();
@@ -1287,7 +1276,6 @@
             pricingCards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             selectedPlan = card.dataset.plan;
-            updateDisclaimer();
         }
 
         pricingCards.forEach(card => {
@@ -1309,7 +1297,6 @@
         }
 
         async function saveToSupabase() {
-            // Alle Quiz-Antworten sammeln
             const answers = {
                 dog_name: localStorage.getItem('dogName'),
                 dog_age: localStorage.getItem('dogAge'),
@@ -1372,10 +1359,8 @@
         }
 
         async function getMyPlan() {
-            // Erst Daten speichern
             await saveToSupabase();
             
-            // Dann zu Stripe weiterleiten
             const stripeLinksDiscount = {
                 '1month': 'https://buy.stripe.com/4gMdR896u8OL0Y4gAD1VK0b',
                 '3month': 'https://buy.stripe.com/14AbJ0aay3ur7msesv1VK0c',
