@@ -59,7 +59,7 @@
         .logo-text {
             font-size: 24px;
             font-weight: 800;
-            color: var(--dark-brown);
+            color: var(--brown-hover);
         }
 
         /* Main Container */
@@ -256,8 +256,8 @@ fbq('track', 'PageView');
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "ufxcf43805");
 </script>
+<script src="cookie-banner.js" defer></script>
 </head>
-
 
 <body>
     <!-- Header -->
@@ -273,7 +273,7 @@ fbq('track', 'PageView');
         <!-- Quiz Header -->
         <div class="quiz-header">
             <h1 class="quiz-title">Was möchtest du verbessern?</h1>
-            <p class="quiz-subtitle">Wähle alle zutreffenden Optionen</p>
+            <p class="quiz-subtitle">Auswählen und auf Weiter drücken</p>
         </div>
 
         <!-- Progress Bar -->
@@ -314,6 +314,16 @@ fbq('track', 'PageView');
                 <div class="option-emoji">😰</div>
                 <div class="option-text">Ängste und Unsicherheiten abbauen</div>
             </div>
+
+            <div class="option-card" data-goal="potty">
+                <div class="option-emoji">🚽</div>
+                <div class="option-text">Toiletten-Routine verbessern</div>
+            </div>
+
+            <div class="option-card" data-goal="none">
+                <div class="option-emoji">✨</div>
+                <div class="option-text">Erstmal nichts – einfach stöbern</div>
+            </div>
         </div>
 
         <!-- Continue Button -->
@@ -334,13 +344,27 @@ fbq('track', 'PageView');
             card.addEventListener('click', () => {
                 const goal = card.dataset.goal;
                 
-                // Toggle selection
-                if (card.classList.contains('selected')) {
-                    card.classList.remove('selected');
-                    selectedGoals = selectedGoals.filter(g => g !== goal);
-                } else {
+                // If "none" is selected, deselect all others
+                if (goal === 'none') {
+                    optionCards.forEach(c => c.classList.remove('selected'));
+                    selectedGoals = ['none'];
                     card.classList.add('selected');
-                    selectedGoals.push(goal);
+                } else {
+                    // Remove "none" if another option is selected
+                    const noneCard = document.querySelector('[data-goal="none"]');
+                    if (noneCard) {
+                        noneCard.classList.remove('selected');
+                        selectedGoals = selectedGoals.filter(g => g !== 'none');
+                    }
+                    
+                    // Toggle selection
+                    if (card.classList.contains('selected')) {
+                        card.classList.remove('selected');
+                        selectedGoals = selectedGoals.filter(g => g !== goal);
+                    } else {
+                        card.classList.add('selected');
+                        selectedGoals.push(goal);
+                    }
                 }
                 
                 // Update button state
