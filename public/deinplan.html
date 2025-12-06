@@ -1395,6 +1395,22 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         }
 
         async function saveToSupabase() {
+            // UTM Parameter aus URL oder localStorage holen
+            const urlParams = new URLSearchParams(window.location.search);
+            const utmParams = {
+                utm_source: urlParams.get('utm_source') || localStorage.getItem('utm_source') || null,
+                utm_medium: urlParams.get('utm_medium') || localStorage.getItem('utm_medium') || null,
+                utm_campaign: urlParams.get('utm_campaign') || localStorage.getItem('utm_campaign') || null,
+                utm_content: urlParams.get('utm_content') || localStorage.getItem('utm_content') || null,
+                utm_term: urlParams.get('utm_term') || localStorage.getItem('utm_term') || null,
+                fbclid: urlParams.get('fbclid') || localStorage.getItem('fbclid') || null,
+                gclid: urlParams.get('gclid') || localStorage.getItem('gclid') || null,
+                ttclid: urlParams.get('ttclid') || localStorage.getItem('ttclid') || null,
+                referrer: localStorage.getItem('referrer') || null,
+                landing_page: localStorage.getItem('landing_page') || null,
+                first_visit: localStorage.getItem('first_visit') || null
+            };
+
             const answers = {
                 dog_name: localStorage.getItem('dogName'),
                 dog_age: localStorage.getItem('dogAge'),
@@ -1420,7 +1436,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 upcoming_event: localStorage.getItem('upcomingEvent'),
                 event_timing: localStorage.getItem('eventTiming'),
                 had_training: localStorage.getItem('hadTraining'),
-                territorial_aggression: localStorage.getItem('territorialAggression')
+                territorial_aggression: localStorage.getItem('territorialAggression'),
+                // UTM Tracking
+                ...utmParams
             };
 
             const leadData = {
