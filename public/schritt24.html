@@ -76,7 +76,7 @@
             font-size: 26px;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             line-height: 1.25;
         }
 
@@ -84,6 +84,12 @@
             font-size: 16px;
             color: var(--text-medium);
             margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .problem-highlight {
+            color: var(--warm-brown);
+            font-weight: 600;
         }
 
         .target-date {
@@ -251,8 +257,8 @@ fbq('track', 'PageView');
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "ufxcf43805");
 </script>
+<script src="cookie-banner.js" defer></script>
 </head>
-
 
 <body>
     <!-- Header -->
@@ -266,7 +272,7 @@ fbq('track', 'PageView');
     <!-- Content -->
     <div class="container">
         <h1 class="page-title">Dein Plan ist so gut wie fertig</h1>
-        <p class="page-subtitle">Wir prognostizieren eine Verbesserung für <span id="dogNameTitle">deinen Hund</span> bis zum</p>
+        <p class="page-subtitle">Mit dem Plan, den wir für <strong id="dogNameTitle">deinen Hund</strong> erstellen, lässt sich <span class="problem-highlight" id="problemText">das Problem</span> und weitere Herausforderungen innerhalb der nächsten 30 Tage lösen.</p>
         <p class="target-date" id="targetDate">20. Dezember 2025</p>
 
         <!-- Chart -->
@@ -314,7 +320,7 @@ fbq('track', 'PageView');
                               stroke-linecap="round"
                               d="M0,160 Q100,140 200,80 T400,10"/>
                         
-                        <!-- Start Circle - direkt am Anfang der Linie bei (0, 160) -->
+                        <!-- Start Circle -->
                         <circle id="startCircle" cx="0" cy="160" r="12" fill="#FFFFFF" stroke="#FF6B6B" stroke-width="4" opacity="0"/>
                     </svg>
 
@@ -327,9 +333,9 @@ fbq('track', 'PageView');
                 <!-- X-Axis -->
                 <div class="x-axis">
                     <span>Jetzt</span>
-                    <span id="month1">Monat 1</span>
-                    <span id="month2">Monat 2</span>
-                    <span id="month3">Monat 3</span>
+                    <span id="week1">Woche 1</span>
+                    <span id="week2">Woche 2</span>
+                    <span id="week3">Tag 30</span>
                 </div>
             </div>
 
@@ -345,10 +351,35 @@ fbq('track', 'PageView');
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         document.getElementById('dogNameTitle').textContent = dogName;
 
-        // Calculate target date (3 months from now)
+        // Load problem from localStorage
+        const dogProblem = localStorage.getItem('dogProblem') || '';
+        const territorialAggression = localStorage.getItem('territorialAggression') || '';
+        
+        let problemText = 'Ungehorsam';
+        
+        if (territorialAggression === 'yes') {
+            problemText = 'Territoriale Aggression';
+        } else if (dogProblem) {
+            const problemMap = {
+                'pulling': 'Leinenziehen',
+                'barking': 'Übermäßiges Bellen',
+                'aggression': 'Aggression',
+                'anxiety': 'Trennungsangst',
+                'jumping': 'Anspringen',
+                'recall': 'Rückruf-Probleme',
+                'energy': 'Übermäßige Energie',
+                'destructive': 'Zerstörerisches Verhalten',
+                'soiling': 'Unsauberkeit'
+            };
+            problemText = problemMap[dogProblem] || dogProblem;
+        }
+        
+        document.getElementById('problemText').textContent = problemText;
+
+        // Calculate target date (30 days from now)
         const now = new Date();
         const targetDate = new Date(now);
-        targetDate.setMonth(targetDate.getMonth() + 3);
+        targetDate.setDate(targetDate.getDate() + 30);
 
         const months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 
                        'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
