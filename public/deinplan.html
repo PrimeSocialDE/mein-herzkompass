@@ -288,6 +288,34 @@
             color: var(--text-dark);
         }
 
+        .motivation-text {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #FAF6F1 0%, var(--white) 100%);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-light);
+        }
+
+        .motivation-text p {
+            font-size: 16px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .motivation-text .problem-highlight {
+            color: var(--warm-brown);
+            font-weight: 600;
+        }
+
+        .motivation-question {
+            font-size: 18px !important;
+            font-weight: 600 !important;
+            color: var(--text-dark) !important;
+            margin-bottom: 0 !important;
+        }
+
         .pricing-section {
             margin-bottom: 30px;
         }
@@ -955,6 +983,11 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
         </div>
 
+        <div class="motivation-text">
+            <p>Mit den richtigen Übungen und einem strukturierten Plan lässt sich <span class="problem-highlight" id="problemTextMotivation">das Problem</span> abtrainieren.</p>
+            <p class="motivation-question">Wie schnell möchtest du Ergebnisse sehen?</p>
+        </div>
+
         <div class="pricing-section">
             <div class="pricing-card popular selected" data-plan="1month" data-price="19.99">
                 <div class="popular-badge">👍 Am beliebtesten</div>
@@ -1253,6 +1286,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             document.getElementById('problemValue1').textContent = values.bad;
             document.getElementById('problemValue2').textContent = values.good;
         }
+        
+        // Motivation Text aktualisieren
+        document.getElementById('problemTextMotivation').textContent = problemText;
 
         let timeLeft;
         let timerExpired = false;
