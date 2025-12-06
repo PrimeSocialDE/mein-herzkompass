@@ -83,42 +83,61 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// ▼▼▼ NEU: Helper um zu prüfen ob ID zu wauwerk_leads oder orders gehört
+async function findLeadOrOrder(id: string): Promise<{ table: 'wauwerk_leads' | 'orders' | null, data: any }> {
+  // Erst in wauwerk_leads suchen
+  const { data: lead, error: leadError } = await supabase
+    .from("wauwerk_leads")
+    .select("*")
+    .eq("id", id)
+    .single();
+  
+  if (lead && !leadError) {
+    console.log("✅ Gefunden in wauwerk_leads");
+    return { table: 'wauwerk_leads', data: lead };
+  }
+  
+  // Dann in orders suchen
+  const { data: order, error: orderError } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("id", id)
+    .single();
+  
+  if (order && !orderError) {
+    console.log("✅ Gefunden in orders");
+    return { table: 'orders', data: order };
+  }
+  
+  console.log("❌ ID nicht gefunden in wauwerk_leads oder orders");
+  return { table: null, data: null };
+}
+// ▲▲▲
+
 async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
   console.log("🔍 === CHECKOUT SUCCESS DEBUG ===");
   console.log("🔍 Session ID:", session.id);
   console.log("🔍 Client Reference ID:", session.client_reference_id);
   console.log("🔍 Session Metadata:", JSON.stringify(session.metadata, null, 2));
   
-  const orderId = session.client_reference_id || session.metadata?.order_id;
-  console.log("🔍 Extrahierte Order ID:", orderId);
+  const referenceId = session.client_reference_id || session.metadata?.order_id;
+  console.log("🔍 Extrahierte Reference ID:", referenceId);
   
-  if (!orderId) {
-    console.error("❌ Keine Order-ID in Session gefunden");
-    console.log("🔍 Verfügbare Session-Daten:", {
-      id: session.id,
-      client_reference_id: session.client_reference_id,
-      metadata: session.metadata,
-      customer: session.customer,
-      customer_email: session.customer_email
-    });
+  if (!referenceId) {
+    console.error("❌ Keine Reference-ID in Session gefunden");
     return;
   }
 
-  // Prüfe ob Order existiert BEVOR Update
-  console.log("🔍 Prüfe ob Order existiert...");
-  const { data: existingOrder, error: selectError } = await supabase
-    .from("orders")
-    .select("id, status, email")
-    .eq("id", orderId)
-    .single();
-    
-  if (selectError) {
-    console.error("❌ Order nicht gefunden:", selectError);
-    console.log("🔍 Supabase Select Error Details:", JSON.stringify(selectError, null, 2));
+  // ▼▼▼ NEU: Prüfen welche Tabelle
+  const { table, data: existingRecord } = await findLeadOrOrder(referenceId);
+  
+  if (!table) {
+    console.error("❌ ID nicht in Datenbank gefunden:", referenceId);
     return;
   }
   
-  console.log("✅ Order gefunden:", JSON.stringify(existingOrder, null, 2));
+  console.log(`✅ Record gefunden in ${table}:`, JSON.stringify(existingRecord, null, 2));
+  // ▲▲▲
 
   let customerEmail = session.customer_email || session.customer_details?.email;
   let customerName = session.customer_details?.name;
@@ -158,7 +177,6 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
     const updateData: any = {
       status: "paid",
       paid_at: new Date().toISOString(),
-      due_at: new Date(Date.now() + 10 * 60 * 60 * 1000).toISOString(),
       stripe_session_id: session.id,
     };
 
@@ -170,35 +188,46 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
       console.log(`E-Mail gefunden: ${customerEmail}`);
     }
     if (customerName) {
-      updateData.name = customerName;
+      // wauwerk_leads nutzt customer_name, orders nutzt name
+      if (table === 'wauwerk_leads') {
+        updateData.customer_name = customerName;
+      } else {
+        updateData.name = customerName;
+      }
       console.log(`Name gefunden: ${customerName}`);
     }
 
+    // Für orders: due_at setzen
+    if (table === 'orders') {
+      updateData.due_at = new Date(Date.now() + 10 * 60 * 60 * 1000).toISOString();
+    }
+
     console.log("🔍 Update Data:", JSON.stringify(updateData, null, 2));
-    console.log("🔍 Führe Supabase Update aus...");
+    console.log(`🔍 Update ${table}...`);
 
     const { data: updatedData, error } = await supabase
-      .from("orders")
+      .from(table)
       .update(updateData)
-      .eq("id", orderId)
-      .select("*"); // Wichtig: .select("*") um zu sehen was aktualisiert wurde
+      .eq("id", referenceId)
+      .select("*");
     
     if (error) {
       console.error("❌ Supabase Update Error:", JSON.stringify(error, null, 2));
     } else {
       console.log("✅ Supabase Update erfolgreich!");
-      console.log("🔍 Aktualisierte Order:", JSON.stringify(updatedData, null, 2));
-      console.log(`Order ${orderId} erfolgreich als bezahlt markiert`);
+      console.log("🔍 Aktualisierte Daten:", JSON.stringify(updatedData, null, 2));
+      console.log(`${table} ${referenceId} erfolgreich als bezahlt markiert`);
       
-      // ▼▼▼ NEU: Make informieren
-      await notifyMake(orderId, {
-        source: "checkout.session",
-        email: updateData.email ?? null,
-        name: updateData.name ?? null,
-        stripe_session_id: session.id,
-        stripe_payment_intent: updateData.stripe_payment_intent ?? null,
-      });
-      // ▲▲▲
+      // Make nur für orders informieren
+      if (table === 'orders') {
+        await notifyMake(referenceId, {
+          source: "checkout.session",
+          email: updateData.email ?? null,
+          name: updateData.name ?? null,
+          stripe_session_id: session.id,
+          stripe_payment_intent: updateData.stripe_payment_intent ?? null,
+        });
+      }
     }
     
     console.log("🔍 === CHECKOUT SUCCESS DEBUG ENDE ===");
@@ -208,11 +237,14 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
 }
 
 async function handleCheckoutFailed(session: Stripe.Checkout.Session) {
-  const orderId = session.client_reference_id || session.metadata?.order_id;
-  if (!orderId) {
-    console.error("Keine Order-ID in Session gefunden");
+  const referenceId = session.client_reference_id || session.metadata?.order_id;
+  if (!referenceId) {
+    console.error("Keine Reference-ID in Session gefunden");
     return;
   }
+
+  const { table } = await findLeadOrOrder(referenceId);
+  if (!table) return;
 
   try {
     const updateData: any = {
@@ -224,12 +256,12 @@ async function handleCheckoutFailed(session: Stripe.Checkout.Session) {
       updateData.stripe_payment_intent = session.payment_intent as string;
     }
 
-    const { error } = await supabase.from("orders").update(updateData).eq("id", orderId);
+    const { error } = await supabase.from(table).update(updateData).eq("id", referenceId);
     
     if (error) {
       console.error("Fehler beim Markieren der fehlgeschlagenen Session:", error);
     } else {
-      console.log(`Order ${orderId} als fehlgeschlagen markiert`);
+      console.log(`${table} ${referenceId} als fehlgeschlagen markiert`);
     }
   } catch (err) {
     console.error("Supabase-Fehler bei fehlgeschlagener Session:", err);
@@ -237,11 +269,14 @@ async function handleCheckoutFailed(session: Stripe.Checkout.Session) {
 }
 
 async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
-  const orderId = paymentIntent.metadata?.order_id;
-  if (!orderId) {
-    console.error("Keine Order-ID in PaymentIntent gefunden");
+  const referenceId = paymentIntent.metadata?.order_id || paymentIntent.metadata?.lead_id;
+  if (!referenceId) {
+    console.error("Keine Reference-ID in PaymentIntent gefunden");
     return;
   }
+
+  const { table } = await findLeadOrOrder(referenceId);
+  if (!table) return;
 
   let customerEmail = paymentIntent.receipt_email;
   let customerName = null;
@@ -282,22 +317,28 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     };
 
     if (customerEmail) updateData.email = customerEmail;
-    if (customerName) updateData.name = customerName;
+    if (customerName) {
+      if (table === 'wauwerk_leads') {
+        updateData.customer_name = customerName;
+      } else {
+        updateData.name = customerName;
+      }
+    }
 
-    const { error } = await supabase.from("orders").update(updateData).eq("id", orderId);
+    const { error } = await supabase.from(table).update(updateData).eq("id", referenceId);
     
     if (error) {
-      console.error("Fehler beim Aktualisieren der Order via PaymentIntent:", error);
+      console.error("Fehler beim Aktualisieren via PaymentIntent:", error);
     } else {
-      console.log(`Order ${orderId} via PaymentIntent aktualisiert`);
-      // ▼▼▼ NEU
-      await notifyMake(orderId, {
-        source: "payment_intent",
-        email: updateData.email ?? null,
-        name: updateData.name ?? null,
-        stripe_payment_intent: paymentIntent.id,
-      });
-      // ▲▲▲
+      console.log(`${table} ${referenceId} via PaymentIntent aktualisiert`);
+      if (table === 'orders') {
+        await notifyMake(referenceId, {
+          source: "payment_intent",
+          email: updateData.email ?? null,
+          name: updateData.name ?? null,
+          stripe_payment_intent: paymentIntent.id,
+        });
+      }
     }
   } catch (err) {
     console.error("Fehler bei PaymentIntent-Verarbeitung:", err);
@@ -305,21 +346,24 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
 }
 
 async function handleChargeSuccess(charge: Stripe.Charge) {
-  let orderId = charge.metadata?.order_id;
+  let referenceId = charge.metadata?.order_id || charge.metadata?.lead_id;
   
-  if (!orderId && charge.payment_intent && stripe) {
+  if (!referenceId && charge.payment_intent && stripe) {
     try {
       const paymentIntent = await stripe.paymentIntents.retrieve(charge.payment_intent as string);
-      orderId = paymentIntent.metadata?.order_id;
+      referenceId = paymentIntent.metadata?.order_id || paymentIntent.metadata?.lead_id;
     } catch (err) {
       console.log("Konnte PaymentIntent für Charge nicht abrufen:", err);
     }
   }
 
-  if (!orderId) {
-    console.log("Keine Order-ID für Charge gefunden - überspringe");
+  if (!referenceId) {
+    console.log("Keine Reference-ID für Charge gefunden - überspringe");
     return;
   }
+
+  const { table } = await findLeadOrOrder(referenceId);
+  if (!table) return;
 
   let customerEmail = charge.billing_details?.email;
   let customerName = charge.billing_details?.name;
@@ -343,22 +387,28 @@ async function handleChargeSuccess(charge: Stripe.Charge) {
     };
 
     if (customerEmail) updateData.email = customerEmail;
-    if (customerName) updateData.name = customerName;
+    if (customerName) {
+      if (table === 'wauwerk_leads') {
+        updateData.customer_name = customerName;
+      } else {
+        updateData.name = customerName;
+      }
+    }
 
-    const { error } = await supabase.from("orders").update(updateData).eq("id", orderId);
+    const { error } = await supabase.from(table).update(updateData).eq("id", referenceId);
     
     if (error) {
-      console.error("Fehler beim Aktualisieren der Order via Charge:", error);
+      console.error("Fehler beim Aktualisieren via Charge:", error);
     } else {
-      console.log(`Order ${orderId} via Charge aktualisiert`);
-      // ▼▼▼ NEU
-      await notifyMake(orderId, {
-        source: "charge",
-        email: updateData.email ?? null,
-        name: updateData.name ?? null,
-        charge_id: charge.id,
-      });
-      // ▲▲▲
+      console.log(`${table} ${referenceId} via Charge aktualisiert`);
+      if (table === 'orders') {
+        await notifyMake(referenceId, {
+          source: "charge",
+          email: updateData.email ?? null,
+          name: updateData.name ?? null,
+          charge_id: charge.id,
+        });
+      }
     }
   } catch (err) {
     console.error("Fehler bei Charge-Verarbeitung:", err);
@@ -366,22 +416,25 @@ async function handleChargeSuccess(charge: Stripe.Charge) {
 }
 
 async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
-  const orderId = paymentIntent.metadata?.order_id;
-  if (!orderId) {
-    console.error("Keine Order-ID in PaymentIntent gefunden");
+  const referenceId = paymentIntent.metadata?.order_id || paymentIntent.metadata?.lead_id;
+  if (!referenceId) {
+    console.error("Keine Reference-ID in PaymentIntent gefunden");
     return;
   }
 
+  const { table } = await findLeadOrOrder(referenceId);
+  if (!table) return;
+
   try {
-    const { error } = await supabase.from("orders").update({
+    const { error } = await supabase.from(table).update({
       status: "failed",
       stripe_payment_intent: paymentIntent.id,
-    }).eq("id", orderId);
+    }).eq("id", referenceId);
 
     if (error) {
       console.error("Fehler beim Markieren der fehlgeschlagenen Order:", error);
     } else {
-      console.log(`Order ${orderId} als fehlgeschlagen markiert`);
+      console.log(`${table} ${referenceId} als fehlgeschlagen markiert`);
     }
   } catch (err) {
     console.error("Fehler bei fehlgeschlagener PaymentIntent-Verarbeitung:", err);
