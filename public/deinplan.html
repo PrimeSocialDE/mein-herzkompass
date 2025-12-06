@@ -1428,6 +1428,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 selected_plan: selectedPlan,
                 price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price,
                 timer_expired: timerExpired,
+                status: 'pending',
                 answers: answers
             };
 
@@ -1440,24 +1441,28 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         'Content-Type': 'application/json',
                         'apikey': SUPABASE_ANON_KEY,
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                        'Prefer': 'return=minimal'
+                        'Prefer': 'return=representation'
                     },
                     body: JSON.stringify(leadData)
                 });
                 
-                console.log('Supabase response:', response.status);
-                
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('Supabase error:', response.status, errorText);
+                    return null;
                 }
+                
+                const data = await response.json();
+                console.log('Supabase response:', data);
+                return data[0]?.id || null;
             } catch (error) {
                 console.error('Failed to save lead:', error);
+                return null;
             }
         }
 
         async function getMyPlan() {
-            await saveToSupabase();
+            const leadId = await saveToSupabase();
             
             const stripeLinksDiscount = {
                 '1month': 'https://buy.stripe.com/4gM3cueqOghd9uAfwz1VK0h',
@@ -1472,7 +1477,14 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             };
             
             const links = timerExpired ? stripeLinksNormal : stripeLinksDiscount;
-            window.location.href = links[selectedPlan] || links['1month'];
+            let url = links[selectedPlan] || links['1month'];
+            
+            // Lead ID an Stripe Link anhängen
+            if (leadId) {
+                url += `?client_reference_id=${leadId}`;
+            }
+            
+            window.location.href = url;
         }
 
         let tpCurrentSlide = 0;
