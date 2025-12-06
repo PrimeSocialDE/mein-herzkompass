@@ -138,11 +138,38 @@
         .comparison-arrows {
             position: absolute;
             left: 50%;
-            top: 50%;
+            top: 45%;
             transform: translate(-50%, -50%);
-            font-size: 30px;
-            color: var(--border-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 26px;
             z-index: 10;
+        }
+
+        .comparison-arrows span {
+            color: var(--warm-brown);
+            opacity: 0.4;
+            animation: lightUp 2s ease-in-out infinite;
+        }
+
+        .comparison-arrows span:nth-child(1) { animation-delay: 0s; }
+        .comparison-arrows span:nth-child(2) { animation-delay: 0.15s; }
+        .comparison-arrows span:nth-child(3) { animation-delay: 0.3s; }
+        .comparison-arrows span:nth-child(4) { animation-delay: 0.45s; }
+        .comparison-arrows span:nth-child(5) { animation-delay: 0.6s; }
+        .comparison-arrows span:nth-child(6) { animation-delay: 0.75s; }
+
+        @keyframes lightUp {
+            0%, 100% {
+                opacity: 0.4;
+                text-shadow: none;
+            }
+            50% {
+                opacity: 1;
+                text-shadow: 0 0 15px rgba(196, 165, 118, 0.9), 0 0 25px rgba(196, 165, 118, 0.6);
+            }
         }
 
         .stat-box {
@@ -862,7 +889,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
                 <div class="stat-box">
                     <div class="stat-label"><span id="dogName1">Dein Hund</span> – <span id="problemLabel1">Gehorsam</span></div>
-                    <div class="stat-value">Niedrig</div>
+                    <div class="stat-value" id="problemValue1">Niedrig</div>
                     <div class="stat-bar">
                         <div class="stat-bar-segment active-red"></div>
                         <div class="stat-bar-segment"></div>
@@ -875,7 +902,14 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
             </div>
 
-            <div class="comparison-arrows">››</div>
+            <div class="comparison-arrows">
+                <span>››</span>
+                <span>››</span>
+                <span>››</span>
+                <span>››</span>
+                <span>››</span>
+                <span>››</span>
+            </div>
 
             <div class="comparison-side">
                 <span class="comparison-badge badge-goal">Dein Ziel</span>
@@ -884,7 +918,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
                 <div class="stat-box">
                     <div class="stat-label"><span id="dogName2">Dein Hund</span> – <span id="problemLabel2">Gehorsam</span></div>
-                    <div class="stat-value">Normal</div>
+                    <div class="stat-value" id="problemValue2">Normal</div>
                     <div class="stat-bar">
                         <div class="stat-bar-segment active-green"></div>
                         <div class="stat-bar-segment active-green"></div>
@@ -1195,6 +1229,30 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         // Problem-Label in Stat-Boxen aktualisieren
         document.getElementById('problemLabel1').textContent = problemText;
         document.getElementById('problemLabel2').textContent = problemText;
+        
+        // Dynamische Werte basierend auf Problem-Typ
+        const problemValueMap = {
+            'pulling': { bad: 'Stark', good: 'Kontrolliert' },
+            'barking': { bad: 'Häufig', good: 'Ruhig' },
+            'aggression': { bad: 'Kritisch', good: 'Friedlich' },
+            'anxiety': { bad: 'Stark', good: 'Entspannt' },
+            'jumping': { bad: 'Ständig', good: 'Kontrolliert' },
+            'recall': { bad: 'Ignoriert', good: 'Zuverlässig' },
+            'energy': { bad: 'Übermäßig', good: 'Ausgeglichen' },
+            'destructive': { bad: 'Häufig', good: 'Gestoppt' },
+            'soiling': { bad: 'Regelmäßig', good: 'Stubenrein' }
+        };
+        
+        const defaultValues = { bad: 'Kritisch', good: 'Gelöst' };
+        const values = problemValueMap[dogProblem] || defaultValues;
+        
+        if (territorialAggression === 'yes') {
+            document.getElementById('problemValue1').textContent = 'Kritisch';
+            document.getElementById('problemValue2').textContent = 'Friedlich';
+        } else {
+            document.getElementById('problemValue1').textContent = values.bad;
+            document.getElementById('problemValue2').textContent = values.good;
+        }
 
         let timeLeft;
         let timerExpired = false;
