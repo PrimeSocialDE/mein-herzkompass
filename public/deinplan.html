@@ -1659,16 +1659,14 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         // Exit-Intent Popup Logic
         let exitPopupShown = false;
         
-        // Prüfen ob User von Stripe zurückkommt (Referrer enthält stripe.com)
-        const fromStripe = document.referrer.includes('stripe.com') || 
-                          document.referrer.includes('checkout.stripe.com') ||
-                          localStorage.getItem('wentToStripe') === 'true';
+        // Prüfen ob User von Stripe zurückkommt
+        const wentToStripe = localStorage.getItem('wentToStripe') === 'true';
         
-        if (fromStripe && !sessionStorage.getItem('exitPopupShown')) {
-            // User kam von Stripe zurück ohne zu kaufen - Popup zeigen
+        if (wentToStripe && !sessionStorage.getItem('exitPopupShown')) {
+            // User kam von Stripe zurück ohne zu kaufen - Popup sofort zeigen
             setTimeout(() => {
                 showExitPopup();
-            }, 1500);
+            }, 500);
         }
         
         // Markieren wenn User zu Stripe geht
@@ -1686,13 +1684,16 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         });
         
         // Back-Button Detection
-        window.addEventListener('popstate', function() {
-            if (!exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
-                showExitPopup();
-                history.pushState(null, '', window.location.href);
+        window.addEventListener('pageshow', function(event) {
+            // Wird getriggert wenn User mit Back-Button zurückkommt (auch aus bfcache)
+            if (event.persisted || localStorage.getItem('wentToStripe') === 'true') {
+                if (!exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
+                    setTimeout(() => {
+                        showExitPopup();
+                    }, 300);
+                }
             }
         });
-        history.pushState(null, '', window.location.href);
         
         function showExitPopup() {
             if (exitPopupShown) return;
