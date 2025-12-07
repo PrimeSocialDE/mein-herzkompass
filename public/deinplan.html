@@ -502,6 +502,134 @@
             text-decoration: underline;
         }
 
+        /* Exit-Intent Popup */
+        .exit-popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .exit-popup-overlay.active {
+            display: flex;
+        }
+
+        .exit-popup {
+            background: var(--white);
+            border-radius: 16px;
+            max-width: 400px;
+            width: 100%;
+            padding: 30px 25px;
+            text-align: center;
+            position: relative;
+            animation: popupIn 0.3s ease-out;
+        }
+
+        @keyframes popupIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .exit-popup-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .exit-popup-emoji {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .exit-popup-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .exit-popup-text {
+            font-size: 15px;
+            color: var(--text-medium);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .exit-popup-highlight {
+            color: var(--warm-brown);
+            font-weight: 600;
+        }
+
+        .exit-popup-bonus {
+            background: linear-gradient(135deg, #FFF9F0 0%, #FFF5E6 100%);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .exit-popup-bonus-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-brown);
+            margin-bottom: 8px;
+        }
+
+        .exit-popup-bonus-list {
+            font-size: 13px;
+            color: var(--text-medium);
+            text-align: left;
+        }
+
+        .exit-popup-bonus-list div {
+            padding: 4px 0;
+        }
+
+        .exit-popup-cta {
+            background: var(--warm-brown);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 12px;
+            transition: background 0.2s;
+        }
+
+        .exit-popup-cta:hover {
+            background: var(--dark-brown);
+        }
+
+        .exit-popup-skip {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
         .guarantee {
             display: flex;
             align-items: center;
@@ -1527,6 +1655,88 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             tpCurrentSlide = (tpCurrentSlide + 1) % 3;
             goToTpSlide(tpCurrentSlide);
         }, 4000);
+
+        // Exit-Intent Popup Logic
+        let exitPopupShown = false;
+        
+        // Prüfen ob User von Stripe zurückkommt (Referrer enthält stripe.com)
+        const fromStripe = document.referrer.includes('stripe.com') || 
+                          document.referrer.includes('checkout.stripe.com') ||
+                          localStorage.getItem('wentToStripe') === 'true';
+        
+        if (fromStripe && !sessionStorage.getItem('exitPopupShown')) {
+            // User kam von Stripe zurück ohne zu kaufen - Popup zeigen
+            setTimeout(() => {
+                showExitPopup();
+            }, 1500);
+        }
+        
+        // Markieren wenn User zu Stripe geht
+        const originalGetMyPlan = getMyPlan;
+        getMyPlan = async function() {
+            localStorage.setItem('wentToStripe', 'true');
+            await originalGetMyPlan();
+        };
+        
+        // Exit-Intent auf Desktop (Maus verlässt Fenster nach oben)
+        document.addEventListener('mouseout', function(e) {
+            if (e.clientY < 10 && !exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
+                showExitPopup();
+            }
+        });
+        
+        // Back-Button Detection
+        window.addEventListener('popstate', function() {
+            if (!exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
+                showExitPopup();
+                history.pushState(null, '', window.location.href);
+            }
+        });
+        history.pushState(null, '', window.location.href);
+        
+        function showExitPopup() {
+            if (exitPopupShown) return;
+            exitPopupShown = true;
+            sessionStorage.setItem('exitPopupShown', 'true');
+            // Problem-Text im Popup aktualisieren
+            const popupProblemEl = document.getElementById('popupProblem');
+            if (popupProblemEl) {
+                popupProblemEl.textContent = problemText;
+            }
+            document.getElementById('exitPopup').classList.add('active');
+        }
+        
+        function closeExitPopup() {
+            document.getElementById('exitPopup').classList.remove('active');
+            localStorage.removeItem('wentToStripe');
+        }
     </script>
+<!-- Exit-Intent Popup -->
+    <div class="exit-popup-overlay" id="exitPopup">
+        <div class="exit-popup">
+            <button class="exit-popup-close" onclick="closeExitPopup()">×</button>
+            <div class="exit-popup-emoji">🐕</div>
+            <h3 class="exit-popup-title">Warte kurz!</h3>
+            <p class="exit-popup-text">
+                Mit unserem Plan trainierst du <span class="exit-popup-highlight" id="popupProblem">das Problem</span> gezielt ab – Schritt für Schritt, ohne Überforderung.
+            </p>
+            <div class="exit-popup-bonus">
+                <div class="exit-popup-bonus-title">🎁 Das bekommst du zusätzlich:</div>
+                <div class="exit-popup-bonus-list">
+                    <div>✓ <strong>6 Bonus-Übungen</strong> für schnellere Erfolge</div>
+                    <div>✓ <strong>30 Tage Geld-zurück-Garantie</strong> – kein Risiko</div>
+                    <div>✓ <strong>Persönlicher Support</strong> bei Fragen</div>
+                    <div>✓ <strong>Sofortiger Zugang</strong> zum kompletten Plan</div>
+                </div>
+            </div>
+            <button class="exit-popup-cta" onclick="closeExitPopup(); document.querySelector('.cta-button').click();">
+                Jetzt Plan sichern 🚀
+            </button>
+            <button class="exit-popup-skip" onclick="closeExitPopup()">
+                Nein danke, ich überlege noch
+            </button>
+        </div>
+    </div>
+
 </body>
 </html>
