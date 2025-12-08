@@ -2190,7 +2190,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             
             // Popup Daten füllen
             document.getElementById('checkoutDogName').textContent = dogName;
-            document.getElementById('checkoutDogName2').textContent = dogName;
             document.getElementById('checkoutDogName3').textContent = dogName;
             document.getElementById('checkoutPlanDuration').textContent = priceData.duration;
             document.getElementById('checkoutPlanPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
@@ -2286,8 +2285,15 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 
                 // Payment Element mounten
                 paymentElement = elements.create('payment', {
-                    layout: 'tabs',
-                    paymentMethodOrder: ['card', 'paypal', 'klarna']
+                    layout: {
+                        type: 'tabs',
+                        defaultCollapsed: false
+                    },
+                    paymentMethodOrder: ['paypal', 'klarna', 'card'],
+                    wallets: {
+                        applePay: 'auto',
+                        googlePay: 'auto'
+                    }
                 });
                 
                 paymentElement.mount('#payment-element');
@@ -2371,7 +2377,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     </div>
 
                     <div class="checkout-features-title">
-                        Basierend auf <span id="checkoutDogName2">deinem Hund</span>'s Profil haben wir diese Features hinzugefügt:
+                        20+ Übungen um alles abzutrainieren:
                     </div>
 
                     <div class="checkout-features">
