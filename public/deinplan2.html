@@ -1,0 +1,2444 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WauWerk - Dein Trainingsplan ist fertig</title>
+    <link rel="icon" type="image/png" href="favconHund.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --text-light: #999999;
+            --background: #FFFFFF;
+            --white: #FFFFFF;
+            --border-light: #E8E4DF;
+            --light-brown: #D4B996;
+            --warm-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --accent-brown: #D4B996;
+            --accent-red: #E8A598;
+            --accent-green: #A8C5A0;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .header {
+            background: var(--white);
+            padding: 16px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-image {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .timer-bar {
+            background: var(--dark-brown);
+            color: var(--white);
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .timer-bar span {
+            font-weight: 700;
+            color: #F5E6D3;
+        }
+
+        .hero-section {
+            background: linear-gradient(180deg, #F5EDE3 0%, #FFFFFF 100%);
+            padding: 30px 20px 40px;
+        }
+
+        .comparison-container {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            position: relative;
+        }
+
+        .comparison-side {
+            flex: 1;
+            text-align: center;
+        }
+
+        .comparison-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .badge-now {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+        }
+
+        .badge-goal {
+            background: var(--warm-brown);
+            color: var(--white);
+        }
+
+        .comparison-image {
+            width: 100%;
+            height: 320px;
+            background: var(--border-light);
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-now {
+            background: linear-gradient(135deg, #F0DED0 0%, #F5E8DD 100%);
+        }
+
+        .image-goal {
+            background: linear-gradient(135deg, #E8DCCC 0%, #F0E6DA 100%);
+        }
+
+        .comparison-arrows {
+            position: absolute;
+            left: 50%;
+            top: 45%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 26px;
+            z-index: 10;
+        }
+
+        .comparison-arrows span {
+            color: var(--warm-brown);
+            opacity: 0.4;
+            animation: lightUp 2s ease-in-out infinite;
+        }
+
+        .comparison-arrows span:nth-child(1) { animation-delay: 0s; }
+        .comparison-arrows span:nth-child(2) { animation-delay: 0.15s; }
+        .comparison-arrows span:nth-child(3) { animation-delay: 0.3s; }
+        .comparison-arrows span:nth-child(4) { animation-delay: 0.45s; }
+        .comparison-arrows span:nth-child(5) { animation-delay: 0.6s; }
+        .comparison-arrows span:nth-child(6) { animation-delay: 0.75s; }
+
+        @keyframes lightUp {
+            0%, 100% {
+                opacity: 0.4;
+                text-shadow: none;
+            }
+            50% {
+                opacity: 1;
+                text-shadow: 0 0 15px rgba(196, 165, 118, 0.9), 0 0 25px rgba(196, 165, 118, 0.6);
+            }
+        }
+
+        .stat-box {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            color: var(--text-medium);
+        }
+
+        .stat-bar {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            padding: 4px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            background: var(--white);
+        }
+
+        .stat-bar-segment {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border-light);
+        }
+
+        .stat-bar-segment.active-red {
+            background: var(--accent-red);
+        }
+
+        .stat-bar-segment.active-green {
+            background: #4CAF50;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .main-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .goal-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .goal-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--white);
+            padding: 12px 18px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-light);
+        }
+
+        .goal-badge-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .icon-blue {
+            background: #F5EDE3;
+            color: var(--dark-brown);
+        }
+
+        .icon-orange {
+            background: #F5E6D8;
+            color: var(--warm-brown);
+        }
+
+        .goal-badge-text {
+            text-align: left;
+        }
+
+        .goal-badge-label {
+            font-size: 11px;
+            color: var(--text-light);
+            text-transform: uppercase;
+        }
+
+        .goal-badge-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .motivation-text {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #FAF6F1 0%, var(--white) 100%);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-light);
+        }
+
+        .motivation-text p {
+            font-size: 16px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .motivation-text .problem-highlight {
+            color: var(--warm-brown);
+            font-weight: 600;
+        }
+
+        .motivation-question {
+            font-size: 18px !important;
+            font-weight: 600 !important;
+            color: var(--text-dark) !important;
+            margin-bottom: 0 !important;
+        }
+
+        .pricing-section {
+            margin-bottom: 30px;
+        }
+
+        .pricing-card {
+            background: var(--white);
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            border-color: var(--light-brown);
+        }
+
+        .pricing-card.selected {
+            border-color: var(--light-brown);
+            background: linear-gradient(135deg, #FAF6F1 0%, var(--white) 100%);
+        }
+
+        .pricing-card.popular {
+            padding-top: 35px;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--warm-brown);
+            color: var(--white);
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .pricing-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .pricing-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .pricing-radio {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .pricing-card.selected .pricing-radio {
+            border-color: var(--warm-brown);
+            background: var(--warm-brown);
+        }
+
+        .pricing-card.selected .pricing-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--white);
+            border-radius: 50%;
+        }
+
+        .pricing-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .pricing-right {
+            text-align: center;
+        }
+
+        .pricing-price {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .price-currency {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .price-amount {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1;
+        }
+
+        .price-cents {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .price-period {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .price-old {
+            font-size: 14px;
+            color: var(--accent-red);
+            text-decoration: line-through;
+        }
+
+        .cta-button {
+            width: 100%;
+            background: var(--warm-brown);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+            line-height: 1.1;
+        }
+
+        .cta-button:hover {
+            background: var(--dark-brown);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 115, 85, 0.4);
+        }
+
+        .cta-button.glow {
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(196, 165, 118, 0.4), 0 0 15px rgba(196, 165, 118, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(196, 165, 118, 0.6), 0 0 40px rgba(196, 165, 118, 0.4);
+            }
+        }
+
+        .disclaimer {
+            background: #F9F7F5;
+            border-radius: var(--border-radius);
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .disclaimer a {
+            color: var(--warm-brown);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .disclaimer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Exit-Intent Popup */
+        .exit-popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .exit-popup-overlay.active {
+            display: flex;
+        }
+
+        .exit-popup {
+            background: var(--white);
+            border-radius: 16px;
+            max-width: 400px;
+            width: 100%;
+            padding: 30px 25px;
+            text-align: center;
+            position: relative;
+            animation: popupIn 0.3s ease-out;
+        }
+
+        @keyframes popupIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .exit-popup-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .exit-popup-emoji {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .exit-popup-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .exit-popup-text {
+            font-size: 15px;
+            color: var(--text-medium);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .exit-popup-highlight {
+            color: var(--warm-brown);
+            font-weight: 600;
+        }
+
+        .exit-popup-bonus {
+            background: linear-gradient(135deg, #FFF9F0 0%, #FFF5E6 100%);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .exit-popup-bonus-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-brown);
+            margin-bottom: 8px;
+        }
+
+        .exit-popup-bonus-list {
+            font-size: 13px;
+            color: var(--text-medium);
+            text-align: left;
+        }
+
+        .exit-popup-bonus-list div {
+            padding: 4px 0;
+        }
+
+        .exit-popup-cta {
+            background: var(--warm-brown);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 12px;
+            transition: background 0.2s;
+        }
+
+        .exit-popup-cta:hover {
+            background: var(--dark-brown);
+        }
+
+        .exit-popup-skip {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Checkout Popup */
+        .checkout-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .checkout-overlay.active {
+            display: flex;
+        }
+
+        .checkout-popup {
+            background: var(--white);
+            border-radius: 16px;
+            max-width: 450px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: popupIn 0.3s ease-out;
+        }
+
+        .checkout-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+        }
+
+        .checkout-close {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #f0f0f0;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            color: var(--text-medium);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checkout-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .checkout-body {
+            padding: 20px 25px;
+        }
+
+        /* Plan Card */
+        .checkout-plan-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .checkout-plan-image {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .checkout-plan-info {
+            flex: 1;
+        }
+
+        .checkout-plan-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .checkout-plan-duration {
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+
+        .checkout-plan-price-box {
+            text-align: right;
+        }
+
+        .checkout-plan-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .checkout-plan-access {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        /* Features Section */
+        .checkout-features-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .checkout-features-title span {
+            color: var(--warm-brown);
+        }
+
+        .checkout-feature-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+            border-bottom: 1px dotted var(--border-light);
+        }
+
+        .checkout-feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .checkout-feature-name {
+            color: var(--text-dark);
+        }
+
+        .checkout-feature-prices {
+            display: flex;
+            gap: 8px;
+        }
+
+        .checkout-feature-old {
+            color: var(--text-light);
+            text-decoration: line-through;
+        }
+
+        .checkout-feature-new {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        /* Total */
+        .checkout-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-top: 10px;
+            border-top: 2px solid var(--warm-brown);
+        }
+
+        .checkout-total-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .checkout-total-discount {
+            font-size: 12px;
+            color: #e74c3c;
+            font-weight: 500;
+        }
+
+        .checkout-total-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .checkout-total-saved {
+            font-size: 12px;
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        /* Continue Button (Step 1) */
+        .checkout-continue-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .checkout-continue-btn:hover {
+            background: linear-gradient(135deg, #ee5a5a, #dd4a4a);
+        }
+
+        /* Step 2: Payment */
+        .checkout-step-2 {
+            display: none;
+        }
+
+        .checkout-step-2.active {
+            display: block;
+        }
+
+        .checkout-step-1.hidden {
+            display: none;
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method {
+            flex: 1;
+            padding: 15px 10px;
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        .payment-method:hover {
+            border-color: var(--warm-brown);
+        }
+
+        .payment-method.selected {
+            border-color: var(--warm-brown);
+            background: #faf6f1;
+        }
+
+        .payment-method-icon {
+            height: 24px;
+            margin-bottom: 5px;
+        }
+
+        .payment-method-name {
+            font-size: 12px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        /* Price Summary (Step 2) */
+        .checkout-summary {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .checkout-summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 14px;
+        }
+
+        .checkout-summary-row.total {
+            border-top: 1px solid var(--border-light);
+            margin-top: 8px;
+            padding-top: 12px;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .checkout-summary-old {
+            text-decoration: line-through;
+            color: var(--text-light);
+            margin-right: 8px;
+        }
+
+        .checkout-summary-saved {
+            color: #27ae60;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        /* Stripe Element */
+        .stripe-element-container {
+            padding: 15px;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: var(--white);
+        }
+
+        #payment-element {
+            min-height: 100px;
+        }
+
+        /* Payment Button */
+        .checkout-pay-btn {
+            width: 100%;
+            padding: 16px;
+            background: #3ecf8e;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .checkout-pay-btn:hover {
+            background: #36b97d;
+        }
+
+        .checkout-pay-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .checkout-pay-btn .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Payment Icons */
+        .payment-icons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            opacity: 0.7;
+        }
+
+        .payment-icons img {
+            height: 24px;
+        }
+
+        /* Back Button */
+        .checkout-back {
+            background: none;
+            border: none;
+            color: var(--text-medium);
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 15px;
+            text-decoration: underline;
+        }
+
+        /* Error Message */
+        .checkout-error {
+            background: #fee;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .checkout-error.visible {
+            display: block;
+        }
+
+        .guarantee {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--text-medium);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .payment-logos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .payment-logos img {
+            height: 28px;
+            width: auto;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+            border-radius: 6px;
+        }
+
+        .payment-logos img:hover {
+            opacity: 1;
+        }
+
+        .guarantee svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--warm-brown);
+        }
+
+        .testimonials-section {
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: var(--warm-brown);
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-light);
+        }
+
+        .testimonial-image-single {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1875 / 1563;
+            background: var(--border-light);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .testimonial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .testimonial-name {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .testimonial-problem {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .testimonial-problem span {
+            color: var(--warm-brown);
+            font-weight: 600;
+        }
+
+        .testimonial-text {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+        }
+
+        .faq-section {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .faq-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+        }
+
+        .faq-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-question {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .faq-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--warm-brown);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .faq-icon svg {
+            width: 14px;
+            height: 14px;
+            fill: var(--white);
+        }
+
+        .faq-question-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .faq-answer {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            padding-left: 36px;
+        }
+
+        .guarantee-box {
+            background: var(--white);
+            border: 2px solid var(--light-brown);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .benefits-box {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-light);
+        }
+
+        .benefits-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .benefits-list li {
+            padding: 10px 0;
+            font-size: 15px;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .benefits-list li:last-child {
+            border-bottom: none;
+        }
+
+        .trustpilot-slider {
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .trustpilot-track {
+            display: flex;
+            transition: transform 0.4s ease;
+        }
+
+        .trustpilot-review {
+            min-width: 100%;
+            text-align: center;
+            padding: 20px;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-light);
+        }
+
+        .trustpilot-stars {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 12px;
+            justify-content: center;
+        }
+
+        .tp-star {
+            width: 22px;
+            height: 22px;
+            background: #00B67A;
+            color: white;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .trustpilot-text {
+            font-size: 15px;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .trustpilot-name {
+            font-size: 13px;
+            color: var(--text-medium);
+            font-weight: 600;
+        }
+
+        .trustpilot-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .tp-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border-light);
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .tp-dot.active {
+            background: var(--warm-brown);
+        }
+
+        .guarantee-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .guarantee-text {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .guarantee-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--warm-brown);
+        }
+
+        .guarantee-badge svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--warm-brown);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--text-light);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .comparison-container {
+                flex-direction: row;
+                gap: 10px;
+            }
+
+            .comparison-image {
+                height: 200px;
+            }
+
+            .comparison-arrows {
+                display: none;
+            }
+
+            .main-title {
+                font-size: 24px;
+            }
+
+            .goal-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .pricing-header {
+                gap: 12px;
+            }
+
+            .pricing-left {
+                justify-content: center;
+            }
+
+            .pricing-right {
+                text-align: center;
+            }
+
+            .pricing-price {
+                justify-content: center;
+            }
+
+            .stat-box {
+                padding: 10px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .stat-value {
+                font-size: 12px;
+            }
+        }
+    </style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '864109602683515');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ufxcf43805");
+</script>
+<script src="cookie-banner.js" defer></script>
+<script src="https://js.stripe.com/v3/"></script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">Mein WauWerk</span>
+        </div>
+    </header>
+
+    <div class="timer-bar">
+        Preis reduziert für: <span id="timer">10:00</span>
+    </div>
+
+    <section class="hero-section">
+        <div class="comparison-container">
+            <div class="comparison-side">
+                <span class="comparison-badge badge-now">Jetzt</span>
+                <div class="comparison-image image-now">
+                    <img src="Vorher.png" alt="Vorher" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label"><span id="dogName1">Dein Hund</span> – <span id="problemLabel1">Gehorsam</span></div>
+                    <div class="stat-value" id="problemValue1">Niedrig</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-segment active-red"></div>
+                        <div class="stat-bar-segment"></div>
+                        <div class="stat-bar-segment"></div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Trainingslevel</div>
+                    <div class="stat-value">Anfänger</div>
+                </div>
+            </div>
+
+            <div class="comparison-arrows">
+                <span>››</span>
+                <span>››</span>
+                <span>››</span>
+                <span>››</span>
+                <span>››</span>
+                <span>››</span>
+            </div>
+
+            <div class="comparison-side">
+                <span class="comparison-badge badge-goal">Dein Ziel</span>
+                <div class="comparison-image image-goal">
+                    <img src="Nachher.png" alt="Nachher" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label"><span id="dogName2">Dein Hund</span> – <span id="problemLabel2">Gehorsam</span></div>
+                    <div class="stat-value" id="problemValue2">Normal</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-segment active-green"></div>
+                        <div class="stat-bar-segment active-green"></div>
+                        <div class="stat-bar-segment active-green"></div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Trainingslevel</div>
+                    <div class="stat-value">Fortgeschritten</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="title-section">
+            <h1 class="main-title">Dein personalisierter Trainingsplan für <span id="dogName3">deinen Hund</span> ist fertig!</h1>
+            
+            <div class="goal-badges">
+                <div class="goal-badge">
+                    <div class="goal-badge-icon icon-blue">🎯</div>
+                    <div class="goal-badge-text">
+                        <div class="goal-badge-label">Ziel</div>
+                        <div class="goal-badge-value" id="userGoal">Gehorsam verbessern</div>
+                    </div>
+                </div>
+                <div class="goal-badge">
+                    <div class="goal-badge-icon icon-orange">⚠️</div>
+                    <div class="goal-badge-text">
+                        <div class="goal-badge-label">Verhaltensproblem</div>
+                        <div class="goal-badge-value" id="userProblem">Trennungsangst</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="motivation-text">
+            <p>Mit den richtigen Übungen und einem strukturierten Plan lässt sich <span class="problem-highlight" id="problemTextMotivation">das Problem</span> abtrainieren.</p>
+            <p class="motivation-question">Wie schnell möchtest du Ergebnisse sehen?</p>
+        </div>
+
+        <div class="pricing-section">
+            <div class="pricing-card popular selected" data-plan="1month" data-price="19.99">
+                <div class="popular-badge">👍 Am beliebtesten</div>
+                <div class="pricing-header">
+                    <div class="pricing-left">
+                        <div class="pricing-radio"></div>
+                        <span class="pricing-name">1-MONATS-PLAN</span>
+                    </div>
+                    <div class="pricing-right">
+                        <div class="pricing-price">
+                            <span class="price-currency">€</span>
+                            <span class="price-amount">0</span>
+                            <span class="price-cents">,67</span>
+                            <span class="price-period">pro Tag</span>
+                        </div>
+                        <div class="price-old">€1,67</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pricing-card" data-plan="3month" data-price="29.99">
+                <div class="pricing-header">
+                    <div class="pricing-left">
+                        <div class="pricing-radio"></div>
+                        <span class="pricing-name">3-MONATS-PLAN</span>
+                    </div>
+                    <div class="pricing-right">
+                        <div class="pricing-price">
+                            <span class="price-currency">€</span>
+                            <span class="price-amount">0</span>
+                            <span class="price-cents">,36</span>
+                            <span class="price-period">pro Tag</span>
+                        </div>
+                        <div class="price-old">€0,89</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pricing-card" data-plan="6month" data-price="39.99">
+                <div class="pricing-header">
+                    <div class="pricing-left">
+                        <div class="pricing-radio"></div>
+                        <span class="pricing-name">6-MONATS-PLAN</span>
+                    </div>
+                    <div class="pricing-right">
+                        <div class="pricing-price">
+                            <span class="price-currency">€</span>
+                            <span class="price-amount">0</span>
+                            <span class="price-cents">,27</span>
+                            <span class="price-period">pro Tag</span>
+                        </div>
+                        <div class="price-old">€0,67</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            ✓ Einmalzahlung • Kein Abo • 30 Tage Geld-zurück-Garantie • <a href="agb.html">AGB</a>
+        </div>
+
+        <button class="cta-button glow" onclick="getMyPlan()">Jetzt Plan sichern</button>
+
+        <div class="payment-logos">
+            <img src="sepa-logo.png" alt="SEPA">
+            <img src="paypal-logo.png" alt="PayPal">
+            <img src="visa-logo.png" alt="Visa">
+            <img src="klarna-logo.png" alt="Klarna">
+            <img src="mastercard-logo.png" alt="Mastercard">
+        </div>
+
+        <div class="guarantee">
+            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+            30-Tage Geld-zurück-Garantie
+        </div>
+
+        <div class="testimonials-section">
+            <div class="section-header">
+                <h2 class="section-title">Echte Erfolgsgeschichten</h2>
+                <p class="section-subtitle">mit unserem Trainingsplan</p>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-image-single">
+                    <img src="Testimonial1.png" alt="Bella Vorher/Nachher" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                </div>
+                <div class="testimonial-header">
+                    <div>
+                        <div class="testimonial-name">Bella</div>
+                        <div class="testimonial-problem">Problem: <span>Leinenaggression</span></div>
+                    </div>
+                </div>
+                <p class="testimonial-text">Mein Hund hat früher jeden anderen Hund angebellt. Nach 3 Wochen mit dem Plan können wir endlich entspannt spazieren gehen. Die Übungen sind einfach und effektiv!</p>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-image-single">
+                    <img src="Testimonial2.png" alt="Max Vorher/Nachher" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                </div>
+                <div class="testimonial-header">
+                    <div>
+                        <div class="testimonial-name">Max</div>
+                        <div class="testimonial-problem">Problem: <span>Hyperaktivität</span></div>
+                    </div>
+                </div>
+                <p class="testimonial-text">Max war ständig aufgedreht und konnte nicht stillsitzen. Die täglichen 10-Minuten-Übungen haben wahre Wunder gewirkt. Jetzt ist er viel ausgeglichener!</p>
+            </div>
+        </div>
+
+        <div class="benefits-box">
+            <h2 class="benefits-title">Das bekommst du</h2>
+            <ul class="benefits-list">
+                <li>✓ Schnell den Gehorsam verbessern</li>
+                <li>✓ Überschüssige Energie in den Griff bekommen</li>
+                <li>✓ Neue Trainingstechniken lernen</li>
+                <li>✓ <span id="userProblemBenefit">Verhaltensprobleme</span> lösen</li>
+                <li>✓ Dauerhaft hohes Gehorsamkeitslevel halten</li>
+                <li>✓ 50+ Spiele für <span id="dogName4">deinen Hund</span>s mentale Gesundheit als Bonus</li>
+                <li>✓ Glückliches Zusammenleben mit einem gehorsamen Hund genießen</li>
+            </ul>
+        </div>
+
+        <div class="trustpilot-slider">
+            <div class="trustpilot-track" id="tpTrack">
+                <div class="trustpilot-review">
+                    <div class="trustpilot-stars">
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                    </div>
+                    <p class="trustpilot-text">Sehr gut erklärt und schnell umsetzbar!</p>
+                    <p class="trustpilot-name">Sandra M.</p>
+                </div>
+                <div class="trustpilot-review">
+                    <div class="trustpilot-stars">
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                    </div>
+                    <p class="trustpilot-text">Tolle Beispiele, die wirklich funktionieren.</p>
+                    <p class="trustpilot-name">Thomas K.</p>
+                </div>
+                <div class="trustpilot-review">
+                    <div class="trustpilot-stars">
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span>
+                    </div>
+                    <p class="trustpilot-text">Einfache Anleitungen, schnelle Ergebnisse!</p>
+                    <p class="trustpilot-name">Julia R.</p>
+                </div>
+            </div>
+            <div class="trustpilot-dots">
+                <span class="tp-dot active" data-index="0"></span>
+                <span class="tp-dot" data-index="1"></span>
+                <span class="tp-dot" data-index="2"></span>
+            </div>
+        </div>
+
+        <div class="guarantee-box">
+            <h3 class="guarantee-title">30-Tage Geld-zurück-Garantie</h3>
+            <p class="guarantee-text">Wir sind überzeugt, dass unser Plan funktioniert und du innerhalb von 4 Wochen sichtbare Ergebnisse siehst. Falls nicht, erstatten wir dir den vollen Betrag zurück – ohne Wenn und Aber.</p>
+            <div class="guarantee-badge">
+                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h2 class="faq-title">Häufige Fragen</h2>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Wie bekomme ich meinen Trainingsplan?</span>
+                </div>
+                <p class="faq-answer">Du erhältst deinen personalisierten Trainingsplan sofort per E-Mail nach dem Kauf. Innerhalb weniger Minuten hast du Zugang zu allen Übungen und kannst direkt loslegen!</p>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Wie unterscheidet sich das von anderen Trainings?</span>
+                </div>
+                <p class="faq-answer">Unser Ansatz basiert auf positiver Verstärkung und ist wissenschaftlich fundiert. Keine Stachelhalsbänder, kein Anschreien - nur Methoden, die wirklich funktionieren und deinem Hund nicht schaden.</p>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Wie viel Zeit brauche ich täglich?</span>
+                </div>
+                <p class="faq-answer">Unsere Trainingseinheiten sind kurz und effektiv – nur 10 bis 15 Minuten am Tag. Perfekt für jeden Alltag!</p>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Funktioniert das auch bei meinem Hund?</span>
+                </div>
+                <p class="faq-answer">Ja! Unser Plan ist personalisiert auf Alter, Rasse und Verhaltensprobleme deines Hundes. Falls du keine Verbesserung siehst, bekommst du dein Geld zurück.</p>
+            </div>
+        </div>
+
+        <button class="cta-button glow" onclick="getMyPlan()">Jetzt Plan sichern</button>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Mein WauWerk. Alle Rechte vorbehalten.</p>
+        <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
+    </footer>
+
+    <script>
+        const dogName = localStorage.getItem('dogName') || 'deinen Hund';
+        const dogGoal = localStorage.getItem('dogGoal') || 'obedience';
+        const dogProblem = localStorage.getItem('dogProblem') || '';
+        const hadTraining = localStorage.getItem('hadTraining') || '';
+        const territorialAggression = localStorage.getItem('territorialAggression') || '';
+
+        document.getElementById('dogName1').textContent = dogName;
+        document.getElementById('dogName2').textContent = dogName;
+        document.getElementById('dogName3').textContent = dogName;
+        document.getElementById('dogName4').textContent = dogName;
+
+        const goalMap = {
+            'basics': 'Grundlagen lernen',
+            'obedience': 'Gehorsam verbessern',
+            'commands': 'Kommandos beibringen',
+            'bond': 'Bindung stärken',
+            'behavior': 'Verhalten verbessern',
+            'anxiety': 'Ängste abbauen',
+            'potty': 'Toiletten-Routine',
+            'none': 'Allgemeines Training'
+        };
+        document.getElementById('userGoal').textContent = goalMap[dogGoal] || 'Gehorsam verbessern';
+
+        let problemText = 'Ungehorsam';
+        
+        if (territorialAggression === 'yes') {
+            problemText = 'Territoriale Aggression';
+        } else if (dogProblem) {
+            const problemMap = {
+                'pulling': 'Leinenziehen',
+                'barking': 'Übermäßiges Bellen',
+                'aggression': 'Aggression',
+                'anxiety': 'Trennungsangst',
+                'jumping': 'Anspringen',
+                'recall': 'Kommt nicht zurück',
+                'energy': 'Übermäßige Energie',
+                'destructive': 'Zerstörerisches Verhalten',
+                'soiling': 'In die Wohnung machen'
+            };
+            problemText = problemMap[dogProblem] || dogProblem;
+        }
+        
+        document.getElementById('userProblem').textContent = problemText;
+        document.getElementById('userProblemBenefit').textContent = problemText;
+        
+        // Problem-Label in Stat-Boxen aktualisieren
+        document.getElementById('problemLabel1').textContent = problemText;
+        document.getElementById('problemLabel2').textContent = problemText;
+        
+        // Dynamische Werte basierend auf Problem-Typ
+        const problemValueMap = {
+            'pulling': { bad: 'Stark', good: 'Kontrolliert' },
+            'barking': { bad: 'Häufig', good: 'Ruhig' },
+            'aggression': { bad: 'Kritisch', good: 'Friedlich' },
+            'anxiety': { bad: 'Stark', good: 'Entspannt' },
+            'jumping': { bad: 'Ständig', good: 'Kontrolliert' },
+            'recall': { bad: 'Ignoriert', good: 'Zuverlässig' },
+            'energy': { bad: 'Übermäßig', good: 'Ausgeglichen' },
+            'destructive': { bad: 'Häufig', good: 'Gestoppt' },
+            'soiling': { bad: 'Regelmäßig', good: 'Stubenrein' }
+        };
+        
+        const defaultValues = { bad: 'Kritisch', good: 'Gelöst' };
+        const values = problemValueMap[dogProblem] || defaultValues;
+        
+        if (territorialAggression === 'yes') {
+            document.getElementById('problemValue1').textContent = 'Kritisch';
+            document.getElementById('problemValue2').textContent = 'Friedlich';
+        } else {
+            document.getElementById('problemValue1').textContent = values.bad;
+            document.getElementById('problemValue2').textContent = values.good;
+        }
+        
+        // Motivation Text aktualisieren
+        document.getElementById('problemTextMotivation').textContent = problemText;
+
+        let timeLeft;
+        let timerExpired = false;
+        
+        function initializeTimer() {
+            const savedStartTime = localStorage.getItem('wauwerk_timerStartTime');
+            const timerDuration = 10 * 60;
+            
+            if (savedStartTime) {
+                const startTime = parseInt(savedStartTime);
+                const currentTime = Date.now();
+                const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+                timeLeft = Math.max(0, timerDuration - elapsedSeconds);
+            } else {
+                timeLeft = timerDuration;
+                localStorage.setItem('wauwerk_timerStartTime', Date.now().toString());
+            }
+        }
+        
+        initializeTimer();
+        
+        function updateTimer() {
+            if (timeLeft <= 0) {
+                timerExpired = true;
+                document.getElementById('timer').textContent = 'ABGELAUFEN';
+                switchToNormalPrices();
+                return;
+            }
+            
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            timeLeft--;
+            setTimeout(updateTimer, 1000);
+        }
+        
+        const pricingCards = document.querySelectorAll('.pricing-card');
+        let selectedPlan = '1month';
+
+        const planDetails = {
+            '1month': { 
+                price: '€17,99', 
+                priceNormal: '€49,99',
+                name: '1-Monats-Plan', 
+                interval: 'monatlich' 
+            },
+            '3month': { 
+                price: '€29,99', 
+                priceNormal: '€79,99',
+                name: '3-Monats-Plan', 
+                interval: 'alle 3 Monate' 
+            },
+            '6month': { 
+                price: '€49,99', 
+                priceNormal: '€119,99',
+                name: '6-Monats-Plan', 
+                interval: 'alle 6 Monate' 
+            }
+        };
+
+        function switchToNormalPrices() {
+            document.querySelectorAll('.price-old').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            const cards = document.querySelectorAll('.pricing-card');
+            
+            cards[0].querySelector('.price-amount').textContent = '1';
+            cards[0].querySelector('.price-cents').textContent = ',67';
+            
+            cards[1].querySelector('.price-amount').textContent = '0';
+            cards[1].querySelector('.price-cents').textContent = ',89';
+            
+            cards[2].querySelector('.price-amount').textContent = '0';
+            cards[2].querySelector('.price-cents').textContent = ',67';
+        }
+        
+        updateTimer();
+
+        function selectPlan(card) {
+            pricingCards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedPlan = card.dataset.plan;
+        }
+
+        pricingCards.forEach(card => {
+            card.addEventListener('click', function() {
+                selectPlan(this);
+            });
+        });
+
+        // Supabase Config
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+        function parseJSON(str) {
+            try {
+                return JSON.parse(str || '[]');
+            } catch(e) {
+                return [];
+            }
+        }
+
+        async function saveToSupabase() {
+            // UTM Parameter aus URL oder localStorage holen
+            const urlParams = new URLSearchParams(window.location.search);
+            const utmParams = {
+                utm_source: urlParams.get('utm_source') || localStorage.getItem('utm_source') || null,
+                utm_medium: urlParams.get('utm_medium') || localStorage.getItem('utm_medium') || null,
+                utm_campaign: urlParams.get('utm_campaign') || localStorage.getItem('utm_campaign') || null,
+                utm_content: urlParams.get('utm_content') || localStorage.getItem('utm_content') || null,
+                utm_term: urlParams.get('utm_term') || localStorage.getItem('utm_term') || null,
+                fbclid: urlParams.get('fbclid') || localStorage.getItem('fbclid') || null,
+                gclid: urlParams.get('gclid') || localStorage.getItem('gclid') || null,
+                ttclid: urlParams.get('ttclid') || localStorage.getItem('ttclid') || null,
+                referrer: localStorage.getItem('referrer') || null,
+                landing_page: localStorage.getItem('landing_page') || null,
+                first_visit: localStorage.getItem('first_visit') || null
+            };
+
+            const answers = {
+                dog_name: localStorage.getItem('dogName'),
+                dog_age: localStorage.getItem('dogAge'),
+                dog_breed: localStorage.getItem('dogBreed'),
+                dog_gender: localStorage.getItem('dogGender'),
+                dog_castration: localStorage.getItem('dogCastration'),
+                dog_goals: parseJSON(localStorage.getItem('dogGoals')),
+                dog_goal: localStorage.getItem('dogGoal'),
+                dog_attention: localStorage.getItem('dogAttention'),
+                dog_crate: localStorage.getItem('dogCrate'),
+                dog_behaviors: parseJSON(localStorage.getItem('dogBehaviors')),
+                dog_problem: localStorage.getItem('dogProblem'),
+                dog_stress_situations: parseJSON(localStorage.getItem('dogStressSituations')),
+                dog_petting: localStorage.getItem('dogPetting'),
+                dog_playing: localStorage.getItem('dogPlaying'),
+                training_time: localStorage.getItem('trainingTime'),
+                dog_traits: parseJSON(localStorage.getItem('dogTraits')),
+                dog_commands: parseJSON(localStorage.getItem('dogCommands')),
+                dog_potty_issues: parseJSON(localStorage.getItem('dogPottyIssues')),
+                dog_feeding: localStorage.getItem('dogFeeding'),
+                dog_obedience_rating: localStorage.getItem('dogObedienceRating'),
+                dog_socialization_rating: localStorage.getItem('dogSocializationRating'),
+                upcoming_event: localStorage.getItem('upcomingEvent'),
+                event_timing: localStorage.getItem('eventTiming'),
+                had_training: localStorage.getItem('hadTraining'),
+                territorial_aggression: localStorage.getItem('territorialAggression'),
+                // UTM Tracking
+                ...utmParams
+            };
+
+            const leadData = {
+                dog_name: localStorage.getItem('dogName'),
+                selected_plan: selectedPlan,
+                price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price,
+                timer_expired: timerExpired,
+                status: 'pending',
+                answers: answers
+            };
+
+            console.log('Sending to Supabase:', leadData);
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(leadData)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Supabase error:', response.status, errorText);
+                    return null;
+                }
+                
+                const data = await response.json();
+                console.log('Supabase response:', data);
+                return data[0]?.id || null;
+            } catch (error) {
+                console.error('Failed to save lead:', error);
+                return null;
+            }
+        }
+
+        async function getMyPlan() {
+            const leadId = await saveToSupabase();
+            
+            const stripeLinksDiscount = {
+                '1month': 'https://buy.stripe.com/4gM3cueqOghd9uAfwz1VK0h',
+                '3month': 'https://buy.stripe.com/6oUfZg82q0ifayE5VZ1VK0i',
+                '6month': 'https://buy.stripe.com/dRm28qciG2qnfSY4RV1VK0j'
+            };
+            
+            const stripeLinksNormal = {
+                '1month': 'https://buy.stripe.com/14A7sKaay3ur6io4RV1VK0k',
+                '3month': 'https://buy.stripe.com/00w8wObeC6GD4agckn1VK0l',
+                '6month': 'https://buy.stripe.com/3cI8wOaay7KH6iofwz1VK0m'
+            };
+            
+            const links = timerExpired ? stripeLinksNormal : stripeLinksDiscount;
+            let url = links[selectedPlan] || links['1month'];
+            
+            // Lead ID an Stripe Link anhängen
+            if (leadId) {
+                url += `?client_reference_id=${leadId}`;
+            }
+            
+            window.location.href = url;
+        }
+
+        let tpCurrentSlide = 0;
+        const tpTrack = document.getElementById('tpTrack');
+        const tpDots = document.querySelectorAll('.tp-dot');
+
+        function goToTpSlide(index) {
+            tpCurrentSlide = index;
+            tpTrack.style.transform = `translateX(-${index * 100}%)`;
+            tpDots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        tpDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                goToTpSlide(parseInt(dot.dataset.index));
+            });
+        });
+
+        setInterval(() => {
+            tpCurrentSlide = (tpCurrentSlide + 1) % 3;
+            goToTpSlide(tpCurrentSlide);
+        }, 4000);
+
+        // Exit-Intent Popup Logic
+        let exitPopupShown = false;
+        
+        // Prüfen ob User von Checkout zurückkommt
+        const fromStripe = localStorage.getItem('wentToStripe') === 'true';
+        
+        if (fromStripe && !sessionStorage.getItem('exitPopupShown')) {
+            // User kam von Stripe zurück ohne zu kaufen - Popup sofort zeigen
+            setTimeout(() => {
+                showExitPopup();
+            }, 500);
+        }
+        
+        // Exit-Intent auf Desktop (Maus verlässt Fenster nach oben)
+        document.addEventListener('mouseout', function(e) {
+            if (e.clientY < 10 && !exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
+                showExitPopup();
+            }
+        });
+        
+        // Back-Button Detection
+        window.addEventListener('pageshow', function(event) {
+            // Wird getriggert wenn User mit Back-Button zurückkommt (auch aus bfcache)
+            if (event.persisted || localStorage.getItem('wentToStripe') === 'true') {
+                if (!exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
+                    setTimeout(() => {
+                        showExitPopup();
+                    }, 300);
+                }
+            }
+        });
+        
+        function showExitPopup() {
+            if (exitPopupShown) return;
+            exitPopupShown = true;
+            sessionStorage.setItem('exitPopupShown', 'true');
+            // Problem-Text im Popup aktualisieren
+            const popupProblemEl = document.getElementById('popupProblem');
+            if (popupProblemEl) {
+                popupProblemEl.textContent = problemText;
+            }
+            document.getElementById('exitPopup').classList.add('active');
+        }
+        
+        function closeExitPopup() {
+            document.getElementById('exitPopup').classList.remove('active');
+            localStorage.removeItem('wentToStripe');
+        }
+
+        // ==================== CHECKOUT POPUP ====================
+        
+        const STRIPE_PUBLIC_KEY = 'pk_live_51PNlogBvwdPgl2mT1jv6EfZ9sSqD0HnAyUhwmCxfvtJZvYf5y7wW9L6zhjbN5oX9onNv4B9w9EhZMFSfNT6dNLvj00FnAG40NR'; // Dein Stripe Public Key
+        
+        let stripe = null;
+        let elements = null;
+        let paymentElement = null;
+        let currentLeadId = null;
+        let clientSecret = null;
+
+        // Preise
+        const checkoutPrices = {
+            '1month': { discount: 17.99, normal: 49.99, oldTotal: 271.94, duration: '1-Monats-Plan' },
+            '3month': { discount: 29.99, normal: 79.99, oldTotal: 301.94, duration: '3-Monats-Plan' },
+            '6month': { discount: 49.99, normal: 119.99, oldTotal: 341.94, duration: '6-Monats-Plan' }
+        };
+
+        async function openCheckoutPopup() {
+            // Erst Lead in Supabase speichern
+            currentLeadId = await saveToSupabase();
+            
+            const priceData = checkoutPrices[selectedPlan] || checkoutPrices['1month'];
+            const price = timerExpired ? priceData.normal : priceData.discount;
+            const oldPrice = priceData.normal;
+            const saved = (priceData.oldTotal - price).toFixed(2);
+            
+            // Popup Daten füllen
+            document.getElementById('checkoutDogName').textContent = dogName;
+            document.getElementById('checkoutDogName2').textContent = dogName;
+            document.getElementById('checkoutDogName3').textContent = dogName;
+            document.getElementById('checkoutPlanDuration').textContent = priceData.duration;
+            document.getElementById('checkoutPlanPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
+            document.getElementById('checkoutTotalPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
+            document.getElementById('checkoutOldPrice').textContent = `€${oldPrice.toFixed(2).replace('.', ',')}`;
+            document.getElementById('checkoutNewPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
+            document.getElementById('checkoutFinalPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
+            document.getElementById('checkoutSaved').textContent = `Du sparst €${saved.replace('.', ',')}`;
+            document.getElementById('checkoutSaved2').textContent = `Du sparst €${saved.replace('.', ',')}`;
+            
+            // Dynamisches Modul basierend auf Problem
+            const moduleMap = {
+                'pulling': '"Leinenführigkeit meistern"',
+                'barking': '"Warum bellt mein Hund?"',
+                'aggression': '"Aggression verstehen & lösen"',
+                'anxiety': '"Trennungsangst bei Hunden"',
+                'jumping': '"Anspringen abtrainieren"',
+                'recall': '"Perfekter Rückruf"',
+                'energy': '"Hyperaktiver Hund"',
+                'destructive': '"Zerstörungswut stoppen"',
+                'soiling': '"Stubenreinheit Training"'
+            };
+            const dogProblemValue = localStorage.getItem('dogProblem') || 'anxiety';
+            document.getElementById('checkoutModule1').textContent = moduleMap[dogProblemValue] || '"Trennungsangst bei Hunden"';
+            
+            // Reset zu Step 1
+            document.getElementById('checkoutStep1').classList.remove('hidden');
+            document.getElementById('checkoutStep2').classList.remove('active');
+            
+            // Popup öffnen
+            document.getElementById('checkoutPopup').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCheckoutPopup() {
+            document.getElementById('checkoutPopup').classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // Für Exit Popup markieren
+            localStorage.setItem('wentToStripe', 'true');
+        }
+
+        async function goToPaymentStep() {
+            // Step 1 verstecken, Step 2 zeigen
+            document.getElementById('checkoutStep1').classList.add('hidden');
+            document.getElementById('checkoutStep2').classList.add('active');
+            
+            // Stripe initialisieren
+            if (!stripe) {
+                stripe = Stripe(STRIPE_PUBLIC_KEY);
+            }
+            
+            // PaymentIntent vom Server holen
+            try {
+                const priceData = checkoutPrices[selectedPlan] || checkoutPrices['1month'];
+                
+                const response = await fetch('/api/wauwerk-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plan: selectedPlan,
+                        timerExpired: timerExpired,
+                        dogName: dogName,
+                        leadId: currentLeadId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showCheckoutError(data.error);
+                    return;
+                }
+                
+                clientSecret = data.clientSecret;
+                
+                // Stripe Elements erstellen
+                elements = stripe.elements({
+                    clientSecret: clientSecret,
+                    appearance: {
+                        theme: 'stripe',
+                        variables: {
+                            colorPrimary: '#C4A576',
+                            colorBackground: '#ffffff',
+                            colorText: '#2C2C2E',
+                            colorDanger: '#e74c3c',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            borderRadius: '8px'
+                        }
+                    },
+                    locale: 'de'
+                });
+                
+                // Payment Element mounten
+                paymentElement = elements.create('payment', {
+                    layout: 'tabs',
+                    paymentMethodOrder: ['card', 'paypal', 'klarna']
+                });
+                
+                paymentElement.mount('#payment-element');
+                
+            } catch (error) {
+                console.error('Checkout Error:', error);
+                showCheckoutError('Verbindungsfehler. Bitte versuche es erneut.');
+            }
+        }
+
+        function goBackToStep1() {
+            document.getElementById('checkoutStep1').classList.remove('hidden');
+            document.getElementById('checkoutStep2').classList.remove('active');
+        }
+
+        async function submitPayment() {
+            const payBtn = document.getElementById('checkoutPayBtn');
+            payBtn.disabled = true;
+            payBtn.innerHTML = '<span class="spinner"></span> Wird verarbeitet...';
+            
+            hideCheckoutError();
+            
+            try {
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: window.location.origin + '/danke.html?lead_id=' + currentLeadId
+                    }
+                });
+                
+                if (error) {
+                    showCheckoutError(error.message);
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '🔒 Jetzt bezahlen';
+                }
+                // Bei Erfolg wird automatisch weitergeleitet
+                
+            } catch (err) {
+                showCheckoutError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
+                payBtn.disabled = false;
+                payBtn.innerHTML = '🔒 Jetzt bezahlen';
+            }
+        }
+
+        function showCheckoutError(message) {
+            const errorEl = document.getElementById('checkoutError');
+            errorEl.textContent = message;
+            errorEl.classList.add('visible');
+        }
+
+        function hideCheckoutError() {
+            document.getElementById('checkoutError').classList.remove('visible');
+        }
+
+        // getMyPlan überschreiben um Checkout Popup zu öffnen
+        async function getMyPlan() {
+            openCheckoutPopup();
+        }
+    </script>
+<!-- Checkout Popup -->
+    <div class="checkout-overlay" id="checkoutPopup">
+        <div class="checkout-popup">
+            <div class="checkout-header">
+                <button class="checkout-close" onclick="closeCheckoutPopup()">×</button>
+                <h2 class="checkout-title">Dein Plan für <span id="checkoutDogName">deinen Hund</span></h2>
+            </div>
+            
+            <div class="checkout-body">
+                <!-- Step 1: Übersicht -->
+                <div class="checkout-step-1" id="checkoutStep1">
+                    <div class="checkout-plan-card">
+                        <div class="checkout-plan-image">🐕</div>
+                        <div class="checkout-plan-info">
+                            <div class="checkout-plan-name">Personalisierter Trainingsplan</div>
+                            <div class="checkout-plan-duration" id="checkoutPlanDuration">1-Monats-Plan</div>
+                        </div>
+                        <div class="checkout-plan-price-box">
+                            <div class="checkout-plan-price" id="checkoutPlanPrice">€17,99</div>
+                            <div class="checkout-plan-access">Voller Zugang</div>
+                        </div>
+                    </div>
+
+                    <div class="checkout-features-title">
+                        Basierend auf <span id="checkoutDogName2">deinem Hund</span>'s Profil haben wir diese Features hinzugefügt:
+                    </div>
+
+                    <div class="checkout-features">
+                        <div class="checkout-feature-item">
+                            <span class="checkout-feature-name">Persönlicher Trainer-Support</span>
+                            <span class="checkout-feature-prices">
+                                <span class="checkout-feature-old">€129,99</span>
+                                <span class="checkout-feature-new">€0</span>
+                            </span>
+                        </div>
+                        <div class="checkout-feature-item">
+                            <span class="checkout-feature-name">Spezialmodul: "50+ HundeSpiele"</span>
+                            <span class="checkout-feature-prices">
+                                <span class="checkout-feature-old">€9,99</span>
+                                <span class="checkout-feature-new">€0</span>
+                            </span>
+                        </div>
+                        <div class="checkout-feature-item">
+                            <span class="checkout-feature-name" id="checkoutModule1">"Trennungsangst bei Hunden"</span>
+                            <span class="checkout-feature-prices">
+                                <span class="checkout-feature-old">€24,99</span>
+                                <span class="checkout-feature-new">€0</span>
+                            </span>
+                        </div>
+                        <div class="checkout-feature-item">
+                            <span class="checkout-feature-name">"Warum bellt mein Hund?"</span>
+                            <span class="checkout-feature-prices">
+                                <span class="checkout-feature-old">€16,99</span>
+                                <span class="checkout-feature-new">€0</span>
+                            </span>
+                        </div>
+                        <div class="checkout-feature-item">
+                            <span class="checkout-feature-name">"Hyperaktiver Hund"</span>
+                            <span class="checkout-feature-prices">
+                                <span class="checkout-feature-old">€39,99</span>
+                                <span class="checkout-feature-new">€0</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="checkout-total">
+                        <div>
+                            <div class="checkout-total-label">Gesamt</div>
+                            <div class="checkout-total-discount">Einführungsrabatt</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="checkout-total-price" id="checkoutTotalPrice">€17,99</div>
+                            <div class="checkout-total-saved" id="checkoutSaved">Du sparst €251,99</div>
+                        </div>
+                    </div>
+
+                    <button class="checkout-continue-btn" onclick="goToPaymentStep()">
+                        WEITER
+                    </button>
+                </div>
+
+                <!-- Step 2: Zahlung -->
+                <div class="checkout-step-2" id="checkoutStep2">
+                    <h3 style="text-align: center; margin-bottom: 20px; font-size: 18px;">Zahlungsmethode wählen</h3>
+                    
+                    <div class="checkout-summary">
+                        <div class="checkout-summary-row">
+                            <span>Trainingsplan für <span id="checkoutDogName3">Hund</span></span>
+                            <span>
+                                <span class="checkout-summary-old" id="checkoutOldPrice">€49,99</span>
+                                <span id="checkoutNewPrice">€17,99</span>
+                            </span>
+                        </div>
+                        <div class="checkout-summary-row">
+                            <span>Bonus-Module</span>
+                            <span>
+                                <span class="checkout-summary-old">€221,95</span>
+                                <span>€0</span>
+                            </span>
+                        </div>
+                        <div class="checkout-summary-row total">
+                            <span>Gesamt</span>
+                            <span id="checkoutFinalPrice">€17,99</span>
+                        </div>
+                        <div class="checkout-summary-saved" id="checkoutSaved2">Du sparst €253,95</div>
+                    </div>
+
+                    <div class="checkout-error" id="checkoutError"></div>
+
+                    <div class="stripe-element-container">
+                        <div id="payment-element"></div>
+                    </div>
+
+                    <button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">
+                        🔒 Jetzt bezahlen
+                    </button>
+
+                    <div class="payment-icons">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Klarna_logo.svg" alt="Klarna">
+                    </div>
+
+                    <button class="checkout-back" onclick="goBackToStep1()">← Zurück zur Übersicht</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exit-Intent Popup -->
+    <div class="exit-popup-overlay" id="exitPopup">
+        <div class="exit-popup">
+            <button class="exit-popup-close" onclick="closeExitPopup()">×</button>
+            <div class="exit-popup-emoji">🐕</div>
+            <h3 class="exit-popup-title">Warte kurz!</h3>
+            <p class="exit-popup-text">
+                Mit unserem Plan trainierst du <span class="exit-popup-highlight" id="popupProblem">das Problem</span> gezielt ab – Schritt für Schritt, ohne Überforderung.
+            </p>
+            <div class="exit-popup-bonus">
+                <div class="exit-popup-bonus-title">🎁 Das bekommst du zusätzlich:</div>
+                <div class="exit-popup-bonus-list">
+                    <div>✓ <strong>6 Bonus-Übungen</strong> für schnellere Erfolge</div>
+                    <div>✓ <strong>30 Tage Geld-zurück-Garantie</strong> – kein Risiko</div>
+                    <div>✓ <strong>Persönlicher Support</strong> bei Fragen</div>
+                    <div>✓ <strong>Sofortiger Zugang</strong> zum kompletten Plan</div>
+                </div>
+            </div>
+            <button class="exit-popup-cta" onclick="closeExitPopup(); document.querySelector('.cta-button').click();">
+                Jetzt Plan sichern 🚀
+            </button>
+            <button class="exit-popup-skip" onclick="closeExitPopup()">
+                Nein danke, ich überlege noch
+            </button>
+        </div>
+    </div>
+
+</body>
+</html>
