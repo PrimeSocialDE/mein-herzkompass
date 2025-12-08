@@ -826,6 +826,143 @@
             font-size: 14px;
         }
 
+        /* Email Step */
+        .checkout-step-email {
+            text-align: center;
+        }
+
+        .checkout-step-email.hidden {
+            display: none;
+        }
+
+        .checkout-email-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .checkout-email-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .checkout-email-subtitle {
+            font-size: 14px;
+            color: var(--text-medium);
+            margin-bottom: 20px;
+        }
+
+        .checkout-email-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .checkout-email-input:focus {
+            outline: none;
+            border-color: var(--warm-brown);
+        }
+
+        .checkout-email-input::placeholder {
+            color: #aaa;
+        }
+
+        .checkout-email-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .checkout-email-privacy {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        /* Trust Badge */
+        .checkout-trust-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 10px;
+            background: #f8f8f8;
+            border-radius: 8px;
+        }
+
+        .trust-stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .trust-star {
+            width: 20px;
+            height: 20px;
+            background: #00b67a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .trust-star svg {
+            width: 12px;
+            height: 12px;
+            fill: white;
+        }
+
+        .trust-text {
+            font-size: 12px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .trust-text strong {
+            color: #00b67a;
+        }
+
+        /* Guarantee Badge */
+        .checkout-guarantee {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 1px solid #86efac;
+            border-radius: 10px;
+            margin-bottom: 14px;
+        }
+
+        .checkout-guarantee-icon {
+            font-size: 24px;
+        }
+
+        .checkout-guarantee-text {
+            flex: 1;
+        }
+
+        .checkout-guarantee-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #166534;
+        }
+
+        .checkout-guarantee-subtitle {
+            font-size: 11px;
+            color: #15803d;
+        }
+
         /* Total */
         .checkout-total {
             display: flex;
@@ -2024,6 +2161,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 event_timing: localStorage.getItem('eventTiming'),
                 had_training: localStorage.getItem('hadTraining'),
                 territorial_aggression: localStorage.getItem('territorialAggression'),
+                // E-Mail aus Checkout
+                email: localStorage.getItem('userEmail') || null,
                 // UTM Tracking
                 ...utmParams
             };
@@ -2034,7 +2173,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price,
                 timer_expired: timerExpired,
                 status: 'pending',
-                answers: answers
+                answers: answers,
+                email: localStorage.getItem('userEmail') || null
             };
 
             console.log('Sending to Supabase:', leadData);
@@ -2147,6 +2287,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         let paymentElement = null;
         let currentLeadId = null;
         let clientSecret = null;
+        let userEmail = null;
 
         // Preise
         const checkoutPrices = {
@@ -2154,6 +2295,26 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             '3month': { discount: 29.99, normal: 79.99, oldTotal: 301.94, duration: '3-Monats-Plan' },
             '6month': { discount: 49.99, normal: 119.99, oldTotal: 341.94, duration: '6-Monats-Plan' }
         };
+
+        function submitEmail() {
+            const emailInput = document.getElementById('checkoutEmailInput');
+            const email = emailInput.value.trim();
+            
+            if (!email || !email.includes('@') || !email.includes('.')) {
+                emailInput.style.borderColor = '#e74c3c';
+                emailInput.placeholder = 'Bitte gültige E-Mail eingeben';
+                return;
+            }
+            
+            userEmail = email;
+            
+            // E-Mail in localStorage speichern (wird bei saveToSupabase mit in answers gespeichert)
+            localStorage.setItem('userEmail', email);
+            
+            // Zum Step 1 wechseln
+            document.getElementById('checkoutStepEmail').classList.add('hidden');
+            document.getElementById('checkoutStep1').classList.remove('hidden');
+        }
 
         async function openCheckoutPopup() {
             // Erst Lead in Supabase speichern
@@ -2191,9 +2352,12 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             const dogProblemValue = localStorage.getItem('dogProblem') || 'anxiety';
             document.getElementById('checkoutModule1').textContent = moduleMap[dogProblemValue] || '"Trennungsangst bei Hunden"';
             
-            // Reset zu Step 1
-            document.getElementById('checkoutStep1').classList.remove('hidden');
+            // Reset - E-Mail Step zuerst zeigen
+            document.getElementById('checkoutStepEmail').classList.remove('hidden');
+            document.getElementById('checkoutStep1').classList.add('hidden');
             document.getElementById('checkoutStep2').classList.remove('active');
+            document.getElementById('checkoutEmailInput').value = '';
+            document.getElementById('checkoutEmailInput').style.borderColor = '';
             
             // Popup öffnen
             document.getElementById('checkoutPopup').classList.add('active');
@@ -2342,8 +2506,32 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
             
             <div class="checkout-body">
+                <!-- Step 0: E-Mail -->
+                <div class="checkout-step-email" id="checkoutStepEmail">
+                    <div class="checkout-email-icon">📧</div>
+                    <div class="checkout-email-title">Wohin sollen wir deinen Plan schicken?</div>
+                    <div class="checkout-email-subtitle">Gib deine E-Mail ein, um deinen personalisierten Trainingsplan zu erhalten.</div>
+                    
+                    <input type="email" class="checkout-email-input" id="checkoutEmailInput" placeholder="deine@email.de" required onkeypress="if(event.key==='Enter')submitEmail()">
+                    
+                    <button class="checkout-email-btn" onclick="submitEmail()">Weiter zum Plan →</button>
+                    
+                    <div class="checkout-trust-badge">
+                        <div class="trust-stars">
+                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
+                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
+                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
+                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
+                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
+                        </div>
+                        <span class="trust-text"><strong>4.8/5</strong> von 2.847 Hundebesitzern</span>
+                    </div>
+                    
+                    <div class="checkout-email-privacy">🔒 Deine Daten sind sicher. Kein Spam, versprochen.</div>
+                </div>
+
                 <!-- Step 1: Übersicht -->
-                <div class="checkout-step-1" id="checkoutStep1">
+                <div class="checkout-step-1 hidden" id="checkoutStep1">
                     <div class="checkout-plan-card">
                         <div class="checkout-plan-image">🐕</div>
                         <div class="checkout-plan-info">
@@ -2406,6 +2594,14 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div style="text-align: right;">
                             <div class="checkout-total-price" id="checkoutTotalPrice">€17,99</div>
                             <div class="checkout-total-saved" id="checkoutSaved">Du sparst €251,99</div>
+                        </div>
+                    </div>
+
+                    <div class="checkout-guarantee">
+                        <div class="checkout-guarantee-icon">🛡️</div>
+                        <div class="checkout-guarantee-text">
+                            <div class="checkout-guarantee-title">30 Tage Geld-zurück-Garantie</div>
+                            <div class="checkout-guarantee-subtitle">Kein Risiko – funktioniert es nicht, bekommst du dein Geld zurück.</div>
                         </div>
                     </div>
 
