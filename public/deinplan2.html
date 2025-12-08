@@ -2161,6 +2161,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 event_timing: localStorage.getItem('eventTiming'),
                 had_training: localStorage.getItem('hadTraining'),
                 territorial_aggression: localStorage.getItem('territorialAggression'),
+                // E-Mail aus Checkout
+                email: localStorage.getItem('userEmail') || null,
                 // UTM Tracking
                 ...utmParams
             };
@@ -2171,7 +2173,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price,
                 timer_expired: timerExpired,
                 status: 'pending',
-                answers: answers
+                answers: answers,
+                email: localStorage.getItem('userEmail') || null
             };
 
             console.log('Sending to Supabase:', leadData);
@@ -2305,19 +2308,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             
             userEmail = email;
             
-            // E-Mail in Supabase speichern (Lead updaten)
-            if (currentLeadId) {
-                fetch('https://ycjjgbpqwcbljrilalef.supabase.co/rest/v1/wauwerk_leads?id=eq.' + currentLeadId, {
-                    method: 'PATCH',
-                    headers: {
-                        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljamdpYnBxd2NibGpyaWxhbGVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE0MjE4MTQsImV4cCI6MjA0Njk5NzgxNH0.0x1C8FaLSvgfwEJSXpYHI9xLFobgBuCYoeP3P3twpfI',
-                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljamdpYnBxd2NibGpyaWxhbGVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE0MjE4MTQsImV4cCI6MjA0Njk5NzgxNH0.0x1C8FaLSvgfwEJSXpYHI9xLFobgBuCYoeP3P3twpfI',
-                        'Content-Type': 'application/json',
-                        'Prefer': 'return=minimal'
-                    },
-                    body: JSON.stringify({ email: email })
-                });
-            }
+            // E-Mail in localStorage speichern (wird bei saveToSupabase mit in answers gespeichert)
+            localStorage.setItem('userEmail', email);
             
             // Zum Step 1 wechseln
             document.getElementById('checkoutStepEmail').classList.add('hidden');
@@ -2524,33 +2516,11 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     
                     <button class="checkout-email-btn" onclick="submitEmail()">Weiter zum Plan →</button>
                     
-                    <div class="checkout-trust-badge">
-                        <div class="trust-stars">
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                        </div>
-                        <span class="trust-text"><strong>4.8/5</strong> von 2.847 Hundebesitzern</span>
-                    </div>
-                    
                     <div class="checkout-email-privacy">🔒 Deine Daten sind sicher. Kein Spam, versprochen.</div>
                 </div>
 
                 <!-- Step 1: Übersicht -->
                 <div class="checkout-step-1 hidden" id="checkoutStep1">
-                    <div class="checkout-trust-badge">
-                        <div class="trust-stars">
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                        </div>
-                        <span class="trust-text"><strong>4.8/5</strong> von 2.847 Hundebesitzern</span>
-                    </div>
-
                     <div class="checkout-plan-card">
                         <div class="checkout-plan-image">🐕</div>
                         <div class="checkout-plan-info">
