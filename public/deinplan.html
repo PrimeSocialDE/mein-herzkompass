@@ -2066,32 +2066,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             }
         }
 
-        async function getMyPlan() {
-            const leadId = await saveToSupabase();
-            
-            const stripeLinksDiscount = {
-                '1month': 'https://buy.stripe.com/4gM3cueqOghd9uAfwz1VK0h',
-                '3month': 'https://buy.stripe.com/6oUfZg82q0ifayE5VZ1VK0i',
-                '6month': 'https://buy.stripe.com/dRm28qciG2qnfSY4RV1VK0j'
-            };
-            
-            const stripeLinksNormal = {
-                '1month': 'https://buy.stripe.com/14A7sKaay3ur6io4RV1VK0k',
-                '3month': 'https://buy.stripe.com/00w8wObeC6GD4agckn1VK0l',
-                '6month': 'https://buy.stripe.com/3cI8wOaay7KH6iofwz1VK0m'
-            };
-            
-            const links = timerExpired ? stripeLinksNormal : stripeLinksDiscount;
-            let url = links[selectedPlan] || links['1month'];
-            
-            // Lead ID an Stripe Link anhängen
-            if (leadId) {
-                url += `?client_reference_id=${leadId}`;
-            }
-            
-            window.location.href = url;
-        }
-
         let tpCurrentSlide = 0;
         const tpTrack = document.getElementById('tpTrack');
         const tpDots = document.querySelectorAll('.tp-dot');
