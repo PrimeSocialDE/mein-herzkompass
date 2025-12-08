@@ -664,7 +664,7 @@
         }
 
         .checkout-header {
-            padding: 24px 25px 20px;
+            padding: 18px 20px 14px;
             border-bottom: 1px solid var(--border-light);
             position: relative;
             background: linear-gradient(180deg, #FAF7F4 0%, var(--white) 100%);
@@ -673,14 +673,14 @@
 
         .checkout-close {
             position: absolute;
-            top: 18px;
-            left: 18px;
+            top: 14px;
+            left: 14px;
             background: var(--white);
             border: 1px solid var(--border-light);
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            font-size: 20px;
+            font-size: 18px;
             color: var(--text-medium);
             cursor: pointer;
             display: flex;
@@ -697,7 +697,7 @@
 
         .checkout-title {
             text-align: center;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--text-dark);
         }
@@ -707,30 +707,30 @@
         }
 
         .checkout-body {
-            padding: 24px 25px 28px;
+            padding: 16px 20px 20px;
         }
 
         /* Plan Card */
         .checkout-plan-card {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 18px;
+            gap: 12px;
+            padding: 14px;
             background: linear-gradient(135deg, #FAF7F4 0%, #F5F0EB 100%);
-            border-radius: 14px;
-            margin-bottom: 24px;
+            border-radius: 12px;
+            margin-bottom: 16px;
             border: 1px solid var(--border-light);
         }
 
         .checkout-plan-image {
-            width: 65px;
-            height: 65px;
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 26px;
             box-shadow: 0 4px 12px rgba(196, 165, 118, 0.3);
         }
 
@@ -739,14 +739,14 @@
         }
 
         .checkout-plan-name {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 2px;
         }
 
         .checkout-plan-duration {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--warm-brown);
             font-weight: 500;
         }
@@ -756,24 +756,24 @@
         }
 
         .checkout-plan-price {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
             color: var(--text-dark);
         }
 
         .checkout-plan-access {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-light);
             font-weight: 500;
         }
 
         /* Features Section */
         .checkout-features-title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-dark);
             text-align: center;
-            margin-bottom: 18px;
+            margin-bottom: 12px;
             line-height: 1.4;
         }
 
@@ -783,17 +783,17 @@
 
         .checkout-features {
             background: #FAFAFA;
-            border-radius: 12px;
-            padding: 5px 15px;
-            margin-bottom: 20px;
+            border-radius: 10px;
+            padding: 4px 12px;
+            margin-bottom: 14px;
         }
 
         .checkout-feature-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
-            font-size: 14px;
+            padding: 8px 0;
+            font-size: 13px;
             border-bottom: 1px solid var(--border-light);
         }
 
@@ -808,20 +808,20 @@
 
         .checkout-feature-prices {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
 
         .checkout-feature-old {
             color: var(--text-light);
             text-decoration: line-through;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .checkout-feature-new {
             color: #27ae60;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         /* Total */
@@ -829,32 +829,32 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px 0;
+            padding: 14px 0;
             margin-top: 5px;
             border-top: 2px solid var(--warm-brown);
         }
 
         .checkout-total-label {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text-dark);
         }
 
         .checkout-total-discount {
-            font-size: 13px;
+            font-size: 12px;
             color: #e74c3c;
             font-weight: 600;
             margin-top: 2px;
         }
 
         .checkout-total-price {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 800;
             color: var(--text-dark);
         }
 
         .checkout-total-saved {
-            font-size: 13px;
+            font-size: 12px;
             color: #27ae60;
             font-weight: 700;
         }
@@ -2228,8 +2228,12 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             document.getElementById('checkoutPopup').classList.remove('active');
             document.body.style.overflow = '';
             
-            // Für Exit Popup markieren
-            localStorage.setItem('wentToStripe', 'true');
+            // Exit Popup zeigen wenn Checkout geschlossen wird
+            if (!sessionStorage.getItem('exitPopupShown')) {
+                setTimeout(() => {
+                    showExitPopup();
+                }, 300);
+            }
         }
 
         async function goToPaymentStep() {
