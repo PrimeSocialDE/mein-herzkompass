@@ -630,6 +630,462 @@
             text-decoration: underline;
         }
 
+        /* Checkout Popup */
+        .checkout-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(44, 44, 46, 0.85);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            overflow-y: auto;
+            backdrop-filter: blur(5px);
+        }
+
+        .checkout-overlay.active {
+            display: flex;
+        }
+
+        .checkout-popup {
+            background: var(--white);
+            border-radius: 20px;
+            max-width: 450px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: popupIn 0.3s ease-out;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .checkout-header {
+            padding: 24px 25px 20px;
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+            background: linear-gradient(180deg, #FAF7F4 0%, var(--white) 100%);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .checkout-close {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 20px;
+            color: var(--text-medium);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .checkout-close:hover {
+            background: #f5f5f5;
+            transform: scale(1.05);
+        }
+
+        .checkout-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .checkout-title span {
+            color: var(--warm-brown);
+        }
+
+        .checkout-body {
+            padding: 24px 25px 28px;
+        }
+
+        /* Plan Card */
+        .checkout-plan-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px;
+            background: linear-gradient(135deg, #FAF7F4 0%, #F5F0EB 100%);
+            border-radius: 14px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-light);
+        }
+
+        .checkout-plan-image {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 4px 12px rgba(196, 165, 118, 0.3);
+        }
+
+        .checkout-plan-info {
+            flex: 1;
+        }
+
+        .checkout-plan-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .checkout-plan-duration {
+            font-size: 14px;
+            color: var(--warm-brown);
+            font-weight: 500;
+        }
+
+        .checkout-plan-price-box {
+            text-align: right;
+        }
+
+        .checkout-plan-price {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .checkout-plan-access {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* Features Section */
+        .checkout-features-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 18px;
+            line-height: 1.4;
+        }
+
+        .checkout-features-title span {
+            color: var(--warm-brown);
+        }
+
+        .checkout-features {
+            background: #FAFAFA;
+            border-radius: 12px;
+            padding: 5px 15px;
+            margin-bottom: 20px;
+        }
+
+        .checkout-feature-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .checkout-feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .checkout-feature-name {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .checkout-feature-prices {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .checkout-feature-old {
+            color: var(--text-light);
+            text-decoration: line-through;
+            font-size: 13px;
+        }
+
+        .checkout-feature-new {
+            color: #27ae60;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        /* Total */
+        .checkout-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+            margin-top: 5px;
+            border-top: 2px solid var(--warm-brown);
+        }
+
+        .checkout-total-label {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .checkout-total-discount {
+            font-size: 13px;
+            color: #e74c3c;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .checkout-total-price {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .checkout-total-saved {
+            font-size: 13px;
+            color: #27ae60;
+            font-weight: 700;
+        }
+
+        /* Continue Button (Step 1) */
+        .checkout-continue-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(196, 165, 118, 0.4);
+        }
+
+        .checkout-continue-btn:hover {
+            background: linear-gradient(135deg, var(--dark-brown), #6B5A45);
+            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5);
+        }
+
+        /* Step 2: Payment */
+        .checkout-step-2 {
+            display: none;
+        }
+
+        .checkout-step-2.active {
+            display: block;
+        }
+
+        .checkout-step-1.hidden {
+            display: none;
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method {
+            flex: 1;
+            padding: 15px 10px;
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        .payment-method:hover {
+            border-color: var(--warm-brown);
+        }
+
+        .payment-method.selected {
+            border-color: var(--warm-brown);
+            background: #faf6f1;
+        }
+
+        .payment-method-icon {
+            height: 24px;
+            margin-bottom: 5px;
+        }
+
+        .payment-method-name {
+            font-size: 12px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        /* Price Summary (Step 2) */
+        .checkout-summary {
+            background: linear-gradient(135deg, #FAF7F4 0%, #F5F0EB 100%);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-light);
+        }
+
+        .checkout-summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 15px;
+            color: var(--text-dark);
+        }
+
+        .checkout-summary-row.total {
+            border-top: 2px solid var(--warm-brown);
+            margin-top: 10px;
+            padding-top: 14px;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .checkout-summary-old {
+            text-decoration: line-through;
+            color: var(--text-light);
+            margin-right: 10px;
+        }
+
+        .checkout-summary-saved {
+            color: #27ae60;
+            font-size: 13px;
+            text-align: right;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        /* Stripe Element */
+        .stripe-element-container {
+            padding: 18px;
+            border: 2px solid var(--border-light);
+            border-radius: 14px;
+            margin-bottom: 18px;
+            background: var(--white);
+            transition: border-color 0.2s;
+        }
+
+        .stripe-element-container:focus-within {
+            border-color: var(--warm-brown);
+        }
+
+        #payment-element {
+            min-height: 100px;
+        }
+
+        /* Payment Button */
+        .checkout-pay-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(196, 165, 118, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .checkout-pay-btn:hover {
+            background: linear-gradient(135deg, var(--dark-brown), #6B5A45);
+            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .checkout-pay-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .checkout-pay-btn .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Payment Icons */
+        .payment-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 12px;
+            background: #FAFAFA;
+            border-radius: 10px;
+        }
+
+        .payment-icons img {
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        /* Back Button */
+        .checkout-back {
+            display: block;
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text-medium);
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 18px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .checkout-back:hover {
+            color: var(--warm-brown);
+        }
+
+        /* Error Message */
+        .checkout-error {
+            background: #FEF2F2;
+            color: #DC2626;
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            display: none;
+            border: 1px solid #FECACA;
+            font-weight: 500;
+        }
+
+        .checkout-error.visible {
+            display: block;
+        }
+
         .guarantee {
             display: flex;
             align-items: center;
@@ -1022,6 +1478,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     })(window, document, "clarity", "script", "ufxcf43805");
 </script>
 <script src="cookie-banner.js" defer></script>
+<script src="https://js.stripe.com/v3/"></script>
 </head>
 
 <body>
@@ -1659,22 +2116,15 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         // Exit-Intent Popup Logic
         let exitPopupShown = false;
         
-        // Prüfen ob User von Stripe zurückkommt
-        const wentToStripe = localStorage.getItem('wentToStripe') === 'true';
+        // Prüfen ob User von Checkout zurückkommt
+        const fromStripe = localStorage.getItem('wentToStripe') === 'true';
         
-        if (wentToStripe && !sessionStorage.getItem('exitPopupShown')) {
+        if (fromStripe && !sessionStorage.getItem('exitPopupShown')) {
             // User kam von Stripe zurück ohne zu kaufen - Popup sofort zeigen
             setTimeout(() => {
                 showExitPopup();
             }, 500);
         }
-        
-        // Markieren wenn User zu Stripe geht
-        const originalGetMyPlan = getMyPlan;
-        getMyPlan = async function() {
-            localStorage.setItem('wentToStripe', 'true');
-            await originalGetMyPlan();
-        };
         
         // Exit-Intent auf Desktop (Maus verlässt Fenster nach oben)
         document.addEventListener('mouseout', function(e) {
@@ -1711,8 +2161,330 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             document.getElementById('exitPopup').classList.remove('active');
             localStorage.removeItem('wentToStripe');
         }
+
+        // ==================== CHECKOUT POPUP ====================
+        
+        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy'; // Dein Stripe Public Key
+        
+        let stripe = null;
+        let elements = null;
+        let paymentElement = null;
+        let currentLeadId = null;
+        let clientSecret = null;
+
+        // Preise
+        const checkoutPrices = {
+            '1month': { discount: 17.99, normal: 49.99, oldTotal: 271.94, duration: '1-Monats-Plan' },
+            '3month': { discount: 29.99, normal: 79.99, oldTotal: 301.94, duration: '3-Monats-Plan' },
+            '6month': { discount: 49.99, normal: 119.99, oldTotal: 341.94, duration: '6-Monats-Plan' }
+        };
+
+        async function openCheckoutPopup() {
+            // Erst Lead in Supabase speichern
+            currentLeadId = await saveToSupabase();
+            
+            const priceData = checkoutPrices[selectedPlan] || checkoutPrices['1month'];
+            const price = timerExpired ? priceData.normal : priceData.discount;
+            const oldPrice = priceData.normal;
+            const saved = (priceData.oldTotal - price).toFixed(2);
+            
+            // Popup Daten füllen
+            document.getElementById('checkoutDogName').textContent = dogName;
+            document.getElementById('checkoutDogName2').textContent = dogName;
+            document.getElementById('checkoutDogName3').textContent = dogName;
+            document.getElementById('checkoutPlanDuration').textContent = priceData.duration;
+            document.getElementById('checkoutPlanPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
+            document.getElementById('checkoutTotalPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
+            document.getElementById('checkoutOldPrice').textContent = `€${oldPrice.toFixed(2).replace('.', ',')}`;
+            document.getElementById('checkoutNewPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
+            document.getElementById('checkoutFinalPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
+            document.getElementById('checkoutSaved').textContent = `Du sparst €${saved.replace('.', ',')}`;
+            document.getElementById('checkoutSaved2').textContent = `Du sparst €${saved.replace('.', ',')}`;
+            
+            // Dynamisches Modul basierend auf Problem
+            const moduleMap = {
+                'pulling': '"Leinenführigkeit meistern"',
+                'barking': '"Warum bellt mein Hund?"',
+                'aggression': '"Aggression verstehen & lösen"',
+                'anxiety': '"Trennungsangst bei Hunden"',
+                'jumping': '"Anspringen abtrainieren"',
+                'recall': '"Perfekter Rückruf"',
+                'energy': '"Hyperaktiver Hund"',
+                'destructive': '"Zerstörungswut stoppen"',
+                'soiling': '"Stubenreinheit Training"'
+            };
+            const dogProblemValue = localStorage.getItem('dogProblem') || 'anxiety';
+            document.getElementById('checkoutModule1').textContent = moduleMap[dogProblemValue] || '"Trennungsangst bei Hunden"';
+            
+            // Reset zu Step 1
+            document.getElementById('checkoutStep1').classList.remove('hidden');
+            document.getElementById('checkoutStep2').classList.remove('active');
+            
+            // Popup öffnen
+            document.getElementById('checkoutPopup').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCheckoutPopup() {
+            document.getElementById('checkoutPopup').classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // Für Exit Popup markieren
+            localStorage.setItem('wentToStripe', 'true');
+        }
+
+        async function goToPaymentStep() {
+            // Step 1 verstecken, Step 2 zeigen
+            document.getElementById('checkoutStep1').classList.add('hidden');
+            document.getElementById('checkoutStep2').classList.add('active');
+            
+            // Stripe initialisieren
+            if (!stripe) {
+                stripe = Stripe(STRIPE_PUBLIC_KEY);
+            }
+            
+            // PaymentIntent vom Server holen
+            try {
+                const priceData = checkoutPrices[selectedPlan] || checkoutPrices['1month'];
+                
+                const response = await fetch('/api/wauwerk-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plan: selectedPlan,
+                        timerExpired: timerExpired,
+                        dogName: dogName,
+                        leadId: currentLeadId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showCheckoutError(data.error);
+                    return;
+                }
+                
+                clientSecret = data.clientSecret;
+                
+                // Stripe Elements erstellen
+                elements = stripe.elements({
+                    clientSecret: clientSecret,
+                    appearance: {
+                        theme: 'stripe',
+                        variables: {
+                            colorPrimary: '#C4A576',
+                            colorBackground: '#ffffff',
+                            colorText: '#2C2C2E',
+                            colorDanger: '#e74c3c',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            borderRadius: '8px'
+                        }
+                    },
+                    locale: 'de'
+                });
+                
+                // Payment Element mounten
+                paymentElement = elements.create('payment', {
+                    layout: {
+                        type: 'tabs',
+                        defaultCollapsed: false
+                    },
+                    paymentMethodOrder: ['card', 'paypal', 'klarna'],
+                    wallets: {
+                        applePay: 'auto',
+                        googlePay: 'auto'
+                    }
+                });
+                
+                paymentElement.mount('#payment-element');
+                
+            } catch (error) {
+                console.error('Checkout Error:', error);
+                showCheckoutError('Verbindungsfehler. Bitte versuche es erneut.');
+            }
+        }
+
+        function goBackToStep1() {
+            document.getElementById('checkoutStep1').classList.remove('hidden');
+            document.getElementById('checkoutStep2').classList.remove('active');
+        }
+
+        async function submitPayment() {
+            const payBtn = document.getElementById('checkoutPayBtn');
+            payBtn.disabled = true;
+            payBtn.innerHTML = '<span class="spinner"></span> Wird verarbeitet...';
+            
+            hideCheckoutError();
+            
+            try {
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: window.location.origin + '/danke.html?lead_id=' + currentLeadId
+                    }
+                });
+                
+                if (error) {
+                    showCheckoutError(error.message);
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '🔒 Jetzt bezahlen';
+                }
+                // Bei Erfolg wird automatisch weitergeleitet
+                
+            } catch (err) {
+                showCheckoutError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
+                payBtn.disabled = false;
+                payBtn.innerHTML = '🔒 Jetzt bezahlen';
+            }
+        }
+
+        function showCheckoutError(message) {
+            const errorEl = document.getElementById('checkoutError');
+            errorEl.textContent = message;
+            errorEl.classList.add('visible');
+        }
+
+        function hideCheckoutError() {
+            document.getElementById('checkoutError').classList.remove('visible');
+        }
+
+        // getMyPlan überschreiben um Checkout Popup zu öffnen
+        async function getMyPlan() {
+            openCheckoutPopup();
+        }
     </script>
-<!-- Exit-Intent Popup -->
+<!-- Checkout Popup -->
+    <div class="checkout-overlay" id="checkoutPopup">
+        <div class="checkout-popup">
+            <div class="checkout-header">
+                <button class="checkout-close" onclick="closeCheckoutPopup()">×</button>
+                <h2 class="checkout-title">Dein Plan für <span id="checkoutDogName">deinen Hund</span></h2>
+            </div>
+            
+            <div class="checkout-body">
+                <!-- Step 1: Übersicht -->
+                <div class="checkout-step-1" id="checkoutStep1">
+                    <div class="checkout-plan-card">
+                        <div class="checkout-plan-image">🐕</div>
+                        <div class="checkout-plan-info">
+                            <div class="checkout-plan-name">Personalisierter Trainingsplan</div>
+                            <div class="checkout-plan-duration" id="checkoutPlanDuration">1-Monats-Plan</div>
+                        </div>
+                        <div class="checkout-plan-price-box">
+                            <div class="checkout-plan-price" id="checkoutPlanPrice">€17,99</div>
+                            <div class="checkout-plan-access">Voller Zugang</div>
+                        </div>
+                    </div>
+
+                    <div class="checkout-features-title">
+                        20+ Übungen um alles abzutrainieren:
+                    </div>
+
+                    <div class="checkout-features">
+                        <div class="checkout-feature-item">
+                            <span class="checkout-feature-name">Persönlicher Trainer-Support</span>
+                            <span class="checkout-feature-prices">
+                                <span class="checkout-feature-old">€129,99</span>
+                                <span class="checkout-feature-new">€0</span>
+                            </span>
+                        </div>
+                        <div class="checkout-feature-item">
+                            <span class="checkout-feature-name">Spezialmodul: "50+ HundeSpiele"</span>
+                            <span class="checkout-feature-prices">
+                                <span class="checkout-feature-old">€9,99</span>
+                                <span class="checkout-feature-new">€0</span>
+                            </span>
+                        </div>
+                        <div class="checkout-feature-item">
+                            <span class="checkout-feature-name" id="checkoutModule1">"Trennungsangst bei Hunden"</span>
+                            <span class="checkout-feature-prices">
+                                <span class="checkout-feature-old">€24,99</span>
+                                <span class="checkout-feature-new">€0</span>
+                            </span>
+                        </div>
+                        <div class="checkout-feature-item">
+                            <span class="checkout-feature-name">"Warum bellt mein Hund?"</span>
+                            <span class="checkout-feature-prices">
+                                <span class="checkout-feature-old">€16,99</span>
+                                <span class="checkout-feature-new">€0</span>
+                            </span>
+                        </div>
+                        <div class="checkout-feature-item">
+                            <span class="checkout-feature-name">"Hyperaktiver Hund"</span>
+                            <span class="checkout-feature-prices">
+                                <span class="checkout-feature-old">€39,99</span>
+                                <span class="checkout-feature-new">€0</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="checkout-total">
+                        <div>
+                            <div class="checkout-total-label">Gesamt</div>
+                            <div class="checkout-total-discount">Einführungsrabatt</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="checkout-total-price" id="checkoutTotalPrice">€17,99</div>
+                            <div class="checkout-total-saved" id="checkoutSaved">Du sparst €251,99</div>
+                        </div>
+                    </div>
+
+                    <button class="checkout-continue-btn" onclick="goToPaymentStep()">
+                        WEITER
+                    </button>
+                </div>
+
+                <!-- Step 2: Zahlung -->
+                <div class="checkout-step-2" id="checkoutStep2">
+                    <h3 style="text-align: center; margin-bottom: 20px; font-size: 18px;">Zahlungsmethode wählen</h3>
+                    
+                    <div class="checkout-summary">
+                        <div class="checkout-summary-row">
+                            <span>Trainingsplan für <span id="checkoutDogName3">Hund</span></span>
+                            <span>
+                                <span class="checkout-summary-old" id="checkoutOldPrice">€49,99</span>
+                                <span id="checkoutNewPrice">€17,99</span>
+                            </span>
+                        </div>
+                        <div class="checkout-summary-row">
+                            <span>Bonus-Module</span>
+                            <span>
+                                <span class="checkout-summary-old">€221,95</span>
+                                <span>€0</span>
+                            </span>
+                        </div>
+                        <div class="checkout-summary-row total">
+                            <span>Gesamt</span>
+                            <span id="checkoutFinalPrice">€17,99</span>
+                        </div>
+                        <div class="checkout-summary-saved" id="checkoutSaved2">Du sparst €253,95</div>
+                    </div>
+
+                    <div class="checkout-error" id="checkoutError"></div>
+
+                    <div class="stripe-element-container">
+                        <div id="payment-element"></div>
+                    </div>
+
+                    <button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">
+                        🔒 Jetzt bezahlen
+                    </button>
+
+                    <div class="payment-icons">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
+                        <img src="klarna-logo.png" alt="Klarna">
+                    </div>
+
+                    <button class="checkout-back" onclick="goBackToStep1()">← Zurück zur Übersicht</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exit-Intent Popup -->
     <div class="exit-popup-overlay" id="exitPopup">
         <div class="exit-popup">
             <button class="exit-popup-close" onclick="closeExitPopup()">×</button>
