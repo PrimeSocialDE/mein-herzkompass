@@ -2120,15 +2120,31 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         }
 
         async function saveToSupabase() {
+            // Cookie Helper Funktion
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+                return null;
+            }
+            
             // UTM Parameter aus URL oder localStorage holen
             const urlParams = new URLSearchParams(window.location.search);
+            
+            // Facebook Browser ID und Click ID
+            const fbp = getCookie('_fbp') || null;
+            const fbclid = urlParams.get('fbclid') || localStorage.getItem('fbclid') || null;
+            const fbc = getCookie('_fbc') || (fbclid ? 'fb.1.' + Date.now() + '.' + fbclid : null);
+            
             const utmParams = {
                 utm_source: urlParams.get('utm_source') || localStorage.getItem('utm_source') || null,
                 utm_medium: urlParams.get('utm_medium') || localStorage.getItem('utm_medium') || null,
                 utm_campaign: urlParams.get('utm_campaign') || localStorage.getItem('utm_campaign') || null,
                 utm_content: urlParams.get('utm_content') || localStorage.getItem('utm_content') || null,
                 utm_term: urlParams.get('utm_term') || localStorage.getItem('utm_term') || null,
-                fbclid: urlParams.get('fbclid') || localStorage.getItem('fbclid') || null,
+                fbclid: fbclid,
+                fbp: fbp,
+                fbc: fbc,
                 gclid: urlParams.get('gclid') || localStorage.getItem('gclid') || null,
                 ttclid: urlParams.get('ttclid') || localStorage.getItem('ttclid') || null,
                 referrer: localStorage.getItem('referrer') || null,
@@ -2422,7 +2438,13 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         plan: selectedPlan,
                         timerExpired: timerExpired,
                         dogName: dogName,
-                        leadId: currentLeadId
+                        leadId: currentLeadId,
+                        utm_source: localStorage.getItem('utm_source') || '',
+                        utm_medium: localStorage.getItem('utm_medium') || '',
+                        utm_campaign: localStorage.getItem('utm_campaign') || '',
+                        utm_content: localStorage.getItem('utm_content') || '',
+                        fbclid: localStorage.getItem('fbclid') || '',
+                        ttclid: localStorage.getItem('ttclid') || ''
                     })
                 });
                 
