@@ -2178,6 +2178,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 email: localStorage.getItem('userEmail') || null
             };
 
+            // Answers in localStorage speichern für E-Mail Update
+            localStorage.setItem('wauwerk_answers', JSON.stringify(answers));
+
             console.log('Sending to Supabase:', leadData);
 
             try {
@@ -2309,8 +2312,29 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             
             userEmail = email;
             
-            // E-Mail in localStorage speichern (wird bei saveToSupabase mit in answers gespeichert)
+            // E-Mail in localStorage speichern
             localStorage.setItem('userEmail', email);
+            
+            // E-Mail in Supabase updaten
+            if (currentLeadId) {
+                // Hole aktuelle answers und füge E-Mail hinzu
+                const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
+                currentAnswers.email = email;
+                
+                fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${currentLeadId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({ 
+                        email: email,
+                        answers: currentAnswers
+                    })
+                });
+            }
             
             // Zum Step 1 wechseln
             document.getElementById('checkoutStepEmail').classList.add('hidden');
@@ -2558,7 +2582,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                             </span>
                         </div>
                         <div class="checkout-feature-item">
-                            <span class="checkout-feature-name">Spezialmodul: "20+ Übungen"</span>
+                            <span class="checkout-feature-name">Spezialmodul: "50+ HundeSpiele"</span>
                             <span class="checkout-feature-prices">
                                 <span class="checkout-feature-old">€9,99</span>
                                 <span class="checkout-feature-new">€0</span>
