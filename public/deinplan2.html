@@ -638,12 +638,14 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(30, 30, 30, 0.95);
+            background: rgba(44, 44, 46, 0.85);
             z-index: 10000;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            padding: 60px 20px;
+            overflow-y: auto;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         .checkout-overlay.active {
@@ -653,13 +655,14 @@
         .checkout-popup {
             background: var(--white);
             border-radius: 20px;
-            max-width: 380px;
-            width: 90%;
-            max-height: 85%;
+            max-width: 420px;
+            width: 100%;
+            max-height: calc(100vh - 120px);
             overflow-y: auto;
             position: relative;
             animation: popupIn 0.3s ease-out;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            margin: auto;
         }
 
         .checkout-header {
