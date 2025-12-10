@@ -27,7 +27,17 @@ export async function POST(req: NextRequest) {
       plan, 
       timerExpired, 
       dogName, 
-      leadId
+      leadId,
+      email,
+      utm_source,
+      utm_medium,
+      utm_campaign,
+      utm_content,
+      fbclid,
+      fbp,
+      fbc,
+      fb_event_id,
+      ttclid
     } = body;
 
     // Preis ermitteln
@@ -53,12 +63,22 @@ export async function POST(req: NextRequest) {
         lead_id: leadId || '',
         plan: plan,
         dog_name: dogName || '',
-        timer_expired: timerExpired ? 'true' : 'false'
+        timer_expired: timerExpired ? 'true' : 'false',
+        email: email || '',
+        utm_source: utm_source || '',
+        utm_medium: utm_medium || '',
+        utm_campaign: utm_campaign || '',
+        utm_content: utm_content || '',
+        fbclid: fbclid || '',
+        fbp: fbp || '',
+        fbc: fbc || '',
+        fb_event_id: fb_event_id || '',
+        ttclid: ttclid || ''
       },
       description: `WauWerk ${planName} für ${dogName || 'Hund'}`,
     });
 
-    // Lead in Supabase updaten falls vorhanden
+    // Lead in Supabase speichern/updaten falls noch nicht vorhanden
     if (leadId) {
       await supabase
         .from('wauwerk_leads')
