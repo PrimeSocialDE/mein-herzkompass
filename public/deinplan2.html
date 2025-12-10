@@ -642,10 +642,10 @@
             z-index: 10000;
             align-items: center;
             justify-content: center;
-            padding: 60px 20px;
+            padding: 100px 20px;
             overflow-y: auto;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .checkout-overlay.active {
@@ -657,7 +657,7 @@
             border-radius: 20px;
             max-width: 420px;
             width: 100%;
-            max-height: calc(100vh - 120px);
+            max-height: calc(100vh - 200px);
             overflow-y: auto;
             position: relative;
             animation: popupIn 0.3s ease-out;
@@ -961,6 +961,64 @@
         .checkout-guarantee-subtitle {
             font-size: 11px;
             color: #15803d;
+        }
+
+        /* Kompakte Step 1 Styles */
+        .checkout-features-compact {
+            background: #f8f8f8;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .checkout-feature-row {
+            font-size: 13px;
+            color: var(--text-dark);
+            padding: 4px 0;
+        }
+
+        .checkout-feature-row span {
+            color: var(--warm-brown);
+            font-weight: 600;
+        }
+
+        .checkout-total-compact {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-top: 2px solid var(--warm-brown);
+            margin-bottom: 10px;
+        }
+
+        .checkout-total-compact .checkout-total-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .checkout-total-compact .checkout-total-saved {
+            font-size: 11px;
+            color: #e74c3c;
+            font-weight: 600;
+            display: block;
+        }
+
+        .checkout-total-compact .checkout-total-price {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--warm-brown);
+        }
+
+        .checkout-guarantee-compact {
+            text-align: center;
+            font-size: 12px;
+            color: #166534;
+            font-weight: 600;
+            padding: 8px;
+            background: #f0fdf4;
+            border-radius: 8px;
+            margin-bottom: 12px;
         }
 
         /* Total */
@@ -1618,15 +1676,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 </script>
 <script src="cookie-banner.js" defer></script>
 <script src="https://js.stripe.com/v3/"></script>
-<!-- TikTok Pixel Code Start -->
-<script>
-!function (w, d, t) {
-  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for( var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-    ttq.load('D4RFSQBC77U7SM7UL8A0');
-  ttq.page();
-}(window, document, 'ttq');
-</script>
-<!-- TikTok Pixel Code End -->
 </head>
 
 <body>
@@ -1718,7 +1767,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 
         <div class="motivation-text">
             <p>Mit den richtigen Übungen und einem strukturierten Plan lässt sich <span class="problem-highlight" id="problemTextMotivation">das Problem</span> abtrainieren.</p>
-            <p class="motivation-question">Wie schnell möchtest du Ergebnisse sehen?</p>
+            <p class="motivation-question">In welcher Zeit soll <span id="dogNamePlan">dein Hund</span> das Problem lösen?</p>
         </div>
 
         <div class="pricing-section">
@@ -1838,7 +1887,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 <li>✓ Neue Trainingstechniken lernen</li>
                 <li>✓ <span id="userProblemBenefit">Verhaltensprobleme</span> lösen</li>
                 <li>✓ Dauerhaft hohes Gehorsamkeitslevel halten</li>
-                <li>✓ 50+ Spiele für <span id="dogName4">deinen Hund</span>s mentale Gesundheit als Bonus</li>
+                <li>✓ 20+ Übungen für <span id="dogName4">deinen Hund</span>s mentale Gesundheit als Bonus</li>
                 <li>✓ Glückliches Zusammenleben mit einem gehorsamen Hund genießen</li>
             </ul>
         </div>
@@ -1957,6 +2006,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         document.getElementById('dogName2').textContent = dogName;
         document.getElementById('dogName3').textContent = dogName;
         document.getElementById('dogName4').textContent = dogName;
+        document.getElementById('dogNamePlan').textContent = dogName;
 
         const goalMap = {
             'basics': 'Grundlagen lernen',
@@ -2127,16 +2177,42 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             }
         }
 
+        // Cookie Helper Funktion (global)
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        // Facebook Event ID generieren
+        function generateEventId() {
+            return 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
         async function saveToSupabase() {
             // UTM Parameter aus URL oder localStorage holen
             const urlParams = new URLSearchParams(window.location.search);
+            
+            // Facebook Browser ID und Click ID
+            const fbp = getCookie('_fbp') || null;
+            const fbclid = urlParams.get('fbclid') || localStorage.getItem('fbclid') || null;
+            const fbc = getCookie('_fbc') || (fbclid ? 'fb.1.' + Date.now() + '.' + fbclid : null);
+            
+            // Facebook Event ID für Deduplizierung generieren
+            const fb_event_id = generateEventId();
+            localStorage.setItem('fb_event_id', fb_event_id);
+            
             const utmParams = {
                 utm_source: urlParams.get('utm_source') || localStorage.getItem('utm_source') || null,
                 utm_medium: urlParams.get('utm_medium') || localStorage.getItem('utm_medium') || null,
                 utm_campaign: urlParams.get('utm_campaign') || localStorage.getItem('utm_campaign') || null,
                 utm_content: urlParams.get('utm_content') || localStorage.getItem('utm_content') || null,
                 utm_term: urlParams.get('utm_term') || localStorage.getItem('utm_term') || null,
-                fbclid: urlParams.get('fbclid') || localStorage.getItem('fbclid') || null,
+                fbclid: fbclid,
+                fbp: fbp,
+                fbc: fbc,
+                fb_event_id: fb_event_id,
                 gclid: urlParams.get('gclid') || localStorage.getItem('gclid') || null,
                 ttclid: urlParams.get('ttclid') || localStorage.getItem('ttclid') || null,
                 referrer: localStorage.getItem('referrer') || null,
@@ -2185,6 +2261,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 answers: answers,
                 email: localStorage.getItem('userEmail') || null
             };
+
+            // Answers in localStorage speichern für E-Mail Update
+            localStorage.setItem('wauwerk_answers', JSON.stringify(answers));
 
             console.log('Sending to Supabase:', leadData);
 
@@ -2317,8 +2396,29 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             
             userEmail = email;
             
-            // E-Mail in localStorage speichern (wird bei saveToSupabase mit in answers gespeichert)
+            // E-Mail in localStorage speichern
             localStorage.setItem('userEmail', email);
+            
+            // E-Mail in Supabase updaten
+            if (currentLeadId) {
+                // Hole aktuelle answers und füge E-Mail hinzu
+                const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
+                currentAnswers.email = email;
+                
+                fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${currentLeadId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({ 
+                        email: email,
+                        answers: currentAnswers
+                    })
+                });
+            }
             
             // Zum Step 1 wechseln
             document.getElementById('checkoutStepEmail').classList.add('hidden');
@@ -2359,7 +2459,24 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 'soiling': '"Stubenreinheit Training"'
             };
             const dogProblemValue = localStorage.getItem('dogProblem') || 'anxiety';
-            document.getElementById('checkoutModule1').textContent = moduleMap[dogProblemValue] || '"Trennungsangst bei Hunden"';
+            
+            // Problem-Labels für Step 1
+            const problemLabels = {
+                'pulling': 'Leinenziehen',
+                'barking': 'Bellen',
+                'aggression': 'Aggression',
+                'anxiety': 'Trennungsangst',
+                'jumping': 'Anspringen',
+                'recall': 'Rückruf',
+                'energy': 'Hyperaktivität',
+                'destructive': 'Zerstörungswut',
+                'soiling': 'Stubenreinheit'
+            };
+            
+            const checkoutDogProblem = document.getElementById('checkoutDogProblem');
+            if (checkoutDogProblem) {
+                checkoutDogProblem.textContent = problemLabels[dogProblemValue] || 'dein Problem';
+            }
             
             // Reset - E-Mail Step zuerst zeigen
             document.getElementById('checkoutStepEmail').classList.remove('hidden');
@@ -2406,7 +2523,17 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         plan: selectedPlan,
                         timerExpired: timerExpired,
                         dogName: dogName,
-                        leadId: currentLeadId
+                        leadId: currentLeadId,
+                        email: userEmail || localStorage.getItem('userEmail') || '',
+                        utm_source: localStorage.getItem('utm_source') || '',
+                        utm_medium: localStorage.getItem('utm_medium') || '',
+                        utm_campaign: localStorage.getItem('utm_campaign') || '',
+                        utm_content: localStorage.getItem('utm_content') || '',
+                        fbclid: localStorage.getItem('fbclid') || '',
+                        fbp: getCookie('_fbp') || '',
+                        fbc: getCookie('_fbc') || '',
+                        fb_event_id: localStorage.getItem('fb_event_id') || '',
+                        ttclid: localStorage.getItem('ttclid') || ''
                     })
                 });
                 
@@ -2418,6 +2545,27 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 }
                 
                 clientSecret = data.clientSecret;
+                
+                // Event ID (payment_intent) in answers updaten
+                if (currentLeadId && data.paymentIntentId) {
+                    const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
+                    currentAnswers.event_id = data.paymentIntentId;
+                    
+                    fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${currentLeadId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                            'Content-Type': 'application/json',
+                            'Prefer': 'return=minimal'
+                        },
+                        body: JSON.stringify({ 
+                            answers: currentAnswers
+                        })
+                    });
+                    
+                    localStorage.setItem('wauwerk_answers', JSON.stringify(currentAnswers));
+                }
                 
                 // Stripe Elements erstellen
                 elements = stripe.elements({
@@ -2553,69 +2701,27 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         </div>
                     </div>
 
-                    <div class="checkout-features-title">
-                        20+ Übungen um alles abzutrainieren:
+                    <div class="checkout-features-compact">
+                        <div class="checkout-feature-row">✓ 20+ Übungen für <span id="checkoutDogProblem">dein Problem</span></div>
+                        <div class="checkout-feature-row">✓ Persönlicher Trainer-Support</div>
+                        <div class="checkout-feature-row">✓ 20+ Übungen</div>
+                        <div class="checkout-feature-row">✓ 3 Spezialmodule gratis dazu</div>
                     </div>
 
-                    <div class="checkout-features">
-                        <div class="checkout-feature-item">
-                            <span class="checkout-feature-name">Persönlicher Trainer-Support</span>
-                            <span class="checkout-feature-prices">
-                                <span class="checkout-feature-old">€129,99</span>
-                                <span class="checkout-feature-new">€0</span>
-                            </span>
-                        </div>
-                        <div class="checkout-feature-item">
-                            <span class="checkout-feature-name">Spezialmodul: "50+ HundeSpiele"</span>
-                            <span class="checkout-feature-prices">
-                                <span class="checkout-feature-old">€9,99</span>
-                                <span class="checkout-feature-new">€0</span>
-                            </span>
-                        </div>
-                        <div class="checkout-feature-item">
-                            <span class="checkout-feature-name" id="checkoutModule1">"Trennungsangst bei Hunden"</span>
-                            <span class="checkout-feature-prices">
-                                <span class="checkout-feature-old">€24,99</span>
-                                <span class="checkout-feature-new">€0</span>
-                            </span>
-                        </div>
-                        <div class="checkout-feature-item">
-                            <span class="checkout-feature-name">"Warum bellt mein Hund?"</span>
-                            <span class="checkout-feature-prices">
-                                <span class="checkout-feature-old">€16,99</span>
-                                <span class="checkout-feature-new">€0</span>
-                            </span>
-                        </div>
-                        <div class="checkout-feature-item">
-                            <span class="checkout-feature-name">"Hyperaktiver Hund"</span>
-                            <span class="checkout-feature-prices">
-                                <span class="checkout-feature-old">€39,99</span>
-                                <span class="checkout-feature-new">€0</span>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="checkout-total">
+                    <div class="checkout-total-compact">
                         <div>
-                            <div class="checkout-total-label">Gesamt</div>
-                            <div class="checkout-total-discount">Einführungsrabatt</div>
+                            <span class="checkout-total-label">Gesamt:</span>
+                            <span class="checkout-total-saved" id="checkoutSaved">Du sparst €251,99</span>
                         </div>
-                        <div style="text-align: right;">
-                            <div class="checkout-total-price" id="checkoutTotalPrice">€17,99</div>
-                            <div class="checkout-total-saved" id="checkoutSaved">Du sparst €251,99</div>
-                        </div>
+                        <div class="checkout-total-price" id="checkoutTotalPrice">€17,99</div>
                     </div>
 
-                    <div class="checkout-guarantee">
-                        <div class="checkout-guarantee-icon">🛡️</div>
-                        <div class="checkout-guarantee-text">
-                            <div class="checkout-guarantee-title">30 Tage Geld-zurück-Garantie</div>
-                            <div class="checkout-guarantee-subtitle">Kein Risiko – funktioniert es nicht, bekommst du dein Geld zurück.</div>
-                        </div>
+                    <div class="checkout-guarantee-compact">
+                        🛡️ 30 Tage Geld-zurück-Garantie
                     </div>
 
                     <button class="checkout-continue-btn" onclick="goToPaymentStep()">
-                        WEITER
+                        WEITER ZUR ZAHLUNG
                     </button>
                 </div>
 
