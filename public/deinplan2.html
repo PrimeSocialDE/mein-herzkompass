@@ -634,19 +634,22 @@
         .checkout-overlay {
             display: none;
             position: fixed;
-            top: 0;
+            top: -50px;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: rgba(44, 44, 46, 0.85);
+            bottom: -50px;
+            width: 100%;
+            height: calc(100% + 100px);
+            min-height: 100vh;
+            min-height: 100dvh;
+            background: rgba(44, 44, 46, 0.9);
             z-index: 10000;
-            display: none;
-            align-items: flex-start;
+            align-items: center;
             justify-content: center;
-            padding: 80px 20px 120px 20px;
+            padding: 60px 20px;
             overflow-y: auto;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
         }
 
         .checkout-overlay.active {
