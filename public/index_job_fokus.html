@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WauWerk - Individueller Trainingsplan für deinen Hund</title>
     <link rel="icon" type="image/png" href="favconHund.png">
+    <script src="cookie-banner.js" defer></script>
     <meta name="description" content="Löse die Verhaltensprobleme deines Hundes mit einem personalisierten 30-60 Tage Trainingsplan. Professionelle Hundeerziehung online.">
     
     <style>
@@ -19,7 +20,7 @@
             --text-light: #A68B5B;
             --text-dark: #6B5B47;
             --white: #FFFFFF;
-            --accent-green: #4CAF50;
+            --accent-green: #00B67A;
             --shadow-light: 0 4px 20px rgba(139, 115, 85, 0.08);
             --shadow-medium: 0 12px 40px rgba(139, 115, 85, 0.15);
             --shadow-heavy: 0 20px 60px rgba(139, 115, 85, 0.2);
@@ -45,7 +46,6 @@
             line-height: 1.6;
             color: var(--text-dark);
             background: #FFFFFF !important;
-            padding-top: 70px;
         }
 
         .container {
@@ -54,174 +54,145 @@
             padding: 0 20px;
         }
 
-        /* Navigation */
-        .nav {
-            position: fixed;
-            top: 0;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--secondary-cream);
-            z-index: 1000;
-            padding: 18px 0;
-            width: 100%;
-            box-shadow: var(--shadow-light);
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-weight: 800;
-            font-size: 22px;
-            color: var(--text-dark);
-            text-decoration: none;
-        }
-
-        .logo-image {
-            width: 45px;
-            height: 45px;
-            border-radius: 14px;
-            object-fit: cover;
-            box-shadow: var(--shadow-light);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 35px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--text-brown);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            transition: color 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--warm-brown);
-        }
-
-        .cta-button-nav {
+        /* Top Banner */
+        .top-banner {
             background: var(--warm-brown);
-            color: var(--white);
-            padding: 14px 28px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 15px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-light);
-            line-height: 1.1;
-        }
-
-        .cta-button-nav:hover {
-            background: var(--dark-brown);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, var(--primary-cream) 0%, var(--white) 100%);
-            padding: 80px 0 60px;
-            position: relative;
-        }
-
-        .hero-content {
+            color: white;
             text-align: center;
-            max-width: 900px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-image {
-            width: 100%;
-            max-width: 500px;
-            aspect-ratio: 1875 / 1563;
-            background: linear-gradient(135deg, var(--accent-brown), var(--warm-brown));
-            border-radius: var(--border-radius-large);
-            margin: 30px auto 25px;
-            box-shadow: var(--shadow-heavy);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-brown);
+            padding: 12px 20px;
+            font-size: 14px;
             font-weight: 600;
-            overflow: hidden;
         }
 
-        .hero-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .top-banner span {
+            font-weight: 700;
+        }
+
+        /* Hero Section - Neuer Aufbau wie Screenshot */
+        .hero {
+            background: var(--white);
+            padding: 35px 20px 40px;
+            text-align: center;
         }
 
         .hero-title {
             font-family: Georgia, serif;
-            font-size: clamp(40px, 6vw, 60px);
+            font-size: clamp(26px, 5vw, 36px);
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: var(--text-dark);
-            line-height: 1.1;
+            line-height: 1.25;
         }
 
         .hero-subtitle {
-            font-size: clamp(18px, 2.5vw, 24px);
+            font-size: 16px;
             color: var(--text-light);
-            margin-bottom: 40px;
-            line-height: 1.6;
-            max-width: 750px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            max-width: 400px;
             margin-left: auto;
             margin-right: auto;
         }
 
+        /* Trustpilot Style Badge */
+        .trust-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            background: #F7F7F7;
+            border-radius: 50px;
+            margin-bottom: 25px;
+        }
+
+        .trust-stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .trust-star {
+            width: 22px;
+            height: 22px;
+            background: var(--accent-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 13px;
+        }
+
+        .trust-text {
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .trust-text strong {
+            font-weight: 700;
+        }
+
+        .trust-text span {
+            color: var(--text-light);
+        }
+
+        /* Hero Image */
+        .hero-image {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 25px;
+            border-radius: var(--border-radius-large);
+            overflow: hidden;
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .hero-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Main CTA Button */
         .main-cta-button {
-            display: inline-block;
+            display: block;
+            width: calc(100% - 40px);
+            max-width: 400px;
+            margin: 0 auto;
             background: var(--warm-brown);
             color: white;
-            padding: 22px 45px;
+            padding: 18px 30px;
             border: none;
             border-radius: 50px;
-            font-size: 20px;
+            font-size: 17px;
             font-weight: 700;
             text-decoration: none;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            box-shadow: 0 12px 40px rgba(139, 115, 85, 0.4);
-            margin-bottom: 15px;
-            line-height: 1.1;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(139, 115, 85, 0.4);
         }
 
         .main-cta-button:hover {
             background: var(--dark-brown);
-            transform: translateY(-4px);
-            box-shadow: 0 16px 50px rgba(139, 115, 85, 0.5);
-        }
-
-        .cta-subtext {
-            font-size: 15px;
-            color: var(--accent-green);
-            font-weight: 600;
-            margin-top: 15px;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(139, 115, 85, 0.5);
         }
 
         /* Simple Benefits List */
         .benefits-list-section {
             padding: 60px 0 40px;
-            background: var(--white);
+            background: var(--primary-cream);
         }
 
         .benefits-list-container {
@@ -251,7 +222,7 @@
             align-items: center;
             gap: 15px;
             padding: 18px 25px;
-            background: var(--secondary-cream);
+            background: var(--white);
             border-radius: var(--border-radius);
             border-left: 4px solid var(--warm-brown);
             transition: transform 0.3s ease;
@@ -526,6 +497,53 @@
             color: white;
         }
 
+        /* About Section */
+        .about-section {
+            padding: 80px 0;
+            background: var(--secondary-cream);
+        }
+
+        .about-container {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .about-image {
+            flex: 0 0 350px;
+            aspect-ratio: 1875 / 1563;
+            border-radius: var(--border-radius-large);
+            overflow: hidden;
+            box-shadow: var(--shadow-heavy);
+            background: var(--accent-brown);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .about-content {
+            flex: 1;
+        }
+
+        .about-title {
+            font-family: Georgia, serif;
+            font-size: clamp(28px, 4vw, 36px);
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .about-text {
+            font-size: 16px;
+            color: var(--text-brown);
+            line-height: 1.7;
+        }
+
         /* Quiz CTA */
         .quiz-cta-section {
             padding: 60px 0;
@@ -563,13 +581,11 @@
             transition: all 0.3s ease;
             box-shadow: 0 10px 30px rgba(139, 115, 85, 0.4);
             display: inline-block;
-            line-height: 1.1;
         }
 
         .quiz-button:hover {
             background: var(--dark-brown);
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(139, 115, 85, 0.5);
         }
 
         /* Benefits Grid */
@@ -643,10 +659,6 @@
             box-shadow: var(--shadow-medium);
         }
 
-        .trustpilot-header {
-            margin-bottom: 30px;
-        }
-
         .trustpilot-logo {
             font-size: 24px;
             font-weight: 800;
@@ -677,7 +689,7 @@
         .star {
             width: 24px;
             height: 24px;
-            background: #00B67A;
+            background: var(--accent-green);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -737,73 +749,11 @@
             display: inline-block;
             transition: all 0.3s ease;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            line-height: 1.1;
         }
 
         .final-button:hover {
             background: var(--primary-cream);
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        /* About Section */
-        .about-section {
-            padding: 80px 0;
-            background: var(--secondary-cream);
-        }
-
-        .about-container {
-            display: flex;
-            align-items: center;
-            gap: 50px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .about-image {
-            flex: 0 0 350px;
-            aspect-ratio: 1875 / 1563;
-            border-radius: var(--border-radius-large);
-            overflow: hidden;
-            box-shadow: var(--shadow-heavy);
-            background: var(--accent-brown);
-        }
-
-        .about-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .about-content {
-            flex: 1;
-        }
-
-        .about-title {
-            font-family: Georgia, serif;
-            font-size: clamp(28px, 4vw, 36px);
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 20px;
-        }
-
-        .about-text {
-            font-size: 16px;
-            color: var(--text-brown);
-            line-height: 1.7;
-        }
-
-        @media (max-width: 768px) {
-            .about-container {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .about-image {
-                flex: 0 0 auto;
-                width: 100%;
-                max-width: 350px;
-            }
         }
 
         /* Footer */
@@ -845,28 +795,20 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-top: 30px;
             text-align: center;
-            color: var(--secondary-cream);
             font-size: 14px;
         }
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .hero-image {
-                max-width: 100%;
-                margin: 25px auto 20px;
-            }
-
-            .trustpilot-container {
-                padding: 35px 25px;
-            }
-
-            .rating-display {
+            .about-container {
                 flex-direction: column;
-                gap: 10px;
+                text-align: center;
+            }
+
+            .about-image {
+                flex: 0 0 auto;
+                width: 100%;
+                max-width: 350px;
             }
 
             .social-proof-avatars {
@@ -889,12 +831,17 @@
                 gap: 20px;
             }
 
-            .hero {
-                padding: 60px 0 40px;
-            }
-
             .main-stat {
                 padding: 35px 25px;
+            }
+
+            .trustpilot-container {
+                padding: 35px 25px;
+            }
+
+            .rating-display {
+                flex-direction: column;
+                gap: 10px;
             }
 
             .footer-content {
@@ -908,15 +855,6 @@
         }
 
         @media (max-width: 480px) {
-            .hero-image {
-                max-width: 100%;
-                margin: 25px auto 20px;
-            }
-
-            .trustpilot-container {
-                padding: 30px 20px;
-            }
-
             .comparison-card {
                 min-width: 250px;
                 flex: 0 0 250px;
@@ -926,41 +864,72 @@
             .social-proof-avatars .avatar-circle:nth-child(n+8) {
                 display: none;
             }
+
+            .trustpilot-container {
+                padding: 30px 20px;
+            }
         }
     </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="nav">
-        <div class="nav-container">
-            <a href="#" class="logo">
-                <img src="logo.png" alt="WauWerk Logo" class="logo-image">
-                WauWerk
-            </a>
-            <ul class="nav-links">
-            </ul>
-            <a href="#quiz" class="cta-button-nav">Quiz starten</a>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero" id="start">
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title">Moderne Online Hundeschule</h1>
-                
-                <div class="hero-image">
-                    <img src="HeroBild1.png" alt="Glücklicher Hund mit Familie">
-                </div>
-                
-                <p class="hero-subtitle">
-                    Löse die Verhaltensprobleme deines Hundes mit einem personalisierten 30-60 Tage Trainingsplan. Professionelle Hundeerziehung für ein harmonisches Zusammenleben.
-                </p>
-                
-                <a href="#quiz" class="main-cta-button">Kostenloses Verhaltens-Quiz starten →</a>
-                <p class="cta-subtext">✓ Individueller Trainingsplan ✓ Sofort verfügbar ✓ 30-60 Tage Programm</p>
+    <!-- Meta Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
+    /></noscript>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ufxcf43805");
+    </script>
+</head>
+
+<body>
+    <!-- Top Banner -->
+    <div class="top-banner">
+        ✨ Über <span>3.400 Trainingspläne</span> erstellt
+    </div>
+
+    <!-- Hero Section - Neuer Aufbau -->
+    <section class="hero">
+        <h1 class="hero-title">Löse die Verhaltensprobleme deines Hundes</h1>
+        
+        <p class="hero-subtitle">Erhalte einen personalisierten 30-Tage Trainingsplan und erlebe, wie dein Hund endlich hört</p>
+        
+        <!-- Trustpilot Style Badge -->
+        <div class="trust-badge">
+            <div class="trust-stars">
+                <span class="trust-star">★</span>
+                <span class="trust-star">★</span>
+                <span class="trust-star">★</span>
+                <span class="trust-star">★</span>
+                <span class="trust-star">★</span>
             </div>
+            <span class="trust-text"><strong>Hervorragend</strong> <span>| 3.400+ Kunden</span></span>
         </div>
+        
+        <!-- Hero Image -->
+        <div class="hero-image">
+            <img src="HeroBild1.png" alt="Glücklicher Hund mit Besitzer">
+            <div class="hero-badge">Sofort verfügbar</div>
+        </div>
+        
+        <!-- CTA Button -->
+        <a href="schritt1.html" class="main-cta-button">Mein Trainingsplan erstellen →</a>
     </section>
 
     <!-- Simple Benefits List -->
@@ -1165,7 +1134,7 @@
         <div class="container">
             <h2 class="quiz-title">Kostenloses Verhaltens-Quiz für deinen Hund</h2>
             <p class="quiz-subtitle">Finde heraus, welche Probleme dein Hund hat und erhalte einen maßgeschneiderten Trainingsplan</p>
-            <a href="#" class="quiz-button">Verhaltens-Quiz starten 🐕</a>
+            <a href="schritt1.html" class="quiz-button">Verhaltens-Quiz starten 🐕</a>
         </div>
     </section>
 
@@ -1214,7 +1183,7 @@
             <div class="trustpilot-container">
                 <div class="trustpilot-header">
                     <div class="trustpilot-logo">Bewertungen</div>
-                    <p class="trustpilot-text">Sieh dir unsere <strong>4.255</strong> Bewertungen an</p>
+                    <p class="trustpilot-text">Sieh dir unsere <strong>3.400+</strong> Bewertungen an</p>
                     
                     <div class="rating-display">
                         <div class="rating-stars">
@@ -1227,7 +1196,7 @@
                         <div class="rating-score">4.8/5</div>
                     </div>
                     
-                    <p class="trustpilot-stats">Basierend auf 4.255 verifizierten Bewertungen</p>
+                    <p class="trustpilot-stats">Basierend auf 3.400+ verifizierten Bewertungen</p>
                     <div class="rating-subtext">Letzte Bewertung: vor 2 Stunden</div>
                 </div>
             </div>
@@ -1239,7 +1208,7 @@
         <div class="container">
             <h2 class="final-title">Bereit für die Transformation?</h2>
             <p class="final-subtitle">Starte noch heute mit dem personalisierten Verhaltens-Quiz</p>
-            <a href="#" class="final-button">Jetzt Quiz machen →</a>
+            <a href="schritt1.html" class="final-button">Jetzt Quiz machen →</a>
         </div>
     </section>
 
@@ -1267,15 +1236,5 @@
             </div>
         </div>
     </footer>
-
-    <script>
-        // Quiz button click handlers - direct redirect
-        document.querySelectorAll('.quiz-button, .cta-button-nav, .final-button, .main-cta-button').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                window.location.href = 'schritt1.html';
-            });
-        });
-    </script>
 </body>
 </html>
