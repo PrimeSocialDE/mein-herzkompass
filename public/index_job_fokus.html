@@ -54,24 +54,68 @@
             padding: 0 20px;
         }
 
-        /* Top Banner */
-        .top-banner {
-            background: var(--warm-brown);
-            color: white;
-            text-align: center;
-            padding: 12px 20px;
-            font-size: 14px;
-            font-weight: 600;
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--secondary-cream);
+            z-index: 1000;
+            padding: 14px 0;
+            width: 100%;
+            box-shadow: var(--shadow-light);
         }
 
-        .top-banner span {
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text-dark);
+            text-decoration: none;
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: var(--shadow-light);
+        }
+
+        .cta-button-nav {
+            background: var(--warm-brown);
+            color: var(--white);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
             font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+        }
+
+        .cta-button-nav:hover {
+            background: var(--dark-brown);
+            transform: translateY(-2px);
         }
 
         /* Hero Section - Neuer Aufbau wie Screenshot */
         .hero {
             background: var(--white);
-            padding: 35px 20px 40px;
+            padding: 100px 20px 40px;
             text-align: center;
         }
 
@@ -149,19 +193,6 @@
             width: 100%;
             height: auto;
             display: block;
-        }
-
-        .hero-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: white;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-dark);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         /* Main CTA Button */
@@ -899,10 +930,16 @@
 </head>
 
 <body>
-    <!-- Top Banner -->
-    <div class="top-banner">
-        ✨ Über <span>3.400 Trainingspläne</span> erstellt
-    </div>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+                Mein WauWerk
+            </a>
+            <a href="schritt1.html" class="cta-button-nav">Quiz starten</a>
+        </div>
+    </nav>
 
     <!-- Hero Section - Neuer Aufbau -->
     <section class="hero">
@@ -925,7 +962,6 @@
         <!-- Hero Image -->
         <div class="hero-image">
             <img src="HeroBild1.png" alt="Glücklicher Hund mit Besitzer">
-            <div class="hero-badge">Sofort verfügbar</div>
         </div>
         
         <!-- CTA Button -->
