@@ -18,36 +18,19 @@
         'https://connect.facebook.net/en_US/fbevents.js');
         fbq('init', '864109602683515');
         fbq('track', 'PageView');
-        
-        // Purchase Event mit kurzem Delay
-        setTimeout(function() {
-            fbq('track', 'Purchase', {
-                value: 29.99,
-                currency: 'EUR',
-                content_name: 'WauWerk Trainingsplan',
-                content_type: 'product'
-            });
-        }, 500);
-        </script>
-        <noscript><img height="1" width="1" style="display:none"
-        src="https://www.facebook.net/tr?id=864109602683515&ev=PageView&noscript=1"
-        /></noscript>
-        <!-- End Meta Pixel Code -->
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
 
     <!-- TikTok Pixel Code Start -->
-<script>
-    !function (w, d, t) {
-      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for( var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-        ttq.load('D4RFSQBC77U7SM7UL8A0');
-      ttq.page();
-      ttq.track('Purchase', {
-        content_type: 'product',
-        content_id: 'wauwerk_plan',
-        content_name: 'WauWerk Trainingsplan',
-        currency: 'EUR',
-        value: 29.99
-      });
-    }(window, document, 'ttq');
+    <script>
+        !function (w, d, t) {
+          w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for( var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+            ttq.load('D4RFSQBC77U7SM7UL8A0');
+          ttq.page();
+        }(window, document, 'ttq');
     </script>
     <!-- TikTok Pixel Code End -->
 
@@ -94,7 +77,6 @@
             padding: 0 1rem;
         }
 
-        /* MAIN CONTENT */
         .thank-you-section {
             padding: 60px 0 100px;
             text-align: center;
@@ -149,7 +131,6 @@
             line-height: 1.5;
         }
 
-        /* SECURITY INFO */
         .security-info {
             background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             color: white;
@@ -171,7 +152,6 @@
             margin-bottom: 0;
         }
 
-        /* NEXT STEPS */
         .next-steps {
             background: #FAF8F5;
             padding: 35px;
@@ -231,7 +211,6 @@
             margin: 0;
         }
 
-        /* GUARANTEE SECTION */
         .guarantee-section {
             background: linear-gradient(135deg, var(--success-color), #1aa34a);
             color: white;
@@ -297,7 +276,6 @@
             margin-bottom: 0;
         }
 
-        /* CONTACT SECTION */
         .contact-section {
             background: #FAF8F5;
             padding: 35px;
@@ -339,7 +317,6 @@
             transform: translateY(-2px);
         }
 
-        /* FOOTER LINK */
         .footer-link {
             text-align: center;
             margin-top: 40px;
@@ -373,7 +350,6 @@
             text-decoration: underline;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             h1 {
                 font-size: 26px;
@@ -484,55 +460,75 @@
     </footer>
 
     <script>
-        // Track successful purchase
+        // Purchase Events mit Deduplizierung - NUR EINMAL feuern
         window.addEventListener('load', function() {
-            console.log('=== PURCHASE SUCCESS PAGE LOADED - MEIN WAUWERK ===');
-            console.log('WauWerk Trainingsplan Purchase Completed');
+            console.log('=== PURCHASE SUCCESS PAGE LOADED ===');
             
-            // Get price from URL or localStorage
-            const urlParams = new URLSearchParams(window.location.search);
-            const price = parseFloat(urlParams.get('price')) || parseFloat(localStorage.getItem('price')) || 17.99;
-            const plan = urlParams.get('plan') || localStorage.getItem('selectedPlan') || '1month';
+            // Preis aus localStorage holen
+            var selectedPlan = localStorage.getItem('selectedPlan') || '1month';
+            var prices = {
+                '1month': 17.99,
+                '3month': 29.99,
+                '6month': 49.99
+            };
+            var value = prices[selectedPlan] || 17.99;
             
-            // Google Analytics
+            // Event ID aus localStorage für Deduplizierung mit Server (CAPI)
+            var eventId = localStorage.getItem('fb_event_id');
+            if (!eventId) {
+                eventId = 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            }
+            
+            console.log('Plan:', selectedPlan);
+            console.log('Value:', value);
+            console.log('Event ID:', eventId);
+            
+            // ===== META PIXEL PURCHASE =====
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'Purchase', {
+                    value: value,
+                    currency: 'EUR',
+                    content_name: 'WauWerk Trainingsplan',
+                    content_type: 'product',
+                    content_ids: [selectedPlan]
+                }, {
+                    eventID: eventId  // WICHTIG: Für Deduplizierung mit CAPI
+                });
+                console.log('✅ Meta Purchase sent with eventID:', eventId);
+            }
+            
+            // ===== TIKTOK PIXEL PURCHASE =====
+            if (typeof ttq !== 'undefined') {
+                ttq.track('CompletePayment', {
+                    value: value,
+                    currency: 'EUR',
+                    content_type: 'product',
+                    content_id: 'wauwerk_' + selectedPlan,
+                    content_name: 'WauWerk Trainingsplan'
+                });
+                console.log('✅ TikTok CompletePayment sent');
+            }
+            
+            // ===== GOOGLE ANALYTICS =====
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'purchase', {
                     'event_category': 'ecommerce',
                     'event_label': 'wauwerk_trainingsplan',
-                    'value': price,
+                    'value': value,
                     'currency': 'EUR',
                     'items': [{
                         'item_name': 'WauWerk Trainingsplan',
                         'item_category': 'dog_training',
-                        'price': price,
+                        'price': value,
                         'quantity': 1
                     }]
                 });
-                console.log('✅ Google Analytics purchase event sent');
+                console.log('✅ GA4 Purchase sent');
             }
-
-            // Facebook Pixel - Purchase Event
-            if (typeof fbq !== 'undefined') {
-                fbq('track', 'Purchase', {
-                    value: price,
-                    currency: 'EUR',
-                    content_name: 'WauWerk Trainingsplan',
-                    content_category: 'dog_training',
-                    content_type: 'product'
-                });
-                console.log('✅ Meta Pixel Purchase event sent');
-            }
-
-            // TikTok
-            if (typeof ttq !== 'undefined') {
-                ttq.track('CompletePayment', {
-                    value: price,
-                    currency: 'EUR',
-                    content_type: 'product',
-                    content_name: 'WauWerk Trainingsplan'
-                });
-                console.log('✅ TikTok CompletePayment event sent');
-            }
+            
+            // Cleanup - Event ID löschen nach Tracking
+            localStorage.removeItem('fb_event_id');
+            localStorage.removeItem('wentToStripe');
         });
     </script>
 </body>
