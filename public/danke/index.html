@@ -6,7 +6,7 @@
     <title>Danke für deine Bestellung - Mein WauWerk</title>
     <link rel="icon" type="image/png" href="favconHund.png">
     
-    <!-- Meta Pixel Code -->
+    <!-- Meta Pixel Code - NUR INIT, kein PageView auf Danke-Seite -->
     <script>
         !function(f,b,e,v,n,t,s)
         {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -17,7 +17,7 @@
         s.parentNode.insertBefore(t,s)}(window, document,'script',
         'https://connect.facebook.net/en_US/fbevents.js');
         fbq('init', '864109602683515');
-        fbq('track', 'PageView');
+        // KEIN PageView hier - nur Purchase unten
     </script>
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
@@ -29,7 +29,7 @@
         !function (w, d, t) {
           w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for( var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
             ttq.load('D4RFSQBC77U7SM7UL8A0');
-          ttq.page();
+          // KEIN ttq.page() hier
         }(window, document, 'ttq');
     </script>
     <!-- TikTok Pixel Code End -->
@@ -460,9 +460,18 @@
     </footer>
 
     <script>
-        // Purchase Events mit Deduplizierung - NUR EINMAL feuern
-        window.addEventListener('load', function() {
-            console.log('=== PURCHASE SUCCESS PAGE LOADED ===');
+        // ========================================
+        // PURCHASE TRACKING - NUR 1x FEUERN
+        // ========================================
+        (function() {
+            // Check ob Purchase schon getrackt wurde (verhindert doppeltes Feuern bei Refresh)
+            var purchaseKey = 'wauwerk_purchase_tracked_' + window.location.search;
+            if (sessionStorage.getItem(purchaseKey)) {
+                console.log('⚠️ Purchase bereits getrackt - skip');
+                return;
+            }
+            
+            console.log('=== PURCHASE TRACKING START ===');
             
             // Preis aus localStorage holen
             var selectedPlan = localStorage.getItem('selectedPlan') || '1month';
@@ -473,15 +482,17 @@
             };
             var value = prices[selectedPlan] || 17.99;
             
-            // Event ID aus localStorage für Deduplizierung mit Server (CAPI)
+            // Event ID aus localStorage - MUSS gleich sein wie in CAPI!
             var eventId = localStorage.getItem('fb_event_id');
             if (!eventId) {
-                eventId = 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                // Fallback - sollte aber eigentlich immer da sein
+                eventId = 'evt_purchase_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                console.log('⚠️ Kein fb_event_id gefunden, generiere neuen:', eventId);
             }
             
             console.log('Plan:', selectedPlan);
             console.log('Value:', value);
-            console.log('Event ID:', eventId);
+            console.log('Event ID für Deduplizierung:', eventId);
             
             // ===== META PIXEL PURCHASE =====
             if (typeof fbq !== 'undefined') {
@@ -492,9 +503,11 @@
                     content_type: 'product',
                     content_ids: [selectedPlan]
                 }, {
-                    eventID: eventId  // WICHTIG: Für Deduplizierung mit CAPI
+                    eventID: eventId  // WICHTIG: Muss identisch mit CAPI event_id sein!
                 });
-                console.log('✅ Meta Purchase sent with eventID:', eventId);
+                console.log('✅ Meta Purchase Event gesendet mit eventID:', eventId);
+            } else {
+                console.log('❌ fbq nicht verfügbar');
             }
             
             // ===== TIKTOK PIXEL PURCHASE =====
@@ -506,30 +519,20 @@
                     content_id: 'wauwerk_' + selectedPlan,
                     content_name: 'WauWerk Trainingsplan'
                 });
-                console.log('✅ TikTok CompletePayment sent');
+                console.log('✅ TikTok CompletePayment Event gesendet');
+            } else {
+                console.log('❌ ttq nicht verfügbar');
             }
             
-            // ===== GOOGLE ANALYTICS =====
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'purchase', {
-                    'event_category': 'ecommerce',
-                    'event_label': 'wauwerk_trainingsplan',
-                    'value': value,
-                    'currency': 'EUR',
-                    'items': [{
-                        'item_name': 'WauWerk Trainingsplan',
-                        'item_category': 'dog_training',
-                        'price': value,
-                        'quantity': 1
-                    }]
-                });
-                console.log('✅ GA4 Purchase sent');
-            }
+            // Markiere als getrackt (verhindert doppeltes Feuern bei Page Refresh)
+            sessionStorage.setItem(purchaseKey, 'true');
             
-            // Cleanup - Event ID löschen nach Tracking
+            // Cleanup localStorage
             localStorage.removeItem('fb_event_id');
             localStorage.removeItem('wentToStripe');
-        });
+            
+            console.log('=== PURCHASE TRACKING DONE ===');
+        })();
     </script>
 </body>
 </html>
