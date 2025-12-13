@@ -6,7 +6,7 @@
     <title>Danke für deine Bestellung - Mein WauWerk</title>
     <link rel="icon" type="image/png" href="favconHund.png">
     
-    <!-- Meta Pixel Code - NUR INIT, kein PageView auf Danke-Seite -->
+    <!-- Meta Pixel - NUR INIT für Retargeting, KEIN Purchase Event hier -->
     <script>
         !function(f,b,e,v,n,t,s)
         {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -17,22 +17,19 @@
         s.parentNode.insertBefore(t,s)}(window, document,'script',
         'https://connect.facebook.net/en_US/fbevents.js');
         fbq('init', '864109602683515');
-        // KEIN PageView hier - nur Purchase unten
+        // KEIN PageView und KEIN Purchase - wird alles server-seitig via CAPI getrackt
     </script>
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     /></noscript>
-    <!-- End Meta Pixel Code -->
 
-    <!-- TikTok Pixel Code Start -->
+    <!-- TikTok Pixel -->
     <script>
         !function (w, d, t) {
           w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for( var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
             ttq.load('D4RFSQBC77U7SM7UL8A0');
-          // KEIN ttq.page() hier
         }(window, document, 'ttq');
     </script>
-    <!-- TikTok Pixel Code End -->
 
     <style>
         * {
@@ -45,13 +42,10 @@
             --text-dark: #2C2C2E;
             --text-medium: #6B6B6B;
             --text-light: #999999;
-            --background: #FFFFFF;
             --white: #FFFFFF;
             --border-light: #E8E4DF;
-            --light-brown: #D4B996;
             --warm-brown: #C4A576;
             --dark-brown: #8B7355;
-            --accent-brown: #D4B996;
             --success-color: #22C55E;
             --border-radius: 12px;
         }
@@ -59,7 +53,6 @@
         html, body {
             width: 100%;
             overflow-x: hidden;
-            scroll-behavior: smooth;
             margin: 0;
             padding: 0;
         }
@@ -351,24 +344,14 @@
         }
 
         @media (max-width: 768px) {
-            h1 {
-                font-size: 26px;
-            }
-
-            .subtitle {
-                font-size: 16px;
-            }
-
-            .thank-you-card {
-                padding: 30px 20px;
-            }
-
+            h1 { font-size: 26px; }
+            .subtitle { font-size: 16px; }
+            .thank-you-card { padding: 30px 20px; }
             .step {
                 flex-direction: column;
                 text-align: center;
                 gap: 12px;
             }
-
             .guarantee-section, .contact-section, .next-steps {
                 padding: 25px 20px;
             }
@@ -461,19 +444,20 @@
 
     <script>
         // ========================================
-        // PURCHASE TRACKING - NUR 1x FEUERN
+        // NUR TIKTOK TRACKING
+        // META PURCHASE WIRD SERVER-SEITIG VIA CAPI GETRACKT
         // ========================================
         (function() {
-            // Check ob Purchase schon getrackt wurde (verhindert doppeltes Feuern bei Refresh)
-            var purchaseKey = 'wauwerk_purchase_tracked_' + window.location.search;
-            if (sessionStorage.getItem(purchaseKey)) {
-                console.log('⚠️ Purchase bereits getrackt - skip');
+            // Prevent duplicate tracking on page refresh
+            var trackingKey = 'wauwerk_thankyou_tracked';
+            if (sessionStorage.getItem(trackingKey)) {
+                console.log('⚠️ Already tracked this session - skip');
                 return;
             }
             
-            console.log('=== PURCHASE TRACKING START ===');
+            console.log('=== DANKE PAGE TRACKING ===');
             
-            // Preis aus localStorage holen
+            // Get plan from localStorage
             var selectedPlan = localStorage.getItem('selectedPlan') || '1month';
             var prices = {
                 '1month': 17.99,
@@ -482,19 +466,9 @@
             };
             var value = prices[selectedPlan] || 17.99;
             
-            // Event ID aus localStorage - MUSS gleich sein wie in CAPI!
-            var eventId = localStorage.getItem('fb_event_id');
-            if (!eventId) {
-                // Fallback - sollte aber eigentlich immer da sein
-                eventId = 'evt_purchase_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                console.log('⚠️ Kein fb_event_id gefunden, generiere neuen:', eventId);
-            }
+            console.log('Plan:', selectedPlan, '| Value:', value);
             
-            console.log('Plan:', selectedPlan);
-            console.log('Value:', value);
-            console.log('Event ID für Deduplizierung:', eventId);
-            
-            // ===== META PIXEL PURCHASE =====
+            // META PURCHASE - NUR BROWSER (kein CAPI)
             if (typeof fbq !== 'undefined') {
                 fbq('track', 'Purchase', {
                     value: value,
@@ -502,15 +476,11 @@
                     content_name: 'WauWerk Trainingsplan',
                     content_type: 'product',
                     content_ids: [selectedPlan]
-                }, {
-                    eventID: eventId  // WICHTIG: Muss identisch mit CAPI event_id sein!
                 });
-                console.log('✅ Meta Purchase Event gesendet mit eventID:', eventId);
-            } else {
-                console.log('❌ fbq nicht verfügbar');
+                console.log('✅ Meta Purchase gesendet:', value, 'EUR');
             }
             
-            // ===== TIKTOK PIXEL PURCHASE =====
+            // TIKTOK - Browser tracking (TikTok hat kein CAPI Setup)
             if (typeof ttq !== 'undefined') {
                 ttq.track('CompletePayment', {
                     value: value,
@@ -519,19 +489,17 @@
                     content_id: 'wauwerk_' + selectedPlan,
                     content_name: 'WauWerk Trainingsplan'
                 });
-                console.log('✅ TikTok CompletePayment Event gesendet');
-            } else {
-                console.log('❌ ttq nicht verfügbar');
+                console.log('✅ TikTok CompletePayment gesendet');
             }
             
-            // Markiere als getrackt (verhindert doppeltes Feuern bei Page Refresh)
-            sessionStorage.setItem(purchaseKey, 'true');
+            // Mark as tracked
+            sessionStorage.setItem(trackingKey, 'true');
             
-            // Cleanup localStorage
+            // Cleanup
             localStorage.removeItem('fb_event_id');
             localStorage.removeItem('wentToStripe');
             
-            console.log('=== PURCHASE TRACKING DONE ===');
+            console.log('=== TRACKING DONE ===');
         })();
     </script>
 </body>
