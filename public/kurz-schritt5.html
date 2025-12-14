@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="favconHund.png">
+    <title>WauWerk - Verhaltensprobleme</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background-light); color: var(--text-dark); line-height: 1.5; }
+        .header { background: var(--white); padding: 16px 0; border-bottom: 1px solid var(--border-light); text-align: center; }
+        .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-dark); }
+        .logo-image { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+        .logo-text { font-size: 22px; font-weight: 800; color: var(--brown-hover); }
+        .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; padding-bottom: 100px; }
+        .quiz-header { text-align: center; margin-bottom: 25px; }
+        .quiz-title { font-size: 24px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; line-height: 1.3; }
+        .quiz-subtitle { font-size: 15px; color: var(--text-medium); }
+        .progress-container { margin-bottom: 30px; }
+        .progress-bar { width: 100%; height: 6px; background: var(--border-light); border-radius: 3px; overflow: hidden; }
+        .progress-fill { width: 55.5%; height: 100%; background: var(--light-brown); transition: width 0.3s ease; }
+        .progress-text { text-align: center; margin-top: 8px; color: var(--text-medium); font-size: 13px; }
+        .options-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .option-card { background: var(--white); border: 2px solid var(--border-light); border-radius: var(--border-radius); padding: 16px 20px; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow-light); display: flex; align-items: center; gap: 16px; }
+        .option-card:hover { border-color: var(--light-brown); transform: translateY(-2px); box-shadow: var(--shadow-medium); }
+        .option-card.selected { border-color: var(--light-brown); background: linear-gradient(135deg, rgba(212, 185, 150, 0.05), rgba(212, 185, 150, 0.1)); }
+        .option-image { width: 60px; height: 60px; flex-shrink: 0; background: var(--border-light); border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .option-image img { width: 100%; height: 100%; object-fit: cover; }
+        .option-text { font-size: 16px; font-weight: 600; color: var(--text-dark); flex: 1; }
+        .continue-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 40px); max-width: 560px; background: var(--primary-brown); color: var(--white); border: none; border-radius: var(--border-radius); padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer; opacity: 0.5; pointer-events: none; transition: all 0.2s ease; }
+        .continue-btn.active { opacity: 1; pointer-events: auto; }
+        .continue-btn.active:hover { background: var(--brown-hover); }
+        @media (max-width: 480px) {
+            .container { padding: 25px 15px; padding-bottom: 90px; }
+            .quiz-title { font-size: 20px; }
+            .option-card { padding: 14px 16px; gap: 14px; }
+            .option-image { width: 50px; height: 50px; }
+            .option-text { font-size: 14px; }
+        }
+    </style>
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','864109602683515');fbq('track','PageView');</script>
+    <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","ufxcf43805");</script>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">Mein WauWerk</span>
+        </a>
+    </header>
+    <div class="container">
+        <div class="quiz-header">
+            <h1 class="quiz-title">Welche Verhaltensprobleme möchtest du zuerst lösen?</h1>
+            <p class="quiz-subtitle">Wähle alle zutreffenden Probleme aus:</p>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar"><div class="progress-fill"></div></div>
+            <div class="progress-text">Frage 5 von 9</div>
+        </div>
+        <div class="options-list">
+            <div class="option-card" data-behavior="energy">
+                <div class="option-image"><img src="bsp1.png" alt="Übermäßige Energie"></div>
+                <div class="option-text">Übermäßige Energie und mangelnde Kontrolle</div>
+            </div>
+            <div class="option-card" data-behavior="aggression">
+                <div class="option-image"><img src="bsp2.png" alt="Aggression"></div>
+                <div class="option-text">Aggression gegenüber Menschen oder anderen Tieren</div>
+            </div>
+            <div class="option-card" data-behavior="pulling">
+                <div class="option-image"><img src="bsp3.png" alt="An der Leine ziehen"></div>
+                <div class="option-text">An der Leine ziehen</div>
+            </div>
+            <div class="option-card" data-behavior="anxiety">
+                <div class="option-image"><img src="bsp4.png" alt="Trennungsangst"></div>
+                <div class="option-text">Trennungsangst</div>
+            </div>
+            <div class="option-card" data-behavior="barking">
+                <div class="option-image"><img src="bsp5.png" alt="Übermäßiges Bellen"></div>
+                <div class="option-text">Übermäßiges Bellen</div>
+            </div>
+            <div class="option-card" data-behavior="destructive">
+                <div class="option-image"><img src="bsp6.png" alt="Zerstörerisches Verhalten"></div>
+                <div class="option-text">Zerstörerisches Verhalten</div>
+            </div>
+            <div class="option-card" data-behavior="soiling">
+                <div class="option-image"><img src="bsp7.png" alt="In die Wohnung machen"></div>
+                <div class="option-text">In die Wohnung machen</div>
+            </div>
+        </div>
+        <button class="continue-btn" id="continueBtn">Weiter</button>
+    </div>
+    <script>
+        const cards = document.querySelectorAll('.option-card');
+        const continueBtn = document.getElementById('continueBtn');
+        let selectedBehaviors = [];
+        
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                const behavior = card.dataset.behavior;
+                if (selectedBehaviors.includes(behavior)) {
+                    selectedBehaviors = selectedBehaviors.filter(b => b !== behavior);
+                    card.classList.remove('selected');
+                } else {
+                    selectedBehaviors.push(behavior);
+                    card.classList.add('selected');
+                }
+                continueBtn.classList.toggle('active', selectedBehaviors.length > 0);
+                
+                // Store selections in localStorage
+                localStorage.setItem('dogBehaviors', JSON.stringify(selectedBehaviors));
+                localStorage.setItem('dogProblem', selectedBehaviors[0] || '');
+            });
+        });
+        
+        continueBtn.addEventListener('click', () => {
+            if (selectedBehaviors.length > 0) {
+                window.location.href = 'kurz-schritt6.html';
+            }
+        });
+        
+        // Load previous selections if available
+        const savedBehaviors = localStorage.getItem('dogBehaviors');
+        if (savedBehaviors) {
+            try {
+                selectedBehaviors = JSON.parse(savedBehaviors);
+                selectedBehaviors.forEach(behavior => {
+                    const card = document.querySelector(`[data-behavior="${behavior}"]`);
+                    if (card) card.classList.add('selected');
+                });
+                if (selectedBehaviors.length > 0) continueBtn.classList.add('active');
+            } catch (e) {}
+        }
+    </script>
+</body>
+</html>

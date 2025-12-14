@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="favconHund.png">
+    <title>WauWerk - Rasse auswählen</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background-light); color: var(--text-dark); line-height: 1.5; }
+        .header { background: var(--white); padding: 16px 0; border-bottom: 1px solid var(--border-light); text-align: center; }
+        .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-dark); }
+        .logo-image { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+        .logo-text { font-size: 22px; font-weight: 800; color: var(--brown-hover); }
+        .container { max-width: 500px; margin: 0 auto; padding: 40px 20px; }
+        .quiz-header { text-align: center; margin-bottom: 30px; }
+        .quiz-title { font-size: 26px; font-weight: 700; color: var(--text-dark); }
+        .progress-container { margin-bottom: 35px; }
+        .progress-bar { width: 100%; height: 6px; background: var(--border-light); border-radius: 3px; overflow: hidden; }
+        .progress-fill { width: 22.2%; height: 100%; background: var(--light-brown); transition: width 0.3s ease; }
+        .progress-text { text-align: center; margin-top: 8px; color: var(--text-medium); font-size: 13px; }
+        .search-container { margin-bottom: 20px; position: sticky; top: 0; z-index: 10; background: var(--background-light); padding-bottom: 10px; }
+        .search-input { width: 100%; padding: 14px 18px; font-size: 16px; border: 2px solid var(--border-light); border-radius: var(--border-radius); background: var(--white); }
+        .search-input:focus { outline: none; border-color: var(--light-brown); }
+        .breeds-list { display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; }
+        .breed-card { background: var(--white); border: 2px solid var(--border-light); border-radius: var(--border-radius); padding: 16px 20px; cursor: pointer; transition: all 0.2s ease; font-size: 16px; font-weight: 500; }
+        .breed-card:hover { border-color: var(--light-brown); background: #FDFCFA; }
+        .breed-card.selected { border-color: var(--primary-brown); background: linear-gradient(135deg, rgba(212, 185, 150, 0.1), rgba(212, 185, 150, 0.15)); }
+        .breed-card.hidden { display: none; }
+        @media (max-width: 480px) {
+            .container { padding: 25px 15px; }
+            .quiz-title { font-size: 22px; }
+            .breeds-list { max-height: 350px; }
+        }
+    </style>
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','864109602683515');fbq('track','PageView');</script>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">Mein WauWerk</span>
+        </a>
+    </header>
+    <div class="container">
+        <div class="quiz-header">
+            <h1 class="quiz-title">Welche Rasse ist dein Hund?</h1>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar"><div class="progress-fill"></div></div>
+            <div class="progress-text">Frage 2 von 9</div>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Rasse suchen...">
+        </div>
+        <div class="breeds-list" id="breedsList">
+            <div class="breed-card" data-breed="Mischling">Mischling</div>
+            <div class="breed-card" data-breed="Labrador Retriever">Labrador Retriever</div>
+            <div class="breed-card" data-breed="Deutscher Schäferhund">Deutscher Schäferhund</div>
+            <div class="breed-card" data-breed="Golden Retriever">Golden Retriever</div>
+            <div class="breed-card" data-breed="Französische Bulldogge">Französische Bulldogge</div>
+            <div class="breed-card" data-breed="Chihuahua">Chihuahua</div>
+            <div class="breed-card" data-breed="Australian Shepherd">Australian Shepherd</div>
+            <div class="breed-card" data-breed="Border Collie">Border Collie</div>
+            <div class="breed-card" data-breed="Beagle">Beagle</div>
+            <div class="breed-card" data-breed="Pudel">Pudel</div>
+            <div class="breed-card" data-breed="Dackel">Dackel / Dachshund</div>
+            <div class="breed-card" data-breed="Rottweiler">Rottweiler</div>
+            <div class="breed-card" data-breed="Boxer">Boxer</div>
+            <div class="breed-card" data-breed="Siberian Husky">Siberian Husky</div>
+            <div class="breed-card" data-breed="Malteser">Malteser</div>
+            <div class="breed-card" data-breed="Jack Russell Terrier">Jack Russell Terrier</div>
+            <div class="breed-card" data-breed="Shih Tzu">Shih Tzu</div>
+            <div class="breed-card" data-breed="Yorkshire Terrier">Yorkshire Terrier</div>
+            <div class="breed-card" data-breed="Akita">Akita</div>
+            <div class="breed-card" data-breed="Alaskan Malamute">Alaskan Malamute</div>
+            <div class="breed-card" data-breed="American Staffordshire Terrier">American Staffordshire Terrier</div>
+            <div class="breed-card" data-breed="Australian Cattle Dog">Australian Cattle Dog</div>
+            <div class="breed-card" data-breed="Aussiedoodle">Aussiedoodle</div>
+            <div class="breed-card" data-breed="Basenji">Basenji</div>
+            <div class="breed-card" data-breed="Basset Hound">Basset Hound</div>
+            <div class="breed-card" data-breed="Belgischer Schäferhund">Belgischer Schäferhund (Malinois)</div>
+            <div class="breed-card" data-breed="Berner Sennenhund">Berner Sennenhund</div>
+            <div class="breed-card" data-breed="Bernedoodle">Bernedoodle</div>
+            <div class="breed-card" data-breed="Bichon Frisé">Bichon Frisé</div>
+            <div class="breed-card" data-breed="Bloodhound">Bloodhound</div>
+            <div class="breed-card" data-breed="Bobtail">Bobtail (Old English Sheepdog)</div>
+            <div class="breed-card" data-breed="Bolonka Zwetna">Bolonka Zwetna</div>
+            <div class="breed-card" data-breed="Bordeauxdogge">Bordeauxdogge</div>
+            <div class="breed-card" data-breed="Boston Terrier">Boston Terrier</div>
+            <div class="breed-card" data-breed="Briard">Briard</div>
+            <div class="breed-card" data-breed="Englische Bulldogge">Englische Bulldogge</div>
+            <div class="breed-card" data-breed="Bullmastiff">Bullmastiff</div>
+            <div class="breed-card" data-breed="Bull Terrier">Bull Terrier</div>
+            <div class="breed-card" data-breed="Cairn Terrier">Cairn Terrier</div>
+            <div class="breed-card" data-breed="Cane Corso">Cane Corso</div>
+            <div class="breed-card" data-breed="Cavalier King Charles Spaniel">Cavalier King Charles Spaniel</div>
+            <div class="breed-card" data-breed="Chow Chow">Chow Chow</div>
+            <div class="breed-card" data-breed="Cockapoo">Cockapoo</div>
+            <div class="breed-card" data-breed="Cocker Spaniel">Cocker Spaniel</div>
+            <div class="breed-card" data-breed="Collie">Collie</div>
+            <div class="breed-card" data-breed="Welsh Corgi">Welsh Corgi</div>
+            <div class="breed-card" data-breed="Dalmatiner">Dalmatiner</div>
+            <div class="breed-card" data-breed="Deutsche Dogge">Deutsche Dogge</div>
+            <div class="breed-card" data-breed="Deutsch Drahthaar">Deutsch Drahthaar</div>
+            <div class="breed-card" data-breed="Deutsch Kurzhaar">Deutsch Kurzhaar</div>
+            <div class="breed-card" data-breed="Dobermann">Dobermann</div>
+            <div class="breed-card" data-breed="Englischer Setter">Englischer Setter</div>
+            <div class="breed-card" data-breed="Englischer Springer Spaniel">Englischer Springer Spaniel</div>
+            <div class="breed-card" data-breed="Eurasier">Eurasier</div>
+            <div class="breed-card" data-breed="Flat Coated Retriever">Flat Coated Retriever</div>
+            <div class="breed-card" data-breed="Foxterrier">Foxterrier</div>
+            <div class="breed-card" data-breed="Goldendoodle">Goldendoodle</div>
+            <div class="breed-card" data-breed="Gordon Setter">Gordon Setter</div>
+            <div class="breed-card" data-breed="Greyhound">Greyhound</div>
+            <div class="breed-card" data-breed="Großer Schweizer Sennenhund">Großer Schweizer Sennenhund</div>
+            <div class="breed-card" data-breed="Havaneser">Havaneser</div>
+            <div class="breed-card" data-breed="Hovawart">Hovawart</div>
+            <div class="breed-card" data-breed="Irish Setter">Irish Setter</div>
+            <div class="breed-card" data-breed="Irish Wolfhound">Irish Wolfhound</div>
+            <div class="breed-card" data-breed="Italienisches Windspiel">Italienisches Windspiel</div>
+            <div class="breed-card" data-breed="Japan Spitz">Japan Spitz</div>
+            <div class="breed-card" data-breed="Kangal">Kangal</div>
+            <div class="breed-card" data-breed="Kaukasischer Owtscharka">Kaukasischer Owtscharka</div>
+            <div class="breed-card" data-breed="Kleinspitz">Kleinspitz</div>
+            <div class="breed-card" data-breed="Kromfohrländer">Kromfohrländer</div>
+            <div class="breed-card" data-breed="Labradoodle">Labradoodle</div>
+            <div class="breed-card" data-breed="Lagotto Romagnolo">Lagotto Romagnolo</div>
+            <div class="breed-card" data-breed="Landseer">Landseer</div>
+            <div class="breed-card" data-breed="Leonberger">Leonberger</div>
+            <div class="breed-card" data-breed="Lhasa Apso">Lhasa Apso</div>
+            <div class="breed-card" data-breed="Maltipoo">Maltipoo</div>
+            <div class="breed-card" data-breed="Maremmen-Abruzzen-Schäferhund">Maremmen-Abruzzen-Schäferhund</div>
+            <div class="breed-card" data-breed="Zwergschnauzer">Zwergschnauzer</div>
+            <div class="breed-card" data-breed="Mittelspitz">Mittelspitz</div>
+            <div class="breed-card" data-breed="Mops">Mops</div>
+            <div class="breed-card" data-breed="Münsterländer">Münsterländer</div>
+            <div class="breed-card" data-breed="Neufundländer">Neufundländer</div>
+            <div class="breed-card" data-breed="Nova Scotia Duck Tolling Retriever">Nova Scotia Duck Tolling Retriever</div>
+            <div class="breed-card" data-breed="Österreichischer Pinscher">Österreichischer Pinscher</div>
+            <div class="breed-card" data-breed="Papillon">Papillon</div>
+            <div class="breed-card" data-breed="Parson Russell Terrier">Parson Russell Terrier</div>
+            <div class="breed-card" data-breed="Pekinese">Pekinese</div>
+            <div class="breed-card" data-breed="Deutscher Pinscher">Deutscher Pinscher</div>
+            <div class="breed-card" data-breed="Pitbull">Pitbull</div>
+            <div class="breed-card" data-breed="Podenco">Podenco</div>
+            <div class="breed-card" data-breed="Pointer">Pointer</div>
+            <div class="breed-card" data-breed="Pomeranian">Pomeranian / Zwergspitz</div>
+            <div class="breed-card" data-breed="Portugiesischer Wasserhund">Portugiesischer Wasserhund</div>
+            <div class="breed-card" data-breed="Prager Rattler">Prager Rattler</div>
+            <div class="breed-card" data-breed="Rhodesian Ridgeback">Rhodesian Ridgeback</div>
+            <div class="breed-card" data-breed="Riesenschnauzer">Riesenschnauzer</div>
+            <div class="breed-card" data-breed="Samojede">Samojede</div>
+            <div class="breed-card" data-breed="Schapendoes">Schapendoes</div>
+            <div class="breed-card" data-breed="Schipperke">Schipperke</div>
+            <div class="breed-card" data-breed="Schnauzer">Schnauzer</div>
+            <div class="breed-card" data-breed="Scottish Terrier">Scottish Terrier</div>
+            <div class="breed-card" data-breed="Shar Pei">Shar Pei</div>
+            <div class="breed-card" data-breed="Shetland Sheepdog">Shetland Sheepdog (Sheltie)</div>
+            <div class="breed-card" data-breed="Shiba Inu">Shiba Inu</div>
+            <div class="breed-card" data-breed="Deutscher Spitz">Deutscher Spitz</div>
+            <div class="breed-card" data-breed="Staffordshire Bullterrier">Staffordshire Bullterrier</div>
+            <div class="breed-card" data-breed="Standardpudel">Standardpudel / Großpudel</div>
+            <div class="breed-card" data-breed="St. Bernhardshund">St. Bernhardshund</div>
+            <div class="breed-card" data-breed="Tibet Terrier">Tibet Terrier</div>
+            <div class="breed-card" data-breed="Toy Pudel">Toy Pudel</div>
+            <div class="breed-card" data-breed="Vizsla">Vizsla (Ungarischer Vorstehhund)</div>
+            <div class="breed-card" data-breed="Weimaraner">Weimaraner</div>
+            <div class="breed-card" data-breed="Weißer Schweizer Schäferhund">Weißer Schweizer Schäferhund</div>
+            <div class="breed-card" data-breed="West Highland White Terrier">West Highland White Terrier (Westie)</div>
+            <div class="breed-card" data-breed="Whippet">Whippet</div>
+            <div class="breed-card" data-breed="Zwergpinscher">Zwergpinscher</div>
+            <div class="breed-card" data-breed="Zwergpudel">Zwergpudel</div>
+            <div class="breed-card" data-breed="Andere Rasse">Andere Rasse / Weiß nicht</div>
+        </div>
+    </div>
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const breedCards = document.querySelectorAll('.breed-card');
+        
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            breedCards.forEach(card => {
+                const breedName = card.textContent.toLowerCase();
+                card.classList.toggle('hidden', !breedName.includes(searchTerm));
+            });
+        });
+        
+        breedCards.forEach(card => {
+            card.addEventListener('click', () => {
+                localStorage.setItem('dogBreed', card.dataset.breed);
+                window.location.href = 'kurz-schritt3.html';
+            });
+        });
+    </script>
+</body>
+</html>
