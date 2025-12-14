@@ -122,7 +122,7 @@
         </div>
     </div>
     
-    <a href="laden.html" class="continue-btn">Meinen Plan ansehen →</a>
+    <a href="deinplan.html" class="continue-btn">Meinen Plan ansehen →</a>
     
     <script>
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
@@ -153,8 +153,8 @@
         const commandCount = dogCommands.includes('none') ? 0 : dogCommands.length;
         document.getElementById('commandsDisplay').textContent = commandCount;
         
-        // Calculate score based on commands
-        let score = Math.min(3 + commandCount, 7);
+        // Calculate score based on commands (max 5)
+        let score = Math.min(2 + Math.floor(commandCount / 2), 5);
         if (dogCommands.includes('none')) score = 2;
         document.getElementById('scoreValue').innerHTML = `${score} <span>/ 10</span>`;
         document.getElementById('scoreMarker').style.left = `${score * 10}%`;
