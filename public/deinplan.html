@@ -2547,26 +2547,27 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 
                 clientSecret = data.clientSecret;
                 
-                // Event ID (payment_intent) in answers updaten
-                if (currentLeadId && data.paymentIntentId) {
-                    const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
-                    currentAnswers.event_id = data.paymentIntentId;
-                    
-                    fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${currentLeadId}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                            'Content-Type': 'application/json',
-                            'Prefer': 'return=minimal'
-                        },
-                        body: JSON.stringify({ 
-                            answers: currentAnswers
-                        })
-                    });
-                    
-                    localStorage.setItem('wauwerk_answers', JSON.stringify(currentAnswers));
-                }
+                // Event ID (payment_intent) und fb_event_id in answers updaten
+if (currentLeadId && data.paymentIntentId) {
+    const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
+    currentAnswers.event_id = data.paymentIntentId;
+    currentAnswers.fb_event_id = localStorage.getItem('fb_event_id') || '';
+    
+    fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${currentLeadId}`, {
+        method: 'PATCH',
+        headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ 
+            answers: currentAnswers
+        })
+    });
+    
+    localStorage.setItem('wauwerk_answers', JSON.stringify(currentAnswers));
+}
                 
                 // Stripe Elements erstellen
                 elements = stripe.elements({
