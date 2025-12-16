@@ -1299,10 +1299,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            color: var(--text-medium);
-            font-size: 14px;
+            gap: 10px;
+            color: var(--text-dark);
+            font-size: 16px;
+            font-weight: 600;
             margin-bottom: 30px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 1px solid #86efac;
+            border-radius: var(--border-radius);
         }
 
         .payment-logos {
@@ -1327,9 +1332,9 @@
         }
 
         .guarantee svg {
-            width: 20px;
-            height: 20px;
-            fill: var(--warm-brown);
+            width: 24px;
+            height: 24px;
+            fill: #16a34a;
         }
 
         .testimonials-section {
@@ -2218,97 +2223,97 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         // Dynamische Benefits basierend auf Problem
         const benefitsMap = {
             'pulling': [
-                '✓ Leinenziehen effektiv abtrainieren',
+                `✓ ${dogName}s Leinenziehen effektiv abtrainieren`,
                 '✓ Entspannte Spaziergänge ohne Zerren',
-                '✓ Richtiges Verhalten an der Leine lernen',
+                `✓ ${dogName} lernt richtiges Verhalten an der Leine`,
                 '✓ Ablenkungen souverän meistern',
-                '✓ Begegnungen mit anderen Hunden stressfrei gestalten',
-                '✓ 20+ Übungen speziell für Leinenführigkeit',
+                `✓ Begegnungen mit anderen Hunden stressfrei`,
+                `✓ 20+ Übungen speziell für ${dogName}`,
                 '✓ Endlich wieder Freude am Gassi gehen'
             ],
             'barking': [
-                '✓ Übermäßiges Bellen gezielt reduzieren',
+                `✓ ${dogName}s übermäßiges Bellen reduzieren`,
                 '✓ Auslöser für das Bellen verstehen',
-                '✓ Ruhe-Kommandos zuverlässig aufbauen',
+                `✓ ${dogName} lernt Ruhe-Kommandos`,
                 '✓ Entspanntere Nachbarschaft',
                 '✓ Besuch ohne Kläffen empfangen',
-                '✓ 20+ Übungen gegen übermäßiges Bellen',
-                '✓ Ein ruhigerer, ausgeglichener Hund'
+                `✓ 20+ Übungen speziell für ${dogName}`,
+                `✓ ${dogName} wird ruhiger & ausgeglichener`
             ],
             'aggression': [
-                '✓ Aggressives Verhalten verstehen & lösen',
+                `✓ ${dogName}s aggressives Verhalten verstehen & lösen`,
                 '✓ Warnsignale frühzeitig erkennen',
-                '✓ Sichere Begegnungen mit anderen Hunden',
+                `✓ Sichere Begegnungen für ${dogName}`,
                 '✓ Stresssituationen souverän meistern',
-                '✓ Vertrauen zwischen dir und deinem Hund stärken',
-                '✓ 20+ Übungen für friedliches Verhalten',
+                `✓ Stärkeres Vertrauen zwischen dir und ${dogName}`,
+                `✓ 20+ Übungen speziell für ${dogName}`,
                 '✓ Entspanntes Zusammenleben ohne Angst'
             ],
             'anxiety': [
-                '✓ Trennungsangst Schritt für Schritt abbauen',
-                '✓ Alleine bleiben ohne Stress lernen',
-                '✓ Zerstörerisches Verhalten bei Abwesenheit stoppen',
-                '✓ Selbstvertrauen deines Hundes stärken',
+                `✓ ${dogName}s Trennungsangst Schritt für Schritt abbauen`,
+                `✓ ${dogName} lernt alleine zu bleiben`,
+                '✓ Zerstörerisches Verhalten stoppen',
+                `✓ ${dogName}s Selbstvertrauen stärken`,
                 '✓ Entspannte Abwesenheiten ermöglichen',
-                '✓ 20+ Übungen gegen Trennungsangst',
+                `✓ 20+ Übungen speziell für ${dogName}`,
                 '✓ Endlich sorgenfrei das Haus verlassen'
             ],
             'jumping': [
-                '✓ Anspringen an Menschen abtrainieren',
-                '✓ Ruhige Begrüßung lernen',
+                `✓ ${dogName}s Anspringen abtrainieren`,
+                `✓ ${dogName} lernt ruhige Begrüßung`,
                 '✓ Selbstkontrolle bei Aufregung aufbauen',
                 '✓ Besuch entspannt empfangen',
-                '✓ Höfliches Verhalten gegenüber Fremden',
-                '✓ 20+ Übungen für kontrolliertes Verhalten',
-                '✓ Keine peinlichen Momente mehr mit Gästen'
+                `✓ Höfliches Verhalten von ${dogName}`,
+                `✓ 20+ Übungen speziell für ${dogName}`,
+                '✓ Keine peinlichen Momente mehr'
             ],
             'recall': [
-                '✓ Zuverlässigen Rückruf aufbauen',
-                '✓ Freilauf ohne Sorgen ermöglichen',
-                '✓ Ablenkungen erfolgreich ignorieren',
+                `✓ ${dogName}s zuverlässigen Rückruf aufbauen`,
+                `✓ Freilauf ohne Sorgen für ${dogName}`,
+                `✓ ${dogName} ignoriert Ablenkungen`,
                 '✓ Sofortige Reaktion auf deinen Ruf',
-                '✓ Sicherheit in jeder Situation',
-                '✓ 20+ Übungen für perfekten Rückruf',
+                `✓ Sicherheit für ${dogName} in jeder Situation`,
+                `✓ 20+ Übungen speziell für ${dogName}`,
                 '✓ Endlich entspannter Freilauf'
             ],
             'energy': [
-                '✓ Überschüssige Energie gezielt abbauen',
-                '✓ Mentale Auslastung für deinen Hund',
-                '✓ Ruhe und Entspannung lernen',
+                `✓ ${dogName}s überschüssige Energie abbauen`,
+                `✓ Mentale Auslastung für ${dogName}`,
+                `✓ ${dogName} lernt Ruhe & Entspannung`,
                 '✓ Hyperaktivität in den Griff bekommen',
                 '✓ Ausgeglichenes Verhalten im Alltag',
-                '✓ 20+ Übungen für mehr Balance',
-                '✓ Ein ruhigerer, zufriedener Hund'
+                `✓ 20+ Übungen speziell für ${dogName}`,
+                `✓ ${dogName} wird ruhiger & zufriedener`
             ],
             'destructive': [
-                '✓ Zerstörerisches Verhalten stoppen',
-                '✓ Langeweile sinnvoll bekämpfen',
+                `✓ ${dogName}s zerstörerisches Verhalten stoppen`,
+                `✓ Langeweile bei ${dogName} sinnvoll bekämpfen`,
                 '✓ Kauen auf erlaubte Gegenstände umlenken',
                 '✓ Deine Möbel und Schuhe schützen',
-                '✓ Mentale Beschäftigung bieten',
-                '✓ 20+ Übungen gegen Zerstörungswut',
+                `✓ Mentale Beschäftigung für ${dogName}`,
+                `✓ 20+ Übungen speziell für ${dogName}`,
                 '✓ Endlich Schluss mit zerstörten Sachen'
             ],
             'soiling': [
-                '✓ Stubenreinheit zuverlässig erreichen',
-                '✓ Klare Routinen für Toilettengänge',
-                '✓ Signale deines Hundes verstehen',
+                `✓ ${dogName} wird zuverlässig stubenrein`,
+                `✓ Klare Routinen für ${dogName}s Toilettengänge`,
+                `✓ ${dogName}s Signale verstehen`,
                 '✓ Unfälle in der Wohnung vermeiden',
                 '✓ Richtiges Timing beim Rausgehen',
-                '✓ 20+ Übungen für Stubenreinheit',
+                `✓ 20+ Übungen speziell für ${dogName}`,
                 '✓ Eine saubere Wohnung ohne Stress'
             ]
         };
         
         // Default Benefits falls Problem nicht gemappt
         const defaultBenefits = [
-            '✓ Gehorsam schnell verbessern',
+            `✓ ${dogName}s Gehorsam schnell verbessern`,
             '✓ Verhaltensprobleme gezielt lösen',
-            '✓ Neue Trainingstechniken lernen',
-            '✓ Stärkere Bindung zu deinem Hund aufbauen',
+            `✓ Neue Trainingstechniken für ${dogName}`,
+            `✓ Stärkere Bindung zu ${dogName} aufbauen`,
             '✓ Dauerhaft gutes Verhalten erreichen',
-            '✓ 20+ Übungen für mentale Gesundheit',
-            '✓ Glückliches Zusammenleben genießen'
+            `✓ 20+ Übungen speziell für ${dogName}`,
+            `✓ Glückliches Zusammenleben mit ${dogName}`
         ];
         
         const benefits = benefitsMap[dogProblem] || defaultBenefits;
