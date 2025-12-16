@@ -1610,6 +1610,148 @@
             text-decoration: underline;
         }
 
+        /* ========== NEU: Price Anchor Box ========== */
+        .price-anchor-box {
+            background: linear-gradient(135deg, #FFF9F0 0%, #FFF5E6 100%);
+            border: 2px solid var(--warm-brown);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .price-anchor-title {
+            font-size: 14px;
+            color: var(--text-medium);
+            margin-bottom: 15px;
+        }
+
+        .price-anchor-comparison {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .price-anchor-item {
+            text-align: center;
+        }
+
+        .price-anchor-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .price-anchor-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .price-anchor-value.old {
+            color: var(--text-light);
+            text-decoration: line-through;
+        }
+
+        .price-anchor-value.new {
+            color: var(--warm-brown);
+        }
+
+        .price-anchor-divider {
+            font-size: 24px;
+            color: var(--warm-brown);
+        }
+
+        /* ========== NEU: Testimonial Compact (vor Pricing) ========== */
+        .testimonial-compact {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-light);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .testimonial-compact-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #F5EDE3 0%, #E8DCCC 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .testimonial-compact-content {
+            flex: 1;
+        }
+
+        .testimonial-compact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .testimonial-compact-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .testimonial-compact-stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .testimonial-compact-stars span {
+            color: #FFB800;
+            font-size: 12px;
+        }
+
+        .testimonial-compact-text {
+            font-size: 13px;
+            color: var(--text-medium);
+            line-height: 1.5;
+        }
+
+        .testimonial-compact-problem {
+            font-size: 11px;
+            color: var(--warm-brown);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* ========== NEU: Section Divider ========== */
+        .section-divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .section-divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: var(--border-light);
+        }
+
+        .section-divider span {
+            background: var(--background);
+            padding: 0 15px;
+            position: relative;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
         @media (max-width: 480px) {
             .comparison-container {
                 flex-direction: row;
@@ -1659,6 +1801,15 @@
 
             .stat-value {
                 font-size: 12px;
+            }
+
+            .price-anchor-comparison {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .price-anchor-divider {
+                transform: rotate(90deg);
             }
         }
     </style>
@@ -1776,6 +1927,31 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
         </div>
 
+        <!-- ========== NEU: Benefits VOR Pricing (dynamisch) ========== -->
+        <div class="benefits-box">
+            <h2 class="benefits-title">Das bekommst du im Plan</h2>
+            <ul class="benefits-list" id="benefitsList">
+                <!-- Wird dynamisch per JS gefüllt -->
+            </ul>
+        </div>
+
+        <!-- ========== NEU: Preisanker ========== -->
+        <div class="price-anchor-box">
+            <p class="price-anchor-title">Was kostet professionelles Hundetraining normalerweise?</p>
+            <div class="price-anchor-comparison">
+                <div class="price-anchor-item">
+                    <p class="price-anchor-label">Hundeschule (10 Std.)</p>
+                    <p class="price-anchor-value old">€500 - €800</p>
+                </div>
+                <span class="price-anchor-divider">→</span>
+                <div class="price-anchor-item">
+                    <p class="price-anchor-label">Unser Trainingsplan</p>
+                    <p class="price-anchor-value new">ab €17,99</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== Pricing Section (umformulierte Frage) ========== -->
         <div class="motivation-text">
             <p>Mit den richtigen Übungen und einem strukturierten Plan lässt sich <span class="problem-highlight" id="problemTextMotivation">das Problem</span> abtrainieren.</p>
             <p class="motivation-question">In welcher Zeit soll <span id="dogNamePlan">dein Hund</span> das Problem lösen?</p>
@@ -1857,6 +2033,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             30-Tage Geld-zurück-Garantie
         </div>
 
+        <!-- ========== Testimonials (ausführlicher, weiter unten) ========== -->
         <div class="testimonials-section">
             <div class="section-header">
                 <h2 class="section-title">Echte Erfolgsgeschichten</h2>
@@ -1888,19 +2065,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
                 <p class="testimonial-text">Max war ständig aufgedreht und konnte nicht stillsitzen. Die täglichen 10-Minuten-Übungen haben wahre Wunder gewirkt. Jetzt ist er viel ausgeglichener!</p>
             </div>
-        </div>
-
-        <div class="benefits-box">
-            <h2 class="benefits-title">Das bekommst du</h2>
-            <ul class="benefits-list">
-                <li>✓ Schnell den Gehorsam verbessern</li>
-                <li>✓ Überschüssige Energie in den Griff bekommen</li>
-                <li>✓ Neue Trainingstechniken lernen</li>
-                <li>✓ <span id="userProblemBenefit">Verhaltensprobleme</span> lösen</li>
-                <li>✓ Dauerhaft hohes Gehorsamkeitslevel halten</li>
-                <li>✓ 20+ Aufgaben für <span id="dogName4">deinen Hund</span>s mentale Gesundheit als Bonus</li>
-                <li>✓ Glückliches Zusammenleben mit einem gehorsamen Hund genießen</li>
-            </ul>
         </div>
 
         <div class="trustpilot-slider">
@@ -2016,7 +2180,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         document.getElementById('dogName1').textContent = dogName;
         document.getElementById('dogName2').textContent = dogName;
         document.getElementById('dogName3').textContent = dogName;
-        document.getElementById('dogName4').textContent = dogName;
         document.getElementById('dogNamePlan').textContent = dogName;
 
         const goalMap = {
@@ -2051,7 +2214,110 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         }
         
         document.getElementById('userProblem').textContent = problemText;
-        document.getElementById('userProblemBenefit').textContent = problemText;
+        
+        // Dynamische Benefits basierend auf Problem
+        const benefitsMap = {
+            'pulling': [
+                '✓ Leinenziehen effektiv abtrainieren',
+                '✓ Entspannte Spaziergänge ohne Zerren',
+                '✓ Richtiges Verhalten an der Leine lernen',
+                '✓ Ablenkungen souverän meistern',
+                '✓ Begegnungen mit anderen Hunden stressfrei gestalten',
+                '✓ 20+ Übungen speziell für Leinenführigkeit',
+                '✓ Endlich wieder Freude am Gassi gehen'
+            ],
+            'barking': [
+                '✓ Übermäßiges Bellen gezielt reduzieren',
+                '✓ Auslöser für das Bellen verstehen',
+                '✓ Ruhe-Kommandos zuverlässig aufbauen',
+                '✓ Entspanntere Nachbarschaft',
+                '✓ Besuch ohne Kläffen empfangen',
+                '✓ 20+ Übungen gegen übermäßiges Bellen',
+                '✓ Ein ruhigerer, ausgeglichener Hund'
+            ],
+            'aggression': [
+                '✓ Aggressives Verhalten verstehen & lösen',
+                '✓ Warnsignale frühzeitig erkennen',
+                '✓ Sichere Begegnungen mit anderen Hunden',
+                '✓ Stresssituationen souverän meistern',
+                '✓ Vertrauen zwischen dir und deinem Hund stärken',
+                '✓ 20+ Übungen für friedliches Verhalten',
+                '✓ Entspanntes Zusammenleben ohne Angst'
+            ],
+            'anxiety': [
+                '✓ Trennungsangst Schritt für Schritt abbauen',
+                '✓ Alleine bleiben ohne Stress lernen',
+                '✓ Zerstörerisches Verhalten bei Abwesenheit stoppen',
+                '✓ Selbstvertrauen deines Hundes stärken',
+                '✓ Entspannte Abwesenheiten ermöglichen',
+                '✓ 20+ Übungen gegen Trennungsangst',
+                '✓ Endlich sorgenfrei das Haus verlassen'
+            ],
+            'jumping': [
+                '✓ Anspringen an Menschen abtrainieren',
+                '✓ Ruhige Begrüßung lernen',
+                '✓ Selbstkontrolle bei Aufregung aufbauen',
+                '✓ Besuch entspannt empfangen',
+                '✓ Höfliches Verhalten gegenüber Fremden',
+                '✓ 20+ Übungen für kontrolliertes Verhalten',
+                '✓ Keine peinlichen Momente mehr mit Gästen'
+            ],
+            'recall': [
+                '✓ Zuverlässigen Rückruf aufbauen',
+                '✓ Freilauf ohne Sorgen ermöglichen',
+                '✓ Ablenkungen erfolgreich ignorieren',
+                '✓ Sofortige Reaktion auf deinen Ruf',
+                '✓ Sicherheit in jeder Situation',
+                '✓ 20+ Übungen für perfekten Rückruf',
+                '✓ Endlich entspannter Freilauf'
+            ],
+            'energy': [
+                '✓ Überschüssige Energie gezielt abbauen',
+                '✓ Mentale Auslastung für deinen Hund',
+                '✓ Ruhe und Entspannung lernen',
+                '✓ Hyperaktivität in den Griff bekommen',
+                '✓ Ausgeglichenes Verhalten im Alltag',
+                '✓ 20+ Übungen für mehr Balance',
+                '✓ Ein ruhigerer, zufriedener Hund'
+            ],
+            'destructive': [
+                '✓ Zerstörerisches Verhalten stoppen',
+                '✓ Langeweile sinnvoll bekämpfen',
+                '✓ Kauen auf erlaubte Gegenstände umlenken',
+                '✓ Deine Möbel und Schuhe schützen',
+                '✓ Mentale Beschäftigung bieten',
+                '✓ 20+ Übungen gegen Zerstörungswut',
+                '✓ Endlich Schluss mit zerstörten Sachen'
+            ],
+            'soiling': [
+                '✓ Stubenreinheit zuverlässig erreichen',
+                '✓ Klare Routinen für Toilettengänge',
+                '✓ Signale deines Hundes verstehen',
+                '✓ Unfälle in der Wohnung vermeiden',
+                '✓ Richtiges Timing beim Rausgehen',
+                '✓ 20+ Übungen für Stubenreinheit',
+                '✓ Eine saubere Wohnung ohne Stress'
+            ]
+        };
+        
+        // Default Benefits falls Problem nicht gemappt
+        const defaultBenefits = [
+            '✓ Gehorsam schnell verbessern',
+            '✓ Verhaltensprobleme gezielt lösen',
+            '✓ Neue Trainingstechniken lernen',
+            '✓ Stärkere Bindung zu deinem Hund aufbauen',
+            '✓ Dauerhaft gutes Verhalten erreichen',
+            '✓ 20+ Übungen für mentale Gesundheit',
+            '✓ Glückliches Zusammenleben genießen'
+        ];
+        
+        const benefits = benefitsMap[dogProblem] || defaultBenefits;
+        const benefitsList = document.getElementById('benefitsList');
+        benefits.forEach(benefit => {
+            const li = document.createElement('li');
+            li.textContent = benefit;
+            benefitsList.appendChild(li);
+        });
         
         // Problem-Label in Stat-Boxen aktualisieren
         document.getElementById('problemLabel1').textContent = problemText;
