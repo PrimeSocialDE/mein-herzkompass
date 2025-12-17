@@ -16,7 +16,7 @@
   gtag('config', 'AW-17806525009');
 </script>
     
-    <!-- Meta Pixel - NUR INIT für Retargeting, KEIN Purchase Event hier -->
+    <!-- Meta Pixel -->
     <script>
         !function(f,b,e,v,n,t,s)
         {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -27,7 +27,7 @@
         s.parentNode.insertBefore(t,s)}(window, document,'script',
         'https://connect.facebook.net/en_US/fbevents.js');
         fbq('init', '864109602683515');
-        // KEIN PageView und KEIN Purchase - wird alles server-seitig via CAPI getrackt
+        fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
@@ -454,20 +454,29 @@
 
     <script>
         // ========================================
-        // NUR TIKTOK TRACKING
-        // META PURCHASE WIRD SERVER-SEITIG VIA CAPI GETRACKT
+        // CONVERSION TRACKING - MIT DEDUPLIZIERUNG
         // ========================================
         (function() {
-            // Prevent duplicate tracking on page refresh
-            var trackingKey = 'wauwerk_thankyou_tracked';
-            if (sessionStorage.getItem(trackingKey)) {
-                console.log('⚠️ Already tracked this session - skip');
+            // Payment Intent ID aus URL holen für Deduplizierung
+            var urlParams = new URLSearchParams(window.location.search);
+            var paymentIntent = urlParams.get('payment_intent');
+            var leadId = urlParams.get('lead_id');
+            
+            // Eindeutiger Key basierend auf payment_intent ODER lead_id
+            var uniqueKey = paymentIntent || leadId || 'unknown';
+            var trackingKey = 'wauwerk_purchase_tracked_' + uniqueKey;
+            
+            // Check ob dieses spezifische Payment schon getrackt wurde
+            if (localStorage.getItem(trackingKey)) {
+                console.log('⚠️ Purchase ' + uniqueKey + ' bereits getrackt - überspringe');
                 return;
             }
             
             console.log('=== DANKE PAGE TRACKING ===');
+            console.log('Payment Intent:', paymentIntent);
+            console.log('Lead ID:', leadId);
             
-            // Get plan from localStorage
+            // Preis aus localStorage oder URL
             var selectedPlan = localStorage.getItem('selectedPlan') || '1month';
             var prices = {
                 '1month': 17.99,
@@ -476,21 +485,32 @@
             };
             var value = prices[selectedPlan] || 17.99;
             
-            console.log('Plan:', selectedPlan, '| Value:', value);
+            // Event ID für Meta Deduplizierung (gleiche ID wie beim Checkout generiert)
+            var eventId = localStorage.getItem('fb_event_id') || ('purchase_' + Date.now());
             
-            // META PURCHASE - NUR BROWSER (kein CAPI)
+            console.log('Plan:', selectedPlan, '| Value:', value, '| Event ID:', eventId);
+            
+            // ========================================
+            // META PIXEL - Purchase Event
+            // ========================================
             if (typeof fbq !== 'undefined') {
                 fbq('track', 'Purchase', {
                     value: value,
                     currency: 'EUR',
-                    content_name: 'WauWerk Trainingsplan',
                     content_type: 'product',
-                    content_ids: [selectedPlan]
-                });
-                console.log('✅ Meta Purchase gesendet:', value, 'EUR');
+                    content_ids: ['wauwerk_' + selectedPlan],
+                    content_name: 'WauWerk Trainingsplan',
+                    contents: [{
+                        id: 'wauwerk_' + selectedPlan,
+                        quantity: 1
+                    }]
+                }, { eventID: eventId });
+                console.log('✅ Meta Purchase gesendet (Event ID: ' + eventId + ')');
             }
             
-            // TIKTOK - Browser tracking (TikTok hat kein CAPI Setup)
+            // ========================================
+            // TIKTOK - CompletePayment Event
+            // ========================================
             if (typeof ttq !== 'undefined') {
                 ttq.track('CompletePayment', {
                     value: value,
@@ -502,14 +522,38 @@
                 console.log('✅ TikTok CompletePayment gesendet');
             }
             
-            // Mark as tracked
-            sessionStorage.setItem(trackingKey, 'true');
+            // ========================================
+            // GOOGLE ADS - Conversion
+            // ========================================
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'conversion', {
+                    'send_to': 'AW-17806525009/I3FdCL3O1NEbENGE6KpC',
+                    'value': value,
+                    'currency': 'EUR',
+                    'transaction_id': paymentIntent || leadId || ''
+                });
+                console.log('✅ Google Ads Conversion gesendet');
+            }
+            
+            // Als getrackt markieren (localStorage = persistent)
+            localStorage.setItem(trackingKey, Date.now().toString());
+            
+            // Alte tracking keys aufräumen (nur die letzten 10 behalten)
+            var allKeys = Object.keys(localStorage).filter(function(k) {
+                return k.startsWith('wauwerk_purchase_tracked_');
+            });
+            if (allKeys.length > 10) {
+                allKeys.sort().slice(0, allKeys.length - 10).forEach(function(k) {
+                    localStorage.removeItem(k);
+                });
+            }
             
             // Cleanup
             localStorage.removeItem('fb_event_id');
             localStorage.removeItem('wentToStripe');
+            localStorage.removeItem('selectedPlan');
             
-            console.log('=== TRACKING DONE ===');
+            console.log('=== TRACKING COMPLETE ===');
         })();
     </script>
 </body>
