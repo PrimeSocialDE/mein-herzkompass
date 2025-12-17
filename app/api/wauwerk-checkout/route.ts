@@ -11,7 +11,7 @@ const stripe = process.env.STRIPE_SECRET_KEY
 
 // Preise in Cent
 const PRICES = {
-  '1month': { discount: 1799, normal: 4999 },
+  '1month': { discount: 2499, normal: 4999 },
   '3month': { discount: 2999, normal: 7999 },
   '6month': { discount: 4999, normal: 11999 }
 };
