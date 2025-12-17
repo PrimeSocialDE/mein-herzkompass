@@ -1757,6 +1757,116 @@
             font-size: 13px;
         }
 
+        /* ========== VIDEO TESTIMONIAL ========== */
+        .video-testimonial {
+            margin-bottom: 25px;
+        }
+
+        .video-testimonial-container {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            background: #000;
+        }
+
+        .video-testimonial-container video {
+            width: 100%;
+            height: auto;
+            display: block;
+            aspect-ratio: 9 / 16;
+            object-fit: cover;
+        }
+
+        .video-testimonial-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(4px);
+        }
+
+        .video-testimonial-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #e74c3c;
+            border-radius: 50%;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .video-play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .video-play-overlay:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .video-play-overlay.hidden {
+            display: none;
+        }
+
+        .video-play-button {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .video-play-overlay:hover .video-play-button {
+            transform: scale(1.1);
+        }
+
+        .video-play-button svg {
+            width: 30px;
+            height: 30px;
+            fill: var(--warm-brown);
+            margin-left: 4px;
+        }
+
+        .video-testimonial-caption {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+
+        .video-testimonial-caption strong {
+            color: var(--text-dark);
+        }
+
         @media (max-width: 480px) {
             .comparison-container {
                 flex-direction: row;
@@ -1815,6 +1925,10 @@
 
             .price-anchor-divider {
                 transform: rotate(90deg);
+            }
+
+            .video-testimonial-container {
+                max-width: 280px;
             }
         }
     </style>
@@ -2045,6 +2159,22 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 <p class="section-subtitle">mit unserem Trainingsplan</p>
             </div>
 
+            <!-- ========== VIDEO TESTIMONIAL ========== -->
+            <div class="video-testimonial">
+                <div class="video-testimonial-container">
+                    <video id="testimonialVideo" playsinline preload="metadata" poster="">
+                        <source src="WauWerkTestimonial.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-testimonial-badge">Kundenstimme</div>
+                    <div class="video-play-overlay" id="videoPlayOverlay" onclick="playTestimonialVideo()">
+                        <div class="video-play-button">
+                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <p class="video-testimonial-caption"><strong>Luna</strong> – Nach 3 Wochen Training</p>
+            </div>
+
             <div class="testimonial-card">
                 <div class="testimonial-image-single">
                     <img src="Testimonial1.png" alt="Bella Vorher/Nachher" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
@@ -2176,6 +2306,25 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     </footer>
 
     <script>
+        // Video Testimonial Play
+        function playTestimonialVideo() {
+            const video = document.getElementById('testimonialVideo');
+            const overlay = document.getElementById('videoPlayOverlay');
+            
+            overlay.classList.add('hidden');
+            video.play();
+            
+            video.addEventListener('ended', function() {
+                overlay.classList.remove('hidden');
+            });
+            
+            video.addEventListener('pause', function() {
+                if (video.currentTime < video.duration) {
+                    overlay.classList.remove('hidden');
+                }
+            });
+        }
+
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         const dogGoal = localStorage.getItem('dogGoal') || 'obedience';
         const dogProblem = localStorage.getItem('dogProblem') || '';
@@ -2436,6 +2585,12 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         updateTimer();
 
         function selectPlan(card) {
+            // Wenn bereits ausgewählt -> direkt zum Checkout
+            if (card.classList.contains('selected')) {
+                getMyPlan();
+                return;
+            }
+            
             pricingCards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             selectedPlan = card.dataset.plan;
