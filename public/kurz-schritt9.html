@@ -12,437 +12,164 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favconHund.png">
-    <title>WauWerk - Dein Trainingsplan</title>
+    <title>WauWerk - Dein Ergebnis</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
             --text-dark: #2C2C2E;
             --text-medium: #6B6B6B;
             --text-light: #999999;
-            --background: #FAFAFA;
+            --background-light: #FAFAFA;
             --white: #FFFFFF;
-            --border-light: #E8E8E8;
+            --border-light: #E5E5E5;
             --light-brown: #D4B996;
-            --warm-brown: #C4A576;
-            --dark-brown: #8B7355;
-            --accent-green: #4CAF50;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
             --border-radius: 12px;
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--background);
-            color: var(--text-dark);
-            line-height: 1.5;
-            min-height: 100vh;
-            padding-bottom: 100px;
-        }
-
-        /* Header */
-        .header {
-            background: var(--white);
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border-light);
-            text-align: center;
-        }
-
-        .logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-        }
-
-        .logo-image {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-
-        .logo-text {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        /* Container */
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 30px 20px;
-            text-align: center;
-        }
-
-        /* Title */
-        .page-title {
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 16px;
-            line-height: 1.25;
-        }
-
-        .page-subtitle {
-            font-size: 16px;
-            color: var(--text-medium);
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
-
-        .problem-highlight {
-            color: var(--warm-brown);
-            font-weight: 600;
-        }
-
-        .target-date {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--accent-green);
-            margin-bottom: 30px;
-        }
-
-        /* Chart Container */
-        .chart-container {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            padding: 30px 20px;
-            margin-bottom: 20px;
-        }
-
-        .chart-wrapper {
-            position: relative;
-            height: 250px;
-            margin-bottom: 15px;
-        }
-
-        /* Y-Axis */
-        .y-axis {
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 30px;
-            width: 25px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-light);
-        }
-
-        /* Chart Area */
-        .chart-area {
-            position: absolute;
-            left: 35px;
-            right: 0;
-            top: 0;
-            bottom: 30px;
-        }
-
-        /* Grid Lines */
-        .grid-line {
-            position: absolute;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: var(--border-light);
-        }
-
-        /* SVG */
-        .chart-svg {
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            overflow: visible;
-        }
-
-        /* X-Axis */
-        .x-axis {
-            position: absolute;
-            left: 35px;
-            right: 0;
-            bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-light);
-            text-transform: uppercase;
-        }
-
-        /* End Badge */
-        .end-badge {
-            position: absolute;
-            right: 0;
-            top: 0;
-            background: rgba(76, 175, 80, 0.15);
-            border-radius: 8px;
-            padding: 6px 12px;
-            opacity: 0;
-            transform: scale(0.8);
-        }
-
-        .end-badge-text {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--accent-green);
-        }
-
-        /* Chart Note */
-        .chart-note {
-            font-size: 13px;
-            color: var(--text-light);
-            font-style: italic;
-            text-align: center;
-        }
-
-        /* Continue Button */
-        .continue-button {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 40px);
-            max-width: 460px;
-            background: var(--light-brown);
-            color: var(--white);
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 18px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            text-decoration: none;
-            display: block;
-            text-align: center;
-        }
-
-        .continue-button:hover {
-            background: var(--warm-brown);
-        }
-
-        /* Mobile */
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background-light); color: var(--text-dark); line-height: 1.5; padding-bottom: 100px; }
+        .header { background: var(--white); padding: 16px 0; border-bottom: 1px solid var(--border-light); text-align: center; }
+        .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-dark); }
+        .logo-image { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+        .logo-text { font-size: 22px; font-weight: 800; color: var(--brown-hover); }
+        .container { max-width: 500px; margin: 0 auto; padding: 30px 20px; }
+        .progress-container { margin-bottom: 25px; }
+        .progress-bar { width: 100%; height: 6px; background: var(--border-light); border-radius: 3px; overflow: hidden; }
+        .progress-fill { width: 100%; height: 100%; background: var(--light-brown); transition: width 0.3s ease; }
+        .progress-text { text-align: center; margin-top: 8px; color: var(--text-medium); font-size: 13px; }
+        .page-title { font-size: 22px; font-weight: 700; color: var(--text-dark); text-align: center; margin-bottom: 25px; }
+        .score-card { background: var(--white); border-radius: var(--border-radius); padding: 24px 20px; margin-bottom: 16px; box-shadow: var(--shadow-light); }
+        .score-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .score-label { font-size: 14px; font-weight: 600; color: var(--text-medium); }
+        .score-value { font-size: 28px; font-weight: 800; color: var(--brown-hover); }
+        .score-value span { font-size: 16px; font-weight: 500; color: var(--text-light); }
+        .progress-bar-score { height: 10px; background: linear-gradient(to right, #ffcccc 0%, #ffe0b3 33%, #d4edda 66%, #c3e6cb 100%); border-radius: 5px; margin-bottom: 10px; position: relative; }
+        .progress-marker { position: absolute; top: 50%; left: 35%; transform: translate(-50%, -50%); width: 18px; height: 18px; background: var(--white); border: 3px solid var(--brown-hover); border-radius: 50%; box-shadow: var(--shadow-light); }
+        .progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-light); }
+        .warning-box { background: #FFF5F5; border-radius: var(--border-radius); padding: 14px 16px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 12px; }
+        .warning-icon { width: 28px; height: 28px; background: #E53935; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+        .warning-text { font-size: 13px; color: var(--text-medium); line-height: 1.4; }
+        .warning-text strong { color: var(--text-dark); }
+        .info-card { background: var(--white); border-radius: var(--border-radius); padding: 16px 20px; margin-bottom: 16px; box-shadow: var(--shadow-light); }
+        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-light); }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { font-size: 14px; color: var(--text-medium); }
+        .info-value { font-size: 14px; font-weight: 600; color: var(--text-dark); }
+        .continue-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 40px); max-width: 460px; background: var(--primary-brown); color: var(--white); border: none; border-radius: var(--border-radius); padding: 18px; font-size: 17px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(196, 165, 118, 0.4); text-decoration: none; display: block; text-align: center; }
+        .continue-btn:hover { background: var(--brown-hover); transform: translateX(-50%) translateY(-2px); }
         @media (max-width: 480px) {
-            .container {
-                padding: 24px 16px;
-            }
-
-            .page-title {
-                font-size: 22px;
-            }
-
-            .chart-wrapper {
-                height: 220px;
-            }
+            .container { padding: 20px 15px; }
+            .page-title { font-size: 20px; }
+            .score-value { font-size: 24px; }
         }
     </style>
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '864109602683515');
-fbq('track', 'PageView');
-</script>
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "ufxcf43805");
-</script>
-<script src="cookie-banner.js" defer></script>
-<!-- TikTok Pixel Code Start -->
-<script>
-!function (w, d, t) {
-  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for( var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-    ttq.load('D4RFSQBC77U7SM7UL8A0');
-  ttq.page();
-}(window, document, 'ttq');
-</script>
-<!-- TikTok Pixel Code End -->
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','864109602683515');fbq('track','PageView');</script>
+    <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","ufxcf43805");</script>
 </head>
-
 <body>
-    <!-- Header -->
     <header class="header">
-        <a href="schritt23.html" class="logo">
+        <a href="index.html" class="logo">
             <img src="logo.png" alt="WauWerk Logo" class="logo-image">
             <span class="logo-text">Mein WauWerk</span>
         </a>
     </header>
-
-    <!-- Content -->
     <div class="container">
-        <h1 class="page-title">Dein Plan ist so gut wie fertig</h1>
-        <p class="page-subtitle">Mit dem Plan, den wir für <strong id="dogNameTitle">deinen Hund</strong> erstellen, lässt sich <span class="problem-highlight" id="problemText">das Problem</span> und weitere Herausforderungen innerhalb der nächsten 30 Tage lösen.</p>
-        <p class="target-date" id="targetDate">20. Dezember 2025</p>
-
-        <!-- Chart -->
-        <div class="chart-container">
-            <div class="chart-wrapper">
-                <!-- Y-Axis -->
-                <div class="y-axis">
-                    <span>10</span>
-                    <span>8</span>
-                    <span>6</span>
-                    <span>4</span>
-                </div>
-
-                <!-- Chart Area -->
-                <div class="chart-area">
-                    <!-- Grid Lines -->
-                    <div class="grid-line" style="top: 0%;"></div>
-                    <div class="grid-line" style="top: 33.3%;"></div>
-                    <div class="grid-line" style="top: 66.6%;"></div>
-                    <div class="grid-line" style="top: 100%;"></div>
-
-                    <!-- SVG Chart -->
-                    <svg class="chart-svg" viewBox="0 0 400 200" preserveAspectRatio="none" id="chartSvg">
-                        <defs>
-                            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" style="stop-color:#FF6B6B"/>
-                                <stop offset="35%" style="stop-color:#FFB347"/>
-                                <stop offset="65%" style="stop-color:#FFD93D"/>
-                                <stop offset="100%" style="stop-color:#4CAF50"/>
-                            </linearGradient>
-                            <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:0.25"/>
-                                <stop offset="100%" style="stop-color:#4CAF50;stop-opacity:0"/>
-                            </linearGradient>
-                        </defs>
-                        
-                        <!-- Area Fill -->
-                        <path id="areaPath" fill="url(#areaGradient)" d="M0,160 Q100,140 200,80 T400,10 L400,200 L0,200 Z" opacity="0"/>
-                        
-                        <!-- Line -->
-                        <path id="linePath" 
-                              fill="none"
-                              stroke="url(#lineGradient)"
-                              stroke-width="5"
-                              stroke-linecap="round"
-                              d="M0,160 Q100,140 200,80 T400,10"/>
-                        
-                        <!-- Start Circle -->
-                        <circle id="startCircle" cx="0" cy="160" r="12" fill="#FFFFFF" stroke="#FF6B6B" stroke-width="4" opacity="0"/>
-                    </svg>
-
-                    <!-- End Badge -->
-                    <div class="end-badge" id="endBadge">
-                        <span class="end-badge-text">Ziel erreicht!</span>
-                    </div>
-                </div>
-
-                <!-- X-Axis -->
-                <div class="x-axis">
-                    <span>Jetzt</span>
-                    <span id="week1">Woche 1</span>
-                    <span id="week2">Woche 2</span>
-                    <span id="week3">Tag 30</span>
-                </div>
+        <div class="progress-container">
+            <div class="progress-bar"><div class="progress-fill"></div></div>
+            <div class="progress-text">Analyse abgeschlossen ✓</div>
+        </div>
+        
+        <h1 class="page-title">Analyse für <span id="dogNameTitle">deinen Hund</span></h1>
+        
+        <div class="score-card">
+            <div class="score-header">
+                <span class="score-label">Aktuelles Gehorsamkeitslevel</span>
+                <span class="score-value" id="scoreValue">4 <span>/ 10</span></span>
             </div>
-
-            <p class="chart-note">Diese Grafik dient nur zur Veranschaulichung</p>
+            <div class="progress-bar-score">
+                <div class="progress-marker" id="scoreMarker"></div>
+            </div>
+            <div class="progress-labels">
+                <span>Niedrig</span>
+                <span>Mittel</span>
+                <span>Hoch</span>
+            </div>
+        </div>
+        
+        <div class="warning-box">
+            <div class="warning-icon">!</div>
+            <div class="warning-text">
+                <strong>Verbesserungspotenzial erkannt</strong><br>
+                Mit dem richtigen Training kannst du das Level auf 8-9 bringen.
+            </div>
+        </div>
+        
+        <div class="info-card">
+            <div class="info-row">
+                <span class="info-label">Rasse</span>
+                <span class="info-value" id="breedDisplay">Mischling</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Alter</span>
+                <span class="info-value" id="ageDisplay">Erwachsen</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Hauptproblem</span>
+                <span class="info-value" id="problemDisplay">Leinenziehen</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Bekannte Kommandos</span>
+                <span class="info-value" id="commandsDisplay">3</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Empfohlene Dauer</span>
+                <span class="info-value" id="durationDisplay">4-6 Wochen</span>
+            </div>
         </div>
     </div>
-
-    <!-- Continue Button -->
-    <a href="laden.html" class="continue-button">Dein Plan ist fertig</a>
-
+    
+    <a href="kurz-schritt10.html" class="continue-btn">Meinen Plan ansehen →</a>
+    
     <script>
-        // Load dog name
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
+        const dogBreed = localStorage.getItem('dogBreed') || 'Mischling';
+        const dogAge = localStorage.getItem('dogAge') || 'adult';
+        const dogProblem = localStorage.getItem('dogProblem') || 'pulling';
+        const trainingTime = localStorage.getItem('trainingTime') || '10';
+        const dogCommands = JSON.parse(localStorage.getItem('dogCommands') || '[]');
+        
         document.getElementById('dogNameTitle').textContent = dogName;
-
-        // Load problem from localStorage
-        const dogProblem = localStorage.getItem('dogProblem') || '';
-        const territorialAggression = localStorage.getItem('territorialAggression') || '';
+        document.getElementById('breedDisplay').textContent = dogBreed;
         
-        let problemText = 'Ungehorsam';
+        const ageMap = { 'puppy': 'Welpe', 'young': 'Junghund', 'adult': 'Erwachsen', 'senior': 'Senior' };
+        document.getElementById('ageDisplay').textContent = ageMap[dogAge] || 'Erwachsen';
         
-        if (territorialAggression === 'yes') {
-            problemText = 'Territoriale Aggression';
-        } else if (dogProblem) {
-            const problemMap = {
-                'pulling': 'Leinenziehen',
-                'barking': 'Übermäßiges Bellen',
-                'aggression': 'Aggression',
-                'anxiety': 'Trennungsangst',
-                'jumping': 'Anspringen',
-                'recall': 'Rückruf-Probleme',
-                'energy': 'Übermäßige Energie',
-                'destructive': 'Zerstörerisches Verhalten',
-                'soiling': 'Unsauberkeit'
-            };
-            problemText = problemMap[dogProblem] || dogProblem;
-        }
+        const problemMap = {
+            'pulling': 'Leinenziehen',
+            'barking': 'Übermäßiges Bellen',
+            'aggression': 'Aggression',
+            'anxiety': 'Trennungsangst',
+            'energy': 'Übermäßige Energie',
+            'destructive': 'Zerstörerisches Verhalten',
+            'soiling': 'Stubenreinheit'
+        };
+        document.getElementById('problemDisplay').textContent = problemMap[dogProblem] || dogProblem;
         
-        document.getElementById('problemText').textContent = problemText;
-
-        // Calculate target date (30 days from now)
-        const now = new Date();
-        const targetDate = new Date(now);
-        targetDate.setDate(targetDate.getDate() + 30);
-
-        const months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 
-                       'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-
-        document.getElementById('targetDate').textContent = 
-            `${targetDate.getDate()}. ${months[targetDate.getMonth()]} ${targetDate.getFullYear()}`;
-
-        // Animation beim Laden der Seite
-        window.addEventListener('load', function() {
-            const linePath = document.getElementById('linePath');
-            const areaPath = document.getElementById('areaPath');
-            const startCircle = document.getElementById('startCircle');
-            const endBadge = document.getElementById('endBadge');
-
-            // Line Length berechnen
-            const lineLength = linePath.getTotalLength();
-
-            // Line verstecken
-            linePath.style.strokeDasharray = lineLength;
-            linePath.style.strokeDashoffset = lineLength;
-
-            // 1. Start-Kreis einblenden (sofort)
-            setTimeout(() => {
-                startCircle.style.transition = 'opacity 0.3s ease-out';
-                startCircle.style.opacity = '1';
-            }, 300);
-
-            // 2. Linie zeichnen
-            setTimeout(() => {
-                linePath.style.transition = 'stroke-dashoffset 2s ease-out';
-                linePath.style.strokeDashoffset = '0';
-            }, 600);
-
-            // 3. Fläche einblenden
-            setTimeout(() => {
-                areaPath.style.transition = 'opacity 0.6s ease-out';
-                areaPath.style.opacity = '1';
-            }, 2000);
-
-            // 4. End-Badge einblenden
-            setTimeout(() => {
-                endBadge.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out';
-                endBadge.style.opacity = '1';
-                endBadge.style.transform = 'scale(1)';
-            }, 2500);
-        });
+        // Commands count
+        const commandCount = dogCommands.includes('none') ? 0 : dogCommands.length;
+        document.getElementById('commandsDisplay').textContent = commandCount;
+        
+        // Calculate score based on commands (max 5)
+        let score = Math.min(2 + Math.floor(commandCount / 2), 5);
+        if (dogCommands.includes('none')) score = 2;
+        document.getElementById('scoreValue').innerHTML = `${score} <span>/ 10</span>`;
+        document.getElementById('scoreMarker').style.left = `${score * 10}%`;
+        
+        // Dauer basierend auf Trainingszeit
+        const durationMap = { '5': '6-8 Wochen', '10': '4-6 Wochen', '15': '3-4 Wochen', '20': '2-3 Wochen' };
+        document.getElementById('durationDisplay').textContent = durationMap[trainingTime] || '4-6 Wochen';
     </script>
 </body>
 </html>
