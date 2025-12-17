@@ -8,10 +8,10 @@ export const dynamic = "force-dynamic";
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-// ▼▼▼ NEU: Helper, benachrichtigt Make nur wenn URL gesetzt ist
+// Helper: Make nur benachrichtigen wenn URL gesetzt ist
 async function notifyMake(orderId: string, payload: Record<string, any>) {
   const url = process.env.MAKE_WEBHOOK_URL;
-  if (!url) return; // still bleiben, wenn nicht konfiguriert
+  if (!url) return;
   try {
     await fetch(url, {
       method: "POST",
@@ -23,7 +23,6 @@ async function notifyMake(orderId: string, payload: Record<string, any>) {
     console.error("Make-Webhook Fehler:", e);
   }
 }
-// ▲▲▲ ENDE Helper
 
 export async function POST(req: NextRequest) {
   if (!stripe || !endpointSecret) {
@@ -83,7 +82,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// ▼▼▼ NEU: Helper um zu prüfen ob ID zu wauwerk_leads oder orders gehört
+// Helper: Prüfen ob ID zu wauwerk_leads oder orders gehört
 async function findLeadOrOrder(id: string): Promise<{ table: 'wauwerk_leads' | 'orders' | null, data: any }> {
   // Erst in wauwerk_leads suchen
   const { data: lead, error: leadError } = await supabase
@@ -112,7 +111,6 @@ async function findLeadOrOrder(id: string): Promise<{ table: 'wauwerk_leads' | '
   console.log("❌ ID nicht gefunden in wauwerk_leads oder orders");
   return { table: null, data: null };
 }
-// ▲▲▲
 
 async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
   console.log("🔍 === CHECKOUT SUCCESS DEBUG ===");
@@ -128,16 +126,20 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
     return;
   }
 
-  // ▼▼▼ NEU: Prüfen welche Tabelle
   const { table, data: existingRecord } = await findLeadOrOrder(referenceId);
   
   if (!table) {
     console.error("❌ ID nicht in Datenbank gefunden:", referenceId);
     return;
   }
+
+  // ⬇️ NEU: Skip wenn bereits paid
+  if (existingRecord.status === 'paid') {
+    console.log(`⚠️ ${referenceId} bereits paid - überspringe (checkout.session)`);
+    return;
+  }
   
   console.log(`✅ Record gefunden in ${table}:`, JSON.stringify(existingRecord, null, 2));
-  // ▲▲▲
 
   let customerEmail = session.customer_email || session.customer_details?.email;
   let customerName = session.customer_details?.name;
@@ -188,7 +190,6 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
       console.log(`E-Mail gefunden: ${customerEmail}`);
     }
     if (customerName) {
-      // wauwerk_leads nutzt customer_name, orders nutzt name
       if (table === 'wauwerk_leads') {
         updateData.customer_name = customerName;
       } else {
@@ -275,8 +276,14 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     return;
   }
 
-  const { table } = await findLeadOrOrder(referenceId);
+  const { table, data: existingRecord } = await findLeadOrOrder(referenceId);
   if (!table) return;
+
+  // ⬇️ NEU: Skip wenn bereits paid
+  if (existingRecord.status === 'paid') {
+    console.log(`⚠️ ${referenceId} bereits paid - überspringe (payment_intent.succeeded)`);
+    return;
+  }
 
   let customerEmail = paymentIntent.receipt_email;
   let customerName = null;
@@ -362,8 +369,14 @@ async function handleChargeSuccess(charge: Stripe.Charge) {
     return;
   }
 
-  const { table } = await findLeadOrOrder(referenceId);
+  const { table, data: existingRecord } = await findLeadOrOrder(referenceId);
   if (!table) return;
+
+  // ⬇️ NEU: Skip wenn bereits paid
+  if (existingRecord.status === 'paid') {
+    console.log(`⚠️ ${referenceId} bereits paid - überspringe (charge.succeeded)`);
+    return;
+  }
 
   let customerEmail = charge.billing_details?.email;
   let customerName = charge.billing_details?.name;
