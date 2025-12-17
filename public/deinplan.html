@@ -380,6 +380,8 @@
 
         .pricing-card.popular {
             padding-top: 35px;
+            border: 2px solid var(--warm-brown);
+            background: linear-gradient(135deg, #FFFBF5 0%, #FFF8EE 100%);
         }
 
         .popular-badge {
@@ -387,7 +389,7 @@
             top: 0;
             left: 0;
             right: 0;
-            background: var(--warm-brown);
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             color: var(--white);
             text-align: center;
             padding: 8px;
@@ -2101,13 +2103,11 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 
         <!-- ========== Pricing Section (umformulierte Frage) ========== -->
         <div class="motivation-text">
-            <p>Mit den richtigen Übungen und einem strukturierten Plan lässt sich <span class="problem-highlight" id="problemTextMotivation">das Problem</span> abtrainieren.</p>
             <p class="motivation-question">In welcher Zeit soll <span id="dogNamePlan">dein Hund</span> das Problem lösen?</p>
         </div>
 
         <div class="pricing-section">
-            <div class="pricing-card popular selected" data-plan="1month" data-price="19.99">
-                <div class="popular-badge">👍 Am beliebtesten</div>
+            <div class="pricing-card" data-plan="1month" data-price="24.99">
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
@@ -2117,7 +2117,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
                             <span class="price-amount">0</span>
-                            <span class="price-cents">,67</span>
+                            <span class="price-cents">,83</span>
                             <span class="price-period">pro Tag</span>
                         </div>
                         <div class="price-old">€1,67</div>
@@ -2125,7 +2125,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
             </div>
 
-            <div class="pricing-card" data-plan="3month" data-price="29.99">
+            <div class="pricing-card popular selected" data-plan="3month" data-price="29.99">
+                <div class="popular-badge">⭐ Beliebteste Wahl</div>
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
@@ -2135,7 +2136,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
                             <span class="price-amount">0</span>
-                            <span class="price-cents">,36</span>
+                            <span class="price-cents">,33</span>
                             <span class="price-period">pro Tag</span>
                         </div>
                         <div class="price-old">€0,89</div>
@@ -2143,7 +2144,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
             </div>
 
-            <div class="pricing-card" data-plan="6month" data-price="39.99">
+            <div class="pricing-card" data-plan="6month" data-price="49.99">
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
@@ -2593,7 +2594,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         }
         
         // Motivation Text aktualisieren
-        document.getElementById('problemTextMotivation').textContent = problemText;
+
 
         let timeLeft;
         let timerExpired = false;
@@ -2633,11 +2634,11 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         }
         
         const pricingCards = document.querySelectorAll('.pricing-card');
-        let selectedPlan = '1month';
+        let selectedPlan = '3month';
 
         const planDetails = {
             '1month': { 
-                price: '€17,99', 
+                price: '€24,99', 
                 priceNormal: '€49,99',
                 name: '1-Monats-Plan', 
                 interval: 'monatlich' 
@@ -2663,12 +2664,15 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             
             const cards = document.querySelectorAll('.pricing-card');
             
+            // 1-Monat: 49,99€ = 1,67€/Tag
             cards[0].querySelector('.price-amount').textContent = '1';
             cards[0].querySelector('.price-cents').textContent = ',67';
             
+            // 3-Monat: 79,99€ = 0,89€/Tag
             cards[1].querySelector('.price-amount').textContent = '0';
             cards[1].querySelector('.price-cents').textContent = ',89';
             
+            // 6-Monat: 119,99€ = 0,67€/Tag
             cards[2].querySelector('.price-amount').textContent = '0';
             cards[2].querySelector('.price-cents').textContent = ',67';
         }
