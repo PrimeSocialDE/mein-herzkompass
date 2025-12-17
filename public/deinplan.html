@@ -233,6 +233,33 @@
             padding: 30px 20px;
         }
 
+        /* ========== Empathie Section ========== */
+        .empathy-section {
+            text-align: center;
+            padding: 25px 20px;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #FFF9F0 0%, #FFF5E6 100%);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--warm-brown);
+        }
+
+        .empathy-text {
+            font-size: 17px;
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .empathy-text strong {
+            color: var(--dark-brown);
+        }
+
+        .empathy-subtext {
+            font-size: 14px;
+            color: var(--text-medium);
+            margin: 0;
+        }
+
         .title-section {
             text-align: center;
             margin-bottom: 30px;
@@ -2033,6 +2060,16 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     </section>
 
     <div class="container">
+        <!-- ========== NEU: Empathie-Text ========== -->
+        <div class="empathy-section">
+            <p class="empathy-text">
+                <span id="empathyProblem">Ungehorsam ist frustrierend – wir wissen das.</span> <strong id="empathyHope">Mit den richtigen Übungen ist dein Hunds Verhalten in wenigen Wochen deutlich besser.</strong>
+            </p>
+            <p class="empathy-subtext">
+                Kein Rätselraten, keine teuren Trainer – nur bewährte Methoden, die du selbst zuhause anwenden kannst.
+            </p>
+        </div>
+
         <div class="title-section">
             <h1 class="main-title">Dein personalisierter Trainingsplan für <span id="dogName3">deinen Hund</span> ist fertig!</h1>
             
@@ -2060,22 +2097,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             <ul class="benefits-list" id="benefitsList">
                 <!-- Wird dynamisch per JS gefüllt -->
             </ul>
-        </div>
-
-        <!-- ========== NEU: Preisanker ========== -->
-        <div class="price-anchor-box">
-            <p class="price-anchor-title">Was kostet professionelles Hundetraining normalerweise?</p>
-            <div class="price-anchor-comparison">
-                <div class="price-anchor-item">
-                    <p class="price-anchor-label">Hundeschule (10 Std.)</p>
-                    <p class="price-anchor-value old">€500 - €800</p>
-                </div>
-                <span class="price-anchor-divider">→</span>
-                <div class="price-anchor-item">
-                    <p class="price-anchor-label">Unser Trainingsplan</p>
-                    <p class="price-anchor-value new">ab €17,99</p>
-                </div>
-            </div>
         </div>
 
         <!-- ========== Pricing Section (umformulierte Frage) ========== -->
@@ -2388,6 +2409,56 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         }
         
         document.getElementById('userProblem').textContent = problemText;
+        
+        // Empathie-Texte pro Problem
+        const empathyMap = {
+            'pulling': {
+                main: 'Leinenziehen macht jeden Spaziergang zum Kampf – wir wissen das.',
+                hope: `Mit den richtigen Übungen läuft ${dogName} in wenigen Wochen entspannt neben dir.`
+            },
+            'barking': {
+                main: 'Ständiges Bellen ist nervenaufreibend – für dich und deine Nachbarn.',
+                hope: `Mit gezieltem Training wird ${dogName} deutlich ruhiger und ausgeglichener.`
+            },
+            'aggression': {
+                main: 'Aggression bei Hunden ist beängstigend – aber kein Grund zur Panik.',
+                hope: `Mit dem richtigen Ansatz kannst du ${dogName}s Verhalten Schritt für Schritt verbessern.`
+            },
+            'anxiety': {
+                main: 'Trennungsangst ist herzzerreißend – für dich und deinen Hund.',
+                hope: `Mit sanften Übungen lernt ${dogName}, entspannt alleine zu bleiben.`
+            },
+            'jumping': {
+                main: 'Anspringen ist peinlich und kann gefährlich werden – das verstehen wir.',
+                hope: `${dogName} kann lernen, Besucher ruhig und höflich zu begrüßen.`
+            },
+            'recall': {
+                main: 'Wenn dein Hund nicht zurückkommt, ist jeder Freilauf stressig.',
+                hope: `Mit dem richtigen Training reagiert ${dogName} zuverlässig auf deinen Ruf.`
+            },
+            'energy': {
+                main: 'Ein hyperaktiver Hund ist anstrengend – du bist nicht allein damit.',
+                hope: `Mit mentaler Auslastung wird ${dogName} ausgeglichener und ruhiger.`
+            },
+            'destructive': {
+                main: 'Zerstörte Möbel und Schuhe sind frustrierend – wir verstehen das.',
+                hope: `Mit den richtigen Übungen hört ${dogName} auf, Dinge zu zerstören.`
+            },
+            'soiling': {
+                main: 'Unsauberkeit in der Wohnung ist stressig – aber lösbar.',
+                hope: `Mit klaren Routinen wird ${dogName} zuverlässig stubenrein.`
+            }
+        };
+        
+        const defaultEmpathy = {
+            main: `${problemText} ist frustrierend – wir wissen das.`,
+            hope: `Mit den richtigen Übungen ist ${dogName}s Verhalten in wenigen Wochen deutlich besser.`
+        };
+        
+        const empathy = empathyMap[dogProblem] || defaultEmpathy;
+        
+        document.getElementById('empathyProblem').textContent = empathy.main;
+        document.getElementById('empathyHope').textContent = empathy.hope;
         
         // Dynamische Benefits basierend auf Problem
         const benefitsMap = {
