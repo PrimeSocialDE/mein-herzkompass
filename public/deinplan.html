@@ -2317,24 +2317,33 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     </footer>
 
     <script>
-        // Video Testimonial Play
+        // Video Testimonial Play/Pause Toggle
         function playTestimonialVideo() {
             const video = document.getElementById('testimonialVideo');
             const overlay = document.getElementById('videoPlayOverlay');
             
-            overlay.classList.add('hidden');
-            video.play();
-            
-            video.addEventListener('ended', function() {
+            if (video.paused) {
+                video.play();
+                overlay.classList.add('hidden');
+            } else {
+                video.pause();
                 overlay.classList.remove('hidden');
-            });
-            
-            video.addEventListener('pause', function() {
-                if (video.currentTime < video.duration) {
-                    overlay.classList.remove('hidden');
-                }
-            });
+            }
         }
+        
+        // Video Click Handler (für Pause wenn Video läuft)
+        document.getElementById('testimonialVideo').addEventListener('click', function() {
+            const overlay = document.getElementById('videoPlayOverlay');
+            if (!this.paused) {
+                this.pause();
+                overlay.classList.remove('hidden');
+            }
+        });
+        
+        // Overlay wieder zeigen wenn Video endet
+        document.getElementById('testimonialVideo').addEventListener('ended', function() {
+            document.getElementById('videoPlayOverlay').classList.remove('hidden');
+        });
 
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         const dogGoal = localStorage.getItem('dogGoal') || 'obedience';
