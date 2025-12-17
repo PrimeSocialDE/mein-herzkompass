@@ -78,7 +78,7 @@
     <div class="container">
         <div class="progress-container">
             <div class="progress-bar"><div class="progress-fill"></div></div>
-            <div class="progress-text">Analyse abgeschlossen ✓</div>
+            <div class="progress-text">Übersicht</div>
         </div>
         
         <h1 class="page-title">Analyse für <span id="dogNameTitle">deinen Hund</span></h1>
@@ -100,9 +100,13 @@
         
         <div class="warning-box">
             <div class="warning-icon">!</div>
-            <div class="warning-text">
-                <strong>Verbesserungspotenzial erkannt</strong><br>
-                Mit dem richtigen Training kannst du das Level auf 8-9 bringen.
+            <div class="warning-text" id="warningText">
+                <strong>Stresslevel <span id="stressDisplay">7</span>/10</strong><br>
+                Je länger du wartest, desto schwerer wird es, <span id="problemTextWarning">das Verhalten</span> abzutrainieren.<br><br>
+                <strong>Durch unseren Plan erhältst du:</strong><br>
+                ✓ Individuelle Übungen für <span id="dogNameIncludes">deinen Hund</span><br>
+                ✓ Wochenplan mit täglichen Aufgaben<br>
+                ✓ Schritt-für-Schritt Anleitungen
             </div>
         </div>
         
@@ -124,7 +128,7 @@
                 <span class="info-value" id="commandsDisplay">3</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Empfohlene Dauer</span>
+                <span class="info-label">Dein Plan</span>
                 <span class="info-value" id="durationDisplay">4-8 Wochen</span>
             </div>
         </div>
@@ -139,9 +143,12 @@
         const dogProblem = localStorage.getItem('dogProblem') || 'pulling';
         const trainingTime = localStorage.getItem('trainingTime') || '10';
         const dogCommands = JSON.parse(localStorage.getItem('dogCommands') || '[]');
+        const stressLevel = localStorage.getItem('stressLevel') || '5';
         
         document.getElementById('dogNameTitle').textContent = dogName;
+        document.getElementById('dogNameIncludes').textContent = dogName;
         document.getElementById('breedDisplay').textContent = dogBreed;
+        document.getElementById('stressDisplay').textContent = stressLevel;
         
         const ageMap = { 'puppy': 'Welpe', 'young': 'Junghund', 'adult': 'Erwachsen', 'senior': 'Senior' };
         document.getElementById('ageDisplay').textContent = ageMap[dogAge] || 'Erwachsen';
@@ -157,6 +164,17 @@
         };
         document.getElementById('problemDisplay').textContent = problemMap[dogProblem] || dogProblem;
         
+        const problemMapWarning = {
+            'pulling': 'das Leinenziehen',
+            'barking': 'das Bellen',
+            'aggression': 'die Aggression',
+            'anxiety': 'die Trennungsangst',
+            'energy': 'die übermäßige Energie',
+            'destructive': 'das zerstörerische Verhalten',
+            'soiling': 'die Unsauberkeit'
+        };
+        document.getElementById('problemTextWarning').textContent = problemMapWarning[dogProblem] || 'das Verhalten';
+        
         // Commands count
         const commandCount = dogCommands.includes('none') ? 0 : dogCommands.length;
         document.getElementById('commandsDisplay').textContent = commandCount;
@@ -169,7 +187,8 @@
         
         // Dauer basierend auf Trainingszeit
         const durationMap = { '5': '10-12 Wochen', '10': '8-10 Wochen', '15': '6-8 Wochen', '20': '4-6 Wochen' };
-        document.getElementById('durationDisplay').textContent = durationMap[trainingTime] || '4-6 Wochen';
+        const duration = durationMap[trainingTime] || '6-8 Wochen';
+        document.getElementById('durationDisplay').textContent = duration;
     </script>
 </body>
 </html>
