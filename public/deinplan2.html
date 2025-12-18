@@ -262,8 +262,11 @@
             <p class="motivation-question">In welcher Zeit soll <span id="dogNamePlan">dein Hund</span> das Problem lösen?</p>
         </div>
         <div class="pricing-section">
-            <div class="pricing-card popular selected" data-plan="1month"><div class="popular-badge">👍 Am beliebtesten</div><div class="pricing-header"><div class="pricing-left"><div class="pricing-radio"></div><span class="pricing-name">1-MONATS-PLAN</span></div><div class="pricing-right"><div class="pricing-price"><span class="price-currency">€</span><span class="price-amount">0</span><span class="price-cents">,67</span><span class="price-period">pro Tag</span></div><div class="price-old">€1,67</div></div></div></div>
-            <div class="pricing-card" data-plan="3month"><div class="pricing-header"><div class="pricing-left"><div class="pricing-radio"></div><span class="pricing-name">3-MONATS-PLAN</span></div><div class="pricing-right"><div class="pricing-price"><span class="price-currency">€</span><span class="price-amount">0</span><span class="price-cents">,36</span><span class="price-period">pro Tag</span></div><div class="price-old">€0,89</div></div></div></div>
+            <!-- 1-Monat: 24,99€ = 0,83€/Tag -->
+            <div class="pricing-card" data-plan="1month"><div class="pricing-header"><div class="pricing-left"><div class="pricing-radio"></div><span class="pricing-name">1-MONATS-PLAN</span></div><div class="pricing-right"><div class="pricing-price"><span class="price-currency">€</span><span class="price-amount">0</span><span class="price-cents">,83</span><span class="price-period">pro Tag</span></div><div class="price-old">€1,67</div></div></div></div>
+            <!-- 3-Monat: 29,99€ = 0,33€/Tag - VORAUSGEWÄHLT -->
+            <div class="pricing-card popular selected" data-plan="3month"><div class="popular-badge">⭐ Beliebteste Wahl</div><div class="pricing-header"><div class="pricing-left"><div class="pricing-radio"></div><span class="pricing-name">3-MONATS-PLAN</span></div><div class="pricing-right"><div class="pricing-price"><span class="price-currency">€</span><span class="price-amount">0</span><span class="price-cents">,33</span><span class="price-period">pro Tag</span></div><div class="price-old">€0,89</div></div></div></div>
+            <!-- 6-Monat: 49,99€ = 0,27€/Tag -->
             <div class="pricing-card" data-plan="6month"><div class="pricing-header"><div class="pricing-left"><div class="pricing-radio"></div><span class="pricing-name">6-MONATS-PLAN</span></div><div class="pricing-right"><div class="pricing-price"><span class="price-currency">€</span><span class="price-amount">0</span><span class="price-cents">,27</span><span class="price-period">pro Tag</span></div><div class="price-old">€0,67</div></div></div></div>
         </div>
         <div class="disclaimer">✓ Einmalzahlung • Kein Abo • 30 Tage Geld-zurück-Garantie • <a href="agb.html">AGB</a></div>
@@ -282,7 +285,7 @@
         <button class="cta-button glow" onclick="getMyPlan()">Jetzt Plan sichern</button>
     </div>
     <footer class="footer"><p>© 2025 Mein WauWerk. Alle Rechte vorbehalten.</p><p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p></footer>
-    <div class="checkout-overlay" id="checkoutPopup"><div class="checkout-popup"><div class="checkout-header"><button class="checkout-close" onclick="closeCheckoutPopup()">×</button><h2 class="checkout-title">Dein Plan für <span id="checkoutDogName">deinen Hund</span></h2></div><div class="checkout-body"><div class="checkout-step-email" id="checkoutStepEmail"><div class="checkout-email-icon">📧</div><div class="checkout-email-title">Wohin sollen wir deinen Plan schicken?</div><div class="checkout-email-subtitle">Gib deine E-Mail ein, um deinen personalisierten Trainingsplan zu erhalten.</div><input type="email" class="checkout-email-input" id="checkoutEmailInput" placeholder="deine@email.de" onkeypress="if(event.key==='Enter')submitEmail()"><button class="checkout-email-btn" onclick="submitEmail()">Weiter zum Plan →</button><div class="checkout-trust-badge"><div class="trust-stars"><span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span></div><span class="trust-text"><strong>4.8/5</strong> von 2.847 Hundebesitzern</span></div><div class="checkout-email-privacy">🔒 Deine Daten sind sicher. Kein Spam.</div></div><div class="checkout-step-1 hidden" id="checkoutStep1"><div class="checkout-plan-card"><div class="checkout-plan-image">🐕</div><div class="checkout-plan-info"><div class="checkout-plan-name">Personalisierter Trainingsplan</div><div class="checkout-plan-duration" id="checkoutPlanDuration">1-Monats-Plan</div></div><div class="checkout-plan-price-box"><div class="checkout-plan-price" id="checkoutPlanPrice">€17,99</div><div class="checkout-plan-access">Voller Zugang</div></div></div><div class="checkout-features-compact"><div class="checkout-feature-row">✓ 20+ Übungen für <span id="checkoutDogProblem">dein Problem</span></div><div class="checkout-feature-row">✓ Persönlicher Trainer-Support</div><div class="checkout-feature-row">✓ 20+ individuelle Aufgaben</div><div class="checkout-feature-row">✓ 3 Spezialmodule gratis dazu</div></div><div class="checkout-total-compact"><div><span class="checkout-total-label">Gesamt:</span><span class="checkout-total-saved" id="checkoutSaved">Du sparst €251,99</span></div><div class="checkout-total-price" id="checkoutTotalPrice">€17,99</div></div><div class="checkout-guarantee-compact">🛡️ 30 Tage Geld-zurück-Garantie</div><button class="checkout-continue-btn" onclick="goToPaymentStep()">WEITER ZUR ZAHLUNG</button></div><div class="checkout-step-2" id="checkoutStep2"><h3 style="text-align:center;margin-bottom:20px;font-size:18px;">Zahlungsmethode wählen</h3><div class="checkout-summary"><div class="checkout-summary-row"><span>Trainingsplan für <span id="checkoutDogName3">Hund</span></span><span><span class="checkout-summary-old" id="checkoutOldPrice">€49,99</span><span id="checkoutNewPrice">€17,99</span></span></div><div class="checkout-summary-row"><span>Bonus-Module</span><span><span class="checkout-summary-old">€221,95</span><span>€0</span></span></div><div class="checkout-summary-row total"><span>Gesamt</span><span id="checkoutFinalPrice">€17,99</span></div><div class="checkout-summary-saved" id="checkoutSaved2">Du sparst €253,95</div></div><div class="checkout-error" id="checkoutError"></div><div class="stripe-element-container"><div id="payment-element"></div></div><button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">🔒 Jetzt bezahlen</button><div class="payment-icons"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal"><img src="klarna-logo.png" alt="Klarna"></div><button class="checkout-back" onclick="goBackToStep1()">← Zurück zur Übersicht</button></div></div></div></div>
+    <div class="checkout-overlay" id="checkoutPopup"><div class="checkout-popup"><div class="checkout-header"><button class="checkout-close" onclick="closeCheckoutPopup()">×</button><h2 class="checkout-title">Dein Plan für <span id="checkoutDogName">deinen Hund</span></h2></div><div class="checkout-body"><div class="checkout-step-email" id="checkoutStepEmail"><div class="checkout-email-icon">📧</div><div class="checkout-email-title">Wohin sollen wir deinen Plan schicken?</div><div class="checkout-email-subtitle">Gib deine E-Mail ein, um deinen personalisierten Trainingsplan zu erhalten.</div><input type="email" class="checkout-email-input" id="checkoutEmailInput" placeholder="deine@email.de" onkeypress="if(event.key==='Enter')submitEmail()"><button class="checkout-email-btn" onclick="submitEmail()">Weiter zum Plan →</button><div class="checkout-trust-badge"><div class="trust-stars"><span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span></div><span class="trust-text"><strong>4.8/5</strong> von 2.847 Hundebesitzern</span></div><div class="checkout-email-privacy">🔒 Deine Daten sind sicher. Kein Spam.</div></div><div class="checkout-step-1 hidden" id="checkoutStep1"><div class="checkout-plan-card"><div class="checkout-plan-image">🐕</div><div class="checkout-plan-info"><div class="checkout-plan-name">Personalisierter Trainingsplan</div><div class="checkout-plan-duration" id="checkoutPlanDuration">3-Monats-Plan</div></div><div class="checkout-plan-price-box"><div class="checkout-plan-price" id="checkoutPlanPrice">€29,99</div><div class="checkout-plan-access">Voller Zugang</div></div></div><div class="checkout-features-compact"><div class="checkout-feature-row">✓ 20+ Übungen für <span id="checkoutDogProblem">dein Problem</span></div><div class="checkout-feature-row">✓ Persönlicher Trainer-Support</div><div class="checkout-feature-row">✓ 20+ individuelle Aufgaben</div><div class="checkout-feature-row">✓ 3 Spezialmodule gratis dazu</div></div><div class="checkout-total-compact"><div><span class="checkout-total-label">Gesamt:</span><span class="checkout-total-saved" id="checkoutSaved">Du sparst €271,96</span></div><div class="checkout-total-price" id="checkoutTotalPrice">€29,99</div></div><div class="checkout-guarantee-compact">🛡️ 30 Tage Geld-zurück-Garantie</div><button class="checkout-continue-btn" onclick="goToPaymentStep()">WEITER ZUR ZAHLUNG</button></div><div class="checkout-step-2" id="checkoutStep2"><h3 style="text-align:center;margin-bottom:20px;font-size:18px;">Zahlungsmethode wählen</h3><div class="checkout-summary"><div class="checkout-summary-row"><span>Trainingsplan für <span id="checkoutDogName3">Hund</span></span><span><span class="checkout-summary-old" id="checkoutOldPrice">€79,99</span><span id="checkoutNewPrice">€29,99</span></span></div><div class="checkout-summary-row" id="bonusModuleRow"><span>Bonus-Module</span><span><span class="checkout-summary-old">€221,95</span><span>€0</span></span></div><div class="checkout-summary-row total"><span>Gesamt</span><span id="checkoutFinalPrice">€29,99</span></div><div class="checkout-summary-saved" id="checkoutSaved2">Du sparst €271,96</div></div><div class="checkout-error" id="checkoutError"></div><div class="stripe-element-container"><div id="payment-element"></div></div><button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">🔒 Jetzt bezahlen</button><div class="payment-icons"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal"><img src="klarna-logo.png" alt="Klarna"></div><button class="checkout-back" onclick="goBackToStep1()">← Zurück zur Übersicht</button></div></div></div></div>
     <div class="exit-popup-overlay" id="exitPopup"><div class="exit-popup"><button class="exit-popup-close" onclick="closeExitPopup()">×</button><div class="exit-popup-emoji">🐕</div><h3 class="exit-popup-title">Warte kurz!</h3><p class="exit-popup-text">Mit unserem Plan trainierst du <span class="exit-popup-highlight" id="popupProblem">das Problem</span> gezielt ab.</p><div class="exit-popup-bonus"><div class="exit-popup-bonus-title">🎁 Das bekommst du zusätzlich:</div><div class="exit-popup-bonus-list"><div>✓ <strong>6 Bonus-Übungen</strong> für schnellere Erfolge</div><div>✓ <strong>30 Tage Geld-zurück-Garantie</strong></div><div>✓ <strong>Persönlicher Support</strong></div><div>✓ <strong>Sofortiger Zugang</strong></div></div></div><button class="exit-popup-cta" onclick="closeExitPopup();document.querySelector('.cta-button').click();">Jetzt Plan sichern 🚀</button><button class="exit-popup-skip" onclick="closeExitPopup()">Nein danke, ich überlege noch</button></div></div>
 <script>
 // ==================== URL RABATTCODE SYSTEM ====================
@@ -359,19 +362,22 @@ function updateTimer() {
 function switchToNormalPrices() {
     document.querySelectorAll('.price-old').forEach(el => el.style.display = 'none');
     const cards = document.querySelectorAll('.pricing-card');
+    // 1-Monat normal: 49,99€ = 1,67€/Tag
     cards[0].querySelector('.price-amount').textContent = '1';
     cards[0].querySelector('.price-cents').textContent = ',67';
+    // 3-Monat normal: 79,99€ = 0,89€/Tag
     cards[1].querySelector('.price-amount').textContent = '0';
     cards[1].querySelector('.price-cents').textContent = ',89';
+    // 6-Monat normal: 119,99€ = 0,67€/Tag
     cards[2].querySelector('.price-amount').textContent = '0';
     cards[2].querySelector('.price-cents').textContent = ',67';
 }
 initializeTimer();
 
-// Plan Selection
+// Plan Selection - 3-Monat vorausgewählt
 const pricingCards = document.querySelectorAll('.pricing-card');
-let selectedPlan = '1month';
-const planDetails = {'1month':{price:'€17,99',priceNormal:'€49,99'},'3month':{price:'€29,99',priceNormal:'€79,99'},'6month':{price:'€49,99',priceNormal:'€119,99'}};
+let selectedPlan = '3month';
+const planDetails = {'1month':{price:'€24,99',priceNormal:'€49,99'},'3month':{price:'€29,99',priceNormal:'€79,99'},'6month':{price:'€49,99',priceNormal:'€119,99'}};
 pricingCards.forEach(card => card.addEventListener('click', function() {
     pricingCards.forEach(c => c.classList.remove('selected'));
     this.classList.add('selected');
@@ -442,7 +448,13 @@ function closeExitPopup() { document.getElementById('exitPopup').classList.remov
 // Checkout
 const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
 let stripe = null, elements = null, paymentElement = null, currentLeadId = null, clientSecret = null, userEmail = null;
-const checkoutPrices = {'1month':{discount:17.99,normal:49.99,oldTotal:271.94,duration:'1-Monats-Plan'},'3month':{discount:29.99,normal:79.99,oldTotal:301.94,duration:'3-Monats-Plan'},'6month':{discount:49.99,normal:119.99,oldTotal:341.94,duration:'6-Monats-Plan'}};
+
+// Preise: 1-Monat 24,99€, 3-Monat 29,99€, 6-Monat 49,99€
+const checkoutPrices = {
+    '1month': { discount: 24.99, normal: 49.99, oldTotal: 271.94, duration: '1-Monats-Plan' },
+    '3month': { discount: 29.99, normal: 79.99, oldTotal: 301.94, duration: '3-Monats-Plan' },
+    '6month': { discount: 49.99, normal: 119.99, oldTotal: 341.94, duration: '6-Monats-Plan' }
+};
 
 function submitEmail() {
     const emailInput = document.getElementById('checkoutEmailInput');
@@ -462,7 +474,7 @@ function submitEmail() {
 
 async function openCheckoutPopup() {
     currentLeadId = await saveToSupabase();
-    const priceData = checkoutPrices[selectedPlan] || checkoutPrices['1month'];
+    const priceData = checkoutPrices[selectedPlan] || checkoutPrices['3month'];
     const useDiscount = hasUrlDiscount || !timerExpired;
     const price = useDiscount ? priceData.discount : priceData.normal;
     const oldPrice = priceData.normal;
@@ -473,11 +485,26 @@ async function openCheckoutPopup() {
     document.getElementById('checkoutPlanDuration').textContent = priceData.duration;
     document.getElementById('checkoutPlanPrice').textContent = `€${price.toFixed(2).replace('.',',')}`;
     document.getElementById('checkoutTotalPrice').textContent = `€${price.toFixed(2).replace('.',',')}`;
-    document.getElementById('checkoutOldPrice').textContent = `€${oldPrice.toFixed(2).replace('.',',')}`;
+    
+    // Durchgestrichenen Preis nur zeigen wenn Rabatt aktiv
+    const oldPriceEl = document.getElementById('checkoutOldPrice');
+    if (!useDiscount) {
+        oldPriceEl.style.display = 'none';
+        document.getElementById('bonusModuleRow').style.display = 'none';
+        document.getElementById('checkoutSaved').style.display = 'none';
+        document.getElementById('checkoutSaved2').style.display = 'none';
+    } else {
+        oldPriceEl.style.display = 'inline';
+        oldPriceEl.textContent = `€${oldPrice.toFixed(2).replace('.',',')}`;
+        document.getElementById('bonusModuleRow').style.display = 'flex';
+        document.getElementById('checkoutSaved').style.display = 'block';
+        document.getElementById('checkoutSaved2').style.display = 'block';
+        document.getElementById('checkoutSaved').textContent = `Du sparst €${saved.replace('.',',')}`;
+        document.getElementById('checkoutSaved2').textContent = `Du sparst €${saved.replace('.',',')}`;
+    }
+    
     document.getElementById('checkoutNewPrice').textContent = `€${price.toFixed(2).replace('.',',')}`;
     document.getElementById('checkoutFinalPrice').textContent = `€${price.toFixed(2).replace('.',',')}`;
-    document.getElementById('checkoutSaved').textContent = `Du sparst €${saved.replace('.',',')}`;
-    document.getElementById('checkoutSaved2').textContent = `Du sparst €${saved.replace('.',',')}`;
     
     const problemLabels = {'pulling':'Leinenziehen','barking':'Bellen','aggression':'Aggression','anxiety':'Trennungsangst','jumping':'Anspringen','recall':'Rückruf','energy':'Hyperaktivität','destructive':'Zerstörungswut','soiling':'Stubenreinheit'};
     const checkoutDogProblem = document.getElementById('checkoutDogProblem');
