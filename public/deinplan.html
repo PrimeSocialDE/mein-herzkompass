@@ -2046,27 +2046,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
     </section>
 
-    <div class="container">
-        <div class="title-section">
-            <h1 class="main-title">Dein personalisierter Trainingsplan für <span id="dogName3">deinen Hund</span> ist fertig!</h1>
-            
-            <div class="goal-badges">
-                <div class="goal-badge">
-                    <div class="goal-badge-icon icon-blue">🎯</div>
-                    <div class="goal-badge-text">
-                        <div class="goal-badge-label">Ziel</div>
-                        <div class="goal-badge-value" id="userGoal">Gehorsam verbessern</div>
-                    </div>
-                </div>
-                <div class="goal-badge">
-                    <div class="goal-badge-icon icon-orange">⚠️</div>
-                    <div class="goal-badge-text">
-                        <div class="goal-badge-label">Verhaltensproblem</div>
-                        <div class="goal-badge-value" id="userProblem">Trennungsangst</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    
 
         <!-- ========== NEU: Benefits VOR Pricing (dynamisch) ========== -->
         <div class="benefits-box">
@@ -2075,6 +2055,28 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 <!-- Wird dynamisch per JS gefüllt -->
             </ul>
         </div>
+
+        <div class="container">
+            <div class="title-section">
+                <h1 class="main-title">Dein personalisierter Trainingsplan für <span id="dogName3">deinen Hund</span> ist fertig!</h1>
+                
+                <div class="goal-badges">
+                    <div class="goal-badge">
+                        <div class="goal-badge-icon icon-blue">🎯</div>
+                        <div class="goal-badge-text">
+                            <div class="goal-badge-label">Ziel</div>
+                            <div class="goal-badge-value" id="userGoal">Gehorsam verbessern</div>
+                        </div>
+                    </div>
+                    <div class="goal-badge">
+                        <div class="goal-badge-icon icon-orange">⚠️</div>
+                        <div class="goal-badge-text">
+                            <div class="goal-badge-label">Verhaltensproblem</div>
+                            <div class="goal-badge-value" id="userProblem">Trennungsangst</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         <!-- ========== Pricing Section (umformulierte Frage) ========== -->
         <div class="motivation-text">
@@ -2903,11 +2905,31 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             document.getElementById('checkoutPlanDuration').textContent = priceData.duration;
             document.getElementById('checkoutPlanPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
             document.getElementById('checkoutTotalPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
-            document.getElementById('checkoutOldPrice').textContent = `€${oldPrice.toFixed(2).replace('.', ',')}`;
+            
+            // Durchgestrichenen Preis nur zeigen wenn Rabatt aktiv
+            const oldPriceEl = document.getElementById('checkoutOldPrice');
+            if (timerExpired) {
+                oldPriceEl.style.display = 'none';
+            } else {
+                oldPriceEl.style.display = 'inline';
+                oldPriceEl.textContent = `€${oldPrice.toFixed(2).replace('.', ',')}`;
+            }
+            
             document.getElementById('checkoutNewPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
             document.getElementById('checkoutFinalPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
-            document.getElementById('checkoutSaved').textContent = `Du sparst €${saved.replace('.', ',')}`;
-            document.getElementById('checkoutSaved2').textContent = `Du sparst €${saved.replace('.', ',')}`;
+            
+            // Bonus-Module und "Du sparst" nur zeigen wenn Rabatt aktiv
+            if (timerExpired) {
+                document.getElementById('bonusModuleRow').style.display = 'none';
+                document.getElementById('checkoutSaved').style.display = 'none';
+                document.getElementById('checkoutSaved2').style.display = 'none';
+            } else {
+                document.getElementById('bonusModuleRow').style.display = 'flex';
+                document.getElementById('checkoutSaved').style.display = 'block';
+                document.getElementById('checkoutSaved2').style.display = 'block';
+                document.getElementById('checkoutSaved').textContent = `Du sparst €${saved.replace('.', ',')}`;
+                document.getElementById('checkoutSaved2').textContent = `Du sparst €${saved.replace('.', ',')}`;
+            }
             
             // Dynamisches Modul basierend auf Problem
             const moduleMap = {
@@ -3201,7 +3223,7 @@ if (currentLeadId && data.paymentIntentId) {
                                 <span id="checkoutNewPrice">€29,99</span>
                             </span>
                         </div>
-                        <div class="checkout-summary-row">
+                        <div class="checkout-summary-row" id="bonusModuleRow">
                             <span>Bonus-Module</span>
                             <span>
                                 <span class="checkout-summary-old">€221,95</span>
