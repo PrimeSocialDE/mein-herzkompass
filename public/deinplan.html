@@ -2903,6 +2903,12 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             document.getElementById('checkoutDogName3').textContent = dogName;
             document.getElementById('checkoutPlanDuration').textContent = priceData.duration;
             document.getElementById('checkoutPlanPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
+            
+            // Step 2 Werte auch setzen
+            const planDuration2 = document.getElementById('checkoutPlanDuration2');
+            const planPrice2 = document.getElementById('checkoutPlanPrice2');
+            if (planDuration2) planDuration2.textContent = priceData.duration;
+            if (planPrice2) planPrice2.textContent = `€${price.toFixed(2).replace('.', ',')}`;
             document.getElementById('checkoutTotalPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
             
             // Durchgestrichenen Preis nur zeigen wenn Rabatt aktiv
@@ -2960,6 +2966,10 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             const checkoutDogProblem = document.getElementById('checkoutDogProblem');
             if (checkoutDogProblem) {
                 checkoutDogProblem.textContent = problemLabels[dogProblemValue] || 'dein Problem';
+            }
+            const checkoutDogProblem2 = document.getElementById('checkoutDogProblem2');
+            if (checkoutDogProblem2) {
+                checkoutDogProblem2.textContent = problemLabels[dogProblemValue] || 'dein Problem';
             }
             
             // Reset - E-Mail Step zuerst zeigen
@@ -3213,29 +3223,30 @@ if (currentLeadId && data.paymentIntentId) {
 
                 <!-- Step 2: Zahlung -->
                 <div class="checkout-step-2" id="checkoutStep2">
-                    <h3 style="text-align: center; margin-bottom: 20px; font-size: 18px;">Zahlungsmethode wählen</h3>
-                    
-                    <div class="checkout-summary">
-                        <div class="checkout-summary-row">
-                            <span>Trainingsplan für <span id="checkoutDogName3">Hund</span></span>
-                            <span>
-                                <span class="checkout-summary-old" id="checkoutOldPrice">€49,99</span>
-                                <span id="checkoutNewPrice">€29,99</span>
-                            </span>
+                    <!-- Plan Card oben -->
+                    <div class="checkout-plan-card" style="margin-bottom: 12px;">
+                        <div class="checkout-plan-image">🐕</div>
+                        <div class="checkout-plan-info">
+                            <div class="checkout-plan-name">Personalisierter Trainingsplan</div>
+                            <div class="checkout-plan-duration" id="checkoutPlanDuration2">3-Monats-Plan</div>
                         </div>
-                        <div class="checkout-summary-row" id="bonusModuleRow">
-                            <span>Bonus-Module</span>
-                            <span>
-                                <span class="checkout-summary-old">€221,95</span>
-                                <span>€0</span>
-                            </span>
+                        <div class="checkout-plan-price-box">
+                            <div class="checkout-plan-price" id="checkoutPlanPrice2">€29,99</div>
+                            <div class="checkout-plan-access">Voller Zugang</div>
                         </div>
-                        <div class="checkout-summary-row total">
-                            <span>Gesamt</span>
-                            <span id="checkoutFinalPrice">€29,99</span>
-                        </div>
-                        <div class="checkout-summary-saved" id="checkoutSaved2">Du sparst €253,95</div>
                     </div>
+
+                    <!-- Features kompakt -->
+                    <div class="checkout-features-compact" style="margin-bottom: 12px;">
+                        <div class="checkout-feature-row">✓ 20+ Übungen für <span id="checkoutDogProblem2">dein Problem</span></div>
+                        <div class="checkout-feature-row">✓ Persönlicher Wochenplan</div>
+                        <div class="checkout-feature-row">✓ Schritt-für-Schritt Anleitungen</div>
+                    </div>
+
+                    <!-- 30 Tage Garantie -->
+                    <div class="checkout-guarantee-compact" style="margin-bottom: 15px;">🛡️ 30 Tage Geld-zurück-Garantie</div>
+
+                    <h3 style="text-align: center; margin-bottom: 15px; font-size: 16px; color: #6B6B6B;">Zahlungsmethode wählen</h3>
 
                     <div class="checkout-error" id="checkoutError"></div>
 
