@@ -2046,7 +2046,27 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
     </section>
 
-    
+    <div class="container">
+        <div class="title-section">
+            <h1 class="main-title">Dein personalisierter Trainingsplan für <span id="dogName3">deinen Hund</span> ist fertig!</h1>
+            
+            <div class="goal-badges">
+                <div class="goal-badge">
+                    <div class="goal-badge-icon icon-blue">🎯</div>
+                    <div class="goal-badge-text">
+                        <div class="goal-badge-label">Ziel</div>
+                        <div class="goal-badge-value" id="userGoal">Gehorsam verbessern</div>
+                    </div>
+                </div>
+                <div class="goal-badge">
+                    <div class="goal-badge-icon icon-orange">⚠️</div>
+                    <div class="goal-badge-text">
+                        <div class="goal-badge-label">Verhaltensproblem</div>
+                        <div class="goal-badge-value" id="userProblem">Trennungsangst</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- ========== NEU: Benefits VOR Pricing (dynamisch) ========== -->
         <div class="benefits-box">
@@ -2055,28 +2075,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 <!-- Wird dynamisch per JS gefüllt -->
             </ul>
         </div>
-
-        <div class="container">
-            <div class="title-section">
-                <h1 class="main-title">Dein personalisierter Trainingsplan für <span id="dogName3">deinen Hund</span> ist fertig!</h1>
-                
-                <div class="goal-badges">
-                    <div class="goal-badge">
-                        <div class="goal-badge-icon icon-blue">🎯</div>
-                        <div class="goal-badge-text">
-                            <div class="goal-badge-label">Ziel</div>
-                            <div class="goal-badge-value" id="userGoal">Gehorsam verbessern</div>
-                        </div>
-                    </div>
-                    <div class="goal-badge">
-                        <div class="goal-badge-icon icon-orange">⚠️</div>
-                        <div class="goal-badge-text">
-                            <div class="goal-badge-label">Verhaltensproblem</div>
-                            <div class="goal-badge-value" id="userProblem">Trennungsangst</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
         <!-- ========== Pricing Section (umformulierte Frage) ========== -->
         <div class="motivation-text">
@@ -2885,9 +2883,10 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 });
             }
             
-            // Zum Step 1 wechseln
+            // Direkt zur Stripe Zahlung
             document.getElementById('checkoutStepEmail').classList.add('hidden');
-            document.getElementById('checkoutStep1').classList.remove('hidden');
+            document.getElementById('checkoutStep2').classList.add('active');
+            goToPaymentStep();
         }
 
         async function openCheckoutPopup() {
@@ -2988,7 +2987,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         }
 
         async function goToPaymentStep() {
-            // Step 1 verstecken, Step 2 zeigen
+            // E-Mail und Step 1 verstecken, Step 2 zeigen
+            document.getElementById('checkoutStepEmail').classList.add('hidden');
             document.getElementById('checkoutStep1').classList.add('hidden');
             document.getElementById('checkoutStep2').classList.add('active');
             
@@ -3092,7 +3092,7 @@ if (currentLeadId && data.paymentIntentId) {
         }
 
         function goBackToStep1() {
-            document.getElementById('checkoutStep1').classList.remove('hidden');
+            document.getElementById('checkoutStepEmail').classList.remove('hidden');
             document.getElementById('checkoutStep2').classList.remove('active');
         }
 
@@ -3254,7 +3254,7 @@ if (currentLeadId && data.paymentIntentId) {
                         <img src="klarna-logo.png" alt="Klarna">
                     </div>
 
-                    <button class="checkout-back" onclick="goBackToStep1()">← Zurück zur Übersicht</button>
+                    <button class="checkout-back" onclick="goBackToStep1()">← E-Mail ändern</button>
                 </div>
             </div>
         </div>
