@@ -2068,14 +2068,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
         </div>
 
-        <!-- ========== NEU: Benefits VOR Pricing (dynamisch) ========== -->
-        <div class="benefits-box">
-            <h2 class="benefits-title">Das bekommst du im Plan</h2>
-            <ul class="benefits-list" id="benefitsList">
-                <!-- Wird dynamisch per JS gefüllt -->
-            </ul>
-        </div>
-
         <!-- ========== Pricing Section (umformulierte Frage) ========== -->
         <div class="motivation-text">
             <p class="motivation-question">In welcher Zeit soll <span id="dogNamePlan">dein Hund</span> das Problem lösen?</p>
@@ -2136,6 +2128,14 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Benefits Box - dynamisch basierend auf Problem -->
+        <div class="benefits-box" id="benefitsBox" style="margin-bottom: 20px;">
+            <h2 class="benefits-title">Das bekommst du im Plan</h2>
+            <ul class="benefits-list" id="benefitsList">
+                <!-- Wird per JavaScript gefüllt -->
+            </ul>
         </div>
 
         <div class="disclaimer">
@@ -2890,17 +2890,14 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         }
 
         async function openCheckoutPopup() {
-            // Erst Lead in Supabase speichern
-            currentLeadId = await saveToSupabase();
+            // Erst Lead in Supabase speichern (non-blocking)
+            saveToSupabase().then(id => { currentLeadId = id; }).catch(e => console.error(e));
             
             const priceData = checkoutPrices[selectedPlan] || checkoutPrices['1month'];
             const price = timerExpired ? priceData.normal : priceData.discount;
-            const oldPrice = priceData.normal;
-            const saved = (priceData.oldTotal - price).toFixed(2);
             
             // Popup Daten füllen
             document.getElementById('checkoutDogName').textContent = dogName;
-            document.getElementById('checkoutDogName3').textContent = dogName;
             document.getElementById('checkoutPlanDuration').textContent = priceData.duration;
             document.getElementById('checkoutPlanPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
             
@@ -2909,32 +2906,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             const planPrice2 = document.getElementById('checkoutPlanPrice2');
             if (planDuration2) planDuration2.textContent = priceData.duration;
             if (planPrice2) planPrice2.textContent = `€${price.toFixed(2).replace('.', ',')}`;
-            document.getElementById('checkoutTotalPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
             
-            // Durchgestrichenen Preis nur zeigen wenn Rabatt aktiv
-            const oldPriceEl = document.getElementById('checkoutOldPrice');
-            if (timerExpired) {
-                oldPriceEl.style.display = 'none';
-            } else {
-                oldPriceEl.style.display = 'inline';
-                oldPriceEl.textContent = `€${oldPrice.toFixed(2).replace('.', ',')}`;
-            }
-            
-            document.getElementById('checkoutNewPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
-            document.getElementById('checkoutFinalPrice').textContent = `€${price.toFixed(2).replace('.', ',')}`;
-            
-            // Bonus-Module und "Du sparst" nur zeigen wenn Rabatt aktiv
-            if (timerExpired) {
-                document.getElementById('bonusModuleRow').style.display = 'none';
-                document.getElementById('checkoutSaved').style.display = 'none';
-                document.getElementById('checkoutSaved2').style.display = 'none';
-            } else {
-                document.getElementById('bonusModuleRow').style.display = 'flex';
-                document.getElementById('checkoutSaved').style.display = 'block';
-                document.getElementById('checkoutSaved2').style.display = 'block';
-                document.getElementById('checkoutSaved').textContent = `Du sparst €${saved.replace('.', ',')}`;
-                document.getElementById('checkoutSaved2').textContent = `Du sparst €${saved.replace('.', ',')}`;
-            }
+            const checkoutTotalPrice = document.getElementById('checkoutTotalPrice');
+            if (checkoutTotalPrice) checkoutTotalPrice.textContent = `€${price.toFixed(2).replace('.', ',')}`;
             
             // Dynamisches Modul basierend auf Problem
             const moduleMap = {
