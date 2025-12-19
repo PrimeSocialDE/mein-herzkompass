@@ -31,6 +31,7 @@
             --warm-brown: #C4A576;
             --dark-brown: #8B7355;
             --accent-green: #4CAF50;
+            --accent-red: #E57373;
             --border-radius: 12px;
         }
 
@@ -43,7 +44,6 @@
             padding-bottom: 100px;
         }
 
-        /* Header */
         .header {
             background: var(--white);
             padding: 16px 0;
@@ -71,7 +71,6 @@
             color: var(--text-dark);
         }
 
-        /* Container */
         .container {
             max-width: 500px;
             margin: 0 auto;
@@ -79,7 +78,6 @@
             text-align: center;
         }
 
-        /* Title */
         .page-title {
             font-size: 26px;
             font-weight: 700;
@@ -111,8 +109,46 @@
         .chart-container {
             background: var(--white);
             border-radius: var(--border-radius);
-            padding: 30px 20px;
+            padding: 25px 20px;
             margin-bottom: 20px;
+        }
+
+        /* Legend */
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.plan {
+            background: linear-gradient(135deg, #4CAF50, #81C784);
+        }
+
+        .legend-dot.selbst {
+            background: linear-gradient(135deg, #E57373, #FFAB91);
+        }
+
+        .legend-text.plan {
+            color: var(--accent-green);
+        }
+
+        .legend-text.selbst {
+            color: var(--accent-red);
         }
 
         .chart-wrapper {
@@ -121,7 +157,6 @@
             margin-bottom: 15px;
         }
 
-        /* Y-Axis */
         .y-axis {
             position: absolute;
             left: 0;
@@ -136,7 +171,6 @@
             color: var(--text-light);
         }
 
-        /* Chart Area */
         .chart-area {
             position: absolute;
             left: 35px;
@@ -145,7 +179,6 @@
             bottom: 30px;
         }
 
-        /* Grid Lines */
         .grid-line {
             position: absolute;
             left: 0;
@@ -154,7 +187,6 @@
             background: var(--border-light);
         }
 
-        /* SVG */
         .chart-svg {
             position: absolute;
             left: 0;
@@ -164,7 +196,6 @@
             overflow: visible;
         }
 
-        /* X-Axis */
         .x-axis {
             position: absolute;
             left: 35px;
@@ -178,7 +209,6 @@
             text-transform: uppercase;
         }
 
-        /* End Badge */
         .end-badge {
             position: absolute;
             right: 0;
@@ -196,12 +226,85 @@
             color: var(--accent-green);
         }
 
-        /* Chart Note */
         .chart-note {
             font-size: 13px;
             color: var(--text-light);
             font-style: italic;
             text-align: center;
+        }
+
+        /* Team Section */
+        .team-section {
+            background: linear-gradient(135deg, #F5EDE3 0%, #EDE5DA 100%);
+            border-radius: var(--border-radius);
+            padding: 30px 20px;
+            margin-bottom: 20px;
+        }
+
+        .team-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .team-subtitle {
+            font-size: 14px;
+            color: var(--text-medium);
+            margin-bottom: 25px;
+        }
+
+        .team-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .team-image {
+            width: 100%;
+            max-width: 280px;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            object-fit: cover;
+        }
+
+        .team-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .team-role {
+            font-size: 14px;
+            color: var(--warm-brown);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .team-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .team-stat {
+            text-align: center;
+        }
+
+        .team-stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark-brown);
+        }
+
+        .team-stat-label {
+            font-size: 12px;
+            color: var(--text-light);
         }
 
         /* Continue Button */
@@ -230,7 +333,6 @@
             background: var(--warm-brown);
         }
 
-        /* Mobile */
         @media (max-width: 480px) {
             .container {
                 padding: 24px 16px;
@@ -243,9 +345,12 @@
             .chart-wrapper {
                 height: 220px;
             }
+
+            .team-stats {
+                gap: 20px;
+            }
         }
     </style>
-<!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -266,19 +371,9 @@ fbq('track', 'PageView');
     })(window, document, "clarity", "script", "ufxcf43805");
 </script>
 <script src="cookie-banner.js" defer></script>
-<!-- TikTok Pixel Code Start -->
-<script>
-!function (w, d, t) {
-  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for( var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-    ttq.load('D4RFSQBC77U7SM7UL8A0');
-  ttq.page();
-}(window, document, 'ttq');
-</script>
-<!-- TikTok Pixel Code End -->
 </head>
 
 <body>
-    <!-- Header -->
     <header class="header">
         <a href="schritt23.html" class="logo">
             <img src="logo.png" alt="WauWerk Logo" class="logo-image">
@@ -286,14 +381,25 @@ fbq('track', 'PageView');
         </a>
     </header>
 
-    <!-- Content -->
     <div class="container">
         <h1 class="page-title">Dein Plan ist so gut wie fertig</h1>
-        <p class="page-subtitle">Mit dem Plan, den wir für <strong id="dogNameTitle">deinen Hund</strong> erstellen, lässt sich <span class="problem-highlight" id="problemText">das Problem</span> und weitere Herausforderungen innerhalb der nächsten 30 Tage lösen.</p>
-        <p class="target-date" id="targetDate">20. Dezember 2025</p>
+        <p class="page-subtitle">Mit dem Plan, den wir für <strong id="dogNameTitle">deinen Hund</strong> erstellen, lässt sich <span class="problem-highlight" id="problemText">das Problem</span> innerhalb der nächsten 30 Tage lösen.</p>
+        <p class="target-date" id="targetDate">20. Januar 2026</p>
 
-        <!-- Chart -->
+        <!-- Chart mit Vergleich -->
         <div class="chart-container">
+            <!-- Legend -->
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <div class="legend-dot plan"></div>
+                    <span class="legend-text plan">Mit WauWerk Plan</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot selbst"></div>
+                    <span class="legend-text selbst">Ohne Plan</span>
+                </div>
+            </div>
+
             <div class="chart-wrapper">
                 <!-- Y-Axis -->
                 <div class="y-axis">
@@ -314,54 +420,101 @@ fbq('track', 'PageView');
                     <!-- SVG Chart -->
                     <svg class="chart-svg" viewBox="0 0 400 200" preserveAspectRatio="none" id="chartSvg">
                         <defs>
-                            <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" style="stop-color:#FF6B6B"/>
-                                <stop offset="35%" style="stop-color:#FFB347"/>
-                                <stop offset="65%" style="stop-color:#FFD93D"/>
+                            <!-- Gradient für Plan-Linie (grün) -->
+                            <linearGradient id="lineGradientPlan" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#81C784"/>
                                 <stop offset="100%" style="stop-color:#4CAF50"/>
                             </linearGradient>
-                            <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:0.25"/>
+                            <!-- Gradient für Selbst-Linie (rot/orange) -->
+                            <linearGradient id="lineGradientSelbst" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#FFAB91"/>
+                                <stop offset="100%" style="stop-color:#E57373"/>
+                            </linearGradient>
+                            <!-- Area Gradient Plan -->
+                            <linearGradient id="areaGradientPlan" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:0.2"/>
                                 <stop offset="100%" style="stop-color:#4CAF50;stop-opacity:0"/>
                             </linearGradient>
                         </defs>
                         
-                        <!-- Area Fill -->
-                        <path id="areaPath" fill="url(#areaGradient)" d="M0,160 Q100,140 200,80 T400,10 L400,200 L0,200 Z" opacity="0"/>
+                        <!-- Selbst-Linie (schlechter Verlauf - zuerst, damit Plan darüber liegt) -->
+                        <path id="linePathSelbst" 
+                              fill="none"
+                              stroke="url(#lineGradientSelbst)"
+                              stroke-width="4"
+                              stroke-linecap="round"
+                              stroke-dasharray="8,6"
+                              d="M0,160 Q80,155 160,145 Q240,135 320,130 Q360,128 400,125"
+                              opacity="0"/>
                         
-                        <!-- Line -->
+                        <!-- Area Fill Plan -->
+                        <path id="areaPath" fill="url(#areaGradientPlan)" d="M0,160 Q100,130 200,70 T400,10 L400,200 L0,200 Z" opacity="0"/>
+                        
+                        <!-- Plan-Linie (guter Verlauf) -->
                         <path id="linePath" 
                               fill="none"
-                              stroke="url(#lineGradient)"
+                              stroke="url(#lineGradientPlan)"
                               stroke-width="5"
                               stroke-linecap="round"
-                              d="M0,160 Q100,140 200,80 T400,10"/>
+                              d="M0,160 Q100,130 200,70 T400,10"/>
                         
                         <!-- Start Circle -->
-                        <circle id="startCircle" cx="0" cy="160" r="12" fill="#FFFFFF" stroke="#FF6B6B" stroke-width="4" opacity="0"/>
+                        <circle id="startCircle" cx="0" cy="160" r="10" fill="#FFFFFF" stroke="#81C784" stroke-width="3" opacity="0"/>
+                        
+                        <!-- End Circle Plan -->
+                        <circle id="endCirclePlan" cx="400" cy="10" r="10" fill="#FFFFFF" stroke="#4CAF50" stroke-width="3" opacity="0"/>
+                        
+                        <!-- End Circle Selbst -->
+                        <circle id="endCircleSelbst" cx="400" cy="125" r="8" fill="#FFFFFF" stroke="#E57373" stroke-width="3" opacity="0"/>
                     </svg>
 
                     <!-- End Badge -->
                     <div class="end-badge" id="endBadge">
-                        <span class="end-badge-text">Ziel erreicht!</span>
+                        <span class="end-badge-text">✓ Ziel erreicht!</span>
                     </div>
                 </div>
 
                 <!-- X-Axis -->
                 <div class="x-axis">
                     <span>Jetzt</span>
-                    <span id="week1">Woche 1</span>
-                    <span id="week2">Woche 2</span>
-                    <span id="week3">Tag 30</span>
+                    <span>Woche 1</span>
+                    <span>Woche 2</span>
+                    <span>Tag 30</span>
                 </div>
             </div>
 
-            <p class="chart-note">Diese Grafik dient nur zur Veranschaulichung</p>
+            <p class="chart-note">Vergleich: Strukturierter Plan vs. Selbstversuche</p>
+        </div>
+
+        <!-- Team Section -->
+        <div class="team-section">
+            <h2 class="team-title">Unser Expertenteam</h2>
+            <p class="team-subtitle">Zertifizierte Hundetrainer entwickeln deinen Plan</p>
+            
+            <div class="team-card">
+                <img src="team.png" alt="WauWerk Team" class="team-image">
+                <h3 class="team-name">Das WauWerk Team</h3>
+                <p class="team-role">Zertifizierte Hundetrainer & Verhaltensexperten</p>
+                
+                <div class="team-stats">
+                    <div class="team-stat">
+                        <div class="team-stat-value">15+</div>
+                        <div class="team-stat-label">Jahre Erfahrung</div>
+                    </div>
+                    <div class="team-stat">
+                        <div class="team-stat-value">3.400+</div>
+                        <div class="team-stat-label">Hunde trainiert</div>
+                    </div>
+                    <div class="team-stat">
+                        <div class="team-stat-value">98%</div>
+                        <div class="team-stat-label">Erfolgsquote</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Continue Button -->
-    <a href="laden.html" class="continue-button">Dein Plan ist fertig</a>
+    <a href="laden.html" class="continue-button">Weiter zu deinem Plan →</a>
 
     <script>
         // Load dog name
@@ -407,41 +560,64 @@ fbq('track', 'PageView');
         // Animation beim Laden der Seite
         window.addEventListener('load', function() {
             const linePath = document.getElementById('linePath');
+            const linePathSelbst = document.getElementById('linePathSelbst');
             const areaPath = document.getElementById('areaPath');
             const startCircle = document.getElementById('startCircle');
+            const endCirclePlan = document.getElementById('endCirclePlan');
+            const endCircleSelbst = document.getElementById('endCircleSelbst');
             const endBadge = document.getElementById('endBadge');
 
             // Line Length berechnen
             const lineLength = linePath.getTotalLength();
+            const lineLengthSelbst = linePathSelbst.getTotalLength();
 
-            // Line verstecken
+            // Lines verstecken
             linePath.style.strokeDasharray = lineLength;
             linePath.style.strokeDashoffset = lineLength;
+            linePathSelbst.style.strokeDasharray = lineLengthSelbst;
+            linePathSelbst.style.strokeDashoffset = lineLengthSelbst;
 
-            // 1. Start-Kreis einblenden (sofort)
+            // 1. Start-Kreis einblenden
             setTimeout(() => {
                 startCircle.style.transition = 'opacity 0.3s ease-out';
                 startCircle.style.opacity = '1';
             }, 300);
 
-            // 2. Linie zeichnen
+            // 2. Beide Linien gleichzeitig zeichnen
             setTimeout(() => {
+                // Selbst-Linie einblenden
+                linePathSelbst.style.transition = 'stroke-dashoffset 2.5s ease-out, opacity 0.3s';
+                linePathSelbst.style.opacity = '1';
+                linePathSelbst.style.strokeDashoffset = '0';
+                
+                // Plan-Linie zeichnen
                 linePath.style.transition = 'stroke-dashoffset 2s ease-out';
                 linePath.style.strokeDashoffset = '0';
             }, 600);
 
-            // 3. Fläche einblenden
+            // 3. End-Kreise einblenden
+            setTimeout(() => {
+                endCircleSelbst.style.transition = 'opacity 0.3s ease-out';
+                endCircleSelbst.style.opacity = '1';
+            }, 2200);
+
+            setTimeout(() => {
+                endCirclePlan.style.transition = 'opacity 0.3s ease-out';
+                endCirclePlan.style.opacity = '1';
+            }, 2400);
+
+            // 4. Fläche einblenden
             setTimeout(() => {
                 areaPath.style.transition = 'opacity 0.6s ease-out';
                 areaPath.style.opacity = '1';
-            }, 2000);
+            }, 2500);
 
-            // 4. End-Badge einblenden
+            // 5. End-Badge einblenden
             setTimeout(() => {
                 endBadge.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out';
                 endBadge.style.opacity = '1';
                 endBadge.style.transform = 'scale(1)';
-            }, 2500);
+            }, 2800);
         });
     </script>
 </body>
