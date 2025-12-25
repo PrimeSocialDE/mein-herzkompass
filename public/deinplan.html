@@ -1629,148 +1629,6 @@
             text-decoration: underline;
         }
 
-        /* ========== NEU: Price Anchor Box ========== */
-        .price-anchor-box {
-            background: linear-gradient(135deg, #FFF9F0 0%, #FFF5E6 100%);
-            border: 2px solid var(--warm-brown);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .price-anchor-title {
-            font-size: 14px;
-            color: var(--text-medium);
-            margin-bottom: 15px;
-        }
-
-        .price-anchor-comparison {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .price-anchor-item {
-            text-align: center;
-        }
-
-        .price-anchor-label {
-            font-size: 12px;
-            color: var(--text-light);
-            margin-bottom: 4px;
-        }
-
-        .price-anchor-value {
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .price-anchor-value.old {
-            color: var(--text-light);
-            text-decoration: line-through;
-        }
-
-        .price-anchor-value.new {
-            color: var(--warm-brown);
-        }
-
-        .price-anchor-divider {
-            font-size: 24px;
-            color: var(--warm-brown);
-        }
-
-        /* ========== NEU: Testimonial Compact (vor Pricing) ========== */
-        .testimonial-compact {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border-light);
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-        }
-
-        .testimonial-compact-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #F5EDE3 0%, #E8DCCC 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            flex-shrink: 0;
-        }
-
-        .testimonial-compact-content {
-            flex: 1;
-        }
-
-        .testimonial-compact-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .testimonial-compact-name {
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--text-dark);
-        }
-
-        .testimonial-compact-stars {
-            display: flex;
-            gap: 2px;
-        }
-
-        .testimonial-compact-stars span {
-            color: #FFB800;
-            font-size: 12px;
-        }
-
-        .testimonial-compact-text {
-            font-size: 13px;
-            color: var(--text-medium);
-            line-height: 1.5;
-        }
-
-        .testimonial-compact-problem {
-            font-size: 11px;
-            color: var(--warm-brown);
-            margin-top: 6px;
-            font-weight: 500;
-        }
-
-        /* ========== NEU: Section Divider ========== */
-        .section-divider {
-            text-align: center;
-            margin: 25px 0;
-            position: relative;
-        }
-
-        .section-divider::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 50%;
-            height: 1px;
-            background: var(--border-light);
-        }
-
-        .section-divider span {
-            background: var(--background);
-            padding: 0 15px;
-            position: relative;
-            color: var(--text-light);
-            font-size: 13px;
-        }
-
         /* ========== VIDEO TESTIMONIAL ========== */
         .video-testimonial {
             margin-bottom: 25px;
@@ -1938,15 +1796,6 @@
 
             .stat-value {
                 font-size: 12px;
-            }
-
-            .price-anchor-comparison {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .price-anchor-divider {
-                transform: rotate(90deg);
             }
 
             .video-testimonial-container {
@@ -2135,8 +1984,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
 
         <button class="cta-button glow" onclick="getMyPlan()">
-            Jetzt Plan sichern 📧
-            <span class="cta-subtext">E-Mail eingeben & Plan erhalten</span>
+            Jetzt Plan sichern 🛒
+            <span class="cta-subtext">Sicher bezahlen & sofort starten</span>
         </button>
 
         <div class="payment-logos">
@@ -2309,8 +2158,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
 
         <button class="cta-button glow" onclick="getMyPlan()">
-            Jetzt Plan sichern 📧
-            <span class="cta-subtext">E-Mail eingeben & Plan erhalten</span>
+            Jetzt Plan sichern 🛒
+            <span class="cta-subtext">Sicher bezahlen & sofort starten</span>
         </button>
     </div>
 
@@ -2523,9 +2372,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             document.getElementById('problemValue1').textContent = values.bad;
             document.getElementById('problemValue2').textContent = values.good;
         }
-        
-        // Motivation Text aktualisieren
-
 
         let timeLeft;
         let timerExpired = false;
@@ -2831,7 +2677,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 
         // ==================== CHECKOUT POPUP ====================
         
-        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy'; // Dein Stripe Public Key
+        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
         
         let stripe = null;
         let elements = null;
@@ -2846,48 +2692,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             '3month': { discount: 29.99, normal: 79.99, oldTotal: 301.94, duration: '3-Monats-Plan' },
             '6month': { discount: 49.99, normal: 119.99, oldTotal: 341.94, duration: '6-Monats-Plan' }
         };
-
-        function submitEmail() {
-            const emailInput = document.getElementById('checkoutEmailInput');
-            const email = emailInput.value.trim();
-            
-            if (!email || !email.includes('@') || !email.includes('.')) {
-                emailInput.style.borderColor = '#e74c3c';
-                emailInput.placeholder = 'Bitte gültige E-Mail eingeben';
-                return;
-            }
-            
-            userEmail = email;
-            
-            // E-Mail in localStorage speichern
-            localStorage.setItem('userEmail', email);
-            
-            // E-Mail in Supabase updaten
-            if (currentLeadId) {
-                // Hole aktuelle answers und füge E-Mail hinzu
-                const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
-                currentAnswers.email = email;
-                
-                fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${currentLeadId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                        'Content-Type': 'application/json',
-                        'Prefer': 'return=minimal'
-                    },
-                    body: JSON.stringify({ 
-                        email: email,
-                        answers: currentAnswers
-                    })
-                });
-            }
-            
-            // Direkt zur Stripe Zahlung
-            document.getElementById('checkoutStepEmail').classList.add('hidden');
-            document.getElementById('checkoutStep2').classList.add('active');
-            goToPaymentStep();
-        }
 
         async function openCheckoutPopup() {
             // Erst Lead in Supabase speichern (non-blocking)
@@ -2910,21 +2714,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             const checkoutTotalPrice = document.getElementById('checkoutTotalPrice');
             if (checkoutTotalPrice) checkoutTotalPrice.textContent = `€${price.toFixed(2).replace('.', ',')}`;
             
-            // Dynamisches Modul basierend auf Problem
-            const moduleMap = {
-                'pulling': '"Leinenführigkeit meistern"',
-                'barking': '"Warum bellt mein Hund?"',
-                'aggression': '"Aggression verstehen & lösen"',
-                'anxiety': '"Trennungsangst bei Hunden"',
-                'jumping': '"Anspringen abtrainieren"',
-                'recall': '"Perfekter Rückruf"',
-                'energy': '"Hyperaktiver Hund"',
-                'destructive': '"Zerstörungswut stoppen"',
-                'soiling': '"Stubenreinheit Training"'
-            };
-            const dogProblemValue = localStorage.getItem('dogProblem') || 'anxiety';
-            
-            // Problem-Labels für Step 1
+            // Problem-Labels
             const problemLabels = {
                 'pulling': 'Leinenziehen',
                 'barking': 'Bellen',
@@ -2937,6 +2727,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 'soiling': 'Stubenreinheit'
             };
             
+            const dogProblemValue = localStorage.getItem('dogProblem') || 'anxiety';
             const checkoutDogProblem = document.getElementById('checkoutDogProblem');
             if (checkoutDogProblem) {
                 checkoutDogProblem.textContent = problemLabels[dogProblemValue] || 'dein Problem';
@@ -2946,16 +2737,20 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 checkoutDogProblem2.textContent = problemLabels[dogProblemValue] || 'dein Problem';
             }
             
-            // Reset - E-Mail Step zuerst zeigen
-            document.getElementById('checkoutStepEmail').classList.remove('hidden');
+            // E-Mail aus localStorage (wurde in kurz-schritt11.html gesammelt)
+            userEmail = localStorage.getItem('userEmail') || '';
+
+            // Direkt zu Zahlung (E-Mail Step überspringen)
+            document.getElementById('checkoutStepEmail').classList.add('hidden');
             document.getElementById('checkoutStep1').classList.add('hidden');
-            document.getElementById('checkoutStep2').classList.remove('active');
-            document.getElementById('checkoutEmailInput').value = '';
-            document.getElementById('checkoutEmailInput').style.borderColor = '';
-            
+            document.getElementById('checkoutStep2').classList.add('active');
+
             // Popup öffnen
             document.getElementById('checkoutPopup').classList.add('active');
             document.body.style.overflow = 'hidden';
+
+            // Direkt Stripe laden
+            goToPaymentStep();
         }
 
         function closeCheckoutPopup() {
@@ -3016,26 +2811,26 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 clientSecret = data.clientSecret;
                 
                 // Event ID (payment_intent) und fb_event_id in answers updaten
-if (currentLeadId && data.paymentIntentId) {
-    const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
-    currentAnswers.event_id = data.paymentIntentId;
-    currentAnswers.fb_event_id = localStorage.getItem('fb_event_id') || '';
-    
-    fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${currentLeadId}`, {
-        method: 'PATCH',
-        headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({ 
-            answers: currentAnswers
-        })
-    });
-    
-    localStorage.setItem('wauwerk_answers', JSON.stringify(currentAnswers));
-}
+                if (currentLeadId && data.paymentIntentId) {
+                    const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
+                    currentAnswers.event_id = data.paymentIntentId;
+                    currentAnswers.fb_event_id = localStorage.getItem('fb_event_id') || '';
+                    
+                    fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${currentLeadId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                            'Content-Type': 'application/json',
+                            'Prefer': 'return=minimal'
+                        },
+                        body: JSON.stringify({ 
+                            answers: currentAnswers
+                        })
+                    });
+                    
+                    localStorage.setItem('wauwerk_answers', JSON.stringify(currentAnswers));
+                }
                 
                 // Stripe Elements erstellen
                 elements = stripe.elements({
@@ -3073,11 +2868,6 @@ if (currentLeadId && data.paymentIntentId) {
                 console.error('Checkout Error:', error);
                 showCheckoutError('Verbindungsfehler. Bitte versuche es erneut.');
             }
-        }
-
-        function goBackToStep1() {
-            document.getElementById('checkoutStepEmail').classList.remove('hidden');
-            document.getElementById('checkoutStep2').classList.remove('active');
         }
 
         async function submitPayment() {
@@ -3124,6 +2914,7 @@ if (currentLeadId && data.paymentIntentId) {
             openCheckoutPopup();
         }
     </script>
+
 <!-- Checkout Popup -->
     <div class="checkout-overlay" id="checkoutPopup">
         <div class="checkout-popup">
@@ -3133,33 +2924,19 @@ if (currentLeadId && data.paymentIntentId) {
             </div>
             
             <div class="checkout-body">
-                <!-- Step 0: E-Mail -->
-                <div class="checkout-step-email" id="checkoutStepEmail">
-                    <div class="checkout-email-icon">📧</div>
-                    <div class="checkout-email-title">Wohin sollen wir deinen Plan schicken?</div>
-                    <div class="checkout-email-subtitle">Gib deine E-Mail ein, um deinen personalisierten Trainingsplan zu erhalten.</div>
-                    
-                    <input type="email" class="checkout-email-input" id="checkoutEmailInput" placeholder="deine@email.de" required onkeypress="if(event.key==='Enter')submitEmail()">
-                    
-                    <button class="checkout-email-btn" onclick="submitEmail()">Weiter zum Plan →</button>
-                    
-                    <div class="checkout-trust-badge">
-                        <div class="trust-stars">
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                            <span class="trust-star"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span>
-                        </div>
-                        <span class="trust-text"><strong>4.8/5</strong> von 2.847 Hundebesitzern</span>
-                    </div>
-                    
-                    <div class="checkout-email-privacy">🔒 Deine Daten sind sicher. Kein Spam, versprochen.</div>
+                <!-- Step 0: E-Mail (wird übersprungen) -->
+                <div class="checkout-step-email hidden" id="checkoutStepEmail">
+                    <!-- E-Mail wird jetzt vorher in kurz-schritt11.html gesammelt -->
                 </div>
 
-                <!-- Step 1: Übersicht -->
+                <!-- Step 1: Übersicht (wird übersprungen) -->
                 <div class="checkout-step-1 hidden" id="checkoutStep1">
-                    <div class="checkout-plan-card">
+                </div>
+
+                <!-- Step 2: Payment -->
+                <div class="checkout-step-2" id="checkoutStep2">
+                    <!-- Plan Card oben -->
+                    <div class="checkout-plan-card" style="margin-bottom: 12px;">
                         <div class="checkout-plan-image">🐕</div>
                         <div class="checkout-plan-info">
                             <div class="checkout-plan-name">Personalisierter Trainingsplan</div>
@@ -3167,45 +2944,6 @@ if (currentLeadId && data.paymentIntentId) {
                         </div>
                         <div class="checkout-plan-price-box">
                             <div class="checkout-plan-price" id="checkoutPlanPrice">€29,99</div>
-                            <div class="checkout-plan-access">Voller Zugang</div>
-                        </div>
-                    </div>
-
-                    <div class="checkout-features-compact">
-                        <div class="checkout-feature-row">✓ 20+ Übungen für <span id="checkoutDogProblem">dein Problem</span></div>
-                        <div class="checkout-feature-row">✓ Persönlicher Trainer-Support</div>
-                        <div class="checkout-feature-row">✓ 20+ individuelle Aufgaben  </div>
-                        <div class="checkout-feature-row">✓ 3 Spezialmodule gratis dazu</div>
-                    </div>
-
-                    <div class="checkout-total-compact">
-                        <div>
-                            <span class="checkout-total-label">Gesamt:</span>
-                            <span class="checkout-total-saved" id="checkoutSaved">Du sparst €251,99</span>
-                        </div>
-                        <div class="checkout-total-price" id="checkoutTotalPrice">€29,99</div>
-                    </div>
-
-                    <div class="checkout-guarantee-compact">
-                        🛡️ 30 Tage Geld-zurück-Garantie
-                    </div>
-
-                    <button class="checkout-continue-btn" onclick="goToPaymentStep()">
-                        WEITER ZUR ZAHLUNG
-                    </button>
-                </div>
-
-                <!-- Step 2: Zahlung -->
-                <div class="checkout-step-2" id="checkoutStep2">
-                    <!-- Plan Card oben -->
-                    <div class="checkout-plan-card" style="margin-bottom: 12px;">
-                        <div class="checkout-plan-image">🐕</div>
-                        <div class="checkout-plan-info">
-                            <div class="checkout-plan-name">Personalisierter Trainingsplan</div>
-                            <div class="checkout-plan-duration" id="checkoutPlanDuration2">3-Monats-Plan</div>
-                        </div>
-                        <div class="checkout-plan-price-box">
-                            <div class="checkout-plan-price" id="checkoutPlanPrice2">€29,99</div>
                             <div class="checkout-plan-access">Voller Zugang</div>
                         </div>
                     </div>
@@ -3239,7 +2977,7 @@ if (currentLeadId && data.paymentIntentId) {
                         <img src="klarna-logo.png" alt="Klarna">
                     </div>
 
-                    <button class="checkout-back" onclick="goBackToStep1()">← E-Mail ändern</button>
+                    <button class="checkout-back" onclick="closeCheckoutPopup()">← Zurück</button>
                 </div>
             </div>
         </div>
@@ -3264,7 +3002,7 @@ if (currentLeadId && data.paymentIntentId) {
                 </div>
             </div>
             <button class="exit-popup-cta" onclick="closeExitPopup(); document.querySelector('.cta-button').click();">
-                Jetzt Plan sichern 📧
+                Jetzt Plan sichern 🛒
             </button>
             <button class="exit-popup-skip" onclick="closeExitPopup()">
                 Nein danke, ich überlege noch
