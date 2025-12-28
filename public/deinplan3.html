@@ -464,19 +464,13 @@
             color: var(--white);
             border: none;
             border-radius: var(--border-radius);
-            padding: 18px 20px;
-            font-size: 18px;
-            font-weight: 700;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             margin-bottom: 15px;
-            line-height: 1.3;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
         }
 
         .cta-subtext {
@@ -653,6 +647,173 @@
             font-size: 13px;
             cursor: pointer;
             text-decoration: underline;
+        }
+
+        /* Did You Know Popup */
+        .dyk-popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10001;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .dyk-popup-overlay.active {
+            display: flex;
+        }
+
+        .dyk-popup {
+            background: var(--white);
+            border-radius: 20px;
+            max-width: 400px;
+            width: 100%;
+            padding: 35px 30px;
+            text-align: center;
+            position: relative;
+            animation: popupIn 0.3s ease-out;
+        }
+
+        .dyk-popup-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .dyk-popup-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .dyk-popup-stat {
+            font-size: 16px;
+            color: var(--text-medium);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .dyk-popup-stat strong {
+            color: #00B67A;
+            font-size: 18px;
+        }
+
+        .dyk-chart {
+            position: relative;
+            height: 160px;
+            margin-bottom: 20px;
+            background: linear-gradient(180deg, #f8f9fa 0%, #fff 100%);
+            border-radius: 12px;
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        .dyk-chart-line {
+            position: absolute;
+            height: 4px;
+            border-radius: 2px;
+            left: 10%;
+        }
+
+        .dyk-chart-line.wauwerk {
+            background: linear-gradient(90deg, #FFB347 0%, #00B67A 100%);
+            bottom: 75%;
+            width: 80%;
+            animation: lineGrow 1s ease-out forwards;
+        }
+
+        .dyk-chart-line.without {
+            background: linear-gradient(90deg, #FFB347 0%, #E8A598 100%);
+            bottom: 35%;
+            width: 80%;
+            animation: lineGrow 1.2s ease-out forwards;
+        }
+
+        @keyframes lineGrow {
+            from { width: 0; }
+            to { width: 80%; }
+        }
+
+        .dyk-chart-label {
+            position: absolute;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
+        .dyk-chart-label.wauwerk {
+            background: #00B67A;
+            color: white;
+            right: 8%;
+            top: 15%;
+        }
+
+        .dyk-chart-label.without {
+            background: #f0f0f0;
+            color: var(--text-medium);
+            right: 8%;
+            top: 55%;
+        }
+
+        .dyk-chart-axis {
+            position: absolute;
+            bottom: 10px;
+            left: 10%;
+            right: 10%;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .dyk-popup-discount {
+            background: #f8f8f8;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .dyk-popup-discount span {
+            color: var(--warm-brown);
+            font-weight: 600;
+        }
+
+        .dyk-popup-cta {
+            background: var(--warm-brown);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .dyk-popup-cta:hover {
+            background: var(--dark-brown);
+        }
+
+        .dyk-popup-disclaimer {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 15px;
         }
 
         /* Checkout Popup */
@@ -1621,10 +1782,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
         </div>
 
-        <button class="cta-button glow" onclick="getMyPlan()">
-            Jetzt meinen Plan sichern!
-            <span class="cta-subtext">Einmalzahlung – kein Abo</span>
-        </button>
+        <button class="cta-button glow" onclick="getMyPlan()">Jetzt <span id="ctaDogName1">deinen</span> Plan sichern</button>
 
         <div class="disclaimer">
             ✓ Einmalzahlung • Kein Abo • 30 Tage Geld-zurück-Garantie • <a href="agb.html">AGB</a>
@@ -1775,10 +1933,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
         </div>
 
-        <button class="cta-button glow" onclick="getMyPlan()">
-            Jetzt meinen Plan sichern!
-            <span class="cta-subtext">Einmalzahlung – kein Abo</span>
-        </button>
+        <button class="cta-button glow" onclick="getMyPlan()">Jetzt <span id="ctaDogName2">deinen</span> Plan sichern</button>
     </div>
 
     <footer class="footer">
@@ -1812,6 +1967,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         document.getElementById('dogName3').textContent = dogName;
         document.getElementById('dogNamePlan').textContent = dogName;
         document.getElementById('dogNameGuarantee').textContent = dogName;
+        document.getElementById('ctaDogName1').textContent = dogName + 's';
+        document.getElementById('ctaDogName2').textContent = dogName + 's';
+        document.getElementById('ctaDogName3').textContent = dogName + 's';
 
         const goalMap = {
             'basics': 'Grundlagen lernen', 'obedience': 'Gehorsam verbessern', 'commands': 'Kommandos beibringen',
@@ -1843,9 +2001,27 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             'destructive': [`✓ ${dogName}s zerstörerisches Verhalten stoppen`, `✓ Langeweile bei ${dogName} sinnvoll bekämpfen`, '✓ Kauen auf erlaubte Gegenstände umlenken', '✓ Deine Möbel und Schuhe schützen', `✓ Mentale Beschäftigung für ${dogName}`, `✓ 20+ Übungen speziell für ${dogName}`, '✓ Endlich Schluss mit zerstörten Sachen'],
             'soiling': [`✓ ${dogName} wird zuverlässig stubenrein`, `✓ Klare Routinen für ${dogName}s Toilettengänge`, `✓ ${dogName}s Signale verstehen`, '✓ Unfälle in der Wohnung vermeiden', '✓ Richtiges Timing beim Rausgehen', `✓ 20+ Übungen speziell für ${dogName}`, '✓ Eine saubere Wohnung ohne Stress']
         };
-        const defaultBenefits = [`✓ ${dogName}s Gehorsam schnell verbessern`, '✓ Verhaltensprobleme gezielt lösen', `✓ Neue Trainingstechniken für ${dogName}`, `✓ Stärkere Bindung zu ${dogName} aufbauen`, '✓ Dauerhaft gutes Verhalten erreichen', `✓ 20+ Übungen speziell für ${dogName}`, `✓ Glückliches Zusammenleben mit ${dogName}`];
+        const hasRealName = dogName !== 'deinen Hund';
+        const defaultBenefits = hasRealName ? [
+            `✓ ${dogName}s Gehorsam schnell verbessern`,
+            '✓ Verhaltensprobleme gezielt lösen',
+            `✓ Neue Trainingstechniken für ${dogName}`,
+            `✓ Stärkere Bindung zu ${dogName} aufbauen`,
+            '✓ Dauerhaft gutes Verhalten erreichen',
+            `✓ 20+ Übungen speziell für ${dogName}`,
+            `✓ Glückliches Zusammenleben mit ${dogName}`
+        ] : [
+            '✓ Personalisierter Trainingsplan',
+            '✓ 20+ Übungen mit Schritt-für-Schritt Anleitung',
+            '✓ Verhaltensprobleme gezielt lösen',
+            '✓ Nur 10-15 Minuten täglich',
+            '✓ Erste Ergebnisse in 2 Wochen',
+            '✓ Stärkere Bindung zu deinem Hund',
+            '✓ 30 Tage Geld-zurück-Garantie'
+        ];
         const benefits = benefitsMap[dogProblem] || defaultBenefits;
         const benefitsList = document.getElementById('benefitsList');
+        benefitsList.innerHTML = '';
         benefits.forEach(benefit => { const li = document.createElement('li'); li.textContent = benefit; benefitsList.appendChild(li); });
         
         document.getElementById('problemLabel1').textContent = problemText;
@@ -2051,10 +2227,24 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             goToPaymentStep();
         }
 
+        // Did You Know Popup
+        let dykPopupShown = false;
+        
+        function showDykPopup() {
+            if (dykPopupShown) return;
+            dykPopupShown = true;
+            document.getElementById('dykDogName').textContent = dogName;
+            document.getElementById('dykPopup').classList.add('active');
+        }
+        
+        function closeDykPopup() {
+            document.getElementById('dykPopup').classList.remove('active');
+        }
+
         function closeCheckoutPopup() {
             document.getElementById('checkoutPopup').classList.remove('active');
             document.body.style.overflow = '';
-            if (!sessionStorage.getItem('exitPopupShown')) { setTimeout(() => { showExitPopup(); }, 300); }
+            if (!dykPopupShown) { setTimeout(() => { showDykPopup(); }, 300); }
         }
 
         async function goToPaymentStep() {
@@ -2175,8 +2365,35 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     <div>✓ <strong>Sofortiger Zugang</strong> zum kompletten Plan</div>
                 </div>
             </div>
-            <button class="exit-popup-cta" onclick="closeExitPopup(); document.querySelector('.cta-button').click();">Jetzt meinen Plan sichern!</button>
+            <button class="exit-popup-cta" onclick="closeExitPopup(); document.querySelector('.cta-button').click();">Jetzt <span id="ctaDogName3">deinen</span> Plan sichern</button>
             <button class="exit-popup-skip" onclick="closeExitPopup()">Nein danke, ich überlege noch</button>
+        </div>
+    </div>
+
+    <!-- Did You Know Popup -->
+    <div class="dyk-popup-overlay" id="dykPopup">
+        <div class="dyk-popup">
+            <button class="dyk-popup-close" onclick="closeDykPopup()">×</button>
+            <h3 class="dyk-popup-title">Wusstest du?</h3>
+            <p class="dyk-popup-stat"><strong>78%</strong> der Hundebesitzer mit WauWerk sehen erste Ergebnisse in unter <strong>2 Wochen</strong>.</p>
+            
+            <div class="dyk-chart">
+                <div class="dyk-chart-line wauwerk"></div>
+                <div class="dyk-chart-line without"></div>
+                <span class="dyk-chart-label wauwerk">Mit WauWerk</span>
+                <span class="dyk-chart-label without">Ohne Plan</span>
+                <div class="dyk-chart-axis">
+                    <span>Heute</span>
+                    <span>4 Wochen</span>
+                </div>
+            </div>
+
+            <div class="dyk-popup-discount">
+                Dein Rabatt für <span id="dykDogName">deinen Hund</span>s Plan ist noch aktiv.
+            </div>
+
+            <button class="dyk-popup-cta" onclick="closeDykPopup(); getMyPlan();">Verstanden, weiter</button>
+            <p class="dyk-popup-disclaimer">Ergebnisse können individuell variieren.</p>
         </div>
     </div>
 
