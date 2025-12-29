@@ -676,15 +676,23 @@
 
         let isNavigating = false;
         
-        continueBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
+        // Sofort bei Touch reagieren, nicht auf click warten
+        continueBtn.addEventListener('touchstart', function(e) {
             if (isNavigating) return;
             isNavigating = true;
             
             continueBtn.style.opacity = '0.5';
-            continueBtn.style.pointerEvents = 'none';
-            continueBtn.disabled = true;
+            continueBtn.textContent = 'Lädt...';
+            
+            window.location.href = 'kurz-schritt6.html';
+        }, { passive: true });
+        
+        // Fallback für Desktop
+        continueBtn.addEventListener('click', function(e) {
+            if (isNavigating) return;
+            isNavigating = true;
+            
+            continueBtn.style.opacity = '0.5';
             continueBtn.textContent = 'Lädt...';
             
             window.location.href = 'kurz-schritt6.html';
