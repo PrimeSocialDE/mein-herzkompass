@@ -454,13 +454,26 @@
 
     <script>
         // ========================================
-        // CONVERSION TRACKING - MIT DEDUPLIZIERUNG
+        // SUPABASE CONFIG
         // ========================================
-        (function() {
-            // Payment Intent ID aus URL holen für Deduplizierung
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+        // ========================================
+        // SUPABASE STATUS UPDATE + CONVERSION TRACKING
+        // ========================================
+        (async function() {
+            // URL Parameter holen
             var urlParams = new URLSearchParams(window.location.search);
             var paymentIntent = urlParams.get('payment_intent');
+            var paymentIntentClientSecret = urlParams.get('payment_intent_client_secret');
+            var redirectStatus = urlParams.get('redirect_status');
             var leadId = urlParams.get('lead_id');
+            
+            console.log('=== DANKE PAGE ===');
+            console.log('Payment Intent:', paymentIntent);
+            console.log('Lead ID:', leadId);
+            console.log('Redirect Status:', redirectStatus);
             
             // Eindeutiger Key basierend auf payment_intent ODER lead_id
             var uniqueKey = paymentIntent || leadId || 'unknown';
@@ -472,20 +485,56 @@
                 return;
             }
             
-            console.log('=== DANKE PAGE TRACKING ===');
-            console.log('Payment Intent:', paymentIntent);
-            console.log('Lead ID:', leadId);
+            // ========================================
+            // SUPABASE STATUS AUF "PAID" SETZEN
+            // ========================================
+            if (leadId && (redirectStatus === 'succeeded' || paymentIntent)) {
+                console.log('📝 Updating Supabase status to PAID...');
+                
+                try {
+                    const response = await fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                            'Prefer': 'return=representation'
+                        },
+                        body: JSON.stringify({
+                            status: 'paid',
+                            stripe_payment_intent: paymentIntent || null,
+                            paid_at: new Date().toISOString()
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('✅ Supabase status updated to PAID:', data);
+                    } else {
+                        const errorText = await response.text();
+                        console.error('❌ Supabase update failed:', response.status, errorText);
+                    }
+                } catch (error) {
+                    console.error('❌ Supabase update error:', error);
+                }
+            } else if (!leadId) {
+                console.warn('⚠️ Keine lead_id in URL - kann Supabase nicht updaten');
+            }
+            
+            // ========================================
+            // CONVERSION TRACKING
+            // ========================================
             
             // Preis aus localStorage oder URL
-            var selectedPlan = localStorage.getItem('selectedPlan') || '1month';
+            var selectedPlan = localStorage.getItem('selectedPlan') || '3month';
             var prices = {
-                '1month': 17.99,
+                '1month': 24.99,
                 '3month': 29.99,
                 '6month': 49.99
             };
-            var value = prices[selectedPlan] || 17.99;
+            var value = prices[selectedPlan] || 29.99;
             
-            // Event ID für Meta Deduplizierung (gleiche ID wie beim Checkout generiert)
+            // Event ID für Meta Deduplizierung
             var eventId = localStorage.getItem('fb_event_id') || ('purchase_' + Date.now());
             
             console.log('Plan:', selectedPlan, '| Value:', value, '| Event ID:', eventId);
@@ -551,9 +600,8 @@
             // Cleanup
             localStorage.removeItem('fb_event_id');
             localStorage.removeItem('wentToStripe');
-            localStorage.removeItem('selectedPlan');
             
-            console.log('=== TRACKING COMPLETE ===');
+            console.log('=== TRACKING & SUPABASE UPDATE COMPLETE ===');
         })();
     </script>
 </body>
