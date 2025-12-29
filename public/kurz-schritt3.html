@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -28,7 +27,7 @@
             --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
             --border-radius: 12px;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background-light); color: var(--text-dark); line-height: 1.5; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background-light); color: var(--text-dark); line-height: 1.5; -webkit-tap-highlight-color: transparent; }
         .header { background: var(--white); padding: 16px 0; border-bottom: 1px solid var(--border-light); text-align: center; }
         .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-dark); }
         .logo-image { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
@@ -36,13 +35,28 @@
         .container { max-width: 500px; margin: 0 auto; padding: 40px 20px; }
         .quiz-header { text-align: center; margin-bottom: 30px; }
         .quiz-title { font-size: 26px; font-weight: 700; color: var(--text-dark); }
+        .quiz-subtitle { font-size: 14px; color: var(--text-medium); margin-top: 6px; }
         .progress-container { margin-bottom: 35px; }
         .progress-bar { width: 100%; height: 6px; background: var(--border-light); border-radius: 3px; overflow: hidden; }
         .progress-fill { width: 33.3%; height: 100%; background: var(--light-brown); transition: width 0.3s ease; }
         .progress-text { text-align: center; margin-top: 8px; color: var(--text-medium); font-size: 13px; }
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .option-card { background: var(--white); border: 2px solid var(--border-light); border-radius: var(--border-radius); padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow-light); }
-        .option-card:hover { border-color: var(--light-brown); transform: translateY(-2px); box-shadow: var(--shadow-medium); }
+        .option-card { 
+            background: var(--white); 
+            border: 2px solid var(--border-light); 
+            border-radius: var(--border-radius); 
+            padding: 40px 20px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: border-color 0.2s ease, box-shadow 0.2s ease; 
+            box-shadow: var(--shadow-light);
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .option-card:hover { border-color: var(--light-brown); box-shadow: var(--shadow-medium); }
+        .option-card:active { background: #F8F6F3; }
+        .option-card.clicked { pointer-events: none; opacity: 0.7; border-color: var(--primary-brown); }
         .option-emoji { font-size: 60px; margin-bottom: 15px; }
         .option-title { font-size: 20px; font-weight: 600; color: var(--text-dark); }
         @media (max-width: 480px) {
@@ -64,7 +78,8 @@
     </header>
     <div class="container">
         <div class="quiz-header">
-            <h1 class="quiz-title">Ist dein Hund männlich oder weiblich?</h1>
+            <h1 class="quiz-title" id="quizTitle">Ist dein Hund männlich oder weiblich?</h1>
+            <p class="quiz-subtitle" id="quizSubtitle"></p>
         </div>
         <div class="progress-container">
             <div class="progress-bar"><div class="progress-fill"></div></div>
@@ -73,19 +88,32 @@
         <div class="options-grid">
             <div class="option-card" data-gender="male">
                 <div class="option-emoji">🐕</div>
-                <h3 class="option-title">Männlich</h3>
+                <h3 class="option-title">Rüde</h3>
             </div>
             <div class="option-card" data-gender="female">
                 <div class="option-emoji">🐩</div>
-                <h3 class="option-title">Weiblich</h3>
+                <h3 class="option-title">Hündin</h3>
             </div>
         </div>
     </div>
     <script>
+        // Personalisieren basierend auf Rasse
+        const dogBreed = localStorage.getItem('dogBreed');
+        if (dogBreed && dogBreed !== 'Andere Rasse') {
+            document.getElementById('quizTitle').textContent = `Ist dein ${dogBreed} männlich oder weiblich?`;
+        }
+
+        let isNavigating = false;
         document.querySelectorAll('.option-card').forEach(card => {
-            card.addEventListener('click', () => {
-                localStorage.setItem('dogGender', card.dataset.gender);
-                window.location.href = 'kurz-schritt4.html';
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isNavigating) return;
+                isNavigating = true;
+                this.classList.add('clicked');
+                localStorage.setItem('dogGender', this.dataset.gender);
+                setTimeout(() => {
+                    window.location.href = 'kurz-schritt4.html';
+                }, 150);
             });
         });
     </script>

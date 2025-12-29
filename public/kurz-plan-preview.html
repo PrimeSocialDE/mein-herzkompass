@@ -16,6 +16,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .header {
@@ -49,9 +50,8 @@
             text-align: center;
         }
 
-        /* Hero */
         .hero {
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
         .hero h1 {
@@ -67,14 +67,39 @@
             color: #6B6B6B;
         }
 
+        /* Selection Tags - oberhalb iPad */
+        .selection-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .selection-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #fff;
+            border: 1px solid #E5E5E5;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #6B6B6B;
+        }
+
+        .selection-tag.problem {
+            background: #FFF8F0;
+            border-color: #E8D5C0;
+            color: #8B7355;
+        }
+
         /* iPad Frame */
         .ipad-frame {
             background: #1a1a1a;
             border-radius: 28px;
             padding: 12px;
-            box-shadow: 
-                0 25px 50px rgba(0, 0, 0, 0.15),
-                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
             margin-bottom: 25px;
             opacity: 0;
             transform: translateY(15px);
@@ -89,10 +114,8 @@
             background: #fff;
             border-radius: 18px;
             overflow: hidden;
-            position: relative;
         }
 
-        /* Screen Header Bar */
         .screen-header {
             background: linear-gradient(180deg, #F8F8F8, #F0F0F0);
             padding: 10px 15px;
@@ -111,7 +134,6 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #DDD;
         }
 
         .screen-dot.red { background: #FF5F57; }
@@ -126,18 +148,17 @@
 
         .screen-spacer { width: 40px; }
 
-        /* Plan Content */
         .plan-content {
             padding: 20px;
-            min-height: 340px;
+            min-height: 320px;
         }
 
         .plan-header {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 18px;
-            padding-bottom: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
             border-bottom: 2px solid #F0F0F0;
         }
 
@@ -202,7 +223,6 @@
         .plan-line:nth-child(3) { width: 92%; }
         .plan-line:nth-child(4) { width: 70%; }
         .plan-line:nth-child(5) { width: 88%; }
-        .plan-line:nth-child(6) { width: 75%; }
 
         /* Stats Row */
         .stats-row {
@@ -287,7 +307,7 @@
             flex-shrink: 0;
         }
 
-        /* Progress Section (below iPad) */
+        /* Progress Section */
         .progress-section {
             background: #fff;
             border-radius: 12px;
@@ -376,6 +396,8 @@
             opacity: 0;
             transform: translateY(10px);
             transition: all 0.3s ease;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .continue-btn.show {
@@ -398,8 +420,10 @@
         @media (max-width: 380px) {
             .ipad-frame { padding: 10px; border-radius: 22px; }
             .ipad-screen { border-radius: 14px; }
-            .plan-content { padding: 15px; min-height: 300px; }
+            .plan-content { padding: 15px; min-height: 280px; }
             .stat-number { font-size: 18px; }
+            .selection-tags { gap: 6px; }
+            .selection-tag { font-size: 11px; padding: 5px 10px; }
         }
     </style>
 </head>
@@ -419,6 +443,9 @@
                 <p>Die ersten 10 Seiten sind fast fertig</p>
             </div>
 
+            <!-- Selection Tags -->
+            <div class="selection-tags" id="selectionTags"></div>
+
             <!-- iPad Frame -->
             <div class="ipad-frame">
                 <div class="ipad-screen">
@@ -435,13 +462,12 @@
                         <div class="plan-header">
                             <div class="plan-logo">🐕</div>
                             <div class="plan-title-area">
-                                <div class="plan-title" id="planTitle">Trainingsplan für Bello</div>
-                                <div class="plan-subtitle" id="planSubtitle">Fokus: Leinenführigkeit</div>
+                                <div class="plan-title" id="planTitle">Trainingsplan</div>
+                                <div class="plan-subtitle" id="planSubtitle">Fokus: Verhaltenskorrektur</div>
                             </div>
                         </div>
                         
                         <div class="plan-lines">
-                            <div class="plan-line"></div>
                             <div class="plan-line"></div>
                             <div class="plan-line"></div>
                             <div class="plan-line"></div>
@@ -455,7 +481,7 @@
                                 <div class="stat-label">Seiten</div>
                             </div>
                             <div class="stat-item animate">
-                                <div class="stat-number" id="exerciseCount">8</div>
+                                <div class="stat-number">8</div>
                                 <div class="stat-label">erste Übungen</div>
                             </div>
                             <div class="stat-item animate">
@@ -475,7 +501,7 @@
                             </div>
                             <div class="check-item animate">
                                 <div class="check-icon">✓</div>
-                                <span id="problemCheck">Erste Erfolge in 2 Wochen</span>
+                                <span>Erste Erfolge in 2 Wochen</span>
                             </div>
                         </div>
                     </div>
@@ -499,7 +525,7 @@
 
             <!-- Vision -->
             <p class="vision-text" id="visionText">
-                Die meisten Hundebesitzer sehen <strong>innerhalb von 2 Wochen</strong> deutliche Verbesserungen bei ihrem Hund.
+                Die meisten Hundebesitzer sehen <strong>innerhalb von 2 Wochen</strong> deutliche Verbesserungen.
             </p>
 
             <!-- Continue Button -->
@@ -512,29 +538,94 @@
 
     <script>
         // Daten aus localStorage
-        const dogName = localStorage.getItem('dogName') || 'dein Hund';
+        const dogName = localStorage.getItem('dogName') || '';
+        const dogBreed = localStorage.getItem('dogBreed') || '';
+        const dogAge = localStorage.getItem('dogAge') || '';
+        const dogGender = localStorage.getItem('dogGender') || '';
         const dogBehaviors = JSON.parse(localStorage.getItem('dogBehaviors') || '[]');
         const dogProblem = dogBehaviors[0] || localStorage.getItem('dogProblem') || '';
 
-        // Problem Data
-        const problemData = {
-            'pulling': { label: 'Leinenführigkeit', exercises: 14, vision: 'entspannter an der Leine' },
-            'barking': { label: 'Bellverhalten', exercises: 12, vision: 'deutlich ruhiger' },
-            'aggression': { label: 'Aggressionsabbau', exercises: 18, vision: 'gelassener bei Begegnungen' },
-            'anxiety': { label: 'Trennungsangst', exercises: 15, vision: 'ruhiger alleine' },
-            'energy': { label: 'Ruhe & Kontrolle', exercises: 16, vision: 'ausgeglichener' },
-            'destructive': { label: 'Impulskontrolle', exercises: 14, vision: 'kontrollierter' },
-            'soiling': { label: 'Stubenreinheit', exercises: 10, vision: 'zuverlässig stubenrein' }
+        // Labels
+        const ageLabels = {
+            'puppy': 'Welpe',
+            'young': 'Junghund',
+            'adult': 'Erwachsen',
+            'senior': 'Senior'
         };
 
-        const data = problemData[dogProblem] || { label: 'Verhaltenskorrektur', exercises: 12, vision: 'folgsamer' };
+        const genderLabels = {
+            'male': 'Rüde',
+            'female': 'Hündin'
+        };
 
-        // Personalisierung
-        document.getElementById('dogNameTitle').textContent = dogName;
-        document.getElementById('planTitle').textContent = 'Trainingsplan für ' + dogName;
+        const problemLabels = {
+            'pulling': 'Leinenziehen',
+            'barking': 'Bellen',
+            'aggression': 'Aggression',
+            'anxiety': 'Trennungsangst',
+            'energy': 'Hyperaktivität',
+            'destructive': 'Zerstören',
+            'soiling': 'Unsauberkeit'
+        };
+
+        const problemData = {
+            'pulling': { label: 'Leinenführigkeit', vision: 'entspannter an der Leine' },
+            'barking': { label: 'Bellverhalten', vision: 'deutlich ruhiger' },
+            'aggression': { label: 'Aggressionsabbau', vision: 'gelassener bei Begegnungen' },
+            'anxiety': { label: 'Trennungsangst', vision: 'ruhiger alleine' },
+            'energy': { label: 'Ruhe & Kontrolle', vision: 'ausgeglichener' },
+            'destructive': { label: 'Impulskontrolle', vision: 'kontrollierter' },
+            'soiling': { label: 'Stubenreinheit', vision: 'zuverlässig stubenrein' }
+        };
+
+        const data = problemData[dogProblem] || { label: 'Verhaltenskorrektur', vision: 'folgsamer' };
+
+        // Selection Tags erstellen
+        const selectionTags = document.getElementById('selectionTags');
+        let tagsHTML = '';
+
+        // Rasse
+        if (dogBreed && dogBreed !== 'Andere Rasse') {
+            tagsHTML += `<div class="selection-tag">🐕 ${dogBreed}</div>`;
+        }
+
+        // Alter
+        if (dogAge && ageLabels[dogAge]) {
+            tagsHTML += `<div class="selection-tag">📅 ${ageLabels[dogAge]}</div>`;
+        }
+
+        // Geschlecht
+        if (dogGender && genderLabels[dogGender]) {
+            tagsHTML += `<div class="selection-tag">${dogGender === 'male' ? '♂️' : '♀️'} ${genderLabels[dogGender]}</div>`;
+        }
+
+        // Probleme (max 2)
+        dogBehaviors.slice(0, 2).forEach(prob => {
+            if (problemLabels[prob]) {
+                tagsHTML += `<div class="selection-tag problem">⚡ ${problemLabels[prob]}</div>`;
+            }
+        });
+
+        selectionTags.innerHTML = tagsHTML;
+
+        // Titel personalisieren
+        let displayName = 'deinen Hund';
+        if (dogBreed && dogBreed !== 'Andere Rasse') {
+            displayName = 'deinen ' + dogBreed;
+        }
+        document.getElementById('dogNameTitle').textContent = displayName;
+
+        // Plan-Titel im iPad
+        let planTitleText = 'Trainingsplan';
+        if (dogBreed && dogBreed !== 'Andere Rasse') {
+            planTitleText = 'Trainingsplan für ' + dogBreed;
+        }
+        document.getElementById('planTitle').textContent = planTitleText;
         document.getElementById('planSubtitle').textContent = 'Fokus: ' + data.label;
-        document.getElementById('exerciseCount').textContent = '8';
-        document.getElementById('visionText').innerHTML = `Die meisten Hundebesitzer sehen <strong>innerhalb von 2 Wochen</strong> deutliche Verbesserungen – ${dogName} wird <strong>${data.vision}</strong> sein.`;
+
+        // Vision Text
+        let visionName = dogBreed && dogBreed !== 'Andere Rasse' ? 'dein ' + dogBreed : 'dein Hund';
+        document.getElementById('visionText').innerHTML = `Die meisten Hundebesitzer sehen <strong>innerhalb von 2 Wochen</strong> deutliche Verbesserungen – ${visionName} wird <strong>${data.vision}</strong> sein.`;
 
         // Progress Animation
         const progressFill = document.getElementById('progressFill');
@@ -557,7 +648,6 @@
         function animateProgress() {
             if (progress < targetProgress) {
                 progress += 1;
-                
                 progressFill.style.width = progress + '%';
                 progressPercent.textContent = progress + '%';
 
@@ -574,17 +664,19 @@
 
         function showComplete() {
             progressLabel.textContent = 'Erste 10 Seiten fertig!';
-            progressStatus.innerHTML = `
-                <span style="color: #C4A576;">✓</span>
-                <span>Grundgerüst für ${dogName} erstellt</span>
-            `;
+            progressStatus.innerHTML = `<span style="color: #C4A576;">✓</span><span>Grundgerüst erstellt</span>`;
             
             setTimeout(() => {
                 continueBtn.classList.add('show');
             }, 400);
         }
 
+        let isNavigating = false;
         function continuePlan() {
+            if (isNavigating) return;
+            isNavigating = true;
+            continueBtn.style.opacity = '0.7';
+            continueBtn.style.pointerEvents = 'none';
             window.location.href = 'kurz-schritt6.html';
         }
 
