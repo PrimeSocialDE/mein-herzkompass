@@ -398,6 +398,9 @@
             transition: all 0.3s ease;
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .continue-btn.show {
@@ -529,7 +532,7 @@
             </p>
 
             <!-- Continue Button -->
-            <button class="continue-btn" id="continueBtn" onclick="continuePlan()">
+            <button class="continue-btn" id="continueBtn">
                 Weiter
                 <span class="subtext">Noch 4 kurze Fragen</span>
             </button>
@@ -672,13 +675,20 @@
         }
 
         let isNavigating = false;
-        function continuePlan() {
+        
+        continueBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
             if (isNavigating) return;
             isNavigating = true;
-            continueBtn.style.opacity = '0.7';
+            
+            continueBtn.style.opacity = '0.5';
             continueBtn.style.pointerEvents = 'none';
+            continueBtn.disabled = true;
+            continueBtn.textContent = 'Lädt...';
+            
             window.location.href = 'kurz-schritt6.html';
-        }
+        });
 
         // Start
         setTimeout(animateProgress, 600);
