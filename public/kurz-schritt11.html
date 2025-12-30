@@ -14,129 +14,25 @@
     })(window, document, "clarity", "script", "ufxcf43805");
 </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #FFFFFF;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .logo {
-            margin-top: 50px;
-            margin-bottom: 50px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo img {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-        }
-
-        .logo span {
-            font-size: 22px;
-            font-weight: 800;
-            color: #C4A576;
-        }
-
-        .container {
-            max-width: 450px;
-            width: 100%;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 32px;
-            font-weight: 800;
-            color: #1a1a1a;
-            margin-bottom: 40px;
-            line-height: 1.3;
-        }
-
-        #dogName {
-            color: #C4A576;
-        }
-
-        .email-input {
-            width: 100%;
-            padding: 20px 24px;
-            font-size: 17px;
-            border: 1px solid #E0E0E0;
-            border-radius: 12px;
-            outline: none;
-            background: #F8F8F8;
-            margin-bottom: 20px;
-        }
-
-        .email-input:focus {
-            border-color: #C4A576;
-            background: #FFFFFF;
-        }
-
-        .email-input::placeholder {
-            color: #999;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 18px 30px;
-            background: #C4A576;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .submit-btn:hover {
-            background: #B8956A;
-        }
-
-        .privacy-note {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            margin-top: 40px;
-            text-align: left;
-            max-width: 400px;
-        }
-
-        .lock-icon {
-            font-size: 20px;
-            color: #CCCCCC;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .privacy-text {
-            font-size: 14px;
-            color: #999;
-            line-height: 1.6;
-        }
-
-        @media (max-width: 500px) {
-            h1 {
-                font-size: 26px;
-            }
-            
-            .logo {
-                margin-top: 30px;
-                margin-bottom: 40px;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #FFFFFF; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .logo { margin-top: 50px; margin-bottom: 50px; display: flex; align-items: center; gap: 10px; }
+        .logo img { width: 42px; height: 42px; border-radius: 10px; }
+        .logo span { font-size: 22px; font-weight: 800; color: #C4A576; }
+        .container { max-width: 450px; width: 100%; text-align: center; }
+        h1 { font-size: 32px; font-weight: 800; color: #1a1a1a; margin-bottom: 40px; line-height: 1.3; }
+        #dogName { color: #C4A576; }
+        .email-input { width: 100%; padding: 20px 24px; font-size: 17px; border: 1px solid #E0E0E0; border-radius: 12px; outline: none; background: #F8F8F8; margin-bottom: 20px; }
+        .email-input:focus { border-color: #C4A576; background: #FFFFFF; }
+        .email-input::placeholder { color: #999; }
+        .submit-btn { width: 100%; padding: 18px 30px; background: #C4A576; color: white; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+        .submit-btn:hover { background: #B8956A; }
+        .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .privacy-note { display: flex; align-items: flex-start; gap: 12px; margin-top: 40px; text-align: left; max-width: 400px; }
+        .lock-icon { font-size: 20px; color: #CCCCCC; flex-shrink: 0; margin-top: 2px; }
+        .privacy-text { font-size: 14px; color: #999; line-height: 1.6; }
+        .privacy-text a { color: #C4A576; text-decoration: underline; }
+        @media (max-width: 500px) { h1 { font-size: 26px; } .logo { margin-top: 30px; margin-bottom: 40px; } }
     </style>
 </head>
 <body>
@@ -149,27 +45,24 @@
         <h1>Dein Plan für <span id="dogName">deinen Hund</span> ist bereit.<br>Wohin dürfen wir ihn senden?</h1>
 
         <form id="emailForm">
-            <input 
-                type="email" 
-                class="email-input" 
-                id="emailInput"
-                placeholder="Deine E-Mail eingeben"
-                required
-            >
-            
-            <button type="submit" class="submit-btn">Plan anfordern</button>
+            <input type="email" class="email-input" id="emailInput" placeholder="Deine E-Mail eingeben" required>
+            <button type="submit" class="submit-btn" id="submitBtn">Plan anfordern</button>
         </form>
 
         <div class="privacy-note">
             <span class="lock-icon">🔒</span>
-            <p class="privacy-text">Wir schützen deine Daten und senden dir nur relevante Informationen. Jederzeit abmelden. <a href="datenschutz.html" style="color: #C4A576; text-decoration: underline;">Datenschutz</a></p>
+            <p class="privacy-text">Du erhältst deinen Plan + gelegentliche Trainingstipps. Jederzeit abmelden. <a href="datenschutz.html">Datenschutz</a></p>
         </div>
     </div>
 
     <script>
-        // Supabase Config (gleiche wie schritt10.html)
+        // Supabase Config
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+        // Brevo API Key - ERSETZE MIT DEINEM KEY!
+        const BREVO_API_KEY = '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';
+        const BREVO_LIST_ID = 2; // Deine WauWerk Liste in Brevo
 
         // Hundename aus localStorage
         const dogName = localStorage.getItem('dogName');
@@ -177,43 +70,103 @@
             document.getElementById('dogName').textContent = dogName + 's';
         }
 
-        // Helper: JSON parsen
+        // Problem Labels für Brevo (lesbar)
+        const problemLabels = {
+            'pulling': 'Leinenziehen',
+            'barking': 'Übermäßiges Bellen',
+            'aggression': 'Aggression',
+            'anxiety': 'Trennungsangst',
+            'jumping': 'Anspringen',
+            'recall': 'Kommt nicht zurück',
+            'energy': 'Übermäßige Energie',
+            'destructive': 'Zerstörerisches Verhalten',
+            'soiling': 'In die Wohnung machen'
+        };
+
         function parseJSON(str) {
+            try { return JSON.parse(str || '[]'); } 
+            catch(e) { return []; }
+        }
+
+        // Brevo Contact erstellen/aktualisieren
+        async function sendToBrevo(email, leadId, dogNameValue, dogProblemKey) {
+            const problemLabel = problemLabels[dogProblemKey] || 'Verhaltensproblem';
+            
             try {
-                return JSON.parse(str || '[]');
-            } catch(e) {
-                return [];
+                const response = await fetch('https://api.brevo.com/v3/contacts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'api-key': BREVO_API_KEY
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        listIds: [BREVO_LIST_ID],
+                        updateEnabled: true,
+                        attributes: {
+                            DOG_NAME: dogNameValue || '',
+                            DOG_PROBLEM: problemLabel,
+                            DOG_PROBLEM_KEY: dogProblemKey || '',
+                            LEAD_ID: leadId || '',
+                            SIGNUP_DATE: new Date().toISOString().split('T')[0]
+                        }
+                    })
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Brevo contact created/updated');
+                    return true;
+                } else {
+                    const error = await response.json();
+                    console.log('Brevo error:', error);
+                    return false;
+                }
+            } catch (err) {
+                console.log('Brevo API error:', err);
+                return false;
             }
         }
 
         // Form Submit
         document.getElementById('emailForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
             const email = document.getElementById('emailInput').value.trim();
             
             if (!email) return;
             
-            // E-Mail in localStorage speichern
+            // Button deaktivieren
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Wird gespeichert...';
+            
+            // E-Mail in localStorage
             localStorage.setItem('userEmail', email);
             
-            // Alle Quiz-Daten sammeln
+            // Quiz-Daten
+            const dogNameValue = localStorage.getItem('dogName') || '';
+            const dogProblemKey = localStorage.getItem('dogProblem') || '';
+            
             const answers = {
                 email: email,
-                dog_name: localStorage.getItem('dogName'),
+                dog_name: dogNameValue,
                 dog_age: localStorage.getItem('dogAge'),
                 dog_breed: localStorage.getItem('dogBreed'),
                 dog_gender: localStorage.getItem('dogGender'),
                 dog_goal: localStorage.getItem('dogGoal'),
-                dog_problem: localStorage.getItem('dogProblem'),
+                dog_problem: dogProblemKey,
                 dog_behaviors: parseJSON(localStorage.getItem('dogBehaviors')),
                 had_training: localStorage.getItem('hadTraining'),
-                // UTM Tracking
+                territorial_aggression: localStorage.getItem('territorialAggression'),
                 utm_source: localStorage.getItem('utm_source') || null,
                 utm_medium: localStorage.getItem('utm_medium') || null,
-                utm_campaign: localStorage.getItem('utm_campaign') || null
+                utm_campaign: localStorage.getItem('utm_campaign') || null,
+                fbclid: localStorage.getItem('fbclid') || null
             };
 
-            // In Supabase speichern (wauwerk_leads)
+            let leadId = null;
+
+            // 1. Supabase speichern
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads`, {
                     method: 'POST',
@@ -225,7 +178,7 @@
                     },
                     body: JSON.stringify({
                         email: email,
-                        dog_name: localStorage.getItem('dogName'),
+                        dog_name: dogNameValue,
                         status: 'email_captured',
                         answers: answers
                     })
@@ -233,16 +186,24 @@
                 
                 if (response.ok) {
                     const data = await response.json();
-                    // Lead ID speichern für später (Checkout)
                     if (data[0]?.id) {
-                        localStorage.setItem('leadId', data[0].id);
+                        leadId = data[0].id;
+                        localStorage.setItem('leadId', leadId);
+                        console.log('✅ Lead saved:', leadId);
                     }
                 }
             } catch (err) {
                 console.log('Supabase error:', err);
             }
             
-            // Weiter zu Ergebnissen
+            // 2. Brevo senden (mit lead_id!)
+            if (BREVO_API_KEY !== 'YOUR_BREVO_API_KEY_HERE') {
+                await sendToBrevo(email, leadId, dogNameValue, dogProblemKey);
+            } else {
+                console.log('⚠️ Brevo API Key nicht gesetzt');
+            }
+            
+            // 3. Weiter zur Checkout-Seite
             window.location.href = 'deinplan.html';
         });
     </script>

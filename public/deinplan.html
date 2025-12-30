@@ -2169,6 +2169,10 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     </footer>
 
     <script>
+        // Supabase Config (am Anfang für E-Mail Link Support)
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
         // Video Testimonial Play/Pause Toggle
         function playTestimonialVideo() {
             const video = document.getElementById('testimonialVideo');
@@ -2196,6 +2200,57 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         document.getElementById('testimonialVideo').addEventListener('ended', function() {
             document.getElementById('videoPlayOverlay').classList.remove('hidden');
         });
+
+        // ==================== LOAD DATA FROM SUPABASE IF COMING FROM EMAIL ====================
+        (async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const leadIdFromUrl = urlParams.get('lead_id');
+            
+            // Wenn lead_id in URL und kein dogName in localStorage -> aus Supabase laden
+            if (leadIdFromUrl && !localStorage.getItem('dogName')) {
+                console.log('📧 User kam via E-Mail Link, lade Daten aus Supabase...');
+                
+                try {
+                    const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + leadIdFromUrl + '&select=*', {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data[0]) {
+                            const lead = data[0];
+                            const answers = lead.answers || {};
+                            
+                            // Alle Daten in localStorage speichern
+                            if (answers.dog_name) localStorage.setItem('dogName', answers.dog_name);
+                            if (answers.dog_age) localStorage.setItem('dogAge', answers.dog_age);
+                            if (answers.dog_breed) localStorage.setItem('dogBreed', answers.dog_breed);
+                            if (answers.dog_gender) localStorage.setItem('dogGender', answers.dog_gender);
+                            if (answers.dog_goal) localStorage.setItem('dogGoal', answers.dog_goal);
+                            if (answers.dog_problem) localStorage.setItem('dogProblem', answers.dog_problem);
+                            if (answers.dog_behaviors) localStorage.setItem('dogBehaviors', JSON.stringify(answers.dog_behaviors));
+                            if (answers.had_training) localStorage.setItem('hadTraining', answers.had_training);
+                            if (answers.territorial_aggression) localStorage.setItem('territorialAggression', answers.territorial_aggression);
+                            if (lead.email) localStorage.setItem('userEmail', lead.email);
+                            
+                            // Lead ID speichern
+                            localStorage.setItem('leadId', leadIdFromUrl);
+                            
+                            console.log('✅ Daten aus Supabase geladen, reload...');
+                            
+                            // Seite neu laden ohne lead_id Parameter (um Loop zu vermeiden)
+                            window.location.href = window.location.pathname;
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ Supabase load error:', error);
+                }
+            }
+        })();
 
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         const dogGoal = localStorage.getItem('dogGoal') || 'obedience';
@@ -2473,10 +2528,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 selectPlan(this);
             });
         });
-
-        // Supabase Config
-        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
 
         function parseJSON(str) {
             try {
