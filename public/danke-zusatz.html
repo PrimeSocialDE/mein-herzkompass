@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danke! | WauWerk</title>
+    <link rel="icon" type="image/png" href="favconHund.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAF8F5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #22C55E, #16A34A);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+            animation: pop 0.5s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 26px;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+
+        .dog-name {
+            color: #C4A576;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .order-box {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            text-align: left;
+            margin-bottom: 24px;
+        }
+
+        .order-title {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-icon {
+            width: 44px;
+            height: 44px;
+            background: #FEF3E7;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .order-info h3 {
+            font-size: 15px;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+
+        .order-info p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .order-check {
+            margin-left: auto;
+            color: #22C55E;
+            font-size: 20px;
+        }
+
+        .email-note {
+            font-size: 14px;
+            color: #666;
+            background: #F8F8F8;
+            padding: 16px;
+            border-radius: 10px;
+            line-height: 1.6;
+        }
+
+        .email-note strong {
+            color: #1a1a1a;
+        }
+
+        .support-note {
+            font-size: 13px;
+            color: #999;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .support-note a {
+            color: #C4A576;
+            text-decoration: none;
+        }
+
+        .support-note a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+            </svg>
+        </div>
+
+        <h1>Perfekt, <span class="dog-name">Luna</span>!</h1>
+        <p class="subtitle">Dein erweitertes Training ist jetzt komplett.</p>
+
+        <div class="order-box">
+            <div class="order-title">Deine Bestellung</div>
+            
+            <div class="order-item" id="mainPlan">
+                <div class="order-icon">📋</div>
+                <div class="order-info">
+                    <h3>Trainingsplan</h3>
+                    <p>Hauptproblem</p>
+                </div>
+                <span class="order-check">✓</span>
+            </div>
+
+            <div class="order-item" id="upsellModule">
+                <div class="order-icon" id="moduleIcon">😰</div>
+                <div class="order-info">
+                    <h3 id="moduleName">Zusatz-Modul</h3>
+                    <p>8 Übungen • 2 Wochen</p>
+                </div>
+                <span class="order-check">✓</span>
+            </div>
+        </div>
+
+        <div class="email-note">
+            📧 <strong>Beide Pläne</strong> werden in wenigen Minuten an deine E-Mail gesendet.
+        </div>
+
+        <div class="support-note">
+            Fragen? Schreib uns an <a href="mailto:support@mein-wauwerk.de">support@mein-wauwerk.de</a>
+        </div>
+    </div>
+
+    <script>
+        // Hundename aus localStorage
+        const dogName = localStorage.getItem('dogName') || 'dein Hund';
+        document.querySelector('.dog-name').textContent = dogName;
+
+        // Modul aus URL Parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const module = urlParams.get('module');
+
+        const moduleData = {
+            'anxiety': { icon: '😰', name: 'Trennungsangst Prävention' },
+            'pulling': { icon: '🦮', name: 'Leinenführigkeit Basics' },
+            'barking': { icon: '🔊', name: 'Anti-Bell Training' },
+            'aggression': { icon: '😤', name: 'Aggressions-Kontrolle' },
+            'recall': { icon: '📣', name: 'Rückruf-Training' },
+            'jumping': { icon: '🐕', name: 'Anti-Anspring Training' }
+        };
+
+        if (module && moduleData[module]) {
+            document.getElementById('moduleIcon').textContent = moduleData[module].icon;
+            document.getElementById('moduleName').textContent = moduleData[module].name;
+        }
+
+        // Hauptproblem aus localStorage
+        const mainProblem = localStorage.getItem('dogProblem');
+        const problemNames = {
+            'pulling': 'Leinenziehen',
+            'barking': 'Bellen',
+            'anxiety': 'Trennungsangst',
+            'aggression': 'Aggression',
+            'recall': 'Rückruf',
+            'jumping': 'Anspringen',
+            'energy': 'Übermäßige Energie',
+            'destructive': 'Zerstörerisches Verhalten'
+        };
+
+        if (mainProblem && problemNames[mainProblem]) {
+            document.querySelector('#mainPlan .order-info p').textContent = problemNames[mainProblem];
+        }
+    </script>
+</body>
+</html>

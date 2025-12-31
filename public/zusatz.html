@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zusatzmodule | WauWerk</title>
+    <link rel="icon" type="image/png" href="favconHund.png">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+
+    <!-- Meta Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+
+    <!-- TikTok Pixel -->
+    <script>
+        !function (w, d, t) {
+            w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for( var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+            ttq.load('D4RFSQBC77U7SM7UL8A0');
+        }(window, document, 'ttq');
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAF8F5;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Success */
+        .success-msg {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .success-check {
+            width: 56px;
+            height: 56px;
+            background: #22C55E;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+        }
+
+        .success-check svg {
+            width: 28px;
+            height: 28px;
+            color: white;
+        }
+
+        .success-msg h1 {
+            font-size: 20px;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+        }
+
+        .success-msg p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .dog-name {
+            color: #C4A576;
+            font-weight: 600;
+        }
+
+        /* Upsell Box */
+        .upsell-box {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .upsell-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .upsell-icon {
+            width: 42px;
+            height: 42px;
+            background: #FEF3E7;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .upsell-header h2 {
+            font-size: 15px;
+            color: #1a1a1a;
+            line-height: 1.4;
+        }
+
+        .upsell-stat {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            background: #FFF8F0;
+            border-radius: 10px;
+            border: 1px solid #E8DDD0;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .upsell-stat strong {
+            color: #C4A576;
+            font-weight: 600;
+        }
+
+        /* Options */
+        .upsell-option {
+            padding: 16px;
+            background: #FAFAFA;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .option-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .option-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .option-icon {
+            font-size: 20px;
+        }
+
+        .option-name {
+            font-size: 15px;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .option-badge {
+            font-size: 11px;
+            color: #666;
+            background: #E8E8E8;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .option-desc {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .option-points {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .option-point {
+            font-size: 12px;
+            color: #444;
+            background: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .option-point::before {
+            content: "✓";
+            color: #22C55E;
+            font-weight: 600;
+        }
+
+        .option-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid #E8E8E8;
+        }
+
+        .option-price {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .option-price-old {
+            font-size: 14px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .option-price-new {
+            font-size: 20px;
+            font-weight: 700;
+            color: #C4A576;
+        }
+
+        .option-btn {
+            background: #C4A576;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            background: #B8956A;
+        }
+
+        /* Skip */
+        .skip {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .skip-btn {
+            display: inline-block;
+            font-size: 14px;
+            color: white;
+            background: #8B7355;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .skip-btn:hover {
+            background: #7A6548;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Success -->
+        <div class="success-msg">
+            <div class="success-check">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <h1>Bestellung bestätigt!</h1>
+            <p>Plan für <span class="dog-name">Luna</span> ist unterwegs</p>
+        </div>
+
+        <!-- Upsell -->
+        <div class="upsell-box">
+            <div class="upsell-stat">
+                <strong>70% aller Welpen</strong> entwickeln später Verhaltensprobleme.
+            </div>
+
+            <div class="upsell-header">
+                <div class="upsell-icon">🐕</div>
+                <h2>Da <span class="dog-name">Luna</span> noch ein Welpe ist, kannst du jetzt vorbeugen:</h2>
+            </div>
+
+            <!-- Option 1: Trennungsangst -->
+            <div class="upsell-option">
+                <div class="option-header">
+                    <div class="option-left">
+                        <span class="option-icon">😰</span>
+                        <span class="option-name">Trennungsangst Prävention</span>
+                    </div>
+                    <span class="option-badge">8 Übungen • 2 Wochen</span>
+                </div>
+                <p class="option-desc">Bringe deinem Welpen bei, entspannt alleine zu bleiben – bevor Angst entsteht.</p>
+                <div class="option-points">
+                    <span class="option-point">Alleine-bleiben Training</span>
+                    <span class="option-point">Abschiedsrituale</span>
+                    <span class="option-point">Ruhe-Signale</span>
+                </div>
+                <div class="option-footer">
+                    <div class="option-price">
+                        <span class="option-price-old">€29</span>
+                        <span class="option-price-new">€19</span>
+                    </div>
+                    <button class="option-btn" onclick="buyUpsell('anxiety')">Hinzufügen</button>
+                </div>
+            </div>
+
+            <!-- Option 2: Leinenführigkeit -->
+            <div class="upsell-option">
+                <div class="option-header">
+                    <div class="option-left">
+                        <span class="option-icon">🦮</span>
+                        <span class="option-name">Leinenführigkeit Basics</span>
+                    </div>
+                    <span class="option-badge">6 Übungen • 2 Wochen</span>
+                </div>
+                <p class="option-desc">Entspannte Spaziergänge von Anfang an – ohne Ziehen und Zerren.</p>
+                <div class="option-points">
+                    <span class="option-point">Bei-Fuß Training</span>
+                    <span class="option-point">Richtungswechsel</span>
+                    <span class="option-point">Ablenkungen meistern</span>
+                </div>
+                <div class="option-footer">
+                    <div class="option-price">
+                        <span class="option-price-old">€29</span>
+                        <span class="option-price-new">€19</span>
+                    </div>
+                    <button class="option-btn" onclick="buyUpsell('pulling')">Hinzufügen</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="skip">
+            <a href="#" class="skip-btn">Nein danke, nur meinen Plan</a>
+        </div>
+    </div>
+
+    <script>
+        const dogName = localStorage.getItem('dogName') || 'Luna';
+        const dogAge = localStorage.getItem('dogAge') || 'puppy';
+        const leadId = localStorage.getItem('leadId') || '';
+        const userEmail = localStorage.getItem('userEmail') || '';
+        const selectedPlan = localStorage.getItem('selectedPlan') || '3month';
+        
+        // Preise je Plan
+        const planPrices = {
+            '1month': 24.99,
+            '3month': 29.99,
+            '6month': 49.99
+        };
+        const purchaseValue = planPrices[selectedPlan] || 29.99;
+
+        // ==================== PURCHASE TRACKING ====================
+        // Prüfen ob von Stripe Checkout kommend
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        const trackingKey = 'purchase_tracked_' + (sessionId || leadId);
+
+        if (!localStorage.getItem(trackingKey)) {
+            console.log('🔥 Purchase Event feuern:', purchaseValue, 'EUR');
+            
+            // Meta Pixel
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'Purchase', {
+                    value: purchaseValue,
+                    currency: 'EUR',
+                    content_type: 'product',
+                    content_name: 'WauWerk Trainingsplan ' + selectedPlan
+                });
+                console.log('✅ Meta Purchase gefeuert');
+            }
+
+            // TikTok Pixel
+            if (typeof ttq !== 'undefined') {
+                ttq.track('CompletePayment', {
+                    value: purchaseValue,
+                    currency: 'EUR',
+                    content_type: 'product',
+                    content_name: 'WauWerk Trainingsplan'
+                });
+                console.log('✅ TikTok Purchase gefeuert');
+            }
+
+            // Google Ads
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'conversion', {
+                    'send_to': 'AW-17806525009/purchase',
+                    'value': purchaseValue,
+                    'currency': 'EUR',
+                    'transaction_id': sessionId || leadId
+                });
+                gtag('event', 'purchase', {
+                    'value': purchaseValue,
+                    'currency': 'EUR',
+                    'transaction_id': sessionId || leadId
+                });
+                console.log('✅ Google Purchase gefeuert');
+            }
+
+            // Markieren dass Pixel gefeuert wurde (verhindert Duplikate)
+            localStorage.setItem(trackingKey, 'true');
+        } else {
+            console.log('⏭️ Purchase bereits getrackt, skip');
+        }
+        // ==================== END TRACKING ====================
+        
+        document.querySelectorAll('.dog-name').forEach(el => {
+            el.textContent = dogName;
+        });
+
+        // Dynamische Texte basierend auf Alter
+        const ageContent = {
+            'puppy': {
+                stat: `<strong>70% aller Welpen</strong> entwickeln später Verhaltensprobleme.`,
+                header: `Da ${dogName} noch ein Welpe ist, kannst du jetzt vorbeugen:`
+            },
+            'young': {
+                stat: `<strong>Junge Hunde lernen am schnellsten.</strong> Schlechte Gewohnheiten jetzt stoppen ist einfacher als später.`,
+                header: `Da ${dogName} noch jung ist, ist jetzt der beste Zeitpunkt:`
+            },
+            'adult': {
+                stat: `<strong>Auch erwachsene Hunde lernen dazu.</strong> Mit den richtigen Methoden siehst du schnell Fortschritte.`,
+                header: `Für ${dogName} empfehlen wir:`
+            },
+            'senior': {
+                stat: `<strong>Alte Hunde, neue Tricks?</strong> Absolut! Sanftes Training funktioniert in jedem Alter.`,
+                header: `Speziell für ${dogName} als älteren Hund:`
+            }
+        };
+
+        const content = ageContent[dogAge] || ageContent['adult'];
+        
+        document.querySelector('.upsell-header h2').innerHTML = content.header;
+        document.querySelector('.upsell-stat').innerHTML = content.stat;
+
+        // Stripe Checkout für Upsell
+        async function buyUpsell(module) {
+            const btn = event.target;
+            btn.textContent = 'Lädt...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/upsell-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        module: module,
+                        leadId: leadId,
+                        email: userEmail,
+                        dogName: dogName
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    alert('Fehler beim Laden. Bitte versuche es erneut.');
+                    btn.textContent = 'Hinzufügen';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error('Checkout error:', err);
+                alert('Fehler beim Laden. Bitte versuche es erneut.');
+                btn.textContent = 'Hinzufügen';
+                btn.disabled = false;
+            }
+        }
+
+        // Skip Button → normale Danke-Seite
+        document.querySelector('.skip-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'danke.html';
+        });
+    </script>
+</body>
+</html>
