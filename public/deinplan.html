@@ -2880,6 +2880,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             try {
                 const priceData = checkoutPrices[selectedPlan] || checkoutPrices['1month'];
                 
+                // Plan im localStorage speichern für Upsell-Seite
+                localStorage.setItem('selectedPlan', selectedPlan);
+                
                 const response = await fetch('/api/wauwerk-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -2981,7 +2984,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 const { error } = await stripe.confirmPayment({
                     elements,
                     confirmParams: {
-                        return_url: window.location.origin + '/danke/?lead_id=' + currentLeadId
+                        return_url: window.location.origin + '/zusatz.html?lead_id=' + currentLeadId
                     }
                 });
                 
