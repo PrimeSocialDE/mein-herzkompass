@@ -497,51 +497,8 @@
             </div>
 
             <!-- Option 1: Trennungsangst -->
-            <div class="upsell-option">
-                <div class="option-header">
-                    <div class="option-left">
-                        <span class="option-icon">😰</span>
-                        <span class="option-name">Trennungsangst Prävention</span>
-                    </div>
-                    <span class="option-badge">8 Übungen • 2 Wochen</span>
-                </div>
-                <p class="option-desc">Bringe deinem Welpen bei, entspannt alleine zu bleiben – bevor Angst entsteht.</p>
-                <div class="option-points">
-                    <span class="option-point">Alleine-bleiben Training</span>
-                    <span class="option-point">Abschiedsrituale</span>
-                    <span class="option-point">Ruhe-Signale</span>
-                </div>
-                <div class="option-footer">
-                    <div class="option-price">
-                        <span class="option-price-old">€29</span>
-                        <span class="option-price-new">€19</span>
-                    </div>
-                    <button class="option-btn" onclick="buyUpsell('anxiety')">Hinzufügen</button>
-                </div>
-            </div>
-
-            <!-- Option 2: Leinenführigkeit -->
-            <div class="upsell-option">
-                <div class="option-header">
-                    <div class="option-left">
-                        <span class="option-icon">🦮</span>
-                        <span class="option-name">Leinenführigkeit Basics</span>
-                    </div>
-                    <span class="option-badge">6 Übungen • 2 Wochen</span>
-                </div>
-                <p class="option-desc">Entspannte Spaziergänge von Anfang an – ohne Ziehen und Zerren.</p>
-                <div class="option-points">
-                    <span class="option-point">Bei-Fuß Training</span>
-                    <span class="option-point">Richtungswechsel</span>
-                    <span class="option-point">Ablenkungen meistern</span>
-                </div>
-                <div class="option-footer">
-                    <div class="option-price">
-                        <span class="option-price-old">€29</span>
-                        <span class="option-price-new">€19</span>
-                    </div>
-                    <button class="option-btn" onclick="buyUpsell('pulling')">Hinzufügen</button>
-                </div>
+            <div class="upsell-options" id="upsellOptions">
+                <!-- Wird dynamisch befüllt -->
             </div>
         </div>
 
@@ -611,39 +568,122 @@
                 icon: '😰', 
                 name: 'Trennungsangst Prävention', 
                 exercises: '8 Übungen',
-                benefits: ['Alleine-bleiben Training', 'Abschiedsrituale', 'Ruhe-Signale aufbauen', 'Schritt-für-Schritt Anleitung']
+                benefits: ['Alleine-bleiben Training', 'Abschiedsrituale', 'Ruhe-Signale aufbauen', 'Schritt-für-Schritt Anleitung'],
+                desc: 'Bringe deinem Hund bei, entspannt alleine zu bleiben.'
             },
             'pulling': { 
                 icon: '🦮', 
                 name: 'Leinenführigkeit Basics', 
                 exercises: '6 Übungen',
-                benefits: ['Bei-Fuß Training', 'Richtungswechsel-Technik', 'Ablenkungen meistern', 'Entspannte Spaziergänge']
+                benefits: ['Bei-Fuß Training', 'Richtungswechsel-Technik', 'Ablenkungen meistern', 'Entspannte Spaziergänge'],
+                desc: 'Entspannte Spaziergänge von Anfang an – ohne Ziehen und Zerren.'
             },
             'barking': { 
                 icon: '🔊', 
                 name: 'Anti-Bell Training', 
                 exercises: '6 Übungen',
-                benefits: ['Ruhe-Kommando aufbauen', 'Auslöser erkennen', 'Bellen auf Signal', 'Nachbarschaftsfrieden']
+                benefits: ['Ruhe-Kommando aufbauen', 'Auslöser erkennen', 'Bellen auf Signal', 'Nachbarschaftsfrieden'],
+                desc: 'Kontrolliertes Bellen auf Kommando – Ruhe für dich und deine Nachbarn.'
             },
             'aggression': { 
                 icon: '😤', 
                 name: 'Aggressions-Kontrolle', 
                 exercises: '8 Übungen',
-                benefits: ['Trigger-Management', 'Ruhe bewahren lernen', 'Sichere Begegnungen', 'Impulskontrolle']
+                benefits: ['Trigger-Management', 'Ruhe bewahren lernen', 'Sichere Begegnungen', 'Impulskontrolle'],
+                desc: 'Sichere Begegnungen mit anderen Hunden und Menschen.'
             },
             'recall': { 
                 icon: '📣', 
                 name: 'Rückruf-Training', 
                 exercises: '6 Übungen',
-                benefits: ['Zuverlässiger Rückruf', 'Ablenkungstraining', 'Belohnungsaufbau', 'Freilauf ermöglichen']
+                benefits: ['Zuverlässiger Rückruf', 'Ablenkungstraining', 'Belohnungsaufbau', 'Freilauf ermöglichen'],
+                desc: 'Zuverlässiger Rückruf – auch bei Ablenkungen.'
             },
             'jumping': { 
                 icon: '🐕', 
                 name: 'Anti-Anspring Training', 
                 exercises: '5 Übungen',
-                benefits: ['Ruhige Begrüßung', 'Vier-Pfoten-Regel', 'Besuchertraining', 'Impulskontrolle']
+                benefits: ['Ruhige Begrüßung', 'Vier-Pfoten-Regel', 'Besuchertraining', 'Impulskontrolle'],
+                desc: 'Ruhige Begrüßungen ohne wildes Anspringen.'
+            },
+            'energy': { 
+                icon: '⚡', 
+                name: 'Energie-Management', 
+                exercises: '6 Übungen',
+                benefits: ['Ruheübungen', 'Mentale Auslastung', 'Entspannungssignale', 'Ausgeglichener Alltag'],
+                desc: 'Ein ausgeglichener Hund durch gezielte Beschäftigung.'
+            },
+            'destructive': { 
+                icon: '🧸', 
+                name: 'Anti-Zerstörungs Training', 
+                exercises: '6 Übungen',
+                benefits: ['Kau-Alternativen', 'Langeweile vermeiden', 'Grenzen setzen', 'Sichere Umgebung'],
+                desc: 'Schluss mit kaputten Schuhen und zerstörten Möbeln.'
             }
         };
+
+        // Alle Probleme aus localStorage/wauwerk_answers holen
+        const answers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
+        
+        // Alle ausgewählten Probleme sammeln
+        const dogGoal = answers.dog_goal || localStorage.getItem('dogProblemKey') || '';
+        const dogProblem = answers.dog_problem || localStorage.getItem('dogProblem') || '';
+        const dogBehaviors = answers.dog_behaviors || JSON.parse(localStorage.getItem('dogBehaviors') || '[]');
+        
+        // Alle Probleme kombinieren (ohne Duplikate)
+        const allUserProblems = [...new Set([dogGoal, dogProblem, ...dogBehaviors].filter(p => p))];
+
+        console.log('🐕 dog_goal:', dogGoal);
+        console.log('🐕 dog_problem:', dogProblem);
+        console.log('🐕 dog_behaviors:', dogBehaviors);
+        console.log('🐕 Alle ausgeschlossenen Probleme:', allUserProblems);
+
+        // Upsell-Optionen rendern (nur die, die der User NICHT hat)
+        function renderUpsellOptions() {
+            const container = document.getElementById('upsellOptions');
+            const allModules = Object.keys(moduleData);
+            
+            // Filter: Module die der User nicht im Plan hat
+            const availableModules = allModules.filter(m => !allUserProblems.includes(m));
+            
+            // Zeige maximal 2 Optionen
+            const modulesToShow = availableModules.slice(0, 2);
+            
+            if (modulesToShow.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:#666;padding:20px;">Du hast bereits alle Module! 🎉</p>';
+                return;
+            }
+
+            let html = '';
+            modulesToShow.forEach(moduleKey => {
+                const m = moduleData[moduleKey];
+                const pointsHtml = m.benefits.slice(0, 3).map(b => '<span class="option-point">' + b + '</span>').join('');
+                
+                html += '<div class="upsell-option">' +
+                    '<div class="option-header">' +
+                        '<div class="option-left">' +
+                            '<span class="option-icon">' + m.icon + '</span>' +
+                            '<span class="option-name">' + m.name + '</span>' +
+                        '</div>' +
+                        '<span class="option-badge">' + m.exercises + ' • 2 Wochen</span>' +
+                    '</div>' +
+                    '<p class="option-desc">' + m.desc + '</p>' +
+                    '<div class="option-points">' + pointsHtml + '</div>' +
+                    '<div class="option-footer">' +
+                        '<div class="option-price">' +
+                            '<span class="option-price-old">€29</span>' +
+                            '<span class="option-price-new">€19</span>' +
+                        '</div>' +
+                        '<button class="option-btn" onclick="buyUpsell(\'' + moduleKey + '\')">Hinzufügen</button>' +
+                    '</div>' +
+                '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Upsell-Optionen beim Laden rendern
+        renderUpsellOptions();
 
         // Preise je Plan
         const planPrices = {
