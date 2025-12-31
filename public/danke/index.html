@@ -3,9 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danke für deine Bestellung - Mein WauWerk</title>
+    <title>Hund trainieren: Personalisierter 30-Tage Trainingsplan | WauWerk</title>
     <link rel="icon" type="image/png" href="favconHund.png">
-
+    <script src="cookie-banner.js" defer></script>
+    <meta name="description" content="Trainiere deinen Hund mit einem personalisierten 30-Tage Plan. Löse Probleme wie Leinenziehen, Bellen oder Trennungsangst. Über 3.400 erfolgreiche Hundebesitzer.">
+    <meta name="keywords" content="hund trainieren, hundetraining, hund erziehen, hundetrainingsplan, hund trainieren online">
+    <link rel="canonical" href="https://mein-wauwerk.de/">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Hund trainieren: Personalisierter 30-Tage Trainingsplan">
+    <meta property="og:description" content="Trainiere deinen Hund mit einem personalisierten Plan. Löse Probleme wie Leinenziehen, Bellen oder Trennungsangst.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mein-wauwerk.de/">
+    
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
 <script>
@@ -15,8 +25,921 @@
 
   gtag('config', 'AW-17806525009');
 </script>
-    
-    <!-- Meta Pixel -->
+
+<script>
+// UTM & Tracking Parameter beim ersten Besuch speichern
+(function() {
+    const params = new URLSearchParams(window.location.search);
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'ttclid'].forEach(function(p) {
+        if (params.get(p)) localStorage.setItem(p, params.get(p));
+    });
+    // Landing Page und Referrer speichern
+    if (!localStorage.getItem('landing_page')) {
+        localStorage.setItem('landing_page', window.location.href);
+        localStorage.setItem('first_visit', new Date().toISOString());
+        if (document.referrer) localStorage.setItem('referrer', document.referrer);
+    }
+})();
+</script>
+
+    <style>
+        :root {
+            --primary-cream: #FDF8F3;
+            --secondary-cream: #F5EDE3;
+            --accent-brown: #D4B996;
+            --warm-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --light-brown: #E8DCCC;
+            --text-brown: #8B7355;
+            --text-light: #A68B5B;
+            --text-dark: #6B5B47;
+            --white: #FFFFFF;
+            --accent-green: #00B67A;
+            --shadow-light: 0 4px 20px rgba(139, 115, 85, 0.08);
+            --shadow-medium: 0 12px 40px rgba(139, 115, 85, 0.15);
+            --shadow-heavy: 0 20px 60px rgba(139, 115, 85, 0.2);
+            --border-radius: 20px;
+            --border-radius-large: 28px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100vw;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            background: #ffffff !important;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: #FFFFFF !important;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--secondary-cream);
+            z-index: 1000;
+            padding: 14px 0;
+            width: 100%;
+            box-shadow: var(--shadow-light);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text-dark);
+            text-decoration: none;
+        }
+
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: var(--shadow-light);
+        }
+
+        .cta-button-nav {
+            background: var(--warm-brown);
+            color: var(--white);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+        }
+
+        .cta-button-nav:hover {
+            background: var(--dark-brown);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section - Neuer Aufbau wie Screenshot */
+        .hero {
+            background: var(--white);
+            padding: 100px 20px 40px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-family: Georgia, serif;
+            font-size: clamp(32px, 5vw, 36px);
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            line-height: 1.25;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            line-height: 1.5;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Trustpilot Style Badge */
+        .trust-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: #F7F7F7;
+            border-radius: 50px;
+            margin-bottom: 25px;
+            flex-wrap: nowrap;
+        }
+
+        .trust-stars {
+            display: flex;
+            gap: 2px;
+            flex-shrink: 0;
+        }
+
+        .trust-star {
+            width: 18px;
+            height: 18px;
+            background: var(--accent-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+        }
+
+        .trust-text {
+            font-size: 13px;
+            color: var(--text-dark);
+            white-space: nowrap;
+        }
+
+        .trust-text strong {
+            font-weight: 700;
+        }
+
+        .trust-text span {
+            color: var(--text-light);
+        }
+
+        /* Hero Image */
+        .hero-image {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 25px;
+            border-radius: var(--border-radius-large);
+            overflow: hidden;
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Main CTA Button */
+        .main-cta-button {
+            display: block;
+            width: calc(100% - 40px);
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--warm-brown);
+            color: white;
+            padding: 18px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 17px;
+            font-weight: 700;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(139, 115, 85, 0.4);
+        }
+
+        .main-cta-button:hover {
+            background: var(--dark-brown);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(139, 115, 85, 0.5);
+        }
+
+        /* Simple Benefits List */
+        .benefits-list-section {
+            padding: 60px 0 40px;
+            background: var(--primary-cream);
+        }
+
+        .benefits-list-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .benefits-list-title {
+            font-family: Georgia, serif;
+            font-size: clamp(24px, 4vw, 32px);
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+        }
+
+        .benefits-simple-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 20px;
+        }
+
+        .benefit-simple-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px 25px;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--warm-brown);
+            transition: transform 0.3s ease;
+        }
+
+        .benefit-simple-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .benefit-check {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .benefit-simple-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-brown);
+            text-align: left;
+        }
+
+        /* Statistics Section */
+        .statistics-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--secondary-cream) 0%, var(--light-brown) 100%);
+            text-align: center;
+        }
+
+        .statistics-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .main-stat {
+            background: var(--white);
+            padding: 50px 40px;
+            border-radius: var(--border-radius-large);
+            box-shadow: var(--shadow-heavy);
+            border-left: 6px solid var(--warm-brown);
+        }
+
+        .stat-number {
+            font-size: clamp(48px, 8vw, 72px);
+            font-weight: 900;
+            color: var(--warm-brown);
+            margin-bottom: 20px;
+            font-family: Georgia, serif;
+        }
+
+        .stat-text {
+            font-size: clamp(18px, 3vw, 24px);
+            color: var(--text-brown);
+            line-height: 1.5;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Social Proof Section */
+        .social-proof-section {
+            padding: 50px 0;
+            background: var(--secondary-cream);
+            text-align: center;
+        }
+
+        .social-proof-title {
+            font-size: clamp(28px, 4vw, 36px);
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+        }
+
+        .social-proof-number {
+            color: var(--warm-brown);
+        }
+
+        .social-proof-avatars {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .avatar-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid var(--white);
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+            background: var(--accent-brown);
+            animation: avatarFloat 4s ease-in-out infinite;
+        }
+
+        .avatar-circle:nth-child(1) { animation-delay: 0s; }
+        .avatar-circle:nth-child(2) { animation-delay: 0.5s; }
+        .avatar-circle:nth-child(3) { animation-delay: 1s; }
+        .avatar-circle:nth-child(4) { animation-delay: 1.5s; }
+        .avatar-circle:nth-child(5) { animation-delay: 2s; }
+        .avatar-circle:nth-child(6) { animation-delay: 2.5s; }
+        .avatar-circle:nth-child(7) { animation-delay: 3s; }
+        .avatar-circle:nth-child(8) { animation-delay: 3.5s; }
+        .avatar-circle:nth-child(9) { animation-delay: 0.3s; }
+        .avatar-circle:nth-child(10) { animation-delay: 0.8s; }
+        .avatar-circle:nth-child(11) { animation-delay: 1.3s; }
+
+        @keyframes avatarFloat {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-8px) scale(1.05); }
+        }
+
+        .avatar-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Comparison Section */
+        .comparison-section {
+            padding: 60px 0;
+            background: var(--white);
+        }
+
+        .comparison-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .comparison-title {
+            font-family: Georgia, serif;
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .comparison-subtitle {
+            font-size: 18px;
+            color: var(--text-light);
+        }
+
+        .comparison-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            background: var(--white);
+        }
+
+        .comparison-scroll {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .comparison-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .comparison-scroll::-webkit-scrollbar-track {
+            background: var(--secondary-cream);
+        }
+
+        .comparison-scroll::-webkit-scrollbar-thumb {
+            background: var(--warm-brown);
+            border-radius: 4px;
+        }
+
+        .comparison-card {
+            min-width: 320px;
+            flex: 0 0 320px;
+            scroll-snap-align: start;
+            padding: 30px;
+            border-right: 1px solid #f0f0f0;
+        }
+
+        .comparison-card:last-child {
+            border-right: none;
+        }
+
+        .wauwerk-card {
+            background: linear-gradient(135deg, rgba(212, 185, 150, 0.15), rgba(196, 165, 118, 0.1));
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--text-light);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin: 0 auto 15px;
+        }
+
+        .wauwerk-card .card-icon {
+            background: var(--warm-brown);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .card-price {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .wauwerk-card .card-price {
+            color: var(--warm-brown);
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .feature-yes {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .feature-no {
+            background: #E74C3C;
+            color: white;
+        }
+
+        .feature-limited {
+            background: #F39C12;
+            color: white;
+        }
+
+        /* About Section */
+        .about-section {
+            padding: 80px 0;
+            background: var(--secondary-cream);
+        }
+
+        .about-container {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .about-image {
+            flex: 0 0 350px;
+            aspect-ratio: 1875 / 1563;
+            border-radius: var(--border-radius-large);
+            overflow: hidden;
+            box-shadow: var(--shadow-heavy);
+            background: var(--accent-brown);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .about-content {
+            flex: 1;
+        }
+
+        .about-title {
+            font-family: Georgia, serif;
+            font-size: clamp(28px, 4vw, 36px);
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .about-text {
+            font-size: 16px;
+            color: var(--text-brown);
+            line-height: 1.7;
+        }
+
+        /* Quiz CTA */
+        .quiz-cta-section {
+            padding: 60px 0;
+            background: linear-gradient(135deg, var(--secondary-cream) 0%, var(--light-brown) 100%);
+            text-align: center;
+        }
+
+        .quiz-title {
+            font-family: Georgia, serif;
+            font-size: clamp(28px, 4vw, 36px);
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: var(--text-dark);
+        }
+
+        .quiz-subtitle {
+            font-size: 18px;
+            color: var(--text-light);
+            margin-bottom: 35px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .quiz-button {
+            background: var(--warm-brown);
+            color: var(--white);
+            padding: 20px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(139, 115, 85, 0.4);
+            display: inline-block;
+        }
+
+        .quiz-button:hover {
+            background: var(--dark-brown);
+            transform: translateY(-3px);
+        }
+
+        /* Benefits Grid */
+        .benefits-section {
+            padding: 60px 0;
+            background: var(--white);
+        }
+
+        .benefits-title {
+            font-family: Georgia, serif;
+            font-size: clamp(28px, 4vw, 36px);
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .benefit-card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            border-left: 4px solid var(--warm-brown);
+            transition: transform 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .benefit-icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .benefit-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .benefit-description {
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        /* Trustpilot Section */
+        .trustpilot-section {
+            padding: 80px 0;
+            background: var(--white);
+            text-align: center;
+        }
+
+        .trustpilot-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 50px;
+            background: linear-gradient(135deg, rgba(212, 185, 150, 0.1), rgba(196, 165, 118, 0.1));
+            border-radius: var(--border-radius-large);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .trustpilot-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .trustpilot-text {
+            font-size: 18px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .rating-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .rating-stars {
+            display: inline-flex;
+            gap: 3px;
+        }
+
+        .star {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .rating-score {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .trustpilot-stats {
+            font-weight: 600;
+            color: var(--text-brown);
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .rating-subtext {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* Final CTA */
+        .final-cta {
+            padding: 60px 0;
+            background: var(--warm-brown);
+            color: var(--white);
+            text-align: center;
+        }
+
+        .final-title {
+            font-family: Georgia, serif;
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .final-subtitle {
+            font-size: 18px;
+            margin-bottom: 35px;
+            opacity: 0.95;
+        }
+
+        .final-button {
+            background: var(--white);
+            color: var(--dark-brown);
+            padding: 20px 45px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .final-button:hover {
+            background: var(--primary-cream);
+            transform: translateY(-3px);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-brown);
+            color: var(--secondary-cream);
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--white);
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: var(--secondary-cream);
+            text-decoration: none;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            display: block;
+            font-size: 14px;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent-brown);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 30px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .about-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .about-image {
+                flex: 0 0 auto;
+                width: 100%;
+                max-width: 350px;
+            }
+
+            .social-proof-avatars {
+                gap: 10px;
+            }
+
+            .avatar-circle {
+                width: 50px;
+                height: 50px;
+            }
+
+            .comparison-card {
+                min-width: 280px;
+                flex: 0 0 280px;
+                padding: 25px;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .main-stat {
+                padding: 35px 25px;
+            }
+
+            .trustpilot-container {
+                padding: 35px 25px;
+            }
+
+            .rating-display {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .footer {
+                padding: 40px 0 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .comparison-card {
+                min-width: 250px;
+                flex: 0 0 250px;
+                padding: 20px;
+            }
+
+            .social-proof-avatars .avatar-circle:nth-child(n+8) {
+                display: none;
+            }
+
+            .trustpilot-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+
+    <!-- Meta Pixel Code -->
     <script>
         !function(f,b,e,v,n,t,s)
         {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -33,576 +956,362 @@
     src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     /></noscript>
 
-    <!-- TikTok Pixel -->
-    <script>
-        !function (w, d, t) {
-          w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for( var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-            ttq.load('D4RFSQBC77U7SM7UL8A0');
-        }(window, document, 'ttq');
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ufxcf43805");
     </script>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --text-dark: #2C2C2E;
-            --text-medium: #6B6B6B;
-            --text-light: #999999;
-            --white: #FFFFFF;
-            --border-light: #E8E4DF;
-            --warm-brown: #C4A576;
-            --dark-brown: #8B7355;
-            --success-color: #22C55E;
-            --border-radius: 12px;
-        }
-
-        html, body {
-            width: 100%;
-            overflow-x: hidden;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            color: var(--text-dark);
-            background: #FAF8F5;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        .thank-you-section {
-            padding: 60px 0 100px;
-            text-align: center;
-            min-height: 100vh;
-        }
-
-        .success-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 35px;
-            box-shadow: 0 15px 35px rgba(196, 165, 118, 0.3);
-            animation: successPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes successPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .success-icon svg {
-            width: 50px;
-            height: 50px;
-            stroke: white;
-            stroke-width: 3;
-        }
-
-        .thank-you-card {
-            background: var(--white);
-            padding: 50px 40px;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-light);
-            margin: 30px auto;
-            max-width: 700px;
-        }
-
-        h1 {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--dark-brown);
-            margin-bottom: 20px;
-        }
-
-        .subtitle {
-            font-size: 18px;
-            color: var(--text-medium);
-            margin-bottom: 35px;
-            line-height: 1.5;
-        }
-
-        .security-info {
-            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
-            color: white;
-            padding: 25px;
-            border-radius: var(--border-radius);
-            margin: 25px 0;
-        }
-
-        .security-info h3 {
-            color: white;
-            margin-bottom: 12px;
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .security-info p {
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 0;
-        }
-
-        .next-steps {
-            background: #FAF8F5;
-            padding: 35px;
-            border-radius: var(--border-radius);
-            margin: 35px 0;
-            text-align: left;
-        }
-
-        .next-steps h3 {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--dark-brown);
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .step {
-            display: flex;
-            align-items: flex-start;
-            gap: 18px;
-            margin-bottom: 20px;
-            padding: 18px;
-            background: var(--white);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-light);
-        }
-
-        .step:last-child {
-            margin-bottom: 0;
-        }
-
-        .step-number {
-            background: var(--warm-brown);
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 15px;
-            flex-shrink: 0;
-        }
-
-        .step-content h4 {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--dark-brown);
-            margin-bottom: 6px;
-        }
-
-        .step-content p {
-            font-size: 14px;
-            color: var(--text-medium);
-            line-height: 1.5;
-            margin: 0;
-        }
-
-        .guarantee-section {
-            background: linear-gradient(135deg, var(--success-color), #1aa34a);
-            color: white;
-            padding: 35px;
-            border-radius: var(--border-radius);
-            margin: 35px 0;
-            text-align: center;
-        }
-
-        .guarantee-section h3 {
-            color: white;
-            margin-bottom: 15px;
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .guarantee-section p {
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .guarantee-button {
-            display: inline-block;
-            background: white;
-            color: var(--success-color);
-            padding: 14px 28px;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            font-weight: 700;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .guarantee-button:hover {
-            background: #f9f9f9;
-            transform: translateY(-2px);
-        }
-
-        .info-box {
-            background: #FAF8F5;
-            border-left: 4px solid var(--warm-brown);
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin: 25px 0;
-            text-align: left;
-        }
-
-        .info-box h3 {
-            color: var(--dark-brown);
-            margin-top: 0;
-            margin-bottom: 10px;
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .info-box p {
-            color: var(--text-medium);
-            font-size: 15px;
-            line-height: 1.6;
-            margin-bottom: 0;
-        }
-
-        .contact-section {
-            background: #FAF8F5;
-            padding: 35px;
-            border-radius: var(--border-radius);
-            margin: 35px 0;
-            text-align: center;
-        }
-
-        .contact-section h3 {
-            color: var(--dark-brown);
-            margin-bottom: 15px;
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .contact-section p {
-            font-size: 16px;
-            color: var(--text-medium);
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .contact-button {
-            display: inline-block;
-            background: var(--warm-brown);
-            color: white;
-            padding: 14px 28px;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            font-weight: 700;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .contact-button:hover {
-            background: var(--dark-brown);
-            transform: translateY(-2px);
-        }
-
-        .footer-link {
-            text-align: center;
-            margin-top: 40px;
-        }
-
-        .footer-link a {
-            display: inline-block;
-            background: var(--warm-brown);
-            color: white;
-            padding: 15px 30px;
-            border-radius: var(--border-radius);
-            text-decoration: none;
-            font-weight: 700;
-            transition: all 0.3s ease;
-        }
-
-        .footer-link a:hover {
-            background: var(--dark-brown);
-            transform: translateY(-2px);
-        }
-
-        .footer {
-            text-align: center;
-            padding: 25px;
-            color: var(--text-light);
-            font-size: 12px;
-        }
-
-        .footer a {
-            color: var(--text-light);
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 26px; }
-            .subtitle { font-size: 16px; }
-            .thank-you-card { padding: 30px 20px; }
-            .step {
-                flex-direction: column;
-                text-align: center;
-                gap: 12px;
-            }
-            .guarantee-section, .contact-section, .next-steps {
-                padding: 25px 20px;
-            }
-        }
-    </style>
 </head>
+
 <body>
-    <section class="thank-you-section">
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <img src="logo.png" alt="WauWerk Hundetraining Logo" class="logo-image">
+                Mein WauWerk
+            </a>
+            <a href="kurz-schritt1.html" class="cta-button-nav">Quiz starten</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section - Neuer Aufbau -->
+    <section class="hero">
+        <h1 class="hero-title">Deine Hundetraining-Reise beginnt jetzt</h1>
+        
+        <p class="hero-subtitle">Erhalte einen personalisierten 30-Tage Trainingsplan für ein entspanntes Zusammenleben mit deinem Hund</p>
+        
+        <!-- Trustpilot Style Badge -->
+        <div class="trust-badge">
+            <div class="trust-stars">
+                <span class="trust-star">★</span>
+                <span class="trust-star">★</span>
+                <span class="trust-star">★</span>
+                <span class="trust-star">★</span>
+                <span class="trust-star">★</span>
+            </div>
+            <span class="trust-text"><strong>Hervorragend</strong> <span>| 3.400+ Kunden</span></span>
+        </div>
+        
+        <!-- Hero Image -->
+        <div class="hero-image">
+            <img src="HeroBild1.png" alt="Hund Training - Glücklicher Hund nach erfolgreichem Hundetraining" width="400" height="400">
+        </div>
+        
+        <!-- CTA Button -->
+        <a href="kurz-schritt1.html" class="main-cta-button">Mein Trainingsplan erstellen →</a>
+    </section>
+
+    <!-- Simple Benefits List -->
+    <section class="benefits-list-section">
         <div class="container">
-            <div class="success-icon">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 12l2 2 4-4" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="12" cy="12" r="9" stroke="white" stroke-width="3"/>
-                </svg>
-            </div>
-
-            <div class="thank-you-card">
-                <h1>🐕 Danke für deine Bestellung!</h1>
-                <p class="subtitle">Du hast den wichtigsten Schritt gemacht – du investierst in eine glückliche Beziehung zu deinem Hund! Deine Zahlung wurde erfolgreich verarbeitet und wir arbeiten bereits an deinem persönlichen Trainingsplan.</p>
-
-                <div class="security-info">
-                    <h3>🔒 Deine Daten sind sicher</h3>
-                    <p>Deine persönlichen Informationen werden 100% sicher verarbeitet. Du erhältst deinen personalisierten Trainingsplan innerhalb der nächsten 2 Stunden per E-Mail.</p>
-                </div>
-
-                <div class="next-steps">
-                    <h3>Das passiert jetzt</h3>
-                    
-                    <div class="step">
-                        <div class="step-number">1</div>
-                        <div class="step-content">
-                            <h4>📧 Bestätigungs-E-Mail erhalten</h4>
-                            <p>Du bekommst in wenigen Minuten eine Bestätigungs-E-Mail mit allen Details deiner Bestellung und der Rechnung.</p>
-                        </div>
-                    </div>
-
-                    <div class="step">
-                        <div class="step-number">2</div>
-                        <div class="step-content">
-                            <h4>🐕 Wir erstellen deinen Plan</h4>
-                            <p>Wir analysieren deine Antworten und erstellen einen individuellen Trainingsplan, perfekt abgestimmt auf deinen Hund.</p>
-                        </div>
-                    </div>
-
-                    <div class="step">
-                        <div class="step-number">3</div>
-                        <div class="step-content">
-                            <h4>💌 Trainingsplan per E-Mail (2h)</h4>
-                            <p>Du erhältst deinen kompletten personalisierten Trainingsplan mit Übungen, Spielen und Schritt-für-Schritt Anleitungen per E-Mail.</p>
-                        </div>
-                    </div>
-
-                    <div class="step">
-                        <div class="step-number">4</div>
-                        <div class="step-content">
-                            <h4>✨ Eure Transformation beginnt</h4>
-                            <p>Starte mit den ersten Übungen und beobachte, wie sich die Beziehung zu deinem Hund verbessert!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="info-box">
-                    <h3>⚠️ Wichtiger Hinweis</h3>
-                    <p>Falls du deinen Trainingsplan nicht innerhalb von 24 Stunden erhältst, checke bitte deinen Spam-Ordner. Bei Fragen erreichst du uns jederzeit unter support@mein-wauwerk.de</p>
-                </div>
-
-                <div class="contact-section">
-                    <h3>📧 Fragen?</h3>
-                    <p>Unser Support-Team ist jederzeit für dich da und hilft gerne bei allen Fragen rund um deinen Trainingsplan.</p>
-                    <a href="mailto:support@mein-wauwerk.de" class="contact-button">📧 Support kontaktieren</a>
-                </div>
-
-                <div class="guarantee-section">
-                    <h3>✅ 30-Tage Geld-zurück-Garantie</h3>
-                    <p>Falls du nicht 100% zufrieden mit deinem Trainingsplan bist, bekommst du binnen 30 Tagen dein Geld vollständig zurück. Ohne Wenn und Aber.</p>
-                    <a href="geld-zurueck.html" class="guarantee-button">Mehr zur Garantie</a>
-                </div>
-            </div>
-
-            <div class="footer-link">
-                <a href="index.html">🐕 Zurück zu Mein WauWerk</a>
+            <div class="benefits-list-container">
+                <h2 class="benefits-list-title">Das erhältst du:</h2>
+                <ul class="benefits-simple-list">
+                    <li class="benefit-simple-item">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-simple-text">Professionelle Analyse der Probleme deines Hundes und Lösungssuche</div>
+                    </li>
+                    <li class="benefit-simple-item">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-simple-text">Spaßige Spiele und leicht verständliche Anleitungen, um deinen Hund zu trainieren</div>
+                    </li>
+                    <li class="benefit-simple-item">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-simple-text">Beeindruckende Trainingseinheiten</div>
+                    </li>
+                    <li class="benefit-simple-item">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-simple-text">Unterstützung durch unser Team</div>
+                    </li>
+                    <li class="benefit-simple-item">
+                        <div class="benefit-check">✓</div>
+                        <div class="benefit-simple-text">Ein problemloses Leben mit deinem Hund</div>
+                    </li>
+                </ul>
             </div>
         </div>
     </section>
 
-    <footer class="footer">
-        <p>&copy; 2025 Mein WauWerk. Alle Rechte vorbehalten.</p>
-        <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
-    </footer>
+    <!-- Statistics Section -->
+    <section class="statistics-section">
+        <div class="container">
+            <div class="statistics-content">
+                <div class="main-stat">
+                    <div class="stat-number">86%</div>
+                    <p class="stat-text">Hundebesitzer steigern das Gehorsamsniveau ihres Hundes im Durchschnitt um 74% mit unserem persönlichen Trainingsplan</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <script>
-        // ========================================
-        // SUPABASE CONFIG
-        // ========================================
-        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+    <!-- Social Proof Section -->
+    <div class="social-proof-section">
+        <div class="container">
+            <h3 class="social-proof-title">Vertraut von <span class="social-proof-number">3.400+</span><br>Hundebesitzern</h3>
+            <div class="social-proof-avatars">
+                <div class="avatar-circle"><img src="Kundin1.png" alt="Hundetraining Erfahrung Kundin" loading="lazy"></div>
+                <div class="avatar-circle"><img src="Kundin2.png" alt="Hund trainieren Erfolg" loading="lazy"></div>
+                <div class="avatar-circle"><img src="Kundin33.png" alt="Hundetraining Bewertung" loading="lazy"></div>
+                <div class="avatar-circle"><img src="Kundin4.png" alt="Hundeerziehung Erfahrung" loading="lazy"></div>
+                <div class="avatar-circle"><img src="Kundin5.png" alt="Hundetraining Kunde" loading="lazy"></div>
+                <div class="avatar-circle"><img src="Kundin66.png" alt="Hund erziehen Erfolg" loading="lazy"></div>
+                <div class="avatar-circle"><img src="Kundin77.png" alt="Hundetraining Feedback" loading="lazy"></div>
+                <div class="avatar-circle"><img src="Kundin8.png" alt="Hundeschule online Kunde" loading="lazy"></div>
+                <div class="avatar-circle"><img src="Kundin9.png" alt="Hundetraining Testimonial" loading="lazy"></div>
+                <div class="avatar-circle"><img src="Kundin10.png" alt="Hund trainieren Bewertung" loading="lazy"></div>
+                <div class="avatar-circle"><img src="Kundin11.png" alt="Hundetraining zufriedener Kunde" loading="lazy"></div>
+            </div>
+        </div>
+    </div>
 
-        // ========================================
-        // SUPABASE STATUS UPDATE + CONVERSION TRACKING
-        // ========================================
-        (async function() {
-            // URL Parameter holen
-            var urlParams = new URLSearchParams(window.location.search);
-            var paymentIntent = urlParams.get('payment_intent');
-            var paymentIntentClientSecret = urlParams.get('payment_intent_client_secret');
-            var redirectStatus = urlParams.get('redirect_status');
-            var leadId = urlParams.get('lead_id');
+    <!-- Comparison Section -->
+    <section class="comparison-section">
+        <div class="container">
+            <div class="comparison-header">
+                <h2 class="comparison-title">WauWerk vs Traditionelle Hundeschulen</h2>
+                <p class="comparison-subtitle">Swipe nach rechts für den Vergleich →</p>
+            </div>
             
-            console.log('=== DANKE PAGE ===');
-            console.log('Payment Intent:', paymentIntent);
-            console.log('Lead ID:', leadId);
-            console.log('Redirect Status:', redirectStatus);
-            
-            // Eindeutiger Key basierend auf payment_intent ODER lead_id
-            var uniqueKey = paymentIntent || leadId || 'unknown';
-            var trackingKey = 'wauwerk_purchase_tracked_' + uniqueKey;
-            
-            // Check ob dieses spezifische Payment schon getrackt wurde
-            if (localStorage.getItem(trackingKey)) {
-                console.log('⚠️ Purchase ' + uniqueKey + ' bereits getrackt - überspringe');
-                return;
-            }
-            
-            // ========================================
-            // SUPABASE STATUS AUF "PAID" SETZEN
-            // ========================================
-            if (leadId && (redirectStatus === 'succeeded' || paymentIntent)) {
-                console.log('📝 Updating Supabase status to PAID...');
-                
-                try {
-                    const response = await fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}`, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                            'Prefer': 'return=representation'
-                        },
-                        body: JSON.stringify({
-                            status: 'paid',
-                            stripe_payment_intent: paymentIntent || null,
-                            paid_at: new Date().toISOString()
-                        })
-                    });
+            <div class="comparison-container">
+                <div class="comparison-scroll">
+                    <!-- WauWerk Card -->
+                    <div class="comparison-card wauwerk-card">
+                        <div class="card-header">
+                            <div class="card-icon">🐕</div>
+                            <div class="card-title">WauWerk</div>
+                            <div class="card-price">ab €24,99/Plan</div>
+                        </div>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon feature-yes">✓</span>
+                                <span>Personalisierter Trainingsplan</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-yes">✓</span>
+                                <span>E-Mail Support</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-yes">✓</span>
+                                <span>Verhaltensanalyse inklusive</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-yes">✓</span>
+                                <span>Globaler Zugang</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-yes">✓</span>
+                                <span>30-60 Tage Programm</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-yes">✓</span>
+                                <span>Selbstbestimmtes Lerntempo</span>
+                            </li>
+                        </ul>
+                    </div>
                     
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log('✅ Supabase status updated to PAID:', data);
-                    } else {
-                        const errorText = await response.text();
-                        console.error('❌ Supabase update failed:', response.status, errorText);
-                    }
-                } catch (error) {
-                    console.error('❌ Supabase update error:', error);
-                }
-            } else if (!leadId) {
-                console.warn('⚠️ Keine lead_id in URL - kann Supabase nicht updaten');
-            }
+                    <!-- Lokale Hundeschule -->
+                    <div class="comparison-card">
+                        <div class="card-header">
+                            <div class="card-icon">🏫</div>
+                            <div class="card-title">Lokale Hundeschule</div>
+                            <div class="card-price">€200-500/Kurs</div>
+                        </div>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon feature-no">✗</span>
+                                <span>Allgemeine Gruppenpläne</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-no">✗</span>
+                                <span>Nur vor Ort verfügbar</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-limited">⚠</span>
+                                <span>Verhaltensberatung extra</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-no">✗</span>
+                                <span>Ortsgebunden</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-limited">⚠</span>
+                                <span>Feste Kurszeiten</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-no">✗</span>
+                                <span>Begrenzte Flexibilität</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Online Kurse -->
+                    <div class="comparison-card">
+                        <div class="card-header">
+                            <div class="card-icon">💻</div>
+                            <div class="card-title">Online Kurse</div>
+                            <div class="card-price">€80-200/Kurs</div>
+                        </div>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon feature-no">✗</span>
+                                <span>Standardisierte Inhalte</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-limited">⚠</span>
+                                <span>Begrenzter Support</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-no">✗</span>
+                                <span>Keine Verhaltensanalyse</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-yes">✓</span>
+                                <span>Online verfügbar</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-no">✗</span>
+                                <span>Allgemeine Programme</span>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon feature-limited">⚠</span>
+                                <span>Begrenzte Interaktion</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-container">
+                <div class="about-image">
+                    <img src="team.png" alt="WauWerk Hundetrainer Team - Experten für Hundeerziehung" loading="lazy">
+                </div>
+                <div class="about-content">
+                    <h2 class="about-title">Das sind wir</h2>
+                    <p class="about-text">Wir sind ein Team aus leidenschaftlichen Hundetrainern und Verhaltensexperten. Mit über 10 Jahren Erfahrung haben wir tausenden Hundebesitzern geholfen, eine harmonische Beziehung zu ihrem Vierbeiner aufzubauen. Unser Ziel: Praktische, wissenschaftlich fundierte Trainingsmethoden für jeden Hundebesitzer zugänglich machen.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz CTA -->
+    <section class="quiz-cta-section" id="quiz">
+        <div class="container">
+            <h2 class="quiz-title">Kostenloses Verhaltens-Quiz für deinen Hund</h2>
+            <p class="quiz-subtitle">Finde heraus, welche Probleme dein Hund hat und erhalte einen maßgeschneiderten Trainingsplan</p>
+            <a href="kurz-schritt1.html" class="quiz-button">Verhaltens-Quiz starten 🐕</a>
+        </div>
+    </section>
+
+    <!-- Benefits Grid -->
+    <section class="benefits-section">
+        <div class="container">
+            <h2 class="benefits-title">Was du erhältst</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">🎯</div>
+                    <div class="benefit-title">Professionelle Verhaltensanalyse</div>
+                    <div class="benefit-description">Wir analysieren die Probleme deines Hundes und erstellen einen individuellen Lösungsplan</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">📋</div>
+                    <div class="benefit-title">30-60 Tage Trainingsplan</div>
+                    <div class="benefit-description">Schritt-für-Schritt Anleitung mit täglichen Übungen für nachhaltigen Erfolg</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🏆</div>
+                    <div class="benefit-title">Schnelle Erfolge</div>
+                    <div class="benefit-description">Sichtbare Fortschritte bereits nach den ersten Wochen des Trainings</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🎓</div>
+                    <div class="benefit-title">Expertenunterstützung</div>
+                    <div class="benefit-description">E-Mail Support und Antworten auf alle deine Fragen zum Hundetraining</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">❤️</div>
+                    <div class="benefit-title">Harmonisches Zusammenleben</div>
+                    <div class="benefit-description">Stressfreier Alltag und eine starke Bindung mit deinem Hund</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">⏰</div>
+                    <div class="benefit-title">Flexible Zeiteinteilung</div>
+                    <div class="benefit-description">Training in deinem eigenen Tempo, wann und wo du möchtest</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trustpilot Section -->
+    <section class="trustpilot-section">
+        <div class="container">
+            <div class="trustpilot-container">
+                <div class="trustpilot-header">
+                    <div class="trustpilot-logo">Bewertungen</div>
+                    <p class="trustpilot-text">Sieh dir unsere <strong>3.400+</strong> Bewertungen an</p>
+                    
+                    <div class="rating-display">
+                        <div class="rating-stars">
+                            <div class="star">★</div>
+                            <div class="star">★</div>
+                            <div class="star">★</div>
+                            <div class="star">★</div>
+                            <div class="star">★</div>
+                        </div>
+                        <div class="rating-score">4.8/5</div>
+                    </div>
+                    
+                    <p class="trustpilot-stats">Basierend auf 3.400+ verifizierten Bewertungen</p>
+                    <div class="rating-subtext">Letzte Bewertung: vor 2 Stunden</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+        <div class="container">
+            <h2 class="final-title">Bereit für die Transformation?</h2>
+            <p class="final-subtitle">Starte noch heute mit dem personalisierten Verhaltens-Quiz</p>
+            <a href="kurz-schritt1.html" class="final-button">Jetzt Quiz machen →</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Über uns</h3>
+                    <p>Professionelle Online-Hundeerziehung für ein harmonisches Zusammenleben mit deinem Vierbeiner.</p>
+                    <p><strong>✉️ E-Mail:</strong> <a href="/cdn-cgi/l/email-protection#44373134342b36300429212d2a693325313321362f6a2021"><span class="__cf_email__" data-cfemail="1d6e686d6d726f695d70787473306a7c686a786f76337978">[email&#160;protected]</span></a></p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Ratgeber</h3>
+                    <a href="leinenziehen-abgewoehnen.html">Hund zieht an der Leine</a>
+                    <a href="hund-bellt-abgewoehnen.html">Hund bellt ständig</a>
+                    <a href="trennungsangst-hund.html">Trennungsangst beim Hund</a>
+                    <a href="welpe-stubenrein.html">Welpe stubenrein</a>
+                    <a href="hund-selbst-trainieren.html">Hund selbst trainieren</a>
+                    <a href="hundeschule-vs-online-training.html">Hundeschule vs Online</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Rechtliches</h3>
+                    <a href="impressum.html">Impressum</a>
+                    <a href="datenschutz.html">Datenschutz</a>
+                    <a href="agb.html">AGB</a>
+                    <a href="widerruf.html">Widerrufsrecht</a>
+                </div>
+            </div>
             
-            // ========================================
-            // CONVERSION TRACKING
-            // ========================================
-            
-            // Preis aus localStorage oder URL
-            var selectedPlan = localStorage.getItem('selectedPlan') || '3month';
-            var prices = {
-                '1month': 24.99,
-                '3month': 29.99,
-                '6month': 49.99
-            };
-            var value = prices[selectedPlan] || 29.99;
-            
-            // Event ID für Meta Deduplizierung
-            var eventId = localStorage.getItem('fb_event_id') || ('purchase_' + Date.now());
-            
-            console.log('Plan:', selectedPlan, '| Value:', value, '| Event ID:', eventId);
-            
-            // ========================================
-            // META PIXEL - Purchase Event
-            // ========================================
-            if (typeof fbq !== 'undefined') {
-                fbq('track', 'Purchase', {
-                    value: value,
-                    currency: 'EUR',
-                    content_type: 'product',
-                    content_ids: ['wauwerk_' + selectedPlan],
-                    content_name: 'WauWerk Trainingsplan',
-                    contents: [{
-                        id: 'wauwerk_' + selectedPlan,
-                        quantity: 1
-                    }]
-                }, { eventID: eventId });
-                console.log('✅ Meta Purchase gesendet (Event ID: ' + eventId + ')');
-            }
-            
-            // ========================================
-            // TIKTOK - CompletePayment Event
-            // ========================================
-            if (typeof ttq !== 'undefined') {
-                ttq.track('CompletePayment', {
-                    value: value,
-                    currency: 'EUR',
-                    content_type: 'product',
-                    content_id: 'wauwerk_' + selectedPlan,
-                    content_name: 'WauWerk Trainingsplan'
-                });
-                console.log('✅ TikTok CompletePayment gesendet');
-            }
-            
-            // ========================================
-            // GOOGLE ADS - Conversion
-            // ========================================
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'conversion', {
-                    'send_to': 'AW-17806525009/I3FdCL3O1NEbENGE6KpC',
-                    'value': value,
-                    'currency': 'EUR',
-                    'transaction_id': paymentIntent || leadId || ''
-                });
-                console.log('✅ Google Ads Conversion gesendet');
-            }
-            
-            // Als getrackt markieren (localStorage = persistent)
-            localStorage.setItem(trackingKey, Date.now().toString());
-            
-            // Alte tracking keys aufräumen (nur die letzten 10 behalten)
-            var allKeys = Object.keys(localStorage).filter(function(k) {
-                return k.startsWith('wauwerk_purchase_tracked_');
-            });
-            if (allKeys.length > 10) {
-                allKeys.sort().slice(0, allKeys.length - 10).forEach(function(k) {
-                    localStorage.removeItem(k);
-                });
-            }
-            
-            // Cleanup
-            localStorage.removeItem('fb_event_id');
-            localStorage.removeItem('wentToStripe');
-            
-            console.log('=== TRACKING & SUPABASE UPDATE COMPLETE ===');
-        })();
-    </script>
-</body>
-</html>
+            <div class="footer

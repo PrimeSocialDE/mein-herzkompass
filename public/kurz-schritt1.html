@@ -13,6 +13,20 @@
       gtag('js', new Date());
       gtag('config', 'AW-17806525009');
     </script>
+    <script>
+    // UTM & Tracking Parameter beim ersten Besuch speichern
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'ttclid'].forEach(function(p) {
+            if (params.get(p)) localStorage.setItem(p, params.get(p));
+        });
+        if (!localStorage.getItem('landing_page')) {
+            localStorage.setItem('landing_page', window.location.href);
+            localStorage.setItem('first_visit', new Date().toISOString());
+            if (document.referrer) localStorage.setItem('referrer', document.referrer);
+        }
+    })();
+    </script>
     <script src="cookie-banner.js" defer></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
