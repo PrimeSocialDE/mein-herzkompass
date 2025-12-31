@@ -37,6 +37,9 @@
         }(window, document, 'ttq');
     </script>
 
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+
     <style>
         * {
             margin: 0;
@@ -54,6 +57,172 @@
         .container {
             max-width: 400px;
             margin: 0 auto;
+        }
+
+        /* Payment Popup Overlay */
+        .payment-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .payment-overlay.active {
+            display: flex;
+        }
+
+        .payment-popup {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .payment-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .payment-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .payment-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .payment-body {
+            padding: 20px;
+        }
+
+        .payment-product {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            background: #FAFAFA;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .payment-product-icon {
+            width: 48px;
+            height: 48px;
+            background: #FEF3E7;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .payment-product-info h3 {
+            font-size: 15px;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .payment-product-info p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .payment-product-price {
+            margin-left: auto;
+            font-size: 20px;
+            font-weight: 700;
+            color: #C4A576;
+        }
+
+        #payment-element {
+            margin-bottom: 20px;
+        }
+
+        .payment-error {
+            background: #FEF2F2;
+            color: #DC2626;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .payment-error.visible {
+            display: block;
+        }
+
+        .payment-btn {
+            width: 100%;
+            background: #C4A576;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .payment-btn:hover {
+            background: #B8956A;
+        }
+
+        .payment-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .payment-guarantee {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         /* Success */
@@ -357,13 +526,63 @@
         </div>
     </div>
 
+    <!-- Payment Popup -->
+    <div class="payment-overlay" id="paymentOverlay">
+        <div class="payment-popup">
+            <div class="payment-header">
+                <span class="payment-title">Zusatzmodul hinzufügen</span>
+                <button class="payment-close" onclick="closePaymentPopup()">✕</button>
+            </div>
+            <div class="payment-body">
+                <div class="payment-product">
+                    <div class="payment-product-icon" id="paymentIcon">😰</div>
+                    <div class="payment-product-info">
+                        <h3 id="paymentModuleName">Trennungsangst Prävention</h3>
+                        <p>8 Übungen • 2 Wochen</p>
+                    </div>
+                    <div class="payment-product-price">€19</div>
+                </div>
+
+                <div id="paymentError" class="payment-error"></div>
+
+                <div id="payment-element"></div>
+
+                <button class="payment-btn" id="paymentBtn" onclick="submitUpsellPayment()">
+                    🔒 Jetzt bezahlen
+                </button>
+
+                <div class="payment-guarantee">
+                    🛡️ Sichere Zahlung • 14 Tage Geld-zurück
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        const STRIPE_PUBLIC_KEY = 'pk_live_51NkRn3Gg0Z3vPuPAXPLYzpdqJB5xgnFmGy4v7Rb9BEelbFehOUOSrxdhMvZzRLqdYSz7N21ZS5dGn3Mn2FKR3Iab00T3s0NxhG';
+        
         const dogName = localStorage.getItem('dogName') || 'Luna';
         const dogAge = localStorage.getItem('dogAge') || 'puppy';
         const leadId = localStorage.getItem('leadId') || '';
         const userEmail = localStorage.getItem('userEmail') || '';
         const selectedPlan = localStorage.getItem('selectedPlan') || '3month';
         
+        let stripe = null;
+        let elements = null;
+        let paymentElement = null;
+        let currentModule = null;
+        let clientSecret = null;
+
+        // Modul-Daten
+        const moduleData = {
+            'anxiety': { icon: '😰', name: 'Trennungsangst Prävention', exercises: '8 Übungen' },
+            'pulling': { icon: '🦮', name: 'Leinenführigkeit Basics', exercises: '6 Übungen' },
+            'barking': { icon: '🔊', name: 'Anti-Bell Training', exercises: '6 Übungen' },
+            'aggression': { icon: '😤', name: 'Aggressions-Kontrolle', exercises: '8 Übungen' },
+            'recall': { icon: '📣', name: 'Rückruf-Training', exercises: '6 Übungen' },
+            'jumping': { icon: '🐕', name: 'Anti-Anspring Training', exercises: '5 Übungen' }
+        };
+
         // Preise je Plan
         const planPrices = {
             '1month': 24.99,
@@ -373,7 +592,6 @@
         const purchaseValue = planPrices[selectedPlan] || 29.99;
 
         // ==================== PURCHASE TRACKING ====================
-        // Prüfen ob von Stripe Checkout kommend
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session_id');
         const trackingKey = 'purchase_tracked_' + (sessionId || leadId);
@@ -381,7 +599,6 @@
         if (!localStorage.getItem(trackingKey)) {
             console.log('🔥 Purchase Event feuern:', purchaseValue, 'EUR');
             
-            // Meta Pixel
             if (typeof fbq !== 'undefined') {
                 fbq('track', 'Purchase', {
                     value: purchaseValue,
@@ -392,7 +609,6 @@
                 console.log('✅ Meta Purchase gefeuert');
             }
 
-            // TikTok Pixel
             if (typeof ttq !== 'undefined') {
                 ttq.track('CompletePayment', {
                     value: purchaseValue,
@@ -403,7 +619,6 @@
                 console.log('✅ TikTok Purchase gefeuert');
             }
 
-            // Google Ads
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'conversion', {
                     'send_to': 'AW-17806525009/purchase',
@@ -419,7 +634,6 @@
                 console.log('✅ Google Purchase gefeuert');
             }
 
-            // Markieren dass Pixel gefeuert wurde (verhindert Duplikate)
             localStorage.setItem(trackingKey, 'true');
         } else {
             console.log('⏭️ Purchase bereits getrackt, skip');
@@ -433,20 +647,20 @@
         // Dynamische Texte basierend auf Alter
         const ageContent = {
             'puppy': {
-                stat: `<strong>70% aller Welpen</strong> entwickeln später Verhaltensprobleme.`,
-                header: `Da ${dogName} noch ein Welpe ist, kannst du jetzt vorbeugen:`
+                stat: '<strong>70% aller Welpen</strong> entwickeln später Verhaltensprobleme.',
+                header: 'Da ' + dogName + ' noch ein Welpe ist, kannst du jetzt vorbeugen:'
             },
             'young': {
-                stat: `<strong>Junge Hunde lernen am schnellsten.</strong> Schlechte Gewohnheiten jetzt stoppen ist einfacher als später.`,
-                header: `Da ${dogName} noch jung ist, ist jetzt der beste Zeitpunkt:`
+                stat: '<strong>Junge Hunde lernen am schnellsten.</strong> Schlechte Gewohnheiten jetzt stoppen ist einfacher als später.',
+                header: 'Da ' + dogName + ' noch jung ist, ist jetzt der beste Zeitpunkt:'
             },
             'adult': {
-                stat: `<strong>Auch erwachsene Hunde lernen dazu.</strong> Mit den richtigen Methoden siehst du schnell Fortschritte.`,
-                header: `Für ${dogName} empfehlen wir:`
+                stat: '<strong>Auch erwachsene Hunde lernen dazu.</strong> Mit den richtigen Methoden siehst du schnell Fortschritte.',
+                header: 'Für ' + dogName + ' empfehlen wir:'
             },
             'senior': {
-                stat: `<strong>Alte Hunde, neue Tricks?</strong> Absolut! Sanftes Training funktioniert in jedem Alter.`,
-                header: `Speziell für ${dogName} als älteren Hund:`
+                stat: '<strong>Alte Hunde, neue Tricks?</strong> Absolut! Sanftes Training funktioniert in jedem Alter.',
+                header: 'Speziell für ' + dogName + ' als älteren Hund:'
             }
         };
 
@@ -455,13 +669,22 @@
         document.querySelector('.upsell-header h2').innerHTML = content.header;
         document.querySelector('.upsell-stat').innerHTML = content.stat;
 
-        // Stripe Checkout für Upsell
+        // Payment Popup öffnen
         async function buyUpsell(module) {
             const btn = event.target;
             btn.textContent = 'Lädt...';
             btn.disabled = true;
 
+            currentModule = module;
+            const data = moduleData[module] || moduleData['anxiety'];
+
+            // Popup aktualisieren
+            document.getElementById('paymentIcon').textContent = data.icon;
+            document.getElementById('paymentModuleName').textContent = data.name;
+            document.querySelector('.payment-product-info p').textContent = data.exercises + ' • 2 Wochen';
+
             try {
+                // PaymentIntent vom Server holen
                 const response = await fetch('/api/upsell-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -473,20 +696,106 @@
                     })
                 });
 
-                const data = await response.json();
+                const result = await response.json();
 
-                if (data.url) {
-                    window.location.href = data.url;
-                } else {
-                    alert('Fehler beim Laden. Bitte versuche es erneut.');
+                if (result.error) {
+                    alert('Fehler: ' + result.error);
                     btn.textContent = 'Hinzufügen';
                     btn.disabled = false;
+                    return;
                 }
+
+                clientSecret = result.clientSecret;
+
+                // Stripe initialisieren
+                if (!stripe) {
+                    stripe = Stripe(STRIPE_PUBLIC_KEY);
+                }
+
+                // Stripe Elements erstellen
+                elements = stripe.elements({
+                    clientSecret: clientSecret,
+                    appearance: {
+                        theme: 'stripe',
+                        variables: {
+                            colorPrimary: '#C4A576',
+                            colorBackground: '#ffffff',
+                            colorText: '#2C2C2E',
+                            colorDanger: '#e74c3c',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            borderRadius: '8px'
+                        }
+                    },
+                    locale: 'de'
+                });
+
+                // Payment Element mounten
+                paymentElement = elements.create('payment', {
+                    layout: { type: 'tabs', defaultCollapsed: false },
+                    paymentMethodOrder: ['card', 'klarna', 'paypal'],
+                    wallets: { applePay: 'auto', googlePay: 'auto' }
+                });
+
+                paymentElement.mount('#payment-element');
+
+                // Popup öffnen
+                document.getElementById('paymentOverlay').classList.add('active');
+
+                btn.textContent = 'Hinzufügen';
+                btn.disabled = false;
+
             } catch (err) {
-                console.error('Checkout error:', err);
+                console.error('Error:', err);
                 alert('Fehler beim Laden. Bitte versuche es erneut.');
                 btn.textContent = 'Hinzufügen';
                 btn.disabled = false;
+            }
+        }
+
+        // Zahlung abschicken
+        async function submitUpsellPayment() {
+            const payBtn = document.getElementById('paymentBtn');
+            payBtn.disabled = true;
+            payBtn.innerHTML = '<span class="spinner"></span> Wird verarbeitet...';
+            
+            hidePaymentError();
+
+            try {
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: window.location.origin + '/danke-zusatz.html?module=' + currentModule
+                    }
+                });
+
+                if (error) {
+                    showPaymentError(error.message);
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '🔒 Jetzt bezahlen';
+                }
+            } catch (err) {
+                showPaymentError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
+                payBtn.disabled = false;
+                payBtn.innerHTML = '🔒 Jetzt bezahlen';
+            }
+        }
+
+        function showPaymentError(message) {
+            const errorEl = document.getElementById('paymentError');
+            errorEl.textContent = message;
+            errorEl.classList.add('visible');
+        }
+
+        function hidePaymentError() {
+            document.getElementById('paymentError').classList.remove('visible');
+        }
+
+        function closePaymentPopup() {
+            document.getElementById('paymentOverlay').classList.remove('active');
+            // Payment Element unmounten
+            if (paymentElement) {
+                paymentElement.unmount();
+                paymentElement = null;
             }
         }
 
@@ -494,6 +803,13 @@
         document.querySelector('.skip-btn').addEventListener('click', function(e) {
             e.preventDefault();
             window.location.href = 'danke.html';
+        });
+
+        // Overlay schließen bei Klick außerhalb
+        document.getElementById('paymentOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePaymentPopup();
+            }
         });
     </script>
 </body>

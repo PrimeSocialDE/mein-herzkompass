@@ -31,36 +31,30 @@ export async function POST(request: Request) {
         }
 
         const moduleName = moduleNames[module] || 'Zusatz-Modul';
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://mein-wauwerk.de';
 
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            mode: 'payment',
-            customer_email: email,
-            line_items: [
-                {
-                    price_data: {
-                        currency: 'eur',
-                        product_data: {
-                            name: 'WauWerk ' + moduleName,
-                            description: 'Zusatz-Modul für ' + (dogName || 'deinen Hund'),
-                        },
-                        unit_amount: 1900,
-                    },
-                    quantity: 1,
-                }
-            ],
+        // PaymentIntent erstellen (nicht Checkout Session)
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: 1900, // €19.00 in cents
+            currency: 'eur',
+            automatic_payment_methods: {
+                enabled: true,
+            },
             metadata: {
                 type: 'upsell',
                 module: module,
+                module_name: moduleName,
                 lead_id: leadId || '',
-                dog_name: dogName || ''
+                dog_name: dogName || '',
+                email: email
             },
-            success_url: baseUrl + '/danke-zusatz.html?session_id={CHECKOUT_SESSION_ID}&module=' + module,
-            cancel_url: baseUrl + '/danke.html',
+            receipt_email: email,
+            description: 'WauWerk ' + moduleName + ' für ' + (dogName || 'Hund')
         });
 
-        return NextResponse.json({ url: session.url });
+        return NextResponse.json({ 
+            clientSecret: paymentIntent.client_secret,
+            paymentIntentId: paymentIntent.id
+        });
 
     } catch {
         return NextResponse.json({ error: 'Checkout failed' }, { status: 500 });
