@@ -51,7 +51,7 @@
 
         <div class="privacy-note">
             <span class="lock-icon">🔒</span>
-            <p class="privacy-text">Du erhältst deinen Plan + gelegentliche Trainingstipps. <a href="datenschutz.html">Datenschutz</a></p>
+            <p class="privacy-text">🔒 Wir senden dir deinen Plan per E-Mail. <a href="datenschutz.html">Datenschutz</a></p>
         </div>
     </div>
 
@@ -60,56 +60,30 @@
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
 
-        // Brevo API Key - ERSETZE MIT DEINEM KEY!
-
-        const BREVO_LIST_ID = 2; // Deine WauWerk Liste in Brevo
-
         // Hundename aus localStorage
         const dogName = localStorage.getItem('dogName');
         if (dogName) {
             document.getElementById('dogName').textContent = dogName + 's';
         }
 
-        // Problem Labels für Brevo (lesbar)
-        const problemLabels = {
-            'pulling': 'Leinenziehen',
-            'barking': 'Übermäßiges Bellen',
-            'aggression': 'Aggression',
-            'anxiety': 'Trennungsangst',
-            'jumping': 'Anspringen',
-            'recall': 'Kommt nicht zurück',
-            'energy': 'Übermäßige Energie',
-            'destructive': 'Zerstörerisches Verhalten',
-            'soiling': 'In die Wohnung machen'
-        };
-
         function parseJSON(str) {
             try { return JSON.parse(str || '[]'); } 
             catch(e) { return []; }
         }
 
-        // Brevo Contact erstellen/aktualisieren
+        // Brevo Contact erstellen via API Route (sicher, kein API Key im Frontend)
         async function sendToBrevo(email, leadId, dogNameValue, dogProblemKey) {
-            const problemLabel = problemLabels[dogProblemKey] || 'Verhaltensproblem';
-            
             try {
-                const response = await fetch('https://api.brevo.com/v3/contacts', {
+                const response = await fetch('/api/brevo-contact', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'api-key': BREVO_API_KEY
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         email: email,
-                        listIds: [BREVO_LIST_ID],
-                        updateEnabled: true,
-                        attributes: {
-                            DOG_NAME: dogNameValue || '',
-                            DOG_PROBLEM: problemLabel,
-                            DOG_PROBLEM_KEY: dogProblemKey || '',
-                            LEAD_ID: leadId || '',
-                            SIGNUP_DATE: new Date().toISOString().split('T')[0]
-                        }
+                        leadId: leadId,
+                        dogName: dogNameValue,
+                        dogProblemKey: dogProblemKey
                     })
                 });
                 
@@ -142,6 +116,12 @@
             
             // E-Mail in localStorage
             localStorage.setItem('userEmail', email);
+            
+            // Sicherheits-Timeout: Nach 5 Sekunden auf jeden Fall weiterleiten
+            const redirectTimeout = setTimeout(() => {
+                console.log('⏱️ Timeout - redirecting anyway');
+                window.location.href = 'deinplan.html';
+            }, 5000);
             
             // Quiz-Daten
             const dogNameValue = localStorage.getItem('dogName') || '';
@@ -196,14 +176,11 @@
                 console.log('Supabase error:', err);
             }
             
-            // 2. Brevo senden (mit lead_id!)
-            if (BREVO_API_KEY !== 'YOUR_BREVO_API_KEY_HERE') {
-                await sendToBrevo(email, leadId, dogNameValue, dogProblemKey);
-            } else {
-                console.log('⚠️ Brevo API Key nicht gesetzt');
-            }
+            // 2. Brevo senden via API Route (im Hintergrund, nicht warten)
+            sendToBrevo(email, leadId, dogNameValue, dogProblemKey);
             
             // 3. Weiter zur Checkout-Seite
+            clearTimeout(redirectTimeout);
             window.location.href = 'deinplan.html';
         });
     </script>
