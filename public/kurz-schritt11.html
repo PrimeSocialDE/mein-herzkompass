@@ -51,7 +51,7 @@
 
         <div class="privacy-note">
             <span class="lock-icon">🔒</span>
-            <p class="privacy-text">🔒 Wir senden dir deinen Plan per E-Mail. <a href="datenschutz.html">Datenschutz</a></p>
+            <p class="privacy-text"> Wir senden dir deinen Plan per E-Mail. <a href="datenschutz.html">Datenschutz</a></p>
         </div>
     </div>
 
@@ -59,6 +59,19 @@
         // Supabase Config
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+        // A/B Test: 50/50 Split
+        function getABTestPage() {
+            // Prüfe ob schon eine Variante zugewiesen wurde
+            let variant = localStorage.getItem('ab_test_pricing');
+            if (!variant) {
+                // 50/50 Zufall
+                variant = Math.random() < 0.5 ? 'A' : 'B';
+                localStorage.setItem('ab_test_pricing', variant);
+            }
+            // A = deinplan.html (Tagespreis groß), B = deinplan3.html (Gesamtpreis groß)
+            return variant === 'A' ? 'deinplan.html' : 'deinplan3.html';
+        }
 
         // Hundename aus localStorage
         const dogName = localStorage.getItem('dogName');
@@ -88,10 +101,13 @@
             // E-Mail in localStorage
             localStorage.setItem('userEmail', email);
             
+            // A/B Test Seite bestimmen
+            const targetPage = getABTestPage();
+            
             // Sicherheits-Timeout: Nach 5 Sekunden auf jeden Fall weiterleiten
             const redirectTimeout = setTimeout(() => {
                 console.log('⏱️ Timeout - redirecting anyway');
-                window.location.href = 'deinplan.html';
+                window.location.href = targetPage;
             }, 5000);
             
             // Quiz-Daten
@@ -112,7 +128,8 @@
                 utm_source: localStorage.getItem('utm_source') || null,
                 utm_medium: localStorage.getItem('utm_medium') || null,
                 utm_campaign: localStorage.getItem('utm_campaign') || null,
-                fbclid: localStorage.getItem('fbclid') || null
+                fbclid: localStorage.getItem('fbclid') || null,
+                ab_variant: localStorage.getItem('ab_test_pricing') || null
             };
 
             let leadId = null;
@@ -131,7 +148,8 @@
                         email: email,
                         dog_name: dogNameValue,
                         status: 'email_captured',
-                        answers: answers
+                        answers: answers,
+                        ab_variant: localStorage.getItem('ab_test_pricing') || null
                     })
                 });
                 
@@ -149,7 +167,7 @@
             
             // 2. Weiter zur Checkout-Seite
             clearTimeout(redirectTimeout);
-            window.location.href = 'deinplan.html';
+            window.location.href = targetPage;
         });
     </script>
 </body>
