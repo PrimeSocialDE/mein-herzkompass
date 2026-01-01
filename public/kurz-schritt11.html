@@ -72,35 +72,6 @@
         }
 
         // Brevo Contact erstellen via API Route (sicher, kein API Key im Frontend)
-        async function sendToBrevo(email, leadId, dogNameValue, dogProblemKey) {
-            try {
-                const response = await fetch('/api/brevo-contact', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        leadId: leadId,
-                        dogName: dogNameValue,
-                        dogProblemKey: dogProblemKey
-                    })
-                });
-                
-                if (response.ok) {
-                    console.log('✅ Brevo contact created/updated');
-                    return true;
-                } else {
-                    const error = await response.json();
-                    console.log('Brevo error:', error);
-                    return false;
-                }
-            } catch (err) {
-                console.log('Brevo API error:', err);
-                return false;
-            }
-        }
-
         // Form Submit
         document.getElementById('emailForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -176,10 +147,7 @@
                 console.log('Supabase error:', err);
             }
             
-            // 2. Brevo senden via API Route (im Hintergrund, nicht warten)
-            sendToBrevo(email, leadId, dogNameValue, dogProblemKey);
-            
-            // 3. Weiter zur Checkout-Seite
+            // 2. Weiter zur Checkout-Seite
             clearTimeout(redirectTimeout);
             window.location.href = 'deinplan.html';
         });
