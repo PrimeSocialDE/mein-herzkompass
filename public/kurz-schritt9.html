@@ -129,7 +129,7 @@
             </div>
             <div class="info-row">
                 <span class="info-label">Dein Plan</span>
-                <span class="info-value" id="durationDisplay">4-6 Wochen</span>
+                <span class="info-value" id="durationDisplay">4-8 Wochen</span>
             </div>
         </div>
     </div>
@@ -160,7 +160,8 @@
             'anxiety': 'Trennungsangst',
             'energy': 'Übermäßige Energie',
             'destructive': 'Zerstörerisches Verhalten',
-            'soiling': 'Stubenreinheit'
+            'soiling': 'Stubenreinheit',
+            'mouthing': 'Unerwünschtes Aufnehmen'
         };
         document.getElementById('problemDisplay').textContent = problemMap[dogProblem] || dogProblem;
         
@@ -171,7 +172,8 @@
             'anxiety': 'die Trennungsangst',
             'energy': 'die übermäßige Energie',
             'destructive': 'das zerstörerische Verhalten',
-            'soiling': 'die Unsauberkeit'
+            'soiling': 'die Unsauberkeit',
+            'mouthing': 'das Aufnehmen von Gegenständen'
         };
         document.getElementById('problemTextWarning').textContent = problemMapWarning[dogProblem] || 'das Verhalten';
         
@@ -186,7 +188,7 @@
         document.getElementById('scoreMarker').style.left = `${score * 10}%`;
         
         // Dauer basierend auf Trainingszeit
-        const durationMap = { '5': '10-12 Wochen', '10': '6-8 Wochen', '15': '4-6 Wochen', '20': '4-6 Wochen' };
+        const durationMap = { '5': '10-12 Wochen', '10': '8-10 Wochen', '15': '6-8 Wochen', '20': '4-6 Wochen' };
         const duration = durationMap[trainingTime] || '6-8 Wochen';
         document.getElementById('durationDisplay').textContent = duration;
     </script>

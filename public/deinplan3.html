@@ -2388,7 +2388,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 'recall': 'Kommt nicht zurück',
                 'energy': 'Übermäßige Energie',
                 'destructive': 'Zerstörerisches Verhalten',
-                'soiling': 'In die Wohnung machen'
+                'soiling': 'In die Wohnung machen',
+                'mouthing': 'Unerwünschtes Aufnehmen'
             };
             problemText = problemMap[dogProblem] || dogProblem;
         }
@@ -2477,6 +2478,15 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 '✓ Richtiges Timing beim Rausgehen',
                 '✓ 20+ Übungen speziell für ' + dogName,
                 '✓ Eine saubere Wohnung ohne Stress'
+            ],
+            'mouthing': [
+                '✓ ' + dogName + ' lernt Sachen liegen zu lassen',
+                '✓ Sicheres "Aus"-Kommando aufbauen',
+                '✓ Gefährliche Gegenstände werden ignoriert',
+                '✓ Kein Fressen vom Boden mehr',
+                '✓ ' + dogName + 's Impulskontrolle stärken',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Entspannte Spaziergänge ohne Sorgen'
             ]
         };
         
@@ -2513,7 +2523,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             'recall': { bad: 'Ignoriert', good: 'Zuverlässig' },
             'energy': { bad: 'Übermäßig', good: 'Ausgeglichen' },
             'destructive': { bad: 'Häufig', good: 'Gestoppt' },
-            'soiling': { bad: 'Regelmäßig', good: 'Stubenrein' }
+            'soiling': { bad: 'Regelmäßig', good: 'Stubenrein' },
+            'mouthing': { bad: 'Ständig', good: 'Kontrolliert' }
         };
         
         const defaultValues = { bad: 'Kritisch', good: 'Gelöst' };
@@ -2865,7 +2876,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             'recall': 'In 4 Wochen zuverlässiger Rückruf',
             'energy': 'In 4 Wochen ein ausgeglichener Hund',
             'destructive': 'In 4 Wochen ein entspanntes Zuhause',
-            'soiling': 'In 4 Wochen ein stubenreiner Hund'
+            'soiling': 'In 4 Wochen ein stubenreiner Hund',
+            'mouthing': 'In 4 Wochen keine unerwünschten Sachen mehr im Maul'
         };
         
         function showExitPopup() {
@@ -2944,7 +2956,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 'recall': 'Rückruf',
                 'energy': 'Hyperaktivität',
                 'destructive': 'Zerstörungswut',
-                'soiling': 'Stubenreinheit'
+                'soiling': 'Stubenreinheit',
+                'mouthing': 'Unerwünschtes Aufnehmen'
             };
             
             const dogProblemValue = localStorage.getItem('dogProblem') || 'anxiety';
