@@ -2834,10 +2834,10 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             goToTpSlide(tpCurrentSlide);
         }, 4000);
 
-        // Exit-Intent Popup Logic
+        // Exit-Intent Popup Logic - nur wenn vom Checkout/Stripe zurück
         let exitPopupShown = false;
         
-        // Prüfen ob User von Checkout zurückkommt
+        // Prüfen ob User von Stripe zurückkommt
         const fromStripe = localStorage.getItem('wentToStripe') === 'true';
         
         if (fromStripe && !sessionStorage.getItem('exitPopupShown')) {
@@ -2847,17 +2847,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             }, 500);
         }
         
-        // Exit-Intent auf Desktop (Maus verlässt Fenster nach oben)
-        document.addEventListener('mouseout', function(e) {
-            if (e.clientY < 10 && !exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
-                showExitPopup();
-            }
-        });
-        
-        // Back-Button Detection
+        // Back-Button Detection - nur wenn von Stripe
         window.addEventListener('pageshow', function(event) {
-            // Wird getriggert wenn User mit Back-Button zurückkommt (auch aus bfcache)
-            if (event.persisted || localStorage.getItem('wentToStripe') === 'true') {
+            if (localStorage.getItem('wentToStripe') === 'true') {
                 if (!exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
                     setTimeout(() => {
                         showExitPopup();
