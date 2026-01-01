@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -28,7 +27,7 @@
             --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
             --border-radius: 12px;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background-light); color: var(--text-dark); line-height: 1.5; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background-light); color: var(--text-dark); line-height: 1.5; -webkit-tap-highlight-color: transparent; }
         .header { background: var(--white); padding: 16px 0; border-bottom: 1px solid var(--border-light); text-align: center; }
         .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-dark); }
         .logo-image { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
@@ -42,162 +41,34 @@
         .progress-fill { width: 55.5%; height: 100%; background: var(--light-brown); transition: width 0.3s ease; }
         .progress-text { text-align: center; margin-top: 8px; color: var(--text-medium); font-size: 13px; }
         .options-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-        .option-card { background: var(--white); border: 2px solid var(--border-light); border-radius: var(--border-radius); padding: 16px 20px; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow-light); display: flex; align-items: center; gap: 16px; }
+        .option-card { background: var(--white); border: 2px solid var(--border-light); border-radius: var(--border-radius); padding: 16px 20px; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow-light); display: flex; align-items: center; gap: 16px; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
         .option-card:hover { border-color: var(--light-brown); transform: translateY(-2px); box-shadow: var(--shadow-medium); }
         .option-card.selected { border-color: var(--light-brown); background: linear-gradient(135deg, rgba(212, 185, 150, 0.05), rgba(212, 185, 150, 0.1)); }
         .option-image { width: 60px; height: 60px; flex-shrink: 0; background: var(--border-light); border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .option-image img { width: 100%; height: 100%; object-fit: cover; }
         .option-text { font-size: 16px; font-weight: 600; color: var(--text-dark); flex: 1; }
-        .continue-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 40px); max-width: 560px; background: var(--primary-brown); color: var(--white); border: none; border-radius: var(--border-radius); padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer; opacity: 0.5; pointer-events: none; transition: all 0.2s ease; }
+        .continue-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 40px); max-width: 560px; background: var(--primary-brown); color: var(--white); border: none; border-radius: var(--border-radius); padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer; opacity: 0.5; pointer-events: none; transition: all 0.2s ease; touch-action: manipulation; }
         .continue-btn.active { opacity: 1; pointer-events: auto; }
         .continue-btn.active:hover { background: var(--brown-hover); }
 
-        /* Stress-Popup Styles */
-        .stress-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .stress-overlay.active {
-            display: flex;
-        }
-
-        .stress-popup {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 35px 30px;
-            max-width: 420px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: popupIn 0.3s ease;
-        }
-
-        @keyframes popupIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .stress-emoji {
-            font-size: 50px;
-            margin-bottom: 15px;
-        }
-
-        .stress-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-            line-height: 1.3;
-        }
-
-        .stress-subtitle {
-            font-size: 14px;
-            color: var(--text-medium);
-            margin-bottom: 30px;
-        }
-
-        .slider-container {
-            margin-bottom: 25px;
-        }
-
-        .slider-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 13px;
-            color: var(--text-medium);
-        }
-
-        .stress-slider {
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            background: linear-gradient(to right, #A8D5A2, #F5D76E, #E88B8B);
-            -webkit-appearance: none;
-            appearance: none;
-            cursor: pointer;
-        }
-
-        .stress-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--white);
-            border: 3px solid var(--primary-brown);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .stress-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.1);
-        }
-
-        .stress-slider::-moz-range-thumb {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--white);
-            border: 3px solid var(--primary-brown);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-        }
-
-        .stress-value {
-            font-size: 48px;
-            font-weight: 800;
-            color: var(--primary-brown);
-            margin: 20px 0 10px;
-        }
-
-        .stress-response {
-            font-size: 15px;
-            color: var(--text-dark);
-            min-height: 45px;
-            line-height: 1.5;
-            margin-bottom: 25px;
-            padding: 0 10px;
-        }
-
-        .stress-continue-btn {
-            width: 100%;
-            background: var(--primary-brown);
-            color: var(--white);
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .stress-continue-btn:hover {
-            background: var(--brown-hover);
-        }
-
-        @media (max-width: 480px) {
-            .container { padding: 25px 15px; padding-bottom: 90px; }
-            .quiz-title { font-size: 20px; }
-            .option-card { padding: 14px 16px; gap: 14px; }
-            .option-image { width: 50px; height: 50px; }
-            .option-text { font-size: 14px; }
-            .stress-popup { padding: 25px 20px; }
-            .stress-title { font-size: 20px; }
-            .stress-value { font-size: 40px; }
-        }
+        .stress-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        .stress-overlay.active { display: flex; }
+        .stress-popup { background: var(--white); border-radius: 20px; padding: 35px 30px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: popupIn 0.3s ease; }
+        @keyframes popupIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .stress-emoji { font-size: 50px; margin-bottom: 15px; }
+        .stress-title { font-size: 22px; font-weight: 700; color: var(--text-dark); margin-bottom: 10px; line-height: 1.3; }
+        .stress-subtitle { font-size: 14px; color: var(--text-medium); margin-bottom: 30px; }
+        .slider-container { margin-bottom: 25px; }
+        .slider-labels { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; color: var(--text-medium); }
+        .stress-slider { width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(to right, #A8D5A2, #F5D76E, #E88B8B); -webkit-appearance: none; appearance: none; cursor: pointer; }
+        .stress-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; border-radius: 50%; background: var(--white); border: 3px solid var(--primary-brown); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); cursor: pointer; transition: transform 0.2s; }
+        .stress-slider::-webkit-slider-thumb:hover { transform: scale(1.1); }
+        .stress-slider::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: var(--white); border: 3px solid var(--primary-brown); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); cursor: pointer; }
+        .stress-value { font-size: 48px; font-weight: 800; color: var(--primary-brown); margin: 20px 0 10px; }
+        .stress-response { font-size: 15px; color: var(--text-dark); min-height: 45px; line-height: 1.5; margin-bottom: 25px; padding: 0 10px; }
+        .stress-continue-btn { width: 100%; background: var(--primary-brown); color: var(--white); border: none; border-radius: var(--border-radius); padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; touch-action: manipulation; }
+        .stress-continue-btn:hover { background: var(--brown-hover); }
+        @media (max-width: 480px) { .container { padding: 25px 15px; padding-bottom: 90px; } .quiz-title { font-size: 20px; } .option-card { padding: 14px 16px; gap: 14px; } .option-image { width: 50px; height: 50px; } .option-text { font-size: 14px; } .stress-popup { padding: 25px 20px; } .stress-title { font-size: 20px; } .stress-value { font-size: 40px; } }
     </style>
     <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','864109602683515');fbq('track','PageView');</script>
     <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","ufxcf43805");</script>
@@ -211,7 +82,7 @@
     </header>
     <div class="container">
         <div class="quiz-header">
-            <h1 class="quiz-title">Welche Verhaltensprobleme möchtest du zuerst lösen?</h1>
+            <h1 class="quiz-title" id="quizTitle">Welche Verhaltensprobleme möchtest du zuerst lösen?</h1>
             <p class="quiz-subtitle">Wähle alle zutreffenden Probleme aus:</p>
         </div>
         <div class="progress-container">
@@ -222,6 +93,10 @@
             <div class="option-card" data-behavior="energy">
                 <div class="option-image"><img src="bsp1.png" alt="Übermäßige Energie"></div>
                 <div class="option-text">Übermäßige Energie und mangelnde Kontrolle</div>
+            </div>
+            <div class="option-card" data-behavior="mouthing">
+                <div class="option-image"><img src="mundboden.png" alt="Nimmt Sachen in den Mund"></div>
+                <div class="option-text">Nimmt Sachen in den Mund, die er nicht soll</div>
             </div>
             <div class="option-card" data-behavior="aggression">
                 <div class="option-image"><img src="bsp2.png" alt="Aggression"></div>
@@ -251,29 +126,28 @@
         <button class="continue-btn" id="continueBtn">Weiter</button>
     </div>
 
-    <!-- Stress-Skala Popup -->
     <div class="stress-overlay" id="stressOverlay">
         <div class="stress-popup">
             <div class="stress-emoji">😤</div>
             <h2 class="stress-title" id="stressTitle">Wie sehr stresst dich dieses Problem im Alltag?</h2>
             <p class="stress-subtitle">Schiebe den Regler auf deine Antwort</p>
-            
             <div class="slider-container">
-                <div class="slider-labels">
-                    <span>Kaum</span>
-                    <span>Sehr stark</span>
-                </div>
+                <div class="slider-labels"><span>Kaum</span><span>Sehr stark</span></div>
                 <input type="range" min="1" max="10" value="5" class="stress-slider" id="stressSlider">
             </div>
-            
             <div class="stress-value" id="stressValue">5</div>
             <p class="stress-response" id="stressResponse">Das kennen viele Hundebesitzer – mit dem richtigen Plan ist das gut lösbar.</p>
-            
             <button class="stress-continue-btn" id="stressContinueBtn">Weiter</button>
         </div>
     </div>
 
     <script>
+        // Personalisieren basierend auf Rasse
+        const dogBreed = localStorage.getItem('dogBreed');
+        if (dogBreed && dogBreed !== 'Andere Rasse') {
+            document.getElementById('quizTitle').textContent = `Welche Probleme hat dein ${dogBreed}?`;
+        }
+
         const cards = document.querySelectorAll('.option-card');
         const continueBtn = document.getElementById('continueBtn');
         const stressOverlay = document.getElementById('stressOverlay');
@@ -284,9 +158,9 @@
         const stressTitle = document.getElementById('stressTitle');
         let selectedBehaviors = [];
 
-        // Problem-Namen Mapping
         const problemNames = {
             'energy': 'die übermäßige Energie',
+            'mouthing': 'das Aufnehmen von Gegenständen',
             'aggression': 'die Aggression',
             'pulling': 'das Leinenziehen',
             'anxiety': 'die Trennungsangst',
@@ -295,7 +169,6 @@
             'soiling': 'die Unsauberkeit'
         };
         
-        // Problem-Auswahl
         cards.forEach(card => {
             card.addEventListener('click', () => {
                 const behavior = card.dataset.behavior;
@@ -307,19 +180,15 @@
                     card.classList.add('selected');
                 }
                 continueBtn.classList.toggle('active', selectedBehaviors.length > 0);
-                
                 localStorage.setItem('dogBehaviors', JSON.stringify(selectedBehaviors));
                 localStorage.setItem('dogProblem', selectedBehaviors[0] || '');
             });
         });
         
-        // Weiter -> Popup öffnen
         continueBtn.addEventListener('click', () => {
             if (selectedBehaviors.length > 0) {
-                // Dynamische Frage generieren
                 const problemTexts = selectedBehaviors.map(b => problemNames[b] || b);
                 let questionText;
-                
                 if (problemTexts.length === 1) {
                     questionText = `Wie sehr stresst dich ${problemTexts[0]} im Alltag?`;
                 } else if (problemTexts.length === 2) {
@@ -328,52 +197,38 @@
                     const lastProblem = problemTexts.pop();
                     questionText = `Wie sehr stressen dich ${problemTexts.join(', ')} und ${lastProblem} im Alltag?`;
                 }
-                
                 stressTitle.textContent = questionText;
                 stressOverlay.classList.add('active');
             }
         });
 
-        // Slider-Responses
         const responses = {
             low: "Gut, dass du früh handelst – so verhinderst du, dass es schlimmer wird.",
             medium: "Das kennen viele Hundebesitzer – mit dem richtigen Plan ist das gut lösbar.",
             high: "Das klingt wirklich belastend. Genau dafür haben wir den Plan entwickelt. 💪"
         };
-
-        const emojis = {
-            low: "😊",
-            medium: "😤",
-            high: "😰"
-        };
+        const emojis = { low: "😊", medium: "😤", high: "😰" };
 
         function updateStressUI(value) {
             stressValue.textContent = value;
-            
-            let level;
-            if (value <= 3) {
-                level = 'low';
-            } else if (value <= 7) {
-                level = 'medium';
-            } else {
-                level = 'high';
-            }
-            
+            let level = value <= 3 ? 'low' : value <= 7 ? 'medium' : 'high';
             stressResponse.textContent = responses[level];
             document.querySelector('.stress-emoji').textContent = emojis[level];
         }
 
-        stressSlider.addEventListener('input', (e) => {
-            updateStressUI(e.target.value);
-        });
+        stressSlider.addEventListener('input', (e) => updateStressUI(e.target.value));
 
-        // Popup Weiter -> nächste Seite
+        // GEÄNDERT: Weiterleitung zur Plan-Preview Animation
+        let isNavigating = false;
         stressContinueBtn.addEventListener('click', () => {
+            if (isNavigating) return;
+            isNavigating = true;
+            stressContinueBtn.style.opacity = '0.7';
+            stressContinueBtn.style.pointerEvents = 'none';
             localStorage.setItem('stressLevel', stressSlider.value);
             window.location.href = 'kurz-plan-preview.html';
         });
 
-        // Load previous selections
         const savedBehaviors = localStorage.getItem('dogBehaviors');
         if (savedBehaviors) {
             try {
