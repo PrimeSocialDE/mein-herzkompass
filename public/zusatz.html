@@ -550,9 +550,17 @@
     <script>
         const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
         
+        // Supabase Config
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+        
         const dogName = localStorage.getItem('dogName') || 'Luna';
         const dogAge = localStorage.getItem('dogAge') || 'puppy';
-        const leadId = localStorage.getItem('leadId') || '';
+        
+        // leadId aus URL oder localStorage
+        const urlParamsInit = new URLSearchParams(window.location.search);
+        const leadId = urlParamsInit.get('lead_id') || localStorage.getItem('leadId') || '';
+        
         const userEmail = localStorage.getItem('userEmail') || '';
         const selectedPlan = localStorage.getItem('selectedPlan') || '3month';
         
@@ -737,6 +745,27 @@
             }
 
             localStorage.setItem(trackingKey, 'true');
+            
+            // Status in Supabase auf "paid" setzen
+            if (leadId) {
+                fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    },
+                    body: JSON.stringify({
+                        status: 'paid',
+                        selected_plan: selectedPlan,
+                        price: purchaseValue
+                    })
+                }).then(() => {
+                    console.log('✅ Supabase Status auf "paid" gesetzt');
+                }).catch(err => {
+                    console.log('Supabase update error:', err);
+                });
+            }
         } else {
             console.log('⏭️ Purchase bereits getrackt, skip');
         }
