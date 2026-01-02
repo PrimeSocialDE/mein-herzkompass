@@ -51,7 +51,7 @@
         .container { max-width: 500px; margin: 0 auto; padding: 40px 20px; }
         .quiz-header { text-align: center; margin-bottom: 30px; }
         .quiz-title { font-size: 26px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
-        .quiz-duration { display: inline-flex; align-items: center; gap: 6px; color: var(--text-medium); font-size: 14px; background: var(--white); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border-light); }
+        .quiz-duration { display: inline-flex; align-items: center; gap: 6px; color: var(--text-medium); font-size: 14px; background: var(--white); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border-light); white-space: nowrap; }
         .progress-container { margin-bottom: 35px; }
         .progress-bar { width: 100%; height: 6px; background: var(--border-light); border-radius: 3px; overflow: hidden; }
         .progress-fill { width: 11.1%; height: 100%; background: var(--light-brown); transition: width 0.3s ease; }
@@ -77,9 +77,11 @@
         .option-image img { width: 100%; height: 100%; object-fit: cover; }
         .option-title { font-size: 16px; font-weight: 600; color: var(--text-dark); margin-bottom: 4px; }
         .option-subtitle { font-size: 13px; color: var(--text-medium); }
+        .quiz-hint { text-align: center; color: var(--text-medium); font-size: 13px; margin-top: 20px; }
         @media (max-width: 480px) {
             .container { padding: 25px 15px; }
             .quiz-title { font-size: 22px; }
+            .quiz-duration { font-size: 11px; padding: 5px 10px; }
             .options-grid { gap: 12px; }
             .option-card { padding: 20px 12px; }
             .option-image { width: 70px; height: 70px; }
@@ -129,6 +131,7 @@
                 <p class="option-subtitle">Über 7 Jahre</p>
             </div>
         </div>
+        <p class="quiz-hint">Basierend auf deiner Auswahl passen wir den Trainingsplan genau auf deinen Hund an.</p>
     </div>
     <script>
         // Clear previous quiz data on fresh start
