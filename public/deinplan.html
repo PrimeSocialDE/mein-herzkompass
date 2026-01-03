@@ -2305,63 +2305,79 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         });
 
         // ==================== LOAD DATA FROM SUPABASE IF COMING FROM EMAIL ====================
-        (async function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const leadIdFromUrl = urlParams.get('lead_id');
-            
-            // Wenn lead_id in URL -> IMMER aus Supabase laden (E-Mail Link)
-            if (leadIdFromUrl) {
-                console.log('📧 User kam via E-Mail Link, lade Daten aus Supabase...');
-                
-                try {
-                    const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + leadIdFromUrl + '&select=*', {
-                        headers: {
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log('📦 Supabase Antwort:', data);
-                        
-                        if (data[0]) {
-                            const lead = data[0];
-                            const answers = lead.answers || {};
-                            
-                            console.log('📋 Answers:', answers);
-                            
-                            // Alle Daten in localStorage speichern (überschreibt alte!)
-                            if (answers.dog_name) localStorage.setItem('dogName', answers.dog_name);
-                            if (answers.dog_age) localStorage.setItem('dogAge', answers.dog_age);
-                            if (answers.dog_breed) localStorage.setItem('dogBreed', answers.dog_breed);
-                            if (answers.dog_gender) localStorage.setItem('dogGender', answers.dog_gender);
-                            if (answers.dog_goal) localStorage.setItem('dogGoal', answers.dog_goal);
-                            if (answers.dog_problem) localStorage.setItem('dogProblem', answers.dog_problem);
-                            if (answers.dog_behaviors) localStorage.setItem('dogBehaviors', JSON.stringify(answers.dog_behaviors));
-                            if (answers.had_training) localStorage.setItem('hadTraining', answers.had_training);
-                            if (answers.territorial_aggression) localStorage.setItem('territorialAggression', answers.territorial_aggression);
-                            if (lead.email) localStorage.setItem('userEmail', lead.email);
-                            
-                            // Lead ID speichern
-                            localStorage.setItem('leadId', leadIdFromUrl);
-                            
-                            console.log('✅ Daten aus Supabase geladen, reload...');
-                            
-                            // Seite neu laden ohne lead_id Parameter (um Loop zu vermeiden)
-                            window.location.href = window.location.pathname;
-                            return;
-                        } else {
-                            console.log('⚠️ Keine Daten für lead_id gefunden:', leadIdFromUrl);
-                        }
-                    } else {
-                        console.error('❌ Supabase response nicht ok:', response.status);
-                    }
-                } catch (error) {
-                    console.error('❌ Supabase load error:', error);
+(async function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const leadIdFromUrl = urlParams.get('lead_id');
+    const emailFromUrl = urlParams.get('email');
+    
+    // Wenn lead_id ODER email in URL -> aus Supabase laden
+    if (leadIdFromUrl || emailFromUrl) {
+        console.log('📧 User kam via E-Mail Link, lade Daten aus Supabase...');
+        
+        // Query bauen - entweder nach ID oder nach Email
+        let queryParam = '';
+        if (leadIdFromUrl) {
+            queryParam = 'id=eq.' + leadIdFromUrl;
+        } else if (emailFromUrl) {
+            // Email URL-decoden und suchen
+            const decodedEmail = decodeURIComponent(emailFromUrl);
+            queryParam = 'email=eq.' + encodeURIComponent(decodedEmail);
+        }
+        
+        try {
+            const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?' + queryParam + '&select=*&order=created_at.desc&limit=1', {
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
                 }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('📦 Supabase Antwort:', data);
+                
+                if (data[0]) {
+                    const lead = data[0];
+                    const answers = lead.answers || {};
+                    
+                    console.log('📋 Answers:', answers);
+                    
+                    // Alle Daten in localStorage speichern
+                    if (answers.dog_name) localStorage.setItem('dogName', answers.dog_name);
+                    if (answers.dog_age) localStorage.setItem('dogAge', answers.dog_age);
+                    if (answers.dog_breed) localStorage.setItem('dogBreed', answers.dog_breed);
+                    if (answers.dog_gender) localStorage.setItem('dogGender', answers.dog_gender);
+                    if (answers.dog_goal) localStorage.setItem('dogGoal', answers.dog_goal);
+                    if (answers.dog_problem) localStorage.setItem('dogProblem', answers.dog_problem);
+                    if (answers.dog_behaviors) localStorage.setItem('dogBehaviors', JSON.stringify(answers.dog_behaviors));
+                    if (answers.had_training) localStorage.setItem('hadTraining', answers.had_training);
+                    if (answers.territorial_aggression) localStorage.setItem('territorialAggression', answers.territorial_aggression);
+                    if (lead.email) localStorage.setItem('userEmail', lead.email);
+                    
+                    // Lead ID speichern
+                    localStorage.setItem('leadId', lead.id);
+                    
+                    console.log('✅ Daten aus Supabase geladen, reload...');
+                    
+                    // Seite neu laden ohne Parameter (um Loop zu vermeiden)
+                    window.location.href = window.location.pathname;
+                    return;
+                } else {
+                    console.log('⚠️ Keine Daten gefunden für:', leadIdFromUrl || emailFromUrl);
+                }
+            } else {
+                console.error('❌ Supabase response nicht ok:', response.status);
             }
-        })();
+        } catch (error) {
+            console.error('❌ Supabase load error:', error);
+        }
+    }
+})();
+```
+
+**Der Brevo-Link wäre dann:**
+```
+https://wauwerk.de/deinplan.html?email={{ contact.EMAIL }}
 
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         const dogGoal = localStorage.getItem('dogGoal') || 'obedience';
