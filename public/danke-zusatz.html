@@ -231,24 +231,9 @@
             document.getElementById('moduleIcon').textContent = moduleData[module].icon;
             document.getElementById('moduleName').textContent = moduleData[module].name;
             
-            // Upsell-Modul + Quiz-Daten in Supabase speichern
+            // Upsell-Modul in Supabase speichern
             if (leadId) {
-                // Alle relevanten Quiz-Daten sammeln
-                const upsellData = {
-                    module: module,
-                    module_name: moduleData[module].name,
-                    dog_name: localStorage.getItem('dogName'),
-                    dog_age: localStorage.getItem('dogAge'),
-                    dog_breed: localStorage.getItem('dogBreed'),
-                    dog_gender: localStorage.getItem('dogGender'),
-                    dog_goal: localStorage.getItem('dogGoal'),
-                    dog_behaviors: parseJSON(localStorage.getItem('dogBehaviors')),
-                    main_problem: localStorage.getItem('dogProblem'),
-                    had_training: localStorage.getItem('hadTraining'),
-                    territorial_aggression: localStorage.getItem('territorialAggression'),
-                    selected_plan: localStorage.getItem('selectedPlan'),
-                    purchased_at: new Date().toISOString()
-                };
+                console.log('🔍 Lead ID gefunden:', leadId);
 
                 fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}`, {
                     method: 'PATCH',
@@ -258,14 +243,21 @@
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
                     },
                     body: JSON.stringify({
-                        upsell_module: module,
-                        upsell_data: upsellData
+                        upsell_module: module
                     })
-                }).then(() => {
-                    console.log('✅ Upsell-Modul + Daten in Supabase gespeichert:', upsellData);
+                }).then(response => {
+                    console.log('📡 Supabase Response Status:', response.status);
+                    if (response.ok) {
+                        console.log('✅ Upsell-Modul gespeichert:', module);
+                    } else {
+                        response.text().then(text => console.error('❌ Supabase Fehler:', text));
+                    }
                 }).catch(err => {
-                    console.log('Supabase update error:', err);
+                    console.error('❌ Supabase update error:', err);
                 });
+            } else {
+                console.warn('⚠️ Keine lead_id gefunden! URL:', window.location.href);
+                console.log('localStorage leadId:', localStorage.getItem('leadId'));
             }
         }
 

@@ -560,6 +560,9 @@
         // leadId aus URL oder localStorage
         const urlParamsInit = new URLSearchParams(window.location.search);
         const leadId = urlParamsInit.get('lead_id') || localStorage.getItem('leadId') || '';
+        console.log('🔍 zusatz.html - leadId aus URL:', urlParamsInit.get('lead_id'));
+        console.log('🔍 zusatz.html - leadId aus localStorage:', localStorage.getItem('leadId'));
+        console.log('🔍 zusatz.html - verwendete leadId:', leadId);
         
         const userEmail = localStorage.getItem('userEmail') || '';
         const selectedPlan = localStorage.getItem('selectedPlan') || '3month';
@@ -926,7 +929,7 @@
                 const { error } = await stripe.confirmPayment({
                     elements,
                     confirmParams: {
-                        return_url: window.location.origin + '/danke-zusatz.html?module=' + currentModule
+                        return_url: window.location.origin + '/danke-zusatz.html?module=' + currentModule + '&lead_id=' + leadId
                     }
                 });
 
