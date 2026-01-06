@@ -787,13 +787,12 @@
             border-radius: 20px;
             max-width: 420px;
             width: calc(100% - 40px);
-            max-height: 70%;
-            overflow-y: auto;
+            max-height: 90vh;
+            overflow: hidden;
             position: relative;
             animation: popupIn 0.3s ease-out;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-            overscroll-behavior: contain;
-            margin-top: 60px;
+            margin-top: 20px;
         }
 
         .checkout-header {
@@ -892,12 +891,34 @@
             font-size: 20px;
             font-weight: 800;
             color: var(--text-dark);
+            line-height: 1.1;
         }
 
-        .checkout-plan-access {
-            font-size: 11px;
+        .checkout-plan-price-sub {
+            font-size: 10px;
             color: var(--text-light);
             font-weight: 500;
+        }
+
+        .checkout-plan-daily {
+            font-size: 11px;
+            color: var(--warm-brown);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .checkout-plan-personalized {
+            font-size: 11px;
+            color: var(--warm-brown);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .checkout-risk-text {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-medium);
+            margin-bottom: 12px;
         }
 
         /* Features Section */
@@ -2944,6 +2965,21 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             document.getElementById('checkoutPlanDuration').textContent = priceData.duration;
             document.getElementById('checkoutPlanPrice').textContent = '€' + price.toFixed(2).replace('.', ',');
             
+            // Hundename in Plan-Karte
+            const checkoutDogNamePlan = document.getElementById('checkoutDogNamePlan');
+            if (checkoutDogNamePlan) checkoutDogNamePlan.textContent = dogName;
+            
+            // Tagespreis berechnen
+            const dailyPrices = {
+                '1month': { discount: '0,83', normal: '1,67' },
+                '3month': { discount: '0,33', normal: '0,89' },
+                '6month': { discount: '0,27', normal: '0,67' }
+            };
+            const dailyData = dailyPrices[selectedPlan] || dailyPrices['3month'];
+            const dailyPrice = timerExpired ? dailyData.normal : dailyData.discount;
+            const checkoutDailyPrice = document.getElementById('checkoutDailyPrice');
+            if (checkoutDailyPrice) checkoutDailyPrice.textContent = '≈ ' + dailyPrice + ' € pro Tag';
+            
             // Step 2 Werte auch setzen
             const planDuration2 = document.getElementById('checkoutPlanDuration2');
             const planPrice2 = document.getElementById('checkoutPlanPrice2');
@@ -2953,18 +2989,18 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             const checkoutTotalPrice = document.getElementById('checkoutTotalPrice');
             if (checkoutTotalPrice) checkoutTotalPrice.textContent = '€' + price.toFixed(2).replace('.', ',');
             
-            // Problem-Labels
+            // Problem-Labels mit gegen/für
             const problemLabels = {
-                'pulling': 'Leinenziehen',
-                'barking': 'Bellen',
-                'aggression': 'Aggression',
-                'anxiety': 'Trennungsangst',
-                'jumping': 'Anspringen',
-                'recall': 'Rückruf',
-                'energy': 'Hyperaktivität',
-                'destructive': 'Zerstörungswut',
-                'soiling': 'Stubenreinheit',
-                'mouthing': 'Unerwünschtes Aufnehmen'
+                'pulling': 'gegen Leinenziehen',
+                'barking': 'gegen übermäßiges Bellen',
+                'aggression': 'gegen Aggression',
+                'anxiety': 'gegen Trennungsangst',
+                'jumping': 'gegen Anspringen',
+                'recall': 'für sicheren Rückruf',
+                'energy': 'gegen Hyperaktivität',
+                'destructive': 'gegen Zerstörungswut',
+                'soiling': 'für Stubenreinheit',
+                'mouthing': 'gegen unerwünschtes Aufnehmen'
             };
             
             const dogProblemValue = localStorage.getItem('dogProblem') || 'anxiety';
@@ -2975,6 +3011,17 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             const checkoutDogProblem2 = document.getElementById('checkoutDogProblem2');
             if (checkoutDogProblem2) {
                 checkoutDogProblem2.textContent = problemLabels[dogProblemValue] || 'dein Problem';
+            }
+            
+            // Plan-Benefit basierend auf Laufzeit
+            const planBenefits = {
+                '1month': 'Klarer 4-Wochen-Fahrplan mit festen Phasen',
+                '3month': 'Klarer 12-Wochen-Fahrplan mit festen Phasen',
+                '6month': 'Klarer 24-Wochen-Fahrplan mit festen Phasen'
+            };
+            const checkoutPlanBenefit = document.getElementById('checkoutPlanBenefit');
+            if (checkoutPlanBenefit) {
+                checkoutPlanBenefit.textContent = planBenefits[selectedPlan] || planBenefits['3month'];
             }
             
             // E-Mail aus localStorage (wurde in kurz-schritt11.html gesammelt)
@@ -3184,24 +3231,27 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="checkout-plan-info">
                             <div class="checkout-plan-name">Personalisierter Trainingsplan</div>
                             <div class="checkout-plan-duration" id="checkoutPlanDuration">3-Monats-Plan</div>
+                            <div class="checkout-plan-personalized" id="checkoutPersonalized">Individuell erstellt für <span id="checkoutDogNamePlan">deinen Hund</span></div>
                         </div>
                         <div class="checkout-plan-price-box">
                             <div class="checkout-plan-price" id="checkoutPlanPrice">€29,99</div>
-                            <div class="checkout-plan-access">Voller Zugang</div>
+                            <div class="checkout-plan-price-sub">einmalig</div>
+                            <div class="checkout-plan-daily" id="checkoutDailyPrice">≈ 0,33 € pro Tag</div>
                         </div>
                     </div>
 
                     <!-- Features kompakt -->
-                    <div class="checkout-features-compact" style="margin-bottom: 12px;">
-                        <div class="checkout-feature-row">✓ 20+ Übungen für <span id="checkoutDogProblem2">dein Problem</span></div>
-                        <div class="checkout-feature-row">✓ Persönlicher Wochenplan</div>
-                        <div class="checkout-feature-row">✓ Schritt-für-Schritt Anleitungen</div>
+                    <div class="checkout-features-compact" style="margin-bottom: 10px;">
+                        <div class="checkout-feature-row">✓ 20+ gezielte Übungen <span id="checkoutDogProblem2">gegen dein Problem</span></div>
+                        <div class="checkout-feature-row">✓ Alles Schritt für Schritt erklärt</div>
+                        <div class="checkout-feature-row">✓ <span id="checkoutPlanBenefit">Klarer 12-Wochen-Fahrplan mit festen Phasen</span></div>
                     </div>
 
-                    <!-- 30 Tage Garantie -->
-                    <div class="checkout-guarantee-compact" style="margin-bottom: 15px;">🛡️ 30 Tage Geld-zurück-Garantie</div>
+                    <!-- 30 Tage Garantie Badge -->
+                    <div class="checkout-guarantee-compact" style="margin-bottom: 10px;">🛡️ 30 Tage Geld-zurück-Garantie</div>
 
-                    <h3 style="text-align: center; margin-bottom: 15px; font-size: 16px; color: #6B6B6B;">Zahlungsmethode wählen</h3>
+                    <h3 style="text-align: center; margin-bottom: 8px; font-size: 16px; color: #6B6B6B;">Zahlungsmethode wählen</h3>
+                    <p class="checkout-risk-text">30 Tage testen – sonst Geld zurück. Ohne Diskussion.</p>
 
                     <div class="checkout-error" id="checkoutError"></div>
 
