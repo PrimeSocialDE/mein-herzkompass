@@ -788,15 +788,16 @@
             max-width: 420px;
             width: calc(100% - 40px);
             max-height: 90vh;
-            overflow: hidden;
+            overflow-y: auto;
             position: relative;
             animation: popupIn 0.3s ease-out;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            overscroll-behavior: contain;
             margin-top: 20px;
         }
 
         .checkout-header {
-            padding: 14px 16px 10px;
+            padding: 12px 16px 8px;
             border-bottom: 1px solid var(--border-light);
             position: relative;
             background: linear-gradient(180deg, #FAF7F4 0%, var(--white) 100%);
@@ -805,14 +806,14 @@
 
         .checkout-close {
             position: absolute;
-            top: 14px;
-            left: 14px;
+            top: 12px;
+            left: 12px;
             background: var(--white);
             border: 1px solid var(--border-light);
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            font-size: 18px;
+            font-size: 16px;
             color: var(--text-medium);
             cursor: pointer;
             display: flex;
@@ -829,7 +830,7 @@
 
         .checkout-title {
             text-align: center;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             color: var(--text-dark);
         }
@@ -839,30 +840,30 @@
         }
 
         .checkout-body {
-            padding: 12px 16px 16px;
+            padding: 10px 14px 14px;
         }
 
         /* Plan Card */
         .checkout-plan-card {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
+            gap: 8px;
+            padding: 8px;
             background: linear-gradient(135deg, #FAF7F4 0%, #F5F0EB 100%);
             border-radius: 10px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             border: 1px solid var(--border-light);
         }
 
         .checkout-plan-image {
-            width: 42px;
-            height: 42px;
+            width: 38px;
+            height: 38px;
             background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 20px;
             box-shadow: 0 4px 12px rgba(196, 165, 118, 0.3);
         }
 
@@ -871,14 +872,14 @@
         }
 
         .checkout-plan-name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
 
         .checkout-plan-duration {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--warm-brown);
             font-weight: 500;
         }
@@ -888,35 +889,35 @@
         }
 
         .checkout-plan-price {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
             color: var(--text-dark);
             line-height: 1.1;
         }
 
         .checkout-plan-price-sub {
-            font-size: 10px;
+            font-size: 9px;
             color: var(--text-light);
             font-weight: 500;
         }
 
         .checkout-plan-daily {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--warm-brown);
             font-weight: 600;
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
         .checkout-plan-personalized {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--warm-brown);
             font-weight: 500;
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
         .checkout-risk-text {
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-medium);
             margin-bottom: 12px;
         }
@@ -1119,14 +1120,14 @@
         .checkout-features-compact {
             background: #f8f8f8;
             border-radius: 8px;
-            padding: 8px 10px;
-            margin-bottom: 10px;
+            padding: 6px 10px;
+            margin-bottom: 6px;
         }
 
         .checkout-feature-row {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-dark);
-            padding: 3px 0;
+            padding: 2px 0;
         }
 
         .checkout-feature-row span {
@@ -1322,10 +1323,10 @@
 
         /* Stripe Element */
         .stripe-element-container {
-            padding: 18px;
+            padding: 12px;
             border: 2px solid var(--border-light);
-            border-radius: 14px;
-            margin-bottom: 18px;
+            border-radius: 12px;
+            margin-bottom: 12px;
             background: var(--white);
             transition: border-color 0.2s;
         }
@@ -1335,18 +1336,18 @@
         }
 
         #payment-element {
-            min-height: 100px;
+            min-height: 80px;
         }
 
         /* Payment Button */
         .checkout-pay-btn {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             cursor: pointer;
             display: flex;
@@ -1388,15 +1389,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 12px;
-            margin-top: 20px;
-            padding: 12px;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 8px;
             background: #FAFAFA;
-            border-radius: 10px;
+            border-radius: 8px;
         }
 
         .payment-icons img {
-            height: 20px;
+            height: 16px;
             opacity: 0.7;
         }
 
@@ -1407,9 +1408,9 @@
             background: none;
             border: none;
             color: var(--text-medium);
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
-            margin-top: 18px;
+            margin-top: 10px;
             text-align: center;
             font-weight: 500;
         }
@@ -3226,7 +3227,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 <!-- Step 2: Payment -->
                 <div class="checkout-step-2" id="checkoutStep2">
                     <!-- Plan Card oben -->
-                    <div class="checkout-plan-card" style="margin-bottom: 12px;">
+                    <div class="checkout-plan-card" style="margin-bottom: 6px;">
                         <div class="checkout-plan-image">🐕</div>
                         <div class="checkout-plan-info">
                             <div class="checkout-plan-name">Personalisierter Trainingsplan</div>
@@ -3241,17 +3242,17 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     </div>
 
                     <!-- Features kompakt -->
-                    <div class="checkout-features-compact" style="margin-bottom: 10px;">
+                    <div class="checkout-features-compact" style="margin-bottom: 6px;">
                         <div class="checkout-feature-row">✓ 20+ gezielte Übungen <span id="checkoutDogProblem2">gegen dein Problem</span></div>
                         <div class="checkout-feature-row">✓ Alles Schritt für Schritt erklärt</div>
                         <div class="checkout-feature-row">✓ <span id="checkoutPlanBenefit">Klarer 12-Wochen-Fahrplan mit festen Phasen</span></div>
                     </div>
 
                     <!-- 30 Tage Garantie Badge -->
-                    <div class="checkout-guarantee-compact" style="margin-bottom: 10px;">🛡️ 30 Tage Geld-zurück-Garantie</div>
+                    <div class="checkout-guarantee-compact" style="margin-bottom: 6px;">🛡️ 30 Tage Geld-zurück-Garantie</div>
 
-                    <h3 style="text-align: center; margin-bottom: 8px; font-size: 16px; color: #6B6B6B;">Zahlungsmethode wählen</h3>
-                    <p class="checkout-risk-text">30 Tage testen – sonst Geld zurück. Ohne Diskussion.</p>
+                    <h3 style="text-align: center; margin-bottom: 4px; font-size: 14px; color: #6B6B6B;">Zahlungsmethode wählen</h3>
+                    <p class="checkout-risk-text" style="margin-bottom: 8px;">30 Tage testen – sonst Geld zurück. Ohne Diskussion.</p>
 
                     <div class="checkout-error" id="checkoutError"></div>
 
