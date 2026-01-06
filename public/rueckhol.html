@@ -1112,11 +1112,11 @@
 
         <!-- Payment Logos -->
         <div class="payment-logos">
-            <img src="sepa.png" alt="SEPA">
-            <img src="paypal.png" alt="PayPal">
-            <img src="visa.png" alt="Visa">
-            <img src="klarna.png" alt="Klarna">
-            <img src="mastercard.png" alt="Mastercard">
+            <img src="sepa-logo.png" alt="SEPA">
+            <img src="paypal-logo.png" alt="PayPal">
+            <img src="visa-logo.png" alt="Visa">
+            <img src="klarna-logo.png" alt="Klarna">
+            <img src="mastercard-logo.png" alt="Mastercard">
             <img src="applepay.png" alt="Apple Pay">
             <img src="googlepay.png" alt="Google Pay">
         </div>
@@ -1264,10 +1264,10 @@
                 </button>
 
                 <div class="payment-icons">
-                    <img src="visa.png" alt="Visa">
-                    <img src="mastercard.png" alt="Mastercard">
-                    <img src="paypal.png" alt="PayPal">
-                    <img src="klarna.png" alt="Klarna">
+                    <img src="visa-logo.png" alt="Visa">
+                    <img src="mastercard-logo.png" alt="Mastercard">
+                    <img src="paypal-logo.png" alt="PayPal">
+                    <img src="klarna-logo.png" alt="Klarna">
                 </div>
 
                 <button class="checkout-back" onclick="closeCheckout()">← Zurück</button>
@@ -1566,6 +1566,14 @@
             });
         });
 
+        // Helper: Cookie lesen
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return '';
+        }
+
         // Checkout öffnen
         async function openCheckout() {
             const plan = planData[selectedPlan];
@@ -1594,17 +1602,29 @@
                 stripe = Stripe(STRIPE_PUBLIC_KEY);
             }
             
+            // Plan im localStorage speichern
+            localStorage.setItem('selectedPlan', selectedPlan);
+            
             // Payment Intent erstellen
             try {
-                const response = await fetch('/api/create-checkout', {
+                const response = await fetch('/api/wauwerk-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         plan: selectedPlan,
-                        email: userEmail,
-                        leadId: leadId,
+                        timerExpired: false,
                         dogName: dogName,
-                        dogProblem: dogProblem
+                        leadId: leadId,
+                        email: userEmail || localStorage.getItem('userEmail') || '',
+                        utm_source: localStorage.getItem('utm_source') || '',
+                        utm_medium: localStorage.getItem('utm_medium') || '',
+                        utm_campaign: localStorage.getItem('utm_campaign') || '',
+                        utm_content: localStorage.getItem('utm_content') || '',
+                        fbclid: localStorage.getItem('fbclid') || '',
+                        fbp: getCookie('_fbp') || '',
+                        fbc: getCookie('_fbc') || '',
+                        fb_event_id: localStorage.getItem('fb_event_id') || '',
+                        ttclid: localStorage.getItem('ttclid') || ''
                     })
                 });
                 
@@ -1615,8 +1635,35 @@
                     return;
                 }
                 
+                clientSecret = data.clientSecret;
+                
+                // Event ID in localStorage speichern
+                if (data.paymentIntentId) {
+                    localStorage.setItem('payment_intent_id', data.paymentIntentId);
+                    
+                    // Auch in Supabase updaten wenn leadId vorhanden
+                    if (leadId) {
+                        const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
+                        currentAnswers.event_id = data.paymentIntentId;
+                        currentAnswers.fb_event_id = localStorage.getItem('fb_event_id') || '';
+                        
+                        fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + leadId, {
+                            method: 'PATCH',
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                                'Content-Type': 'application/json',
+                                'Prefer': 'return=minimal'
+                            },
+                            body: JSON.stringify({ answers: currentAnswers })
+                        });
+                        
+                        localStorage.setItem('wauwerk_answers', JSON.stringify(currentAnswers));
+                    }
+                }
+                
                 elements = stripe.elements({
-                    clientSecret: data.clientSecret,
+                    clientSecret: clientSecret,
                     appearance: {
                         theme: 'stripe',
                         variables: {
@@ -1632,7 +1679,7 @@
                 
                 paymentElement = elements.create('payment', {
                     layout: { type: 'tabs', defaultCollapsed: false },
-                    paymentMethodOrder: ['card', 'klarna', 'paypal'],
+                    paymentMethodOrder: ['klarna', 'paypal', 'card'],
                     wallets: { applePay: 'auto', googlePay: 'auto' }
                 });
                 
@@ -1661,7 +1708,7 @@
                 const { error } = await stripe.confirmPayment({
                     elements,
                     confirmParams: {
-                        return_url: window.location.origin + '/zusatz.html?lead_id=' + leadId + '&plan=' + selectedPlan
+                        return_url: window.location.origin + '/zusatz.html?lead_id=' + leadId
                     }
                 });
                 
@@ -1670,8 +1717,10 @@
                     btn.disabled = false;
                     btn.innerHTML = '🔒 Jetzt bezahlen';
                 }
+                // Bei Erfolg wird automatisch weitergeleitet
+                
             } catch (err) {
-                showError('Ein Fehler ist aufgetreten. Bitte versuche es erneut.');
+                showError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
                 btn.disabled = false;
                 btn.innerHTML = '🔒 Jetzt bezahlen';
             }
