@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="favconHund.png">
+    <title>WauWerk - Dein Trainingsplan</title>
+    
+    <!-- Google tag -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+    
+    <!-- Meta Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+        (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --text-dark: #1a1a1a;
+            --text-medium: #555;
+            --text-light: #888;
+            --background: #FAF8F5;
+            --white: #FFFFFF;
+            --border-light: #E8E8E8;
+            --success-green: #22C55E;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: var(--white);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            text-align: center;
+        }
+        
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+        
+        .logo-image {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        .logo-text {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--dark-brown);
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        /* Hero Section - Emotional */
+        .hero {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FEF3E7, #FFF9F0);
+            color: var(--dark-brown);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(196, 165, 118, 0.3);
+        }
+        
+        .hero h1 {
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.35;
+            margin-bottom: 16px;
+            color: var(--text-dark);
+        }
+        
+        .hero h1 .highlight {
+            color: var(--primary-brown);
+        }
+        
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--text-medium);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        /* Insight Section */
+        .insight-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        
+        .insight-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 18px;
+        }
+        
+        .insight-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .insight-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .insight-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #FEF3E7, #FFF9F0);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .insight-text {
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+        
+        .insight-text strong {
+            color: var(--dark-brown);
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            margin-bottom: 20px;
+        }
+
+        .pricing-question {
+            text-align: center;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+        
+        .pricing-card {
+            background: var(--white);
+            border: 2px solid var(--border-light);
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .pricing-card:hover {
+            border-color: var(--primary-brown);
+        }
+        
+        .pricing-card.selected {
+            border-color: var(--primary-brown);
+            background: linear-gradient(135deg, #FFFBF5 0%, var(--white) 100%);
+        }
+        
+        .pricing-card.popular {
+            border-color: var(--primary-brown);
+        }
+        
+        .popular-badge {
+            position: absolute;
+            top: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary-brown), var(--dark-brown));
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+        
+        .pricing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .pricing-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .pricing-radio {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .pricing-card.selected .pricing-radio {
+            border-color: var(--primary-brown);
+            background: var(--primary-brown);
+        }
+        
+        .pricing-card.selected .pricing-radio::after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        
+        .pricing-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .pricing-right {
+            text-align: right;
+        }
+        
+        .pricing-price {
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-end;
+            gap: 2px;
+        }
+        
+        .price-currency {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-brown);
+        }
+        
+        .price-amount {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary-brown);
+            line-height: 1;
+        }
+        
+        .price-cents {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-brown);
+        }
+        
+        .price-period {
+            font-size: 12px;
+            color: var(--text-medium);
+            margin-left: 4px;
+        }
+        
+        .price-old {
+            font-size: 13px;
+            color: var(--text-light);
+            text-decoration: line-through;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-medium);
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        .disclaimer a {
+            color: var(--primary-brown);
+            text-decoration: none;
+        }
+        
+        /* CTA Button */
+        .cta-button {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-brown), var(--dark-brown));
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 18px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(196, 165, 118, 0.4);
+            margin-bottom: 16px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5);
+        }
+        
+        .cta-subtext {
+            display: block;
+            font-size: 13px;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        /* Payment Logos */
+        .payment-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: nowrap;
+            margin-bottom: 30px;
+        }
+
+        .payment-logos img {
+            height: 24px;
+            opacity: 0.7;
+        }
+
+        /* Guarantee Badge */
+        .guarantee {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: var(--text-dark);
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 35px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
+            border-radius: 12px;
+        }
+
+        .guarantee svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--success-green);
+            flex-shrink: 0;
+        }
+        
+        /* Benefits Section */
+        .benefits-box {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        
+        .benefits-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        
+        .benefits-list {
+            list-style: none;
+        }
+        
+        .benefits-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+        
+        .benefits-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Soft CTA - dezent */
+        .soft-cta {
+            text-align: center;
+            margin-bottom: 35px;
+            padding: 20px;
+        }
+
+        .soft-cta-text {
+            font-size: 15px;
+            color: var(--text-medium);
+            margin-bottom: 12px;
+        }
+
+        .soft-cta-button {
+            background: none;
+            border: 2px solid var(--primary-brown);
+            color: var(--primary-brown);
+            font-size: 15px;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .soft-cta-button:hover {
+            background: var(--primary-brown);
+            color: white;
+        }
+
+        /* Testimonials Section */
+        .testimonials-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .testimonials-rating {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .rating-stars svg {
+            width: 24px;
+            height: 24px;
+            fill: #00B67A;
+        }
+
+        .rating-text {
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        }
+
+        .testimonial-text {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.5;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .testimonial-name {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        /* Trustpilot Slider */
+        .trustpilot-slider {
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .trustpilot-track {
+            display: flex;
+            gap: 14px;
+            animation: scroll 20s linear infinite;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .trustpilot-review {
+            flex-shrink: 0;
+            background: var(--white);
+            padding: 14px 18px;
+            border-radius: 10px;
+            min-width: 240px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .tp-stars {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 6px;
+        }
+
+        .tp-stars svg {
+            width: 14px;
+            height: 14px;
+            fill: #00B67A;
+        }
+
+        .tp-text {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-bottom: 6px;
+        }
+
+        .tp-name {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        /* Guarantee Box */
+        .guarantee-box {
+            background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .guarantee-box-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .guarantee-box-text {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+        }
+
+        .guarantee-box-badge {
+            position: absolute;
+            top: -14px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--success-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .guarantee-box-badge svg {
+            width: 26px;
+            height: 26px;
+            fill: white;
+        }
+        
+        /* FAQ Section */
+        .faq-section {
+            margin-bottom: 30px;
+        }
+        
+        .faq-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        
+        .faq-item {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        
+        .faq-question {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .faq-icon {
+            width: 22px;
+            height: 22px;
+            background: var(--success-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .faq-icon svg {
+            width: 12px;
+            height: 12px;
+            fill: white;
+        }
+        
+        .faq-question-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .faq-answer {
+            font-size: 13px;
+            color: var(--text-medium);
+            line-height: 1.5;
+            padding-left: 34px;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        .final-cta-text {
+            font-size: 15px;
+            color: var(--text-medium);
+            margin-bottom: 16px;
+        }
+
+        .final-cta-text strong {
+            color: var(--text-dark);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 12px;
+            color: var(--text-light);
+            border-top: 1px solid var(--border-light);
+            margin-top: 20px;
+        }
+
+        .footer a {
+            color: var(--text-light);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: var(--primary-brown);
+        }
+
+        /* Checkout Overlay */
+        .checkout-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .checkout-overlay.active {
+            display: flex;
+        }
+
+        .checkout-popup {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 440px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .checkout-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .checkout-title {
+            font-size: 18px;
+            font-weight: 700;
+            flex: 1;
+            text-align: center;
+        }
+
+        .checkout-close {
+            position: absolute;
+            left: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 0;
+            line-height: 1;
+        }
+
+        .checkout-body {
+            padding: 24px 20px;
+        }
+
+        .checkout-plan-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            background: #FAFAFA;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .checkout-plan-image {
+            font-size: 32px;
+        }
+
+        .checkout-plan-info {
+            flex: 1;
+        }
+
+        .checkout-plan-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .checkout-plan-duration {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .checkout-plan-price-box {
+            text-align: right;
+        }
+
+        .checkout-plan-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-brown);
+        }
+
+        .checkout-plan-access {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .checkout-features-compact {
+            margin-bottom: 12px;
+        }
+
+        .checkout-feature-row {
+            font-size: 13px;
+            color: var(--text-medium);
+            padding: 6px 0;
+        }
+
+        .checkout-guarantee-compact {
+            text-align: center;
+            font-size: 13px;
+            color: var(--success-green);
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #F0FDF4;
+            border-radius: 8px;
+        }
+
+        .checkout-payment-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #6B6B6B;
+            font-weight: 600;
+        }
+
+        .checkout-error {
+            background: #FEF2F2;
+            color: #DC2626;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .checkout-error.visible {
+            display: block;
+        }
+
+        #payment-element {
+            margin-bottom: 20px;
+        }
+
+        .checkout-pay-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-brown), var(--dark-brown));
+            color: white;
+            font-size: 17px;
+            font-weight: 700;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .checkout-pay-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .checkout-pay-btn .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .payment-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+            padding: 12px;
+            background: #FAFAFA;
+            border-radius: 10px;
+        }
+
+        .payment-icons img {
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        .checkout-back {
+            display: block;
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text-medium);
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 16px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .checkout-back:hover {
+            color: var(--primary-brown);
+        }
+        
+        /* Mobile */
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 16px;
+            }
+            
+            .hero h1 {
+                font-size: 22px;
+            }
+            
+            .hero-subtitle {
+                font-size: 15px;
+            }
+
+            .price-amount {
+                font-size: 24px;
+            }
+
+            .testimonial-card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+            <span class="logo-text">Mein WauWerk</span>
+        </a>
+    </header>
+    
+    <div class="container">
+        <!-- Hero - Emotional -->
+        <div class="hero">
+            <span class="hero-badge">📋 Dein Plan ist noch verfügbar</span>
+            <h1 id="heroTitle">Stell dir vor, <span class="highlight" id="dogNameHero">dein Hund</span> wäre kein Problem mehr.</h1>
+            <p class="hero-subtitle" id="heroSubtitle">Entspannte Spaziergänge. Keine Kämpfe mehr. Ein Hund, auf den du stolz bist. Das ist möglich – in wenigen Wochen.</p>
+        </div>
+        
+        <!-- Personalized Insights -->
+        <div class="insight-section">
+            <div class="insight-title">Was du wissen solltest</div>
+            
+            <div class="insight-item">
+                <div class="insight-icon">🎯</div>
+                <div class="insight-text" id="insight1">
+                    <strong id="dogNameInsight1">Dein Hund</strong> braucht klare, konsistente Signale – keine Bestrafung.
+                </div>
+            </div>
+            
+            <div class="insight-item">
+                <div class="insight-icon">📅</div>
+                <div class="insight-text" id="insight2">
+                    Erste Veränderungen siehst du oft schon nach <strong>2-3 Wochen</strong>. Stabile Ergebnisse nach 4-6 Wochen.
+                </div>
+            </div>
+            
+            <div class="insight-item">
+                <div class="insight-icon">⚠️</div>
+                <div class="insight-text" id="insight3">
+                    Ohne strukturiertes Training wird das Verhalten zur festen Gewohnheit – und <strong>immer schwerer zu ändern</strong>.
+                </div>
+            </div>
+        </div>
+
+        <!-- Benefits Section - Was du bekommst -->
+        <div class="benefits-box">
+            <h2 class="benefits-title">Das bekommst du im Plan</h2>
+            <ul class="benefits-list" id="benefitsList">
+                <!-- Wird per JavaScript gefüllt -->
+            </ul>
+        </div>
+
+        <!-- Soft CTA - dezent -->
+        <div class="soft-cta">
+            <p class="soft-cta-text">Bereit für den ersten Schritt?</p>
+            <button class="soft-cta-button" onclick="document.getElementById('pricingSection').scrollIntoView({behavior: 'smooth'})">
+                Zum Trainingsplan →
+            </button>
+        </div>
+
+        <!-- Testimonials -->
+        <div class="testimonials-section">
+            <h2 class="section-title">Das sagen andere Hundebesitzer</h2>
+            
+            <div class="testimonials-rating">
+                <div class="rating-stars">
+                    <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                    <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                    <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                    <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                    <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                </div>
+                <div class="rating-text">4.9 von 5 Sternen</div>
+            </div>
+
+            <div class="testimonial-card">
+                <p class="testimonial-text">"Mein Hund hat früher jeden anderen Hund angebellt. Nach 3 Wochen mit dem Plan können wir endlich entspannt spazieren gehen."</p>
+                <p class="testimonial-name">Sandra M. – Leinenaggression</p>
+            </div>
+
+            <div class="testimonial-card">
+                <p class="testimonial-text">"Max war ständig aufgedreht. Die täglichen 10-Minuten-Übungen haben wahre Wunder gewirkt. Jetzt ist er viel ausgeglichener!"</p>
+                <p class="testimonial-name">Thomas K. – Hyperaktivität</p>
+            </div>
+
+            <div class="testimonial-card">
+                <p class="testimonial-text">"Endlich kann ich meine Hündin von der Leine lassen. Der Rückruf klappt jetzt zuverlässig!"</p>
+                <p class="testimonial-name">Julia R. – Rückruf-Training</p>
+            </div>
+        </div>
+
+        <!-- Pricing Section -->
+        <div id="pricingSection">
+            <p class="pricing-question">Wähle deinen Plan:</p>
+
+        <div class="pricing-section">
+            <div class="pricing-card" data-plan="1month" data-price="24.99">
+                <div class="pricing-header">
+                    <div class="pricing-left">
+                        <div class="pricing-radio"></div>
+                        <span class="pricing-name">1-MONATS-PLAN</span>
+                    </div>
+                    <div class="pricing-right">
+                        <div class="pricing-price">
+                            <span class="price-currency">€</span>
+                            <span class="price-amount">0</span>
+                            <span class="price-cents">,83</span>
+                            <span class="price-period">pro Tag</span>
+                        </div>
+                        <div class="price-old">€1,67</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pricing-card popular selected" data-plan="3month" data-price="29.99">
+                <div class="popular-badge">⭐ Für dauerhafte Veränderung</div>
+                <div class="pricing-header">
+                    <div class="pricing-left">
+                        <div class="pricing-radio"></div>
+                        <span class="pricing-name">3-MONATS-PLAN</span>
+                    </div>
+                    <div class="pricing-right">
+                        <div class="pricing-price">
+                            <span class="price-currency">€</span>
+                            <span class="price-amount">0</span>
+                            <span class="price-cents">,33</span>
+                            <span class="price-period">pro Tag</span>
+                        </div>
+                        <div class="price-old">€0,89</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pricing-card" data-plan="6month" data-price="49.99">
+                <div class="pricing-header">
+                    <div class="pricing-left">
+                        <div class="pricing-radio"></div>
+                        <span class="pricing-name">6-MONATS-PLAN</span>
+                    </div>
+                    <div class="pricing-right">
+                        <div class="pricing-price">
+                            <span class="price-currency">€</span>
+                            <span class="price-amount">0</span>
+                            <span class="price-cents">,27</span>
+                            <span class="price-period">pro Tag</span>
+                        </div>
+                        <div class="price-old">€0,67</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            ✓ <strong style="color: var(--dark-brown);">Einmalzahlung</strong> • <strong style="color: var(--dark-brown);">Kein Abo</strong> • 30 Tage Geld-zurück-Garantie • <a href="agb.html">AGB</a>
+        </div>
+
+        <button class="cta-button" id="ctaButton" onclick="openCheckout()">
+            Trainingsplan freischalten
+            <span class="cta-subtext">Sicher bezahlen & sofort starten</span>
+        </button>
+
+        <!-- Payment Logos -->
+        <div class="payment-logos">
+            <img src="sepa.png" alt="SEPA">
+            <img src="paypal.png" alt="PayPal">
+            <img src="visa.png" alt="Visa">
+            <img src="klarna.png" alt="Klarna">
+            <img src="mastercard.png" alt="Mastercard">
+            <img src="applepay.png" alt="Apple Pay">
+            <img src="googlepay.png" alt="Google Pay">
+        </div>
+
+        <!-- Guarantee -->
+        <div class="guarantee">
+            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+            30-Tage Geld-zurück-Garantie
+        </div>
+
+        <!-- Trustpilot Slider -->
+        <div class="trustpilot-slider">
+            <div class="trustpilot-track" id="tpTrack">
+                <div class="trustpilot-review">
+                    <div class="tp-stars"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
+                    <p class="tp-text">Sehr gut erklärt und schnell umsetzbar!</p>
+                    <p class="tp-name">Sandra M.</p>
+                </div>
+                <div class="trustpilot-review">
+                    <div class="tp-stars"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
+                    <p class="tp-text">Endlich ein Plan, der funktioniert.</p>
+                    <p class="tp-name">Thomas K.</p>
+                </div>
+                <div class="trustpilot-review">
+                    <div class="tp-stars"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
+                    <p class="tp-text">Einfache Anleitungen, schnelle Ergebnisse!</p>
+                    <p class="tp-name">Julia R.</p>
+                </div>
+                <div class="trustpilot-review">
+                    <div class="tp-stars"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
+                    <p class="tp-text">Mein Hund ist wie ausgewechselt!</p>
+                    <p class="tp-name">Michael S.</p>
+                </div>
+                <div class="trustpilot-review">
+                    <div class="tp-stars"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
+                    <p class="tp-text">Sehr gut erklärt und schnell umsetzbar!</p>
+                    <p class="tp-name">Sandra M.</p>
+                </div>
+                <div class="trustpilot-review">
+                    <div class="tp-stars"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
+                    <p class="tp-text">Endlich ein Plan, der funktioniert.</p>
+                    <p class="tp-name">Thomas K.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guarantee Box -->
+        <div class="guarantee-box">
+            <div class="guarantee-box-badge">
+                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+            </div>
+            <h3 class="guarantee-box-title">Kein Risiko für dich</h3>
+            <p class="guarantee-box-text">Falls du keine Verbesserung siehst, erstatten wir dir den vollen Betrag zurück – ohne Wenn und Aber. 30 Tage lang.</p>
+        </div>
+        
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2 class="faq-title">Häufige Fragen</h2>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Wie bekomme ich meinen Plan?</span>
+                </div>
+                <p class="faq-answer">Du erhältst deinen personalisierten Trainingsplan sofort per E-Mail. Innerhalb weniger Minuten kannst du loslegen!</p>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Wie viel Zeit brauche ich täglich?</span>
+                </div>
+                <p class="faq-answer">Nur 10-15 Minuten am Tag. Die Übungen sind kurz, effektiv und passen in jeden Alltag.</p>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Funktioniert das auch bei meinem Hund?</span>
+                </div>
+                <p class="faq-answer">Ja! Der Plan ist personalisiert auf Alter, Rasse und Problem deines Hundes. Falls du keine Verbesserung siehst, bekommst du dein Geld zurück.</p>
+            </div>
+        </div>
+
+        <!-- Final CTA -->
+        <div class="final-cta">
+            <p class="final-cta-text">Bereit, das Training mit <strong id="dogNameFinal">deinem Hund</strong> zu starten?</p>
+            <button class="cta-button" onclick="openCheckout()">
+                Trainingsplan freischalten
+                <span class="cta-subtext">30 Tage Geld-zurück-Garantie</span>
+            </button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Mein WauWerk. Alle Rechte vorbehalten.</p>
+        <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
+    </footer>
+
+    <!-- Checkout Popup -->
+    <div class="checkout-overlay" id="checkoutOverlay">
+        <div class="checkout-popup">
+            <div class="checkout-header">
+                <button class="checkout-close" onclick="closeCheckout()">×</button>
+                <h2 class="checkout-title">Dein Plan für <span id="checkoutDogName">deinen Hund</span></h2>
+            </div>
+            <div class="checkout-body">
+                <!-- Plan Card oben -->
+                <div class="checkout-plan-card">
+                    <div class="checkout-plan-image">🐕</div>
+                    <div class="checkout-plan-info">
+                        <div class="checkout-plan-name">Personalisierter Trainingsplan</div>
+                        <div class="checkout-plan-duration" id="checkoutPlanDuration">3-Monats-Plan</div>
+                    </div>
+                    <div class="checkout-plan-price-box">
+                        <div class="checkout-plan-price" id="checkoutPrice">€29,99</div>
+                        <div class="checkout-plan-access">Voller Zugang</div>
+                    </div>
+                </div>
+
+                <!-- Features kompakt -->
+                <div class="checkout-features-compact">
+                    <div class="checkout-feature-row">✓ 20+ Übungen für <span id="checkoutDogProblem">dein Problem</span></div>
+                    <div class="checkout-feature-row">✓ Persönlicher Wochenplan</div>
+                    <div class="checkout-feature-row">✓ Schritt-für-Schritt Anleitungen</div>
+                </div>
+
+                <!-- 30 Tage Garantie -->
+                <div class="checkout-guarantee-compact">🛡️ 30 Tage Geld-zurück-Garantie</div>
+
+                <h3 class="checkout-payment-title">Zahlungsmethode wählen</h3>
+
+                <div class="checkout-error" id="checkoutError"></div>
+
+                <div id="payment-element"></div>
+
+                <button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">
+                    🔒 Jetzt bezahlen
+                </button>
+
+                <div class="payment-icons">
+                    <img src="visa.png" alt="Visa">
+                    <img src="mastercard.png" alt="Mastercard">
+                    <img src="paypal.png" alt="PayPal">
+                    <img src="klarna.png" alt="Klarna">
+                </div>
+
+                <button class="checkout-back" onclick="closeCheckout()">← Zurück</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Config
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+        
+        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
+
+        let stripe = null;
+        let elements = null;
+        let paymentElement = null;
+        let selectedPlan = '3month';
+        let userEmail = '';
+        let leadId = '';
+        let dogName = 'deinen Hund';
+        let dogProblem = '';
+
+        // Problem-spezifische Inhalte
+        const problemContent = {
+            'pulling': {
+                name: 'Leinenziehen',
+                subtitle: 'Stell dir vor: Entspannte Spaziergänge, bei denen du die Natur genießt statt zu kämpfen. Das ist in 4 Wochen möglich.',
+                insights: [
+                    '{dogName} braucht beim Spaziergang klare Signale, wann es weitergeht und wann nicht.',
+                    'Die meisten Hunde verstehen "Bei Fuß" erst nach 3-4 Wochen konsequentem Training wirklich.',
+                    'Ohne klares Training wird das Ziehen zur Gewohnheit – und die ist schwer zu brechen.'
+                ],
+                benefits: [
+                    '✓ {dogName}s Leinenziehen Schritt für Schritt abtrainieren',
+                    '✓ Entspannte Spaziergänge ohne Zerren',
+                    '✓ Klare Kommandos, die {dogName} versteht',
+                    '✓ Richtungswechsel-Technik für sofortige Wirkung',
+                    '✓ 20+ Übungen speziell für {dogName}',
+                    '✓ Endlich stress-frei Gassi gehen'
+                ]
+            },
+            'barking': {
+                name: 'Bellen',
+                subtitle: 'Stell dir vor: Besuch kommt – und dein Hund bleibt ruhig. Keine genervten Nachbarn mehr. Das ist möglich.',
+                insights: [
+                    '{dogName} bellt oft aus Unsicherheit oder Aufregung, nicht aus Aggression.',
+                    'Ein "Ruhe"-Kommando braucht ca. 4-6 Wochen, bis es auch in aufregenden Situationen wirkt.',
+                    'Falsches Reagieren auf Bellen (Schimpfen, Aufmerksamkeit) verstärkt das Verhalten oft.'
+                ],
+                benefits: [
+                    '✓ {dogName}s übermäßiges Bellen stoppen',
+                    '✓ Ruhe-Kommando aufbauen',
+                    '✓ Auslöser verstehen und vermeiden',
+                    '✓ Entspannte Reaktion auf Besucher',
+                    '✓ 20+ Übungen speziell für {dogName}',
+                    '✓ Endlich Ruhe für dich und deine Nachbarn'
+                ]
+            },
+            'aggression': {
+                name: 'Aggression',
+                subtitle: 'Stell dir vor: Entspannte Begegnungen mit anderen Hunden. Keine Angst mehr, dass etwas passiert. Das ist erreichbar.',
+                insights: [
+                    '{dogName} zeigt aggressives Verhalten wahrscheinlich aus Angst oder Überforderung.',
+                    'Verhaltensänderungen bei Aggression brauchen Zeit – erste Erfolge oft erst nach 6-8 Wochen.',
+                    'Ohne professionelle Anleitung kann falsches Training die Aggression verstärken.'
+                ],
+                benefits: [
+                    '✓ {dogName}s aggressives Verhalten verstehen & lösen',
+                    '✓ Warnsignale frühzeitig erkennen',
+                    '✓ Sichere Begegnungen ermöglichen',
+                    '✓ Stresssituationen souverän meistern',
+                    '✓ 20+ Übungen speziell für {dogName}',
+                    '✓ Entspanntes Zusammenleben ohne Angst'
+                ]
+            },
+            'anxiety': {
+                name: 'Trennungsangst',
+                subtitle: 'Stell dir vor: Du gehst aus dem Haus – und dein Hund bleibt entspannt. Kein Stress, kein Heulen. Das kannst du erreichen.',
+                insights: [
+                    '{dogName} braucht schrittweises Training, um zu lernen, dass Alleinsein sicher ist.',
+                    'Trennungsangst-Training ist ein Marathon, kein Sprint – plane mindestens 8 Wochen ein.',
+                    'Zu schnelles Vorgehen oder Bestrafung macht die Angst fast immer schlimmer.'
+                ],
+                benefits: [
+                    '✓ {dogName}s Trennungsangst Schritt für Schritt abbauen',
+                    '✓ {dogName} lernt alleine zu bleiben',
+                    '✓ Zerstörerisches Verhalten stoppen',
+                    '✓ {dogName}s Selbstvertrauen stärken',
+                    '✓ 20+ Übungen speziell für {dogName}',
+                    '✓ Endlich sorgenfrei das Haus verlassen'
+                ]
+            },
+            'recall': {
+                name: 'Rückruf',
+                subtitle: 'Stell dir vor: Du rufst – und dein Hund kommt sofort. Freilauf ohne Sorgen. Das ist in wenigen Wochen möglich.',
+                insights: [
+                    '{dogName} ignoriert den Rückruf nicht absichtlich – andere Reize sind einfach spannender.',
+                    'Ein zuverlässiger Rückruf braucht 4-8 Wochen Training mit steigender Ablenkung.',
+                    'Ein Rückruf, der nicht konsequent belohnt wird, verliert schnell seine Wirkung.'
+                ],
+                benefits: [
+                    '✓ {dogName}s zuverlässigen Rückruf aufbauen',
+                    '✓ Freilauf ohne Sorgen ermöglichen',
+                    '✓ {dogName} ignoriert Ablenkungen',
+                    '✓ Sofortige Reaktion auf deinen Ruf',
+                    '✓ 20+ Übungen speziell für {dogName}',
+                    '✓ Endlich entspannter Freilauf'
+                ]
+            },
+            'jumping': {
+                name: 'Anspringen',
+                subtitle: 'Stell dir vor: Besuch kommt – und dein Hund begrüßt alle mit vier Pfoten am Boden. Das ist trainierbar.',
+                insights: [
+                    '{dogName} springt, weil es funktioniert – er bekommt Aufmerksamkeit (auch negative).',
+                    'Alternative Begrüßungsrituale brauchen ca. 3-4 Wochen konsequentes Training.',
+                    'Inkonsequenz ist der häufigste Grund, warum Anspring-Training nicht funktioniert.'
+                ],
+                benefits: [
+                    '✓ {dogName}s Anspringen abtrainieren',
+                    '✓ Ruhige Begrüßung lernen',
+                    '✓ Selbstkontrolle bei Aufregung aufbauen',
+                    '✓ Besuch entspannt empfangen',
+                    '✓ 20+ Übungen speziell für {dogName}',
+                    '✓ Keine peinlichen Momente mehr'
+                ]
+            },
+            'energy': {
+                name: 'Hyperaktivität',
+                subtitle: 'Stell dir vor: Ein Hund, der auch mal zur Ruhe kommt. Ausgeglichen und zufrieden. Das ist möglich.',
+                insights: [
+                    '{dogName} ist vielleicht körperlich müde, aber geistig unterfordert.',
+                    'Ruhetraining und mentale Auslastung zeigen oft schon nach 2-3 Wochen erste Wirkung.',
+                    'Mehr Bewegung führt oft zu mehr Ausdauer – nicht zu mehr Ruhe.'
+                ],
+                benefits: [
+                    '✓ {dogName}s überschüssige Energie abbauen',
+                    '✓ Mentale Auslastung für {dogName}',
+                    '✓ {dogName} lernt Ruhe & Entspannung',
+                    '✓ Hyperaktivität in den Griff bekommen',
+                    '✓ 20+ Übungen speziell für {dogName}',
+                    '✓ {dogName} wird ruhiger & zufriedener'
+                ]
+            },
+            'destructive': {
+                name: 'Zerstören',
+                subtitle: 'Stell dir vor: Deine Schuhe, Möbel und Sachen bleiben heil. Dein Hund hat gelernt, was er kauen darf.',
+                insights: [
+                    '{dogName} zerstört Dinge nicht aus Bosheit, sondern weil er ein Ventil braucht.',
+                    'Alternative Beschäftigungen müssen 3-4 Wochen konsequent angeboten werden.',
+                    'Bestrafung nach der Tat bringt nichts – dein Hund versteht den Zusammenhang nicht.'
+                ],
+                benefits: [
+                    '✓ {dogName}s zerstörerisches Verhalten stoppen',
+                    '✓ Langeweile sinnvoll bekämpfen',
+                    '✓ Kauen auf erlaubte Gegenstände umlenken',
+                    '✓ Deine Möbel und Schuhe schützen',
+                    '✓ 20+ Übungen speziell für {dogName}',
+                    '✓ Endlich Schluss mit zerstörten Sachen'
+                ]
+            },
+            'mouthing': {
+                name: 'Unerwünschtes Aufnehmen',
+                subtitle: 'Stell dir vor: Spaziergänge ohne Sorge, dass dein Hund etwas Gefährliches frisst. Das ist trainierbar.',
+                insights: [
+                    '{dogName} erkundet die Welt mit dem Maul – das ist normal, aber trainierbar.',
+                    'Ein sicheres "Aus"-Kommando braucht ca. 3-4 Wochen konsequentes Training.',
+                    'Ohne klares Training wird das Verhalten zur gefährlichen Gewohnheit.'
+                ],
+                benefits: [
+                    '✓ {dogName} lernt Sachen liegen zu lassen',
+                    '✓ Sicheres "Aus"-Kommando aufbauen',
+                    '✓ Gefährliche Gegenstände werden ignoriert',
+                    '✓ Kein Fressen vom Boden mehr',
+                    '✓ 20+ Übungen speziell für {dogName}',
+                    '✓ Entspannte Spaziergänge ohne Sorgen'
+                ]
+            }
+        };
+
+        // Default content
+        const defaultContent = {
+            name: 'Verhaltensprobleme',
+            subtitle: 'Entspannte Spaziergänge. Keine Kämpfe mehr. Ein Hund, auf den du stolz bist. Das ist möglich – in wenigen Wochen.',
+            insights: [
+                '{dogName} braucht klare, konsistente Signale und viel Geduld.',
+                'Die meisten Verhaltensänderungen werden erst nach 4-6 Wochen wirklich stabil.',
+                'Ohne strukturiertes Training kehren alte Muster oft zurück.'
+            ],
+            benefits: [
+                '✓ {dogName}s Verhalten gezielt verbessern',
+                '✓ Klare Trainingsstruktur für jeden Tag',
+                '✓ Neue Trainingstechniken für {dogName}',
+                '✓ Stärkere Bindung zu {dogName} aufbauen',
+                '✓ 20+ Übungen speziell für {dogName}',
+                '✓ Dauerhaft gutes Verhalten erreichen'
+            ]
+        };
+
+        // Plan-Daten
+        const planData = {
+            '1month': { name: '1-Monats-Plan', price: '24,99', priceNum: 24.99 },
+            '3month': { name: '3-Monats-Plan', price: '29,99', priceNum: 29.99 },
+            '6month': { name: '6-Monats-Plan', price: '49,99', priceNum: 49.99 }
+        };
+
+        // Daten laden und Seite personalisieren
+        async function loadAndPersonalize() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const leadIdParam = urlParams.get('lead_id');
+            const emailParam = urlParams.get('email');
+            
+            dogName = localStorage.getItem('dogName') || 'deinen Hund';
+            dogProblem = localStorage.getItem('dogProblem') || '';
+            leadId = leadIdParam || localStorage.getItem('leadId') || '';
+            userEmail = localStorage.getItem('userEmail') || '';
+            
+            // Aus Supabase laden wenn Parameter vorhanden
+            if (leadIdParam || emailParam) {
+                let queryParam = '';
+                if (leadIdParam) {
+                    queryParam = 'id=eq.' + leadIdParam;
+                } else if (emailParam) {
+                    const decodedEmail = decodeURIComponent(emailParam);
+                    queryParam = 'email=eq.' + encodeURIComponent(decodedEmail);
+                }
+                
+                try {
+                    const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?' + queryParam + '&select=*&order=created_at.desc&limit=1', {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data[0]) {
+                            const lead = data[0];
+                            const answers = lead.answers || {};
+                            
+                            if (answers.dog_name) dogName = answers.dog_name;
+                            if (answers.dog_problem) dogProblem = answers.dog_problem;
+                            if (lead.id) leadId = lead.id;
+                            if (lead.email) userEmail = lead.email;
+                            
+                            // In localStorage speichern
+                            localStorage.setItem('dogName', dogName);
+                            localStorage.setItem('dogProblem', dogProblem);
+                            localStorage.setItem('leadId', leadId);
+                            localStorage.setItem('userEmail', userEmail);
+                            
+                            console.log('✅ Daten aus Supabase geladen:', { dogName, dogProblem, leadId });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Supabase error:', error);
+                }
+            }
+            
+            // Content basierend auf Problem
+            const content = problemContent[dogProblem] || defaultContent;
+            
+            // Hero personalisieren
+            document.getElementById('dogNameHero').textContent = dogName;
+            document.getElementById('heroSubtitle').textContent = content.subtitle;
+            
+            // Dog names überall ersetzen
+            document.getElementById('dogNameFinal').textContent = dogName;
+            
+            // Insights personalisieren
+            const insightTexts = document.querySelectorAll('.insight-text');
+            content.insights.forEach((insight, i) => {
+                if (insightTexts[i]) {
+                    insightTexts[i].innerHTML = insight.replace('{dogName}', '<strong>' + dogName + '</strong>');
+                }
+            });
+            
+            // Benefits personalisieren
+            const benefitsList = document.getElementById('benefitsList');
+            benefitsList.innerHTML = '';
+            content.benefits.forEach(benefit => {
+                const li = document.createElement('li');
+                li.textContent = benefit.replace(/{dogName}/g, dogName);
+                benefitsList.appendChild(li);
+            });
+        }
+
+        // Pricing Selection
+        const pricingCards = document.querySelectorAll('.pricing-card');
+        pricingCards.forEach(card => {
+            card.addEventListener('click', () => {
+                pricingCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedPlan = card.dataset.plan;
+            });
+        });
+
+        // Checkout öffnen
+        async function openCheckout() {
+            const plan = planData[selectedPlan];
+            document.getElementById('checkoutPlanDuration').textContent = plan.name;
+            document.getElementById('checkoutPrice').textContent = '€' + plan.price;
+            document.getElementById('checkoutDogName').textContent = dogName;
+            
+            // Problem-Text
+            const problemNames = {
+                'pulling': 'Leinenziehen',
+                'barking': 'Bellen',
+                'aggression': 'Aggression',
+                'anxiety': 'Trennungsangst',
+                'recall': 'Rückruf',
+                'jumping': 'Anspringen',
+                'energy': 'Hyperaktivität',
+                'destructive': 'Zerstören',
+                'mouthing': 'Unerwünschtes Aufnehmen'
+            };
+            document.getElementById('checkoutDogProblem').textContent = problemNames[dogProblem] || 'dein Problem';
+            
+            document.getElementById('checkoutOverlay').classList.add('active');
+            
+            // Stripe initialisieren
+            if (!stripe) {
+                stripe = Stripe(STRIPE_PUBLIC_KEY);
+            }
+            
+            // Payment Intent erstellen
+            try {
+                const response = await fetch('/api/create-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plan: selectedPlan,
+                        email: userEmail,
+                        leadId: leadId,
+                        dogName: dogName,
+                        dogProblem: dogProblem
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showError(data.error);
+                    return;
+                }
+                
+                elements = stripe.elements({
+                    clientSecret: data.clientSecret,
+                    appearance: {
+                        theme: 'stripe',
+                        variables: {
+                            colorPrimary: '#C4A576',
+                            colorBackground: '#ffffff',
+                            colorText: '#1a1a1a',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            borderRadius: '8px'
+                        }
+                    },
+                    locale: 'de'
+                });
+                
+                paymentElement = elements.create('payment', {
+                    layout: { type: 'tabs', defaultCollapsed: false },
+                    paymentMethodOrder: ['card', 'klarna', 'paypal'],
+                    wallets: { applePay: 'auto', googlePay: 'auto' }
+                });
+                
+                document.getElementById('payment-element').innerHTML = '';
+                paymentElement.mount('#payment-element');
+                
+            } catch (error) {
+                console.error('Checkout error:', error);
+                showError('Fehler beim Laden. Bitte versuche es erneut.');
+            }
+        }
+
+        // Checkout schließen
+        function closeCheckout() {
+            document.getElementById('checkoutOverlay').classList.remove('active');
+        }
+
+        // Zahlung absenden
+        async function submitPayment() {
+            const btn = document.getElementById('checkoutPayBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Wird verarbeitet...';
+            hideError();
+            
+            try {
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: window.location.origin + '/zusatz.html?lead_id=' + leadId + '&plan=' + selectedPlan
+                    }
+                });
+                
+                if (error) {
+                    showError(error.message);
+                    btn.disabled = false;
+                    btn.innerHTML = '🔒 Jetzt bezahlen';
+                }
+            } catch (err) {
+                showError('Ein Fehler ist aufgetreten. Bitte versuche es erneut.');
+                btn.disabled = false;
+                btn.innerHTML = '🔒 Jetzt bezahlen';
+            }
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('checkoutError');
+            errorEl.textContent = message;
+            errorEl.classList.add('visible');
+        }
+
+        function hideError() {
+            document.getElementById('checkoutError').classList.remove('visible');
+        }
+
+        // Escape-Taste schließt Checkout
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeCheckout();
+        });
+
+        // Beim Laden ausführen
+        loadAndPersonalize();
+    </script>
+</body>
+</html>
