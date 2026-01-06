@@ -449,6 +449,141 @@
             background: #B8956A;
         }
 
+        /* Bundle Styles */
+        .bundle-option {
+            background: linear-gradient(135deg, #F5F0E8 0%, #FFFFFF 100%);
+            border: 2px solid #C4A576;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bundle-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: linear-gradient(135deg, #C4A576, #8B7355);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 0 14px 0 12px;
+        }
+
+        .bundle-header {
+            margin-bottom: 16px;
+        }
+
+        .bundle-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .bundle-subtitle {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .bundle-modules {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .bundle-module {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .bundle-module-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .bundle-module-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .bundle-module-points {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .bundle-point {
+            font-size: 11px;
+            color: #555;
+            background: #F5F5F5;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .bundle-point::before {
+            content: "✓ ";
+            color: #22C55E;
+            font-weight: 600;
+        }
+
+        .bundle-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid #E8E8E8;
+        }
+
+        .bundle-price {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bundle-price-old {
+            font-size: 13px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .bundle-price-new {
+            font-size: 24px;
+            font-weight: 700;
+            color: #C4A576;
+        }
+
+        .bundle-price-save {
+            font-size: 11px;
+            color: #22C55E;
+            font-weight: 600;
+        }
+
+        .bundle-btn {
+            background: linear-gradient(135deg, #C4A576, #8B7355);
+            border: none;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .bundle-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(196, 165, 118, 0.4);
+        }
+
         /* Skip */
         .skip {
             text-align: center;
@@ -630,6 +765,13 @@
                 exercises: '6 Übungen',
                 benefits: ['Kau-Alternativen', 'Langeweile vermeiden', 'Grenzen setzen', 'Sichere Umgebung'],
                 desc: 'Schluss mit kaputten Schuhen und zerstörten Möbeln.'
+            },
+            'mouthing': { 
+                icon: '🦴', 
+                name: 'Anti-Aufnehm Training', 
+                exercises: '6 Übungen',
+                benefits: ['Aus-Kommando aufbauen', 'Impulskontrolle stärken', 'Gefahren vermeiden', 'Entspannte Spaziergänge'],
+                desc: 'Dein Hund lernt, unerwünschte Sachen liegen zu lassen.'
             }
         };
 
@@ -657,7 +799,7 @@
             // Filter: Module die der User nicht im Plan hat
             const availableModules = allModules.filter(m => !allUserProblems.includes(m));
             
-            // Zeige maximal 2 Optionen
+            // Zeige maximal 2 Optionen für Einzelmodule
             const modulesToShow = availableModules.slice(0, 2);
             
             if (modulesToShow.length === 0) {
@@ -666,6 +808,8 @@
             }
 
             let html = '';
+
+            // Einzelne Module zuerst
             modulesToShow.forEach(moduleKey => {
                 const m = moduleData[moduleKey];
                 const pointsHtml = m.benefits.slice(0, 3).map(b => '<span class="option-point">' + b + '</span>').join('');
@@ -690,6 +834,52 @@
                 '</div>';
             });
 
+            // Trennlinie
+            html += '<div style="text-align:center;color:#999;font-size:13px;margin:20px 0;">oder im Spar-Paket:</div>';
+
+            // Bundle Option (erstes Modul + Prävention) unten
+            if (modulesToShow.length >= 1) {
+                const firstModule = moduleData[modulesToShow[0]];
+                
+                html += '<div class="bundle-option">' +
+                    '<span class="bundle-badge">⭐ SPAR-PAKET</span>' +
+                    '<div class="bundle-header">' +
+                        '<h3 class="bundle-title">Komplett-Paket für ' + dogName + '</h3>' +
+                        '<p class="bundle-subtitle">Training + Prävention in einem</p>' +
+                    '</div>' +
+                    '<div class="bundle-modules">' +
+                        '<div class="bundle-module">' +
+                            '<span class="bundle-module-icon">' + firstModule.icon + '</span>' +
+                            '<div class="bundle-module-info">' +
+                                '<h4>' + firstModule.name + '</h4>' +
+                                '<div class="bundle-module-points">' +
+                                    firstModule.benefits.slice(0, 2).map(b => '<span class="bundle-point">' + b + '</span>').join('') +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="bundle-module">' +
+                            '<span class="bundle-module-icon">🧠</span>' +
+                            '<div class="bundle-module-info">' +
+                                '<h4>Prävention & Grundlagen</h4>' +
+                                '<div class="bundle-module-points">' +
+                                    '<span class="bundle-point">Warnsignale rechtzeitig verstehen</span>' +
+                                    '<span class="bundle-point">Klar handeln in schwierigen Momenten</span>' +
+                                    '<span class="bundle-point">Rückfälle vermeiden</span>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="bundle-footer">' +
+                        '<div class="bundle-price">' +
+                            '<span class="bundle-price-old">Statt €38</span>' +
+                            '<span class="bundle-price-new">€24,99</span>' +
+                            '<span class="bundle-price-save">Du sparst €13!</span>' +
+                        '</div>' +
+                        '<button class="bundle-btn" onclick="buyBundle(\'' + modulesToShow[0] + '\')">Bundle sichern</button>' +
+                    '</div>' +
+                '</div>';
+            }
+
             container.innerHTML = html;
         }
 
@@ -707,19 +897,31 @@
         // ==================== PURCHASE TRACKING ====================
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session_id');
-        const trackingKey = 'purchase_tracked_' + (sessionId || leadId);
+        const paymentIntent = urlParams.get('payment_intent');
+        
+        // Gleicher Key wie in danke.html für Deduplizierung
+        const uniqueKey = paymentIntent || sessionId || leadId || 'unknown';
+        const trackingKey = 'wauwerk_purchase_tracked_' + uniqueKey;
 
         if (!localStorage.getItem(trackingKey)) {
             console.log('🔥 Purchase Event feuern:', purchaseValue, 'EUR');
+            
+            // Event ID für Meta Deduplizierung
+            const eventId = 'purchase_' + uniqueKey + '_' + Date.now();
             
             if (typeof fbq !== 'undefined') {
                 fbq('track', 'Purchase', {
                     value: purchaseValue,
                     currency: 'EUR',
                     content_type: 'product',
-                    content_name: 'WauWerk Trainingsplan ' + selectedPlan
-                });
-                console.log('✅ Meta Purchase gefeuert');
+                    content_ids: ['wauwerk_' + selectedPlan],
+                    content_name: 'WauWerk Trainingsplan ' + selectedPlan,
+                    contents: [{
+                        id: 'wauwerk_' + selectedPlan,
+                        quantity: 1
+                    }]
+                }, { eventID: eventId });
+                console.log('✅ Meta Purchase gefeuert (Event ID:', eventId, ')');
             }
 
             if (typeof ttq !== 'undefined') {
@@ -750,25 +952,48 @@
             localStorage.setItem(trackingKey, 'true');
             
             // Status in Supabase auf "paid" setzen
-            if (leadId) {
-                fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    },
-                    body: JSON.stringify({
-                        status: 'paid',
-                        selected_plan: selectedPlan,
-                        price: purchaseValue
-                    })
-                }).then(() => {
-                    console.log('✅ Supabase Status auf "paid" gesetzt');
-                }).catch(err => {
-                    console.log('Supabase update error:', err);
-                });
-            }
+            const updatePaidStatus = async () => {
+                let updateUrl = '';
+                
+                if (leadId) {
+                    updateUrl = `${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}`;
+                } else if (userEmail) {
+                    // Fallback: nach Email suchen
+                    updateUrl = `${SUPABASE_URL}/rest/v1/wauwerk_leads?email=eq.${encodeURIComponent(userEmail)}&order=created_at.desc&limit=1`;
+                }
+                
+                if (updateUrl) {
+                    try {
+                        const response = await fetch(updateUrl, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                            },
+                            body: JSON.stringify({
+                                status: 'paid',
+                                selected_plan: selectedPlan,
+                                price: purchaseValue,
+                                stripe_payment_intent: paymentIntent || null,
+                                paid_at: new Date().toISOString()
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            console.log('✅ Supabase Status auf "paid" gesetzt');
+                        } else {
+                            console.error('❌ Supabase update failed:', response.status);
+                        }
+                    } catch (err) {
+                        console.error('Supabase update error:', err);
+                    }
+                } else {
+                    console.warn('⚠️ Keine leadId oder Email - kann Status nicht updaten');
+                }
+            };
+            
+            updatePaidStatus();
         } else {
             console.log('⏭️ Purchase bereits getrackt, skip');
         }
@@ -905,6 +1130,112 @@
                 console.error('Error:', err);
                 alert('Fehler beim Laden. Bitte versuche es erneut.');
                 btn.textContent = 'Hinzufügen';
+                btn.disabled = false;
+            }
+        }
+
+        // Bundle kaufen (Modul + Prävention)
+        async function buyBundle(module) {
+            const btn = event.target;
+            btn.textContent = 'Lädt...';
+            btn.disabled = true;
+
+            if (!userEmail) {
+                alert('Bitte zuerst E-Mail eingeben.');
+                btn.textContent = 'Bundle sichern';
+                btn.disabled = false;
+                return;
+            }
+
+            currentModule = module + '+anxiety'; // Bundle: Modul + Prävention
+            const data = moduleData[module] || moduleData['anxiety'];
+
+            // Popup für Bundle aktualisieren
+            document.getElementById('paymentIcon').textContent = '📦';
+            document.getElementById('paymentModuleName').textContent = 'Komplett-Paket';
+            document.querySelector('.payment-product-info p').textContent = data.name + ' + Prävention';
+            document.querySelector('.payment-product-price').textContent = '€24,99';
+
+            // Benefits für Bundle
+            const bundleBenefits = [
+                ...data.benefits.slice(0, 2),
+                'Trennungsangst vorbeugen',
+                'Alleine-bleiben üben'
+            ];
+            const benefitsHtml = bundleBenefits.map(b => '<div class="payment-benefit">✓ <span>' + b + '</span></div>').join('');
+            document.getElementById('paymentBenefits').innerHTML = benefitsHtml;
+
+            try {
+                console.log('📤 Bundle Checkout:', { module, leadId, email: userEmail, bundle: true });
+                
+                const response = await fetch('/api/upsell-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        module: module + '+anxiety',
+                        leadId: leadId,
+                        email: userEmail,
+                        dogName: dogName,
+                        bundle: true,
+                        price: 2499 // 24,99€ in Cents
+                    })
+                });
+
+                const result = await response.json();
+                console.log('📥 Bundle API Response:', result);
+
+                if (result.error) {
+                    alert('Fehler: ' + result.error);
+                    btn.textContent = 'Bundle sichern';
+                    btn.disabled = false;
+                    return;
+                }
+
+                if (!result.clientSecret) {
+                    alert('Fehler: Keine Zahlungs-Session erhalten');
+                    btn.textContent = 'Bundle sichern';
+                    btn.disabled = false;
+                    return;
+                }
+
+                clientSecret = result.clientSecret;
+
+                if (!stripe) {
+                    stripe = Stripe(STRIPE_PUBLIC_KEY);
+                }
+
+                elements = stripe.elements({
+                    clientSecret: clientSecret,
+                    appearance: {
+                        theme: 'stripe',
+                        variables: {
+                            colorPrimary: '#C4A576',
+                            colorBackground: '#ffffff',
+                            colorText: '#2C2C2E',
+                            colorDanger: '#e74c3c',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            borderRadius: '8px'
+                        }
+                    },
+                    locale: 'de'
+                });
+
+                paymentElement = elements.create('payment', {
+                    layout: { type: 'tabs', defaultCollapsed: false },
+                    paymentMethodOrder: ['card', 'klarna', 'paypal'],
+                    wallets: { applePay: 'auto', googlePay: 'auto' }
+                });
+
+                paymentElement.mount('#payment-element');
+                document.getElementById('paymentOverlay').classList.add('active');
+
+                btn.textContent = 'Bundle sichern';
+                btn.disabled = false;
+
+            } catch (err) {
+                console.error('Bundle Error:', err);
+                alert('Fehler beim Laden. Bitte versuche es erneut.');
+                btn.textContent = 'Bundle sichern';
                 btn.disabled = false;
             }
         }
