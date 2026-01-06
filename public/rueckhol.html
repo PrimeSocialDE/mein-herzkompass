@@ -1248,6 +1248,7 @@
                     <div class="checkout-feature-row">✓ 20+ Übungen für <span id="checkoutDogProblem">dein Problem</span></div>
                     <div class="checkout-feature-row">✓ Persönlicher Wochenplan</div>
                     <div class="checkout-feature-row">✓ Schritt-für-Schritt Anleitungen</div>
+                    <div class="checkout-feature-row">✓ <span id="checkoutPlanBenefit">Trainingsplan auf 12 Wochen optimiert</span></div>
                 </div>
 
                 <!-- 30 Tage Garantie -->
@@ -1595,6 +1596,14 @@
             };
             document.getElementById('checkoutDogProblem').textContent = problemNames[dogProblem] || 'dein Problem';
             
+            // Plan-Benefit basierend auf Laufzeit
+            const planBenefits = {
+                '1month': 'Trainingsplan auf 4 Wochen optimiert',
+                '3month': 'Trainingsplan auf 12 Wochen optimiert',
+                '6month': 'Trainingsplan auf 24 Wochen optimiert'
+            };
+            document.getElementById('checkoutPlanBenefit').textContent = planBenefits[selectedPlan] || planBenefits['3month'];
+            
             document.getElementById('checkoutOverlay').classList.add('active');
             
             // Stripe initialisieren
@@ -1640,26 +1649,6 @@
                 // Event ID in localStorage speichern
                 if (data.paymentIntentId) {
                     localStorage.setItem('payment_intent_id', data.paymentIntentId);
-                    
-                    // Auch in Supabase updaten wenn leadId vorhanden
-                    if (leadId) {
-                        const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
-                        currentAnswers.event_id = data.paymentIntentId;
-                        currentAnswers.fb_event_id = localStorage.getItem('fb_event_id') || '';
-                        
-                        fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + leadId, {
-                            method: 'PATCH',
-                            headers: {
-                                'apikey': SUPABASE_ANON_KEY,
-                                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-                                'Content-Type': 'application/json',
-                                'Prefer': 'return=minimal'
-                            },
-                            body: JSON.stringify({ answers: currentAnswers })
-                        });
-                        
-                        localStorage.setItem('wauwerk_answers', JSON.stringify(currentAnswers));
-                    }
                 }
                 
                 elements = stripe.elements({
