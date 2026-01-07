@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persönliche Trainer-Hilfe | WauWerk</title>
+    <link rel="icon" type="image/png" href="favconHund.png">
+    <style>
+        :root {
+            --primary-cream: #FDF8F3;
+            --secondary-cream: #F5EDE3;
+            --warm-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --text-dark: #3D3D3D;
+            --text-medium: #6B6B6B;
+            --text-light: #8B8B8B;
+            --white: #FFFFFF;
+            --border-light: #E8E0D5;
+            --success-green: #22c55e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--primary-cream);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .page-header {
+            text-align: center;
+            padding: 30px 0 20px;
+        }
+
+        .logo {
+            height: 60px;
+            margin-bottom: 25px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .page-title span {
+            color: var(--warm-brown);
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: var(--text-medium);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Intro Section */
+        .intro-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .intro-text {
+            font-size: 15px;
+            color: var(--text-medium);
+            line-height: 1.7;
+        }
+
+        .intro-text strong {
+            color: var(--text-dark);
+        }
+
+        /* Trainer Section */
+        .trainer-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .trainer-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .trainer-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .trainer-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .trainer-info h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .trainer-title {
+            font-size: 13px;
+            color: var(--warm-brown);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .trainer-credentials {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .trainer-bio {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .trainer-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--warm-brown);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        /* How it works */
+        .process-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .process-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .step-content p {
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+
+        /* Form Section */
+        .form-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .form-label span {
+            font-weight: 400;
+            color: var(--text-light);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            font-size: 15px;
+            color: var(--text-dark);
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--warm-brown);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 6px;
+        }
+
+        /* Video Upload */
+        .video-upload-area {
+            border: 2px dashed var(--border-light);
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--primary-cream);
+        }
+
+        .video-upload-area:hover {
+            border-color: var(--warm-brown);
+            background: #FAF7F2;
+        }
+
+        .video-upload-area.dragover {
+            border-color: var(--warm-brown);
+            background: #FAF7F2;
+        }
+
+        .video-upload-area.has-file {
+            border-color: var(--success-green);
+            background: #f0fdf4;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            font-size: 14px;
+            color: var(--text-medium);
+            margin-bottom: 6px;
+        }
+
+        .upload-text strong {
+            color: var(--warm-brown);
+        }
+
+        .upload-formats {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .selected-file {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 12px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .selected-file-name {
+            font-size: 13px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .remove-file {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            background: linear-gradient(135deg, #FAF7F2 0%, var(--white) 100%);
+            border: 2px solid var(--warm-brown);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .pricing-badge {
+            display: inline-block;
+            background: var(--warm-brown);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .pricing-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .pricing-price {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .price-amount {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--warm-brown);
+        }
+
+        .price-info {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .pricing-includes {
+            margin: 20px 0;
+        }
+
+        .include-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .include-icon {
+            color: var(--success-green);
+            font-weight: bold;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(196, 165, 118, 0.4);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .guarantee-note {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+
+        .guarantee-note span {
+            color: var(--success-green);
+        }
+
+        /* Trust Section */
+        .trust-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .trust-items {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .trust-item {
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .trust-icon {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .trust-text {
+            font-size: 12px;
+            color: var(--text-medium);
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .faq-item {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .faq-question {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .faq-answer {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+        }
+
+        /* Success State */
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-message.visible {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .success-text {
+            font-size: 15px;
+            color: var(--text-medium);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 24px;
+            }
+
+            .trainer-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .trainer-stats {
+                justify-content: center;
+            }
+
+            .price-amount {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <img src="logo.png" alt="WauWerk" class="logo">
+            <div class="badge">🎯 Exklusiv für WauWerk Mitglieder</div>
+            <h1 class="page-title">Persönliche <span>Trainer-Hilfe</span></h1>
+            <p class="page-subtitle">Ein Hundetrainer aus unserem Team analysiert dein Problem und gibt dir einen individuellen Lösungsplan.</p>
+        </div>
+
+        <!-- Intro -->
+        <div class="intro-section">
+            <p class="intro-text">
+                <strong>Du hast deinen Trainingsplan – aber ein spezielles Problem macht dir noch Sorgen?</strong><br><br>
+                Manchmal braucht es den Blick eines Profis. Beschreib uns genau, was passiert – und unser Trainer schaut sich die Situation an. Du bekommst eine <strong>persönliche Analyse</strong> mit konkreten Übungen, die genau auf dein Problem zugeschnitten sind.
+            </p>
+        </div>
+
+        <!-- Trainer Vorstellung -->
+        <div class="trainer-section">
+            <div class="trainer-header">
+                <div class="trainer-avatar"><img src="TrainerWau.png" alt="Hundetrainer"></div>
+                <div class="trainer-info">
+                    <h3>Dein persönlicher Trainer</h3>
+                    <div class="trainer-title">Hundetrainer aus dem WauWerk Team</div>
+                    <div class="trainer-credentials">Erfahren · Zertifiziert · Praxisorientiert</div>
+                </div>
+            </div>
+            <p class="trainer-bio">
+                Ein erfahrener Hundetrainer aus unserem Team schaut sich dein Problem genau an. Unsere Trainer arbeiten seit Jahren mit Hunden aller Rassen und kennen die typischen Herausforderungen – von Hyperaktivität bis Leinenführigkeit. Du bekommst keine Standard-Antwort, sondern eine echte Analyse deiner Situation.
+            </p>
+            <div class="trainer-stats">
+                <div class="stat-item">
+                    <div class="stat-number">2.000+</div>
+                    <div class="stat-label">Hunde trainiert</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Jahre Erfahrung</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4.9 ★</div>
+                    <div class="stat-label">Bewertung</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- So funktioniert's -->
+        <div class="process-section">
+            <h2 class="section-title">So funktioniert's</h2>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Beschreib dein Problem</h4>
+                        <p>Erzähl uns genau, was passiert. Je mehr Details, desto besser können wir helfen.</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Video hochladen (optional)</h4>
+                        <p>Zeig uns die Situation – ein kurzes Video hilft enorm bei der Analyse.</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Trainer analysiert</h4>
+                        <p>Unser Trainer schaut sich alles genau an und erstellt deinen persönlichen Lösungsplan.</p>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Antwort in 48h</h4>
+                        <p>Du erhältst eine ausführliche Video-Antwort mit konkreten Übungen per E-Mail.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formular -->
+        <div class="form-section" id="formSection">
+            <h2 class="section-title">Dein Problem beschreiben</h2>
+            
+            <form id="coachingForm">
+                <div class="form-group">
+                    <label class="form-label">Name deines Hundes</label>
+                    <input type="text" class="form-input" id="dogName" placeholder="z.B. Luna" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Deine E-Mail</label>
+                    <input type="email" class="form-input" id="userEmail" placeholder="deine@email.de" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Was ist das Problem? <span>(So genau wie möglich)</span></label>
+                    <textarea class="form-input form-textarea" id="problemDescription" placeholder="Beschreibe die Situation: Wann tritt das Problem auf? Was macht dein Hund genau? Wie reagierst du? Was hast du schon versucht?" required></textarea>
+                    <p class="form-hint">Je mehr Details du teilst, desto besser können wir dir helfen.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Video hochladen <span>(Optional, aber sehr hilfreich)</span></label>
+                    <div class="video-upload-area" id="uploadArea">
+                        <div class="upload-icon">🎥</div>
+                        <p class="upload-text">Klicken oder <strong>Video hierher ziehen</strong></p>
+                        <p class="upload-formats">MP4, MOV, AVI · Max. 100MB · Max. 3 Minuten</p>
+                        <input type="file" class="file-input" id="videoFile" accept="video/*">
+                        <div class="selected-file" id="selectedFile" style="display: none;">
+                            <span class="selected-file-name" id="fileName"></span>
+                            <button type="button" class="remove-file" onclick="removeFile()">✕</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Gibt es noch etwas, das wir wissen sollten? <span>(Optional)</span></label>
+                    <textarea class="form-input form-textarea" id="additionalInfo" placeholder="z.B. Vorgeschichte, Gesundheitsprobleme, was du schon versucht hast..." style="min-height: 80px;"></textarea>
+                </div>
+            </form>
+        </div>
+
+        <!-- Pricing -->
+        <div class="pricing-section">
+            <div class="pricing-header">
+                <div class="pricing-badge">⭐ Persönliche Betreuung</div>
+                <h2 class="pricing-title">Trainer-Analyse</h2>
+                <div class="pricing-price">
+                    <span class="price-amount">€49</span>
+                    <span class="price-info">einmalig</span>
+                </div>
+            </div>
+
+            <div class="pricing-includes">
+                <div class="include-item">
+                    <span class="include-icon">✓</span>
+                    <span>Ausführliche Analyse deines Problems</span>
+                </div>
+                <div class="include-item">
+                    <span class="include-icon">✓</span>
+                    <span>Persönliche Video-Antwort vom Trainer</span>
+                </div>
+                <div class="include-item">
+                    <span class="include-icon">✓</span>
+                    <span>Konkrete Übungen für dein spezifisches Problem</span>
+                </div>
+                <div class="include-item">
+                    <span class="include-icon">✓</span>
+                    <span>Schritt-für-Schritt Anleitung</span>
+                </div>
+                <div class="include-item">
+                    <span class="include-icon">✓</span>
+                    <span>Antwort innerhalb von 48 Stunden</span>
+                </div>
+            </div>
+
+            <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">
+                Jetzt Trainer-Hilfe anfordern →
+            </button>
+            <p class="guarantee-note"><span>🛡️</span> 100% Geld-zurück-Garantie wenn du nicht zufrieden bist</p>
+        </div>
+
+        <!-- Trust -->
+        <div class="trust-section">
+            <div class="trust-items">
+                <div class="trust-item">
+                    <div class="trust-icon">🔒</div>
+                    <div class="trust-text">Sichere Zahlung</div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">⏱️</div>
+                    <div class="trust-text">48h Antwortzeit</div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">🛡️</div>
+                    <div class="trust-text">Geld-zurück-Garantie</div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">🎯</div>
+                    <div class="trust-text">Individuell für dich</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="faq-section">
+            <h2 class="section-title">Häufige Fragen</h2>
+            
+            <div class="faq-item">
+                <h3 class="faq-question">Wie lange dauert es, bis ich eine Antwort bekomme?</h3>
+                <p class="faq-answer">Du erhältst deine persönliche Video-Antwort innerhalb von 48 Stunden per E-Mail.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3 class="faq-question">Muss ich ein Video hochladen?</h3>
+                <p class="faq-answer">Nein, das Video ist optional. Aber es hilft unserem Trainer enorm, die Situation besser einzuschätzen und dir gezieltere Tipps zu geben.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3 class="faq-question">Was, wenn es nicht hilft?</h3>
+                <p class="faq-answer">Wir bieten eine 100% Geld-zurück-Garantie. Wenn du mit der Analyse nicht zufrieden bist, erstatten wir dir den vollen Betrag.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3 class="faq-question">Kann ich danach weitere Fragen stellen?</h3>
+                <p class="faq-answer">Die Trainer-Hilfe beinhaltet eine ausführliche Analyse. Für Folgefragen kannst du eine weitere Analyse buchen oder unseren E-Mail-Support nutzen.</p>
+            </div>
+        </div>
+
+        <!-- Success Message (hidden by default) -->
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">🎉</div>
+            <h2 class="success-title">Anfrage erhalten!</h2>
+            <p class="success-text">
+                Vielen Dank! Unser Trainer wird sich dein Problem genau anschauen. Du erhältst deine persönliche Video-Antwort innerhalb von 48 Stunden an deine E-Mail-Adresse.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // URL Parameter auslesen
+        const urlParams = new URLSearchParams(window.location.search);
+        const dogNameParam = urlParams.get('dog_name') || localStorage.getItem('dogName');
+        const emailParam = urlParams.get('email') || localStorage.getItem('userEmail');
+        const leadIdParam = urlParams.get('lead_id') || localStorage.getItem('leadId');
+
+        // Felder vorausfüllen
+        if (dogNameParam) {
+            document.getElementById('dogName').value = dogNameParam;
+        }
+        if (emailParam) {
+            document.getElementById('userEmail').value = emailParam;
+        }
+
+        // Video Upload Handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('videoFile');
+        const selectedFile = document.getElementById('selectedFile');
+        const fileName = document.getElementById('fileName');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('video/')) {
+                handleFile(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            // Check file size (max 100MB)
+            if (file.size > 100 * 1024 * 1024) {
+                alert('Das Video ist zu groß. Bitte wähle ein Video unter 100MB.');
+                return;
+            }
+            
+            fileName.textContent = file.name;
+            selectedFile.style.display = 'flex';
+            uploadArea.classList.add('has-file');
+        }
+
+        function removeFile() {
+            fileInput.value = '';
+            selectedFile.style.display = 'none';
+            uploadArea.classList.remove('has-file');
+        }
+
+        // Form Submit
+        async function submitForm() {
+            const btn = document.getElementById('submitBtn');
+            const dogName = document.getElementById('dogName').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            const problem = document.getElementById('problemDescription').value.trim();
+            const additional = document.getElementById('additionalInfo').value.trim();
+            const video = fileInput.files[0];
+
+            // Validation
+            if (!dogName || !email || !problem) {
+                alert('Bitte fülle alle Pflichtfelder aus.');
+                return;
+            }
+
+            if (!email.includes('@')) {
+                alert('Bitte gib eine gültige E-Mail-Adresse ein.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Wird gesendet...';
+
+            try {
+                // Hier würde der API-Call kommen
+                // Für jetzt simulieren wir den Erfolg
+                
+                // TODO: Implementiere Stripe Checkout und Datenspeicherung
+                // const response = await fetch('/api/trainer-hilfe-checkout', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({
+                //         dogName,
+                //         email,
+                //         problem,
+                //         additional,
+                //         hasVideo: !!video,
+                //         leadId: leadIdParam
+                //     })
+                // });
+
+                // Simuliere Erfolg für Demo
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // Zeige Erfolg
+                document.getElementById('formSection').style.display = 'none';
+                document.querySelector('.pricing-section').style.display = 'none';
+                document.getElementById('successMessage').classList.add('visible');
+
+                // Scroll nach oben
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Es ist ein Fehler aufgetreten. Bitte versuche es erneut.');
+                btn.disabled = false;
+                btn.innerHTML = 'Jetzt Trainer-Hilfe anfordern →';
+            }
+        }
+    </script>
+</body>
+</html>
