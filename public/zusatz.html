@@ -15,15 +15,6 @@
         gtag('config', 'AW-17806525009');
     </script>
 
-    <!-- Microsoft Clarity -->
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "ufxcf43805");
-    </script>
-
     <!-- Meta Pixel -->
     <script>
         !function(f,b,e,v,n,t,s)
@@ -36,6 +27,15 @@
         'https://connect.facebook.net/en_US/fbevents.js');
         fbq('init', '864109602683515');
         fbq('track', 'PageView');
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ufxcf43805");
     </script>
 
     <!-- TikTok Pixel -->
@@ -907,12 +907,16 @@
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session_id');
         const paymentIntent = urlParams.get('payment_intent');
+        const redirectStatus = urlParams.get('redirect_status');
+        
+        // NUR wenn redirect_status=succeeded ODER payment_intent vorhanden (Stripe Redirect)
+        const isValidPurchase = (redirectStatus === 'succeeded') || (paymentIntent && !redirectStatus);
         
         // Gleicher Key wie in danke.html für Deduplizierung
         const uniqueKey = paymentIntent || sessionId || leadId || 'unknown';
         const trackingKey = 'wauwerk_purchase_tracked_' + uniqueKey;
 
-        if (!localStorage.getItem(trackingKey)) {
+        if (isValidPurchase && !localStorage.getItem(trackingKey)) {
             console.log('🔥 Purchase Event feuern:', purchaseValue, 'EUR');
             
             // Event ID für Meta Deduplizierung
