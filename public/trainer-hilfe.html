@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Persönliche Trainer-Hilfe | WauWerk</title>
+    <title>Persönliche Trainingsanpassung | WauWerk</title>
     <link rel="icon" type="image/png" href="favconHund.png">
     <style>
         :root {
@@ -97,6 +97,42 @@
 
         .intro-text strong {
             color: var(--text-dark);
+        }
+
+        /* When Section */
+        .when-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .when-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .when-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .when-item.when-yes .when-icon {
+            color: var(--success-green);
+            font-weight: 600;
+        }
+
+        .when-item.when-no {
+            color: var(--text-light);
+        }
+
+        .when-item.when-no .when-icon {
+            color: var(--text-light);
         }
 
         /* Trainer Section */
@@ -639,17 +675,40 @@
     <div class="container">
         <!-- Header -->
         <div class="page-header">
-            <div class="badge">🎯 Exklusiv für WauWerk Mitglieder</div>
-            <h1 class="page-title">Persönliche <span>Trainer-Hilfe</span></h1>
-            <p class="page-subtitle">Ein Hundetrainer aus unserem Team analysiert dein Problem und gibt dir einen individuellen Lösungsplan.</p>
+            <div class="badge">Für WauWerk Mitglieder</div>
+            <h1 class="page-title">Persönliche <span>Trainingsanpassung</span></h1>
+            <p class="page-subtitle">Ein Trainer schaut sich deine Situation an und sagt dir genau, was du ändern, beibehalten oder überspringen solltest.</p>
         </div>
 
         <!-- Intro -->
         <div class="intro-section">
             <p class="intro-text">
-                <strong>Du hast deinen Trainingsplan – aber ein spezielles Problem macht dir noch Sorgen?</strong><br><br>
-                Manchmal braucht es den Blick eines Profis. Beschreib uns genau, was passiert – und unser Trainer schaut sich die Situation an. Du bekommst eine <strong>persönliche Analyse</strong> mit konkreten Übungen, die genau auf dein Problem zugeschnitten sind.
+                Dein Hund zeigt ein Verhalten, das tiefer geht? Etwas Spezielles, das im Quiz nicht abgefragt wurde – oder eine Situation, die sich schwer in Worte fassen lässt?<br><br>
+                Schilder uns, was passiert. Ein Trainer analysiert deine Situation und gibt dir eine <strong>schriftliche, individuelle Trainingsanpassung</strong> – abgestimmt auf dich und deinen Hund.
             </p>
+        </div>
+
+        <!-- Wann sinnvoll -->
+        <div class="when-section">
+            <h2 class="section-title">Wann ist das sinnvoll?</h2>
+            <div class="when-list">
+                <div class="when-item when-yes">
+                    <span class="when-icon">✓</span>
+                    <span>Dein Hund zeigt ein spezielles Verhalten, das im Quiz nicht vorkam</span>
+                </div>
+                <div class="when-item when-yes">
+                    <span class="when-icon">✓</span>
+                    <span>Eine Situation lässt sich schwer beschreiben – du willst sie zeigen</span>
+                </div>
+                <div class="when-item when-yes">
+                    <span class="when-icon">✓</span>
+                    <span>Du möchtest eine zweite Meinung zu deiner Umsetzung</span>
+                </div>
+                <div class="when-item when-no">
+                    <span class="when-icon">–</span>
+                    <span>Nicht nötig, wenn bei dir alles rund läuft</span>
+                </div>
+            </div>
         </div>
 
         <!-- Trainer Vorstellung -->
@@ -657,60 +716,45 @@
             <div class="trainer-header">
                 <div class="trainer-avatar"><img src="TrainerWau.png" alt="Hundetrainer"></div>
                 <div class="trainer-info">
-                    <h3>Dein persönlicher Trainer</h3>
-                    <div class="trainer-title">Hundetrainer aus dem WauWerk Team</div>
-                    <div class="trainer-credentials">Erfahren · Zertifiziert · Praxisorientiert</div>
+                    <h3>Wer begleitet dich?</h3>
+                    <div class="trainer-title">Ein Trainer aus dem WauWerk Team</div>
                 </div>
             </div>
             <p class="trainer-bio">
-                Ein erfahrener Hundetrainer aus unserem Team schaut sich dein Problem genau an. Unsere Trainer arbeiten seit Jahren mit Hunden aller Rassen und kennen die typischen Herausforderungen – von Hyperaktivität bis Leinenführigkeit. Du bekommst keine Standard-Antwort, sondern eine echte Analyse deiner Situation.
+                Ein erfahrener Trainer schaut sich an, wie du trainierst – und was dein Hund zeigt. Du bekommst eine persönliche Anleitung: Was ändern, was beibehalten, welche Übung als nächstes.
             </p>
-            <div class="trainer-stats">
-                <div class="stat-item">
-                    <div class="stat-number">2.000+</div>
-                    <div class="stat-label">Hunde trainiert</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">Jahre Erfahrung</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">4.9 ★</div>
-                    <div class="stat-label">Bewertung</div>
-                </div>
-            </div>
         </div>
 
-        <!-- So funktioniert's -->
+        <!-- So läuft es ab -->
         <div class="process-section">
-            <h2 class="section-title">So funktioniert's</h2>
+            <h2 class="section-title">So läuft es ab</h2>
             <div class="process-steps">
                 <div class="process-step">
                     <div class="step-number">1</div>
                     <div class="step-content">
-                        <h4>Beschreib dein Problem</h4>
-                        <p>Erzähl uns genau, was passiert. Je mehr Details, desto besser können wir helfen.</p>
+                        <h4>Du beschreibst deine Situation</h4>
+                        <p>Per Text oder mit einem kurzen Video.</p>
                     </div>
                 </div>
                 <div class="process-step">
                     <div class="step-number">2</div>
                     <div class="step-content">
-                        <h4>Video hochladen (optional)</h4>
-                        <p>Zeig uns die Situation – ein kurzes Video hilft enorm bei der Analyse.</p>
+                        <h4>Der Trainer analysiert</h4>
+                        <p>Deinen Hund, dein Verhalten, deine Umsetzung.</p>
                     </div>
                 </div>
                 <div class="process-step">
                     <div class="step-number">3</div>
                     <div class="step-content">
-                        <h4>Trainer analysiert</h4>
-                        <p>Unser Trainer schaut sich alles genau an und erstellt deinen persönlichen Lösungsplan.</p>
+                        <h4>Du erhältst deine Trainingsanpassung</h4>
+                        <p>Schriftlich, persönlich, innerhalb von 48h.</p>
                     </div>
                 </div>
                 <div class="process-step">
                     <div class="step-number">4</div>
                     <div class="step-content">
-                        <h4>Antwort in 48h</h4>
-                        <p>Du erhältst eine ausführliche Video-Antwort mit konkreten Übungen per E-Mail.</p>
+                        <h4>Du weißt genau</h4>
+                        <p>Was ändern. Was beibehalten. Was überspringen.</p>
                     </div>
                 </div>
             </div>
@@ -718,7 +762,7 @@
 
         <!-- Formular -->
         <div class="form-section" id="formSection">
-            <h2 class="section-title">Dein Problem beschreiben</h2>
+            <h2 class="section-title">Schilder deine Situation</h2>
             
             <form id="coachingForm">
                 <div class="form-group">
@@ -732,17 +776,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Was ist das Problem? <span>(So genau wie möglich)</span></label>
-                    <textarea class="form-input form-textarea" id="problemDescription" placeholder="Beschreibe die Situation: Wann tritt das Problem auf? Was macht dein Hund genau? Wie reagierst du? Was hast du schon versucht?" required></textarea>
-                    <p class="form-hint">Je mehr Details du teilst, desto besser können wir dir helfen.</p>
+                    <label class="form-label">Was passiert? <span>(So genau wie möglich)</span></label>
+                    <textarea class="form-input form-textarea" id="problemDescription" placeholder="Wann tritt das Problem auf? Was macht dein Hund genau? Wie reagierst du?" required></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Video hochladen <span>(Optional, aber sehr hilfreich)</span></label>
+                    <label class="form-label">Video hochladen <span>(Optional)</span></label>
                     <div class="video-upload-area" id="uploadArea">
                         <div class="upload-icon">🎥</div>
                         <p class="upload-text">Klicken oder <strong>Video hierher ziehen</strong></p>
-                        <p class="upload-formats">MP4, MOV, AVI · Max. 100MB · Max. 3 Minuten</p>
+                        <p class="upload-formats">MP4, MOV, AVI · Max. 100MB</p>
                         <input type="file" class="file-input" id="videoFile" accept="video/*">
                         <div class="selected-file" id="selectedFile" style="display: none;">
                             <span class="selected-file-name" id="fileName"></span>
@@ -750,109 +793,71 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label">Gibt es noch etwas, das wir wissen sollten? <span>(Optional)</span></label>
-                    <textarea class="form-input form-textarea" id="additionalInfo" placeholder="z.B. Vorgeschichte, Gesundheitsprobleme, was du schon versucht hast..." style="min-height: 80px;"></textarea>
-                </div>
             </form>
         </div>
 
         <!-- Pricing -->
         <div class="pricing-section">
             <div class="pricing-header">
-                <div class="pricing-badge">⭐ Persönliche Betreuung</div>
                 <div class="scarcity-badge"><span class="scarcity-dot"></span> Nur noch <span id="spotsLeft">3</span> Plätze diese Woche frei</div>
-                <h2 class="pricing-title">Trainer-Analyse</h2>
+                <h2 class="pricing-title">Individuelle Trainingsanpassung</h2>
                 <div class="pricing-price">
-                    <span class="price-old">€119,99</span>
                     <span class="price-amount">€79,99</span>
-                    <span class="price-info">einmalig</span>
+                    <span class="price-info">einmalig · kein Abo</span>
                 </div>
             </div>
 
             <div class="pricing-includes">
                 <div class="include-item">
                     <span class="include-icon">✓</span>
-                    <span>Ausführliche Analyse deines Problems</span>
+                    <span>Schriftliche, persönliche Ausarbeitung</span>
                 </div>
                 <div class="include-item">
                     <span class="include-icon">✓</span>
-                    <span>Persönliche Video-Antwort vom Trainer</span>
+                    <span>Analyse deines Verhaltens und deines Hundes</span>
                 </div>
                 <div class="include-item">
                     <span class="include-icon">✓</span>
-                    <span>Konkrete Übungen für dein spezifisches Problem</span>
+                    <span>Konkrete Anpassung: Übung 2 statt 3, Variante A statt B</span>
                 </div>
                 <div class="include-item">
                     <span class="include-icon">✓</span>
-                    <span>Schritt-für-Schritt Anleitung</span>
-                </div>
-                <div class="include-item">
-                    <span class="include-icon">✓</span>
-                    <span>Antwort innerhalb von 48 Stunden</span>
+                    <span>Klare Empfehlung, wie es weitergeht</span>
                 </div>
             </div>
 
             <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">
-                Jetzt Trainer-Hilfe anfordern →
+                Trainingsanpassung anfordern →
             </button>
-            <p class="guarantee-note"><span>🛡️</span> 100% Geld-zurück-Garantie wenn du nicht zufrieden bist</p>
+            <p class="guarantee-note">Keine Standardantwort. Persönlich für dich.</p>
         </div>
 
-        <!-- Trust -->
-        <div class="trust-section">
-            <div class="trust-items">
-                <div class="trust-item">
-                    <div class="trust-icon">🔒</div>
-                    <div class="trust-text">Sichere Zahlung</div>
-                </div>
-                <div class="trust-item">
-                    <div class="trust-icon">⏱️</div>
-                    <div class="trust-text">48h Antwortzeit</div>
-                </div>
-                <div class="trust-item">
-                    <div class="trust-icon">🛡️</div>
-                    <div class="trust-text">Geld-zurück-Garantie</div>
-                </div>
-                <div class="trust-item">
-                    <div class="trust-icon">🎯</div>
-                    <div class="trust-text">Individuell für dich</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- FAQ -->
+        <!-- FAQ - nur das Wichtigste -->
         <div class="faq-section">
-            <h2 class="section-title">Häufige Fragen</h2>
-            
-            <div class="faq-item">
-                <h3 class="faq-question">Wie lange dauert es, bis ich eine Antwort bekomme?</h3>
-                <p class="faq-answer">Du erhältst deine persönliche Video-Antwort innerhalb von 48 Stunden per E-Mail.</p>
-            </div>
+            <h2 class="section-title">Kurz erklärt</h2>
             
             <div class="faq-item">
                 <h3 class="faq-question">Muss ich ein Video hochladen?</h3>
-                <p class="faq-answer">Nein, das Video ist optional. Aber es hilft unserem Trainer enorm, die Situation besser einzuschätzen und dir gezieltere Tipps zu geben.</p>
+                <p class="faq-answer">Nein, ist optional. Aber es hilft dem Trainer, deine Situation besser zu verstehen.</p>
             </div>
             
             <div class="faq-item">
-                <h3 class="faq-question">Was, wenn es nicht hilft?</h3>
-                <p class="faq-answer">Wir bieten eine 100% Geld-zurück-Garantie. Wenn du mit der Analyse nicht zufrieden bist, erstatten wir dir den vollen Betrag.</p>
+                <h3 class="faq-question">Wie bekomme ich die Trainingsanpassung?</h3>
+                <p class="faq-answer">Schriftlich per E-Mail, innerhalb von 48 Stunden.</p>
             </div>
             
             <div class="faq-item">
-                <h3 class="faq-question">Kann ich danach weitere Fragen stellen?</h3>
-                <p class="faq-answer">Die Trainer-Hilfe beinhaltet eine ausführliche Analyse. Für Folgefragen kannst du eine weitere Analyse buchen oder unseren E-Mail-Support nutzen.</p>
+                <h3 class="faq-question">Was, wenn es mir nicht weiterhilft?</h3>
+                <p class="faq-answer">Dann bekommst du dein Geld zurück.</p>
             </div>
         </div>
 
         <!-- Success Message (hidden by default) -->
         <div class="success-message" id="successMessage">
-            <div class="success-icon">🎉</div>
-            <h2 class="success-title">Anfrage erhalten!</h2>
+            <div class="success-icon">✓</div>
+            <h2 class="success-title">Erhalten!</h2>
             <p class="success-text">
-                Vielen Dank! Unser Trainer wird sich dein Problem genau anschauen. Du erhältst deine persönliche Video-Antwort innerhalb von 48 Stunden an deine E-Mail-Adresse.
+                Du bekommst deine Trainingsanpassung innerhalb von 48 Stunden per E-Mail.
             </p>
         </div>
     </div>
