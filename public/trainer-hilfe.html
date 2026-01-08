@@ -1331,7 +1331,10 @@
             dogName: '',
             email: '',
             problem: '',
-            videoFile: null
+            videoFile: null,
+            videoUrl: null,
+            videoFilename: null,
+            videoSizeMb: null
         };
 
         // ========== TIMELINE ANIMATION ==========
@@ -1418,6 +1421,36 @@
             uploadArea.classList.remove('has-file');
         }
 
+        // ========== VIDEO UPLOAD TO SUPABASE ==========
+        async function uploadVideoToSupabase(file) {
+            const timestamp = Date.now();
+            const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+            const filePath = `${timestamp}_${safeName}`;
+
+            const response = await fetch(`${SUPABASE_URL}/storage/v1/object/trainer-videos/${filePath}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Content-Type': file.type
+                },
+                body: file
+            });
+
+            if (!response.ok) {
+                throw new Error('Video-Upload fehlgeschlagen');
+            }
+
+            // URL zum Video
+            const videoUrl = `${SUPABASE_URL}/storage/v1/object/trainer-videos/${filePath}`;
+            
+            return {
+                url: videoUrl,
+                filename: file.name,
+                sizeMb: (file.size / (1024 * 1024)).toFixed(2)
+            };
+        }
+
         // ========== CHECKOUT POPUP ==========
         function openCheckoutPopup() {
             document.getElementById('checkoutPopup').classList.add('active');
@@ -1462,7 +1495,38 @@
             }
 
             // Store form data
-            formData = { dogName, email, problem, videoFile: video };
+            formData = { 
+                dogName, 
+                email, 
+                problem, 
+                videoFile: video,
+                videoUrl: null,
+                videoFilename: null,
+                videoSizeMb: null
+            };
+
+            // Upload video if present
+            if (video) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner"></span> Video wird hochgeladen...';
+
+                try {
+                    const uploadResult = await uploadVideoToSupabase(video);
+                    formData.videoUrl = uploadResult.url;
+                    formData.videoFilename = uploadResult.filename;
+                    formData.videoSizeMb = uploadResult.sizeMb;
+                    console.log('✅ Video hochgeladen:', uploadResult.url);
+                } catch (error) {
+                    console.error('❌ Video-Upload Fehler:', error);
+                    alert('Video-Upload fehlgeschlagen. Bitte versuche es erneut oder fahre ohne Video fort.');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Trainingsanpassung anfordern →';
+                    return;
+                }
+
+                btn.disabled = false;
+                btn.innerHTML = 'Trainingsanpassung anfordern →';
+            }
 
             // Open checkout popup
             openCheckoutPopup();
@@ -1483,7 +1547,9 @@
                         dogName: formData.dogName,
                         email: formData.email,
                         problem: formData.problem,
-                        hasVideo: !!formData.videoFile,
+                        videoUrl: formData.videoUrl,
+                        videoFilename: formData.videoFilename,
+                        videoSizeMb: formData.videoSizeMb,
                         leadId: leadIdParam,
                         price: 79.99
                     })

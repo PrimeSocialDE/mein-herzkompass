@@ -23,7 +23,9 @@ export async function POST(req: NextRequest) {
       dogName, 
       email,
       problem,
-      hasVideo,
+      videoUrl,
+      videoFilename,
+      videoSizeMb,
       leadId
     } = body;
 
@@ -34,6 +36,9 @@ export async function POST(req: NextRequest) {
         email: email,
         dog_name: dogName,
         problem_description: problem,
+        video_url: videoUrl || null,
+        video_filename: videoFilename || null,
+        video_size_mb: videoSizeMb || null,
         lead_id: leadId || null,
         status: 'pending',
         price: 79.99
@@ -60,7 +65,8 @@ export async function POST(req: NextRequest) {
         type: 'trainer_hilfe',
         email: email || '',
         dog_name: dogName || '',
-        lead_id: leadId || ''
+        lead_id: leadId || '',
+        has_video: videoUrl ? 'true' : 'false'
       },
       description: `WauWerk Trainingsanpassung für ${dogName || 'Hund'}`,
     });
