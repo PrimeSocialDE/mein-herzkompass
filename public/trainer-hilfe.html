@@ -214,59 +214,162 @@
             color: var(--text-light);
         }
 
-        /* How it works */
+        /* How it works - Horizontal Timeline with Animation */
         .process-section {
             background: var(--white);
             border-radius: 20px;
-            padding: 25px;
+            padding: 25px 20px;
             margin-bottom: 20px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.06);
         }
 
         .section-title {
-            font-size: 18px;
+            font-size: 21px;
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 20px;
             text-align: center;
         }
 
-        .process-steps {
+        .timeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            padding: 0 10px;
+        }
+
+        /* Background line (gray) */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 40px;
+            right: 40px;
+            height: 3px;
+            background: var(--border-light);
+            z-index: 0;
+        }
+
+        /* Progress line (animated) */
+        .timeline::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 40px;
+            width: 0;
+            height: 3px;
+            background: var(--warm-brown);
+            z-index: 1;
+            transition: width 1.5s ease-out;
+        }
+
+        .timeline.animate::after {
+            width: calc(100% - 80px);
+        }
+
+        .timeline-step {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
         }
 
-        .process-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-        }
-
-        .step-number {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
-            color: white;
+        .timeline-dot {
+            width: 40px;
+            height: 40px;
+            background: var(--border-light);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            color: var(--text-light);
             font-weight: 700;
-            flex-shrink: 0;
+            font-size: 14px;
+            margin-bottom: 10px;
+            transition: all 0.4s ease;
         }
 
-        .step-content h4 {
-            font-size: 15px;
-            font-weight: 600;
+        .timeline.animate .timeline-step:nth-child(1) .timeline-dot {
+            background: var(--warm-brown);
+            color: white;
+            transition-delay: 0s;
+        }
+
+        .timeline.animate .timeline-step:nth-child(2) .timeline-dot {
+            background: var(--warm-brown);
+            color: white;
+            transition-delay: 0.4s;
+        }
+
+        .timeline.animate .timeline-step:nth-child(3) .timeline-dot {
+            background: var(--warm-brown);
+            color: white;
+            transition-delay: 0.8s;
+        }
+
+        .timeline.animate .timeline-step:nth-child(4) .timeline-dot {
+            background: var(--warm-brown);
+            color: white;
+            transition-delay: 1.2s;
+        }
+
+        .timeline-label {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 500;
+            max-width: 80px;
+            transition: color 0.4s ease;
+        }
+
+        .timeline.animate .timeline-step:nth-child(1) .timeline-label {
             color: var(--text-dark);
-            margin-bottom: 4px;
+            transition-delay: 0s;
         }
 
-        .step-content p {
-            font-size: 13px;
-            color: var(--text-medium);
+        .timeline.animate .timeline-step:nth-child(2) .timeline-label {
+            color: var(--text-dark);
+            transition-delay: 0.4s;
+        }
+
+        .timeline.animate .timeline-step:nth-child(3) .timeline-label {
+            color: var(--text-dark);
+            transition-delay: 0.8s;
+        }
+
+        .timeline.animate .timeline-step:nth-child(4) .timeline-label {
+            color: var(--text-dark);
+            transition-delay: 1.2s;
+        }
+
+        @media (max-width: 480px) {
+            .timeline::before,
+            .timeline::after {
+                left: 25px;
+                right: 25px;
+            }
+            
+            .timeline::after {
+                width: 0;
+            }
+            
+            .timeline.animate::after {
+                width: calc(100% - 50px);
+            }
+            
+            .timeline-dot {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+            
+            .timeline-label {
+                font-size: 11px;
+                max-width: 70px;
+            }
         }
 
         /* Form Section */
@@ -573,7 +676,7 @@
             color: var(--text-medium);
         }
 
-        /* FAQ Section */
+        /* FAQ Section - Accordion */
         .faq-section {
             background: var(--white);
             border-radius: 20px;
@@ -583,26 +686,63 @@
         }
 
         .faq-item {
-            padding: 16px 0;
             border-bottom: 1px solid var(--border-light);
         }
 
         .faq-item:last-child {
             border-bottom: none;
-            padding-bottom: 0;
         }
 
         .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
             font-size: 15px;
             font-weight: 600;
             color: var(--text-dark);
-            margin-bottom: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .faq-question::after {
+            content: '+';
+            font-size: 20px;
+            font-weight: 400;
+            color: var(--text-light);
+            transition: transform 0.2s;
+        }
+
+        .faq-item.open .faq-question::after {
+            content: '−';
         }
 
         .faq-answer {
             font-size: 14px;
             color: var(--text-medium);
             line-height: 1.6;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            padding: 0;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 200px;
+            padding-bottom: 16px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--text-light);
+            text-decoration: underline;
         }
 
         /* Success State */
@@ -669,6 +809,270 @@
                 font-size: 32px;
             }
         }
+
+        /* ========== CHECKOUT POPUP ========== */
+        .checkout-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(44, 44, 46, 0.85);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .checkout-overlay.active {
+            display: flex;
+        }
+
+        .checkout-popup {
+            background: var(--white);
+            border-radius: 20px;
+            max-width: 420px;
+            width: calc(100% - 40px);
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: popupIn 0.3s ease-out;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            overscroll-behavior: contain;
+            margin-top: 20px;
+        }
+
+        @keyframes popupIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .checkout-header {
+            padding: 12px 16px 8px;
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+            background: linear-gradient(180deg, #FAF7F4 0%, var(--white) 100%);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .checkout-close {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 16px;
+            color: var(--text-medium);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .checkout-close:hover {
+            background: #f5f5f5;
+            transform: scale(1.05);
+        }
+
+        .checkout-title {
+            text-align: center;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .checkout-body {
+            padding: 14px;
+        }
+
+        .checkout-plan-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: linear-gradient(135deg, #FAF7F4 0%, #F5F0EB 100%);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-light);
+        }
+
+        .checkout-plan-image {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(196, 165, 118, 0.3);
+        }
+
+        .checkout-plan-info {
+            flex: 1;
+        }
+
+        .checkout-plan-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .checkout-plan-duration {
+            font-size: 12px;
+            color: var(--text-medium);
+        }
+
+        .checkout-plan-price-box {
+            text-align: right;
+        }
+
+        .checkout-plan-price {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .checkout-plan-price-sub {
+            font-size: 10px;
+            color: var(--text-light);
+        }
+
+        .checkout-features-compact {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+        }
+
+        .checkout-feature-row {
+            font-size: 13px;
+            color: var(--text-dark);
+            padding: 4px 0;
+        }
+
+        .checkout-guarantee-compact {
+            text-align: center;
+            font-size: 12px;
+            color: #166534;
+            font-weight: 600;
+            padding: 8px;
+            background: #f0fdf4;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .checkout-error {
+            background: #FEF2F2;
+            color: #DC2626;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            display: none;
+            border: 1px solid #FECACA;
+            font-weight: 500;
+        }
+
+        .checkout-error.visible {
+            display: block;
+        }
+
+        .stripe-element-container {
+            padding: 12px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background: var(--white);
+            transition: border-color 0.2s;
+        }
+
+        .stripe-element-container:focus-within {
+            border-color: var(--warm-brown);
+        }
+
+        #payment-element {
+            min-height: 80px;
+        }
+
+        .checkout-pay-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(196, 165, 118, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .checkout-pay-btn:hover {
+            background: linear-gradient(135deg, var(--dark-brown), #6B5A45);
+            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .checkout-pay-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .checkout-pay-btn .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .payment-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 8px;
+            background: #FAFAFA;
+            border-radius: 8px;
+        }
+
+        .payment-icons img {
+            height: 16px;
+            opacity: 0.7;
+        }
+
+        .checkout-back {
+            display: block;
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text-medium);
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -721,41 +1125,29 @@
                 </div>
             </div>
             <p class="trainer-bio">
-                Ein erfahrener Trainer schaut sich an, wie du trainierst – und was dein Hund zeigt. Du bekommst eine persönliche Anleitung: Was ändern, was beibehalten, welche Übung als nächstes.
+                Ein erfahrener Trainer schaut sich an, wie du trainierst – und was dein Hund zeigt. Du bekommst eine persönliche Anleitung: Was ändern, was beibehalten, welche Übung als nächstes – und wie du dich als Besitzer verhalten solltest.
             </p>
         </div>
 
         <!-- So läuft es ab -->
         <div class="process-section">
             <h2 class="section-title">So läuft es ab</h2>
-            <div class="process-steps">
-                <div class="process-step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h4>Du beschreibst deine Situation</h4>
-                        <p>Per Text oder mit einem kurzen Video.</p>
-                    </div>
+            <div class="timeline">
+                <div class="timeline-step">
+                    <div class="timeline-dot">1</div>
+                    <div class="timeline-label">Beschreiben</div>
                 </div>
-                <div class="process-step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h4>Der Trainer analysiert</h4>
-                        <p>Deinen Hund, dein Verhalten, deine Umsetzung.</p>
-                    </div>
+                <div class="timeline-step">
+                    <div class="timeline-dot">2</div>
+                    <div class="timeline-label">Analyse</div>
                 </div>
-                <div class="process-step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h4>Du erhältst deine Trainingsanpassung</h4>
-                        <p>Schriftlich, persönlich, innerhalb von 48h.</p>
-                    </div>
+                <div class="timeline-step">
+                    <div class="timeline-dot">3</div>
+                    <div class="timeline-label">Anpassung</div>
                 </div>
-                <div class="process-step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <h4>Du weißt genau</h4>
-                        <p>Was ändern. Was beibehalten. Was überspringen.</p>
-                    </div>
+                <div class="timeline-step">
+                    <div class="timeline-dot">4</div>
+                    <div class="timeline-label">Klarheit</div>
                 </div>
             </div>
         </div>
@@ -776,8 +1168,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Was passiert? <span>(So genau wie möglich)</span></label>
-                    <textarea class="form-input form-textarea" id="problemDescription" placeholder="Wann tritt das Problem auf? Was macht dein Hund genau? Wie reagierst du?" required></textarea>
+                    <label class="form-label">Dein konkretes Thema <span>(1–2 Themen pro Anfrage)</span></label>
+                    <textarea class="form-input form-textarea" id="problemDescription" placeholder="Beschreibe eine konkrete Situation: Was passiert genau? Wann tritt es auf?" required></textarea>
                 </div>
 
                 <div class="form-group">
@@ -818,7 +1210,7 @@
                 </div>
                 <div class="include-item">
                     <span class="include-icon">✓</span>
-                    <span>Konkrete Anpassung: Übung 2 statt 3, Variante A statt B</span>
+                    <span>Individuelle Empfehlungen für dein spezielles Thema</span>
                 </div>
                 <div class="include-item">
                     <span class="include-icon">✓</span>
@@ -837,17 +1229,17 @@
             <h2 class="section-title">Kurz erklärt</h2>
             
             <div class="faq-item">
-                <h3 class="faq-question">Muss ich ein Video hochladen?</h3>
+                <div class="faq-question" onclick="toggleFaq(this)">Muss ich ein Video hochladen?</div>
                 <p class="faq-answer">Nein, ist optional. Aber es hilft dem Trainer, deine Situation besser zu verstehen.</p>
             </div>
             
             <div class="faq-item">
-                <h3 class="faq-question">Wie bekomme ich die Trainingsanpassung?</h3>
+                <div class="faq-question" onclick="toggleFaq(this)">Wie bekomme ich die Trainingsanpassung?</div>
                 <p class="faq-answer">Schriftlich per E-Mail, innerhalb von 48 Stunden.</p>
             </div>
             
             <div class="faq-item">
-                <h3 class="faq-question">Was, wenn es mir nicht weiterhilft?</h3>
+                <div class="faq-question" onclick="toggleFaq(this)">Was, wenn es mir nicht weiterhilft?</div>
                 <p class="faq-answer">Dann bekommst du dein Geld zurück.</p>
             </div>
         </div>
@@ -862,8 +1254,109 @@
         </div>
     </div>
 
+    <footer class="footer">
+        <p>&copy; 2025 Mein WauWerk. Alle Rechte vorbehalten.</p>
+        <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
+    </footer>
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <!-- Checkout Popup -->
+    <div class="checkout-overlay" id="checkoutPopup">
+        <div class="checkout-popup">
+            <div class="checkout-header">
+                <button class="checkout-close" onclick="closeCheckoutPopup()">×</button>
+                <h2 class="checkout-title">Trainingsanpassung für <span id="checkoutDogName">deinen Hund</span></h2>
+            </div>
+            
+            <div class="checkout-body">
+                <div class="checkout-plan-card">
+                    <div class="checkout-plan-image">🎯</div>
+                    <div class="checkout-plan-info">
+                        <div class="checkout-plan-name">Individuelle Trainingsanpassung</div>
+                        <div class="checkout-plan-duration">Schriftlich · Innerhalb 48h</div>
+                    </div>
+                    <div class="checkout-plan-price-box">
+                        <div class="checkout-plan-price">€79,99</div>
+                        <div class="checkout-plan-price-sub">einmalig</div>
+                    </div>
+                </div>
+
+                <div class="checkout-features-compact">
+                    <div class="checkout-feature-row">✓ Persönliche Analyse deiner Situation</div>
+                    <div class="checkout-feature-row">✓ Konkrete Empfehlungen vom Trainer</div>
+                    <div class="checkout-feature-row">✓ Antwort innerhalb von 48 Stunden</div>
+                </div>
+
+                <div class="checkout-guarantee-compact">🛡️ Nicht zufrieden? Geld zurück.</div>
+
+                <h3 style="text-align: center; margin-bottom: 8px; font-size: 14px; color: #6B6B6B;">Zahlungsmethode wählen</h3>
+
+                <div class="checkout-error" id="checkoutError"></div>
+
+                <div class="stripe-element-container">
+                    <div id="payment-element"></div>
+                </div>
+
+                <button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">
+                    🔒 Jetzt bezahlen
+                </button>
+
+                <div class="payment-icons">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
+                    <img src="klarna-logo.png" alt="Klarna">
+                </div>
+
+                <button class="checkout-back" onclick="closeCheckoutPopup()">← Zurück</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // URL Parameter auslesen
+        // ========== CONFIG ==========
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
+
+        let stripe = null;
+        let elements = null;
+        let clientSecret = null;
+        let currentAnfrageId = null;
+
+        // Form data storage
+        let formData = {
+            dogName: '',
+            email: '',
+            problem: '',
+            videoFile: null
+        };
+
+        // ========== TIMELINE ANIMATION ==========
+        const timeline = document.querySelector('.timeline');
+        const timelineObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    timeline.classList.add('animate');
+                } else {
+                    timeline.classList.remove('animate');
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        if (timeline) {
+            timelineObserver.observe(timeline);
+        }
+
+        // ========== FAQ TOGGLE ==========
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            item.classList.toggle('open');
+        }
+
+        // ========== URL PARAMETERS ==========
         const urlParams = new URLSearchParams(window.location.search);
         const dogNameParam = urlParams.get('dog_name') || localStorage.getItem('dogName');
         const emailParam = urlParams.get('email') || localStorage.getItem('userEmail');
@@ -877,7 +1370,7 @@
             document.getElementById('userEmail').value = emailParam;
         }
 
-        // Video Upload Handling
+        // ========== VIDEO UPLOAD ==========
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('videoFile');
         const selectedFile = document.getElementById('selectedFile');
@@ -910,12 +1403,10 @@
         });
 
         function handleFile(file) {
-            // Check file size (max 100MB)
             if (file.size > 100 * 1024 * 1024) {
                 alert('Das Video ist zu groß. Bitte wähle ein Video unter 100MB.');
                 return;
             }
-            
             fileName.textContent = file.name;
             selectedFile.style.display = 'flex';
             uploadArea.classList.add('has-file');
@@ -927,13 +1418,36 @@
             uploadArea.classList.remove('has-file');
         }
 
-        // Form Submit
+        // ========== CHECKOUT POPUP ==========
+        function openCheckoutPopup() {
+            document.getElementById('checkoutPopup').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Hundename im Popup aktualisieren
+            document.getElementById('checkoutDogName').textContent = formData.dogName || 'deinen Hund';
+            
+            // Stripe initialisieren
+            initStripePayment();
+        }
+
+        function closeCheckoutPopup() {
+            document.getElementById('checkoutPopup').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close on overlay click
+        document.getElementById('checkoutPopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCheckoutPopup();
+            }
+        });
+
+        // ========== FORM SUBMIT ==========
         async function submitForm() {
             const btn = document.getElementById('submitBtn');
             const dogName = document.getElementById('dogName').value.trim();
             const email = document.getElementById('userEmail').value.trim();
             const problem = document.getElementById('problemDescription').value.trim();
-            const additional = document.getElementById('additionalInfo').value.trim();
             const video = fileInput.files[0];
 
             // Validation
@@ -947,61 +1461,123 @@
                 return;
             }
 
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Wird gesendet...';
+            // Store form data
+            formData = { dogName, email, problem, videoFile: video };
+
+            // Open checkout popup
+            openCheckoutPopup();
+        }
+
+        // ========== STRIPE PAYMENT ==========
+        async function initStripePayment() {
+            if (!stripe) {
+                stripe = Stripe(STRIPE_PUBLIC_KEY);
+            }
 
             try {
-                // Hier würde der API-Call kommen
-                // Für jetzt simulieren wir den Erfolg
-                
-                // TODO: Implementiere Stripe Checkout und Datenspeicherung
-                // const response = await fetch('/api/trainer-hilfe-checkout', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({
-                //         dogName,
-                //         email,
-                //         problem,
-                //         additional,
-                //         hasVideo: !!video,
-                //         leadId: leadIdParam
-                //     })
-                // });
+                // Create payment intent via API
+                const response = await fetch('/api/trainer-hilfe-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        dogName: formData.dogName,
+                        email: formData.email,
+                        problem: formData.problem,
+                        hasVideo: !!formData.videoFile,
+                        leadId: leadIdParam,
+                        price: 79.99
+                    })
+                });
 
-                // Simuliere Erfolg für Demo
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                const data = await response.json();
 
-                // Zeige Erfolg
-                document.getElementById('formSection').style.display = 'none';
-                document.querySelector('.pricing-section').style.display = 'none';
-                document.getElementById('successMessage').classList.add('visible');
+                if (data.error) {
+                    showCheckoutError(data.error);
+                    return;
+                }
 
-                // Scroll nach oben
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                clientSecret = data.clientSecret;
+                currentAnfrageId = data.anfrageId;
+
+                // Create Stripe Elements
+                elements = stripe.elements({
+                    clientSecret: clientSecret,
+                    appearance: {
+                        theme: 'stripe',
+                        variables: {
+                            colorPrimary: '#C4A576',
+                            colorBackground: '#ffffff',
+                            colorText: '#2C2C2E',
+                            colorDanger: '#e74c3c',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            fontSizeBase: '15px',
+                            borderRadius: '10px'
+                        }
+                    }
+                });
+
+                const paymentElement = elements.create('payment', {
+                    layout: 'tabs'
+                });
+                paymentElement.mount('#payment-element');
 
             } catch (error) {
-                console.error('Error:', error);
-                alert('Es ist ein Fehler aufgetreten. Bitte versuche es erneut.');
-                btn.disabled = false;
-                btn.innerHTML = 'Jetzt Trainer-Hilfe anfordern →';
+                console.error('Checkout Error:', error);
+                showCheckoutError('Verbindungsfehler. Bitte versuche es erneut.');
             }
         }
 
-        // Scarcity Countdown - Plätze reduzieren
+        async function submitPayment() {
+            const payBtn = document.getElementById('checkoutPayBtn');
+            payBtn.disabled = true;
+            payBtn.innerHTML = '<span class="spinner"></span> Wird verarbeitet...';
+
+            hideCheckoutError();
+
+            try {
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: window.location.origin + '/danke-trainer.html?anfrage_id=' + currentAnfrageId
+                    }
+                });
+
+                if (error) {
+                    showCheckoutError(error.message);
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '🔒 Jetzt bezahlen';
+                }
+                // Bei Erfolg wird automatisch weitergeleitet
+
+            } catch (err) {
+                showCheckoutError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
+                payBtn.disabled = false;
+                payBtn.innerHTML = '🔒 Jetzt bezahlen';
+            }
+        }
+
+        function showCheckoutError(message) {
+            const errorEl = document.getElementById('checkoutError');
+            errorEl.textContent = message;
+            errorEl.classList.add('visible');
+        }
+
+        function hideCheckoutError() {
+            document.getElementById('checkoutError').classList.remove('visible');
+        }
+
+        // ========== SCARCITY COUNTDOWN ==========
         let spots = 3;
         const spotsElement = document.getElementById('spotsLeft');
         
-        // Nach 1 Minute auf 2 reduzieren
         setTimeout(() => {
             spots = 2;
             spotsElement.textContent = spots;
-            
-            // Visueller Effekt
             spotsElement.style.transform = 'scale(1.3)';
             setTimeout(() => {
                 spotsElement.style.transform = 'scale(1)';
             }, 300);
-        }, 60000); // 60 Sekunden
+        }, 60000);
     </script>
 </body>
 </html>

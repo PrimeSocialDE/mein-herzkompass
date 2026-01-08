@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vielen Dank! | WauWerk</title>
+    <link rel="icon" type="image/png" href="favconHund.png">
+    <style>
+        :root {
+            --primary-cream: #FDF8F3;
+            --secondary-cream: #F5EDE3;
+            --warm-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --text-dark: #3D3D3D;
+            --text-medium: #6B6B6B;
+            --text-light: #8B8B8B;
+            --white: #FFFFFF;
+            --success-green: #22c55e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--primary-cream);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .success-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-green), #16a34a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .success-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .success-text {
+            font-size: 16px;
+            color: var(--text-medium);
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+
+        .next-steps {
+            background: var(--primary-cream);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 24px;
+        }
+
+        .next-steps-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--text-medium);
+        }
+
+        .step-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--warm-brown);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: var(--warm-brown);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .footer a {
+            color: var(--text-light);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-card">
+            <div class="success-icon">✓</div>
+            <h1 class="success-title">Vielen Dank!</h1>
+            <p class="success-text">
+                Deine Anfrage ist bei uns eingegangen. Ein Trainer wird sich deine Situation genau anschauen.
+            </p>
+
+            <div class="next-steps">
+                <div class="next-steps-title">Was passiert jetzt?</div>
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <span>Wir schauen uns deine Beschreibung (und dein Video) an</span>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <span>Der Trainer erstellt deine individuelle Trainingsanpassung</span>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <span>Du erhältst alles per E-Mail – innerhalb von 48 Stunden</span>
+                </div>
+            </div>
+
+            <a href="index.html" class="back-link">← Zurück zur Startseite</a>
+        </div>
+
+        <div class="footer">
+            <p>Fragen? <a href="mailto:support@mein-wauwerk.de">support@mein-wauwerk.de</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Config
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+        // URL Parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const anfrageId = urlParams.get('anfrage_id');
+        const redirectStatus = urlParams.get('redirect_status');
+
+        // Update status to paid if payment succeeded
+        if (anfrageId && redirectStatus === 'succeeded') {
+            fetch(SUPABASE_URL + '/rest/v1/trainer_hilfe_anfragen?id=eq.' + anfrageId, {
+                method: 'PATCH',
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    status: 'paid',
+                    paid_at: new Date().toISOString()
+                })
+            }).then(() => {
+                console.log('✅ Status auf paid gesetzt');
+            }).catch(err => {
+                console.error('❌ Fehler beim Status-Update:', err);
+            });
+        }
+    </script>
+</body>
+</html>
