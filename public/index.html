@@ -242,8 +242,8 @@
         .hero-image {
             position: relative;
             width: 100%;
-            max-width: 400px;
-            margin: 0 auto 25px;
+            max-width: 320px;
+            margin: 0 auto 20px;
             border-radius: var(--border-radius-large);
             overflow: hidden;
             box-shadow: var(--shadow-heavy);
@@ -253,6 +253,13 @@
             width: 100%;
             height: auto;
             display: block;
+        }
+
+        @media (max-width: 480px) {
+            .hero-image {
+                max-width: 260px;
+                margin: 0 auto 15px;
+            }
         }
 
         /* Main CTA Button */
