@@ -2399,7 +2399,8 @@ if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers
 
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         const dogGoal = localStorage.getItem('dogGoal') || 'obedience';
-        const dogProblem = localStorage.getItem('dogProblem') || '';
+        const customProblemKey = localStorage.getItem('customProblemKey') || '';
+const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         const hadTraining = localStorage.getItem('hadTraining') || '';
         const territorialAggression = localStorage.getItem('territorialAggression') || '';
 
@@ -2425,7 +2426,9 @@ if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers
         if (territorialAggression === 'yes') {
             problemText = 'Territoriale Aggression';
         } else if (dogProblem) {
+            // ==================== ERWEITERTE problemMap (34 Keys) ====================
             const problemMap = {
+                // Standard (10)
                 'pulling': 'Leinenziehen',
                 'barking': 'Übermäßiges Bellen',
                 'aggression': 'Aggression',
@@ -2435,15 +2438,56 @@ if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers
                 'energy': 'Übermäßige Energie',
                 'destructive': 'Zerstörerisches Verhalten',
                 'soiling': 'In die Wohnung machen',
-                'mouthing': 'Unerwünschtes Aufnehmen'
+                'mouthing': 'Unerwünschtes Aufnehmen',
+                // Custom Angst (7)
+                'visitor-anxiety': 'Angst bei Besuch',
+                'thunder-anxiety': 'Gewitterangst',
+                'noise-sensitivity': 'Geräuschempfindlichkeit',
+                'general-anxiety': 'Allgemeine Ängstlichkeit',
+                'stranger-anxiety': 'Angst vor Fremden',
+                'anxious-overreaction': 'Ängstliche Überreaktion',
+                'separation': 'Trennungsangst',
+                // Custom Jagd (4)
+                'chasing': 'Jagdverhalten',
+                'chasing-movement': 'Jagt Bewegungen',
+                'prey-drive': 'Starker Jagdtrieb',
+                'chasing-cars': 'Jagt Autos/Fahrräder',
+                // Custom Fressen (3)
+                'eating-unwanted': 'Frisst Unerwünschtes',
+                'eating-trash': 'Frisst aus dem Müll',
+                'eating-objects': 'Frisst Gegenstände',
+                // Custom Reaktivität (4)
+                'postman-reactive': 'Reaktiv auf Postboten',
+                'dog-reactive': 'Reaktiv auf andere Hunde',
+                'leash-reactive': 'Leinenreaktivität',
+                'overreaction': 'Überreaktion auf Reize',
+                // Custom Sonstiges (6)
+                'vocalization': 'Übermäßiges Lautgeben',
+                'resource-guarding': 'Ressourcenverteidigung',
+                'biting': 'Beißen/Schnappen',
+                'digging': 'Buddeln',
+                'marking': 'Markieren in der Wohnung',
+                'custom-other': 'Sonstiges Verhalten'
             };
             problemText = problemMap[dogProblem] || dogProblem;
         }
         
         document.getElementById('userProblem').textContent = problemText;
         
-        // Dynamische Benefits basierend auf Problem
+        // ==================== FIX: defaultBenefits MUSS VOR benefitsMap stehen! ====================
+        const defaultBenefits = [
+            '✓ ' + dogName + 's Gehorsam schnell verbessern',
+            '✓ Verhaltensprobleme gezielt lösen',
+            '✓ Neue Trainingstechniken für ' + dogName,
+            '✓ Stärkere Bindung zu ' + dogName + ' aufbauen',
+            '✓ Dauerhaft gutes Verhalten erreichen',
+            '✓ 20+ Übungen speziell für ' + dogName,
+            '✓ Glückliches Zusammenleben mit ' + dogName
+        ];
+
+        // ==================== ERWEITERTE benefitsMap (34 Keys) ====================
         const benefitsMap = {
+            // Standard (10)
             'pulling': [
                 '✓ ' + dogName + 's Leinenziehen effektiv abtrainieren',
                 '✓ Entspannte Spaziergänge ohne Zerren',
@@ -2533,6 +2577,227 @@ if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers
                 '✓ ' + dogName + 's Impulskontrolle stärken',
                 '✓ 20+ Übungen speziell für ' + dogName,
                 '✓ Entspannte Spaziergänge ohne Sorgen'
+            ],
+            // ==================== CUSTOM ANGST (7) ====================
+            'visitor-anxiety': [
+                '✓ ' + dogName + 's Angst bei Besuch abbauen',
+                '✓ Entspannte Begrüßungen ermöglichen',
+                '✓ ' + dogName + ' lernt Besucher zu akzeptieren',
+                '✓ Sichere Rückzugsorte schaffen',
+                '✓ Stressfreie Besuche für alle',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Endlich entspannt Gäste empfangen'
+            ],
+            'thunder-anxiety': [
+                '✓ ' + dogName + 's Gewitterangst Schritt für Schritt abbauen',
+                '✓ Beruhigungstechniken für Unwetter',
+                '✓ ' + dogName + ' lernt mit Geräuschen umzugehen',
+                '✓ Sichere Rückzugsorte einrichten',
+                '✓ Panikattacken vorbeugen',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Entspannte Gewitter ohne Stress'
+            ],
+            'noise-sensitivity': [
+                '✓ ' + dogName + 's Geräuschempfindlichkeit reduzieren',
+                '✓ Desensibilisierung gegen Alltagsgeräusche',
+                '✓ ' + dogName + ' lernt Geräusche zu ignorieren',
+                '✓ Mehr Gelassenheit im Alltag',
+                '✓ Weniger Stress bei lauten Situationen',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Entspanntes Leben trotz Lärm'
+            ],
+            'general-anxiety': [
+                '✓ ' + dogName + 's allgemeine Ängstlichkeit abbauen',
+                '✓ Selbstvertrauen aufbauen',
+                '✓ ' + dogName + ' lernt neue Situationen zu meistern',
+                '✓ Entspannungstechniken für den Alltag',
+                '✓ Sichere Bindung stärken',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Ein mutigerer, entspannterer Hund'
+            ],
+            'stranger-anxiety': [
+                '✓ ' + dogName + 's Angst vor Fremden abbauen',
+                '✓ Positive Begegnungen ermöglichen',
+                '✓ ' + dogName + ' lernt Menschen zu vertrauen',
+                '✓ Sichere Distanz respektieren',
+                '✓ Stressfreie Spaziergänge',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Entspannte Begegnungen mit Fremden'
+            ],
+            'anxious-overreaction': [
+                '✓ ' + dogName + 's ängstliche Überreaktionen reduzieren',
+                '✓ Impulskontrolle aufbauen',
+                '✓ ' + dogName + ' lernt gelassen zu bleiben',
+                '✓ Trigger erkennen und managen',
+                '✓ Ruhiges Verhalten fördern',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Gelassener Hund in allen Situationen'
+            ],
+            'separation': [
+                '✓ ' + dogName + 's Trennungsangst Schritt für Schritt abbauen',
+                '✓ ' + dogName + ' lernt alleine zu bleiben',
+                '✓ Zerstörerisches Verhalten stoppen',
+                '✓ ' + dogName + 's Selbstvertrauen stärken',
+                '✓ Entspannte Abwesenheiten ermöglichen',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Endlich sorgenfrei das Haus verlassen'
+            ],
+            // ==================== CUSTOM JAGD (4) ====================
+            'chasing': [
+                '✓ ' + dogName + 's Jagdverhalten kontrollieren',
+                '✓ Zuverlässigen Rückruf aufbauen',
+                '✓ ' + dogName + ' lernt Impulskontrolle',
+                '✓ Sichere Freiläufe ermöglichen',
+                '✓ Wildtiere werden ignoriert',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Entspannte Spaziergänge in der Natur'
+            ],
+            'chasing-movement': [
+                '✓ ' + dogName + 's Reaktion auf Bewegung kontrollieren',
+                '✓ Jogger und Radfahrer ignorieren',
+                '✓ ' + dogName + ' lernt ruhig zu bleiben',
+                '✓ Impulskontrolle bei Bewegungsreizen',
+                '✓ Sichere Begegnungen ermöglichen',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Stressfreie Spaziergänge'
+            ],
+            'prey-drive': [
+                '✓ ' + dogName + 's starken Jagdtrieb managen',
+                '✓ Alternative Beschäftigung bieten',
+                '✓ ' + dogName + ' lernt Impulskontrolle',
+                '✓ Sicherer Freilauf ermöglichen',
+                '✓ Kontrolliertes Jagdspiel',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Ausgeglichener Hund trotz Jagdtrieb'
+            ],
+            'chasing-cars': [
+                '✓ ' + dogName + 's Jagen von Autos stoppen',
+                '✓ Sichere Straßensituationen',
+                '✓ ' + dogName + ' lernt Fahrzeuge zu ignorieren',
+                '✓ Lebensrettende Impulskontrolle',
+                '✓ Entspannte Spaziergänge am Straßenrand',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Keine Gefahr mehr durch Verkehr'
+            ],
+            // ==================== CUSTOM FRESSEN (3) ====================
+            'eating-unwanted': [
+                '✓ ' + dogName + ' lernt Sachen liegen zu lassen',
+                '✓ Sicheres "Aus"-Kommando aufbauen',
+                '✓ Gefährliche Gegenstände werden ignoriert',
+                '✓ Kein Fressen vom Boden mehr',
+                '✓ ' + dogName + 's Impulskontrolle stärken',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Entspannte Spaziergänge ohne Sorgen'
+            ],
+            'eating-trash': [
+                '✓ ' + dogName + ' ignoriert Müll und Abfall',
+                '✓ Sicheres "Pfui"-Kommando aufbauen',
+                '✓ Keine Gesundheitsrisiken mehr',
+                '✓ ' + dogName + 's Impulskontrolle stärken',
+                '✓ Entspannte Spaziergänge in der Stadt',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Sorgenfrei unterwegs'
+            ],
+            'eating-objects': [
+                '✓ ' + dogName + ' hört auf Gegenstände zu fressen',
+                '✓ Gefährliche Situationen vermeiden',
+                '✓ ' + dogName + ' lernt sicheres Kauen',
+                '✓ Tierarztbesuche reduzieren',
+                '✓ Impulskontrolle aufbauen',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Sicheres Spielen und Erkunden'
+            ],
+            // ==================== CUSTOM REAKTIVITÄT (4) ====================
+            'postman-reactive': [
+                '✓ ' + dogName + 's Reaktion auf Postboten stoppen',
+                '✓ Entspannte Türklingel-Situationen',
+                '✓ ' + dogName + ' lernt ruhig zu bleiben',
+                '✓ Keine Aggressionen mehr an der Tür',
+                '✓ Sichere Paketannahme',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Friedliches Zusammenleben mit Nachbarn'
+            ],
+            'dog-reactive': [
+                '✓ ' + dogName + 's Reaktivität auf Hunde reduzieren',
+                '✓ Entspannte Hundebegegnungen ermöglichen',
+                '✓ ' + dogName + ' lernt andere Hunde zu ignorieren',
+                '✓ Stressfreie Spaziergänge',
+                '✓ Sichere Distanz halten können',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Endlich wieder Freude am Gassi gehen'
+            ],
+            'leash-reactive': [
+                '✓ ' + dogName + 's Leinenreaktivität abbauen',
+                '✓ Entspannte Spaziergänge an der Leine',
+                '✓ ' + dogName + ' lernt Reize zu ignorieren',
+                '✓ Keine Ausraster mehr an der Leine',
+                '✓ Sichere Begegnungen ermöglichen',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Stressfreies Gassi gehen'
+            ],
+            'overreaction': [
+                '✓ ' + dogName + 's Überreaktionen reduzieren',
+                '✓ Gelassenheit im Alltag aufbauen',
+                '✓ ' + dogName + ' lernt ruhig zu bleiben',
+                '✓ Trigger erkennen und managen',
+                '✓ Impulskontrolle stärken',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Entspannter Hund in allen Situationen'
+            ],
+            // ==================== CUSTOM SONSTIGES (6) ====================
+            'vocalization': [
+                '✓ ' + dogName + 's übermäßiges Bellen/Jaulen reduzieren',
+                '✓ Auslöser verstehen und managen',
+                '✓ ' + dogName + ' lernt Ruhe-Kommandos',
+                '✓ Entspanntere Nachbarschaft',
+                '✓ Alternative Kommunikation fördern',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Ruhigeres Zusammenleben'
+            ],
+            'resource-guarding': [
+                '✓ ' + dogName + 's Ressourcenverteidigung abbauen',
+                '✓ Sicheres Füttern und Spielen',
+                '✓ ' + dogName + ' lernt zu teilen',
+                '✓ Vertrauen zwischen euch stärken',
+                '✓ Keine Aggressionen mehr bei Futter',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Entspanntes Zusammenleben'
+            ],
+            'biting': [
+                '✓ ' + dogName + 's Beißen/Schnappen stoppen',
+                '✓ Sichere Interaktionen ermöglichen',
+                '✓ ' + dogName + ' lernt Beißhemmung',
+                '✓ Warnsignale verstehen',
+                '✓ Vertrauen wieder aufbauen',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Sicheres Zusammenleben für alle'
+            ],
+            'digging': [
+                '✓ ' + dogName + 's Buddeln kontrollieren',
+                '✓ Deinen Garten schützen',
+                '✓ ' + dogName + ' lernt erlaubte Buddelzonen',
+                '✓ Alternative Beschäftigung bieten',
+                '✓ Langeweile effektiv bekämpfen',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Schöner Garten trotz Hund'
+            ],
+            'marking': [
+                '✓ ' + dogName + 's Markieren in der Wohnung stoppen',
+                '✓ Klare Toilettenroutinen aufbauen',
+                '✓ ' + dogName + ' lernt draußen zu markieren',
+                '✓ Saubere Wohnung',
+                '✓ Stressfaktoren erkennen',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Keine Flecken mehr im Haus'
+            ],
+            'custom-other': [
+                '✓ ' + dogName + 's Verhalten gezielt verbessern',
+                '✓ Individuelle Lösungsansätze',
+                '✓ ' + dogName + ' lernt gewünschtes Verhalten',
+                '✓ Stärkere Bindung aufbauen',
+                '✓ Positive Verstärkung nutzen',
+                '✓ 20+ Übungen speziell für ' + dogName,
+                '✓ Entspanntes Zusammenleben'
             ]
         };
         
@@ -2559,8 +2824,9 @@ if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers
         document.getElementById('problemLabel1').textContent = problemText;
         document.getElementById('problemLabel2').textContent = problemText;
         
-        // Dynamische Werte basierend auf Problem-Typ
+        // ==================== ERWEITERTE problemValueMap (34 Keys) ====================
         const problemValueMap = {
+            // Standard (10)
             'pulling': { bad: 'Stark', good: 'Kontrolliert' },
             'barking': { bad: 'Häufig', good: 'Ruhig' },
             'aggression': { bad: 'Kritisch', good: 'Friedlich' },
@@ -2570,7 +2836,36 @@ if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers
             'energy': { bad: 'Übermäßig', good: 'Ausgeglichen' },
             'destructive': { bad: 'Häufig', good: 'Gestoppt' },
             'soiling': { bad: 'Regelmäßig', good: 'Stubenrein' },
-            'mouthing': { bad: 'Ständig', good: 'Kontrolliert' }
+            'mouthing': { bad: 'Ständig', good: 'Kontrolliert' },
+            // Custom Angst (7)
+            'visitor-anxiety': { bad: 'Stark', good: 'Entspannt' },
+            'thunder-anxiety': { bad: 'Panisch', good: 'Ruhig' },
+            'noise-sensitivity': { bad: 'Stark', good: 'Gelassen' },
+            'general-anxiety': { bad: 'Stark', good: 'Entspannt' },
+            'stranger-anxiety': { bad: 'Stark', good: 'Gelassen' },
+            'anxious-overreaction': { bad: 'Häufig', good: 'Kontrolliert' },
+            'separation': { bad: 'Stark', good: 'Entspannt' },
+            // Custom Jagd (4)
+            'chasing': { bad: 'Unkontrolliert', good: 'Kontrolliert' },
+            'chasing-movement': { bad: 'Stark', good: 'Ignoriert' },
+            'prey-drive': { bad: 'Stark', good: 'Kontrolliert' },
+            'chasing-cars': { bad: 'Gefährlich', good: 'Sicher' },
+            // Custom Fressen (3)
+            'eating-unwanted': { bad: 'Ständig', good: 'Kontrolliert' },
+            'eating-trash': { bad: 'Häufig', good: 'Ignoriert' },
+            'eating-objects': { bad: 'Gefährlich', good: 'Sicher' },
+            // Custom Reaktivität (4)
+            'postman-reactive': { bad: 'Stark', good: 'Ruhig' },
+            'dog-reactive': { bad: 'Stark', good: 'Gelassen' },
+            'leash-reactive': { bad: 'Stark', good: 'Entspannt' },
+            'overreaction': { bad: 'Häufig', good: 'Kontrolliert' },
+            // Custom Sonstiges (6)
+            'vocalization': { bad: 'Häufig', good: 'Ruhig' },
+            'resource-guarding': { bad: 'Stark', good: 'Entspannt' },
+            'biting': { bad: 'Kritisch', good: 'Sicher' },
+            'digging': { bad: 'Häufig', good: 'Kontrolliert' },
+            'marking': { bad: 'Regelmäßig', good: 'Draußen' },
+            'custom-other': { bad: 'Problematisch', good: 'Gelöst' }
         };
         
         const defaultValues = { bad: 'Kritisch', good: 'Gelöst' };
@@ -2903,8 +3198,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             }
         });
 
-        // Emotional headlines based on problem
+        // ==================== ERWEITERTE emotionalHeadlines (34 Keys) ====================
         const emotionalHeadlines = {
+            // Standard (10)
             'pulling': 'In 4 Wochen entspannte Spaziergänge',
             'barking': 'In 4 Wochen ein ruhiges Zuhause',
             'aggression': 'In 4 Wochen entspannte Begegnungen',
@@ -2914,7 +3210,36 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             'energy': 'In 4 Wochen ein ausgeglichener Hund',
             'destructive': 'In 4 Wochen ein entspanntes Zuhause',
             'soiling': 'In 4 Wochen ein stubenreiner Hund',
-            'mouthing': 'In 4 Wochen keine unerwünschten Sachen mehr im Maul'
+            'mouthing': 'In 4 Wochen keine unerwünschten Sachen mehr im Maul',
+            // Custom Angst (7)
+            'visitor-anxiety': 'In 4 Wochen entspannte Besuche',
+            'thunder-anxiety': 'In 4 Wochen keine Gewitterangst mehr',
+            'noise-sensitivity': 'In 4 Wochen gelassen bei Geräuschen',
+            'general-anxiety': 'In 4 Wochen ein mutiger Hund',
+            'stranger-anxiety': 'In 4 Wochen entspannt bei Fremden',
+            'anxious-overreaction': 'In 4 Wochen gelassene Reaktionen',
+            'separation': 'In 4 Wochen entspannt alleine bleiben',
+            // Custom Jagd (4)
+            'chasing': 'In 4 Wochen kontrolliertes Jagdverhalten',
+            'chasing-movement': 'In 4 Wochen Jogger & Radfahrer ignorieren',
+            'prey-drive': 'In 4 Wochen kontrollierbarer Jagdtrieb',
+            'chasing-cars': 'In 4 Wochen sicher im Straßenverkehr',
+            // Custom Fressen (3)
+            'eating-unwanted': 'In 4 Wochen kein Fressen vom Boden mehr',
+            'eating-trash': 'In 4 Wochen Müll wird ignoriert',
+            'eating-objects': 'In 4 Wochen sicheres Erkunden',
+            // Custom Reaktivität (4)
+            'postman-reactive': 'In 4 Wochen entspannte Paketannahme',
+            'dog-reactive': 'In 4 Wochen entspannte Hundebegegnungen',
+            'leash-reactive': 'In 4 Wochen entspannte Leinenspaziergänge',
+            'overreaction': 'In 4 Wochen gelassene Reaktionen',
+            // Custom Sonstiges (6)
+            'vocalization': 'In 4 Wochen ein ruhigerer Hund',
+            'resource-guarding': 'In 4 Wochen entspanntes Teilen',
+            'biting': 'In 4 Wochen sichere Interaktionen',
+            'digging': 'In 4 Wochen ein schöner Garten',
+            'marking': 'In 4 Wochen nur noch draußen markieren',
+            'custom-other': 'In 4 Wochen ein entspannter Hund'
         };
         
         function showExitPopup() {
@@ -2998,8 +3323,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             const checkoutTotalPrice = document.getElementById('checkoutTotalPrice');
             if (checkoutTotalPrice) checkoutTotalPrice.textContent = '€' + price.toFixed(2).replace('.', ',');
             
-            // Problem-Labels mit gegen/für
+            // ==================== ERWEITERTE problemLabels (34 Keys) ====================
             const problemLabels = {
+                // Standard (10)
                 'pulling': 'gegen Leinenziehen',
                 'barking': 'gegen übermäßiges Bellen',
                 'aggression': 'gegen Aggression',
@@ -3009,7 +3335,36 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 'energy': 'gegen Hyperaktivität',
                 'destructive': 'gegen Zerstörungswut',
                 'soiling': 'für Stubenreinheit',
-                'mouthing': 'gegen unerwünschtes Aufnehmen'
+                'mouthing': 'gegen unerwünschtes Aufnehmen',
+                // Custom Angst (7)
+                'visitor-anxiety': 'gegen Besucherangst',
+                'thunder-anxiety': 'gegen Gewitterangst',
+                'noise-sensitivity': 'gegen Geräuschempfindlichkeit',
+                'general-anxiety': 'gegen Ängstlichkeit',
+                'stranger-anxiety': 'gegen Angst vor Fremden',
+                'anxious-overreaction': 'gegen Überreaktionen',
+                'separation': 'gegen Trennungsangst',
+                // Custom Jagd (4)
+                'chasing': 'gegen Jagdverhalten',
+                'chasing-movement': 'gegen Jagen von Bewegungen',
+                'prey-drive': 'gegen starken Jagdtrieb',
+                'chasing-cars': 'gegen Autos/Fahrräder jagen',
+                // Custom Fressen (3)
+                'eating-unwanted': 'gegen unerwünschtes Fressen',
+                'eating-trash': 'gegen Müll fressen',
+                'eating-objects': 'gegen Gegenstände fressen',
+                // Custom Reaktivität (4)
+                'postman-reactive': 'gegen Postboten-Reaktivität',
+                'dog-reactive': 'gegen Hundereaktivität',
+                'leash-reactive': 'gegen Leinenreaktivität',
+                'overreaction': 'gegen Überreaktionen',
+                // Custom Sonstiges (6)
+                'vocalization': 'gegen übermäßiges Lautgeben',
+                'resource-guarding': 'gegen Ressourcenverteidigung',
+                'biting': 'gegen Beißen',
+                'digging': 'gegen Buddeln',
+                'marking': 'gegen Markieren im Haus',
+                'custom-other': 'für besseres Verhalten'
             };
             
             const dogProblemValue = localStorage.getItem('dogProblem') || 'anxiety';
