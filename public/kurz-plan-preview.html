@@ -86,12 +86,22 @@
             padding: 6px 12px;
             font-size: 12px;
             color: #6B6B6B;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .selection-tag.problem {
             background: #FFF8F0;
             border-color: #E8D5C0;
             color: #8B7355;
+        }
+
+        .selection-tag.custom {
+            background: #F0F8FF;
+            border-color: #C0D8E8;
+            color: #5577AA;
         }
 
         /* iPad Frame */
@@ -547,6 +557,8 @@
         const dogGender = localStorage.getItem('dogGender') || '';
         const dogBehaviors = JSON.parse(localStorage.getItem('dogBehaviors') || '[]');
         const dogProblem = dogBehaviors[0] || localStorage.getItem('dogProblem') || '';
+        const customProblem = localStorage.getItem('customProblem') || '';
+        const customProblemKey = localStorage.getItem('customProblemKey') || '';
 
         // Labels
         const ageLabels = {
@@ -569,7 +581,33 @@
             'energy': 'Hyperaktivität',
             'destructive': 'Zerstören',
             'soiling': 'Unsauberkeit',
-            'mouthing': 'Aufnehmen'
+            'mouthing': 'Aufnehmen',
+            // Custom Problem Keys
+            'visitor-anxiety': 'Angst bei Besuch',
+            'thunder-anxiety': 'Gewitterangst',
+            'noise-sensitivity': 'Geräuschempfindlichkeit',
+            'general-anxiety': 'Ängstliches Verhalten',
+            'stranger-anxiety': 'Angst vor Fremden',
+            'chasing': 'Jagdverhalten',
+            'chasing-movement': 'Jagt Bewegungen',
+            'prey-drive': 'Jagdtrieb',
+            'chasing-cars': 'Jagt Autos',
+            'eating-unwanted': 'Frisst Unerwünschtes',
+            'eating-trash': 'Frisst Unrat',
+            'eating-objects': 'Frisst Gegenstände',
+            'postman-reactive': 'Reaktiv bei Postbote',
+            'dog-reactive': 'Reaktiv bei Hunden',
+            'leash-reactive': 'Leinenreaktivität',
+            'overreaction': 'Überreaktion',
+            'anxious-overreaction': 'Ängstliche Überreaktion',
+            'separation': 'Trennungsstress',
+            'vocalization': 'Lautäußerungen',
+            'resource-guarding': 'Ressourcenverteidigung',
+            'biting': 'Beißverhalten',
+            'jumping': 'Anspringen',
+            'digging': 'Buddeln',
+            'marking': 'Markierverhalten',
+            'custom-other': 'Individuelles Verhalten'
         };
 
         const problemData = {
@@ -580,10 +618,47 @@
             'energy': { label: 'Ruhe & Kontrolle', vision: 'ausgeglichener' },
             'destructive': { label: 'Impulskontrolle', vision: 'kontrollierter' },
             'soiling': { label: 'Stubenreinheit', vision: 'zuverlässig stubenrein' },
-            'mouthing': { label: 'Impulskontrolle', vision: 'lässt Sachen liegen' }
+            'mouthing': { label: 'Impulskontrolle', vision: 'lässt Sachen liegen' },
+            // Custom Problem Keys
+            'visitor-anxiety': { label: 'Besuchertraining', vision: 'ruhiger bei Besuch' },
+            'thunder-anxiety': { label: 'Geräuschtraining', vision: 'gelassener bei Gewitter' },
+            'noise-sensitivity': { label: 'Desensibilisierung', vision: 'entspannter bei Geräuschen' },
+            'general-anxiety': { label: 'Vertrauensaufbau', vision: 'selbstsicherer' },
+            'stranger-anxiety': { label: 'Sozialisierung', vision: 'entspannter bei Fremden' },
+            'chasing': { label: 'Impulskontrolle', vision: 'abrufbar beim Jagen' },
+            'chasing-movement': { label: 'Impulskontrolle', vision: 'gelassener bei Bewegungen' },
+            'prey-drive': { label: 'Jagdkontrolle', vision: 'kontrollierbarer Jagdtrieb' },
+            'chasing-cars': { label: 'Anti-Jagd-Training', vision: 'ignoriert Autos' },
+            'eating-unwanted': { label: 'Impulskontrolle', vision: 'lässt Sachen liegen' },
+            'eating-trash': { label: 'Giftköder-Training', vision: 'sicher beim Spaziergang' },
+            'eating-objects': { label: 'Impulskontrolle', vision: 'lässt Gegenstände liegen' },
+            'postman-reactive': { label: 'Besuchertraining', vision: 'ruhiger bei Lieferanten' },
+            'dog-reactive': { label: 'Hundebegegnungen', vision: 'entspannter bei anderen Hunden' },
+            'leash-reactive': { label: 'Leinentraining', vision: 'gelassener an der Leine' },
+            'overreaction': { label: 'Impulskontrolle', vision: 'ausgeglichener' },
+            'anxious-overreaction': { label: 'Vertrauensaufbau', vision: 'ruhiger in Stresssituationen' },
+            'separation': { label: 'Alleinebleiben', vision: 'entspannter alleine' },
+            'vocalization': { label: 'Ruhetraining', vision: 'weniger Lautäußerungen' },
+            'resource-guarding': { label: 'Ressourcen-Training', vision: 'entspannter beim Teilen' },
+            'biting': { label: 'Beißhemmung', vision: 'sanfteres Maulverhalten' },
+            'jumping': { label: 'Begrüßungstraining', vision: 'ruhigere Begrüßung' },
+            'digging': { label: 'Alternativverhalten', vision: 'weniger Buddeln' },
+            'marking': { label: 'Stubenreinheit', vision: 'kontrolliertes Markieren' },
+            'custom-other': { label: 'Individuelles Training', vision: 'deutliche Fortschritte machen' }
         };
 
-        const data = problemData[dogProblem] || { label: 'Verhaltenskorrektur', vision: 'folgsamer' };
+        // Determine focus label and vision text
+        let focusLabel = 'Verhaltenskorrektur';
+        let visionOutcome = 'folgsamer';
+
+        // Erstes Problem (egal ob standard oder custom) für Focus verwenden
+        if (dogProblem && problemData[dogProblem]) {
+            focusLabel = problemData[dogProblem].label;
+            visionOutcome = problemData[dogProblem].vision;
+        } else if (customProblemKey && problemData[customProblemKey]) {
+            focusLabel = problemData[customProblemKey].label;
+            visionOutcome = problemData[customProblemKey].vision;
+        }
 
         // Selection Tags erstellen
         const selectionTags = document.getElementById('selectionTags');
@@ -604,12 +679,20 @@
             tagsHTML += `<div class="selection-tag">${dogGender === 'male' ? '♂️' : '♀️'} ${genderLabels[dogGender]}</div>`;
         }
 
-        // Probleme (max 2)
-        dogBehaviors.slice(0, 2).forEach(prob => {
+        // Standard-Probleme (max 2, ohne custom key)
+        const standardBehaviors = dogBehaviors.filter(b => b !== customProblemKey);
+        
+        standardBehaviors.slice(0, 2).forEach(prob => {
             if (problemLabels[prob]) {
                 tagsHTML += `<div class="selection-tag problem">⚡ ${problemLabels[prob]}</div>`;
             }
         });
+
+        // Custom Problem als eigenen Tag (mit Tooltip für vollen Text)
+        if (customProblem && customProblemKey) {
+            const label = problemLabels[customProblemKey] || 'Individuelles Verhalten';
+            tagsHTML += `<div class="selection-tag custom" title="${customProblem}">✏️ ${label}</div>`;
+        }
 
         selectionTags.innerHTML = tagsHTML;
 
@@ -626,11 +709,11 @@
             planTitleText = 'Trainingsplan für ' + dogBreed;
         }
         document.getElementById('planTitle').textContent = planTitleText;
-        document.getElementById('planSubtitle').textContent = 'Fokus: ' + data.label;
+        document.getElementById('planSubtitle').textContent = 'Fokus: ' + focusLabel;
 
         // Vision Text
         let visionName = dogBreed && dogBreed !== 'Andere Rasse' ? 'dein ' + dogBreed : 'dein Hund';
-        document.getElementById('visionText').innerHTML = `Die meisten Hundebesitzer sehen <strong>innerhalb von 2 Wochen</strong> deutliche Verbesserungen – ${visionName} wird <strong>${data.vision}</strong> sein.`;
+        document.getElementById('visionText').innerHTML = `Die meisten Hundebesitzer sehen <strong>innerhalb von 2 Wochen</strong> deutliche Verbesserungen – ${visionName} wird <strong>${visionOutcome}</strong>.`;
 
         // Progress Animation
         const progressFill = document.getElementById('progressFill');
@@ -643,12 +726,24 @@
         let progress = 0;
         const targetProgress = 60;
 
-        const statusMessages = [
+        // Customize status messages if custom problem exists
+        let statusMessages = [
             { at: 0, text: 'Analysiere deine Angaben...' },
             { at: 20, text: 'Erstelle Übungen...' },
             { at: 40, text: 'Generiere Wochenplan...' },
             { at: 55, text: 'Fast fertig...' }
         ];
+
+        if (customProblemKey) {
+            const customLabel = problemLabels[customProblemKey] || 'dein spezielles Problem';
+            statusMessages = [
+                { at: 0, text: 'Analysiere deine Angaben...' },
+                { at: 15, text: `Berücksichtige: ${customLabel}...` },
+                { at: 35, text: 'Erstelle individuelle Übungen...' },
+                { at: 50, text: 'Generiere Wochenplan...' },
+                { at: 58, text: 'Fast fertig...' }
+            ];
+        }
 
         function animateProgress() {
             if (progress < targetProgress) {

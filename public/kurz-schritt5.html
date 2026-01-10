@@ -51,6 +51,53 @@
         .continue-btn.active { opacity: 1; pointer-events: auto; }
         .continue-btn.active:hover { background: var(--brown-hover); }
 
+        /* Custom Problem Card */
+        .custom-card { 
+            background: var(--white); 
+            border: 2px dashed var(--border-light); 
+            border-radius: var(--border-radius); 
+            padding: 16px 20px; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            box-shadow: var(--shadow-light);
+            touch-action: manipulation;
+        }
+        .custom-card:hover { border-color: var(--light-brown); }
+        .custom-card.expanded { border-style: solid; border-color: var(--primary-brown); cursor: default; }
+        .custom-card-header { display: flex; align-items: center; gap: 16px; }
+        .custom-card-emoji { font-size: 28px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: var(--background-light); border-radius: 8px; flex-shrink: 0; }
+        .custom-card-text { font-size: 16px; font-weight: 600; color: var(--text-dark); }
+        .custom-card-hint { font-size: 13px; color: var(--text-medium); margin-top: 2px; }
+        .custom-input-wrapper { 
+            margin-top: 16px; 
+            padding-top: 16px; 
+            border-top: 1px solid var(--border-light);
+            display: none;
+        }
+        .custom-card.expanded .custom-input-wrapper { display: block; }
+        .custom-input { 
+            width: 100%; 
+            padding: 14px 16px; 
+            border: 2px solid var(--border-light); 
+            border-radius: 10px; 
+            font-size: 15px; 
+            font-family: inherit;
+            resize: none;
+            min-height: 80px;
+            transition: border-color 0.2s;
+        }
+        .custom-input:focus { 
+            outline: none; 
+            border-color: var(--primary-brown); 
+        }
+        .custom-input::placeholder { color: #B0B0B0; }
+        .custom-char-count {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-medium);
+            margin-top: 6px;
+        }
+
         .stress-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
         .stress-overlay.active { display: flex; }
         .stress-popup { background: var(--white); border-radius: 20px; padding: 35px 30px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: popupIn 0.3s ease; }
@@ -68,7 +115,7 @@
         .stress-response { font-size: 15px; color: var(--text-dark); min-height: 45px; line-height: 1.5; margin-bottom: 25px; padding: 0 10px; }
         .stress-continue-btn { width: 100%; background: var(--primary-brown); color: var(--white); border: none; border-radius: var(--border-radius); padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; touch-action: manipulation; }
         .stress-continue-btn:hover { background: var(--brown-hover); }
-        @media (max-width: 480px) { .container { padding: 25px 15px; padding-bottom: 90px; } .quiz-title { font-size: 20px; } .option-card { padding: 14px 16px; gap: 14px; } .option-image { width: 50px; height: 50px; } .option-text { font-size: 14px; } .stress-popup { padding: 25px 20px; } .stress-title { font-size: 20px; } .stress-value { font-size: 40px; } }
+        @media (max-width: 480px) { .container { padding: 25px 15px; padding-bottom: 90px; } .quiz-title { font-size: 20px; } .option-card { padding: 14px 16px; gap: 14px; } .option-image { width: 50px; height: 50px; } .option-text { font-size: 14px; } .stress-popup { padding: 25px 20px; } .stress-title { font-size: 20px; } .stress-value { font-size: 40px; } .custom-card-emoji { width: 50px; height: 50px; font-size: 24px; } .custom-card-text { font-size: 14px; } }
     </style>
     <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','864109602683515');fbq('track','PageView');</script>
     <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","ufxcf43805");</script>
@@ -123,6 +170,27 @@
                 <div class="option-text">In die Wohnung machen</div>
             </div>
         </div>
+
+        <!-- Custom Problem Card -->
+        <div class="custom-card" id="customCard">
+            <div class="custom-card-header">
+                <div class="custom-card-emoji">✏️</div>
+                <div>
+                    <div class="custom-card-text">Spezielles Problem</div>
+                    <div class="custom-card-hint">Etwas anderes? Beschreibe es kurz</div>
+                </div>
+            </div>
+            <div class="custom-input-wrapper">
+                <textarea 
+                    class="custom-input" 
+                    id="customInput" 
+                    placeholder="z.B. Jagt Fahrradfahrern hinterher, hat Angst vor Gewitter..."
+                    maxlength="150"
+                ></textarea>
+                <div class="custom-char-count"><span id="charCount">0</span>/150</div>
+            </div>
+        </div>
+
         <button class="continue-btn" id="continueBtn">Weiter</button>
     </div>
 
@@ -156,6 +224,9 @@
         const stressResponse = document.getElementById('stressResponse');
         const stressContinueBtn = document.getElementById('stressContinueBtn');
         const stressTitle = document.getElementById('stressTitle');
+        const customCard = document.getElementById('customCard');
+        const customInput = document.getElementById('customInput');
+        const charCount = document.getElementById('charCount');
         let selectedBehaviors = [];
 
         const problemNames = {
@@ -168,6 +239,117 @@
             'destructive': 'das zerstörerische Verhalten',
             'soiling': 'die Unsauberkeit'
         };
+
+        // Custom Card Toggle
+        customCard.addEventListener('click', (e) => {
+            if (!customCard.classList.contains('expanded')) {
+                customCard.classList.add('expanded');
+                setTimeout(() => customInput.focus(), 100);
+            }
+        });
+
+        // Prevent card collapse when clicking inside input
+        customInput.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // Character count
+        customInput.addEventListener('input', () => {
+            charCount.textContent = customInput.value.length;
+            updateContinueButton();
+        });
+
+        // Intelligente Problem-Diagnose
+        function diagnoseCustomProblem(text) {
+            const lowerText = text.toLowerCase();
+            
+            // Pattern-Matching für bekannte Problemkategorien
+            // Gibt { key: 'xxx', label: 'Xxx' } zurück
+            const patterns = [
+                // Angst-Kategorien
+                { keywords: ['besuch', 'klingel', 'klopf', 'tür', 'läutet', 'gäste'], key: 'visitor-anxiety', label: 'Angst bei Besuch' },
+                { keywords: ['gewitter', 'donner', 'blitz'], key: 'thunder-anxiety', label: 'Gewitterangst' },
+                { keywords: ['feuerwerk', 'böller', 'silvester', 'knall'], key: 'noise-sensitivity', label: 'Geräuschempfindlichkeit' },
+                { keywords: ['laut', 'geräusch', 'krach', 'lärm'], key: 'noise-sensitivity', label: 'Geräuschempfindlichkeit' },
+                { keywords: ['unsicher', 'ängstlich', 'angst', 'scheu', 'versteck'], key: 'general-anxiety', label: 'Ängstliches Verhalten' },
+                { keywords: ['fremd', 'menschen', 'personen', 'leute'], key: 'stranger-anxiety', label: 'Angst vor Fremden' },
+                
+                // Jagd-Kategorien
+                { keywords: ['jagt', 'jagd', 'hinterher', 'rennt nach'], key: 'chasing', label: 'Jagdverhalten' },
+                { keywords: ['fahrrad', 'radfahrer', 'jogger', 'läufer'], key: 'chasing-movement', label: 'Jagt Bewegungen' },
+                { keywords: ['katze', 'eichhörn', 'vögel', 'hase', 'reh', 'wild'], key: 'prey-drive', label: 'Jagdtrieb' },
+                { keywords: ['auto', 'autos', 'fahrzeug'], key: 'chasing-cars', label: 'Jagt Autos' },
+                
+                // Fress-Probleme
+                { keywords: ['frisst', 'fressen', 'schluckt', 'aufnimmt'], key: 'eating-unwanted', label: 'Frisst Unerwünschtes' },
+                { keywords: ['kot', 'dreck', 'müll', 'gift'], key: 'eating-trash', label: 'Frisst Unrat' },
+                { keywords: ['socken', 'schuhe', 'spielzeug', 'gegenstände'], key: 'eating-objects', label: 'Frisst Gegenstände' },
+                
+                // Reaktivität
+                { keywords: ['postbote', 'briefträger', 'paket', 'lieferant'], key: 'postman-reactive', label: 'Reaktiv bei Postbote' },
+                { keywords: ['andere hunde', 'artgenossen', 'hundebegegnung'], key: 'dog-reactive', label: 'Reaktiv bei Hunden' },
+                { keywords: ['leine', 'angeleint', 'gespannt'], key: 'leash-reactive', label: 'Leinenreaktivität' },
+                { keywords: ['aufgeregt', 'aufgebracht', 'rastet', 'flippt', 'dreht durch'], key: 'overreaction', label: 'Überreaktion' },
+                
+                // Trennungs-/Allein-Probleme  
+                { keywords: ['allein', 'verlassen', 'weg', 'trennung'], key: 'separation', label: 'Trennungsstress' },
+                { keywords: ['heult', 'jault', 'winselt', 'schreit'], key: 'vocalization', label: 'Lautäußerungen' },
+                
+                // Ressourcen
+                { keywords: ['futter', 'napf', 'fressen verteidigt', 'knurrt beim'], key: 'resource-guarding', label: 'Ressourcenverteidigung' },
+                { keywords: ['spielzeug verteidigt', 'abgeben', 'wegnehmen'], key: 'resource-guarding', label: 'Ressourcenverteidigung' },
+                
+                // Sonstiges
+                { keywords: ['beißt', 'schnappt', 'zwickt', 'biss'], key: 'biting', label: 'Beißverhalten' },
+                { keywords: ['spring', 'hochspring', 'anspring'], key: 'jumping', label: 'Anspringen' },
+                { keywords: ['buddel', 'gräbt', 'graben', 'löcher'], key: 'digging', label: 'Buddeln' },
+                { keywords: ['markier', 'pinkelt', 'hebt bein'], key: 'marking', label: 'Markierverhalten' },
+            ];
+            
+            // Finde passende Pattern
+            const matches = [];
+            for (const pattern of patterns) {
+                for (const keyword of pattern.keywords) {
+                    if (lowerText.includes(keyword)) {
+                        if (!matches.find(m => m.key === pattern.key)) {
+                            matches.push(pattern);
+                        }
+                        break;
+                    }
+                }
+            }
+            
+            // Kombiniere sinnvoll bei Angst + Trigger
+            if (matches.length >= 2) {
+                const angstMatch = matches.find(m => m.key.includes('anxiety'));
+                const triggerMatch = matches.find(m => !m.key.includes('anxiety'));
+                
+                if (angstMatch && triggerMatch) {
+                    if (triggerMatch.key === 'visitor-anxiety' || triggerMatch.key === 'postman-reactive') {
+                        return { key: 'visitor-anxiety', label: 'Angst bei Besuch' };
+                    }
+                    if (triggerMatch.key === 'overreaction') {
+                        return { key: 'anxious-overreaction', label: 'Ängstliche Überreaktion' };
+                    }
+                    return triggerMatch;
+                }
+                
+                return matches[0];
+            }
+            
+            if (matches.length === 1) {
+                return matches[0];
+            }
+            
+            // Fallback
+            return { key: 'custom-other', label: 'Individuelles Verhalten' };
+        }
+
+        function updateContinueButton() {
+            const hasSelection = selectedBehaviors.length > 0;
+            const hasCustomText = customInput.value.trim().length > 0;
+            continueBtn.classList.toggle('active', hasSelection || hasCustomText);
+        }
         
         cards.forEach(card => {
             card.addEventListener('click', () => {
@@ -179,15 +361,47 @@
                     selectedBehaviors.push(behavior);
                     card.classList.add('selected');
                 }
-                continueBtn.classList.toggle('active', selectedBehaviors.length > 0);
+                updateContinueButton();
                 localStorage.setItem('dogBehaviors', JSON.stringify(selectedBehaviors));
                 localStorage.setItem('dogProblem', selectedBehaviors[0] || '');
             });
         });
         
         continueBtn.addEventListener('click', () => {
-            if (selectedBehaviors.length > 0) {
+            const customText = customInput.value.trim();
+            let allBehaviors = [...selectedBehaviors];
+            
+            // Custom Problem diagnostizieren und als Behavior hinzufügen
+            if (customText) {
+                const diagnosed = diagnoseCustomProblem(customText);
+                localStorage.setItem('customProblem', customText); // Freitext für Tooltip
+                localStorage.setItem('customProblemKey', diagnosed.key);
+                localStorage.setItem('customProblemLabel', diagnosed.label);
+                
+                // Als Behavior hinzufügen (falls nicht schon drin)
+                if (!allBehaviors.includes(diagnosed.key)) {
+                    allBehaviors.push(diagnosed.key);
+                }
+            } else {
+                localStorage.removeItem('customProblem');
+                localStorage.removeItem('customProblemKey');
+                localStorage.removeItem('customProblemLabel');
+            }
+            
+            if (allBehaviors.length > 0) {
+                // Speichern wie die anderen
+                localStorage.setItem('dogBehaviors', JSON.stringify(allBehaviors));
+                localStorage.setItem('dogProblem', allBehaviors[0] || '');
+
+                // Build stress question
                 const problemTexts = selectedBehaviors.map(b => problemNames[b] || b);
+                
+                // Custom Problem Label für Frage
+                if (customText) {
+                    const diagnosed = diagnoseCustomProblem(customText);
+                    problemTexts.push(diagnosed.label);
+                }
+
                 let questionText;
                 if (problemTexts.length === 1) {
                     questionText = `Wie sehr stresst dich ${problemTexts[0]} im Alltag?`;
@@ -218,7 +432,7 @@
 
         stressSlider.addEventListener('input', (e) => updateStressUI(e.target.value));
 
-        // GEÄNDERT: Weiterleitung zur Plan-Preview Animation
+        // Weiterleitung zur Plan-Preview Animation
         let isNavigating = false;
         stressContinueBtn.addEventListener('click', () => {
             if (isNavigating) return;
@@ -229,6 +443,7 @@
             window.location.href = 'kurz-plan-preview.html';
         });
 
+        // Restore saved data
         const savedBehaviors = localStorage.getItem('dogBehaviors');
         if (savedBehaviors) {
             try {
@@ -237,9 +452,17 @@
                     const card = document.querySelector(`[data-behavior="${behavior}"]`);
                     if (card) card.classList.add('selected');
                 });
-                if (selectedBehaviors.length > 0) continueBtn.classList.add('active');
             } catch (e) {}
         }
+
+        const savedCustom = localStorage.getItem('customProblem');
+        if (savedCustom) {
+            customInput.value = savedCustom;
+            charCount.textContent = savedCustom.length;
+            customCard.classList.add('expanded');
+        }
+
+        updateContinueButton();
     </script>
 </body>
 </html>
