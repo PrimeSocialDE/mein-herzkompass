@@ -2454,6 +2454,17 @@ if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers
         
         document.getElementById('userProblem').textContent = problemText;
         
+        // ==================== FIX: defaultBenefits MUSS VOR benefitsMap stehen! ====================
+        const defaultBenefits = [
+            '✓ ' + dogName + 's Gehorsam schnell verbessern',
+            '✓ Verhaltensprobleme gezielt lösen',
+            '✓ Neue Trainingstechniken für ' + dogName,
+            '✓ Stärkere Bindung zu ' + dogName + ' aufbauen',
+            '✓ Dauerhaft gutes Verhalten erreichen',
+            '✓ 20+ Übungen speziell für ' + dogName,
+            '✓ Glückliches Zusammenleben mit ' + dogName
+        ];
+
         // Dynamische Benefits basierend auf Problem
         const benefitsMap = {
             // Standard (10)
@@ -2783,7 +2794,9 @@ if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers
         document.getElementById('problemLabel2').textContent = problemText;
         
         // Dynamische Werte basierend auf Problem-Typ
+        // ==================== FIX: ERWEITERTE problemValueMap (40 Keys) ====================
         const problemValueMap = {
+            // Standard (10)
             'pulling': { bad: 'Stark', good: 'Kontrolliert' },
             'barking': { bad: 'Häufig', good: 'Ruhig' },
             'aggression': { bad: 'Kritisch', good: 'Friedlich' },
@@ -2793,7 +2806,36 @@ if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers
             'energy': { bad: 'Übermäßig', good: 'Ausgeglichen' },
             'destructive': { bad: 'Häufig', good: 'Gestoppt' },
             'soiling': { bad: 'Regelmäßig', good: 'Stubenrein' },
-            'mouthing': { bad: 'Ständig', good: 'Kontrolliert' }
+            'mouthing': { bad: 'Ständig', good: 'Kontrolliert' },
+            // Custom Angst (7)
+            'visitor-anxiety': { bad: 'Stark', good: 'Entspannt' },
+            'thunder-anxiety': { bad: 'Panisch', good: 'Ruhig' },
+            'noise-sensitivity': { bad: 'Stark', good: 'Gelassen' },
+            'general-anxiety': { bad: 'Stark', good: 'Entspannt' },
+            'stranger-anxiety': { bad: 'Stark', good: 'Gelassen' },
+            'anxious-overreaction': { bad: 'Häufig', good: 'Kontrolliert' },
+            'separation': { bad: 'Stark', good: 'Entspannt' },
+            // Custom Jagd (4)
+            'chasing': { bad: 'Unkontrolliert', good: 'Kontrolliert' },
+            'chasing-movement': { bad: 'Stark', good: 'Ignoriert' },
+            'prey-drive': { bad: 'Stark', good: 'Kontrolliert' },
+            'chasing-cars': { bad: 'Gefährlich', good: 'Sicher' },
+            // Custom Fressen (3)
+            'eating-unwanted': { bad: 'Ständig', good: 'Kontrolliert' },
+            'eating-trash': { bad: 'Häufig', good: 'Ignoriert' },
+            'eating-objects': { bad: 'Gefährlich', good: 'Sicher' },
+            // Custom Reaktivität (4)
+            'postman-reactive': { bad: 'Stark', good: 'Ruhig' },
+            'dog-reactive': { bad: 'Stark', good: 'Gelassen' },
+            'leash-reactive': { bad: 'Stark', good: 'Entspannt' },
+            'overreaction': { bad: 'Häufig', good: 'Kontrolliert' },
+            // Custom Sonstiges (6)
+            'vocalization': { bad: 'Häufig', good: 'Ruhig' },
+            'resource-guarding': { bad: 'Stark', good: 'Entspannt' },
+            'biting': { bad: 'Kritisch', good: 'Sicher' },
+            'digging': { bad: 'Häufig', good: 'Kontrolliert' },
+            'marking': { bad: 'Regelmäßig', good: 'Draußen' },
+            'custom-other': { bad: 'Problematisch', good: 'Gelöst' }
         };
         
         const defaultValues = { bad: 'Kritisch', good: 'Gelöst' };
