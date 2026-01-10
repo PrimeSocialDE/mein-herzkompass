@@ -173,7 +173,7 @@
             <div class="order-item" id="mainPlan">
                 <div class="order-icon">📋</div>
                 <div class="order-info">
-                    <h3 id="mainProblemName">Trainingsplan</h3>
+                    <h3>Trainingsplan</h3>
                     <p>Hauptproblem</p>
                 </div>
                 <span class="order-check">✓</span>
@@ -194,14 +194,14 @@
         </div>
 
         <div class="support-note">
-            Fragen? Schreib uns an <a href="mailto:support@mein-wauwerk.de">support@mein-wauwerk.de</a>
+            Fragen? Schreib uns an <a href="/cdn-cgi/l/email-protection#6615131616091412260b030f084b1107131103140d480203"><span class="__cf_email__" data-cfemail="e99a9c9999869b9da9848c8087c49e889c9e8c9b82c78d8c">[email&#160;protected]</span></a>
         </div>
     </div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // Supabase Config
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzOTc2MDcsImV4cCI6MjA2NDk3MzYwN30.xvXSBo_8Xfb0GbmQKYHUOjd3cakOdeoFl2ZzFdNjtpc';
 
         // Hundename aus localStorage
         const dogName = localStorage.getItem('dogName') || 'dein Hund';
@@ -220,6 +220,12 @@
             'recall': { icon: '📣', name: 'Rückruf-Training' },
             'jumping': { icon: '🐕', name: 'Anti-Anspring Training' }
         };
+
+        // Helper für JSON parsing
+        function parseJSON(str) {
+            try { return JSON.parse(str); } 
+            catch { return null; }
+        }
 
         if (module && moduleData[module]) {
             document.getElementById('moduleIcon').textContent = moduleData[module].icon;
@@ -255,54 +261,23 @@
             }
         }
 
-        // ERWEITERTE problemNames mit allen Custom-Keys
+        // Hauptproblem aus localStorage
         const mainProblem = localStorage.getItem('dogProblem');
         const problemNames = {
-            // Standard
             'pulling': 'Leinenziehen',
-            'barking': 'Übermäßiges Bellen',
-            'aggression': 'Aggression',
+            'barking': 'Bellen',
             'anxiety': 'Trennungsangst',
+            'aggression': 'Aggression',
+            'recall': 'Rückruf',
             'jumping': 'Anspringen',
-            'recall': 'Kommt nicht zurück',
             'energy': 'Übermäßige Energie',
             'destructive': 'Zerstörerisches Verhalten',
-            'soiling': 'In die Wohnung machen',
-            'mouthing': 'Unerwünschtes Aufnehmen',
-            // Custom Angst
-            'visitor-anxiety': 'Angst bei Besuch',
-            'thunder-anxiety': 'Gewitterangst',
-            'noise-sensitivity': 'Geräuschempfindlichkeit',
-            'general-anxiety': 'Allgemeine Ängstlichkeit',
-            'stranger-anxiety': 'Angst vor Fremden',
-            'anxious-overreaction': 'Ängstliche Überreaktion',
-            'separation': 'Trennungsangst',
-            // Custom Jagd
-            'chasing': 'Jagdverhalten',
-            'chasing-movement': 'Jagt Bewegungen',
-            'prey-drive': 'Starker Jagdtrieb',
-            'chasing-cars': 'Jagt Autos/Fahrräder',
-            // Custom Fressen
-            'eating-unwanted': 'Frisst Unerwünschtes',
-            'eating-trash': 'Frisst aus dem Müll',
-            'eating-objects': 'Frisst Gegenstände',
-            // Custom Reaktivität
-            'postman-reactive': 'Reaktiv auf Postboten',
-            'dog-reactive': 'Reaktiv auf andere Hunde',
-            'leash-reactive': 'Leinenreaktivität',
-            'overreaction': 'Überreaktion auf Reize',
-            // Custom Sonstiges
-            'vocalization': 'Übermäßiges Lautgeben',
-            'resource-guarding': 'Ressourcenverteidigung',
-            'biting': 'Beißen/Schnappen',
-            'digging': 'Buddeln',
-            'marking': 'Markieren in der Wohnung',
-            'custom-other': 'Sonstiges Verhalten'
+            'disobedience': 'Ungehorsam',
+            'mouthing': 'Unerwünschtes Aufnehmen'
         };
 
-        if (mainProblem) {
-            const problemText = problemNames[mainProblem] || mainProblem;
-            document.getElementById('mainProblemName').textContent = problemText + '-Training';
+        if (mainProblem && problemNames[mainProblem]) {
+            document.getElementById('mainProblemName').textContent = problemNames[mainProblem] + '-Training';
         }
     </script>
 </body>

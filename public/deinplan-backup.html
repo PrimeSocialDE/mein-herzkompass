@@ -2352,8 +2352,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     if (answers.dog_behaviors) localStorage.setItem('dogBehaviors', JSON.stringify(answers.dog_behaviors));
                     if (answers.had_training) localStorage.setItem('hadTraining', answers.had_training);
                     if (answers.territorial_aggression) localStorage.setItem('territorialAggression', answers.territorial_aggression);
-                    if (answers.custom_problem_text) localStorage.setItem('customProblem', answers.custom_problem_text);  // ← NEU
-if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers.custom_problem_key);  // ← NEU
                     if (lead.email) localStorage.setItem('userEmail', lead.email);
                     
                     // Lead ID speichern
@@ -2749,8 +2747,6 @@ if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers
                 event_timing: localStorage.getItem('eventTiming'),
                 had_training: localStorage.getItem('hadTraining'),
                 territorial_aggression: localStorage.getItem('territorialAggression'),
-custom_problem_text: localStorage.getItem('customProblem'),    // ← NEU
-custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 email: localStorage.getItem('userEmail') || null,
                 ...utmParams
             };

@@ -531,6 +531,7 @@ fbq('track', 'PageView');
             problemText = 'Territoriale Aggression';
         } else if (dogProblem) {
             const problemMap = {
+                // Standard
                 'pulling': 'Leinenziehen',
                 'barking': 'Übermäßiges Bellen',
                 'aggression': 'Aggression',
@@ -540,7 +541,36 @@ fbq('track', 'PageView');
                 'energy': 'Übermäßige Energie',
                 'destructive': 'Zerstörerisches Verhalten',
                 'soiling': 'Unsauberkeit',
-                'mouthing': 'Unerwünschtes Aufnehmen'
+                'mouthing': 'Unerwünschtes Aufnehmen',
+                // Custom Angst
+                'visitor-anxiety': 'Angst bei Besuch',
+                'thunder-anxiety': 'Gewitterangst',
+                'noise-sensitivity': 'Geräuschempfindlichkeit',
+                'general-anxiety': 'Allgemeine Ängstlichkeit',
+                'stranger-anxiety': 'Angst vor Fremden',
+                'anxious-overreaction': 'Ängstliche Überreaktion',
+                'separation': 'Trennungsangst',
+                // Custom Jagd
+                'chasing': 'Jagdverhalten',
+                'chasing-movement': 'Jagt Bewegungen',
+                'prey-drive': 'Starker Jagdtrieb',
+                'chasing-cars': 'Jagt Autos/Fahrräder',
+                // Custom Fressen
+                'eating-unwanted': 'Frisst Unerwünschtes',
+                'eating-trash': 'Frisst aus dem Müll',
+                'eating-objects': 'Frisst Gegenstände',
+                // Custom Reaktivität
+                'postman-reactive': 'Reaktiv auf Postboten',
+                'dog-reactive': 'Reaktiv auf andere Hunde',
+                'leash-reactive': 'Leinenreaktivität',
+                'overreaction': 'Überreaktion auf Reize',
+                // Custom Sonstiges
+                'vocalization': 'Übermäßiges Lautgeben',
+                'resource-guarding': 'Ressourcenverteidigung',
+                'biting': 'Beißen/Schnappen',
+                'digging': 'Buddeln',
+                'marking': 'Markieren in der Wohnung',
+                'custom-other': 'Sonstiges Verhalten'
             };
             problemText = problemMap[dogProblem] || dogProblem;
         }
@@ -556,7 +586,7 @@ fbq('track', 'PageView');
                        'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
 
         document.getElementById('targetDate').textContent = 
-            `${targetDate.getDate()}. ${months[targetDate.getMonth()]} ${targetDate.getFullYear()}`;
+            targetDate.getDate() + '. ' + months[targetDate.getMonth()] + ' ' + targetDate.getFullYear();
 
         // Animation beim Laden der Seite
         window.addEventListener('load', function() {
