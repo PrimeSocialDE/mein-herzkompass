@@ -153,6 +153,7 @@
         const ageMap = { 'puppy': 'Welpe', 'young': 'Junghund', 'adult': 'Erwachsen', 'senior': 'Senior' };
         document.getElementById('ageDisplay').textContent = ageMap[dogAge] || 'Erwachsen';
         
+        // Erweiterte Problem-Map mit Custom Keys
         const problemMap = {
             'pulling': 'Leinenziehen',
             'barking': 'Übermäßiges Bellen',
@@ -161,10 +162,37 @@
             'energy': 'Übermäßige Energie',
             'destructive': 'Zerstörerisches Verhalten',
             'soiling': 'Stubenreinheit',
-            'mouthing': 'Unerwünschtes Aufnehmen'
+            'mouthing': 'Unerwünschtes Aufnehmen',
+            // Custom Problem Keys
+            'visitor-anxiety': 'Angst bei Besuch',
+            'thunder-anxiety': 'Gewitterangst',
+            'noise-sensitivity': 'Geräuschempfindlichkeit',
+            'general-anxiety': 'Ängstliches Verhalten',
+            'stranger-anxiety': 'Angst vor Fremden',
+            'chasing': 'Jagdverhalten',
+            'chasing-movement': 'Jagt Bewegungen',
+            'prey-drive': 'Jagdtrieb',
+            'chasing-cars': 'Jagt Autos',
+            'eating-unwanted': 'Frisst Unerwünschtes',
+            'eating-trash': 'Frisst Unrat',
+            'eating-objects': 'Frisst Gegenstände',
+            'postman-reactive': 'Reaktiv bei Postbote',
+            'dog-reactive': 'Reaktiv bei Hunden',
+            'leash-reactive': 'Leinenreaktivität',
+            'overreaction': 'Überreaktion',
+            'anxious-overreaction': 'Ängstliche Überreaktion',
+            'separation': 'Trennungsstress',
+            'vocalization': 'Lautäußerungen',
+            'resource-guarding': 'Ressourcenverteidigung',
+            'biting': 'Beißverhalten',
+            'jumping': 'Anspringen',
+            'digging': 'Buddeln',
+            'marking': 'Markierverhalten',
+            'custom-other': 'Individuelles Verhalten'
         };
         document.getElementById('problemDisplay').textContent = problemMap[dogProblem] || dogProblem;
         
+        // Erweiterte Warning-Map mit Custom Keys
         const problemMapWarning = {
             'pulling': 'das Leinenziehen',
             'barking': 'das Bellen',
@@ -173,7 +201,33 @@
             'energy': 'die übermäßige Energie',
             'destructive': 'das zerstörerische Verhalten',
             'soiling': 'die Unsauberkeit',
-            'mouthing': 'das Aufnehmen von Gegenständen'
+            'mouthing': 'das Aufnehmen von Gegenständen',
+            // Custom Problem Keys
+            'visitor-anxiety': 'die Angst bei Besuch',
+            'thunder-anxiety': 'die Gewitterangst',
+            'noise-sensitivity': 'die Geräuschempfindlichkeit',
+            'general-anxiety': 'das ängstliche Verhalten',
+            'stranger-anxiety': 'die Angst vor Fremden',
+            'chasing': 'das Jagdverhalten',
+            'chasing-movement': 'das Jagen von Bewegungen',
+            'prey-drive': 'den Jagdtrieb',
+            'chasing-cars': 'das Jagen von Autos',
+            'eating-unwanted': 'das Fressen von Unerwünschtem',
+            'eating-trash': 'das Fressen von Unrat',
+            'eating-objects': 'das Fressen von Gegenständen',
+            'postman-reactive': 'die Reaktivität bei Postbote',
+            'dog-reactive': 'die Reaktivität bei Hunden',
+            'leash-reactive': 'die Leinenreaktivität',
+            'overreaction': 'die Überreaktion',
+            'anxious-overreaction': 'die ängstliche Überreaktion',
+            'separation': 'den Trennungsstress',
+            'vocalization': 'die Lautäußerungen',
+            'resource-guarding': 'die Ressourcenverteidigung',
+            'biting': 'das Beißverhalten',
+            'jumping': 'das Anspringen',
+            'digging': 'das Buddeln',
+            'marking': 'das Markierverhalten',
+            'custom-other': 'das Verhalten'
         };
         document.getElementById('problemTextWarning').textContent = problemMapWarning[dogProblem] || 'das Verhalten';
         
