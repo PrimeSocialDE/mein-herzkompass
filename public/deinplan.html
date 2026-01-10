@@ -3248,8 +3248,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             const checkoutTotalPrice = document.getElementById('checkoutTotalPrice');
             if (checkoutTotalPrice) checkoutTotalPrice.textContent = '€' + price.toFixed(2).replace('.', ',');
             
-            // Problem-Labels
+            // ==================== FIX: ERWEITERTE problemLabels (34 Keys) ====================
             const problemLabels = {
+                // Standard (10)
                 'pulling': 'Leinenziehen',
                 'barking': 'Bellen',
                 'aggression': 'Aggression',
@@ -3259,7 +3260,36 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 'energy': 'Hyperaktivität',
                 'destructive': 'Zerstörungswut',
                 'soiling': 'Stubenreinheit',
-                'mouthing': 'Unerwünschtes Aufnehmen'
+                'mouthing': 'Unerwünschtes Aufnehmen',
+                // Custom Angst (7)
+                'visitor-anxiety': 'Besucherangst',
+                'thunder-anxiety': 'Gewitterangst',
+                'noise-sensitivity': 'Geräuschempfindlichkeit',
+                'general-anxiety': 'Ängstlichkeit',
+                'stranger-anxiety': 'Angst vor Fremden',
+                'anxious-overreaction': 'Überreaktion',
+                'separation': 'Trennungsangst',
+                // Custom Jagd (4)
+                'chasing': 'Jagdverhalten',
+                'chasing-movement': 'Jagen von Bewegungen',
+                'prey-drive': 'Jagdtrieb',
+                'chasing-cars': 'Autos/Fahrräder jagen',
+                // Custom Fressen (3)
+                'eating-unwanted': 'Unerwünschtes Fressen',
+                'eating-trash': 'Müll fressen',
+                'eating-objects': 'Gegenstände fressen',
+                // Custom Reaktivität (4)
+                'postman-reactive': 'Postboten-Reaktivität',
+                'dog-reactive': 'Hundereaktivität',
+                'leash-reactive': 'Leinenreaktivität',
+                'overreaction': 'Überreaktion',
+                // Custom Sonstiges (6)
+                'vocalization': 'Lautgeben',
+                'resource-guarding': 'Ressourcenverteidigung',
+                'biting': 'Beißen',
+                'digging': 'Buddeln',
+                'marking': 'Markieren',
+                'custom-other': 'Verhaltensproblem'
             };
             
             const dogProblemValue = localStorage.getItem('dogProblem') || 'anxiety';
