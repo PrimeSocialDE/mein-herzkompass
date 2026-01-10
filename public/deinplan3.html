@@ -2801,16 +2801,7 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
             ]
         };
         
-        // Default Benefits falls Problem nicht gemappt
-        const defaultBenefits = [
-            '✓ ' + dogName + 's Gehorsam schnell verbessern',
-            '✓ Verhaltensprobleme gezielt lösen',
-            '✓ Neue Trainingstechniken für ' + dogName,
-            '✓ Stärkere Bindung zu ' + dogName + ' aufbauen',
-            '✓ Dauerhaft gutes Verhalten erreichen',
-            '✓ 20+ Übungen speziell für ' + dogName,
-            '✓ Glückliches Zusammenleben mit ' + dogName
-        ];
+        
         
         const benefits = benefitsMap[dogProblem] || defaultBenefits;
         const benefitsList = document.getElementById('benefitsList');
