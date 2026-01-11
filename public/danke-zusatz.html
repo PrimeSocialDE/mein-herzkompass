@@ -183,7 +183,7 @@
                 <div class="order-icon" id="moduleIcon">😰</div>
                 <div class="order-info">
                     <h3 id="moduleName">Zusatz-Modul</h3>
-                    <p>8 Übungen • 2 Wochen</p>
+                    <p id="moduleDesc">8 Übungen • 2 Wochen</p>
                 </div>
                 <span class="order-check">✓</span>
             </div>
@@ -212,37 +212,68 @@
         const module = urlParams.get('module');
         const leadId = urlParams.get('lead_id') || localStorage.getItem('leadId');
 
+        // ALLE Module (inkl. fehlende)
         const moduleData = {
-            'anxiety': { icon: '😰', name: 'Trennungsangst Prävention' },
-            'pulling': { icon: '🦮', name: 'Leinenführigkeit Basics' },
-            'barking': { icon: '🔊', name: 'Anti-Bell Training' },
-            'aggression': { icon: '😤', name: 'Aggressions-Kontrolle' },
-            'recall': { icon: '📣', name: 'Rückruf-Training' },
-            'jumping': { icon: '🐕', name: 'Anti-Anspring Training' }
+            'anxiety': { icon: '😰', name: 'Trennungsangst Prävention', exercises: '8 Übungen' },
+            'pulling': { icon: '🦮', name: 'Leinenführigkeit Basics', exercises: '6 Übungen' },
+            'barking': { icon: '🔊', name: 'Anti-Bell Training', exercises: '6 Übungen' },
+            'aggression': { icon: '😤', name: 'Aggressions-Kontrolle', exercises: '8 Übungen' },
+            'recall': { icon: '📣', name: 'Rückruf-Training', exercises: '6 Übungen' },
+            'jumping': { icon: '🐕', name: 'Anti-Anspring Training', exercises: '5 Übungen' },
+            'energy': { icon: '⚡', name: 'Energie-Management', exercises: '6 Übungen' },
+            'destructive': { icon: '🧸', name: 'Anti-Zerstörungs Training', exercises: '6 Übungen' },
+            'mouthing': { icon: '🦴', name: 'Anti-Aufnehm Training', exercises: '6 Übungen' }
         };
 
-        if (module && moduleData[module]) {
-            document.getElementById('moduleIcon').textContent = moduleData[module].icon;
-            document.getElementById('moduleName').textContent = moduleData[module].name;
+        if (module) {
+            // Bundle erkennen (z.B. "pulling+anxiety")
+            const isBundle = module.includes('+');
             
-            // Upsell-Modul in Supabase speichern
+            let displayIcon, displayName, displayDesc, upsellValue;
+            
+            if (isBundle) {
+                const modules = module.split('+');
+                const mainModule = modules[0];
+                displayIcon = '📦';
+                displayName = 'Komplett-Paket';
+                displayDesc = (moduleData[mainModule]?.name || mainModule) + ' + Prävention';
+                upsellValue = module; // z.B. "pulling+anxiety"
+            } else if (moduleData[module]) {
+                displayIcon = moduleData[module].icon;
+                displayName = moduleData[module].name;
+                displayDesc = moduleData[module].exercises + ' • 2 Wochen';
+                upsellValue = module;
+            } else {
+                displayIcon = '📋';
+                displayName = 'Zusatz-Modul';
+                displayDesc = 'Erweitertes Training';
+                upsellValue = module;
+            }
+            
+            document.getElementById('moduleIcon').textContent = displayIcon;
+            document.getElementById('moduleName').textContent = displayName;
+            document.getElementById('moduleDesc').textContent = displayDesc;
+            
+            // Upsell-Modul in Supabase speichern - IMMER wenn module vorhanden
             if (leadId) {
                 console.log('🔍 Lead ID gefunden:', leadId);
+                console.log('📦 Modul zu speichern:', upsellValue, '(Bundle:', isBundle, ')');
 
                 fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
                         'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=minimal'
                     },
                     body: JSON.stringify({
-                        upsell_module: module
+                        upsell_module: upsellValue
                     })
                 }).then(response => {
                     console.log('📡 Supabase Response Status:', response.status);
-                    if (response.ok) {
-                        console.log('✅ Upsell-Modul gespeichert:', module);
+                    if (response.ok || response.status === 204) {
+                        console.log('✅ Upsell-Modul gespeichert:', upsellValue);
                     } else {
                         response.text().then(text => console.error('❌ Supabase Fehler:', text));
                     }
