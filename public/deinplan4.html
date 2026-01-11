@@ -1915,9 +1915,8 @@
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};
 if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
 n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 fbq('init', '864109602683515');
 fbq('track', 'PageView');
 </script>
@@ -2347,6 +2346,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                             
                             console.log('📋 Answers:', answers);
                             
+                            // ========== FIX: KOMPLETTE ANSWERS ALS BACKUP SPEICHERN ==========
+                            localStorage.setItem('wauwerk_answers_backup', JSON.stringify(answers));
+                            
                             // Alle Daten in localStorage speichern (überschreibt alte!)
                             if (answers.dog_name) localStorage.setItem('dogName', answers.dog_name);
                             if (answers.dog_age) localStorage.setItem('dogAge', answers.dog_age);
@@ -2668,10 +2670,14 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             return 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
 
-        // ==================== GEFIXT: UPDATE statt INSERT ====================
+        // ==================== GEFIXT: UPDATE statt INSERT + ANSWERS MERGE ====================
         async function saveToSupabase() {
             // Prüfen ob bereits ein Lead existiert (aus kurz-schritt11.html)
             const existingLeadId = localStorage.getItem('leadId');
+            
+            // ========== FIX: BESTEHENDE ANSWERS LADEN UND MERGEN ==========
+            const existingAnswers = JSON.parse(localStorage.getItem('wauwerk_answers_backup') || '{}');
+            console.log('📋 Existing answers backup:', existingAnswers);
             
             // UTM Parameter aus URL oder localStorage holen
             const urlParams = new URLSearchParams(window.location.search);
@@ -2686,51 +2692,55 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             localStorage.setItem('fb_event_id', fb_event_id);
             
             const utmParams = {
-                utm_source: urlParams.get('utm_source') || localStorage.getItem('utm_source') || null,
-                utm_medium: urlParams.get('utm_medium') || localStorage.getItem('utm_medium') || null,
-                utm_campaign: urlParams.get('utm_campaign') || localStorage.getItem('utm_campaign') || null,
-                utm_content: urlParams.get('utm_content') || localStorage.getItem('utm_content') || null,
-                utm_term: urlParams.get('utm_term') || localStorage.getItem('utm_term') || null,
-                fbclid: fbclid,
-                fbp: fbp,
-                fbc: fbc,
+                utm_source: urlParams.get('utm_source') || localStorage.getItem('utm_source') || existingAnswers.utm_source || null,
+                utm_medium: urlParams.get('utm_medium') || localStorage.getItem('utm_medium') || existingAnswers.utm_medium || null,
+                utm_campaign: urlParams.get('utm_campaign') || localStorage.getItem('utm_campaign') || existingAnswers.utm_campaign || null,
+                utm_content: urlParams.get('utm_content') || localStorage.getItem('utm_content') || existingAnswers.utm_content || null,
+                utm_term: urlParams.get('utm_term') || localStorage.getItem('utm_term') || existingAnswers.utm_term || null,
+                fbclid: fbclid || existingAnswers.fbclid || null,
+                fbp: fbp || existingAnswers.fbp || null,
+                fbc: fbc || existingAnswers.fbc || null,
                 fb_event_id: fb_event_id,
-                gclid: urlParams.get('gclid') || localStorage.getItem('gclid') || null,
-                ttclid: urlParams.get('ttclid') || localStorage.getItem('ttclid') || null,
-                referrer: localStorage.getItem('referrer') || null,
-                landing_page: localStorage.getItem('landing_page') || null,
-                first_visit: localStorage.getItem('first_visit') || null
+                gclid: urlParams.get('gclid') || localStorage.getItem('gclid') || existingAnswers.gclid || null,
+                ttclid: urlParams.get('ttclid') || localStorage.getItem('ttclid') || existingAnswers.ttclid || null,
+                referrer: localStorage.getItem('referrer') || existingAnswers.referrer || null,
+                landing_page: localStorage.getItem('landing_page') || existingAnswers.landing_page || null,
+                first_visit: localStorage.getItem('first_visit') || existingAnswers.first_visit || null
             };
 
+            // ========== FIX: ANSWERS MIT EXISTIERENDEN MERGEN ==========
             const answers = {
-                dog_name: localStorage.getItem('dogName'),
-                dog_age: localStorage.getItem('dogAge'),
-                dog_breed: localStorage.getItem('dogBreed'),
-                dog_gender: localStorage.getItem('dogGender'),
-                dog_castration: localStorage.getItem('dogCastration'),
-                dog_goals: parseJSON(localStorage.getItem('dogGoals')),
-                dog_goal: localStorage.getItem('dogGoal'),
-                dog_attention: localStorage.getItem('dogAttention'),
-                dog_crate: localStorage.getItem('dogCrate'),
-                dog_behaviors: parseJSON(localStorage.getItem('dogBehaviors')),
-                dog_problem: localStorage.getItem('dogProblem'),
-                dog_stress_situations: parseJSON(localStorage.getItem('dogStressSituations')),
-                dog_petting: localStorage.getItem('dogPetting'),
-                dog_playing: localStorage.getItem('dogPlaying'),
-                training_time: localStorage.getItem('trainingTime'),
-                dog_traits: parseJSON(localStorage.getItem('dogTraits')),
-                dog_commands: parseJSON(localStorage.getItem('dogCommands')),
-                dog_potty_issues: parseJSON(localStorage.getItem('dogPottyIssues')),
-                dog_feeding: localStorage.getItem('dogFeeding'),
-                dog_obedience_rating: localStorage.getItem('dogObedienceRating'),
-                dog_socialization_rating: localStorage.getItem('dogSocializationRating'),
-                upcoming_event: localStorage.getItem('upcomingEvent'),
-                event_timing: localStorage.getItem('eventTiming'),
-                had_training: localStorage.getItem('hadTraining'),
-                territorial_aggression: localStorage.getItem('territorialAggression'),
-                email: localStorage.getItem('userEmail') || null,
+                ...existingAnswers,  // ERST alle bestehenden Werte behalten!
+                dog_name: localStorage.getItem('dogName') || existingAnswers.dog_name,
+                dog_age: localStorage.getItem('dogAge') || existingAnswers.dog_age,
+                dog_breed: localStorage.getItem('dogBreed') || existingAnswers.dog_breed,
+                dog_gender: localStorage.getItem('dogGender') || existingAnswers.dog_gender,
+                dog_castration: localStorage.getItem('dogCastration') || existingAnswers.dog_castration,
+                dog_goals: parseJSON(localStorage.getItem('dogGoals')).length ? parseJSON(localStorage.getItem('dogGoals')) : existingAnswers.dog_goals,
+                dog_goal: localStorage.getItem('dogGoal') || existingAnswers.dog_goal,
+                dog_attention: localStorage.getItem('dogAttention') || existingAnswers.dog_attention,
+                dog_crate: localStorage.getItem('dogCrate') || existingAnswers.dog_crate,
+                dog_behaviors: parseJSON(localStorage.getItem('dogBehaviors')).length ? parseJSON(localStorage.getItem('dogBehaviors')) : existingAnswers.dog_behaviors,
+                dog_problem: localStorage.getItem('dogProblem') || existingAnswers.dog_problem,
+                dog_stress_situations: parseJSON(localStorage.getItem('dogStressSituations')).length ? parseJSON(localStorage.getItem('dogStressSituations')) : existingAnswers.dog_stress_situations,
+                dog_petting: localStorage.getItem('dogPetting') || existingAnswers.dog_petting,
+                dog_playing: localStorage.getItem('dogPlaying') || existingAnswers.dog_playing,
+                training_time: localStorage.getItem('trainingTime') || existingAnswers.training_time,
+                dog_traits: parseJSON(localStorage.getItem('dogTraits')).length ? parseJSON(localStorage.getItem('dogTraits')) : existingAnswers.dog_traits,
+                dog_commands: parseJSON(localStorage.getItem('dogCommands')).length ? parseJSON(localStorage.getItem('dogCommands')) : existingAnswers.dog_commands,
+                dog_potty_issues: parseJSON(localStorage.getItem('dogPottyIssues')).length ? parseJSON(localStorage.getItem('dogPottyIssues')) : existingAnswers.dog_potty_issues,
+                dog_feeding: localStorage.getItem('dogFeeding') || existingAnswers.dog_feeding,
+                dog_obedience_rating: localStorage.getItem('dogObedienceRating') || existingAnswers.dog_obedience_rating,
+                dog_socialization_rating: localStorage.getItem('dogSocializationRating') || existingAnswers.dog_socialization_rating,
+                upcoming_event: localStorage.getItem('upcomingEvent') || existingAnswers.upcoming_event,
+                event_timing: localStorage.getItem('eventTiming') || existingAnswers.event_timing,
+                had_training: localStorage.getItem('hadTraining') || existingAnswers.had_training,
+                territorial_aggression: localStorage.getItem('territorialAggression') || existingAnswers.territorial_aggression,
+                email: localStorage.getItem('userEmail') || existingAnswers.email || null,
                 ...utmParams
             };
+
+            console.log('📝 Merged answers to save:', answers);
 
             // Answers in localStorage speichern für E-Mail Update
             localStorage.setItem('wauwerk_answers', JSON.stringify(answers));
