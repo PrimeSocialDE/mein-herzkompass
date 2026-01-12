@@ -17,7 +17,7 @@
     // UTM & Tracking Parameter beim ersten Besuch speichern
     (function() {
         const params = new URLSearchParams(window.location.search);
-        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'ttclid'].forEach(function(p) {
+        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'ttclid', 'ref'].forEach(function(p) {
             if (params.get(p)) localStorage.setItem(p, params.get(p));
         });
         if (!localStorage.getItem('landing_page')) {

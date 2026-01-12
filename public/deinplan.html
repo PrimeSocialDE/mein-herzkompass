@@ -3005,7 +3005,13 @@ if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers
                 ttclid: urlParams.get('ttclid') || localStorage.getItem('ttclid') || null,
                 referrer: localStorage.getItem('referrer') || null,
                 landing_page: localStorage.getItem('landing_page') || null,
-                first_visit: localStorage.getItem('first_visit') || null
+                first_visit: localStorage.getItem('first_visit') || null,
+                // ========== NEU: Auto-Detection & Device Felder ==========
+                utm_source_auto: localStorage.getItem('utm_source_auto') || null,
+                device_type: localStorage.getItem('device_type') || null,
+                browser: localStorage.getItem('browser') || null,
+                in_app_browser: localStorage.getItem('in_app_browser') || null,
+                email_source: localStorage.getItem('email_source') || null
             };
 
             const answers = {

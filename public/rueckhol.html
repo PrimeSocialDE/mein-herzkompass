@@ -1625,15 +1625,30 @@
                         dogName: dogName,
                         leadId: leadId,
                         email: userEmail || localStorage.getItem('userEmail') || '',
+                        // UTM Parameter
                         utm_source: localStorage.getItem('utm_source') || '',
                         utm_medium: localStorage.getItem('utm_medium') || '',
                         utm_campaign: localStorage.getItem('utm_campaign') || '',
                         utm_content: localStorage.getItem('utm_content') || '',
+                        utm_term: localStorage.getItem('utm_term') || '',
+                        // Click IDs
                         fbclid: localStorage.getItem('fbclid') || '',
-                        fbp: getCookie('_fbp') || '',
-                        fbc: getCookie('_fbc') || '',
+                        gclid: localStorage.getItem('gclid') || '',
+                        ttclid: localStorage.getItem('ttclid') || '',
+                        // Facebook Cookies
+                        fbp: getCookie('_fbp') || localStorage.getItem('fbp') || '',
+                        fbc: getCookie('_fbc') || localStorage.getItem('fbc') || '',
                         fb_event_id: localStorage.getItem('fb_event_id') || '',
-                        ttclid: localStorage.getItem('ttclid') || ''
+                        // Tracking Infos
+                        referrer: localStorage.getItem('referrer') || '',
+                        landing_page: localStorage.getItem('landing_page') || '',
+                        first_visit: localStorage.getItem('first_visit') || '',
+                        // Auto-Detection Felder
+                        utm_source_auto: localStorage.getItem('utm_source_auto') || '',
+                        device_type: localStorage.getItem('device_type') || '',
+                        browser: localStorage.getItem('browser') || '',
+                        in_app_browser: localStorage.getItem('in_app_browser') || '',
+                        email_source: localStorage.getItem('email_source') || ''
                     })
                 });
                 

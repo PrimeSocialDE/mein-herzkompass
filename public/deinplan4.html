@@ -2692,20 +2692,26 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             localStorage.setItem('fb_event_id', fb_event_id);
             
             const utmParams = {
-                utm_source: urlParams.get('utm_source') || localStorage.getItem('utm_source') || existingAnswers.utm_source || null,
-                utm_medium: urlParams.get('utm_medium') || localStorage.getItem('utm_medium') || existingAnswers.utm_medium || null,
-                utm_campaign: urlParams.get('utm_campaign') || localStorage.getItem('utm_campaign') || existingAnswers.utm_campaign || null,
-                utm_content: urlParams.get('utm_content') || localStorage.getItem('utm_content') || existingAnswers.utm_content || null,
-                utm_term: urlParams.get('utm_term') || localStorage.getItem('utm_term') || existingAnswers.utm_term || null,
-                fbclid: fbclid || existingAnswers.fbclid || null,
-                fbp: fbp || existingAnswers.fbp || null,
-                fbc: fbc || existingAnswers.fbc || null,
+                utm_source: urlParams.get('utm_source') || localStorage.getItem('utm_source') || null,
+                utm_medium: urlParams.get('utm_medium') || localStorage.getItem('utm_medium') || null,
+                utm_campaign: urlParams.get('utm_campaign') || localStorage.getItem('utm_campaign') || null,
+                utm_content: urlParams.get('utm_content') || localStorage.getItem('utm_content') || null,
+                utm_term: urlParams.get('utm_term') || localStorage.getItem('utm_term') || null,
+                fbclid: fbclid,
+                fbp: fbp,
+                fbc: fbc,
                 fb_event_id: fb_event_id,
-                gclid: urlParams.get('gclid') || localStorage.getItem('gclid') || existingAnswers.gclid || null,
-                ttclid: urlParams.get('ttclid') || localStorage.getItem('ttclid') || existingAnswers.ttclid || null,
-                referrer: localStorage.getItem('referrer') || existingAnswers.referrer || null,
-                landing_page: localStorage.getItem('landing_page') || existingAnswers.landing_page || null,
-                first_visit: localStorage.getItem('first_visit') || existingAnswers.first_visit || null
+                gclid: urlParams.get('gclid') || localStorage.getItem('gclid') || null,
+                ttclid: urlParams.get('ttclid') || localStorage.getItem('ttclid') || null,
+                referrer: localStorage.getItem('referrer') || null,
+                landing_page: localStorage.getItem('landing_page') || null,
+                first_visit: localStorage.getItem('first_visit') || null,
+                // ========== NEU: Auto-Detection & Device Felder ==========
+                utm_source_auto: localStorage.getItem('utm_source_auto') || null,
+                device_type: localStorage.getItem('device_type') || null,
+                browser: localStorage.getItem('browser') || null,
+                in_app_browser: localStorage.getItem('in_app_browser') || null,
+                email_source: localStorage.getItem('email_source') || null
             };
 
             // ========== FIX: ANSWERS MIT EXISTIERENDEN MERGEN ==========
