@@ -658,6 +658,18 @@
             display: block;
         }
 
+        .recovery-new-link {
+            display: block;
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--text-light);
+            text-decoration: underline;
+        }
+
+        .recovery-new-link:hover {
+            color: var(--warm-brown);
+        }
+
         /* Trust Badges */
         .trust-badges {
             display: flex;
@@ -1018,7 +1030,7 @@
             
             <div class="cta-choice">
                 <!-- Option 1: Neu hier -->
-                <div class="cta-option">
+                <div class="cta-option" id="newUserOption">
                     <div class="cta-option-title">Ich bin neu hier</div>
                     <div class="cta-option-desc">Starte das kurze Quiz und erhalte deinen Plan.</div>
                     <a href="kurz-schritt1.html" class="btn-primary btn">Trainingsplan erstellen</a>
@@ -1028,13 +1040,14 @@
                 <div class="cta-option" id="returningOption">
                     <div class="cta-option-title">Ich habe das Quiz schon gemacht</div>
                     <div class="cta-option-desc">Gib deine E-Mail ein und mach dort weiter, wo du aufgehört hast.</div>
-                    <button class="btn-secondary btn" onclick="showRecoveryForm()">Weiter zum Plan</button>
+                    <button class="btn-secondary btn" onclick="showRecoveryForm()">Meinen Plan freischalten</button>
                     
                     <div class="recovery-form" id="recoveryForm">
                         <input type="email" class="recovery-input" id="recoveryEmail" placeholder="Deine E-Mail Adresse">
                         <button class="btn-primary" style="width: 100%;" onclick="recoverLead()">Daten laden</button>
                         <p class="recovery-hint">Wir laden deine Angaben und leiten dich zur Bezahlung weiter.</p>
                         <p class="recovery-error" id="recoveryError">Diese E-Mail wurde nicht gefunden. Bitte starte das Quiz neu.</p>
+                        <a href="kurz-schritt1.html" class="recovery-new-link">Ich bin doch neu hier</a>
                     </div>
                 </div>
             </div>
@@ -1065,6 +1078,19 @@
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
 
+        // Check URL params für direkte Links aus Emails
+        const urlParams = new URLSearchParams(window.location.search);
+        const emailFromUrl = urlParams.get('email');
+
+        // Wenn Email in URL, direkt laden
+        window.addEventListener('DOMContentLoaded', async function() {
+            if (emailFromUrl) {
+                document.getElementById('recoveryEmail').value = emailFromUrl;
+                document.getElementById('recoveryForm').classList.add('active');
+                await recoverLead();
+            }
+        });
+
         function showRecoveryForm() {
             document.getElementById('recoveryForm').classList.add('active');
             document.getElementById('recoveryEmail').focus();
@@ -1073,10 +1099,13 @@
         async function recoverLead() {
             const email = document.getElementById('recoveryEmail').value.trim();
             const errorEl = document.getElementById('recoveryError');
+            const btn = document.querySelector('#recoveryForm .btn-primary');
             
             if (!email) return;
             
             errorEl.classList.remove('visible');
+            btn.textContent = 'Wird geladen...';
+            btn.disabled = true;
             
             try {
                 const response = await fetch(
@@ -1111,17 +1140,23 @@
                         if (answers.had_training) localStorage.setItem('hadTraining', answers.had_training);
                         if (answers.territorial_aggression) localStorage.setItem('territorialAggression', answers.territorial_aggression);
                         
-                        // Zur Checkout-Seite weiterleiten
-                        window.location.href = 'deinplan3.html';
+                        // Zur Checkout-Seite weiterleiten mit Email
+                        window.location.href = 'deinplan3.html?email=' + encodeURIComponent(email);
                     } else {
                         errorEl.classList.add('visible');
+                        btn.textContent = 'Daten laden';
+                        btn.disabled = false;
                     }
                 } else {
                     errorEl.classList.add('visible');
+                    btn.textContent = 'Daten laden';
+                    btn.disabled = false;
                 }
             } catch (err) {
                 console.error('Recovery error:', err);
                 errorEl.classList.add('visible');
+                btn.textContent = 'Daten laden';
+                btn.disabled = false;
             }
         }
 
