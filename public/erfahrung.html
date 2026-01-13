@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erfahrungen mit WauWerk | Echte Rückmeldungen</title>
+    <meta name="description" content="Echte Erfahrungen von Hundehaltern, die WauWerk genutzt haben. Ohne Filter, ohne Übertreibung.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --warm-brown: #8B7355;
+            --cream: #FAF8F5;
+            --white: #FFFFFF;
+            --text-dark: #2C2C2C;
+            --text-medium: #5C5C5C;
+            --text-light: #8C8C8C;
+            --border-light: #E8E4DF;
+            --border-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--cream);
+            color: var(--text-dark);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-image {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .header-link {
+            font-size: 14px;
+            color: var(--warm-brown);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .header-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Hero */
+        .hero {
+            background: var(--white);
+            padding: 50px 20px 40px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .hero h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--text-medium);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .hero-trust {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .trustpilot-stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .tp-star {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: #00B67A;
+            border-radius: 0;
+        }
+
+        .tp-star svg {
+            width: 17px;
+            height: 15px;
+            fill: white;
+        }
+
+        .trust-text {
+            font-size: 14px;
+            color: var(--text-medium);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Stats */
+        .stats-bar {
+            background: var(--warm-brown);
+            padding: 20px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* Section */
+        .section {
+            padding: 40px 20px;
+        }
+
+        .section-alt {
+            background: var(--white);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .section-intro {
+            font-size: 15px;
+            color: var(--text-medium);
+            margin-bottom: 24px;
+        }
+
+        /* Testimonials */
+        .testimonial-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 24px;
+        }
+
+        .testimonial-stars {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 12px;
+        }
+
+        .section-alt .testimonial-card {
+            background: var(--cream);
+        }
+
+        .testimonial-quote {
+            font-size: 16px;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .testimonial-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .testimonial-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--warm-brown);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .testimonial-info {
+            flex: 1;
+        }
+
+        .testimonial-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .testimonial-detail {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .testimonial-tag {
+            font-size: 11px;
+            padding: 4px 10px;
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        /* Highlight Card */
+        .highlight-card {
+            background: var(--warm-brown);
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 28px;
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .highlight-quote {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .highlight-author {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        /* CTA */
+        .cta-section {
+            background: var(--white);
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .cta-text {
+            font-size: 15px;
+            color: var(--text-medium);
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--warm-brown);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            background: transparent;
+            color: var(--warm-brown);
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border: 2px solid var(--warm-brown);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--cream);
+        }
+
+        .cta-section .btn-secondary {
+            margin-left: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px 20px;
+            color: var(--text-light);
+            font-size: 12px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .footer a {
+            color: var(--text-light);
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .hero h1 {
+                font-size: 22px;
+            }
+
+            .stats-row {
+                gap: 24px;
+            }
+
+            .stat-number {
+                font-size: 24px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-buttons .btn-primary,
+            .hero-buttons .btn-secondary {
+                width: 100%;
+                max-width: 280px;
+                text-align: center;
+            }
+
+            .cta-section .btn-secondary {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="WauWerk Logo" class="logo-image">
+                <span class="logo-text">WauWerk</span>
+            </a>
+            <a href="info" class="header-link">Zurück zur Übersicht</a>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>Was andere Hundehalter über WauWerk sagen</h1>
+            <p class="hero-subtitle">Echte Rückmeldungen. Ohne Filter, ohne Übertreibung.</p>
+            <div class="hero-trust">
+                <div class="trustpilot-stars">
+                    <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                </div>
+                <span class="trust-text">4,8 von 5 Sternen</span>
+            </div>
+            
+            <div class="hero-buttons">
+                <a href="kurz-schritt1.html" class="btn-primary">Ich bin neu hier</a>
+                <a href="info#returningOption" class="btn-secondary">Quiz schon gemacht</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="container">
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-number">4,8</div>
+                    <div class="stat-label">Bewertung</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2.400+</div>
+                    <div class="stat-label">Pläne erstellt</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">94%</div>
+                    <div class="stat-label">Weiterempfehlung</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials Section 1 -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Struktur statt Chaos</h2>
+            <p class="section-intro">Viele Hundehalter kommen zu WauWerk, weil sie sich einen klaren Fahrplan wünschen.</p>
+            
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Ich hatte vorher so viele Videos geschaut und Tipps gelesen, dass ich gar nicht mehr wusste, wo ich anfangen soll. Der Plan hat mir endlich Struktur gegeben."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">S</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Sandra</div>
+                            <div class="testimonial-detail">Labrador, 8 Monate</div>
+                        </div>
+                        <span class="testimonial-tag">3 Monats Plan</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Endlich ein klarer Plan statt widersprüchlicher Tipps aus dem Internet. Ich weiß jetzt jeden Tag, was ich üben soll."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">M</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Michael</div>
+                            <div class="testimonial-detail">Border Collie Mix, 2 Jahre</div>
+                        </div>
+                        <span class="testimonial-tag">6 Monats Plan</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Die Übungen sind kurz und passen in den Alltag. Kein stundenlanges Training, sondern kleine Einheiten, die wirklich was bringen."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">L</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Lisa</div>
+                            <div class="testimonial-detail">Golden Retriever, 1 Jahr</div>
+                        </div>
+                        <span class="testimonial-tag">3 Monats Plan</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Highlight -->
+    <section class="section" style="padding-top: 0; padding-bottom: 0;">
+        <div class="container">
+            <div class="highlight-card">
+                <p class="highlight-quote">„Fühlt sich nicht nach Internetkurs an. Eher wie eine Anleitung, die jemand speziell für meinen Hund geschrieben hat."</p>
+                <p class="highlight-author">– Julia, Australian Shepherd, 10 Monate</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section 2 -->
+    <section class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Echte Fortschritte</h2>
+            <p class="section-intro">Was Hundehalter nach einigen Wochen mit dem Plan berichten.</p>
+            
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Nach 2 Wochen zieht mein Hund nicht mehr an der Leine. Ich hätte nicht gedacht, dass das so schnell geht."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">T</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Thomas</div>
+                            <div class="testimonial-detail">Beagle, 3 Jahre</div>
+                        </div>
+                        <span class="testimonial-tag">1 Monats Plan</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Das Bellen an der Tür war unser größtes Problem. Nach 3 Wochen ist es deutlich besser geworden. Nicht perfekt, aber ein riesiger Unterschied."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">K</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Kathrin</div>
+                            <div class="testimonial-detail">Jack Russell, 4 Jahre</div>
+                        </div>
+                        <span class="testimonial-tag">3 Monats Plan</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Mein Hund war sehr unsicher bei Begegnungen mit anderen Hunden. Der Plan hat mir gezeigt, wie ich damit umgehen kann. Wir machen gute Fortschritte."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">A</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Anna</div>
+                            <div class="testimonial-detail">Schäferhund Mix, 2 Jahre</div>
+                        </div>
+                        <span class="testimonial-tag">6 Monats Plan</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section 3 -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Ehrliches Feedback</h2>
+            <p class="section-intro">Nicht jeder ist begeistert. Aber die meisten sind zufrieden.</p>
+            
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Ich war skeptisch, ob ein PDF wirklich hilft. Aber die Erklärungen sind so gut, dass ich verstanden habe, warum mein Hund sich so verhält. Das hat alles verändert."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">J</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Jan</div>
+                            <div class="testimonial-detail">Französische Bulldogge, 1 Jahr</div>
+                        </div>
+                        <span class="testimonial-tag">3 Monats Plan</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Nicht laut, nicht überfordernd, sondern klar. Genau das, was ich gebraucht habe."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">N</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Nina</div>
+                            <div class="testimonial-detail">Dackel, 5 Jahre</div>
+                        </div>
+                        <span class="testimonial-tag">1 Monats Plan</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Ich wusste nach dem ersten Lesen, was ich tun soll. Das hatte ich bei anderen Kursen nicht. Keine endlosen Videos, sondern direkt umsetzbare Schritte."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">P</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Patrick</div>
+                            <div class="testimonial-detail">Husky, 1,5 Jahre</div>
+                        </div>
+                        <span class="testimonial-tag">6 Monats Plan</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="section-title">Bereit für deinen Plan?</h2>
+            <p class="cta-text">
+                Finde heraus, ob WauWerk zu dir und deinem Hund passt.
+            </p>
+            <a href="kurz-schritt1.html" class="btn-primary">Trainingsplan erstellen</a>
+            <a href="info" class="btn-secondary">Mehr erfahren</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a>
+    </footer>
+
+</body>
+</html>
