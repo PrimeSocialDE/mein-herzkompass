@@ -217,6 +217,153 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
+        /* Comparison Table */
+        .comparison-table {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .comparison-header,
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+        }
+
+        .comparison-header {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .comparison-header .comparison-cell:first-child {
+            background: var(--cream);
+        }
+
+        .comparison-cell {
+            padding: 14px 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .comparison-cell.label {
+            justify-content: flex-start;
+            font-weight: 500;
+            color: var(--text-dark);
+            background: var(--cream);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .comparison-row:last-child .comparison-cell.label {
+            border-bottom: none;
+        }
+
+        .header-wauwerk {
+            background: #4CAF50;
+            color: white;
+            text-align: center;
+        }
+
+        .header-schule {
+            background: #9E9E9E;
+            color: white;
+            text-align: center;
+        }
+
+        .comparison-row .comparison-cell:nth-child(2) {
+            background: #E8F5E9;
+            color: #2E7D32;
+            font-weight: 500;
+            border-bottom: 1px solid #C8E6C9;
+        }
+
+        .comparison-row:last-child .comparison-cell:nth-child(2) {
+            border-bottom: none;
+        }
+
+        .comparison-row .comparison-cell:nth-child(3) {
+            background: #F5F5F5;
+            color: #616161;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .comparison-row:last-child .comparison-cell:nth-child(3) {
+            border-bottom: none;
+        }
+
+        .row-price .comparison-cell {
+            font-weight: 600;
+            font-size: 15px;
+            padding: 16px;
+        }
+
+        .row-price .comparison-cell.label {
+            background: var(--cream);
+        }
+
+        .row-price .price-wauwerk {
+            background: #4CAF50;
+            color: white;
+            border-bottom: none;
+        }
+
+        .row-price .price-schule {
+            background: #757575;
+            color: white;
+            border-bottom: none;
+        }
+
+        /* Mid-Page CTA */
+        .mid-cta {
+            background: var(--warm-brown);
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .mid-cta-text {
+            color: white;
+            font-size: 17px;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .mid-cta .hero-buttons {
+            justify-content: center;
+        }
+
+        .mid-cta .btn-primary {
+            background: white;
+            color: var(--warm-brown);
+        }
+
+        .mid-cta .btn-primary:hover {
+            background: var(--cream);
+        }
+
+        .mid-cta .btn-secondary {
+            border-color: white;
+            color: white;
+        }
+
+        .mid-cta .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 500px) {
+            .comparison-header,
+            .comparison-row {
+                grid-template-columns: 1.2fr 1fr 1fr;
+            }
+
+            .comparison-cell {
+                padding: 10px 8px;
+                font-size: 11px;
+            }
+        }
+
         /* Progress Graphic */
         .progress-graphic {
             background: var(--white);
@@ -1014,8 +1161,19 @@
         </div>
     </section>
 
+    <!-- Mid-Page CTA -->
+    <section class="section mid-cta">
+        <div class="container">
+            <p class="mid-cta-text">Bereit für deinen individuellen Trainingsplan?</p>
+            <div class="hero-buttons">
+                <a href="kurz-schritt1.html" class="btn-primary">Ich bin neu hier</a>
+                <button class="btn-secondary" onclick="document.getElementById('returningOption').scrollIntoView({behavior: 'smooth'})">Quiz schon gemacht</button>
+            </div>
+        </div>
+    </section>
+
     <!-- Expertise -->
-    <section class="section section-alt">
+    <section class="section">
         <div class="container">
             <h2 class="section-title">Unsere Erfahrung</h2>
             <p class="section-intro">
@@ -1080,6 +1238,71 @@
             <div class="testimonial-card">
                 <p class="testimonial-text">„Ich wusste nach dem ersten Lesen, was ich tun soll. Das hatte ich bei anderen Kursen nicht."</p>
             </div>
+        </div>
+    </section>
+
+    <!-- Kostenvergleich -->
+    <section class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">WauWerk oder Hundeschule?</h2>
+            <p class="section-intro">
+                Viele Hundehalter fragen sich, ob ein digitaler Trainingsplan eine echte Alternative zur Hundeschule ist. Die Antwort hängt davon ab, was du suchst. Beide Wege können funktionieren. Hier geht es nicht darum, einen davon besser darzustellen, sondern darum, die Unterschiede transparent zu machen.
+            </p>
+            
+            <div class="comparison-table">
+                <div class="comparison-header">
+                    <div class="comparison-cell"></div>
+                    <div class="comparison-cell header-wauwerk">WauWerk</div>
+                    <div class="comparison-cell header-schule">Hundeschule</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell label">Kosten</div>
+                    <div class="comparison-cell">Einmalig</div>
+                    <div class="comparison-cell">Pro Stunde / Kursblock</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell label">Laufende Gebühren</div>
+                    <div class="comparison-cell">Keine</div>
+                    <div class="comparison-cell">Bei weiterem Bedarf</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell label">Abo</div>
+                    <div class="comparison-cell">Nein</div>
+                    <div class="comparison-cell">Teilweise</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell label">Verfügbarkeit</div>
+                    <div class="comparison-cell">Dauerhaft nutzbar</div>
+                    <div class="comparison-cell">Während der Kursdauer</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell label">Tempo</div>
+                    <div class="comparison-cell">Eigenes Tempo</div>
+                    <div class="comparison-cell">Feste Termine</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell label">Anfahrt</div>
+                    <div class="comparison-cell">Keine</div>
+                    <div class="comparison-cell">Notwendig</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="comparison-cell label">Training</div>
+                    <div class="comparison-cell">Individuell, zu Hause</div>
+                    <div class="comparison-cell">Oft in Gruppen</div>
+                </div>
+                <div class="comparison-row row-price">
+                    <div class="comparison-cell label">Gesamtkosten</div>
+                    <div class="comparison-cell price-wauwerk">24,99 – 49,99 €</div>
+                    <div class="comparison-cell price-schule">500 € +</div>
+                </div>
+            </div>
+            
+            <p class="section-note">
+                Eine Hundeschule kann sinnvoll sein, wenn du gern vor Ort trainierst, den Austausch mit anderen Hundehaltern schätzt oder direktes Feedback brauchst. WauWerk ist für Menschen gedacht, die eine klare Struktur im Alltag suchen und flexibel bleiben möchten. Es geht nicht um besser oder schlechter. Es geht darum, was zu dir passt.
+            </p>
+            <p class="section-note">
+                Über mehrere Wochen summieren sich die Kosten bei klassischen Angeboten oft deutlich. Ein individueller Trainingsplan wird einmal erstellt und bleibt dauerhaft verfügbar.
+            </p>
         </div>
     </section>
 
