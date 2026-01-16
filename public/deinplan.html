@@ -2043,7 +2043,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
 
             <div class="pricing-card popular selected" data-plan="3month" data-price="29.99">
-                <div class="popular-badge">⭐ Für dauerhafte Veränderung</div>
+                <div class="popular-badge" id="popularBadge">⭐ Für dauerhafte Veränderung</div>
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
@@ -2788,6 +2788,60 @@ if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers
             li.textContent = benefit;
             benefitsList.appendChild(li);
         });
+
+        // ==================== DYNAMISCHER POPULAR BADGE ====================
+const popularBadgeMap = {
+    // Standard
+    'pulling': '⭐ Beste Lösung bei Leinenziehen',
+    'barking': '⭐ Beste Lösung bei Bellen',
+    'aggression': '⭐ Beste Lösung bei Aggression',
+    'anxiety': '⭐ Beste Lösung bei Trennungsangst',
+    'jumping': '⭐ Beste Lösung bei Anspringen',
+    'recall': '⭐ Beste Lösung bei Rückruf-Problemen',
+    'energy': '⭐ Beste Lösung bei Hyperaktivität',
+    'destructive': '⭐ Beste Lösung bei Zerstörungswut',
+    'soiling': '⭐ Beste Lösung bei Stubenreinheit',
+    'mouthing': '⭐ Beste Lösung bei unerwünschtem Aufnehmen',
+    // Angst
+    'visitor-anxiety': '⭐ Beste Lösung bei Besucherangst',
+    'thunder-anxiety': '⭐ Beste Lösung bei Gewitterangst',
+    'noise-sensitivity': '⭐ Beste Lösung bei Geräuschempfindlichkeit',
+    'general-anxiety': '⭐ Beste Lösung bei Ängstlichkeit',
+    'stranger-anxiety': '⭐ Beste Lösung bei Angst vor Fremden',
+    'anxious-overreaction': '⭐ Beste Lösung bei Überreaktion',
+    'separation': '⭐ Beste Lösung bei Trennungsangst',
+    // Jagd
+    'chasing': '⭐ Beste Lösung bei Jagdverhalten',
+    'chasing-movement': '⭐ Beste Lösung bei Jagen',
+    'prey-drive': '⭐ Beste Lösung bei Jagdtrieb',
+    'chasing-cars': '⭐ Beste Lösung bei Auto-Jagen',
+    // Fressen
+    'eating-unwanted': '⭐ Beste Lösung bei unerwünschtem Fressen',
+    'eating-trash': '⭐ Beste Lösung bei Müll-Fressen',
+    'eating-objects': '⭐ Beste Lösung bei Gegenstände-Fressen',
+    // Reaktivität
+    'postman-reactive': '⭐ Beste Lösung bei Postboten-Reaktivität',
+    'dog-reactive': '⭐ Beste Lösung bei Hundereaktivität',
+    'leash-reactive': '⭐ Beste Lösung bei Leinenreaktivität',
+    'overreaction': '⭐ Beste Lösung bei Überreaktion',
+    // Sonstiges
+    'vocalization': '⭐ Beste Lösung bei übermäßigem Bellen',
+    'resource-guarding': '⭐ Beste Lösung bei Ressourcenverteidigung',
+    'biting': '⭐ Beste Lösung bei Beißen',
+    'digging': '⭐ Beste Lösung bei Buddeln',
+    'marking': '⭐ Beste Lösung bei Markieren',
+    'custom-other': '⭐ Beste Lösung für dein Problem'
+};
+
+// Badge dynamisch setzen
+const popularBadge = document.getElementById('popularBadge');
+if (popularBadge) {
+    if (territorialAggression === 'yes') {
+        popularBadge.textContent = '⭐ Beste Lösung bei territorialer Aggression';
+    } else {
+        popularBadge.textContent = popularBadgeMap[dogProblem] || '⭐ Für dauerhafte Veränderung';
+    }
+}
         
         // Problem-Label in Stat-Boxen aktualisieren
         document.getElementById('problemLabel1').textContent = problemText;
