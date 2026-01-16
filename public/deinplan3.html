@@ -2093,7 +2093,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
 
             <div class="pricing-card popular selected" data-plan="6month" data-price="49.99">
-                <div class="popular-badge">⭐ Für dauerhafte Veränderung</div>
+                <div class="popular-badge" id="popularBadge">⭐ Für dauerhafte Veränderung</div>
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
@@ -2810,6 +2810,60 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
             li.textContent = benefit;
             benefitsList.appendChild(li);
         });
+
+        // ==================== DYNAMISCHER POPULAR BADGE ====================
+const popularBadgeMap = {
+    // Standard
+    'pulling': '⭐ Für entspannte Spaziergänge',
+    'barking': '⭐ Für ein ruhiges Zuhause',
+    'aggression': '⭐ Für sichere Begegnungen',
+    'anxiety': '⭐ Für entspanntes Alleinbleiben',
+    'jumping': '⭐ Für höfliche Begrüßungen',
+    'recall': '⭐ Für sorgenfreien Freilauf',
+    'energy': '⭐ Für einen ausgeglichenen Hund',
+    'destructive': '⭐ Für ein heiles Zuhause',
+    'soiling': '⭐ Für eine saubere Wohnung',
+    'mouthing': '⭐ Für sorgenfreie Spaziergänge',
+    // Angst
+    'visitor-anxiety': '⭐ Für entspannten Besuch',
+    'thunder-anxiety': '⭐ Für ruhige Gewitter',
+    'noise-sensitivity': '⭐ Für mehr Gelassenheit',
+    'general-anxiety': '⭐ Für einen mutigen Hund',
+    'stranger-anxiety': '⭐ Für entspannte Begegnungen',
+    'anxious-overreaction': '⭐ Für einen gelassenen Hund',
+    'separation': '⭐ Für entspanntes Alleinbleiben',
+    // Jagd
+    'chasing': '⭐ Für kontrollierten Freilauf',
+    'chasing-movement': '⭐ Für sichere Spaziergänge',
+    'prey-drive': '⭐ Für kontrollierten Jagdtrieb',
+    'chasing-cars': '⭐ Für sichere Straßen',
+    // Fressen
+    'eating-unwanted': '⭐ Für sorgenfreie Spaziergänge',
+    'eating-trash': '⭐ Für sicheres Gassi gehen',
+    'eating-objects': '⭐ Für einen sicheren Hund',
+    // Reaktivität
+    'postman-reactive': '⭐ Für entspannte Türklingel',
+    'dog-reactive': '⭐ Für entspannte Hundebegegnungen',
+    'leash-reactive': '⭐ Für stressfreie Leine',
+    'overreaction': '⭐ Für einen gelassenen Hund',
+    // Sonstiges
+    'vocalization': '⭐ Für ein ruhiges Zuhause',
+    'resource-guarding': '⭐ Für entspanntes Teilen',
+    'biting': '⭐ Für sicheres Zusammenleben',
+    'digging': '⭐ Für einen schönen Garten',
+    'marking': '⭐ Für eine saubere Wohnung',
+    'custom-other': '⭐ Für dauerhafte Veränderung'
+};
+
+// Badge dynamisch setzen
+const popularBadge = document.getElementById('popularBadge');
+if (popularBadge) {
+    if (territorialAggression === 'yes') {
+        popularBadge.textContent = '⭐ Für friedliches Zusammenleben';
+    } else {
+        popularBadge.textContent = popularBadgeMap[dogProblem] || '⭐ Für dauerhafte Veränderung';
+    }
+}
         
         // Problem-Label in Stat-Boxen aktualisieren
         document.getElementById('problemLabel1').textContent = problemText;
