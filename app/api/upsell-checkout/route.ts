@@ -31,15 +31,29 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
+        // Premium erkennen
+        const isPremium = module === 'premium';
+        
         // Bundle erkennen (z.B. "pulling+anxiety")
         const isBundle = bundle || module.includes('+');
         
-        // Preis: Bundle = 24,99€, Einzelmodul = 19€
-        const amount = price || (isBundle ? 2499 : 1900);
+        // Preis: Premium = 197€, Bundle = 25€, Einzelmodul = 19€
+        let amount: number;
+        if (price) {
+            amount = price;
+        } else if (isPremium) {
+            amount = 19700; // €197
+        } else if (isBundle) {
+            amount = 2500; // €25
+        } else {
+            amount = 1900; // €19
+        }
 
         // Modul-Name generieren
         let moduleName: string;
-        if (isBundle) {
+        if (isPremium) {
+            moduleName = 'WauWerk Premium - Alle Module + 3 Monate Support';
+        } else if (isBundle) {
             const mainModule = module.split('+')[0];
             moduleName = 'Komplett-Paket: ' + (moduleNames[mainModule] || mainModule) + ' + Prävention';
         } else {
@@ -53,13 +67,14 @@ export async function POST(request: Request) {
                 enabled: true,
             },
             metadata: {
-                type: 'upsell',
+                type: isPremium ? 'premium' : 'upsell',
                 module: module,
                 module_name: moduleName,
                 lead_id: leadId || '',
                 dog_name: dogName || '',
                 email: email,
-                is_bundle: isBundle ? 'true' : 'false'
+                is_bundle: isBundle ? 'true' : 'false',
+                is_premium: isPremium ? 'true' : 'false'
             },
             receipt_email: email,
             description: 'WauWerk ' + moduleName + ' für ' + (dogName || 'Hund')

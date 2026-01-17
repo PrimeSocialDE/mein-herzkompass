@@ -617,6 +617,157 @@
             box-shadow: 0 4px 12px rgba(196, 165, 118, 0.4);
         }
 
+        /* Premium Option */
+        .premium-option {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 2px solid #C4A576;
+            border-radius: 16px;
+            padding: 24px 20px;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: linear-gradient(135deg, #C4A576, #D4B996);
+            color: #1a1a1a;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 0 14px 0 12px;
+        }
+
+        .premium-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .premium-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .premium-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .premium-subtitle {
+            font-size: 13px;
+            color: #C4A576;
+        }
+
+        .premium-features {
+            margin-bottom: 20px;
+        }
+
+        .premium-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .premium-feature:last-child {
+            border-bottom: none;
+        }
+
+        .premium-feature-icon {
+            color: #C4A576;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .premium-feature-text {
+            flex: 1;
+        }
+
+        .premium-feature-value {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .premium-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .premium-price {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .premium-price-old {
+            font-size: 13px;
+            color: #888;
+            text-decoration: line-through;
+        }
+
+        .premium-price-new {
+            font-size: 28px;
+            font-weight: 700;
+            color: #C4A576;
+        }
+
+        .premium-price-info {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .premium-btn {
+            background: linear-gradient(135deg, #C4A576, #D4B996);
+            border: none;
+            color: #1a1a1a;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .premium-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5);
+        }
+
+        .section-divider {
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+            margin: 24px 0;
+            position: relative;
+        }
+
+        .section-divider::before,
+        .section-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background: #E8E8E8;
+        }
+
+        .section-divider::before {
+            left: 0;
+        }
+
+        .section-divider::after {
+            right: 0;
+        }
+
         /* Skip */
         .skip {
             text-align: center;
@@ -843,76 +994,105 @@
 
             let html = '';
 
-            // Einzelne Module zuerst
-            modulesToShow.forEach(moduleKey => {
-                const m = moduleData[moduleKey];
-                const pointsHtml = m.benefits.slice(0, 3).map(b => '<span class="option-point">' + b + '</span>').join('');
-                
-                html += '<div class="upsell-option">' +
-                    '<div class="option-header">' +
-                        '<div class="option-left">' +
-                            '<span class="option-icon">' + m.icon + '</span>' +
-                            '<span class="option-name">' + m.name + '</span>' +
-                        '</div>' +
-                        '<span class="option-badge">' + m.exercises + ' • 2 Wochen</span>' +
+            // ========== 1. PREMIUM OPTION (ganz oben) ==========
+            html += '<div class="premium-option">' +
+                '<span class="premium-badge">🥇 EMPFOHLEN</span>' +
+                '<div class="premium-header">' +
+                    '<div class="premium-icon">👑</div>' +
+                    '<h3 class="premium-title">WauWerk Premium</h3>' +
+                    '<p class="premium-subtitle">Dein persönlicher Hundetrainer für ' + dogName + '</p>' +
+                '</div>' +
+                '<div class="premium-features">' +
+                    '<div class="premium-feature">' +
+                        '<span class="premium-feature-icon">✓</span>' +
+                        '<span class="premium-feature-text">Alle Trainingsmodule: Leinenführigkeit, Anti-Bell, Rückruf, Trennungsangst, Aggression & mehr</span>' +
                     '</div>' +
-                    '<p class="option-desc">' + m.desc + '</p>' +
-                    '<div class="option-points">' + pointsHtml + '</div>' +
-                    '<div class="option-footer">' +
-                        '<div class="option-price">' +
-                            '<span class="option-price-old">€29</span>' +
-                            '<span class="option-price-new">€19</span>' +
-                        '</div>' +
-                        '<button class="option-btn" onclick="buyUpsell(\'' + moduleKey + '\')">Hinzufügen</button>' +
+                    '<div class="premium-feature">' +
+                        '<span class="premium-feature-icon">✓</span>' +
+                        '<span class="premium-feature-text">3 Monate persönlicher Support via WhatsApp</span>' +
                     '</div>' +
-                '</div>';
-            });
+                    '<div class="premium-feature">' +
+                        '<span class="premium-feature-icon">✓</span>' +
+                        '<span class="premium-feature-text">Video-Feedback auf deine Übungen</span>' +
+                    '</div>' +
+                    '<div class="premium-feature">' +
+                        '<span class="premium-feature-icon">✓</span>' +
+                        '<span class="premium-feature-text">Wöchentliche Check-ins</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="premium-footer">' +
+                    '<div class="premium-price">' +
+                        '<span class="premium-price-old">Wert: €715</span>' +
+                        '<span class="premium-price-new">€197</span>' +
+                        '<span class="premium-price-info">einmalig</span>' +
+                    '</div>' +
+                    '<button class="premium-btn" onclick="buyPremium()">Premium sichern</button>' +
+                '</div>' +
+            '</div>';
 
             // Trennlinie
-            html += '<div style="text-align:center;color:#999;font-size:13px;margin:20px 0;">oder im Spar-Paket:</div>';
+            html += '<div class="section-divider">Lieber ohne Support?</div>';
 
-            // Bundle Option (erstes Modul + Prävention) unten
-            if (modulesToShow.length >= 1) {
-                const firstModule = moduleData[modulesToShow[0]];
-                
-                html += '<div class="bundle-option">' +
-                    '<span class="bundle-badge">⭐ SPAR-PAKET</span>' +
-                    '<div class="bundle-header">' +
-                        '<h3 class="bundle-title">Komplett-Paket für ' + dogName + '</h3>' +
-                        '<p class="bundle-subtitle">Training + Prävention in einem</p>' +
-                    '</div>' +
-                    '<div class="bundle-modules">' +
-                        '<div class="bundle-module">' +
-                            '<span class="bundle-module-icon">' + firstModule.icon + '</span>' +
-                            '<div class="bundle-module-info">' +
-                                '<h4>' + firstModule.name + '</h4>' +
-                                '<div class="bundle-module-points">' +
-                                    firstModule.benefits.slice(0, 2).map(b => '<span class="bundle-point">' + b + '</span>').join('') +
-                                '</div>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="bundle-module">' +
-                            '<span class="bundle-module-icon">🧠</span>' +
-                            '<div class="bundle-module-info">' +
-                                '<h4>Prävention & Grundlagen</h4>' +
-                                '<div class="bundle-module-points">' +
-                                    '<span class="bundle-point">Warnsignale rechtzeitig verstehen</span>' +
-                                    '<span class="bundle-point">Klar handeln in schwierigen Momenten</span>' +
-                                    '<span class="bundle-point">Rückfälle vermeiden</span>' +
-                                '</div>' +
+            // ========== 2. BUNDLE OPTION (2 Module für €25) ==========
+            const firstModule = moduleData[modulesToShow[0]];
+            
+            html += '<div class="bundle-option" style="border-color: #E8E8E8; background: #FAFAFA;">' +
+                '<span class="bundle-badge" style="background: #666;">📦 BUNDLE</span>' +
+                '<div class="bundle-header">' +
+                    '<h3 class="bundle-title">2 Extra-Module für ' + dogName + '</h3>' +
+                    '<p class="bundle-subtitle">' + firstModule.name + ' + 1 weiteres Modul</p>' +
+                '</div>' +
+                '<div class="bundle-modules">' +
+                    '<div class="bundle-module">' +
+                        '<span class="bundle-module-icon">' + firstModule.icon + '</span>' +
+                        '<div class="bundle-module-info">' +
+                            '<h4>' + firstModule.name + '</h4>' +
+                            '<div class="bundle-module-points">' +
+                                firstModule.benefits.slice(0, 2).map(b => '<span class="bundle-point">' + b + '</span>').join('') +
                             '</div>' +
                         '</div>' +
                     '</div>' +
-                    '<div class="bundle-footer">' +
-                        '<div class="bundle-price">' +
-                            '<span class="bundle-price-old">Statt €38</span>' +
-                            '<span class="bundle-price-new">€24,99</span>' +
-                            '<span class="bundle-price-save">Du sparst €13!</span>' +
+                    '<div class="bundle-module">' +
+                        '<span class="bundle-module-icon">🎁</span>' +
+                        '<div class="bundle-module-info">' +
+                            '<h4>+ Bonus-Modul</h4>' +
+                            '<div class="bundle-module-points">' +
+                                '<span class="bundle-point">Passend zu ' + dogName + '</span>' +
+                            '</div>' +
                         '</div>' +
-                        '<button class="bundle-btn" onclick="buyBundle(\'' + modulesToShow[0] + '\')">Bundle sichern</button>' +
                     '</div>' +
-                '</div>';
-            }
+                '</div>' +
+                '<div class="bundle-footer">' +
+                    '<div class="bundle-price">' +
+                        '<span class="bundle-price-old">Statt €38</span>' +
+                        '<span class="bundle-price-new">€25</span>' +
+                        '<span class="bundle-price-save">Du sparst €13!</span>' +
+                    '</div>' +
+                    '<button class="bundle-btn" style="background: #666;" onclick="buyBundle(\'' + modulesToShow[0] + '\')">Bundle sichern</button>' +
+                '</div>' +
+            '</div>';
+
+            // ========== 3. EINZELNES MODUL (€19) ==========
+            const pointsHtml = firstModule.benefits.slice(0, 3).map(b => '<span class="option-point">' + b + '</span>').join('');
+            
+            html += '<div class="upsell-option">' +
+                '<div class="option-header">' +
+                    '<div class="option-left">' +
+                        '<span class="option-icon">' + firstModule.icon + '</span>' +
+                        '<span class="option-name">' + firstModule.name + '</span>' +
+                    '</div>' +
+                    '<span class="option-badge">' + firstModule.exercises + '</span>' +
+                '</div>' +
+                '<p class="option-desc">' + firstModule.desc + '</p>' +
+                '<div class="option-points">' + pointsHtml + '</div>' +
+                '<div class="option-footer">' +
+                    '<div class="option-price">' +
+                        '<span class="option-price-old">€29</span>' +
+                        '<span class="option-price-new">€19</span>' +
+                    '</div>' +
+                    '<button class="option-btn" onclick="buyUpsell(\'' + modulesToShow[0] + '\')">Hinzufügen</button>' +
+                '</div>' +
+            '</div>';
 
             container.innerHTML = html;
         }
@@ -1065,6 +1245,129 @@
         
         document.querySelector('.upsell-header h2').innerHTML = content.header;
         document.querySelector('.upsell-stat').innerHTML = content.stat;
+
+        // Premium kaufen
+        async function buyPremium() {
+            const btn = document.querySelector('.premium-btn');
+            btn.textContent = 'Lädt...';
+            btn.disabled = true;
+
+            currentModule = 'premium';
+
+            // Popup SOFORT öffnen und aktualisieren - mit Trainer-Bild
+            document.querySelector('.payment-product').innerHTML = 
+                '<div class="payment-trainer-img">' +
+                    '<img src="TrainerWau.png" alt="Dein Trainer" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid #C4A576;">' +
+                '</div>' +
+                '<div class="payment-product-info">' +
+                    '<h3 id="paymentModuleName">WauWerk Premium</h3>' +
+                    '<p>Dein persönlicher Trainer für ' + dogName + '</p>' +
+                '</div>' +
+                '<div class="payment-product-price" style="font-size: 16px; text-align: right;">' +
+                    '<div style="font-size: 20px; font-weight: 700;">€65,67</div>' +
+                    '<div style="font-size: 11px; color: #888;">pro Monat (3 Monate)</div>' +
+                '</div>';
+
+            // Premium Benefits
+            const premiumBenefits = [
+                'Alle Trainingsmodule inklusive',
+                '3 Monate WhatsApp-Support',
+                'Video-Feedback auf deine Übungen',
+                'Wöchentliche Check-ins'
+            ];
+            const benefitsHtml = premiumBenefits.map(b => '<div class="payment-benefit">✓ <span>' + b + '</span></div>').join('');
+            document.getElementById('paymentBenefits').innerHTML = benefitsHtml;
+
+            // Popup Title ändern
+            document.querySelector('.payment-title').textContent = 'Premium sichern';
+
+            // Popup SOFORT öffnen
+            document.getElementById('paymentOverlay').classList.add('active');
+
+            // Check email
+            if (!userEmail) {
+                alert('Bitte zuerst E-Mail eingeben.');
+                btn.textContent = 'Premium sichern';
+                btn.disabled = false;
+                closePaymentPopup();
+                return;
+            }
+
+            try {
+                console.log('📤 Premium Checkout:', { leadId, email: userEmail, dogName });
+                
+                const response = await fetch('/api/upsell-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        module: 'premium',
+                        leadId: leadId,
+                        email: userEmail,
+                        dogName: dogName,
+                        price: 19700 // €197 in Cents
+                    })
+                });
+
+                const result = await response.json();
+                console.log('📥 Premium API Response:', result);
+
+                if (result.error) {
+                    alert('Fehler: ' + result.error);
+                    btn.textContent = 'Premium sichern';
+                    btn.disabled = false;
+                    closePaymentPopup();
+                    return;
+                }
+
+                if (!result.clientSecret) {
+                    alert('Fehler: Keine Zahlungs-Session erhalten');
+                    btn.textContent = 'Premium sichern';
+                    btn.disabled = false;
+                    closePaymentPopup();
+                    return;
+                }
+
+                clientSecret = result.clientSecret;
+
+                if (!stripe) {
+                    stripe = Stripe(STRIPE_PUBLIC_KEY);
+                }
+
+                elements = stripe.elements({
+                    clientSecret: clientSecret,
+                    appearance: {
+                        theme: 'stripe',
+                        variables: {
+                            colorPrimary: '#C4A576',
+                            colorBackground: '#ffffff',
+                            colorText: '#2C2C2E',
+                            colorDanger: '#e74c3c',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            borderRadius: '8px'
+                        }
+                    },
+                    locale: 'de'
+                });
+
+                paymentElement = elements.create('payment', {
+                    layout: { type: 'tabs', defaultCollapsed: false },
+                    paymentMethodOrder: ['card', 'klarna', 'paypal'],
+                    wallets: { applePay: 'auto', googlePay: 'auto' }
+                });
+
+                paymentElement.mount('#payment-element');
+
+                btn.textContent = 'Premium sichern';
+                btn.disabled = false;
+
+            } catch (err) {
+                console.error('Premium Error:', err);
+                alert('Fehler beim Laden. Bitte versuche es erneut.');
+                btn.textContent = 'Premium sichern';
+                btn.disabled = false;
+                closePaymentPopup();
+            }
+        }
 
         // Payment Popup öffnen
         async function buyUpsell(module) {
