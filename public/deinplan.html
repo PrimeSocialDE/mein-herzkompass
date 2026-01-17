@@ -2191,27 +2191,11 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             benefitsList.appendChild(li);
         });
 
-        const popularBadgeMap = {
-            'pulling': '⭐ Beste Lösung bei Leinenziehen',
-            'barking': '⭐ Beste Lösung bei Bellen',
-            'aggression': '⭐ Beste Lösung bei Aggression',
-            'anxiety': '⭐ Beste Lösung bei Trennungsangst',
-            'jumping': '⭐ Beste Lösung bei Anspringen',
-            'recall': '⭐ Beste Lösung bei Rückruf-Problemen',
-            'energy': '⭐ Beste Lösung bei Hyperaktivität',
-            'destructive': '⭐ Beste Lösung bei Zerstörungswut',
-            'soiling': '⭐ Beste Lösung bei Stubenreinheit',
-            'mouthing': '⭐ Beste Lösung bei unerwünschtem Aufnehmen'
-        };
-
         const popularBadge = document.getElementById('popularBadge');
-        if (popularBadge) {
-            if (territorialAggression === 'yes') {
-                popularBadge.textContent = '⭐ Beste Lösung bei territorialer Aggression';
-            } else {
-                popularBadge.textContent = popularBadgeMap[dogProblem] || '⭐ Für dauerhafte Veränderung';
-            }
-        }
+if (popularBadge) {
+    popularBadge.textContent = '⭐ Empfohlen für ' + dogName;
+}
+
 
         document.getElementById('problemLabel1').textContent = problemText;
         document.getElementById('problemLabel2').textContent = problemText;
