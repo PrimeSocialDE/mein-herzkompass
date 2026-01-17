@@ -25,8 +25,8 @@
             // Wenn redirect_status vorhanden aber NICHT "succeeded" → Zahlung abgebrochen
             if (redirectStatus && redirectStatus !== 'succeeded') {
                 console.log('❌ Zahlung abgebrochen, redirect_status:', redirectStatus);
-                // Zurück zur Checkout-Seite
-                window.location.href = '/kurz-checkout.html?cancelled=true';
+                // Zurück zur Plan-Seite
+                window.location.href = '/deinplan.html';
                 return;
             }
             
