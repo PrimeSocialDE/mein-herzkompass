@@ -1257,26 +1257,32 @@
             // Popup SOFORT öffnen und aktualisieren - mit Trainer-Bild
             document.querySelector('.payment-product').innerHTML = 
                 '<div class="payment-trainer-img">' +
-                    '<img src="TrainerWau.png" alt="Dein Trainer" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid #C4A576;">' +
+                    '<img src="TrainerWau.png" alt="Dein Trainer" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid #C4A576;">' +
                 '</div>' +
                 '<div class="payment-product-info">' +
                     '<h3 id="paymentModuleName">WauWerk Premium</h3>' +
-                    '<p>Dein persönlicher Trainer für ' + dogName + '</p>' +
+                    '<p>Persönliche Betreuung für ' + dogName + '</p>' +
                 '</div>' +
                 '<div class="payment-product-price" style="font-size: 16px; text-align: right;">' +
-                    '<div style="font-size: 20px; font-weight: 700;">€65,67</div>' +
+                    '<div style="font-size: 18px; font-weight: 700;">€65,67</div>' +
                     '<div style="font-size: 11px; color: #888;">pro Monat (3 Monate)</div>' +
                 '</div>';
 
-            // Premium Benefits
-            const premiumBenefits = [
-                'Alle Trainingsmodule inklusive',
-                '3 Monate WhatsApp-Support',
-                'Video-Feedback auf deine Übungen',
-                'Wöchentliche Check-ins'
-            ];
-            const benefitsHtml = premiumBenefits.map(b => '<div class="payment-benefit">✓ <span>' + b + '</span></div>').join('');
-            document.getElementById('paymentBenefits').innerHTML = benefitsHtml;
+            // Premium Benefits - besser erklärt
+            const premiumBenefitsHtml = 
+                '<div class="payment-benefit">✓ <span>Leinenführigkeit, Anti-Bell, Rückruf, Trennungsangst & mehr</span></div>' +
+                '<div class="payment-benefit">✓ <span>3 Monate persönlicher Support via WhatsApp</span></div>' +
+                '<div class="payment-benefit">✓ <span>Schick Videos – bekomm Feedback</span></div>' +
+                '<div class="payment-benefit">✓ <span>Wöchentliche Check-ins: "Wie läuft\'s?"</span></div>';
+            document.getElementById('paymentBenefits').innerHTML = premiumBenefitsHtml;
+
+            // WhatsApp Hinweis hinzufügen
+            const whatsappNote = document.createElement('div');
+            whatsappNote.style.cssText = 'background: #E8F5E9; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 12px; color: #2E7D32; text-align: center;';
+            whatsappNote.innerHTML = '📱 <strong>Nach dem Kauf:</strong> Du bekommst per Email deine WhatsApp-Zugangsdaten';
+            
+            const paymentBenefits = document.getElementById('paymentBenefits');
+            paymentBenefits.parentNode.insertBefore(whatsappNote, paymentBenefits.nextSibling);
 
             // Popup Title ändern
             document.querySelector('.payment-title').textContent = 'Premium sichern';
