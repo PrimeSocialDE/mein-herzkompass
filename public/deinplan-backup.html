@@ -12,7 +12,6 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'AW-17806525009');
 </script>
 
@@ -667,7 +666,6 @@
             fill: #aaa;
         }
 
-        /* Line animation - starts when popup opens */
         .line-wauwerk {
             stroke-dasharray: 300;
             stroke-dashoffset: 300;
@@ -709,7 +707,6 @@
             to { opacity: 1; }
         }
 
-        /* Benefits compact */
         .exit-popup-benefits {
             display: flex;
             flex-wrap: wrap;
@@ -781,17 +778,30 @@
             border-radius: 20px;
             max-width: 420px;
             width: calc(100% - 40px);
-            max-height: 70%;
+            max-height: 90vh;
             overflow-y: auto;
             position: relative;
             animation: popupIn 0.3s ease-out;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
             overscroll-behavior: contain;
-            margin-top: 60px;
+            margin-top: 20px;
+        }
+
+        @keyframes pulse-live {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1);
+                box-shadow: 0 0 0 4px rgba(34, 197, 94, 0);
+            }
         }
 
         .checkout-header {
-            padding: 14px 16px 10px;
+            padding: 12px 16px 8px;
             border-bottom: 1px solid var(--border-light);
             position: relative;
             background: linear-gradient(180deg, #FAF7F4 0%, var(--white) 100%);
@@ -800,14 +810,14 @@
 
         .checkout-close {
             position: absolute;
-            top: 14px;
-            left: 14px;
+            top: 12px;
+            left: 12px;
             background: var(--white);
             border: 1px solid var(--border-light);
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            font-size: 18px;
+            font-size: 16px;
             color: var(--text-medium);
             cursor: pointer;
             display: flex;
@@ -824,7 +834,7 @@
 
         .checkout-title {
             text-align: center;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             color: var(--text-dark);
         }
@@ -834,30 +844,29 @@
         }
 
         .checkout-body {
-            padding: 12px 16px 16px;
+            padding: 10px 14px 14px;
         }
 
-        /* Plan Card */
         .checkout-plan-card {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
+            gap: 8px;
+            padding: 8px;
             background: linear-gradient(135deg, #FAF7F4 0%, #F5F0EB 100%);
             border-radius: 10px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             border: 1px solid var(--border-light);
         }
 
         .checkout-plan-image {
-            width: 42px;
-            height: 42px;
+            width: 38px;
+            height: 38px;
             background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 20px;
             box-shadow: 0 4px 12px rgba(196, 165, 118, 0.3);
         }
 
@@ -866,16 +875,23 @@
         }
 
         .checkout-plan-name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
 
         .checkout-plan-duration {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--warm-brown);
             font-weight: 500;
+        }
+
+        .checkout-plan-personalized {
+            font-size: 10px;
+            color: var(--warm-brown);
+            font-weight: 500;
+            margin-top: 1px;
         }
 
         .checkout-plan-price-box {
@@ -883,9 +899,23 @@
         }
 
         .checkout-plan-price {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
             color: var(--text-dark);
+            line-height: 1.1;
+        }
+
+        .checkout-plan-price-sub {
+            font-size: 9px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .checkout-plan-daily {
+            font-size: 10px;
+            color: var(--warm-brown);
+            font-weight: 600;
+            margin-top: 1px;
         }
 
         .checkout-plan-access {
@@ -894,245 +924,26 @@
             font-weight: 500;
         }
 
-        /* Features Section */
-        .checkout-features-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-            text-align: center;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .checkout-features-title span {
-            color: var(--warm-brown);
-        }
-
-        .checkout-features {
-            background: #FAFAFA;
-            border-radius: 10px;
-            padding: 4px 12px;
-            margin-bottom: 14px;
-        }
-
-        .checkout-feature-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            font-size: 13px;
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        .checkout-feature-item:last-child {
-            border-bottom: none;
-        }
-
-        .checkout-feature-name {
-            color: var(--text-dark);
-            font-weight: 500;
-        }
-
-        .checkout-feature-prices {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .checkout-feature-old {
-            color: var(--text-light);
-            text-decoration: line-through;
-            font-size: 12px;
-        }
-
-        .checkout-feature-new {
-            color: #27ae60;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        /* Email Step */
-        .checkout-step-email {
-            text-align: center;
-        }
-
-        .checkout-step-email.hidden {
-            display: none;
-        }
-
-        .checkout-email-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .checkout-email-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-        }
-
-        .checkout-email-subtitle {
-            font-size: 14px;
-            color: var(--text-medium);
-            margin-bottom: 20px;
-        }
-
-        .checkout-email-input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid var(--border-light);
-            border-radius: 10px;
-            font-size: 16px;
-            margin-bottom: 12px;
-            transition: border-color 0.2s;
-        }
-
-        .checkout-email-input:focus {
-            outline: none;
-            border-color: var(--warm-brown);
-        }
-
-        .checkout-email-input::placeholder {
-            color: #aaa;
-        }
-
-        .checkout-email-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-bottom: 15px;
-        }
-
-        .checkout-email-privacy {
-            font-size: 11px;
-            color: var(--text-light);
-        }
-
-        /* Trust Badge */
-        .checkout-trust-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 16px;
-            padding: 10px;
-            background: #f8f8f8;
-            border-radius: 8px;
-        }
-
-        .trust-stars {
-            display: flex;
-            gap: 2px;
-        }
-
-        .trust-star {
-            width: 20px;
-            height: 20px;
-            background: #00b67a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .trust-star svg {
-            width: 12px;
-            height: 12px;
-            fill: white;
-        }
-
-        .trust-text {
-            font-size: 12px;
-            color: var(--text-dark);
-            font-weight: 500;
-        }
-
-        .trust-text strong {
-            color: #00b67a;
-        }
-
-        /* Guarantee Badge */
-        .checkout-guarantee {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px;
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border: 1px solid #86efac;
-            border-radius: 10px;
-            margin-bottom: 14px;
-        }
-
-        .checkout-guarantee-icon {
-            font-size: 24px;
-        }
-
-        .checkout-guarantee-text {
-            flex: 1;
-        }
-
-        .checkout-guarantee-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #166534;
-        }
-
-        .checkout-guarantee-subtitle {
-            font-size: 11px;
-            color: #15803d;
-        }
-
-        /* Kompakte Step 1 Styles */
         .checkout-features-compact {
             background: #f8f8f8;
             border-radius: 8px;
-            padding: 8px 10px;
-            margin-bottom: 10px;
+            padding: 6px 10px;
+            margin-bottom: 6px;
         }
 
         .checkout-feature-row {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-dark);
             padding: 3px 0;
         }
 
         .checkout-feature-row span {
-            color: var(--warm-brown);
-            font-weight: 600;
-        }
-
-        .checkout-total-compact {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-top: 2px solid var(--warm-brown);
-            margin-bottom: 8px;
-        }
-
-        .checkout-total-compact .checkout-total-label {
-            font-size: 13px;
-            font-weight: 700;
             color: var(--text-dark);
         }
 
-        .checkout-total-compact .checkout-total-saved {
-            font-size: 10px;
-            color: #e74c3c;
-            font-weight: 600;
-            display: block;
-        }
-
-        .checkout-total-compact .checkout-total-price {
-            font-size: 20px;
-            font-weight: 800;
+        .checkout-feature-row .problem-highlight {
             color: var(--warm-brown);
+            font-weight: 600;
         }
 
         .checkout-guarantee-compact {
@@ -1146,64 +957,14 @@
             margin-bottom: 10px;
         }
 
-        /* Total */
-        .checkout-total {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 0;
-            margin-top: 5px;
-            border-top: 2px solid var(--warm-brown);
+        .checkout-step-email {
+            text-align: center;
         }
 
-        .checkout-total-label {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-dark);
+        .checkout-step-email.hidden {
+            display: none;
         }
 
-        .checkout-total-discount {
-            font-size: 12px;
-            color: #e74c3c;
-            font-weight: 600;
-            margin-top: 2px;
-        }
-
-        .checkout-total-price {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .checkout-total-saved {
-            font-size: 12px;
-            color: #27ae60;
-            font-weight: 700;
-        }
-
-        /* Continue Button (Step 1) */
-        .checkout-continue-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 0;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 15px rgba(196, 165, 118, 0.4);
-        }
-
-        .checkout-continue-btn:hover {
-            background: linear-gradient(135deg, var(--dark-brown), #6B5A45);
-            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5);
-        }
-
-        /* Step 2: Payment */
         .checkout-step-2 {
             display: none;
         }
@@ -1216,89 +977,11 @@
             display: none;
         }
 
-        /* Payment Methods */
-        .payment-methods {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .payment-method {
-            flex: 1;
-            padding: 15px 10px;
-            border: 2px solid var(--border-light);
-            border-radius: 10px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
-            background: var(--white);
-        }
-
-        .payment-method:hover {
-            border-color: var(--warm-brown);
-        }
-
-        .payment-method.selected {
-            border-color: var(--warm-brown);
-            background: #faf6f1;
-        }
-
-        .payment-method-icon {
-            height: 24px;
-            margin-bottom: 5px;
-        }
-
-        .payment-method-name {
-            font-size: 12px;
-            color: var(--text-dark);
-            font-weight: 500;
-        }
-
-        /* Price Summary (Step 2) */
-        .checkout-summary {
-            background: linear-gradient(135deg, #FAF7F4 0%, #F5F0EB 100%);
-            border-radius: 14px;
-            padding: 18px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-light);
-        }
-
-        .checkout-summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            font-size: 15px;
-            color: var(--text-dark);
-        }
-
-        .checkout-summary-row.total {
-            border-top: 2px solid var(--warm-brown);
-            margin-top: 10px;
-            padding-top: 14px;
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        .checkout-summary-old {
-            text-decoration: line-through;
-            color: var(--text-light);
-            margin-right: 10px;
-        }
-
-        .checkout-summary-saved {
-            color: #27ae60;
-            font-size: 13px;
-            text-align: right;
-            font-weight: 700;
-            margin-top: 5px;
-        }
-
-        /* Stripe Element */
         .stripe-element-container {
-            padding: 18px;
+            padding: 12px;
             border: 2px solid var(--border-light);
-            border-radius: 14px;
-            margin-bottom: 18px;
+            border-radius: 12px;
+            margin-bottom: 12px;
             background: var(--white);
             transition: border-color 0.2s;
         }
@@ -1308,18 +991,17 @@
         }
 
         #payment-element {
-            min-height: 100px;
+            min-height: 80px;
         }
 
-        /* Payment Button */
         .checkout-pay-btn {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             cursor: pointer;
             display: flex;
@@ -1356,33 +1038,31 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Payment Icons */
         .payment-icons {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 12px;
-            margin-top: 20px;
-            padding: 12px;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 8px;
             background: #FAFAFA;
-            border-radius: 10px;
+            border-radius: 8px;
         }
 
         .payment-icons img {
-            height: 20px;
+            height: 16px;
             opacity: 0.7;
         }
 
-        /* Back Button */
         .checkout-back {
             display: block;
             width: 100%;
             background: none;
             border: none;
             color: var(--text-medium);
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
-            margin-top: 18px;
+            margin-top: 10px;
             text-align: center;
             font-weight: 500;
         }
@@ -1391,7 +1071,6 @@
             color: var(--warm-brown);
         }
 
-        /* Error Message */
         .checkout-error {
             background: #FEF2F2;
             color: #DC2626;
@@ -1728,7 +1407,6 @@
             text-decoration: underline;
         }
 
-        /* ========== VIDEO TESTIMONIAL ========== */
         .video-testimonial {
             margin-bottom: 25px;
         }
@@ -2017,7 +1695,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
         </div>
 
-        <!-- ========== Pricing Section (umformulierte Frage) ========== -->
         <div class="motivation-text">
             <p class="motivation-question">In welcher Zeit soll <span id="dogNamePlan">dein Hund</span> das Problem lösen?</p>
             <p class="pricing-hint">Je nach Laufzeit passen wir Trainingsintensität und Aufbau an.</p>
@@ -2043,7 +1720,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
 
             <div class="pricing-card popular selected" data-plan="3month" data-price="29.99">
-                <div class="popular-badge">⭐ Für dauerhafte Veränderung</div>
+                <div class="popular-badge" id="popularBadge">⭐ Für dauerhafte Veränderung</div>
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
@@ -2104,22 +1781,18 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             30-Tage Geld-zurück-Garantie
         </div>
 
-        <!-- Benefits Box - dynamisch basierend auf Problem -->
         <div class="benefits-box" id="benefitsBox" style="margin-top: 35px;">
             <h2 class="benefits-title">Das bekommst du im Plan</h2>
             <ul class="benefits-list" id="benefitsList">
-                <!-- Wird per JavaScript gefüllt -->
             </ul>
         </div>
 
-        <!-- ========== Testimonials (ausführlicher, weiter unten) ========== -->
         <div class="testimonials-section">
             <div class="section-header">
                 <h2 class="section-title">Echte Erfolgsgeschichten</h2>
                 <p class="section-subtitle">mit unserem Trainingsplan</p>
             </div>
 
-            <!-- ========== VIDEO TESTIMONIAL ========== -->
             <div class="video-testimonial">
                 <div class="video-testimonial-container">
                     <video id="testimonialVideo" playsinline preload="metadata" poster="video-thumbnail.png">
@@ -2169,33 +1842,21 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             <div class="trustpilot-track" id="tpTrack">
                 <div class="trustpilot-review">
                     <div class="trustpilot-stars">
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span>
                     </div>
                     <p class="trustpilot-text">Sehr gut erklärt und schnell umsetzbar!</p>
                     <p class="trustpilot-name">Sandra M.</p>
                 </div>
                 <div class="trustpilot-review">
                     <div class="trustpilot-stars">
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span>
                     </div>
                     <p class="trustpilot-text">Tolle Beispiele, die wirklich funktionieren.</p>
                     <p class="trustpilot-name">Thomas K.</p>
                 </div>
                 <div class="trustpilot-review">
                     <div class="trustpilot-stars">
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
+                        <span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span>
                     </div>
                     <p class="trustpilot-text">Einfache Anleitungen, schnelle Ergebnisse!</p>
                     <p class="trustpilot-name">Julia R.</p>
@@ -2221,9 +1882,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 
             <div class="faq-item">
                 <div class="faq-question">
-                    <div class="faq-icon">
-                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                    </div>
+                    <div class="faq-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
                     <span class="faq-question-text">Wie bekomme ich meinen Trainingsplan?</span>
                 </div>
                 <p class="faq-answer">Du erhältst deinen personalisierten Trainingsplan sofort per E-Mail nach dem Kauf. Innerhalb weniger Minuten hast du Zugang zu allen Übungen und kannst direkt loslegen!</p>
@@ -2231,9 +1890,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 
             <div class="faq-item">
                 <div class="faq-question">
-                    <div class="faq-icon">
-                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                    </div>
+                    <div class="faq-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
                     <span class="faq-question-text">Wie unterscheidet sich das von anderen Trainings?</span>
                 </div>
                 <p class="faq-answer">Unser Ansatz basiert auf positiver Verstärkung und ist wissenschaftlich fundiert. Keine Stachelhalsbänder, kein Anschreien - nur Methoden, die wirklich funktionieren und deinem Hund nicht schaden.</p>
@@ -2241,9 +1898,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 
             <div class="faq-item">
                 <div class="faq-question">
-                    <div class="faq-icon">
-                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                    </div>
+                    <div class="faq-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
                     <span class="faq-question-text">Wie viel Zeit brauche ich täglich?</span>
                 </div>
                 <p class="faq-answer">Unsere Trainingseinheiten sind kurz und effektiv – nur 10 bis 15 Minuten am Tag. Perfekt für jeden Alltag!</p>
@@ -2251,9 +1906,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 
             <div class="faq-item">
                 <div class="faq-question">
-                    <div class="faq-icon">
-                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                    </div>
+                    <div class="faq-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
                     <span class="faq-question-text">Funktioniert das auch bei meinem Hund?</span>
                 </div>
                 <p class="faq-answer">Ja! Unser Plan ist personalisiert auf Alter, Rasse und Verhaltensprobleme deines Hundes. Falls du keine Verbesserung siehst, bekommst du dein Geld zurück.</p>
@@ -2272,15 +1925,12 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     </footer>
 
     <script>
-        // Supabase Config (am Anfang für E-Mail Link Support)
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
 
-        // Video Testimonial Play/Pause Toggle
         function playTestimonialVideo() {
             const video = document.getElementById('testimonialVideo');
             const overlay = document.getElementById('videoPlayOverlay');
-            
             if (video.paused) {
                 video.play();
                 overlay.classList.add('hidden');
@@ -2290,7 +1940,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             }
         }
         
-        // Video Click Handler (für Pause wenn Video läuft)
         document.getElementById('testimonialVideo').addEventListener('click', function() {
             const overlay = document.getElementById('videoPlayOverlay');
             if (!this.paused) {
@@ -2299,85 +1948,65 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             }
         });
         
-        // Overlay wieder zeigen wenn Video endet
         document.getElementById('testimonialVideo').addEventListener('ended', function() {
             document.getElementById('videoPlayOverlay').classList.remove('hidden');
         });
 
-        // ==================== LOAD DATA FROM SUPABASE IF COMING FROM EMAIL ====================
-(async function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const leadIdFromUrl = urlParams.get('lead_id');
-    const emailFromUrl = urlParams.get('email');
-    
-    // Wenn lead_id ODER email in URL -> aus Supabase laden
-    if (leadIdFromUrl || emailFromUrl) {
-        console.log('📧 User kam via E-Mail Link, lade Daten aus Supabase...');
-        
-        // Query bauen - entweder nach ID oder nach Email
-        let queryParam = '';
-        if (leadIdFromUrl) {
-            queryParam = 'id=eq.' + leadIdFromUrl;
-        } else if (emailFromUrl) {
-            // Email URL-decoden und suchen
-            const decodedEmail = decodeURIComponent(emailFromUrl);
-            queryParam = 'email=eq.' + encodeURIComponent(decodedEmail);
-        }
-        
-        try {
-            const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?' + queryParam + '&select=*&order=created_at.desc&limit=1', {
-                headers: {
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                }
-            });
+        (async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const leadIdFromUrl = urlParams.get('lead_id');
+            const emailFromUrl = urlParams.get('email');
             
-            if (response.ok) {
-                const data = await response.json();
-                console.log('📦 Supabase Antwort:', data);
-                
-                if (data[0]) {
-                    const lead = data[0];
-                    const answers = lead.answers || {};
-                    
-                    console.log('📋 Answers:', answers);
-                    
-                    // Alle Daten in localStorage speichern
-                    if (answers.dog_name) localStorage.setItem('dogName', answers.dog_name);
-                    if (answers.dog_age) localStorage.setItem('dogAge', answers.dog_age);
-                    if (answers.dog_breed) localStorage.setItem('dogBreed', answers.dog_breed);
-                    if (answers.dog_gender) localStorage.setItem('dogGender', answers.dog_gender);
-                    if (answers.dog_goal) localStorage.setItem('dogGoal', answers.dog_goal);
-                    if (answers.dog_problem) localStorage.setItem('dogProblem', answers.dog_problem);
-                    if (answers.dog_behaviors) localStorage.setItem('dogBehaviors', JSON.stringify(answers.dog_behaviors));
-                    if (answers.had_training) localStorage.setItem('hadTraining', answers.had_training);
-                    if (answers.territorial_aggression) localStorage.setItem('territorialAggression', answers.territorial_aggression);
-                    if (lead.email) localStorage.setItem('userEmail', lead.email);
-                    
-                    // Lead ID speichern
-                    localStorage.setItem('leadId', lead.id);
-                    
-                    console.log('✅ Daten aus Supabase geladen, reload...');
-                    
-                    // Seite neu laden ohne Parameter (um Loop zu vermeiden)
-                    window.location.href = window.location.pathname;
-                    return;
-                } else {
-                    console.log('⚠️ Keine Daten gefunden für:', leadIdFromUrl || emailFromUrl);
+            if (leadIdFromUrl || emailFromUrl) {
+                console.log('📧 User kam via E-Mail Link, lade Daten aus Supabase...');
+                let queryParam = '';
+                if (leadIdFromUrl) {
+                    queryParam = 'id=eq.' + leadIdFromUrl;
+                } else if (emailFromUrl) {
+                    const decodedEmail = decodeURIComponent(emailFromUrl);
+                    queryParam = 'email=eq.' + encodeURIComponent(decodedEmail);
                 }
-            } else {
-                console.error('❌ Supabase response nicht ok:', response.status);
+                
+                try {
+                    const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?' + queryParam + '&select=*&order=created_at.desc&limit=1', {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data[0]) {
+                            const lead = data[0];
+                            const answers = lead.answers || {};
+                            if (answers.dog_name) localStorage.setItem('dogName', answers.dog_name);
+                            if (answers.dog_age) localStorage.setItem('dogAge', answers.dog_age);
+                            if (answers.dog_breed) localStorage.setItem('dogBreed', answers.dog_breed);
+                            if (answers.dog_gender) localStorage.setItem('dogGender', answers.dog_gender);
+                            if (answers.dog_goal) localStorage.setItem('dogGoal', answers.dog_goal);
+                            if (answers.dog_problem) localStorage.setItem('dogProblem', answers.dog_problem);
+                            if (answers.dog_behaviors) localStorage.setItem('dogBehaviors', JSON.stringify(answers.dog_behaviors));
+                            if (answers.had_training) localStorage.setItem('hadTraining', answers.had_training);
+                            if (answers.territorial_aggression) localStorage.setItem('territorialAggression', answers.territorial_aggression);
+                            if (answers.custom_problem_text) localStorage.setItem('customProblem', answers.custom_problem_text);
+                            if (answers.custom_problem_key) localStorage.setItem('customProblemKey', answers.custom_problem_key);
+                            if (lead.email) localStorage.setItem('userEmail', lead.email);
+                            localStorage.setItem('leadId', lead.id);
+                            window.location.href = window.location.pathname;
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ Supabase load error:', error);
+                }
             }
-        } catch (error) {
-            console.error('❌ Supabase load error:', error);
-        }
-    }
-})();
-
+        })();
 
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         const dogGoal = localStorage.getItem('dogGoal') || 'obedience';
-        const dogProblem = localStorage.getItem('dogProblem') || '';
+        const customProblemKey = localStorage.getItem('customProblemKey') || '';
+        const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         const hadTraining = localStorage.getItem('hadTraining') || '';
         const territorialAggression = localStorage.getItem('territorialAggression') || '';
 
@@ -2399,7 +2028,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         document.getElementById('userGoal').textContent = goalMap[dogGoal] || 'Gehorsam verbessern';
 
         let problemText = 'Ungehorsam';
-        
         if (territorialAggression === 'yes') {
             problemText = 'Territoriale Aggression';
         } else if (dogProblem) {
@@ -2413,14 +2041,46 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 'energy': 'Übermäßige Energie',
                 'destructive': 'Zerstörerisches Verhalten',
                 'soiling': 'In die Wohnung machen',
-                'mouthing': 'Unerwünschtes Aufnehmen'
+                'mouthing': 'Unerwünschtes Aufnehmen',
+                'visitor-anxiety': 'Angst bei Besuch',
+                'thunder-anxiety': 'Gewitterangst',
+                'noise-sensitivity': 'Geräuschempfindlichkeit',
+                'general-anxiety': 'Allgemeine Ängstlichkeit',
+                'stranger-anxiety': 'Angst vor Fremden',
+                'anxious-overreaction': 'Ängstliche Überreaktion',
+                'separation': 'Trennungsangst',
+                'chasing': 'Jagdverhalten',
+                'chasing-movement': 'Jagt Bewegungen',
+                'prey-drive': 'Starker Jagdtrieb',
+                'chasing-cars': 'Jagt Autos/Fahrräder',
+                'eating-unwanted': 'Frisst Unerwünschtes',
+                'eating-trash': 'Frisst aus dem Müll',
+                'eating-objects': 'Frisst Gegenstände',
+                'postman-reactive': 'Reaktiv auf Postboten',
+                'dog-reactive': 'Reaktiv auf andere Hunde',
+                'leash-reactive': 'Leinenreaktivität',
+                'overreaction': 'Überreaktion auf Reize',
+                'vocalization': 'Übermäßiges Lautgeben',
+                'resource-guarding': 'Ressourcenverteidigung',
+                'biting': 'Beißen/Schnappen',
+                'digging': 'Buddeln',
+                'marking': 'Markieren in der Wohnung',
+                'custom-other': 'Sonstiges Verhalten'
             };
             problemText = problemMap[dogProblem] || dogProblem;
         }
-        
         document.getElementById('userProblem').textContent = problemText;
-        
-        // Dynamische Benefits basierend auf Problem
+
+        const defaultBenefits = [
+            '✓ ' + dogName + 's Gehorsam schnell verbessern',
+            '✓ Verhaltensprobleme gezielt lösen',
+            '✓ Neue Trainingstechniken für ' + dogName,
+            '✓ Stärkere Bindung zu ' + dogName + ' aufbauen',
+            '✓ Dauerhaft gutes Verhalten erreichen',
+            '✓ 20+ Übungen speziell für ' + dogName,
+            '✓ Glückliches Zusammenleben mit ' + dogName
+        ];
+
         const benefitsMap = {
             'pulling': [
                 '✓ ' + dogName + 's Leinenziehen effektiv abtrainieren',
@@ -2513,18 +2173,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 '✓ Entspannte Spaziergänge ohne Sorgen'
             ]
         };
-        
-        // Default Benefits falls Problem nicht gemappt
-        const defaultBenefits = [
-            '✓ ' + dogName + 's Gehorsam schnell verbessern',
-            '✓ Verhaltensprobleme gezielt lösen',
-            '✓ Neue Trainingstechniken für ' + dogName,
-            '✓ Stärkere Bindung zu ' + dogName + ' aufbauen',
-            '✓ Dauerhaft gutes Verhalten erreichen',
-            '✓ 20+ Übungen speziell für ' + dogName,
-            '✓ Glückliches Zusammenleben mit ' + dogName
-        ];
-        
+
         const benefits = benefitsMap[dogProblem] || defaultBenefits;
         const benefitsList = document.getElementById('benefitsList');
         benefits.forEach(benefit => {
@@ -2532,12 +2181,32 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             li.textContent = benefit;
             benefitsList.appendChild(li);
         });
-        
-        // Problem-Label in Stat-Boxen aktualisieren
+
+        const popularBadgeMap = {
+            'pulling': '⭐ Beste Lösung bei Leinenziehen',
+            'barking': '⭐ Beste Lösung bei Bellen',
+            'aggression': '⭐ Beste Lösung bei Aggression',
+            'anxiety': '⭐ Beste Lösung bei Trennungsangst',
+            'jumping': '⭐ Beste Lösung bei Anspringen',
+            'recall': '⭐ Beste Lösung bei Rückruf-Problemen',
+            'energy': '⭐ Beste Lösung bei Hyperaktivität',
+            'destructive': '⭐ Beste Lösung bei Zerstörungswut',
+            'soiling': '⭐ Beste Lösung bei Stubenreinheit',
+            'mouthing': '⭐ Beste Lösung bei unerwünschtem Aufnehmen'
+        };
+
+        const popularBadge = document.getElementById('popularBadge');
+        if (popularBadge) {
+            if (territorialAggression === 'yes') {
+                popularBadge.textContent = '⭐ Beste Lösung bei territorialer Aggression';
+            } else {
+                popularBadge.textContent = popularBadgeMap[dogProblem] || '⭐ Für dauerhafte Veränderung';
+            }
+        }
+
         document.getElementById('problemLabel1').textContent = problemText;
         document.getElementById('problemLabel2').textContent = problemText;
-        
-        // Dynamische Werte basierend auf Problem-Typ
+
         const problemValueMap = {
             'pulling': { bad: 'Stark', good: 'Kontrolliert' },
             'barking': { bad: 'Häufig', good: 'Ruhig' },
@@ -2550,10 +2219,10 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             'soiling': { bad: 'Regelmäßig', good: 'Stubenrein' },
             'mouthing': { bad: 'Ständig', good: 'Kontrolliert' }
         };
-        
+
         const defaultValues = { bad: 'Kritisch', good: 'Gelöst' };
         const values = problemValueMap[dogProblem] || defaultValues;
-        
+
         if (territorialAggression === 'yes') {
             document.getElementById('problemValue1').textContent = 'Kritisch';
             document.getElementById('problemValue2').textContent = 'Friedlich';
@@ -2564,11 +2233,10 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 
         let timeLeft;
         let timerExpired = false;
-        
+
         function initializeTimer() {
             const savedStartTime = localStorage.getItem('wauwerk_timerStartTime');
             const timerDuration = 10 * 60;
-            
             if (savedStartTime) {
                 const startTime = parseInt(savedStartTime);
                 const currentTime = Date.now();
@@ -2579,9 +2247,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 localStorage.setItem('wauwerk_timerStartTime', Date.now().toString());
             }
         }
-        
+
         initializeTimer();
-        
+
         function updateTimer() {
             if (timeLeft <= 0) {
                 timerExpired = true;
@@ -2589,92 +2257,56 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 switchToNormalPrices();
                 return;
             }
-            
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
-            document.getElementById('timer').textContent = 
-                minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
-            
+            document.getElementById('timer').textContent = minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
             timeLeft--;
             setTimeout(updateTimer, 1000);
         }
-        
+
         const pricingCards = document.querySelectorAll('.pricing-card');
         let selectedPlan = '3month';
 
         const planDetails = {
-            '1month': { 
-                price: '€24,99', 
-                priceNormal: '€49,99',
-                name: '1-Monats-Plan', 
-                interval: 'monatlich' 
-            },
-            '3month': { 
-                price: '€29,99', 
-                priceNormal: '€79,99',
-                name: '3-Monats-Plan', 
-                interval: 'alle 3 Monate' 
-            },
-            '6month': { 
-                price: '€49,99', 
-                priceNormal: '€119,99',
-                name: '6-Monats-Plan', 
-                interval: 'alle 6 Monate' 
-            }
+            '1month': { price: '€24,99', priceNormal: '€49,99', name: '1-Monats-Plan', interval: 'monatlich' },
+            '3month': { price: '€29,99', priceNormal: '€79,99', name: '3-Monats-Plan', interval: 'alle 3 Monate' },
+            '6month': { price: '€49,99', priceNormal: '€119,99', name: '6-Monats-Plan', interval: 'alle 6 Monate' }
         };
 
         function switchToNormalPrices() {
-            document.querySelectorAll('.price-old').forEach(el => {
-                el.style.display = 'none';
-            });
-            
+            document.querySelectorAll('.price-old').forEach(el => { el.style.display = 'none'; });
             const cards = document.querySelectorAll('.pricing-card');
-            
-            // 1-Monat: €49,99 = €1,67/Tag
             cards[0].querySelector('.price-amount').textContent = '1';
             cards[0].querySelector('.price-cents').textContent = ',67';
             cards[0].dataset.price = '49.99';
-            
-            // 3-Monat: €79,99 = €0,89/Tag
             cards[1].querySelector('.price-amount').textContent = '0';
             cards[1].querySelector('.price-cents').textContent = ',89';
             cards[1].dataset.price = '79.99';
-            
-            // 6-Monat: €119,99 = €0,67/Tag
             cards[2].querySelector('.price-amount').textContent = '0';
             cards[2].querySelector('.price-cents').textContent = ',67';
             cards[2].dataset.price = '119.99';
         }
-        
+
         updateTimer();
 
         function selectPlan(card) {
-            // Wenn bereits ausgewählt -> direkt zum Checkout
             if (card.classList.contains('selected')) {
                 getMyPlan();
                 return;
             }
-            
             pricingCards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             selectedPlan = card.dataset.plan;
         }
 
         pricingCards.forEach(card => {
-            card.addEventListener('click', function() {
-                selectPlan(this);
-            });
+            card.addEventListener('click', function() { selectPlan(this); });
         });
 
         function parseJSON(str) {
-            try {
-                return JSON.parse(str || '[]');
-            } catch(e) {
-                return [];
-            }
+            try { return JSON.parse(str || '[]'); } catch(e) { return []; }
         }
 
-        // Cookie Helper Funktion (global)
         function getCookie(name) {
             const value = '; ' + document.cookie;
             const parts = value.split('; ' + name + '=');
@@ -2682,43 +2314,36 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             return null;
         }
 
-        // Facebook Event ID generieren
         function generateEventId() {
             return 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
 
-        // ==================== GEFIXT: UPDATE statt INSERT ====================
         async function saveToSupabase() {
-            // Prüfen ob bereits ein Lead existiert (aus kurz-schritt11.html)
             const existingLeadId = localStorage.getItem('leadId');
-            
-            // UTM Parameter aus URL oder localStorage holen
             const urlParams = new URLSearchParams(window.location.search);
-            
-            // Facebook Browser ID und Click ID
             const fbp = getCookie('_fbp') || null;
             const fbclid = urlParams.get('fbclid') || localStorage.getItem('fbclid') || null;
             const fbc = getCookie('_fbc') || (fbclid ? 'fb.1.' + Date.now() + '.' + fbclid : null);
-            
-            // Facebook Event ID für Deduplizierung generieren
             const fb_event_id = generateEventId();
             localStorage.setItem('fb_event_id', fb_event_id);
-            
+
             const utmParams = {
                 utm_source: urlParams.get('utm_source') || localStorage.getItem('utm_source') || null,
                 utm_medium: urlParams.get('utm_medium') || localStorage.getItem('utm_medium') || null,
                 utm_campaign: urlParams.get('utm_campaign') || localStorage.getItem('utm_campaign') || null,
                 utm_content: urlParams.get('utm_content') || localStorage.getItem('utm_content') || null,
                 utm_term: urlParams.get('utm_term') || localStorage.getItem('utm_term') || null,
-                fbclid: fbclid,
-                fbp: fbp,
-                fbc: fbc,
-                fb_event_id: fb_event_id,
+                fbclid: fbclid, fbp: fbp, fbc: fbc, fb_event_id: fb_event_id,
                 gclid: urlParams.get('gclid') || localStorage.getItem('gclid') || null,
                 ttclid: urlParams.get('ttclid') || localStorage.getItem('ttclid') || null,
                 referrer: localStorage.getItem('referrer') || null,
                 landing_page: localStorage.getItem('landing_page') || null,
-                first_visit: localStorage.getItem('first_visit') || null
+                first_visit: localStorage.getItem('first_visit') || null,
+                utm_source_auto: localStorage.getItem('utm_source_auto') || null,
+                device_type: localStorage.getItem('device_type') || null,
+                browser: localStorage.getItem('browser') || null,
+                in_app_browser: localStorage.getItem('in_app_browser') || null,
+                email_source: localStorage.getItem('email_source') || null
             };
 
             const answers = {
@@ -2747,16 +2372,15 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 event_timing: localStorage.getItem('eventTiming'),
                 had_training: localStorage.getItem('hadTraining'),
                 territorial_aggression: localStorage.getItem('territorialAggression'),
+                custom_problem_text: localStorage.getItem('customProblem'),
+                custom_problem_key: localStorage.getItem('customProblemKey'),
                 email: localStorage.getItem('userEmail') || null,
                 ...utmParams
             };
 
-            // Answers in localStorage speichern für E-Mail Update
             localStorage.setItem('wauwerk_answers', JSON.stringify(answers));
 
-            // ========== WENN LEAD EXISTIERT: UPDATE STATT INSERT ==========
             if (existingLeadId) {
-                console.log('📝 Updating existing lead:', existingLeadId);
                 try {
                     const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + existingLeadId, {
                         method: 'PATCH',
@@ -2774,21 +2398,11 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                             answers: answers
                         })
                     });
-                    
-                    if (response.ok) {
-                        console.log('✅ Lead updated to pending:', existingLeadId);
-                        return existingLeadId;
-                    } else {
-                        console.error('❌ Update failed:', await response.text());
-                    }
-                } catch (error) {
-                    console.error('❌ Update error:', error);
-                }
-                // Falls Update fehlschlägt, trotzdem existingLeadId zurückgeben
+                    if (response.ok) { return existingLeadId; }
+                } catch (error) { console.error('Update error:', error); }
                 return existingLeadId;
             }
 
-            // ========== FALLBACK: NEUEN LEAD ERSTELLEN (sollte selten passieren) ==========
             const leadData = {
                 dog_name: localStorage.getItem('dogName'),
                 selected_plan: selectedPlan,
@@ -2798,8 +2412,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 answers: answers,
                 email: localStorage.getItem('userEmail') || null
             };
-
-            console.log('📝 Creating new lead (no existing leadId found)');
 
             try {
                 const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads', {
@@ -2812,24 +2424,12 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     },
                     body: JSON.stringify(leadData)
                 });
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Supabase error:', response.status, errorText);
-                    return null;
-                }
-                
+                if (!response.ok) { return null; }
                 const data = await response.json();
-                console.log('Supabase response:', data);
                 const newId = data[0]?.id || null;
-                if (newId) {
-                    localStorage.setItem('leadId', newId);
-                }
+                if (newId) { localStorage.setItem('leadId', newId); }
                 return newId;
-            } catch (error) {
-                console.error('Failed to save lead:', error);
-                return null;
-            }
+            } catch (error) { return null; }
         }
 
         let tpCurrentSlide = 0;
@@ -2839,15 +2439,11 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         function goToTpSlide(index) {
             tpCurrentSlide = index;
             tpTrack.style.transform = 'translateX(-' + (index * 100) + '%)';
-            tpDots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
+            tpDots.forEach((dot, i) => { dot.classList.toggle('active', i === index); });
         }
 
         tpDots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                goToTpSlide(parseInt(dot.dataset.index));
-            });
+            dot.addEventListener('click', () => { goToTpSlide(parseInt(dot.dataset.index)); });
         });
 
         setInterval(() => {
@@ -2855,31 +2451,21 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             goToTpSlide(tpCurrentSlide);
         }, 4000);
 
-        // Exit-Intent Popup Logic - nur wenn vom Checkout/Stripe zurück
         let exitPopupShown = false;
-        
-        // Prüfen ob User von Stripe zurückkommt
         const fromStripe = localStorage.getItem('wentToStripe') === 'true';
-        
+
         if (fromStripe && !sessionStorage.getItem('exitPopupShown')) {
-            // User kam von Stripe zurück ohne zu kaufen - Popup sofort zeigen
-            setTimeout(() => {
-                showExitPopup();
-            }, 500);
+            setTimeout(() => { showExitPopup(); }, 500);
         }
-        
-        // Back-Button Detection - nur wenn von Stripe
+
         window.addEventListener('pageshow', function(event) {
             if (localStorage.getItem('wentToStripe') === 'true') {
                 if (!exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
-                    setTimeout(() => {
-                        showExitPopup();
-                    }, 300);
+                    setTimeout(() => { showExitPopup(); }, 300);
                 }
             }
         });
 
-        // Emotional headlines based on problem
         const emotionalHeadlines = {
             'pulling': 'In 4 Wochen entspannte Spaziergänge',
             'barking': 'In 4 Wochen ein ruhiges Zuhause',
@@ -2892,28 +2478,22 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             'soiling': 'In 4 Wochen ein stubenreiner Hund',
             'mouthing': 'In 4 Wochen keine unerwünschten Sachen mehr im Maul'
         };
-        
+
         function showExitPopup() {
             if (exitPopupShown) return;
             exitPopupShown = true;
             sessionStorage.setItem('exitPopupShown', 'true');
-            
-            // Dynamic headline based on problem
             const popupHeadlineEl = document.getElementById('popupHeadline');
             if (popupHeadlineEl) {
-                const headline = emotionalHeadlines[dogProblem] || 'In 4 Wochen ein entspannter Hund';
-                popupHeadlineEl.textContent = headline;
+                popupHeadlineEl.textContent = emotionalHeadlines[dogProblem] || 'In 4 Wochen ein entspannter Hund';
             }
-            
             document.getElementById('exitPopup').classList.add('active');
-            
-            // Trigger line animation
             const popup = document.querySelector('.exit-popup');
             popup.classList.remove('animate');
-            void popup.offsetWidth; // Force reflow
+            void popup.offsetWidth;
             popup.classList.add('animate');
         }
-        
+
         function closeExitPopup() {
             document.getElementById('exitPopup').classList.remove('active');
             document.querySelector('.exit-popup').classList.remove('animate');
@@ -2921,9 +2501,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         }
 
         // ==================== CHECKOUT POPUP ====================
-        
         const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
-        
+
         let stripe = null;
         let elements = null;
         let paymentElement = null;
@@ -2931,7 +2510,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         let clientSecret = null;
         let userEmail = null;
 
-        // Preise
         const checkoutPrices = {
             '1month': { discount: 24.99, normal: 49.99, oldTotal: 271.94, duration: '1-Monats-Plan' },
             '3month': { discount: 29.99, normal: 79.99, oldTotal: 301.94, duration: '3-Monats-Plan' },
@@ -2939,96 +2517,98 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         };
 
         async function openCheckoutPopup() {
-            // Erst Lead in Supabase speichern (non-blocking)
             saveToSupabase().then(id => { currentLeadId = id; }).catch(e => console.error(e));
-            
-            const priceData = checkoutPrices[selectedPlan] || checkoutPrices['1month'];
+
+            const priceData = checkoutPrices[selectedPlan] || checkoutPrices['3month'];
             const price = timerExpired ? priceData.normal : priceData.discount;
-            
-            // Popup Daten füllen
+
             document.getElementById('checkoutDogName').textContent = dogName;
             document.getElementById('checkoutPlanDuration').textContent = priceData.duration;
             document.getElementById('checkoutPlanPrice').textContent = '€' + price.toFixed(2).replace('.', ',');
-            
-            // Step 2 Werte auch setzen
-            const planDuration2 = document.getElementById('checkoutPlanDuration2');
-            const planPrice2 = document.getElementById('checkoutPlanPrice2');
-            if (planDuration2) planDuration2.textContent = priceData.duration;
-            if (planPrice2) planPrice2.textContent = '€' + price.toFixed(2).replace('.', ',');
-            
-            const checkoutTotalPrice = document.getElementById('checkoutTotalPrice');
-            if (checkoutTotalPrice) checkoutTotalPrice.textContent = '€' + price.toFixed(2).replace('.', ',');
-            
-            // Problem-Labels
-            const problemLabels = {
-                'pulling': 'Leinenziehen',
-                'barking': 'Bellen',
-                'aggression': 'Aggression',
-                'anxiety': 'Trennungsangst',
-                'jumping': 'Anspringen',
-                'recall': 'Rückruf',
-                'energy': 'Hyperaktivität',
-                'destructive': 'Zerstörungswut',
-                'soiling': 'Stubenreinheit',
-                'mouthing': 'Unerwünschtes Aufnehmen'
+
+            // Hundename in Plan-Karte
+            const checkoutDogNamePlan = document.getElementById('checkoutDogNamePlan');
+            if (checkoutDogNamePlan) checkoutDogNamePlan.textContent = dogName;
+
+            // Tagespreis berechnen
+            const dailyPrices = {
+                '1month': { discount: '0,83', normal: '1,67' },
+                '3month': { discount: '0,33', normal: '0,89' },
+                '6month': { discount: '0,27', normal: '0,67' }
             };
-            
-            const dogProblemValue = localStorage.getItem('dogProblem') || 'anxiety';
-            const checkoutDogProblem = document.getElementById('checkoutDogProblem');
-            if (checkoutDogProblem) {
-                checkoutDogProblem.textContent = problemLabels[dogProblemValue] || 'dein Problem';
+            const dailyData = dailyPrices[selectedPlan] || dailyPrices['3month'];
+            const dailyPrice = timerExpired ? dailyData.normal : dailyData.discount;
+            const checkoutDailyPrice = document.getElementById('checkoutDailyPrice');
+            if (checkoutDailyPrice) checkoutDailyPrice.textContent = '≈ ' + dailyPrice + ' € pro Tag';
+
+            // Plan-Hint basierend auf Laufzeit
+            const planHints = {
+                '1month': '⚡ Intensives Training – schnelle Ergebnisse',
+                '3month': '⭐ Ideales Tempo für dauerhafte Ergebnisse',
+                '6month': '🧘 Entspanntes Training – nachhaltige Veränderung'
+            };
+            const checkoutPlanHint = document.getElementById('checkoutPlanHint');
+            if (checkoutPlanHint) {
+                checkoutPlanHint.textContent = planHints[selectedPlan] || planHints['3month'];
             }
+
+            // Problem Labels für Checkout
+            const problemLabels = {
+                'pulling': 'gegen Leinenziehen',
+                'barking': 'gegen übermäßiges Bellen',
+                'aggression': 'gegen Aggression',
+                'anxiety': 'gegen Trennungsangst',
+                'jumping': 'gegen Anspringen',
+                'recall': 'für sicheren Rückruf',
+                'energy': 'gegen Hyperaktivität',
+                'destructive': 'gegen Zerstörungswut',
+                'soiling': 'für Stubenreinheit',
+                'mouthing': 'gegen unerwünschtes Aufnehmen'
+            };
+
+            const dogProblemValue = localStorage.getItem('dogProblem') || 'anxiety';
             const checkoutDogProblem2 = document.getElementById('checkoutDogProblem2');
             if (checkoutDogProblem2) {
                 checkoutDogProblem2.textContent = problemLabels[dogProblemValue] || 'dein Problem';
             }
-            
-            // E-Mail aus localStorage (wurde in kurz-schritt11.html gesammelt)
+
             userEmail = localStorage.getItem('userEmail') || '';
 
-            // Direkt zu Zahlung (E-Mail Step überspringen)
+            // Button-Text mit Hundename
+            const checkoutBtnText = document.getElementById('checkoutBtnText');
+            if (checkoutBtnText) {
+                checkoutBtnText.textContent = 'Training mit ' + dogName + ' starten';
+            }
+
             document.getElementById('checkoutStepEmail').classList.add('hidden');
             document.getElementById('checkoutStep1').classList.add('hidden');
             document.getElementById('checkoutStep2').classList.add('active');
 
-            // Popup öffnen
             document.getElementById('checkoutPopup').classList.add('active');
             document.body.style.overflow = 'hidden';
 
-            // Direkt Stripe laden
             goToPaymentStep();
         }
 
         function closeCheckoutPopup() {
             document.getElementById('checkoutPopup').classList.remove('active');
             document.body.style.overflow = '';
-            
-            // Exit Popup zeigen wenn Checkout geschlossen wird
             if (!sessionStorage.getItem('exitPopupShown')) {
-                setTimeout(() => {
-                    showExitPopup();
-                }, 300);
+                setTimeout(() => { showExitPopup(); }, 300);
             }
         }
 
         async function goToPaymentStep() {
-            // E-Mail und Step 1 verstecken, Step 2 zeigen
             document.getElementById('checkoutStepEmail').classList.add('hidden');
             document.getElementById('checkoutStep1').classList.add('hidden');
             document.getElementById('checkoutStep2').classList.add('active');
-            
-            // Stripe initialisieren
-            if (!stripe) {
-                stripe = Stripe(STRIPE_PUBLIC_KEY);
-            }
-            
-            // PaymentIntent vom Server holen
+
+            if (!stripe) { stripe = Stripe(STRIPE_PUBLIC_KEY); }
+
             try {
-                const priceData = checkoutPrices[selectedPlan] || checkoutPrices['1month'];
-                
-                // Plan im localStorage speichern für Upsell-Seite
+                const priceData = checkoutPrices[selectedPlan] || checkoutPrices['3month'];
                 localStorage.setItem('selectedPlan', selectedPlan);
-                
+
                 const response = await fetch('/api/wauwerk-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -3049,22 +2629,17 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         ttclid: localStorage.getItem('ttclid') || ''
                     })
                 });
-                
+
                 const data = await response.json();
-                
-                if (data.error) {
-                    showCheckoutError(data.error);
-                    return;
-                }
-                
+                if (data.error) { showCheckoutError(data.error); return; }
+
                 clientSecret = data.clientSecret;
-                
-                // Event ID (payment_intent) und fb_event_id in answers updaten
+
                 if (currentLeadId && data.paymentIntentId) {
                     const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
                     currentAnswers.event_id = data.paymentIntentId;
                     currentAnswers.fb_event_id = localStorage.getItem('fb_event_id') || '';
-                    
+
                     fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + currentLeadId, {
                         method: 'PATCH',
                         headers: {
@@ -3073,15 +2648,11 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                             'Content-Type': 'application/json',
                             'Prefer': 'return=minimal'
                         },
-                        body: JSON.stringify({ 
-                            answers: currentAnswers
-                        })
+                        body: JSON.stringify({ answers: currentAnswers })
                     });
-                    
                     localStorage.setItem('wauwerk_answers', JSON.stringify(currentAnswers));
                 }
-                
-                // Stripe Elements erstellen
+
                 elements = stripe.elements({
                     clientSecret: clientSecret,
                     appearance: {
@@ -3097,22 +2668,15 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     },
                     locale: 'de'
                 });
-                
-                // Payment Element mounten
+
                 paymentElement = elements.create('payment', {
-                    layout: {
-                        type: 'tabs',
-                        defaultCollapsed: false
-                    },
+                    layout: { type: 'tabs', defaultCollapsed: false },
                     paymentMethodOrder: ['klarna', 'paypal', 'card'],
-                    wallets: {
-                        applePay: 'auto',
-                        googlePay: 'auto'
-                    }
+                    wallets: { applePay: 'auto', googlePay: 'auto' }
                 });
-                
+
                 paymentElement.mount('#payment-element');
-                
+
             } catch (error) {
                 console.error('Checkout Error:', error);
                 showCheckoutError('Verbindungsfehler. Bitte versuche es erneut.');
@@ -3123,9 +2687,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             const payBtn = document.getElementById('checkoutPayBtn');
             payBtn.disabled = true;
             payBtn.innerHTML = '<span class="spinner"></span> Wird verarbeitet...';
-            
             hideCheckoutError();
-            
+
             try {
                 const { error } = await stripe.confirmPayment({
                     elements,
@@ -3133,14 +2696,12 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         return_url: window.location.origin + '/zusatz.html?lead_id=' + currentLeadId
                     }
                 });
-                
+
                 if (error) {
                     showCheckoutError(error.message);
                     payBtn.disabled = false;
                     payBtn.innerHTML = '🔒 Jetzt bezahlen';
                 }
-                // Bei Erfolg wird automatisch weitergeleitet
-                
             } catch (err) {
                 showCheckoutError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
                 payBtn.disabled = false;
@@ -3158,143 +2719,127 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             document.getElementById('checkoutError').classList.remove('visible');
         }
 
-        // getMyPlan überschreiben um Checkout Popup zu öffnen
         async function getMyPlan() {
             openCheckoutPopup();
         }
     </script>
 
 <!-- Checkout Popup -->
-    <div class="checkout-overlay" id="checkoutPopup">
-        <div class="checkout-popup">
-            <div class="checkout-header">
-                <button class="checkout-close" onclick="closeCheckoutPopup()">×</button>
-                <h2 class="checkout-title">Dein Plan für <span id="checkoutDogName">deinen Hund</span></h2>
-            </div>
-            
-            <div class="checkout-body">
-                <!-- Step 0: E-Mail (wird übersprungen) -->
-                <div class="checkout-step-email hidden" id="checkoutStepEmail">
-                    <!-- E-Mail wird jetzt vorher in kurz-schritt11.html gesammelt -->
+<div class="checkout-overlay" id="checkoutPopup">
+    <div class="checkout-popup">
+        <div class="checkout-header">
+            <button class="checkout-close" onclick="closeCheckoutPopup()">×</button>
+            <h2 class="checkout-title">Dein Plan für <span id="checkoutDogName">deinen Hund</span></h2>
+        </div>
+        
+        <div class="checkout-body">
+            <div class="checkout-step-email hidden" id="checkoutStepEmail"></div>
+            <div class="checkout-step-1 hidden" id="checkoutStep1"></div>
+
+            <div class="checkout-step-2" id="checkoutStep2">
+                <!-- Live Indicator -->
+                <div class="checkout-live-indicator" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; font-size: 12px; color: var(--text-medium);">
+                    <span class="live-dot" style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse-live 2s ease-in-out infinite;"></span>
+                    <span id="checkoutLiveCount">127 Hundebesitzer haben diese Woche gestartet</span>
                 </div>
 
-                <!-- Step 1: Übersicht (wird übersprungen) -->
-                <div class="checkout-step-1 hidden" id="checkoutStep1">
+                <div class="checkout-plan-card" style="margin-bottom: 6px;">
+                    <div class="checkout-plan-image">🐕</div>
+                    <div class="checkout-plan-info">
+                        <div class="checkout-plan-name">Personalisierter Trainingsplan</div>
+                        <div class="checkout-plan-duration" id="checkoutPlanDuration">3-Monats-Plan</div>
+                        <div class="checkout-plan-personalized">Individuell erstellt für <span id="checkoutDogNamePlan">deinen Hund</span></div>
+                    </div>
+                    <div class="checkout-plan-price-box">
+                        <div class="checkout-plan-price" id="checkoutPlanPrice">€29,99</div>
+                        <div class="checkout-plan-price-sub">einmalig</div>
+                        <div class="checkout-plan-daily" id="checkoutDailyPrice">≈ 0,33 € pro Tag</div>
+                    </div>
                 </div>
 
-                <!-- Step 2: Payment -->
-                <div class="checkout-step-2" id="checkoutStep2">
-                    <!-- Plan Card oben -->
-                    <div class="checkout-plan-card" style="margin-bottom: 12px;">
-                        <div class="checkout-plan-image">🐕</div>
-                        <div class="checkout-plan-info">
-                            <div class="checkout-plan-name">Personalisierter Trainingsplan</div>
-                            <div class="checkout-plan-duration" id="checkoutPlanDuration">3-Monats-Plan</div>
-                        </div>
-                        <div class="checkout-plan-price-box">
-                            <div class="checkout-plan-price" id="checkoutPlanPrice">€29,99</div>
-                            <div class="checkout-plan-access">Voller Zugang</div>
-                        </div>
-                    </div>
-
-                    <!-- Features kompakt -->
-                    <div class="checkout-features-compact" style="margin-bottom: 12px;">
-                        <div class="checkout-feature-row">✓ 20+ Übungen für <span id="checkoutDogProblem2">dein Problem</span></div>
-                        <div class="checkout-feature-row">✓ Persönlicher Wochenplan</div>
-                        <div class="checkout-feature-row">✓ Schritt-für-Schritt Anleitungen</div>
-                    </div>
-
-                    <!-- 30 Tage Garantie -->
-                    <div class="checkout-guarantee-compact" style="margin-bottom: 15px;">🛡️ 30 Tage Geld-zurück-Garantie</div>
-
-                    <h3 style="text-align: center; margin-bottom: 15px; font-size: 16px; color: #6B6B6B;">Zahlungsmethode wählen</h3>
-
-                    <div class="checkout-error" id="checkoutError"></div>
-
-                    <div class="stripe-element-container">
-                        <div id="payment-element"></div>
-                    </div>
-
-                    <button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">
-                        🔒 Jetzt bezahlen
-                    </button>
-
-                    <div class="payment-icons">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
-                        <img src="klarna-logo.png" alt="Klarna">
-                    </div>
-
-                    <button class="checkout-back" onclick="closeCheckoutPopup()">← Zurück</button>
+                <!-- Plan Hint Box -->
+                <div class="checkout-plan-hint" id="checkoutPlanHint" style="text-align: center; padding: 8px 12px; background: linear-gradient(135deg, #FFF9F0 0%, #FFF5E6 100%); border-radius: 8px; font-size: 12px; color: var(--dark-brown); margin-bottom: 6px; font-weight: 500;">
+                    ⭐ Ideales Tempo für dauerhafte Ergebnisse
                 </div>
+
+                <div class="checkout-features-compact" style="margin-bottom: 6px;">
+                    <div class="checkout-feature-row">✓ 20+ gezielte Übungen <span id="checkoutDogProblem2" class="problem-highlight">gegen dein Problem</span></div>
+                    <div class="checkout-feature-row">✓ Schritt für Schritt erklärt mit 30 Tage Garantie</div>
+                </div>
+
+                <h3 style="text-align: center; margin-bottom: 6px; font-size: 14px; color: #6B6B6B;">Zahlungsmethode wählen</h3>
+
+                <div class="checkout-error" id="checkoutError"></div>
+
+                <div class="stripe-element-container">
+                    <div id="payment-element"></div>
+                </div>
+
+                <button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">
+                    🐕 <span id="checkoutBtnText">Training starten</span>
+                </button>
+
+                <div class="payment-icons">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
+                    <img src="klarna-logo.png" alt="Klarna">
+                </div>
+
+                <button class="checkout-back" onclick="closeCheckoutPopup()">Ich brauche noch einen Moment</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Exit-Intent Popup -->
-    <div class="exit-popup-overlay" id="exitPopup">
-        <div class="exit-popup">
-            <button class="exit-popup-close" onclick="closeExitPopup()">×</button>
-            <h3 class="exit-popup-title">Stell dir vor: <span class="highlight" id="popupHeadline">In 4 Wochen ein entspannter Hund</span></h3>
-            <p class="exit-popup-subtitle">So erreichst du es mit <span class="exit-popup-highlight">WauWerk</span>:</p>
-            
-            <div class="comparison-graph">
-                <div class="graph-container">
-                    <svg class="graph-svg" viewBox="0 0 300 140">
-                        <!-- Grid lines -->
-                        <line x1="40" y1="20" x2="40" y2="110" stroke="#ddd" stroke-width="1"/>
-                        <line x1="40" y1="110" x2="280" y2="110" stroke="#ddd" stroke-width="1"/>
-                        <line x1="40" y1="65" x2="280" y2="65" stroke="#eee" stroke-width="1" stroke-dasharray="4"/>
-                        <line x1="40" y1="20" x2="280" y2="20" stroke="#eee" stroke-width="1" stroke-dasharray="4"/>
-                        
-                        <!-- Y-axis labels -->
-                        <text x="5" y="24" class="axis-label">100%</text>
-                        <text x="5" y="69" class="axis-label">50%</text>
-                        <text x="5" y="114" class="axis-label">0%</text>
-                        
-                        <!-- X-axis labels -->
-                        <text x="40" y="125" class="axis-label">Start</text>
-                        <text x="95" y="125" class="axis-label">4 Wo.</text>
-                        <text x="240" y="125" class="axis-label">12 Mo.</text>
-                        
-                        <!-- WauWerk line (fast rise) -->
-                        <path class="line-wauwerk" d="M 40 110 Q 70 60, 110 25" stroke="#4CAF50" stroke-width="3" fill="none" stroke-linecap="round"/>
-                        <circle class="goal-circle" cx="110" cy="25" r="5" fill="#4CAF50"/>
-                        <text class="goal-text" x="115" y="22" font-size="10" fill="#4CAF50" font-weight="600">✓ Ziel</text>
-                        
-                        <!-- Alone line (slow rise) -->
-                        <path class="line-alone" d="M 40 110 Q 120 100, 180 80 T 280 55" stroke="#9E9E9E" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="5,3"/>
-                        <text class="goal-text" x="245" y="48" font-size="9" fill="#9E9E9E">vielleicht...</text>
-                    </svg>
-                </div>
-                <div class="graph-legend">
-                    <div class="legend-item">
-                        <div class="legend-dot wauwerk"></div>
-                        <span>Mit WauWerk</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-dot alone"></div>
-                        <span>Alleine</span>
-                    </div>
-                </div>
+<!-- Exit-Intent Popup -->
+<div class="exit-popup-overlay" id="exitPopup">
+    <div class="exit-popup">
+        <button class="exit-popup-close" onclick="closeExitPopup()">×</button>
+        <h3 class="exit-popup-title">Stell dir vor: <span class="highlight" id="popupHeadline">In 4 Wochen ein entspannter Hund</span></h3>
+        <p class="exit-popup-subtitle">So erreichst du es mit <span class="exit-popup-highlight">WauWerk</span>:</p>
+        
+        <div class="comparison-graph">
+            <div class="graph-container">
+                <svg class="graph-svg" viewBox="0 0 300 140">
+                    <line x1="40" y1="20" x2="40" y2="110" stroke="#ddd" stroke-width="1"/>
+                    <line x1="40" y1="110" x2="280" y2="110" stroke="#ddd" stroke-width="1"/>
+                    <line x1="40" y1="65" x2="280" y2="65" stroke="#eee" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="40" y1="20" x2="280" y2="20" stroke="#eee" stroke-width="1" stroke-dasharray="4"/>
+                    <text x="5" y="24" class="axis-label">100%</text>
+                    <text x="5" y="69" class="axis-label">50%</text>
+                    <text x="5" y="114" class="axis-label">0%</text>
+                    <text x="40" y="125" class="axis-label">Start</text>
+                    <text x="95" y="125" class="axis-label">4 Wo.</text>
+                    <text x="240" y="125" class="axis-label">12 Mo.</text>
+                    <path class="line-wauwerk" d="M 40 110 Q 70 60, 110 25" stroke="#4CAF50" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <circle class="goal-circle" cx="110" cy="25" r="5" fill="#4CAF50"/>
+                    <text class="goal-text" x="115" y="22" font-size="10" fill="#4CAF50" font-weight="600">✓ Ziel</text>
+                    <path class="line-alone" d="M 40 110 Q 120 100, 180 80 T 280 55" stroke="#9E9E9E" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="5,3"/>
+                    <text class="goal-text" x="245" y="48" font-size="9" fill="#9E9E9E">vielleicht...</text>
+                </svg>
             </div>
-
-            <div class="exit-popup-benefits">
-                <span class="benefit-tag">✓ Schritt-für-Schritt</span>
-                <span class="benefit-tag">✓ 30 Tage Garantie</span>
-                <span class="benefit-tag">✓ Sofort starten</span>
-                <span class="benefit-tag">✓ Support inklusive</span>
+            <div class="graph-legend">
+                <div class="legend-item"><div class="legend-dot wauwerk"></div><span>Mit WauWerk</span></div>
+                <div class="legend-item"><div class="legend-dot alone"></div><span>Alleine</span></div>
             </div>
-
-            <button class="exit-popup-cta" onclick="closeExitPopup(); document.querySelector('.cta-button').click();">
-                Trainingsplan freischalten
-            </button>
-            <button class="exit-popup-skip" onclick="closeExitPopup()">
-                Nein danke, ich überlege noch
-            </button>
         </div>
+
+        <div class="exit-popup-benefits">
+            <span class="benefit-tag">✓ Schritt-für-Schritt</span>
+            <span class="benefit-tag">✓ 30 Tage Garantie</span>
+            <span class="benefit-tag">✓ Sofort starten</span>
+            <span class="benefit-tag">✓ Support inklusive</span>
+        </div>
+
+        <button class="exit-popup-cta" onclick="closeExitPopup(); document.querySelector('.cta-button').click();">
+            Trainingsplan freischalten
+        </button>
+        <button class="exit-popup-skip" onclick="closeExitPopup()">
+            Nein danke, ich überlege noch
+        </button>
     </div>
+</div>
 
 </body>
 </html>
