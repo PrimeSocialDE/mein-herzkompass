@@ -37,12 +37,12 @@ export async function POST(request: Request) {
         // Bundle erkennen (z.B. "pulling+anxiety")
         const isBundle = bundle || module.includes('+');
         
-        // Preis: Premium = 197€, Bundle = 25€, Einzelmodul = 19€
+        // Preis: Premium = 249,99€, Bundle = 25€, Einzelmodul = 19€
         let amount: number;
         if (price) {
             amount = price;
         } else if (isPremium) {
-            amount = 19700; // €197
+            amount = 24999; // €249,99
         } else if (isBundle) {
             amount = 2500; // €25
         } else {
