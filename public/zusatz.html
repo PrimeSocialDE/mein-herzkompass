@@ -15,6 +15,30 @@
         gtag('config', 'AW-17806525009');
     </script>
 
+    <!-- SOFORT PRÜFEN: Wurde Zahlung abgebrochen? -->
+    <script>
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectStatus = urlParams.get('redirect_status');
+            const paymentIntent = urlParams.get('payment_intent');
+            
+            // Wenn redirect_status vorhanden aber NICHT "succeeded" → Zahlung abgebrochen
+            if (redirectStatus && redirectStatus !== 'succeeded') {
+                console.log('❌ Zahlung abgebrochen, redirect_status:', redirectStatus);
+                // Zurück zur Checkout-Seite
+                window.location.href = '/kurz-checkout.html?cancelled=true';
+                return;
+            }
+            
+            // Wenn payment_intent vorhanden aber kein redirect_status → auch prüfen
+            // (Manche Payment Methods wie Klarna setzen redirect_status nicht immer)
+            if (paymentIntent && !redirectStatus) {
+                // Das ist okay - wir lassen es durchlaufen und prüfen unten
+                console.log('ℹ️ Payment Intent ohne redirect_status, prüfe weiter...');
+            }
+        })();
+    </script>
+
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
