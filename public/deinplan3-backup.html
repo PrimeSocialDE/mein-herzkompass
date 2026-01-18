@@ -5,3344 +5,417 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WauWerk - Dein Trainingsplan ist fertig</title>
     <link rel="icon" type="image/png" href="favconHund.png">
-
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'AW-17806525009');
-</script>
-
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-17806525009');
+    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --text-dark: #2C2C2E;
-            --text-medium: #6B6B6B;
-            --text-light: #999999;
-            --background: #FFFFFF;
-            --white: #FFFFFF;
-            --border-light: #E8E4DF;
-            --light-brown: #D4B996;
-            --warm-brown: #C4A576;
-            --dark-brown: #8B7355;
-            --accent-brown: #D4B996;
-            --accent-red: #E8A598;
-            --accent-green: #A8C5A0;
+            --text-dark: #2C2C2E; --text-medium: #6B6B6B; --text-light: #999999;
+            --background: #FFFFFF; --white: #FFFFFF; --border-light: #E8E4DF;
+            --light-brown: #D4B996; --warm-brown: #C4A576; --dark-brown: #8B7355;
+            --accent-brown: #D4B996; --accent-red: #E8A598; --accent-green: #A8C5A0;
             --border-radius: 12px;
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--background);
-            color: var(--text-dark);
-            line-height: 1.5;
-        }
-
-        .header {
-            background: var(--white);
-            padding: 16px 20px;
-            text-align: center;
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        .logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-        }
-
-        .logo-image {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-        }
-
-        .logo-text {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .timer-bar {
-            background: var(--dark-brown);
-            color: var(--white);
-            padding: 12px 20px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .timer-bar span {
-            font-weight: 700;
-            color: #F5E6D3;
-        }
-
-        .hero-section {
-            background: linear-gradient(180deg, #F5EDE3 0%, #FFFFFF 100%);
-            padding: 30px 20px 40px;
-        }
-
-        .comparison-container {
-            max-width: 600px;
-            margin: 0 auto;
-            display: flex;
-            gap: 15px;
-            position: relative;
-        }
-
-        .comparison-side {
-            flex: 1;
-            text-align: center;
-        }
-
-        .comparison-badge {
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .badge-now {
-            background: var(--white);
-            color: var(--text-dark);
-            border: 1px solid var(--border-light);
-        }
-
-        .badge-goal {
-            background: var(--warm-brown);
-            color: var(--white);
-        }
-
-        .comparison-image {
-            width: 100%;
-            height: 320px;
-            background: var(--border-light);
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-light);
-            font-size: 14px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .image-now {
-            background: linear-gradient(135deg, #F0DED0 0%, #F5E8DD 100%);
-        }
-
-        .image-goal {
-            background: linear-gradient(135deg, #E8DCCC 0%, #F0E6DA 100%);
-        }
-
-        .comparison-arrows {
-            position: absolute;
-            left: 50%;
-            top: 45%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            font-size: 26px;
-            z-index: 10;
-        }
-
-        .comparison-arrows span {
-            color: var(--warm-brown);
-            opacity: 0.4;
-            animation: lightUp 2s ease-in-out infinite;
-        }
-
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background); color: var(--text-dark); line-height: 1.5; }
+        .header { background: var(--white); padding: 16px 20px; text-align: center; border-bottom: 1px solid var(--border-light); }
+        .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-image { width: 36px; height: 36px; border-radius: 8px; }
+        .logo-text { font-size: 20px; font-weight: 800; color: var(--text-dark); }
+        .timer-bar { background: var(--dark-brown); color: var(--white); padding: 12px 20px; text-align: center; font-size: 16px; }
+        .timer-bar span { font-weight: 700; color: #F5E6D3; }
+        .hero-section { background: linear-gradient(180deg, #F5EDE3 0%, #FFFFFF 100%); padding: 30px 20px 40px; }
+        .comparison-container { max-width: 600px; margin: 0 auto; display: flex; gap: 15px; position: relative; }
+        .comparison-side { flex: 1; text-align: center; }
+        .comparison-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 15px; }
+        .badge-now { background: var(--white); color: var(--text-dark); border: 1px solid var(--border-light); }
+        .badge-goal { background: var(--warm-brown); color: var(--white); }
+        .comparison-image { width: 100%; height: 320px; background: var(--border-light); border-radius: var(--border-radius); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; color: var(--text-light); font-size: 14px; position: relative; overflow: hidden; }
+        .image-now { background: linear-gradient(135deg, #F0DED0 0%, #F5E8DD 100%); }
+        .image-goal { background: linear-gradient(135deg, #E8DCCC 0%, #F0E6DA 100%); }
+        .comparison-arrows { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 26px; z-index: 10; }
+        .comparison-arrows span { color: var(--warm-brown); opacity: 0.4; animation: lightUp 2s ease-in-out infinite; }
         .comparison-arrows span:nth-child(1) { animation-delay: 0s; }
         .comparison-arrows span:nth-child(2) { animation-delay: 0.15s; }
         .comparison-arrows span:nth-child(3) { animation-delay: 0.3s; }
         .comparison-arrows span:nth-child(4) { animation-delay: 0.45s; }
         .comparison-arrows span:nth-child(5) { animation-delay: 0.6s; }
         .comparison-arrows span:nth-child(6) { animation-delay: 0.75s; }
-
-        @keyframes lightUp {
-            0%, 100% {
-                opacity: 0.4;
-                text-shadow: none;
-            }
-            50% {
-                opacity: 1;
-                text-shadow: 0 0 15px rgba(196, 165, 118, 0.9), 0 0 25px rgba(196, 165, 118, 0.6);
-            }
-        }
-
-        .stat-box {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            padding: 15px;
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 4px;
-        }
-
-        .stat-value {
-            font-size: 14px;
-            color: var(--text-medium);
-        }
-
-        .stat-bar {
-            display: flex;
-            gap: 6px;
-            margin-top: 8px;
-            padding: 4px;
-            border: 1px solid var(--border-light);
-            border-radius: 6px;
-            background: var(--white);
-        }
-
-        .stat-bar-segment {
-            flex: 1;
-            height: 6px;
-            border-radius: 3px;
-            background: var(--border-light);
-        }
-
-        .stat-bar-segment.active-red {
-            background: var(--accent-red);
-        }
-
-        .stat-bar-segment.active-green {
-            background: #4CAF50;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
-
-        .title-section {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .main-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-            line-height: 1.2;
-        }
-
-        .preview-hint {
-            font-size: 13px;
-            color: var(--text-medium);
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .goal-badges {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .goal-badge {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--white);
-            padding: 12px 18px;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-light);
-        }
-
-        .goal-badge-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .icon-blue {
-            background: #F5EDE3;
-            color: var(--dark-brown);
-        }
-
-        .icon-orange {
-            background: #F5E6D8;
-            color: var(--warm-brown);
-        }
-
-        .goal-badge-text {
-            text-align: left;
-        }
-
-        .goal-badge-label {
-            font-size: 11px;
-            color: var(--text-light);
-            text-transform: uppercase;
-        }
-
-        .goal-badge-value {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .motivation-text {
-            text-align: center;
-            margin-bottom: 25px;
-            padding: 20px;
-            background: linear-gradient(135deg, #FAF6F1 0%, var(--white) 100%);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-light);
-        }
-
-        .motivation-text p {
-            font-size: 16px;
-            color: var(--text-medium);
-            line-height: 1.6;
-            margin-bottom: 10px;
-        }
-
-        .motivation-text .problem-highlight {
-            color: var(--warm-brown);
-            font-weight: 600;
-        }
-
-        .pricing-hint {
-            font-size: 11px !important;
-            color: var(--text-medium);
-            margin-top: 4px;
-            text-align: center;
-        }
-
-        .motivation-question {
-            font-size: 18px !important;
-            font-weight: 600 !important;
-            color: var(--text-dark) !important;
-            margin-bottom: 0 !important;
-        }
-
-        .pricing-section {
-            margin-bottom: 30px;
-        }
-
-        .pricing-card {
-            background: var(--white);
-            border: 2px solid var(--border-light);
-            border-radius: var(--border-radius);
-            padding: 15px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .pricing-card:hover {
-            border-color: var(--light-brown);
-        }
-
-        .pricing-card.selected {
-            border-color: var(--light-brown);
-            background: linear-gradient(135deg, #FAF6F1 0%, var(--white) 100%);
-        }
-
-        .pricing-card.popular {
-            padding-top: 30px;
-            border: 2px solid var(--warm-brown);
-            background: linear-gradient(135deg, #FFFBF5 0%, #FFF8EE 100%);
-        }
-
-        .popular-badge {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
-            color: var(--white);
-            text-align: center;
-            padding: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
-        }
-
-        .pricing-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            text-align: center;
-        }
-
-        .pricing-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .pricing-radio {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border-light);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .pricing-card.selected .pricing-radio {
-            border-color: var(--warm-brown);
-            background: var(--warm-brown);
-        }
-
-        .pricing-card.selected .pricing-radio::after {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: var(--white);
-            border-radius: 50%;
-        }
-
-        .pricing-name {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .pricing-right {
-            text-align: center;
-        }
-
-        .pricing-price {
-            display: flex;
-            align-items: baseline;
-            gap: 2px;
-            justify-content: center;
-        }
-
-        .price-currency {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .price-amount {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--text-dark);
-            line-height: 1;
-        }
-
-        .price-cents {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .price-period {
-            font-size: 12px;
-            color: var(--text-light);
-        }
-
-        .price-old {
-            font-size: 13px;
-            color: var(--accent-red);
-            text-decoration: line-through;
-        }
-
-        .price-daily {
-            font-size: 12px;
-            color: var(--warm-brown);
-            margin-top: 2px;
-        }
-
-        .cta-button {
-            width: 100%;
-            background: var(--warm-brown);
-            color: var(--white);
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 18px 20px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 15px;
-            line-height: 1.3;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-        }
-
-        .cta-subtext {
-            font-size: 11px;
-            font-weight: 500;
-            opacity: 0.9;
-            text-transform: none;
-            letter-spacing: 0;
-        }
-
-        .cta-button:hover {
-            background: var(--dark-brown);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(139, 115, 85, 0.4);
-        }
-
-        .cta-button.glow {
-            animation: glow 2s ease-in-out infinite;
-        }
-
-        @keyframes glow {
-            0%, 100% {
-                box-shadow: 0 0 5px rgba(196, 165, 118, 0.4), 0 0 15px rgba(196, 165, 118, 0.2);
-            }
-            50% {
-                box-shadow: 0 0 20px rgba(196, 165, 118, 0.6), 0 0 40px rgba(196, 165, 118, 0.4);
-            }
-        }
-
-        .disclaimer {
-            background: #F9F7F5;
-            border-radius: var(--border-radius);
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            color: var(--text-medium);
-            line-height: 1.6;
-            text-align: center;
-        }
-
-        .disclaimer a {
-            color: var(--warm-brown);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .disclaimer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Exit-Intent Popup */
-        .exit-popup-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .exit-popup-overlay.active {
-            display: flex;
-        }
-
-        .exit-popup {
-            background: var(--white);
-            border-radius: 16px;
-            max-width: 400px;
-            width: 100%;
-            padding: 25px 20px;
-            text-align: center;
-            position: relative;
-            animation: popupIn 0.3s ease-out;
-        }
-
-        @keyframes popupIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .exit-popup-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: var(--text-light);
-            cursor: pointer;
-        }
-
-        .exit-popup-title {
-            font-size: 19px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 5px;
-            line-height: 1.3;
-        }
-
-        .exit-popup-title .highlight {
-            color: #4CAF50;
-        }
-
-        .exit-popup-subtitle {
-            font-size: 14px;
-            color: var(--text-medium);
-            margin-bottom: 20px;
-        }
-
-        .exit-popup-highlight {
-            color: var(--warm-brown);
-            font-weight: 600;
-        }
-
-        /* Line Graph */
-        .comparison-graph {
-            background: #FAFAFA;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .graph-container {
-            position: relative;
-            height: 150px;
-            margin-bottom: 10px;
-        }
-
-        .graph-svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .graph-legend {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            font-size: 12px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .legend-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        .legend-dot.wauwerk {
-            background: #4CAF50;
-        }
-
-        .legend-dot.alone {
-            background: #9E9E9E;
-        }
-
-        .axis-label {
-            font-size: 9px;
-            fill: #aaa;
-        }
-
-        /* Line animation - starts when popup opens */
-        .line-wauwerk {
-            stroke-dasharray: 300;
-            stroke-dashoffset: 300;
-        }
-
-        .line-alone {
-            stroke-dasharray: 400;
-            stroke-dashoffset: 400;
-        }
-
-        .exit-popup.animate .line-wauwerk {
-            animation: drawLine 2s ease-out forwards;
-        }
-
-        .exit-popup.animate .line-alone {
-            animation: drawLineAlone 2s ease-out forwards;
-            animation-delay: 0.3s;
-        }
-
-        .goal-circle, .goal-text {
-            opacity: 0;
-        }
-
-        .exit-popup.animate .goal-circle,
-        .exit-popup.animate .goal-text {
-            animation: fadeIn 0.3s ease-out forwards;
-            animation-delay: 1.8s;
-        }
-
-        @keyframes drawLine {
-            to { stroke-dashoffset: 0; }
-        }
-
-        @keyframes drawLineAlone {
-            to { stroke-dashoffset: 0; }
-        }
-
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-
-        /* Benefits compact */
-        .exit-popup-benefits {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-
-        .benefit-tag {
-            background: linear-gradient(135deg, #FFF9F0 0%, #FFF5E6 100%);
-            border: 1px solid var(--border-light);
-            border-radius: 20px;
-            padding: 6px 12px;
-            font-size: 12px;
-            color: var(--dark-brown);
-        }
-
-        .exit-popup-cta {
-            background: var(--warm-brown);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 14px 24px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 12px;
-            transition: background 0.2s;
-        }
-
-        .exit-popup-cta:hover {
-            background: var(--dark-brown);
-        }
-
-        .exit-popup-skip {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            font-size: 13px;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-
-        /* Checkout Popup */
-        .checkout-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(44, 44, 46, 0.85);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            overflow: hidden;
-            touch-action: none;
-        }
-
-        .checkout-overlay.active {
-            display: flex;
-        }
-
-        .checkout-popup {
-            background: var(--white);
-            border-radius: 20px;
-            max-width: 420px;
-            width: calc(100% - 40px);
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            animation: popupIn 0.3s ease-out;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-            overscroll-behavior: contain;
-            margin-top: 20px;
-        }
-
-        .checkout-header {
-            padding: 12px 16px 8px;
-            border-bottom: 1px solid var(--border-light);
-            position: relative;
-            background: linear-gradient(180deg, #FAF7F4 0%, var(--white) 100%);
-            border-radius: 20px 20px 0 0;
-        }
-
-        .checkout-close {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: var(--white);
-            border: 1px solid var(--border-light);
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            font-size: 16px;
-            color: var(--text-medium);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .checkout-close:hover {
-            background: #f5f5f5;
-            transform: scale(1.05);
-        }
-
-        .checkout-title {
-            text-align: center;
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .checkout-title span {
-            color: var(--warm-brown);
-        }
-
-        .checkout-body {
-            padding: 10px 14px 14px;
-        }
-
-        /* Plan Card */
-        .checkout-plan-card {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
-            background: linear-gradient(135deg, #FAF7F4 0%, #F5F0EB 100%);
-            border-radius: 10px;
-            margin-bottom: 8px;
-            border: 1px solid var(--border-light);
-        }
-
-        .checkout-plan-image {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 12px rgba(196, 165, 118, 0.3);
-        }
-
-        .checkout-plan-info {
-            flex: 1;
-        }
-
-        .checkout-plan-name {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 1px;
-        }
-
-        .checkout-plan-duration {
-            font-size: 12px;
-            color: var(--warm-brown);
-            font-weight: 500;
-        }
-
-        .checkout-plan-price-box {
-            text-align: right;
-        }
-
-        .checkout-plan-price {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--text-dark);
-            line-height: 1.1;
-        }
-
-        .checkout-plan-price-sub {
-            font-size: 9px;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        .checkout-plan-daily {
-            font-size: 10px;
-            color: var(--warm-brown);
-            font-weight: 600;
-            margin-top: 1px;
-        }
-
-        .checkout-plan-personalized {
-            font-size: 10px;
-            color: var(--warm-brown);
-            font-weight: 500;
-            margin-top: 1px;
-        }
-
-        .checkout-risk-text {
-            text-align: center;
-            font-size: 11px;
-            color: var(--text-medium);
-            margin-bottom: 12px;
-        }
-
-        /* Features Section */
-        .checkout-features-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-            text-align: center;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .checkout-features-title span {
-            color: var(--warm-brown);
-        }
-
-        .checkout-features {
-            background: #FAFAFA;
-            border-radius: 10px;
-            padding: 4px 12px;
-            margin-bottom: 14px;
-        }
-
-        .checkout-feature-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            font-size: 13px;
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        .checkout-feature-item:last-child {
-            border-bottom: none;
-        }
-
-        .checkout-feature-name {
-            color: var(--text-dark);
-            font-weight: 500;
-        }
-
-        .checkout-feature-prices {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .checkout-feature-old {
-            color: var(--text-light);
-            text-decoration: line-through;
-            font-size: 12px;
-        }
-
-        .checkout-feature-new {
-            color: #27ae60;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        /* Email Step */
-        .checkout-step-email {
-            text-align: center;
-        }
-
-        .checkout-step-email.hidden {
-            display: none;
-        }
-
-        .checkout-email-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .checkout-email-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-        }
-
-        .checkout-email-subtitle {
-            font-size: 14px;
-            color: var(--text-medium);
-            margin-bottom: 20px;
-        }
-
-        .checkout-email-input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid var(--border-light);
-            border-radius: 10px;
-            font-size: 16px;
-            margin-bottom: 12px;
-            transition: border-color 0.2s;
-        }
-
-        .checkout-email-input:focus {
-            outline: none;
-            border-color: var(--warm-brown);
-        }
-
-        .checkout-email-input::placeholder {
-            color: #aaa;
-        }
-
-        .checkout-email-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-bottom: 15px;
-        }
-
-        .checkout-email-privacy {
-            font-size: 11px;
-            color: var(--text-light);
-        }
-
-        /* Trust Badge */
-        .checkout-trust-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 16px;
-            padding: 10px;
-            background: #f8f8f8;
-            border-radius: 8px;
-        }
-
-        .trust-stars {
-            display: flex;
-            gap: 2px;
-        }
-
-        .trust-star {
-            width: 20px;
-            height: 20px;
-            background: #00b67a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .trust-star svg {
-            width: 12px;
-            height: 12px;
-            fill: white;
-        }
-
-        .trust-text {
-            font-size: 12px;
-            color: var(--text-dark);
-            font-weight: 500;
-        }
-
-        .trust-text strong {
-            color: #00b67a;
-        }
-
-        /* Guarantee Badge */
-        .checkout-guarantee {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px;
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border: 1px solid #86efac;
-            border-radius: 10px;
-            margin-bottom: 14px;
-        }
-
-        .checkout-guarantee-icon {
-            font-size: 24px;
-        }
-
-        .checkout-guarantee-text {
-            flex: 1;
-        }
-
-        .checkout-guarantee-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #166534;
-        }
-
-        .checkout-guarantee-subtitle {
-            font-size: 11px;
-            color: #15803d;
-        }
-
-        /* Kompakte Step 1 Styles */
-        .checkout-features-compact {
-            background: #f8f8f8;
-            border-radius: 8px;
-            padding: 6px 10px;
-            margin-bottom: 6px;
-        }
-
-        .checkout-feature-row {
-            font-size: 13px;
-            color: var(--text-dark);
-            padding: 3px 0;
-        }
-
-        .checkout-feature-row span {
-            color: var(--text-dark);
-        }
-
-        .checkout-feature-row .problem-highlight {
-            color: var(--warm-brown);
-            font-weight: 600;
-        }
-
-        .checkout-total-compact {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-top: 2px solid var(--warm-brown);
-            margin-bottom: 8px;
-        }
-
-        .checkout-total-compact .checkout-total-label {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .checkout-total-compact .checkout-total-saved {
-            font-size: 10px;
-            color: #e74c3c;
-            font-weight: 600;
-            display: block;
-        }
-
-        .checkout-total-compact .checkout-total-price {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--warm-brown);
-        }
-
-        .checkout-guarantee-compact {
-            text-align: center;
-            font-size: 11px;
-            color: #166534;
-            font-weight: 600;
-            padding: 6px;
-            background: #f0fdf4;
-            border-radius: 6px;
-            margin-bottom: 10px;
-        }
-
-        /* Total */
-        .checkout-total {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 0;
-            margin-top: 5px;
-            border-top: 2px solid var(--warm-brown);
-        }
-
-        .checkout-total-label {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .checkout-total-discount {
-            font-size: 12px;
-            color: #e74c3c;
-            font-weight: 600;
-            margin-top: 2px;
-        }
-
-        .checkout-total-price {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .checkout-total-saved {
-            font-size: 12px;
-            color: #27ae60;
-            font-weight: 700;
-        }
-
-        /* Continue Button (Step 1) */
-        .checkout-continue-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 0;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 15px rgba(196, 165, 118, 0.4);
-        }
-
-        .checkout-continue-btn:hover {
-            background: linear-gradient(135deg, var(--dark-brown), #6B5A45);
-            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5);
-        }
-
-        /* Step 2: Payment */
-        .checkout-step-2 {
-            display: none;
-        }
-
-        .checkout-step-2.active {
-            display: block;
-        }
-
-        .checkout-step-1.hidden {
-            display: none;
-        }
-
-        /* Payment Methods */
-        .payment-methods {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .payment-method {
-            flex: 1;
-            padding: 15px 10px;
-            border: 2px solid var(--border-light);
-            border-radius: 10px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
-            background: var(--white);
-        }
-
-        .payment-method:hover {
-            border-color: var(--warm-brown);
-        }
-
-        .payment-method.selected {
-            border-color: var(--warm-brown);
-            background: #faf6f1;
-        }
-
-        .payment-method-icon {
-            height: 24px;
-            margin-bottom: 5px;
-        }
-
-        .payment-method-name {
-            font-size: 12px;
-            color: var(--text-dark);
-            font-weight: 500;
-        }
-
-        /* Price Summary (Step 2) */
-        .checkout-summary {
-            background: linear-gradient(135deg, #FAF7F4 0%, #F5F0EB 100%);
-            border-radius: 14px;
-            padding: 18px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-light);
-        }
-
-        .checkout-summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            font-size: 15px;
-            color: var(--text-dark);
-        }
-
-        .checkout-summary-row.total {
-            border-top: 2px solid var(--warm-brown);
-            margin-top: 10px;
-            padding-top: 14px;
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        .checkout-summary-old {
-            text-decoration: line-through;
-            color: var(--text-light);
-            margin-right: 10px;
-        }
-
-        .checkout-summary-saved {
-            color: #27ae60;
-            font-size: 13px;
-            text-align: right;
-            font-weight: 700;
-            margin-top: 5px;
-        }
-
-        /* Stripe Element */
-        .stripe-element-container {
-            padding: 12px;
-            border: 2px solid var(--border-light);
-            border-radius: 12px;
-            margin-bottom: 12px;
-            background: var(--white);
-            transition: border-color 0.2s;
-        }
-
-        .stripe-element-container:focus-within {
-            border-color: var(--warm-brown);
-        }
-
-        #payment-element {
-            min-height: 80px;
-        }
-
-        /* Payment Button */
-        .checkout-pay-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(196, 165, 118, 0.4);
-            transition: all 0.2s ease;
-        }
-
-        .checkout-pay-btn:hover {
-            background: linear-gradient(135deg, var(--dark-brown), #6B5A45);
-            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5);
-            transform: translateY(-1px);
-        }
-
-        .checkout-pay-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
-        .checkout-pay-btn .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Payment Icons */
-        .payment-icons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-            padding: 8px;
-            background: #FAFAFA;
-            border-radius: 8px;
-        }
-
-        .payment-icons img {
-            height: 16px;
-            opacity: 0.7;
-        }
-
-        /* Back Button */
-        .checkout-back {
-            display: block;
-            width: 100%;
-            background: none;
-            border: none;
-            color: var(--text-medium);
-            font-size: 13px;
-            cursor: pointer;
-            margin-top: 10px;
-            text-align: center;
-            font-weight: 500;
-        }
-
-        .checkout-back:hover {
-            color: var(--warm-brown);
-        }
-
-        /* Error Message */
-        .checkout-error {
-            background: #FEF2F2;
-            color: #DC2626;
-            padding: 14px 16px;
-            border-radius: 10px;
-            margin-bottom: 18px;
-            font-size: 14px;
-            display: none;
-            border: 1px solid #FECACA;
-            font-weight: 500;
-        }
-
-        .checkout-error.visible {
-            display: block;
-        }
-
-        .guarantee {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            color: var(--text-dark);
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 30px;
-            padding: 14px 20px;
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border: 1px solid #86efac;
-            border-radius: var(--border-radius);
-        }
-
-        .payment-logos {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: nowrap;
-        }
-
-        .payment-logos img {
-            height: 24px;
-            width: auto;
-            opacity: 0.7;
-            transition: opacity 0.2s ease;
-            border-radius: 6px;
-        }
-
-        .payment-logos img:hover {
-            opacity: 1;
-        }
-
-        .guarantee svg {
-            width: 24px;
-            height: 24px;
-            fill: #16a34a;
-        }
-
-        .testimonials-section {
-            margin-bottom: 30px;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 5px;
-        }
-
-        .section-subtitle {
-            font-size: 14px;
-            color: var(--warm-brown);
-        }
-
-        .testimonial-card {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border-light);
-        }
-
-        .testimonial-image-single {
-            width: 100%;
-            height: auto;
-            aspect-ratio: 1875 / 1563;
-            background: var(--border-light);
-            border-radius: 8px;
-            margin-bottom: 15px;
-            overflow: hidden;
-        }
-
-        .testimonial-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 10px;
-        }
-
-        .testimonial-name {
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .testimonial-problem {
-            font-size: 13px;
-            color: var(--text-light);
-        }
-
-        .testimonial-problem span {
-            color: var(--warm-brown);
-            font-weight: 600;
-        }
-
-        .testimonial-text {
-            font-size: 14px;
-            color: var(--text-medium);
-            line-height: 1.6;
-        }
-
-        .faq-section {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .faq-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-dark);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .faq-item {
-            margin-bottom: 20px;
-        }
-
-        .faq-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .faq-question {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            margin-bottom: 8px;
-        }
-
-        .faq-icon {
-            width: 24px;
-            height: 24px;
-            background: var(--warm-brown);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .faq-icon svg {
-            width: 14px;
-            height: 14px;
-            fill: var(--white);
-        }
-
-        .faq-question-text {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .faq-answer {
-            font-size: 14px;
-            color: var(--text-medium);
-            line-height: 1.6;
-            padding-left: 36px;
-        }
-
-        .guarantee-box {
-            background: var(--white);
-            border: 2px solid var(--light-brown);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .benefits-box {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid var(--border-light);
-        }
-
-        .benefits-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .benefits-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .benefits-list li {
-            padding: 10px 0;
-            font-size: 15px;
-            color: var(--text-dark);
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        .benefits-list li:last-child {
-            border-bottom: none;
-        }
-
-        .trustpilot-slider {
-            margin-bottom: 30px;
-            overflow: hidden;
-        }
-
-        .trustpilot-track {
-            display: flex;
-            transition: transform 0.4s ease;
-        }
-
-        .trustpilot-review {
-            min-width: 100%;
-            text-align: center;
-            padding: 20px;
-            background: var(--white);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-light);
-        }
-
-        .trustpilot-stars {
-            display: flex;
-            gap: 2px;
-            margin-bottom: 12px;
-            justify-content: center;
-        }
-
-        .tp-star {
-            width: 22px;
-            height: 22px;
-            background: #00B67A;
-            color: white;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .trustpilot-text {
-            font-size: 15px;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-            font-style: italic;
-        }
-
-        .trustpilot-name {
-            font-size: 13px;
-            color: var(--text-medium);
-            font-weight: 600;
-        }
-
-        .trustpilot-dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .tp-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--border-light);
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .tp-dot.active {
-            background: var(--warm-brown);
-        }
-
-        .guarantee-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 12px;
-        }
-
-        .guarantee-text {
-            font-size: 14px;
-            color: var(--text-medium);
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .guarantee-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--warm-brown);
-        }
-
-        .guarantee-badge svg {
-            width: 40px;
-            height: 40px;
-            fill: var(--warm-brown);
-        }
-
-        .footer {
-            text-align: center;
-            padding: 20px;
-            color: var(--text-light);
-            font-size: 12px;
-        }
-
-        .footer a {
-            color: var(--text-light);
-            text-decoration: underline;
-        }
-
-        /* ========== VIDEO TESTIMONIAL ========== */
-        .video-testimonial {
-            margin-bottom: 25px;
-        }
-
-        .video-testimonial-container {
-            position: relative;
-            width: 100%;
-            max-width: 300px;
-            margin: 0 auto;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-            background: #000;
-        }
-
-        .video-testimonial-container video {
-            width: 100%;
-            height: auto;
-            display: block;
-            aspect-ratio: 9 / 16;
-            object-fit: cover;
-        }
-
-        .video-testimonial-badge {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            backdrop-filter: blur(4px);
-        }
-
-        .video-testimonial-badge::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: #e74c3c;
-            border-radius: 50%;
-            animation: pulse-dot 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .video-play-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .video-play-overlay:hover {
-            background: rgba(0, 0, 0, 0.4);
-        }
-
-        .video-play-overlay.hidden {
-            display: none;
-        }
-
-        .video-play-button {
-            width: 70px;
-            height: 70px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s;
-        }
-
-        .video-play-overlay:hover .video-play-button {
-            transform: scale(1.1);
-        }
-
-        .video-play-button svg {
-            width: 30px;
-            height: 30px;
-            fill: var(--warm-brown);
-            margin-left: 4px;
-        }
-
-        .video-testimonial-caption {
-            text-align: center;
-            margin-top: 15px;
-            padding: 0 10px;
-        }
-
-        .video-testimonial-caption strong {
-            display: block;
-            font-size: 15px;
-            color: var(--text-dark);
-            margin-bottom: 4px;
-        }
-
-        .video-testimonial-caption span {
-            display: block;
-            font-size: 13px;
-            color: var(--text-medium);
-        }
-
+        @keyframes lightUp { 0%, 100% { opacity: 0.4; text-shadow: none; } 50% { opacity: 1; text-shadow: 0 0 15px rgba(196, 165, 118, 0.9), 0 0 25px rgba(196, 165, 118, 0.6); } }
+        .stat-box { background: var(--white); border-radius: var(--border-radius); padding: 15px; margin-bottom: 10px; }
+        .stat-label { font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 4px; }
+        .stat-value { font-size: 14px; color: var(--text-medium); }
+        .stat-bar { display: flex; gap: 6px; margin-top: 8px; padding: 4px; border: 1px solid var(--border-light); border-radius: 6px; background: var(--white); }
+        .stat-bar-segment { flex: 1; height: 6px; border-radius: 3px; background: var(--border-light); }
+        .stat-bar-segment.active-red { background: var(--accent-red); }
+        .stat-bar-segment.active-green { background: #4CAF50; }
+        .container { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+        .title-section { text-align: center; margin-bottom: 30px; }
+        .main-title { font-size: 28px; font-weight: 800; color: var(--text-dark); margin-bottom: 10px; line-height: 1.2; }
+        .preview-hint { font-size: 13px; color: var(--text-medium); margin-bottom: 20px; line-height: 1.5; }
+        .goal-badges { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .goal-badge { display: flex; align-items: center; gap: 10px; background: var(--white); padding: 12px 18px; border-radius: var(--border-radius); border: 1px solid var(--border-light); }
+        .goal-badge-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .icon-blue { background: #F5EDE3; color: var(--dark-brown); }
+        .icon-orange { background: #F5E6D8; color: var(--warm-brown); }
+        .goal-badge-text { text-align: left; }
+        .goal-badge-label { font-size: 11px; color: var(--text-light); text-transform: uppercase; }
+        .goal-badge-value { font-size: 14px; font-weight: 600; color: var(--text-dark); }
+        .motivation-text { text-align: center; margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, #FAF6F1 0%, var(--white) 100%); border-radius: var(--border-radius); border: 1px solid var(--border-light); }
+        .motivation-text p { font-size: 16px; color: var(--text-medium); line-height: 1.6; margin-bottom: 10px; }
+        .pricing-hint { font-size: 11px !important; color: var(--text-medium); margin-top: 4px; text-align: center; }
+        .motivation-question { font-size: 18px !important; font-weight: 600 !important; color: var(--text-dark) !important; margin-bottom: 0 !important; }
+        .pricing-section { margin-bottom: 30px; }
+        .pricing-card { background: var(--white); border: 2px solid var(--border-light); border-radius: var(--border-radius); padding: 15px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s ease; position: relative; }
+        .pricing-card:hover { border-color: var(--light-brown); }
+        .pricing-card.selected { border-color: var(--light-brown); background: linear-gradient(135deg, #FAF6F1 0%, var(--white) 100%); }
+        .pricing-card.popular { padding-top: 30px; border: 2px solid var(--warm-brown); background: linear-gradient(135deg, #FFFBF5 0%, #FFF8EE 100%); }
+        .popular-badge { position: absolute; top: 0; left: 0; right: 0; background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown)); color: var(--white); text-align: center; padding: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: var(--border-radius) var(--border-radius) 0 0; }
+        .pricing-header { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+        .pricing-left { display: flex; align-items: center; gap: 10px; justify-content: center; }
+        .pricing-radio { width: 20px; height: 20px; border: 2px solid var(--border-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .pricing-card.selected .pricing-radio { border-color: var(--warm-brown); background: var(--warm-brown); }
+        .pricing-card.selected .pricing-radio::after { content: ''; width: 8px; height: 8px; background: var(--white); border-radius: 50%; }
+        .pricing-name { font-size: 15px; font-weight: 600; color: var(--text-dark); }
+        .pricing-right { text-align: center; }
+        .pricing-price-full { display: flex; align-items: baseline; gap: 6px; justify-content: center; margin-bottom: 4px; }
+        .price-full-amount { font-size: 20px; font-weight: 800; color: var(--text-dark); }
+        .price-full-label { font-size: 12px; color: var(--text-medium); font-weight: 500; }
+        .pricing-price-daily { display: flex; align-items: baseline; gap: 4px; justify-content: center; margin-bottom: 4px; }
+        .price-daily-amount { font-size: 14px; font-weight: 600; color: var(--warm-brown); }
+        .price-daily-label { font-size: 11px; color: var(--text-light); }
+        .price-old { font-size: 13px; color: var(--accent-red); text-decoration: line-through; }
+        .cta-button { width: 100%; background: var(--warm-brown); color: var(--white); border: none; border-radius: var(--border-radius); padding: 18px 20px; font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 15px; line-height: 1.3; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .cta-subtext { font-size: 11px; font-weight: 500; opacity: 0.9; text-transform: none; letter-spacing: 0; }
+        .cta-button:hover { background: var(--dark-brown); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139, 115, 85, 0.4); }
+        .cta-button.glow { animation: glow 2s ease-in-out infinite; }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 5px rgba(196, 165, 118, 0.4), 0 0 15px rgba(196, 165, 118, 0.2); } 50% { box-shadow: 0 0 20px rgba(196, 165, 118, 0.6), 0 0 40px rgba(196, 165, 118, 0.4); } }
+        .disclaimer { background: #F9F7F5; border-radius: var(--border-radius); padding: 15px 20px; margin-bottom: 20px; font-size: 13px; color: var(--text-medium); line-height: 1.6; text-align: center; }
+        .disclaimer a { color: var(--warm-brown); text-decoration: none; font-weight: 600; }
+        .disclaimer a:hover { text-decoration: underline; }
+        .exit-popup-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
+        .exit-popup-overlay.active { display: flex; }
+        .exit-popup { background: var(--white); border-radius: 16px; max-width: 400px; width: 100%; padding: 25px 20px; text-align: center; position: relative; animation: popupIn 0.3s ease-out; }
+        @keyframes popupIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .exit-popup-close { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 24px; color: var(--text-light); cursor: pointer; }
+        .exit-popup-title { font-size: 19px; font-weight: 700; color: var(--text-dark); margin-bottom: 5px; line-height: 1.3; }
+        .exit-popup-title .highlight { color: #4CAF50; }
+        .exit-popup-subtitle { font-size: 14px; color: var(--text-medium); margin-bottom: 20px; }
+        .exit-popup-highlight { color: var(--warm-brown); font-weight: 600; }
+        .comparison-graph { background: #FAFAFA; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
+        .graph-container { position: relative; height: 150px; margin-bottom: 10px; }
+        .graph-svg { width: 100%; height: 100%; }
+        .graph-legend { display: flex; justify-content: center; gap: 20px; font-size: 12px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .legend-dot.wauwerk { background: #4CAF50; }
+        .legend-dot.alone { background: #9E9E9E; }
+        .axis-label { font-size: 9px; fill: #aaa; }
+        .line-wauwerk { stroke-dasharray: 300; stroke-dashoffset: 300; }
+        .line-alone { stroke-dasharray: 400; stroke-dashoffset: 400; }
+        .exit-popup.animate .line-wauwerk { animation: drawLine 2s ease-out forwards; }
+        .exit-popup.animate .line-alone { animation: drawLineAlone 2s ease-out forwards; animation-delay: 0.3s; }
+        .goal-circle, .goal-text { opacity: 0; }
+        .exit-popup.animate .goal-circle, .exit-popup.animate .goal-text { animation: fadeIn 0.3s ease-out forwards; animation-delay: 1.8s; }
+        @keyframes drawLine { to { stroke-dashoffset: 0; } }
+        @keyframes drawLineAlone { to { stroke-dashoffset: 0; } }
+        @keyframes fadeIn { to { opacity: 1; } }
+        .exit-popup-benefits { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; justify-content: center; }
+        .benefit-tag { background: linear-gradient(135deg, #FFF9F0 0%, #FFF5E6 100%); border: 1px solid var(--border-light); border-radius: 20px; padding: 6px 12px; font-size: 12px; color: var(--dark-brown); }
+        .exit-popup-cta { background: var(--warm-brown); color: white; border: none; border-radius: 10px; padding: 14px 24px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 12px; transition: background 0.2s; }
+        .exit-popup-cta:hover { background: var(--dark-brown); }
+        .exit-popup-skip { background: none; border: none; color: var(--text-light); font-size: 13px; cursor: pointer; text-decoration: underline; }
+        .checkout-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(44, 44, 46, 0.85); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); overflow: hidden; touch-action: none; }
+        .checkout-overlay.active { display: flex; }
+        .checkout-popup { background: var(--white); border-radius: 20px; max-width: 420px; width: calc(100% - 40px); max-height: 90vh; overflow-y: auto; position: relative; animation: popupIn 0.3s ease-out; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25); overscroll-behavior: contain; margin-top: 20px; }
+        .checkout-header { padding: 12px 16px 8px; border-bottom: 1px solid var(--border-light); position: relative; background: linear-gradient(180deg, #FAF7F4 0%, var(--white) 100%); border-radius: 20px 20px 0 0; }
+        .checkout-close { position: absolute; top: 12px; left: 12px; background: var(--white); border: 1px solid var(--border-light); width: 28px; height: 28px; border-radius: 50%; font-size: 16px; color: var(--text-medium); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .checkout-close:hover { background: #f5f5f5; transform: scale(1.05); }
+        .checkout-title { text-align: center; font-size: 17px; font-weight: 700; color: var(--text-dark); }
+        .checkout-title span { color: var(--warm-brown); }
+        .checkout-body { padding: 10px 14px 14px; }
+        .checkout-plan-card { display: flex; align-items: center; gap: 8px; padding: 8px; background: linear-gradient(135deg, #FAF7F4 0%, #F5F0EB 100%); border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border-light); }
+        .checkout-plan-image { width: 38px; height: 38px; background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(196, 165, 118, 0.3); }
+        .checkout-plan-info { flex: 1; }
+        .checkout-plan-name { font-size: 13px; font-weight: 700; color: var(--text-dark); margin-bottom: 1px; }
+        .checkout-plan-duration { font-size: 12px; color: var(--warm-brown); font-weight: 500; }
+        .checkout-plan-price-box { text-align: right; }
+        .checkout-plan-price { font-size: 18px; font-weight: 800; color: var(--text-dark); line-height: 1.1; }
+        .checkout-plan-price-sub { font-size: 9px; color: var(--text-light); font-weight: 500; }
+        .checkout-plan-daily { font-size: 10px; color: var(--warm-brown); font-weight: 600; margin-top: 1px; }
+        .checkout-plan-personalized { font-size: 10px; color: var(--warm-brown); font-weight: 500; margin-top: 1px; }
+        .checkout-features-compact { background: #f8f8f8; border-radius: 8px; padding: 6px 10px; margin-bottom: 6px; }
+        .checkout-feature-row { font-size: 13px; color: var(--text-dark); padding: 3px 0; }
+        .checkout-feature-row .problem-highlight { color: var(--warm-brown); font-weight: 600; }
+        .checkout-guarantee-compact { text-align: center; font-size: 11px; color: #166534; font-weight: 600; padding: 6px; background: #f0fdf4; border-radius: 6px; margin-bottom: 10px; }
+        .checkout-step-email.hidden { display: none; }
+        .checkout-step-2 { display: none; }
+        .checkout-step-2.active { display: block; }
+        .checkout-step-1.hidden { display: none; }
+        .stripe-element-container { padding: 12px; border: 2px solid var(--border-light); border-radius: 12px; margin-bottom: 12px; background: var(--white); transition: border-color 0.2s; }
+        .stripe-element-container:focus-within { border-color: var(--warm-brown); }
+        #payment-element { min-height: 80px; }
+        .checkout-pay-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown)); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(196, 165, 118, 0.4); transition: all 0.2s ease; }
+        .checkout-pay-btn:hover { background: linear-gradient(135deg, var(--dark-brown), #6B5A45); box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5); transform: translateY(-1px); }
+        .checkout-pay-btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; transform: none; }
+        .checkout-pay-btn .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .payment-icons { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; padding: 8px; background: #FAFAFA; border-radius: 8px; }
+        .payment-icons img { height: 16px; opacity: 0.7; }
+        .checkout-back { display: block; width: 100%; background: none; border: none; color: var(--text-medium); font-size: 13px; cursor: pointer; margin-top: 10px; text-align: center; font-weight: 500; }
+        .checkout-back:hover { color: var(--warm-brown); }
+        .checkout-error { background: #FEF2F2; color: #DC2626; padding: 14px 16px; border-radius: 10px; margin-bottom: 18px; font-size: 14px; display: none; border: 1px solid #FECACA; font-weight: 500; }
+        .checkout-error.visible { display: block; }
+        .guarantee { display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--text-dark); font-size: 16px; font-weight: 600; margin-bottom: 30px; padding: 14px 20px; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #86efac; border-radius: var(--border-radius); }
+        .payment-logos { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: nowrap; }
+        .payment-logos img { height: 24px; width: auto; opacity: 0.7; transition: opacity 0.2s ease; border-radius: 6px; }
+        .payment-logos img:hover { opacity: 1; }
+        .guarantee svg { width: 24px; height: 24px; fill: #16a34a; }
+        .testimonials-section { margin-bottom: 30px; }
+        .section-header { text-align: center; margin-bottom: 25px; }
+        .section-title { font-size: 20px; font-weight: 700; color: var(--text-dark); margin-bottom: 5px; }
+        .section-subtitle { font-size: 14px; color: var(--warm-brown); }
+        .testimonial-card { background: var(--white); border-radius: var(--border-radius); padding: 20px; margin-bottom: 15px; border: 1px solid var(--border-light); }
+        .testimonial-image-single { width: 100%; height: auto; aspect-ratio: 1875 / 1563; background: var(--border-light); border-radius: 8px; margin-bottom: 15px; overflow: hidden; }
+        .testimonial-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .testimonial-name { font-weight: 700; color: var(--text-dark); }
+        .testimonial-problem { font-size: 13px; color: var(--text-light); }
+        .testimonial-problem span { color: var(--warm-brown); font-weight: 600; }
+        .testimonial-text { font-size: 14px; color: var(--text-medium); line-height: 1.6; }
+        .faq-section { background: var(--white); border-radius: var(--border-radius); padding: 25px; margin-bottom: 30px; }
+        .faq-title { font-size: 20px; font-weight: 700; color: var(--text-dark); text-align: center; margin-bottom: 20px; }
+        .faq-item { margin-bottom: 20px; }
+        .faq-item:last-child { margin-bottom: 0; }
+        .faq-question { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
+        .faq-icon { width: 24px; height: 24px; background: var(--warm-brown); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .faq-icon svg { width: 14px; height: 14px; fill: var(--white); }
+        .faq-question-text { font-size: 15px; font-weight: 600; color: var(--text-dark); }
+        .faq-answer { font-size: 14px; color: var(--text-medium); line-height: 1.6; padding-left: 36px; }
+        .guarantee-box { background: var(--white); border: 2px solid var(--light-brown); border-radius: var(--border-radius); padding: 25px; text-align: center; margin-bottom: 30px; }
+        .benefits-box { background: var(--white); border-radius: var(--border-radius); padding: 25px; margin-bottom: 25px; border: 1px solid var(--border-light); }
+        .benefits-title { font-size: 20px; font-weight: 700; color: var(--text-dark); margin-bottom: 20px; text-align: center; }
+        .benefits-list { list-style: none; padding: 0; margin: 0; }
+        .benefits-list li { padding: 10px 0; font-size: 15px; color: var(--text-dark); border-bottom: 1px solid var(--border-light); }
+        .benefits-list li:last-child { border-bottom: none; }
+        .trustpilot-slider { margin-bottom: 30px; overflow: hidden; }
+        .trustpilot-track { display: flex; transition: transform 0.4s ease; }
+        .trustpilot-review { min-width: 100%; text-align: center; padding: 20px; background: var(--white); border-radius: var(--border-radius); border: 1px solid var(--border-light); }
+        .trustpilot-stars { display: flex; gap: 2px; margin-bottom: 12px; justify-content: center; }
+        .tp-star { width: 22px; height: 22px; background: #00B67A; color: white; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+        .trustpilot-text { font-size: 15px; color: var(--text-dark); margin-bottom: 10px; font-style: italic; }
+        .trustpilot-name { font-size: 13px; color: var(--text-medium); font-weight: 600; }
+        .trustpilot-dots { display: flex; justify-content: center; gap: 8px; margin-top: 15px; }
+        .tp-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-light); cursor: pointer; transition: background 0.3s ease; }
+        .tp-dot.active { background: var(--warm-brown); }
+        .guarantee-title { font-size: 20px; font-weight: 700; color: var(--text-dark); margin-bottom: 12px; }
+        .guarantee-text { font-size: 14px; color: var(--text-medium); line-height: 1.6; margin-bottom: 15px; }
+        .guarantee-badge { display: inline-flex; align-items: center; gap: 8px; color: var(--warm-brown); }
+        .guarantee-badge svg { width: 40px; height: 40px; fill: var(--warm-brown); }
+        .footer { text-align: center; padding: 20px; color: var(--text-light); font-size: 12px; }
+        .footer a { color: var(--text-light); text-decoration: underline; }
+        .video-testimonial { margin-bottom: 25px; }
+        .video-testimonial-container { position: relative; width: 100%; max-width: 300px; margin: 0 auto; border-radius: var(--border-radius); overflow: hidden; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); background: #000; }
+        .video-testimonial-container video { width: 100%; height: auto; display: block; aspect-ratio: 9 / 16; object-fit: cover; }
+        .video-testimonial-badge { position: absolute; top: 12px; left: 12px; background: rgba(0, 0, 0, 0.7); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(4px); }
+        .video-testimonial-badge::before { content: ''; width: 8px; height: 8px; background: #e74c3c; border-radius: 50%; animation: pulse-dot 1.5s ease-in-out infinite; }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .video-play-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.3); cursor: pointer; transition: background 0.2s; }
+        .video-play-overlay:hover { background: rgba(0, 0, 0, 0.4); }
+        .video-play-overlay.hidden { display: none; }
+        .video-play-button { width: 70px; height: 70px; background: rgba(255, 255, 255, 0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); transition: transform 0.2s; }
+        .video-play-overlay:hover .video-play-button { transform: scale(1.1); }
+        .video-play-button svg { width: 30px; height: 30px; fill: var(--warm-brown); margin-left: 4px; }
+        .video-testimonial-caption { text-align: center; margin-top: 15px; padding: 0 10px; }
+        .video-testimonial-caption strong { display: block; font-size: 15px; color: var(--text-dark); margin-bottom: 4px; }
+        .video-testimonial-caption span { display: block; font-size: 13px; color: var(--text-medium); }
         @media (max-width: 480px) {
-            .comparison-container {
-                flex-direction: row;
-                gap: 10px;
-            }
-
-            .comparison-image {
-                height: 200px;
-            }
-
-            .comparison-arrows {
-                display: none;
-            }
-
-            .main-title {
-                font-size: 24px;
-            }
-
-            .goal-badges {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .pricing-header {
-                gap: 12px;
-            }
-
-            .pricing-left {
-                justify-content: center;
-            }
-
-            .pricing-right {
-                text-align: center;
-            }
-
-            .pricing-price {
-                justify-content: center;
-            }
-
-            .stat-box {
-                padding: 10px;
-            }
-
-            .stat-label {
-                font-size: 11px;
-            }
-
-            .stat-value {
-                font-size: 12px;
-            }
-
-            .video-testimonial-container {
-                max-width: 280px;
-            }
+            .comparison-container { flex-direction: row; gap: 10px; }
+            .comparison-image { height: 200px; }
+            .comparison-arrows { display: none; }
+            .main-title { font-size: 24px; }
+            .goal-badges { flex-direction: column; align-items: center; }
+            .stat-box { padding: 10px; }
+            .stat-label { font-size: 11px; }
+            .stat-value { font-size: 12px; }
+            .video-testimonial-container { max-width: 280px; }
         }
     </style>
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '864109602683515');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "ufxcf43805");
-</script>
-<script src="https://js.stripe.com/v3/"></script>
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '864109602683515');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"/></noscript>
+    <script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "ufxcf43805");</script>
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
-
 <body>
-    <header class="header">
-        <div class="logo">
-            <img src="logo.png" alt="WauWerk Logo" class="logo-image">
-            <span class="logo-text">Mein WauWerk</span>
-        </div>
-    </header>
-
-    <div class="timer-bar">
-        Preis reduziert für: <span id="timer">10:00</span>
-    </div>
-
+    <header class="header"><div class="logo"><img src="logo.png" alt="WauWerk Logo" class="logo-image"><span class="logo-text">Mein WauWerk</span></div></header>
+    <div class="timer-bar">Preis reduziert für: <span id="timer">10:00</span></div>
     <section class="hero-section">
         <div class="comparison-container">
             <div class="comparison-side">
                 <span class="comparison-badge badge-now">Jetzt</span>
-                <div class="comparison-image image-now">
-                    <img src="Vorher.png" alt="Vorher" style="width: 100%; height: 100%; object-fit: cover;">
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label"><span id="dogName1">Dein Hund</span> – <span id="problemLabel1">Gehorsam</span></div>
-                    <div class="stat-value" id="problemValue1">Niedrig</div>
-                    <div class="stat-bar">
-                        <div class="stat-bar-segment active-red"></div>
-                        <div class="stat-bar-segment"></div>
-                        <div class="stat-bar-segment"></div>
-                    </div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Trainingslevel</div>
-                    <div class="stat-value">Anfänger</div>
-                </div>
+                <div class="comparison-image image-now"><img src="Vorher.png" alt="Vorher" style="width: 100%; height: 100%; object-fit: cover;"></div>
+                <div class="stat-box"><div class="stat-label"><span id="dogName1">Dein Hund</span> – <span id="problemLabel1">Gehorsam</span></div><div class="stat-value" id="problemValue1">Niedrig</div><div class="stat-bar"><div class="stat-bar-segment active-red"></div><div class="stat-bar-segment"></div><div class="stat-bar-segment"></div></div></div>
+                <div class="stat-box"><div class="stat-label">Trainingslevel</div><div class="stat-value">Anfänger</div></div>
             </div>
-
-            <div class="comparison-arrows">
-                <span>››</span>
-                <span>››</span>
-                <span>››</span>
-                <span>››</span>
-                <span>››</span>
-                <span>››</span>
-            </div>
-
+            <div class="comparison-arrows"><span>››</span><span>››</span><span>››</span><span>››</span><span>››</span><span>››</span></div>
             <div class="comparison-side">
                 <span class="comparison-badge badge-goal">Dein Ziel</span>
-                <div class="comparison-image image-goal">
-                    <img src="Nachher.png" alt="Nachher" style="width: 100%; height: 100%; object-fit: cover;">
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label"><span id="dogName2">Dein Hund</span> – <span id="problemLabel2">Gehorsam</span></div>
-                    <div class="stat-value" id="problemValue2">Normal</div>
-                    <div class="stat-bar">
-                        <div class="stat-bar-segment active-green"></div>
-                        <div class="stat-bar-segment active-green"></div>
-                        <div class="stat-bar-segment active-green"></div>
-                    </div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Trainingslevel</div>
-                    <div class="stat-value">Fortgeschritten</div>
-                </div>
+                <div class="comparison-image image-goal"><img src="Nachher.png" alt="Nachher" style="width: 100%; height: 100%; object-fit: cover;"></div>
+                <div class="stat-box"><div class="stat-label"><span id="dogName2">Dein Hund</span> – <span id="problemLabel2">Gehorsam</span></div><div class="stat-value" id="problemValue2">Normal</div><div class="stat-bar"><div class="stat-bar-segment active-green"></div><div class="stat-bar-segment active-green"></div><div class="stat-bar-segment active-green"></div></div></div>
+                <div class="stat-box"><div class="stat-label">Trainingslevel</div><div class="stat-value">Fortgeschritten</div></div>
             </div>
         </div>
     </section>
-
     <div class="container">
         <div class="title-section">
             <h1 class="main-title">Dein personalisierter Trainingsplan für <span id="dogName3">deinen Hund</span> ist FAST fertig!</h1>
-            <p class="preview-hint">Das ist eine Vorschau deines Trainingsplans.<br>Die konkreten Übungen und Wochenpläne erhältst du nach dem Kauf.</p>
-            
+            <p class="preview-hint">Das ist eine Vorschau deines persönlichen Trainingsplans.<br>Die individuellen Übungen basieren auf deinen Antworten und sind nach Kauf verfügbar.</p>
             <div class="goal-badges">
-                <div class="goal-badge">
-                    <div class="goal-badge-icon icon-blue">🎯</div>
-                    <div class="goal-badge-text">
-                        <div class="goal-badge-label">Ziel</div>
-                        <div class="goal-badge-value" id="userGoal">Gehorsam verbessern</div>
-                    </div>
-                </div>
-                <div class="goal-badge">
-                    <div class="goal-badge-icon icon-orange">⚠️</div>
-                    <div class="goal-badge-text">
-                        <div class="goal-badge-label">Verhaltensproblem</div>
-                        <div class="goal-badge-value" id="userProblem">Trennungsangst</div>
-                    </div>
-                </div>
+                <div class="goal-badge"><div class="goal-badge-icon icon-blue">🎯</div><div class="goal-badge-text"><div class="goal-badge-label">Ziel</div><div class="goal-badge-value" id="userGoal">Gehorsam verbessern</div></div></div>
+                <div class="goal-badge"><div class="goal-badge-icon icon-orange">⚠️</div><div class="goal-badge-text"><div class="goal-badge-label">Verhaltensproblem</div><div class="goal-badge-value" id="userProblem">Trennungsangst</div></div></div>
             </div>
         </div>
-
-        <!-- ========== Pricing Section (umformulierte Frage) ========== -->
-        <div class="motivation-text">
-            <p class="motivation-question">In welcher Zeit soll <span id="dogNamePlan">dein Hund</span> das Problem lösen?</p>
-            <p class="pricing-hint">Je nach Laufzeit passen wir Trainingsintensität und Aufbau an.</p>
-        </div>
-
+        <div class="motivation-text"><p class="motivation-question">In welcher Zeit soll <span id="dogNamePlan">dein Hund</span> das Problem lösen?</p><p class="pricing-hint">Je nach Laufzeit passen wir Trainingsintensität und Aufbau an.</p></div>
         <div class="pricing-section">
             <div class="pricing-card" data-plan="1month" data-price="24.99">
                 <div class="pricing-header">
-                    <div class="pricing-left">
-                        <div class="pricing-radio"></div>
-                        <span class="pricing-name">1-MONATS-PLAN</span>
-                    </div>
+                    <div class="pricing-left"><div class="pricing-radio"></div><span class="pricing-name">1-MONATS-PLAN</span></div>
                     <div class="pricing-right">
-                        <div class="pricing-price">
-                            <span class="price-currency">€</span>
-                            <span class="price-amount">0</span>
-                            <span class="price-cents">,83</span>
-                            <span class="price-period">pro Tag</span>
-                        </div>
-                        <div class="price-old">€1,67</div>
+                        <div class="pricing-price-full"><span class="price-full-amount">€24,99</span><span class="price-full-label">einmalig</span></div>
+                        <div class="pricing-price-daily"><span class="price-daily-amount">€0,83</span><span class="price-daily-label">pro Tag</span></div>
+                        <div class="price-old">€49,99</div>
                     </div>
                 </div>
             </div>
-
             <div class="pricing-card" data-plan="3month" data-price="29.99">
                 <div class="pricing-header">
-                    <div class="pricing-left">
-                        <div class="pricing-radio"></div>
-                        <span class="pricing-name">3-MONATS-PLAN</span>
-                    </div>
+                    <div class="pricing-left"><div class="pricing-radio"></div><span class="pricing-name">3-MONATS-PLAN</span></div>
                     <div class="pricing-right">
-                        <div class="pricing-price">
-                            <span class="price-currency">€</span>
-                            <span class="price-amount">0</span>
-                            <span class="price-cents">,33</span>
-                            <span class="price-period">pro Tag</span>
-                        </div>
-                        <div class="price-old">€0,89</div>
+                        <div class="pricing-price-full"><span class="price-full-amount">€29,99</span><span class="price-full-label">einmalig</span></div>
+                        <div class="pricing-price-daily"><span class="price-daily-amount">€0,33</span><span class="price-daily-label">pro Tag</span></div>
+                        <div class="price-old">€79,99</div>
                     </div>
                 </div>
             </div>
-
             <div class="pricing-card popular selected" data-plan="6month" data-price="49.99">
-                <div class="popular-badge">⭐ Für dauerhafte Veränderung</div>
+                <div class="popular-badge" id="popularBadge">⭐ Empfohlen für dauerhafte Ergebnisse</div>
                 <div class="pricing-header">
-                    <div class="pricing-left">
-                        <div class="pricing-radio"></div>
-                        <span class="pricing-name">6-MONATS-PLAN</span>
-                    </div>
+                    <div class="pricing-left"><div class="pricing-radio"></div><span class="pricing-name">6-MONATS-PLAN</span></div>
                     <div class="pricing-right">
-                        <div class="pricing-price">
-                            <span class="price-currency">€</span>
-                            <span class="price-amount">0</span>
-                            <span class="price-cents">,27</span>
-                            <span class="price-period">pro Tag</span>
-                        </div>
-                        <div class="price-old">€0,67</div>
+                        <div class="pricing-price-full"><span class="price-full-amount">€49,99</span><span class="price-full-label">einmalig</span></div>
+                        <div class="pricing-price-daily"><span class="price-daily-amount">€0,27</span><span class="price-daily-label">pro Tag</span></div>
+                        <div class="price-old">€119,99</div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="disclaimer">
-            ✓ <strong style="color: var(--warm-brown);">Einmalzahlung</strong> • <strong style="color: var(--warm-brown);">Kein Abo</strong> • 30 Tage Geld-zurück-Garantie • <a href="agb.html">AGB</a>
-        </div>
-
-        <button class="cta-button glow" onclick="getMyPlan()">
-            Trainingsplan freischalten
-            <span class="cta-subtext">Sicher bezahlen & sofort starten</span>
-        </button>
-
-        <div class="payment-logos">
-            <img src="sepa-logo.png" alt="SEPA">
-            <img src="paypal-logo.png" alt="PayPal">
-            <img src="visa-logo.png" alt="Visa">
-            <img src="klarna-logo.png" alt="Klarna">
-            <img src="mastercard-logo.png" alt="Mastercard">
-            <img src="applepay.png" alt="Apple Pay">
-            <img src="googlepay.png" alt="Google Pay">
-        </div>
-
-        <div class="guarantee">
-            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-            30-Tage Geld-zurück-Garantie
-        </div>
-
-        <!-- Benefits Box - dynamisch basierend auf Problem -->
-        <div class="benefits-box" id="benefitsBox" style="margin-top: 35px;">
-            <h2 class="benefits-title">Das bekommst du im Plan</h2>
-            <ul class="benefits-list" id="benefitsList">
-                <!-- Wird per JavaScript gefüllt -->
-            </ul>
-        </div>
-
-        <!-- ========== Testimonials (ausführlicher, weiter unten) ========== -->
+        <div class="disclaimer">✓ <strong style="color: var(--warm-brown);">Einmalzahlung</strong> • <strong style="color: var(--warm-brown);">Kein Abo</strong> • 30 Tage Geld-zurück-Garantie • <a href="agb.html">AGB</a></div>
+        <button class="cta-button glow" onclick="getMyPlan()">Trainingsplan freischalten<span class="cta-subtext">Sicher bezahlen & sofort starten</span></button>
+        <div class="payment-logos"><img src="sepa-logo.png" alt="SEPA"><img src="paypal-logo.png" alt="PayPal"><img src="visa-logo.png" alt="Visa"><img src="klarna-logo.png" alt="Klarna"><img src="mastercard-logo.png" alt="Mastercard"><img src="applepay.png" alt="Apple Pay"><img src="googlepay.png" alt="Google Pay"></div>
+        <div class="guarantee"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>30-Tage Geld-zurück-Garantie</div>
+        <div class="benefits-box" id="benefitsBox" style="margin-top: 35px;"><h2 class="benefits-title">Das bekommst du im Plan</h2><ul class="benefits-list" id="benefitsList"></ul></div>
         <div class="testimonials-section">
-            <div class="section-header">
-                <h2 class="section-title">Echte Erfolgsgeschichten</h2>
-                <p class="section-subtitle">mit unserem Trainingsplan</p>
-            </div>
-
-            <!-- ========== VIDEO TESTIMONIAL ========== -->
+            <div class="section-header"><h2 class="section-title">Echte Erfolgsgeschichten</h2><p class="section-subtitle">mit unserem Trainingsplan</p></div>
             <div class="video-testimonial">
                 <div class="video-testimonial-container">
-                    <video id="testimonialVideo" playsinline preload="metadata" poster="video-thumbnail.png">
-                        <source src="WauWerkTestimonial.mp4" type="video/mp4">
-                    </video>
+                    <video id="testimonialVideo" playsinline preload="metadata" poster="video-thumbnail.png"><source src="WauWerkTestimonial.mp4" type="video/mp4"></video>
                     <div class="video-testimonial-badge">Kundenstimme</div>
-                    <div class="video-play-overlay" id="videoPlayOverlay" onclick="playTestimonialVideo()">
-                        <div class="video-play-button">
-                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </div>
-                    </div>
+                    <div class="video-play-overlay" id="videoPlayOverlay" onclick="playTestimonialVideo()"><div class="video-play-button"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
                 </div>
-                <div class="video-testimonial-caption">
-                    <strong>Luna zieht nicht mehr an der Leine</strong>
-                    <span>Nach nur 3 Wochen Training – ohne teure Hundeschule</span>
-                </div>
+                <div class="video-testimonial-caption"><strong>Luna zieht nicht mehr an der Leine</strong><span>Nach nur 3 Wochen Training – ohne teure Hundeschule</span></div>
             </div>
-
-            <div class="testimonial-card">
-                <div class="testimonial-image-single">
-                    <img src="Testimonial1.png" alt="Bella Vorher/Nachher" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
-                </div>
-                <div class="testimonial-header">
-                    <div>
-                        <div class="testimonial-name">Bella</div>
-                        <div class="testimonial-problem">Problem: <span>Leinenaggression</span></div>
-                    </div>
-                </div>
-                <p class="testimonial-text">Mein Hund hat früher jeden anderen Hund angebellt. Nach 3 Wochen mit dem Plan können wir endlich entspannt spazieren gehen. Die Übungen sind einfach und effektiv!</p>
-            </div>
-
-            <div class="testimonial-card">
-                <div class="testimonial-image-single">
-                    <img src="Testimonial2.png" alt="Max Vorher/Nachher" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
-                </div>
-                <div class="testimonial-header">
-                    <div>
-                        <div class="testimonial-name">Max</div>
-                        <div class="testimonial-problem">Problem: <span>Hyperaktivität</span></div>
-                    </div>
-                </div>
-                <p class="testimonial-text">Max war ständig aufgedreht und konnte nicht stillsitzen. Die täglichen 10-Minuten-Übungen haben wahre Wunder gewirkt. Jetzt ist er viel ausgeglichener!</p>
-            </div>
+            <div class="testimonial-card"><div class="testimonial-image-single"><img src="Testimonial1.png" alt="Bella Vorher/Nachher" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"></div><div class="testimonial-header"><div><div class="testimonial-name">Bella</div><div class="testimonial-problem">Problem: <span>Leinenaggression</span></div></div></div><p class="testimonial-text">Mein Hund hat früher jeden anderen Hund angebellt. Nach 3 Wochen mit dem Plan können wir endlich entspannt spazieren gehen. Die Übungen sind einfach und effektiv!</p></div>
+            <div class="testimonial-card"><div class="testimonial-image-single"><img src="Testimonial2.png" alt="Max Vorher/Nachher" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"></div><div class="testimonial-header"><div><div class="testimonial-name">Max</div><div class="testimonial-problem">Problem: <span>Hyperaktivität</span></div></div></div><p class="testimonial-text">Max war ständig aufgedreht und konnte nicht stillsitzen. Die täglichen 10-Minuten-Übungen haben wahre Wunder gewirkt. Jetzt ist er viel ausgeglichener!</p></div>
         </div>
-
         <div class="trustpilot-slider">
             <div class="trustpilot-track" id="tpTrack">
-                <div class="trustpilot-review">
-                    <div class="trustpilot-stars">
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                    </div>
-                    <p class="trustpilot-text">Sehr gut erklärt und schnell umsetzbar!</p>
-                    <p class="trustpilot-name">Sandra M.</p>
-                </div>
-                <div class="trustpilot-review">
-                    <div class="trustpilot-stars">
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                    </div>
-                    <p class="trustpilot-text">Tolle Beispiele, die wirklich funktionieren.</p>
-                    <p class="trustpilot-name">Thomas K.</p>
-                </div>
-                <div class="trustpilot-review">
-                    <div class="trustpilot-stars">
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                        <span class="tp-star">★</span>
-                    </div>
-                    <p class="trustpilot-text">Einfache Anleitungen, schnelle Ergebnisse!</p>
-                    <p class="trustpilot-name">Julia R.</p>
-                </div>
+                <div class="trustpilot-review"><div class="trustpilot-stars"><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span></div><p class="trustpilot-text">Sehr gut erklärt und schnell umsetzbar!</p><p class="trustpilot-name">Sandra M.</p></div>
+                <div class="trustpilot-review"><div class="trustpilot-stars"><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span></div><p class="trustpilot-text">Tolle Beispiele, die wirklich funktionieren.</p><p class="trustpilot-name">Thomas K.</p></div>
+                <div class="trustpilot-review"><div class="trustpilot-stars"><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span><span class="tp-star">★</span></div><p class="trustpilot-text">Einfache Anleitungen, schnelle Ergebnisse!</p><p class="trustpilot-name">Julia R.</p></div>
             </div>
-            <div class="trustpilot-dots">
-                <span class="tp-dot active" data-index="0"></span>
-                <span class="tp-dot" data-index="1"></span>
-                <span class="tp-dot" data-index="2"></span>
-            </div>
+            <div class="trustpilot-dots"><span class="tp-dot active" data-index="0"></span><span class="tp-dot" data-index="1"></span><span class="tp-dot" data-index="2"></span></div>
         </div>
-
-        <div class="guarantee-box">
-            <h3 class="guarantee-title">Kein Risiko für dich</h3>
-            <p class="guarantee-text">Wir sind überzeugt, dass unser Plan funktioniert und du innerhalb von 4 Wochen sichtbare Ergebnisse siehst. Falls nicht, erstatten wir dir den vollen Betrag zurück – ohne Wenn und Aber.</p>
-            <div class="guarantee-badge">
-                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-            </div>
-        </div>
-
+        <div class="guarantee-box"><h3 class="guarantee-title">Kein Risiko für dich</h3><p class="guarantee-text">Wir sind überzeugt, dass unser Plan funktioniert und du innerhalb von 4 Wochen sichtbare Ergebnisse siehst. Falls nicht, erstatten wir dir den vollen Betrag zurück – ohne Wenn und Aber.</p><div class="guarantee-badge"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg></div></div>
         <div class="faq-section">
             <h2 class="faq-title">Häufige Fragen</h2>
-
-            <div class="faq-item">
-                <div class="faq-question">
-                    <div class="faq-icon">
-                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                    </div>
-                    <span class="faq-question-text">Wie bekomme ich meinen Trainingsplan?</span>
-                </div>
-                <p class="faq-answer">Du erhältst deinen personalisierten Trainingsplan sofort per E-Mail nach dem Kauf. Innerhalb weniger Minuten hast du Zugang zu allen Übungen und kannst direkt loslegen!</p>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">
-                    <div class="faq-icon">
-                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                    </div>
-                    <span class="faq-question-text">Wie unterscheidet sich das von anderen Trainings?</span>
-                </div>
-                <p class="faq-answer">Unser Ansatz basiert auf positiver Verstärkung und ist wissenschaftlich fundiert. Keine Stachelhalsbänder, kein Anschreien - nur Methoden, die wirklich funktionieren und deinem Hund nicht schaden.</p>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">
-                    <div class="faq-icon">
-                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                    </div>
-                    <span class="faq-question-text">Wie viel Zeit brauche ich täglich?</span>
-                </div>
-                <p class="faq-answer">Unsere Trainingseinheiten sind kurz und effektiv – nur 10 bis 15 Minuten am Tag. Perfekt für jeden Alltag!</p>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">
-                    <div class="faq-icon">
-                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                    </div>
-                    <span class="faq-question-text">Funktioniert das auch bei meinem Hund?</span>
-                </div>
-                <p class="faq-answer">Ja! Unser Plan ist personalisiert auf Alter, Rasse und Verhaltensprobleme deines Hundes. Falls du keine Verbesserung siehst, bekommst du dein Geld zurück.</p>
-            </div>
+            <div class="faq-item"><div class="faq-question"><div class="faq-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="faq-question-text">Wie bekomme ich meinen Trainingsplan?</span></div><p class="faq-answer">Du erhältst deinen personalisierten Trainingsplan sofort per E-Mail nach dem Kauf. Innerhalb weniger Minuten hast du Zugang zu allen Übungen und kannst direkt loslegen!</p></div>
+            <div class="faq-item"><div class="faq-question"><div class="faq-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="faq-question-text">Wie unterscheidet sich das von anderen Trainings?</span></div><p class="faq-answer">Unser Ansatz basiert auf positiver Verstärkung und ist wissenschaftlich fundiert. Keine Stachelhalsbänder, kein Anschreien - nur Methoden, die wirklich funktionieren und deinem Hund nicht schaden.</p></div>
+            <div class="faq-item"><div class="faq-question"><div class="faq-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="faq-question-text">Wie viel Zeit brauche ich täglich?</span></div><p class="faq-answer">Unsere Trainingseinheiten sind kurz und effektiv – nur 10 bis 15 Minuten am Tag. Perfekt für jeden Alltag!</p></div>
+            <div class="faq-item"><div class="faq-question"><div class="faq-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div><span class="faq-question-text">Funktioniert das auch bei meinem Hund?</span></div><p class="faq-answer">Ja! Unser Plan ist personalisiert auf Alter, Rasse und Verhaltensprobleme deines Hundes. Falls du keine Verbesserung siehst, bekommst du dein Geld zurück.</p></div>
         </div>
-
-        <button class="cta-button glow" onclick="getMyPlan()">
-            Trainingsplan freischalten
-            <span class="cta-subtext">Sicher bezahlen & sofort starten</span>
-        </button>
+        <button class="cta-button glow" onclick="getMyPlan()">Trainingsplan freischalten<span class="cta-subtext">Sicher bezahlen & sofort starten</span></button>
     </div>
+    <footer class="footer"><p>&copy; 2025 Mein WauWerk. Alle Rechte vorbehalten.</p><p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p></footer>
 
-    <footer class="footer">
-        <p>&copy; 2025 Mein WauWerk. Alle Rechte vorbehalten.</p>
-        <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
-    </footer>
-
-    <script>
-        // Supabase Config (am Anfang für E-Mail Link Support)
-        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
-
-        // Video Testimonial Play/Pause Toggle
-        function playTestimonialVideo() {
-            const video = document.getElementById('testimonialVideo');
-            const overlay = document.getElementById('videoPlayOverlay');
-            
-            if (video.paused) {
-                video.play();
-                overlay.classList.add('hidden');
-            } else {
-                video.pause();
-                overlay.classList.remove('hidden');
-            }
-        }
-        
-        // Video Click Handler (für Pause wenn Video läuft)
-        document.getElementById('testimonialVideo').addEventListener('click', function() {
-            const overlay = document.getElementById('videoPlayOverlay');
-            if (!this.paused) {
-                this.pause();
-                overlay.classList.remove('hidden');
-            }
-        });
-        
-        // Overlay wieder zeigen wenn Video endet
-        document.getElementById('testimonialVideo').addEventListener('ended', function() {
-            document.getElementById('videoPlayOverlay').classList.remove('hidden');
-        });
-
-        // ==================== LOAD DATA FROM SUPABASE IF COMING FROM EMAIL ====================
-        (async function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const leadIdFromUrl = urlParams.get('lead_id');
-            
-            // Wenn lead_id in URL -> IMMER aus Supabase laden (E-Mail Link)
-            if (leadIdFromUrl) {
-                console.log('📧 User kam via E-Mail Link, lade Daten aus Supabase...');
-                
-                try {
-                    const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + leadIdFromUrl + '&select=*', {
-                        headers: {
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log('📦 Supabase Antwort:', data);
-                        
-                        if (data[0]) {
-                            const lead = data[0];
-                            const answers = lead.answers || {};
-                            
-                            console.log('📋 Answers:', answers);
-                            
-                            // Alle Daten in localStorage speichern (überschreibt alte!)
-                            if (answers.dog_name) localStorage.setItem('dogName', answers.dog_name);
-                            if (answers.dog_age) localStorage.setItem('dogAge', answers.dog_age);
-                            if (answers.dog_breed) localStorage.setItem('dogBreed', answers.dog_breed);
-                            if (answers.dog_gender) localStorage.setItem('dogGender', answers.dog_gender);
-                            if (answers.dog_goal) localStorage.setItem('dogGoal', answers.dog_goal);
-                            if (answers.dog_problem) localStorage.setItem('dogProblem', answers.dog_problem);
-                            if (answers.dog_behaviors) localStorage.setItem('dogBehaviors', JSON.stringify(answers.dog_behaviors));
-                            if (answers.had_training) localStorage.setItem('hadTraining', answers.had_training);
-                            if (answers.territorial_aggression) localStorage.setItem('territorialAggression', answers.territorial_aggression);
-                            if (lead.email) localStorage.setItem('userEmail', lead.email);
-                            
-                            // Lead ID speichern
-                            localStorage.setItem('leadId', leadIdFromUrl);
-                            
-                            console.log('✅ Daten aus Supabase geladen, reload...');
-                            
-                            // Seite neu laden ohne lead_id Parameter (um Loop zu vermeiden)
-                            window.location.href = window.location.pathname;
-                            return;
-                        } else {
-                            console.log('⚠️ Keine Daten für lead_id gefunden:', leadIdFromUrl);
-                        }
-                    } else {
-                        console.error('❌ Supabase response nicht ok:', response.status);
-                    }
-                } catch (error) {
-                    console.error('❌ Supabase load error:', error);
-                }
-            }
-        })();
-
-        const dogName = localStorage.getItem('dogName') || 'deinen Hund';
-        const dogGoal = localStorage.getItem('dogGoal') || 'obedience';
-        const dogProblem = localStorage.getItem('dogProblem') || '';
-        const hadTraining = localStorage.getItem('hadTraining') || '';
-        const territorialAggression = localStorage.getItem('territorialAggression') || '';
-
-        document.getElementById('dogName1').textContent = dogName;
-        document.getElementById('dogName2').textContent = dogName;
-        document.getElementById('dogName3').textContent = dogName;
-        document.getElementById('dogNamePlan').textContent = dogName;
-
-        const goalMap = {
-            'basics': 'Grundlagen lernen',
-            'obedience': 'Gehorsam verbessern',
-            'commands': 'Kommandos beibringen',
-            'bond': 'Bindung stärken',
-            'behavior': 'Verhalten verbessern',
-            'anxiety': 'Ängste abbauen',
-            'potty': 'Toiletten-Routine',
-            'none': 'Allgemeines Training'
-        };
-        document.getElementById('userGoal').textContent = goalMap[dogGoal] || 'Gehorsam verbessern';
-
-        let problemText = 'Ungehorsam';
-        
-        if (territorialAggression === 'yes') {
-            problemText = 'Territoriale Aggression';
-        } else if (dogProblem) {
-            const problemMap = {
-                'pulling': 'Leinenziehen',
-                'barking': 'Übermäßiges Bellen',
-                'aggression': 'Aggression',
-                'anxiety': 'Trennungsangst',
-                'jumping': 'Anspringen',
-                'recall': 'Kommt nicht zurück',
-                'energy': 'Übermäßige Energie',
-                'destructive': 'Zerstörerisches Verhalten',
-                'soiling': 'In die Wohnung machen',
-                'mouthing': 'Unerwünschtes Aufnehmen'
-            };
-            problemText = problemMap[dogProblem] || dogProblem;
-        }
-        
-        document.getElementById('userProblem').textContent = problemText;
-        
-        // Dynamische Benefits basierend auf Problem
-        const benefitsMap = {
-            'pulling': [
-                '✓ ' + dogName + 's Leinenziehen effektiv abtrainieren',
-                '✓ Entspannte Spaziergänge ohne Zerren',
-                '✓ ' + dogName + ' lernt richtiges Verhalten an der Leine',
-                '✓ Ablenkungen souverän meistern',
-                '✓ Begegnungen mit anderen Hunden stressfrei',
-                '✓ 20+ Übungen speziell für ' + dogName,
-                '✓ Endlich wieder Freude am Gassi gehen'
-            ],
-            'barking': [
-                '✓ ' + dogName + 's übermäßiges Bellen reduzieren',
-                '✓ Auslöser für das Bellen verstehen',
-                '✓ ' + dogName + ' lernt Ruhe-Kommandos',
-                '✓ Entspanntere Nachbarschaft',
-                '✓ Besuch ohne Kläffen empfangen',
-                '✓ 20+ Übungen speziell für ' + dogName,
-                '✓ ' + dogName + ' wird ruhiger & ausgeglichener'
-            ],
-            'aggression': [
-                '✓ ' + dogName + 's aggressives Verhalten verstehen & lösen',
-                '✓ Warnsignale frühzeitig erkennen',
-                '✓ Sichere Begegnungen für ' + dogName,
-                '✓ Stresssituationen souverän meistern',
-                '✓ Stärkeres Vertrauen zwischen dir und ' + dogName,
-                '✓ 20+ Übungen speziell für ' + dogName,
-                '✓ Entspanntes Zusammenleben ohne Angst'
-            ],
-            'anxiety': [
-                '✓ ' + dogName + 's Trennungsangst Schritt für Schritt abbauen',
-                '✓ ' + dogName + ' lernt alleine zu bleiben',
-                '✓ Zerstörerisches Verhalten stoppen',
-                '✓ ' + dogName + 's Selbstvertrauen stärken',
-                '✓ Entspannte Abwesenheiten ermöglichen',
-                '✓ 20+ Übungen speziell für ' + dogName,
-                '✓ Endlich sorgenfrei das Haus verlassen'
-            ],
-            'jumping': [
-                '✓ ' + dogName + 's Anspringen abtrainieren',
-                '✓ ' + dogName + ' lernt ruhige Begrüßung',
-                '✓ Selbstkontrolle bei Aufregung aufbauen',
-                '✓ Besuch entspannt empfangen',
-                '✓ Höfliches Verhalten von ' + dogName,
-                '✓ 20+ Übungen speziell für ' + dogName,
-                '✓ Keine peinlichen Momente mehr'
-            ],
-            'recall': [
-                '✓ ' + dogName + 's zuverlässigen Rückruf aufbauen',
-                '✓ Freilauf ohne Sorgen für ' + dogName,
-                '✓ ' + dogName + ' ignoriert Ablenkungen',
-                '✓ Sofortige Reaktion auf deinen Ruf',
-                '✓ Sicherheit für ' + dogName + ' in jeder Situation',
-                '✓ 20+ Übungen speziell für ' + dogName,
-                '✓ Endlich entspannter Freilauf'
-            ],
-            'energy': [
-                '✓ ' + dogName + 's überschüssige Energie abbauen',
-                '✓ Mentale Auslastung für ' + dogName,
-                '✓ ' + dogName + ' lernt Ruhe & Entspannung',
-                '✓ Hyperaktivität in den Griff bekommen',
-                '✓ Ausgeglichenes Verhalten im Alltag',
-                '✓ 20+ Übungen speziell für ' + dogName,
-                '✓ ' + dogName + ' wird ruhiger & zufriedener'
-            ],
-            'destructive': [
-                '✓ ' + dogName + 's zerstörerisches Verhalten stoppen',
-                '✓ Langeweile bei ' + dogName + ' sinnvoll bekämpfen',
-                '✓ Kauen auf erlaubte Gegenstände umlenken',
-                '✓ Deine Möbel und Schuhe schützen',
-                '✓ Mentale Beschäftigung für ' + dogName,
-                '✓ 20+ Übungen speziell für ' + dogName,
-                '✓ Endlich Schluss mit zerstörten Sachen'
-            ],
-            'soiling': [
-                '✓ ' + dogName + ' wird zuverlässig stubenrein',
-                '✓ Klare Routinen für ' + dogName + 's Toilettengänge',
-                '✓ ' + dogName + 's Signale verstehen',
-                '✓ Unfälle in der Wohnung vermeiden',
-                '✓ Richtiges Timing beim Rausgehen',
-                '✓ 20+ Übungen speziell für ' + dogName,
-                '✓ Eine saubere Wohnung ohne Stress'
-            ],
-            'mouthing': [
-                '✓ ' + dogName + ' lernt Sachen liegen zu lassen',
-                '✓ Sicheres "Aus"-Kommando aufbauen',
-                '✓ Gefährliche Gegenstände werden ignoriert',
-                '✓ Kein Fressen vom Boden mehr',
-                '✓ ' + dogName + 's Impulskontrolle stärken',
-                '✓ 20+ Übungen speziell für ' + dogName,
-                '✓ Entspannte Spaziergänge ohne Sorgen'
-            ]
-        };
-        
-        // Default Benefits falls Problem nicht gemappt
-        const defaultBenefits = [
-            '✓ ' + dogName + 's Gehorsam schnell verbessern',
-            '✓ Verhaltensprobleme gezielt lösen',
-            '✓ Neue Trainingstechniken für ' + dogName,
-            '✓ Stärkere Bindung zu ' + dogName + ' aufbauen',
-            '✓ Dauerhaft gutes Verhalten erreichen',
-            '✓ 20+ Übungen speziell für ' + dogName,
-            '✓ Glückliches Zusammenleben mit ' + dogName
-        ];
-        
-        const benefits = benefitsMap[dogProblem] || defaultBenefits;
-        const benefitsList = document.getElementById('benefitsList');
-        benefits.forEach(benefit => {
-            const li = document.createElement('li');
-            li.textContent = benefit;
-            benefitsList.appendChild(li);
-        });
-        
-        // Problem-Label in Stat-Boxen aktualisieren
-        document.getElementById('problemLabel1').textContent = problemText;
-        document.getElementById('problemLabel2').textContent = problemText;
-        
-        // Dynamische Werte basierend auf Problem-Typ
-        const problemValueMap = {
-            'pulling': { bad: 'Stark', good: 'Kontrolliert' },
-            'barking': { bad: 'Häufig', good: 'Ruhig' },
-            'aggression': { bad: 'Kritisch', good: 'Friedlich' },
-            'anxiety': { bad: 'Stark', good: 'Entspannt' },
-            'jumping': { bad: 'Ständig', good: 'Kontrolliert' },
-            'recall': { bad: 'Ignoriert', good: 'Zuverlässig' },
-            'energy': { bad: 'Übermäßig', good: 'Ausgeglichen' },
-            'destructive': { bad: 'Häufig', good: 'Gestoppt' },
-            'soiling': { bad: 'Regelmäßig', good: 'Stubenrein' },
-            'mouthing': { bad: 'Ständig', good: 'Kontrolliert' }
-        };
-        
-        const defaultValues = { bad: 'Kritisch', good: 'Gelöst' };
-        const values = problemValueMap[dogProblem] || defaultValues;
-        
-        if (territorialAggression === 'yes') {
-            document.getElementById('problemValue1').textContent = 'Kritisch';
-            document.getElementById('problemValue2').textContent = 'Friedlich';
-        } else {
-            document.getElementById('problemValue1').textContent = values.bad;
-            document.getElementById('problemValue2').textContent = values.good;
-        }
-
-        let timeLeft;
-        let timerExpired = false;
-        
-        function initializeTimer() {
-            const savedStartTime = localStorage.getItem('wauwerk_timerStartTime');
-            const timerDuration = 10 * 60;
-            
-            if (savedStartTime) {
-                const startTime = parseInt(savedStartTime);
-                const currentTime = Date.now();
-                const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
-                timeLeft = Math.max(0, timerDuration - elapsedSeconds);
-            } else {
-                timeLeft = timerDuration;
-                localStorage.setItem('wauwerk_timerStartTime', Date.now().toString());
-            }
-        }
-        
-        initializeTimer();
-        
-        function updateTimer() {
-            if (timeLeft <= 0) {
-                timerExpired = true;
-                document.getElementById('timer').textContent = 'ABGELAUFEN';
-                switchToNormalPrices();
-                return;
-            }
-            
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            document.getElementById('timer').textContent = 
-                minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
-            
-            timeLeft--;
-            setTimeout(updateTimer, 1000);
-        }
-        
-        const pricingCards = document.querySelectorAll('.pricing-card');
-        let selectedPlan = '6month';
-
-        const planDetails = {
-            '1month': { 
-                price: '€24,99', 
-                priceNormal: '€49,99',
-                name: '1-Monats-Plan', 
-                interval: 'monatlich' 
-            },
-            '3month': { 
-                price: '€29,99', 
-                priceNormal: '€79,99',
-                name: '3-Monats-Plan', 
-                interval: 'alle 3 Monate' 
-            },
-            '6month': { 
-                price: '€49,99', 
-                priceNormal: '€119,99',
-                name: '6-Monats-Plan', 
-                interval: 'alle 6 Monate' 
-            }
-        };
-
-        function switchToNormalPrices() {
-            document.querySelectorAll('.price-old').forEach(el => {
-                el.style.display = 'none';
-            });
-            
-            const cards = document.querySelectorAll('.pricing-card');
-            
-            // 1-Monat: €49,99 = €1,67/Tag
-            cards[0].querySelector('.price-amount').textContent = '1';
-            cards[0].querySelector('.price-cents').textContent = ',67';
-            cards[0].dataset.price = '49.99';
-            
-            // 3-Monat: €79,99 = €0,89/Tag
-            cards[1].querySelector('.price-amount').textContent = '0';
-            cards[1].querySelector('.price-cents').textContent = ',89';
-            cards[1].dataset.price = '79.99';
-            
-            // 6-Monat: €119,99 = €0,67/Tag
-            cards[2].querySelector('.price-amount').textContent = '0';
-            cards[2].querySelector('.price-cents').textContent = ',67';
-            cards[2].dataset.price = '119.99';
-        }
-        
-        updateTimer();
-
-        function selectPlan(card) {
-            // Wenn bereits ausgewählt -> direkt zum Checkout
-            if (card.classList.contains('selected')) {
-                getMyPlan();
-                return;
-            }
-            
-            pricingCards.forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            selectedPlan = card.dataset.plan;
-        }
-
-        pricingCards.forEach(card => {
-            card.addEventListener('click', function() {
-                selectPlan(this);
-            });
-        });
-
-        function parseJSON(str) {
-            try {
-                return JSON.parse(str || '[]');
-            } catch(e) {
-                return [];
-            }
-        }
-
-        // Cookie Helper Funktion (global)
-        function getCookie(name) {
-            const value = '; ' + document.cookie;
-            const parts = value.split('; ' + name + '=');
-            if (parts.length === 2) return parts.pop().split(';').shift();
-            return null;
-        }
-
-        // Facebook Event ID generieren
-        function generateEventId() {
-            return 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        }
-
-        // ==================== GEFIXT: UPDATE statt INSERT ====================
-        async function saveToSupabase() {
-            // Prüfen ob bereits ein Lead existiert (aus kurz-schritt11.html)
-            const existingLeadId = localStorage.getItem('leadId');
-            
-            // UTM Parameter aus URL oder localStorage holen
-            const urlParams = new URLSearchParams(window.location.search);
-            
-            // Facebook Browser ID und Click ID
-            const fbp = getCookie('_fbp') || null;
-            const fbclid = urlParams.get('fbclid') || localStorage.getItem('fbclid') || null;
-            const fbc = getCookie('_fbc') || (fbclid ? 'fb.1.' + Date.now() + '.' + fbclid : null);
-            
-            // Facebook Event ID für Deduplizierung generieren
-            const fb_event_id = generateEventId();
-            localStorage.setItem('fb_event_id', fb_event_id);
-            
-            const utmParams = {
-                utm_source: urlParams.get('utm_source') || localStorage.getItem('utm_source') || null,
-                utm_medium: urlParams.get('utm_medium') || localStorage.getItem('utm_medium') || null,
-                utm_campaign: urlParams.get('utm_campaign') || localStorage.getItem('utm_campaign') || null,
-                utm_content: urlParams.get('utm_content') || localStorage.getItem('utm_content') || null,
-                utm_term: urlParams.get('utm_term') || localStorage.getItem('utm_term') || null,
-                fbclid: fbclid,
-                fbp: fbp,
-                fbc: fbc,
-                fb_event_id: fb_event_id,
-                gclid: urlParams.get('gclid') || localStorage.getItem('gclid') || null,
-                ttclid: urlParams.get('ttclid') || localStorage.getItem('ttclid') || null,
-                referrer: localStorage.getItem('referrer') || null,
-                landing_page: localStorage.getItem('landing_page') || null,
-                first_visit: localStorage.getItem('first_visit') || null
-            };
-
-            const answers = {
-                dog_name: localStorage.getItem('dogName'),
-                dog_age: localStorage.getItem('dogAge'),
-                dog_breed: localStorage.getItem('dogBreed'),
-                dog_gender: localStorage.getItem('dogGender'),
-                dog_castration: localStorage.getItem('dogCastration'),
-                dog_goals: parseJSON(localStorage.getItem('dogGoals')),
-                dog_goal: localStorage.getItem('dogGoal'),
-                dog_attention: localStorage.getItem('dogAttention'),
-                dog_crate: localStorage.getItem('dogCrate'),
-                dog_behaviors: parseJSON(localStorage.getItem('dogBehaviors')),
-                dog_problem: localStorage.getItem('dogProblem'),
-                dog_stress_situations: parseJSON(localStorage.getItem('dogStressSituations')),
-                dog_petting: localStorage.getItem('dogPetting'),
-                dog_playing: localStorage.getItem('dogPlaying'),
-                training_time: localStorage.getItem('trainingTime'),
-                dog_traits: parseJSON(localStorage.getItem('dogTraits')),
-                dog_commands: parseJSON(localStorage.getItem('dogCommands')),
-                dog_potty_issues: parseJSON(localStorage.getItem('dogPottyIssues')),
-                dog_feeding: localStorage.getItem('dogFeeding'),
-                dog_obedience_rating: localStorage.getItem('dogObedienceRating'),
-                dog_socialization_rating: localStorage.getItem('dogSocializationRating'),
-                upcoming_event: localStorage.getItem('upcomingEvent'),
-                event_timing: localStorage.getItem('eventTiming'),
-                had_training: localStorage.getItem('hadTraining'),
-                territorial_aggression: localStorage.getItem('territorialAggression'),
-                email: localStorage.getItem('userEmail') || null,
-                ...utmParams
-            };
-
-            // Answers in localStorage speichern für E-Mail Update
-            localStorage.setItem('wauwerk_answers', JSON.stringify(answers));
-
-            // ========== WENN LEAD EXISTIERT: UPDATE STATT INSERT ==========
-            if (existingLeadId) {
-                console.log('📝 Updating existing lead:', existingLeadId);
-                try {
-                    const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + existingLeadId, {
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-                            'Prefer': 'return=representation'
-                        },
-                        body: JSON.stringify({
-                            selected_plan: selectedPlan,
-                            price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price,
-                            timer_expired: timerExpired,
-                            status: 'pending',
-                            answers: answers
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        console.log('✅ Lead updated to pending:', existingLeadId);
-                        return existingLeadId;
-                    } else {
-                        console.error('❌ Update failed:', await response.text());
-                    }
-                } catch (error) {
-                    console.error('❌ Update error:', error);
-                }
-                // Falls Update fehlschlägt, trotzdem existingLeadId zurückgeben
-                return existingLeadId;
-            }
-
-            // ========== FALLBACK: NEUEN LEAD ERSTELLEN (sollte selten passieren) ==========
-            const leadData = {
-                dog_name: localStorage.getItem('dogName'),
-                selected_plan: selectedPlan,
-                price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price,
-                timer_expired: timerExpired,
-                status: 'pending',
-                answers: answers,
-                email: localStorage.getItem('userEmail') || null
-            };
-
-            console.log('📝 Creating new lead (no existing leadId found)');
-
-            try {
-                const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-                        'Prefer': 'return=representation'
-                    },
-                    body: JSON.stringify(leadData)
-                });
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Supabase error:', response.status, errorText);
-                    return null;
-                }
-                
-                const data = await response.json();
-                console.log('Supabase response:', data);
-                const newId = data[0]?.id || null;
-                if (newId) {
-                    localStorage.setItem('leadId', newId);
-                }
-                return newId;
-            } catch (error) {
-                console.error('Failed to save lead:', error);
-                return null;
-            }
-        }
-
-        let tpCurrentSlide = 0;
-        const tpTrack = document.getElementById('tpTrack');
-        const tpDots = document.querySelectorAll('.tp-dot');
-
-        function goToTpSlide(index) {
-            tpCurrentSlide = index;
-            tpTrack.style.transform = 'translateX(-' + (index * 100) + '%)';
-            tpDots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
-        }
-
-        tpDots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                goToTpSlide(parseInt(dot.dataset.index));
-            });
-        });
-
-        setInterval(() => {
-            tpCurrentSlide = (tpCurrentSlide + 1) % 3;
-            goToTpSlide(tpCurrentSlide);
-        }, 4000);
-
-        // Exit-Intent Popup Logic - nur wenn vom Checkout/Stripe zurück
-        let exitPopupShown = false;
-        
-        // Prüfen ob User von Stripe zurückkommt
-        const fromStripe = localStorage.getItem('wentToStripe') === 'true';
-        
-        if (fromStripe && !sessionStorage.getItem('exitPopupShown')) {
-            // User kam von Stripe zurück ohne zu kaufen - Popup sofort zeigen
-            setTimeout(() => {
-                showExitPopup();
-            }, 500);
-        }
-        
-        // Back-Button Detection - nur wenn von Stripe
-        window.addEventListener('pageshow', function(event) {
-            if (localStorage.getItem('wentToStripe') === 'true') {
-                if (!exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
-                    setTimeout(() => {
-                        showExitPopup();
-                    }, 300);
-                }
-            }
-        });
-
-        // Emotional headlines based on problem
-        const emotionalHeadlines = {
-            'pulling': 'In 4 Wochen entspannte Spaziergänge',
-            'barking': 'In 4 Wochen ein ruhiges Zuhause',
-            'aggression': 'In 4 Wochen entspannte Begegnungen',
-            'anxiety': 'In 4 Wochen entspannt alleine bleiben',
-            'jumping': 'In 4 Wochen höfliche Begrüßungen',
-            'recall': 'In 4 Wochen zuverlässiger Rückruf',
-            'energy': 'In 4 Wochen ein ausgeglichener Hund',
-            'destructive': 'In 4 Wochen ein entspanntes Zuhause',
-            'soiling': 'In 4 Wochen ein stubenreiner Hund',
-            'mouthing': 'In 4 Wochen keine unerwünschten Sachen mehr im Maul'
-        };
-        
-        function showExitPopup() {
-            if (exitPopupShown) return;
-            exitPopupShown = true;
-            sessionStorage.setItem('exitPopupShown', 'true');
-            
-            // Dynamic headline based on problem
-            const popupHeadlineEl = document.getElementById('popupHeadline');
-            if (popupHeadlineEl) {
-                const headline = emotionalHeadlines[dogProblem] || 'In 4 Wochen ein entspannter Hund';
-                popupHeadlineEl.textContent = headline;
-            }
-            
-            document.getElementById('exitPopup').classList.add('active');
-            
-            // Trigger line animation
-            const popup = document.querySelector('.exit-popup');
-            popup.classList.remove('animate');
-            void popup.offsetWidth; // Force reflow
-            popup.classList.add('animate');
-        }
-        
-        function closeExitPopup() {
-            document.getElementById('exitPopup').classList.remove('active');
-            document.querySelector('.exit-popup').classList.remove('animate');
-            localStorage.removeItem('wentToStripe');
-        }
-
-        // ==================== CHECKOUT POPUP ====================
-        
-        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
-        
-        let stripe = null;
-        let elements = null;
-        let paymentElement = null;
-        let currentLeadId = null;
-        let clientSecret = null;
-        let userEmail = null;
-
-        // Preise
-        const checkoutPrices = {
-            '1month': { discount: 24.99, normal: 49.99, oldTotal: 271.94, duration: '1-Monats-Plan' },
-            '3month': { discount: 29.99, normal: 79.99, oldTotal: 301.94, duration: '3-Monats-Plan' },
-            '6month': { discount: 49.99, normal: 119.99, oldTotal: 341.94, duration: '6-Monats-Plan' }
-        };
-
-        async function openCheckoutPopup() {
-            // Erst Lead in Supabase speichern (non-blocking)
-            saveToSupabase().then(id => { currentLeadId = id; }).catch(e => console.error(e));
-            
-            const priceData = checkoutPrices[selectedPlan] || checkoutPrices['1month'];
-            const price = timerExpired ? priceData.normal : priceData.discount;
-            
-            // Popup Daten füllen
-            document.getElementById('checkoutDogName').textContent = dogName;
-            document.getElementById('checkoutPlanDuration').textContent = priceData.duration;
-            document.getElementById('checkoutPlanPrice').textContent = '€' + price.toFixed(2).replace('.', ',');
-            
-            // Hundename in Plan-Karte
-            const checkoutDogNamePlan = document.getElementById('checkoutDogNamePlan');
-            if (checkoutDogNamePlan) checkoutDogNamePlan.textContent = dogName;
-            
-            // Tagespreis berechnen
-            const dailyPrices = {
-                '1month': { discount: '0,83', normal: '1,67' },
-                '3month': { discount: '0,33', normal: '0,89' },
-                '6month': { discount: '0,27', normal: '0,67' }
-            };
-            const dailyData = dailyPrices[selectedPlan] || dailyPrices['3month'];
-            const dailyPrice = timerExpired ? dailyData.normal : dailyData.discount;
-            const checkoutDailyPrice = document.getElementById('checkoutDailyPrice');
-            if (checkoutDailyPrice) checkoutDailyPrice.textContent = '≈ ' + dailyPrice + ' € pro Tag';
-            
-            // Step 2 Werte auch setzen
-            const planDuration2 = document.getElementById('checkoutPlanDuration2');
-            const planPrice2 = document.getElementById('checkoutPlanPrice2');
-            if (planDuration2) planDuration2.textContent = priceData.duration;
-            if (planPrice2) planPrice2.textContent = '€' + price.toFixed(2).replace('.', ',');
-            
-            const checkoutTotalPrice = document.getElementById('checkoutTotalPrice');
-            if (checkoutTotalPrice) checkoutTotalPrice.textContent = '€' + price.toFixed(2).replace('.', ',');
-            
-            // Problem-Labels mit gegen/für
-            const problemLabels = {
-                'pulling': 'gegen Leinenziehen',
-                'barking': 'gegen übermäßiges Bellen',
-                'aggression': 'gegen Aggression',
-                'anxiety': 'gegen Trennungsangst',
-                'jumping': 'gegen Anspringen',
-                'recall': 'für sicheren Rückruf',
-                'energy': 'gegen Hyperaktivität',
-                'destructive': 'gegen Zerstörungswut',
-                'soiling': 'für Stubenreinheit',
-                'mouthing': 'gegen unerwünschtes Aufnehmen'
-            };
-            
-            const dogProblemValue = localStorage.getItem('dogProblem') || 'anxiety';
-            const checkoutDogProblem = document.getElementById('checkoutDogProblem');
-            if (checkoutDogProblem) {
-                checkoutDogProblem.textContent = problemLabels[dogProblemValue] || 'dein Problem';
-            }
-            const checkoutDogProblem2 = document.getElementById('checkoutDogProblem2');
-            if (checkoutDogProblem2) {
-                checkoutDogProblem2.textContent = problemLabels[dogProblemValue] || 'dein Problem';
-            }
-            
-            // Plan-Benefit basierend auf Laufzeit
-            const planBenefits = {
-                '1month': 'Klarer 4-Wochen-Fahrplan mit festen Phasen',
-                '3month': 'Klarer 12-Wochen-Fahrplan mit festen Phasen',
-                '6month': 'Klarer 24-Wochen-Fahrplan mit festen Phasen'
-            };
-            const checkoutPlanBenefit = document.getElementById('checkoutPlanBenefit');
-            if (checkoutPlanBenefit) {
-                checkoutPlanBenefit.textContent = planBenefits[selectedPlan] || planBenefits['3month'];
-            }
-            
-            // E-Mail aus localStorage (wurde in kurz-schritt11.html gesammelt)
-            userEmail = localStorage.getItem('userEmail') || '';
-
-            // Direkt zu Zahlung (E-Mail Step überspringen)
-            document.getElementById('checkoutStepEmail').classList.add('hidden');
-            document.getElementById('checkoutStep1').classList.add('hidden');
-            document.getElementById('checkoutStep2').classList.add('active');
-
-            // Popup öffnen
-            document.getElementById('checkoutPopup').classList.add('active');
-            document.body.style.overflow = 'hidden';
-
-            // Direkt Stripe laden
-            goToPaymentStep();
-        }
-
-        function closeCheckoutPopup() {
-            document.getElementById('checkoutPopup').classList.remove('active');
-            document.body.style.overflow = '';
-            
-            // Exit Popup zeigen wenn Checkout geschlossen wird
-            if (!sessionStorage.getItem('exitPopupShown')) {
-                setTimeout(() => {
-                    showExitPopup();
-                }, 300);
-            }
-        }
-
-        async function goToPaymentStep() {
-            // E-Mail und Step 1 verstecken, Step 2 zeigen
-            document.getElementById('checkoutStepEmail').classList.add('hidden');
-            document.getElementById('checkoutStep1').classList.add('hidden');
-            document.getElementById('checkoutStep2').classList.add('active');
-            
-            // Stripe initialisieren
-            if (!stripe) {
-                stripe = Stripe(STRIPE_PUBLIC_KEY);
-            }
-            
-            // PaymentIntent vom Server holen
-            try {
-                const priceData = checkoutPrices[selectedPlan] || checkoutPrices['1month'];
-                
-                // Plan im localStorage speichern für Upsell-Seite
-                localStorage.setItem('selectedPlan', selectedPlan);
-                
-                const response = await fetch('/api/wauwerk-checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        plan: selectedPlan,
-                        timerExpired: timerExpired,
-                        dogName: dogName,
-                        leadId: currentLeadId,
-                        email: userEmail || localStorage.getItem('userEmail') || '',
-                        utm_source: localStorage.getItem('utm_source') || '',
-                        utm_medium: localStorage.getItem('utm_medium') || '',
-                        utm_campaign: localStorage.getItem('utm_campaign') || '',
-                        utm_content: localStorage.getItem('utm_content') || '',
-                        fbclid: localStorage.getItem('fbclid') || '',
-                        fbp: getCookie('_fbp') || '',
-                        fbc: getCookie('_fbc') || '',
-                        fb_event_id: localStorage.getItem('fb_event_id') || '',
-                        ttclid: localStorage.getItem('ttclid') || ''
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.error) {
-                    showCheckoutError(data.error);
-                    return;
-                }
-                
-                clientSecret = data.clientSecret;
-                
-                // Event ID (payment_intent) und fb_event_id in answers updaten
-                if (currentLeadId && data.paymentIntentId) {
-                    const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
-                    currentAnswers.event_id = data.paymentIntentId;
-                    currentAnswers.fb_event_id = localStorage.getItem('fb_event_id') || '';
-                    
-                    fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + currentLeadId, {
-                        method: 'PATCH',
-                        headers: {
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-                            'Content-Type': 'application/json',
-                            'Prefer': 'return=minimal'
-                        },
-                        body: JSON.stringify({ 
-                            answers: currentAnswers
-                        })
-                    });
-                    
-                    localStorage.setItem('wauwerk_answers', JSON.stringify(currentAnswers));
-                }
-                
-                // Stripe Elements erstellen
-                elements = stripe.elements({
-                    clientSecret: clientSecret,
-                    appearance: {
-                        theme: 'stripe',
-                        variables: {
-                            colorPrimary: '#C4A576',
-                            colorBackground: '#ffffff',
-                            colorText: '#2C2C2E',
-                            colorDanger: '#e74c3c',
-                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                            borderRadius: '8px'
-                        }
-                    },
-                    locale: 'de'
-                });
-                
-                // Payment Element mounten
-                paymentElement = elements.create('payment', {
-                    layout: {
-                        type: 'tabs',
-                        defaultCollapsed: false
-                    },
-                    paymentMethodOrder: ['klarna', 'paypal', 'card'],
-                    wallets: {
-                        applePay: 'auto',
-                        googlePay: 'auto'
-                    }
-                });
-                
-                paymentElement.mount('#payment-element');
-                
-            } catch (error) {
-                console.error('Checkout Error:', error);
-                showCheckoutError('Verbindungsfehler. Bitte versuche es erneut.');
-            }
-        }
-
-        async function submitPayment() {
-            const payBtn = document.getElementById('checkoutPayBtn');
-            payBtn.disabled = true;
-            payBtn.innerHTML = '<span class="spinner"></span> Wird verarbeitet...';
-            
-            hideCheckoutError();
-            
-            try {
-                const { error } = await stripe.confirmPayment({
-                    elements,
-                    confirmParams: {
-                        return_url: window.location.origin + '/zusatz.html?lead_id=' + currentLeadId
-                    }
-                });
-                
-                if (error) {
-                    showCheckoutError(error.message);
-                    payBtn.disabled = false;
-                    payBtn.innerHTML = '🔒 Jetzt bezahlen';
-                }
-                // Bei Erfolg wird automatisch weitergeleitet
-                
-            } catch (err) {
-                showCheckoutError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
-                payBtn.disabled = false;
-                payBtn.innerHTML = '🔒 Jetzt bezahlen';
-            }
-        }
-
-        function showCheckoutError(message) {
-            const errorEl = document.getElementById('checkoutError');
-            errorEl.textContent = message;
-            errorEl.classList.add('visible');
-        }
-
-        function hideCheckoutError() {
-            document.getElementById('checkoutError').classList.remove('visible');
-        }
-
-        // getMyPlan überschreiben um Checkout Popup zu öffnen
-        async function getMyPlan() {
-            openCheckoutPopup();
-        }
-    </script>
-
-<!-- Checkout Popup -->
     <div class="checkout-overlay" id="checkoutPopup">
         <div class="checkout-popup">
-            <div class="checkout-header">
-                <button class="checkout-close" onclick="closeCheckoutPopup()">×</button>
-                <h2 class="checkout-title">Dein Plan für <span id="checkoutDogName">deinen Hund</span></h2>
-            </div>
-            
+            <div class="checkout-header"><button class="checkout-close" onclick="closeCheckoutPopup()">×</button><h2 class="checkout-title">Dein Plan für <span id="checkoutDogName">deinen Hund</span></h2></div>
             <div class="checkout-body">
-                <!-- Step 0: E-Mail (wird übersprungen) -->
-                <div class="checkout-step-email hidden" id="checkoutStepEmail">
-                    <!-- E-Mail wird jetzt vorher in kurz-schritt11.html gesammelt -->
-                </div>
-
-                <!-- Step 1: Übersicht (wird übersprungen) -->
-                <div class="checkout-step-1 hidden" id="checkoutStep1">
-                </div>
-
-                <!-- Step 2: Payment -->
+                <div class="checkout-step-email hidden" id="checkoutStepEmail"></div>
+                <div class="checkout-step-1 hidden" id="checkoutStep1"></div>
                 <div class="checkout-step-2" id="checkoutStep2">
-                    <!-- Plan Card oben -->
                     <div class="checkout-plan-card" style="margin-bottom: 6px;">
                         <div class="checkout-plan-image">🐕</div>
-                        <div class="checkout-plan-info">
-                            <div class="checkout-plan-name">Personalisierter Trainingsplan</div>
-                            <div class="checkout-plan-duration" id="checkoutPlanDuration">3-Monats-Plan</div>
-                            <div class="checkout-plan-personalized" id="checkoutPersonalized">Individuell erstellt für <span id="checkoutDogNamePlan">deinen Hund</span></div>
-                        </div>
-                        <div class="checkout-plan-price-box">
-                            <div class="checkout-plan-price" id="checkoutPlanPrice">€29,99</div>
-                            <div class="checkout-plan-price-sub">einmalig</div>
-                            <div class="checkout-plan-daily" id="checkoutDailyPrice">≈ 0,33 € pro Tag</div>
-                        </div>
+                        <div class="checkout-plan-info"><div class="checkout-plan-name">Personalisierter Trainingsplan</div><div class="checkout-plan-duration" id="checkoutPlanDuration">3-Monats-Plan</div><div class="checkout-plan-personalized">Individuell erstellt für <span id="checkoutDogNamePlan">deinen Hund</span></div></div>
+                        <div class="checkout-plan-price-box"><div class="checkout-plan-price" id="checkoutPlanPrice">€29,99</div><div class="checkout-plan-price-sub">einmalig</div><div class="checkout-plan-daily" id="checkoutDailyPrice">≈ 0,33 € pro Tag</div></div>
                     </div>
-
-                    <!-- Features kompakt -->
                     <div class="checkout-features-compact" style="margin-bottom: 6px;">
                         <div class="checkout-feature-row">✓ 20+ gezielte Übungen <span id="checkoutDogProblem2" class="problem-highlight">gegen dein Problem</span></div>
                         <div class="checkout-feature-row">✓ Alles Schritt für Schritt erklärt</div>
                         <div class="checkout-feature-row">✓ <span id="checkoutPlanBenefit">Klarer 12-Wochen-Fahrplan mit festen Phasen</span></div>
                     </div>
-
-                    <!-- 30 Tage Garantie Badge -->
                     <div class="checkout-guarantee-compact" style="margin-bottom: 6px;">🛡️ 30 Tage Geld-zurück-Garantie</div>
-
                     <h3 style="text-align: center; margin-bottom: 6px; font-size: 14px; color: #6B6B6B;">Zahlungsmethode wählen</h3>
-
                     <div class="checkout-error" id="checkoutError"></div>
-
-                    <div class="stripe-element-container">
-                        <div id="payment-element"></div>
-                    </div>
-
-                    <button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">
-                        🔒 Jetzt bezahlen
-                    </button>
-
-                    <div class="payment-icons">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
-                        <img src="klarna-logo.png" alt="Klarna">
-                    </div>
-
+                    <div class="stripe-element-container"><div id="payment-element"></div></div>
+                    <button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">🔒 Jetzt bezahlen</button>
+                    <div class="payment-icons"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal"><img src="klarna-logo.png" alt="Klarna"></div>
                     <button class="checkout-back" onclick="closeCheckoutPopup()">← Zurück</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Exit-Intent Popup -->
     <div class="exit-popup-overlay" id="exitPopup">
         <div class="exit-popup">
             <button class="exit-popup-close" onclick="closeExitPopup()">×</button>
             <h3 class="exit-popup-title">Stell dir vor: <span class="highlight" id="popupHeadline">In 4 Wochen ein entspannter Hund</span></h3>
             <p class="exit-popup-subtitle">So erreichst du es mit <span class="exit-popup-highlight">WauWerk</span>:</p>
-            
             <div class="comparison-graph">
                 <div class="graph-container">
                     <svg class="graph-svg" viewBox="0 0 300 140">
-                        <!-- Grid lines -->
                         <line x1="40" y1="20" x2="40" y2="110" stroke="#ddd" stroke-width="1"/>
                         <line x1="40" y1="110" x2="280" y2="110" stroke="#ddd" stroke-width="1"/>
                         <line x1="40" y1="65" x2="280" y2="65" stroke="#eee" stroke-width="1" stroke-dasharray="4"/>
                         <line x1="40" y1="20" x2="280" y2="20" stroke="#eee" stroke-width="1" stroke-dasharray="4"/>
-                        
-                        <!-- Y-axis labels -->
                         <text x="5" y="24" class="axis-label">100%</text>
                         <text x="5" y="69" class="axis-label">50%</text>
                         <text x="5" y="114" class="axis-label">0%</text>
-                        
-                        <!-- X-axis labels -->
                         <text x="40" y="125" class="axis-label">Start</text>
                         <text x="95" y="125" class="axis-label">4 Wo.</text>
                         <text x="240" y="125" class="axis-label">12 Mo.</text>
-                        
-                        <!-- WauWerk line (fast rise) -->
                         <path class="line-wauwerk" d="M 40 110 Q 70 60, 110 25" stroke="#4CAF50" stroke-width="3" fill="none" stroke-linecap="round"/>
                         <circle class="goal-circle" cx="110" cy="25" r="5" fill="#4CAF50"/>
                         <text class="goal-text" x="115" y="22" font-size="10" fill="#4CAF50" font-weight="600">✓ Ziel</text>
-                        
-                        <!-- Alone line (slow rise) -->
                         <path class="line-alone" d="M 40 110 Q 120 100, 180 80 T 280 55" stroke="#9E9E9E" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="5,3"/>
                         <text class="goal-text" x="245" y="48" font-size="9" fill="#9E9E9E">vielleicht...</text>
                     </svg>
                 </div>
-                <div class="graph-legend">
-                    <div class="legend-item">
-                        <div class="legend-dot wauwerk"></div>
-                        <span>Mit WauWerk</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-dot alone"></div>
-                        <span>Alleine</span>
-                    </div>
-                </div>
+                <div class="graph-legend"><div class="legend-item"><div class="legend-dot wauwerk"></div><span>Mit WauWerk</span></div><div class="legend-item"><div class="legend-dot alone"></div><span>Alleine</span></div></div>
             </div>
-
-            <div class="exit-popup-benefits">
-                <span class="benefit-tag">✓ Schritt-für-Schritt</span>
-                <span class="benefit-tag">✓ 30 Tage Garantie</span>
-                <span class="benefit-tag">✓ Sofort starten</span>
-                <span class="benefit-tag">✓ Support inklusive</span>
-            </div>
-
-            <button class="exit-popup-cta" onclick="closeExitPopup(); document.querySelector('.cta-button').click();">
-                Trainingsplan freischalten
-            </button>
-            <button class="exit-popup-skip" onclick="closeExitPopup()">
-                Nein danke, ich überlege noch
-            </button>
+            <div class="exit-popup-benefits"><span class="benefit-tag">✓ Schritt-für-Schritt</span><span class="benefit-tag">✓ 30 Tage Garantie</span><span class="benefit-tag">✓ Sofort starten</span><span class="benefit-tag">✓ Support inklusive</span></div>
+            <button class="exit-popup-cta" onclick="closeExitPopup(); document.querySelector('.cta-button').click();">Trainingsplan freischalten</button>
+            <button class="exit-popup-skip" onclick="closeExitPopup()">Nein danke, ich überlege noch</button>
         </div>
     </div>
 
+    <script src="deinplan-logic.js"></script>
 </body>
 </html>
