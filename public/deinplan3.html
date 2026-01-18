@@ -432,45 +432,53 @@
         }
 
         .pricing-right {
-            text-align: center;
-        }
+    text-align: center;
+}
 
-        .pricing-price {
-            display: flex;
-            align-items: baseline;
-            gap: 2px;
-            justify-content: center;
-        }
+.pricing-price-full {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 4px;
+}
 
-        .price-currency {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
+.price-full-amount {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-dark);
+}
 
-        .price-amount {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--text-dark);
-            line-height: 1;
-        }
+.price-full-label {
+    font-size: 12px;
+    color: var(--text-medium);
+    font-weight: 500;
+}
 
-        .price-cents {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
+.pricing-price-daily {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    justify-content: center;
+    margin-bottom: 4px;
+}
 
-        .price-period {
-            font-size: 12px;
-            color: var(--text-light);
-        }
+.price-daily-amount {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--warm-brown);
+}
 
-        .price-old {
-            font-size: 13px;
-            color: var(--accent-red);
-            text-decoration: line-through;
-        }
+.price-daily-label {
+    font-size: 11px;
+    color: var(--text-light);
+}
+
+.price-old {
+    font-size: 13px;
+    color: var(--accent-red);
+    text-decoration: line-through;
+}
 
         .price-daily {
             font-size: 12px;
@@ -2063,17 +2071,19 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <span class="pricing-name">1-MONATS-PLAN</span>
                     </div>
                     <div class="pricing-right">
-                        <div class="pricing-price">
-                            <span class="price-currency">€</span>
-                            <span class="price-amount">0</span>
-                            <span class="price-cents">,83</span>
-                            <span class="price-period">pro Tag</span>
+                        <div class="pricing-price-full">
+                            <span class="price-full-amount">€24,99</span>
+                            <span class="price-full-label">einmalig</span>
                         </div>
-                        <div class="price-old">€1,67</div>
+                        <div class="pricing-price-daily">
+                            <span class="price-daily-amount">€0,83</span>
+                            <span class="price-daily-label">pro Tag</span>
+                        </div>
+                        <div class="price-old">€49,99</div>
                     </div>
                 </div>
             </div>
-
+        
             <div class="pricing-card" data-plan="3month" data-price="29.99">
                 <div class="pricing-header">
                     <div class="pricing-left">
@@ -2081,32 +2091,36 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <span class="pricing-name">3-MONATS-PLAN</span>
                     </div>
                     <div class="pricing-right">
-                        <div class="pricing-price">
-                            <span class="price-currency">€</span>
-                            <span class="price-amount">0</span>
-                            <span class="price-cents">,33</span>
-                            <span class="price-period">pro Tag</span>
+                        <div class="pricing-price-full">
+                            <span class="price-full-amount">€29,99</span>
+                            <span class="price-full-label">einmalig</span>
                         </div>
-                        <div class="price-old">€0,89</div>
+                        <div class="pricing-price-daily">
+                            <span class="price-daily-amount">€0,33</span>
+                            <span class="price-daily-label">pro Tag</span>
+                        </div>
+                        <div class="price-old">€79,99</div>
                     </div>
                 </div>
             </div>
-
+        
             <div class="pricing-card popular selected" data-plan="6month" data-price="49.99">
-                <div class="popular-badge" id="popularBadge">⭐ Für dauerhafte Veränderung</div>
+                <div class="popular-badge" id="popularBadge">⭐ Meistgewählt – beste Ergebnisse</div>
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
                         <span class="pricing-name">6-MONATS-PLAN</span>
                     </div>
                     <div class="pricing-right">
-                        <div class="pricing-price">
-                            <span class="price-currency">€</span>
-                            <span class="price-amount">0</span>
-                            <span class="price-cents">,27</span>
-                            <span class="price-period">pro Tag</span>
+                        <div class="pricing-price-full">
+                            <span class="price-full-amount">€49,99</span>
+                            <span class="price-full-label">einmalig</span>
                         </div>
-                        <div class="price-old">€0,67</div>
+                        <div class="pricing-price-daily">
+                            <span class="price-daily-amount">€0,27</span>
+                            <span class="price-daily-label">pro Tag</span>
+                        </div>
+                        <div class="price-old">€119,99</div>
                     </div>
                 </div>
             </div>
@@ -2938,27 +2952,27 @@ if (popularBadge) {
         };
 
         function switchToNormalPrices() {
-            document.querySelectorAll('.price-old').forEach(el => {
-                el.style.display = 'none';
-            });
-            
-            const cards = document.querySelectorAll('.pricing-card');
-            
-            // 1-Monat: €49,99 = €1,67/Tag
-            cards[0].querySelector('.price-amount').textContent = '1';
-            cards[0].querySelector('.price-cents').textContent = ',67';
-            cards[0].dataset.price = '49.99';
-            
-            // 3-Monat: €79,99 = €0,89/Tag
-            cards[1].querySelector('.price-amount').textContent = '0';
-            cards[1].querySelector('.price-cents').textContent = ',89';
-            cards[1].dataset.price = '79.99';
-            
-            // 6-Monat: €119,99 = €0,67/Tag
-            cards[2].querySelector('.price-amount').textContent = '0';
-            cards[2].querySelector('.price-cents').textContent = ',67';
-            cards[2].dataset.price = '119.99';
-        }
+    document.querySelectorAll('.price-old').forEach(el => {
+        el.style.display = 'none';
+    });
+    
+    const cards = document.querySelectorAll('.pricing-card');
+    
+    // 1-Monat: €49,99
+    cards[0].querySelector('.price-full-amount').textContent = '€49,99';
+    cards[0].querySelector('.price-daily-amount').textContent = '€1,67';
+    cards[0].dataset.price = '49.99';
+    
+    // 3-Monat: €79,99
+    cards[1].querySelector('.price-full-amount').textContent = '€79,99';
+    cards[1].querySelector('.price-daily-amount').textContent = '€0,89';
+    cards[1].dataset.price = '79.99';
+    
+    // 6-Monat: €119,99
+    cards[2].querySelector('.price-full-amount').textContent = '€119,99';
+    cards[2].querySelector('.price-daily-amount').textContent = '€0,67';
+    cards[2].dataset.price = '119.99';
+}
         
         updateTimer();
 
