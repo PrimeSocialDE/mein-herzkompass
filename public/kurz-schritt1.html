@@ -5,29 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="favconHund.png">
     <title>WauWerk - Kostenloses Quiz</title>
-    <script src="utm-tracking.js"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'AW-17806525009');
-    </script>
-    <script>
-    // UTM & Tracking Parameter beim ersten Besuch speichern
-    (function() {
-        const params = new URLSearchParams(window.location.search);
-        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid', 'gclid', 'ttclid', 'ref'].forEach(function(p) {
-            if (params.get(p)) localStorage.setItem(p, params.get(p));
-        });
-        if (!localStorage.getItem('landing_page')) {
-            localStorage.setItem('landing_page', window.location.href);
-            localStorage.setItem('first_visit', new Date().toISOString());
-            if (document.referrer) localStorage.setItem('referrer', document.referrer);
-        }
-    })();
-    </script>
-    <script src="cookie-banner.js" defer></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -50,6 +27,7 @@
         .logo-text { font-size: 22px; font-weight: 800; color: var(--brown-hover); }
         .container { max-width: 500px; margin: 0 auto; padding: 40px 20px; }
         .quiz-header { text-align: center; margin-bottom: 30px; }
+        .quiz-hook { font-size: 15px; color: var(--text-medium); margin-bottom: 12px; }
         .quiz-title { font-size: 26px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
         .quiz-duration { display: inline-flex; align-items: center; gap: 6px; color: var(--text-medium); font-size: 14px; background: var(--white); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border-light); white-space: nowrap; }
         .progress-container { margin-bottom: 35px; }
@@ -89,9 +67,6 @@
             .option-subtitle { font-size: 12px; }
         }
     </style>
-    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','864109602683515');fbq('track','PageView');</script>
-    <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","ufxcf43805");</script>
-    <script>!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};ttq.load('D4RFSQBC77U7SM7UL8A0');ttq.page();}(window,document,'ttq');</script>
 </head>
 <body>
     <header class="header">
@@ -102,6 +77,7 @@
     </header>
     <div class="container">
         <div class="quiz-header">
+            <p class="quiz-hook">🐕 Lass uns einen Trainingsplan erstellen, der perfekt zu deinem Hund passt</p>
             <h1 class="quiz-title">Wie alt ist dein Hund?</h1>
             <span class="quiz-duration">⏱️ Dauert nur 2 Minuten bis zu deinem Trainingsplan</span>
         </div>
@@ -161,5 +137,19 @@
             });
         });
     </script>
+    
+    <!-- Tracking Scripts - loaded after page content -->
+    <script src="utm-tracking.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-17806525009');
+    </script>
+    <script src="cookie-banner.js" defer></script>
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','864109602683515');fbq('track','PageView');</script>
+    <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","ufxcf43805");</script>
+    <script>!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};ttq.load('D4RFSQBC77U7SM7UL8A0');ttq.page();}(window,document,'ttq');</script>
 </body>
 </html>
