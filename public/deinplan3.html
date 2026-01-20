@@ -1450,9 +1450,10 @@
 
         .guarantee {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 4px;
             color: var(--text-dark);
             font-size: 16px;
             font-weight: 600;
@@ -1461,6 +1462,11 @@
             background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
             border: 1px solid #86efac;
             border-radius: var(--border-radius);
+            text-align: center;
+        }
+
+        .guarantee svg {
+            margin-bottom: 4px;
         }
 
         .payment-logos {
@@ -2127,7 +2133,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
 
         <div class="disclaimer">
-            ✓ <strong style="color: var(--warm-brown);">Einmalzahlung</strong> • <strong style="color: var(--warm-brown);">Kein Abo</strong> • 30 Tage Geld-zurück-Garantie • <a href="agb.html">AGB</a>
+            ✓ <strong style="color: #166534;">Einmalzahlung</strong> – kein Abo, <strong style="color: #166534;">lebenslanger Zugang</strong> • 30 Tage Geld-zurück-Garantie • <a href="agb.html">AGB</a>
         </div>
 
         <button class="cta-button glow" onclick="getMyPlan()">
@@ -2148,6 +2154,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         <div class="guarantee">
             <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
             30-Tage Geld-zurück-Garantie
+            <span style="font-size: 11px; color: #166534; font-weight: 500;">Einmalzahlung · Kein Abo · Lebenslanger Zugang</span>
         </div>
 
         <!-- Benefits Box - dynamisch basierend auf Problem -->
@@ -3630,6 +3637,10 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
                     <!-- 30 Tage Garantie Badge -->
                     <div class="checkout-guarantee-compact" style="margin-bottom: 6px;">🛡️ 30 Tage Geld-zurück-Garantie</div>
+
+                    <div style="text-align: center; padding: 6px 10px; background: #f0fdf4; border-radius: 6px; font-size: 11px; color: #166534; margin-bottom: 10px; font-weight: 500;">
+                        ✓ Einmalzahlung – kein Abo · ✓ Lebenslanger Zugang
+                    </div>
 
                     <h3 style="text-align: center; margin-bottom: 6px; font-size: 14px; color: #6B6B6B;">Zahlungsmethode wählen</h3>
 
