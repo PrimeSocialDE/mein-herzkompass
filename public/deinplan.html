@@ -2297,6 +2297,22 @@ if (popularBadge) {
             pricingCards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             selectedPlan = card.dataset.plan;
+
+            // Übungsanzahl in Benefits-Liste aktualisieren
+            updateExerciseCount(selectedPlan);
+        }
+
+        function updateExerciseCount(plan) {
+            const exerciseCount = plan === '1month' ? '10+' : '20+';
+            const benefitsList = document.getElementById('benefitsList');
+            if (benefitsList) {
+                const items = benefitsList.querySelectorAll('li');
+                items.forEach(item => {
+                    if (item.textContent.includes('Übungen speziell für')) {
+                        item.textContent = item.textContent.replace(/\d+\+/, exerciseCount);
+                    }
+                });
+            }
         }
 
         pricingCards.forEach(card => {
@@ -2563,6 +2579,17 @@ if (popularBadge) {
                 checkoutPlanBenefit.textContent = planBenefits[selectedPlan] || planBenefits['3month'];
             }
 
+            // Übungsanzahl basierend auf Plan
+            const exerciseCounts = {
+                '1month': '10+',
+                '3month': '20+',
+                '6month': '20+'
+            };
+            const checkoutExerciseCount = document.getElementById('checkoutExerciseCount');
+            if (checkoutExerciseCount) {
+                checkoutExerciseCount.textContent = exerciseCounts[selectedPlan] || exerciseCounts['3month'];
+            }
+
             // Problem Labels für Checkout
             const problemLabels = {
                 'pulling': 'gegen Leinenziehen',
@@ -2771,7 +2798,7 @@ if (popularBadge) {
                 </div>
 
                 <div class="checkout-features-compact" style="margin-bottom: 6px;">
-                    <div class="checkout-feature-row">✓ 20+ gezielte Übungen <span id="checkoutDogProblem2" class="problem-highlight">gegen dein Problem</span></div>
+                    <div class="checkout-feature-row">✓ <span id="checkoutExerciseCount">20+</span> gezielte Übungen <span id="checkoutDogProblem2" class="problem-highlight">gegen dein Problem</span></div>
                     <div class="checkout-feature-row">✓ Alles Schritt für Schritt erklärt</div>
                     <div class="checkout-feature-row">✓ <span id="checkoutPlanBenefit">Klarer 12-Wochen-Fahrplan mit festen Phasen</span></div>
                 </div>
