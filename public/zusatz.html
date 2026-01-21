@@ -895,10 +895,10 @@
 
         // Modul-Daten mit Benefits
         const moduleData = {
-            'anxiety': { 
-                icon: '😰', 
-                name: 'Trennungsangst Prävention', 
-                exercises: '8 Übungen',
+            'anxiety': {
+                icon: '😰',
+                name: 'Trennungsangst Prävention',
+                exercises: '6 Übungen',
                 benefits: ['Alleine-bleiben Training', 'Abschiedsrituale', 'Ruhe-Signale aufbauen', 'Schritt-für-Schritt Anleitung'],
                 desc: 'Bringe deinem Hund bei, entspannt alleine zu bleiben.'
             },
@@ -916,10 +916,10 @@
                 benefits: ['Ruhe-Kommando aufbauen', 'Auslöser erkennen', 'Bellen auf Signal', 'Nachbarschaftsfrieden'],
                 desc: 'Kontrolliertes Bellen auf Kommando – Ruhe für dich und deine Nachbarn.'
             },
-            'aggression': { 
-                icon: '😤', 
-                name: 'Aggressions-Kontrolle', 
-                exercises: '8 Übungen',
+            'aggression': {
+                icon: '😤',
+                name: 'Aggressions-Kontrolle',
+                exercises: '6 Übungen',
                 benefits: ['Trigger-Management', 'Ruhe bewahren lernen', 'Sichere Begegnungen', 'Impulskontrolle'],
                 desc: 'Sichere Begegnungen mit anderen Hunden und Menschen.'
             },
@@ -930,10 +930,10 @@
                 benefits: ['Zuverlässiger Rückruf', 'Ablenkungstraining', 'Belohnungsaufbau', 'Freilauf ermöglichen'],
                 desc: 'Zuverlässiger Rückruf – auch bei Ablenkungen.'
             },
-            'jumping': { 
-                icon: '🐕', 
-                name: 'Anti-Anspring Training', 
-                exercises: '5 Übungen',
+            'jumping': {
+                icon: '🐕',
+                name: 'Anti-Anspring Training',
+                exercises: '6 Übungen',
                 benefits: ['Ruhige Begrüßung', 'Vier-Pfoten-Regel', 'Besuchertraining', 'Impulskontrolle'],
                 desc: 'Ruhige Begrüßungen ohne wildes Anspringen.'
             },
@@ -993,88 +993,11 @@
             }
 
             let html = '';
-
-            // ========== 1. PREMIUM OPTION (ganz oben) ==========
-            html += '<div class="premium-option">' +
-                '<span class="premium-badge">🥇 EMPFOHLEN</span>' +
-                '<div class="premium-header">' +
-                    '<div class="premium-icon">👑</div>' +
-                    '<h3 class="premium-title">WauWerk Premium</h3>' +
-                    '<p class="premium-subtitle">Dein persönlicher Hundetrainer für ' + dogName + '</p>' +
-                '</div>' +
-                '<div class="premium-features">' +
-                    '<div class="premium-feature">' +
-                        '<span class="premium-feature-icon">✓</span>' +
-                        '<span class="premium-feature-text">Alle Trainingsmodule: Leinenführigkeit, Anti-Bell, Rückruf, Trennungsangst, Aggression & mehr</span>' +
-                    '</div>' +
-                    '<div class="premium-feature">' +
-                        '<span class="premium-feature-icon">✓</span>' +
-                        '<span class="premium-feature-text">3 Monate persönlicher Support via WhatsApp</span>' +
-                    '</div>' +
-                    '<div class="premium-feature">' +
-                        '<span class="premium-feature-icon">✓</span>' +
-                        '<span class="premium-feature-text">Video-Feedback auf deine Übungen</span>' +
-                    '</div>' +
-                    '<div class="premium-feature">' +
-                        '<span class="premium-feature-icon">✓</span>' +
-                        '<span class="premium-feature-text">Wöchentliche Check-ins</span>' +
-                    '</div>' +
-                '</div>' +
-                '<div class="premium-footer">' +
-                    '<div class="premium-price">' +
-                        '<span class="premium-price-old">Wert: €715</span>' +
-                        '<span class="premium-price-new">€249,99</span>' +
-                        '<span class="premium-price-info">≈ €83,33/Monat</span>' +
-                    '</div>' +
-                    '<button class="premium-btn" onclick="buyPremium()">Premium sichern</button>' +
-                '</div>' +
-            '</div>';
-
-            // Trennlinie
-            html += '<div class="section-divider">Lieber ohne Support?</div>';
-
-            // ========== 2. BUNDLE OPTION (2 Module für €25) ==========
             const firstModule = moduleData[modulesToShow[0]];
-            
-            html += '<div class="bundle-option" style="border-color: #E8E8E8; background: #FAFAFA;">' +
-                '<span class="bundle-badge" style="background: #666;">📦 BUNDLE</span>' +
-                '<div class="bundle-header">' +
-                    '<h3 class="bundle-title">2 Extra-Module für ' + dogName + '</h3>' +
-                    '<p class="bundle-subtitle">' + firstModule.name + ' + 1 weiteres Modul</p>' +
-                '</div>' +
-                '<div class="bundle-modules">' +
-                    '<div class="bundle-module">' +
-                        '<span class="bundle-module-icon">' + firstModule.icon + '</span>' +
-                        '<div class="bundle-module-info">' +
-                            '<h4>' + firstModule.name + '</h4>' +
-                            '<div class="bundle-module-points">' +
-                                firstModule.benefits.slice(0, 2).map(b => '<span class="bundle-point">' + b + '</span>').join('') +
-                            '</div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="bundle-module">' +
-                        '<span class="bundle-module-icon">🎁</span>' +
-                        '<div class="bundle-module-info">' +
-                            '<h4>+ Bonus-Modul</h4>' +
-                            '<div class="bundle-module-points">' +
-                                '<span class="bundle-point">Passend zu ' + dogName + '</span>' +
-                            '</div>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>' +
-                '<div class="bundle-footer">' +
-                    '<div class="bundle-price">' +
-                        '<span class="bundle-price-old">Statt €38</span>' +
-                        '<span class="bundle-price-new">€25</span>' +
-                        '<span class="bundle-price-save">Du sparst €13!</span>' +
-                    '</div>' +
-                    '<button class="bundle-btn" style="background: #666;" onclick="buyBundle(\'' + modulesToShow[0] + '\')">Bundle sichern</button>' +
-                '</div>' +
-            '</div>';
 
-            // ========== 3. EINZELNES MODUL (€19) ==========
+            // ========== 1. ERSTES EINZELNES MODUL (€19) ==========
             const pointsHtml = firstModule.benefits.slice(0, 3).map(b => '<span class="option-point">' + b + '</span>').join('');
-            
+
             html += '<div class="upsell-option">' +
                 '<div class="option-header">' +
                     '<div class="option-left">' +
@@ -1093,6 +1016,72 @@
                     '<button class="option-btn" onclick="buyUpsell(\'' + modulesToShow[0] + '\')">Hinzufügen</button>' +
                 '</div>' +
             '</div>';
+
+            // ========== 2. ZWEITES EINZELNES MODUL (€19) - falls vorhanden ==========
+            if (modulesToShow.length > 1) {
+                const secondModule = moduleData[modulesToShow[1]];
+                const pointsHtml2 = secondModule.benefits.slice(0, 3).map(b => '<span class="option-point">' + b + '</span>').join('');
+
+                html += '<div class="upsell-option">' +
+                    '<div class="option-header">' +
+                        '<div class="option-left">' +
+                            '<span class="option-icon">' + secondModule.icon + '</span>' +
+                            '<span class="option-name">' + secondModule.name + '</span>' +
+                        '</div>' +
+                        '<span class="option-badge">' + secondModule.exercises + '</span>' +
+                    '</div>' +
+                    '<p class="option-desc">' + secondModule.desc + '</p>' +
+                    '<div class="option-points">' + pointsHtml2 + '</div>' +
+                    '<div class="option-footer">' +
+                        '<div class="option-price">' +
+                            '<span class="option-price-old">€29</span>' +
+                            '<span class="option-price-new">€19</span>' +
+                        '</div>' +
+                        '<button class="option-btn" onclick="buyUpsell(\'' + modulesToShow[1] + '\')">Hinzufügen</button>' +
+                    '</div>' +
+                '</div>';
+            }
+
+            // ========== 3. BUNDLE OPTION (2 Module für €25) - nur wenn 2 Module vorhanden ==========
+            if (modulesToShow.length > 1) {
+                const secondModule = moduleData[modulesToShow[1]];
+
+                html += '<div class="bundle-option" style="border-color: #E8E8E8; background: #FAFAFA;">' +
+                    '<span class="bundle-badge" style="background: #666;">📦 BUNDLE</span>' +
+                    '<div class="bundle-header">' +
+                        '<h3 class="bundle-title">2 Extra-Module für ' + dogName + '</h3>' +
+                        '<p class="bundle-subtitle">' + firstModule.name + ' + ' + secondModule.name + '</p>' +
+                    '</div>' +
+                    '<div class="bundle-modules">' +
+                        '<div class="bundle-module">' +
+                            '<span class="bundle-module-icon">' + firstModule.icon + '</span>' +
+                            '<div class="bundle-module-info">' +
+                                '<h4>' + firstModule.name + '</h4>' +
+                                '<div class="bundle-module-points">' +
+                                    firstModule.benefits.slice(0, 2).map(b => '<span class="bundle-point">' + b + '</span>').join('') +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="bundle-module">' +
+                            '<span class="bundle-module-icon">' + secondModule.icon + '</span>' +
+                            '<div class="bundle-module-info">' +
+                                '<h4>' + secondModule.name + '</h4>' +
+                                '<div class="bundle-module-points">' +
+                                    secondModule.benefits.slice(0, 2).map(b => '<span class="bundle-point">' + b + '</span>').join('') +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="bundle-footer">' +
+                        '<div class="bundle-price">' +
+                            '<span class="bundle-price-old">Statt €38</span>' +
+                            '<span class="bundle-price-new">€25</span>' +
+                            '<span class="bundle-price-save">Du sparst €13!</span>' +
+                        '</div>' +
+                        '<button class="bundle-btn" style="background: #666;" onclick="buyBundle(\'' + modulesToShow[0] + '\')">Bundle sichern</button>' +
+                    '</div>' +
+                '</div>';
+            }
 
             container.innerHTML = html;
         }
