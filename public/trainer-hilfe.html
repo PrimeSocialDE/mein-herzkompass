@@ -849,7 +849,34 @@
             btn.innerHTML = '<span class="spinner"></span> Wird gesendet...';
 
             try {
-                // Direkt in Supabase speichern
+                // 1. Quiz-Antworten aus wauwerk_leads holen (nur lesen, nichts ändern)
+                let quizAnswers = null;
+                let foundLeadId = leadIdParam;
+
+                const leadsResponse = await fetch(
+                    `${SUPABASE_URL}/rest/v1/wauwerk_leads?email=eq.${encodeURIComponent(email)}&select=id,answers&order=created_at.desc&limit=1`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        }
+                    }
+                );
+
+                if (leadsResponse.ok) {
+                    const leadsData = await leadsResponse.json();
+                    if (leadsData && leadsData.length > 0) {
+                        quizAnswers = leadsData[0].answers;
+                        if (!foundLeadId) {
+                            foundLeadId = leadsData[0].id;
+                        }
+                        console.log('✅ Quiz-Antworten gefunden');
+                    } else {
+                        console.log('ℹ️ Keine Quiz-Antworten für diese E-Mail gefunden');
+                    }
+                }
+
+                // 2. In trainer_hilfe_anfragen speichern (mit Quiz-Antworten)
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/trainer_hilfe_anfragen`, {
                     method: 'POST',
                     headers: {
@@ -863,7 +890,8 @@
                         dog_name: dogName,
                         problem_description: problem,
                         selected_plan: selectedPlan,
-                        lead_id: leadIdParam || null,
+                        lead_id: foundLeadId || null,
+                        quiz_answers: quizAnswers,
                         status: 'pending'
                     })
                 });
