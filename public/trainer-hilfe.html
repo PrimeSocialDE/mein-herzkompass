@@ -425,187 +425,6 @@
             margin-top: 6px;
         }
 
-        /* Video Upload */
-        .video-upload-area {
-            border: 2px dashed var(--border-light);
-            border-radius: 12px;
-            padding: 30px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: var(--primary-cream);
-        }
-
-        .video-upload-area:hover {
-            border-color: var(--warm-brown);
-            background: #FAF7F2;
-        }
-
-        .video-upload-area.dragover {
-            border-color: var(--warm-brown);
-            background: #FAF7F2;
-        }
-
-        .video-upload-area.has-file {
-            border-color: var(--success-green);
-            background: #f0fdf4;
-        }
-
-        .upload-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-        .upload-text {
-            font-size: 14px;
-            color: var(--text-medium);
-            margin-bottom: 6px;
-        }
-
-        .upload-text strong {
-            color: var(--warm-brown);
-        }
-
-        .upload-formats {
-            font-size: 12px;
-            color: var(--text-light);
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .selected-file {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 12px;
-            padding: 10px;
-            background: white;
-            border-radius: 8px;
-        }
-
-        .selected-file-name {
-            font-size: 13px;
-            color: var(--text-dark);
-            font-weight: 500;
-        }
-
-        .remove-file {
-            background: none;
-            border: none;
-            color: #e74c3c;
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        /* Pricing Section */
-        .pricing-section {
-            background: linear-gradient(135deg, #FAF7F2 0%, var(--white) 100%);
-            border: 2px solid var(--warm-brown);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-        }
-
-        .pricing-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .pricing-badge {
-            display: inline-block;
-            background: var(--warm-brown);
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 12px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-        }
-
-        .scarcity-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--white);
-            color: var(--text-dark);
-            font-size: 13px;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 20px;
-            margin-bottom: 12px;
-            border: 1px solid var(--border-light);
-        }
-
-        .scarcity-badge span {
-            font-weight: 700;
-        }
-
-        .scarcity-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--success-green);
-            border-radius: 50%;
-            animation: pulse-dot 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
-        }
-
-        .pricing-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 6px;
-        }
-
-        .pricing-price {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .price-old {
-            font-size: 18px;
-            color: var(--text-light);
-            text-decoration: line-through;
-        }
-
-        .price-amount {
-            font-size: 36px;
-            font-weight: 800;
-            color: var(--warm-brown);
-        }
-
-        .price-info {
-            font-size: 14px;
-            color: var(--text-light);
-        }
-
-        .pricing-includes {
-            margin: 20px 0;
-        }
-
-        .include-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 0;
-            font-size: 14px;
-            color: var(--text-dark);
-        }
-
-        .include-icon {
-            color: var(--success-green);
-            font-weight: bold;
-        }
 
         .submit-btn {
             width: 100%;
@@ -810,291 +629,28 @@
             }
         }
 
-        /* ========== CHECKOUT POPUP ========== */
-        .checkout-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(44, 44, 46, 0.85);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            overflow: hidden;
-            touch-action: none;
-        }
-
-        .checkout-overlay.active {
-            display: flex;
-        }
-
-        .checkout-popup {
-            background: var(--white);
-            border-radius: 20px;
-            max-width: 420px;
-            width: calc(100% - 40px);
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            animation: popupIn 0.3s ease-out;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-            overscroll-behavior: contain;
-            margin-top: 20px;
-        }
-
-        @keyframes popupIn {
-            from { opacity: 0; transform: scale(0.95) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .checkout-header {
-            padding: 12px 16px 8px;
-            border-bottom: 1px solid var(--border-light);
-            position: relative;
-            background: linear-gradient(180deg, #FAF7F4 0%, var(--white) 100%);
-            border-radius: 20px 20px 0 0;
-        }
-
-        .checkout-close {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: var(--white);
-            border: 1px solid var(--border-light);
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            font-size: 16px;
-            color: var(--text-medium);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .checkout-close:hover {
-            background: #f5f5f5;
-            transform: scale(1.05);
-        }
-
-        .checkout-title {
-            text-align: center;
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .checkout-body {
-            padding: 14px;
-        }
-
-        .checkout-plan-card {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: linear-gradient(135deg, #FAF7F4 0%, #F5F0EB 100%);
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border: 1px solid var(--border-light);
-        }
-
-        .checkout-plan-image {
-            width: 42px;
-            height: 42px;
-            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            box-shadow: 0 4px 12px rgba(196, 165, 118, 0.3);
-        }
-
-        .checkout-plan-info {
-            flex: 1;
-        }
-
-        .checkout-plan-name {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 2px;
-        }
-
-        .checkout-plan-duration {
-            font-size: 12px;
-            color: var(--text-medium);
-        }
-
-        .checkout-plan-price-box {
-            text-align: right;
-        }
-
-        .checkout-plan-price {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .checkout-plan-price-sub {
-            font-size: 10px;
-            color: var(--text-light);
-        }
-
-        .checkout-features-compact {
-            background: #f8f8f8;
-            border-radius: 8px;
-            padding: 8px 12px;
-            margin-bottom: 10px;
-        }
-
-        .checkout-feature-row {
-            font-size: 13px;
-            color: var(--text-dark);
-            padding: 4px 0;
-        }
-
-        .checkout-guarantee-compact {
-            text-align: center;
-            font-size: 12px;
-            color: #166534;
-            font-weight: 600;
-            padding: 8px;
-            background: #f0fdf4;
-            border-radius: 6px;
-            margin-bottom: 12px;
-        }
-
-        .checkout-error {
-            background: #FEF2F2;
-            color: #DC2626;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-            font-size: 14px;
-            display: none;
-            border: 1px solid #FECACA;
-            font-weight: 500;
-        }
-
-        .checkout-error.visible {
-            display: block;
-        }
-
-        .stripe-element-container {
-            padding: 12px;
-            border: 2px solid var(--border-light);
-            border-radius: 12px;
-            margin-bottom: 12px;
-            background: var(--white);
-            transition: border-color 0.2s;
-        }
-
-        .stripe-element-container:focus-within {
-            border-color: var(--warm-brown);
-        }
-
-        #payment-element {
-            min-height: 80px;
-        }
-
-        .checkout-pay-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(196, 165, 118, 0.4);
-            transition: all 0.2s ease;
-        }
-
-        .checkout-pay-btn:hover {
-            background: linear-gradient(135deg, var(--dark-brown), #6B5A45);
-            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5);
-            transform: translateY(-1px);
-        }
-
-        .checkout-pay-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
-        .checkout-pay-btn .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        .payment-icons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-            padding: 8px;
-            background: #FAFAFA;
-            border-radius: 8px;
-        }
-
-        .payment-icons img {
-            height: 16px;
-            opacity: 0.7;
-        }
-
-        .checkout-back {
-            display: block;
-            width: 100%;
-            background: none;
-            border: none;
-            color: var(--text-medium);
-            font-size: 13px;
-            cursor: pointer;
-            margin-top: 10px;
-            text-align: center;
-            font-weight: 500;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Header -->
         <div class="page-header">
-            <div class="badge">Für WauWerk Mitglieder</div>
-            <h1 class="page-title">Persönliche <span>Trainingsanpassung</span></h1>
-            <p class="page-subtitle">Ein Trainer schaut sich deine Situation an und sagt dir genau, was du ändern, beibehalten oder überspringen solltest.</p>
+            <div class="badge">Für WauWerk Kunden</div>
+            <h1 class="page-title">Individuelles <span>Problem melden</span></h1>
+            <p class="page-subtitle">Im Quiz decken wir die gängigsten Probleme ab. Bei individuellen Situationen hilft es, uns dein Problem genau zu beschreiben – wir passen deinen Plan an.</p>
         </div>
 
         <!-- Intro -->
         <div class="intro-section">
             <p class="intro-text">
-                Dein Hund zeigt ein Verhalten, das tiefer geht? Etwas Spezielles, das im Quiz nicht abgefragt wurde – oder eine Situation, die sich schwer in Worte fassen lässt?<br><br>
-                Schilder uns, was passiert. Ein Trainer analysiert deine Situation und gibt dir eine <strong>schriftliche, individuelle Trainingsanpassung</strong> – abgestimmt auf dich und deinen Hund.
+                Dein Hund zeigt ein spezielles Verhalten, das im Quiz nicht vorkam? Oder eine Situation, die sich nicht in eine Kategorie einordnen lässt?<br><br>
+                <strong>Beschreibe uns dein Problem</strong> – wir schauen uns das an und passen deinen Trainingsplan entsprechend an. Kostenlos für alle WauWerk Kunden.
             </p>
         </div>
 
         <!-- Wann sinnvoll -->
         <div class="when-section">
-            <h2 class="section-title">Wann ist das sinnvoll?</h2>
+            <h2 class="section-title">Wann solltest du uns schreiben?</h2>
             <div class="when-list">
                 <div class="when-item when-yes">
                     <span class="when-icon">✓</span>
@@ -1102,11 +658,11 @@
                 </div>
                 <div class="when-item when-yes">
                     <span class="when-icon">✓</span>
-                    <span>Eine Situation lässt sich schwer beschreiben – du willst sie zeigen</span>
+                    <span>Du hast eine Frage zu deinem aktuellen Trainingsplan</span>
                 </div>
                 <div class="when-item when-yes">
                     <span class="when-icon">✓</span>
-                    <span>Du möchtest eine zweite Meinung zu deiner Umsetzung</span>
+                    <span>Eine Übung funktioniert nicht wie erwartet</span>
                 </div>
                 <div class="when-item when-no">
                     <span class="when-icon">–</span>
@@ -1120,42 +676,39 @@
             <div class="trainer-header">
                 <div class="trainer-avatar"><img src="TrainerWau.png" alt="Hundetrainer"></div>
                 <div class="trainer-info">
-                    <h3>Wer begleitet dich?</h3>
-                    <div class="trainer-title">Ein Trainer aus dem WauWerk Team</div>
+                    <h3>Wer hilft dir?</h3>
+                    <div class="trainer-title">Das WauWerk Team</div>
                 </div>
             </div>
             <p class="trainer-bio">
-                Ein erfahrener Trainer schaut sich an, wie du trainierst – und was dein Hund zeigt. Du bekommst eine persönliche Anleitung: Was ändern, was beibehalten, welche Übung als nächstes – und wie du dich als Besitzer verhalten solltest.
+                Unser Team schaut sich dein individuelles Problem an und gibt dir konkrete Tipps, wie du damit umgehen kannst. Bei Bedarf passen wir deinen Trainingsplan entsprechend an.
             </p>
         </div>
 
         <!-- So läuft es ab -->
         <div class="process-section">
             <h2 class="section-title">So läuft es ab</h2>
-            <div class="timeline">
+            <div class="timeline" style="justify-content: center; gap: 40px;">
                 <div class="timeline-step">
                     <div class="timeline-dot">1</div>
-                    <div class="timeline-label">Beschreiben</div>
+                    <div class="timeline-label">Du beschreibst</div>
                 </div>
                 <div class="timeline-step">
                     <div class="timeline-dot">2</div>
-                    <div class="timeline-label">Analyse</div>
+                    <div class="timeline-label">Wir prüfen</div>
                 </div>
                 <div class="timeline-step">
                     <div class="timeline-dot">3</div>
-                    <div class="timeline-label">Anpassung</div>
-                </div>
-                <div class="timeline-step">
-                    <div class="timeline-dot">4</div>
-                    <div class="timeline-label">Klarheit</div>
+                    <div class="timeline-label">Plan angepasst</div>
                 </div>
             </div>
+            <p style="text-align: center; font-size: 13px; color: var(--text-medium); margin-top: 16px;">Wir melden uns so schnell es geht – kann bis zu 1-2 Stunden dauern.</p>
         </div>
 
         <!-- Formular -->
         <div class="form-section" id="formSection">
-            <h2 class="section-title">Schilder deine Situation</h2>
-            
+            <h2 class="section-title">Schilder dein Problem</h2>
+
             <form id="coachingForm">
                 <div class="form-group">
                     <label class="form-label">Name deines Hundes</label>
@@ -1168,88 +721,57 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Dein konkretes Thema <span>(1–2 Themen pro Anfrage)</span></label>
-                    <textarea class="form-input form-textarea" id="problemDescription" placeholder="Beschreibe eine konkrete Situation: Was passiert genau? Wann tritt es auf?" required></textarea>
+                    <label class="form-label">Welchen Plan hast du gekauft?</label>
+                    <select class="form-input" id="selectedPlan" required>
+                        <option value="">Bitte wählen...</option>
+                        <option value="1month">1 Monat Plan</option>
+                        <option value="3month">3 Monate Plan</option>
+                        <option value="6month">6 Monate Plan</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Video hochladen <span>(Optional)</span></label>
-                    <div class="video-upload-area" id="uploadArea">
-                        <div class="upload-icon">🎥</div>
-                        <p class="upload-text">Klicken oder <strong>Video hierher ziehen</strong></p>
-                        <p class="upload-formats">MP4, MOV, AVI · Max. 100MB</p>
-                        <input type="file" class="file-input" id="videoFile" accept="video/*">
-                        <div class="selected-file" id="selectedFile" style="display: none;">
-                            <span class="selected-file-name" id="fileName"></span>
-                            <button type="button" class="remove-file" onclick="removeFile()">✕</button>
-                        </div>
-                    </div>
+                    <label class="form-label">Beschreibe dein Problem <span>(so genau wie möglich)</span></label>
+                    <textarea class="form-input form-textarea" id="problemDescription" placeholder="Was passiert genau? In welcher Situation? Wie reagiert dein Hund?" required></textarea>
+                    <p class="form-hint">Je genauer du beschreibst, desto besser können wir helfen.</p>
                 </div>
             </form>
         </div>
 
-        <!-- Pricing -->
-        <div class="pricing-section">
-            <div class="pricing-header">
-                <div class="scarcity-badge"><span class="scarcity-dot"></span> Nur noch <span id="spotsLeft">3</span> Plätze diese Woche frei</div>
-                <h2 class="pricing-title">Individuelle Trainingsanpassung</h2>
-                <div class="pricing-price">
-                    <span class="price-amount">€79,99</span>
-                    <span class="price-info">einmalig · kein Abo</span>
-                </div>
-            </div>
-
-            <div class="pricing-includes">
-                <div class="include-item">
-                    <span class="include-icon">✓</span>
-                    <span>Schriftliche, persönliche Ausarbeitung</span>
-                </div>
-                <div class="include-item">
-                    <span class="include-icon">✓</span>
-                    <span>Analyse deines Verhaltens und deines Hundes</span>
-                </div>
-                <div class="include-item">
-                    <span class="include-icon">✓</span>
-                    <span>Individuelle Empfehlungen für dein spezielles Thema</span>
-                </div>
-                <div class="include-item">
-                    <span class="include-icon">✓</span>
-                    <span>Klare Empfehlung, wie es weitergeht</span>
-                </div>
-            </div>
-
+        <!-- Submit Section -->
+        <div class="submit-section" style="background: var(--white); border-radius: 20px; padding: 25px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
             <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">
-                Trainingsanpassung anfordern →
+                Mein individuelles Problem abschicken
             </button>
-            <p class="guarantee-note">Keine Standardantwort. Persönlich für dich.</p>
+            <p class="guarantee-note" style="text-align: center; margin-top: 14px; font-size: 13px; color: var(--text-medium);">Wir melden uns innerhalb von 48 Stunden bei dir.</p>
         </div>
 
         <!-- FAQ - nur das Wichtigste -->
         <div class="faq-section">
             <h2 class="section-title">Kurz erklärt</h2>
-            
+
             <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">Muss ich ein Video hochladen?</div>
-                <p class="faq-answer">Nein, ist optional. Aber es hilft dem Trainer, deine Situation besser zu verstehen.</p>
+                <div class="faq-question" onclick="toggleFaq(this)">Ist das kostenlos?</div>
+                <p class="faq-answer">Ja, für alle WauWerk Kunden ist die individuelle Anpassung kostenlos.</p>
             </div>
-            
+
             <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">Wie bekomme ich die Trainingsanpassung?</div>
-                <p class="faq-answer">Schriftlich per E-Mail, innerhalb von 48 Stunden.</p>
+                <div class="faq-question" onclick="toggleFaq(this)">Wie schnell bekomme ich eine Antwort?</div>
+                <p class="faq-answer">Wir melden uns innerhalb von 48 Stunden per E-Mail bei dir.</p>
             </div>
-            
+
             <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">Was, wenn es mir nicht weiterhilft?</div>
-                <p class="faq-answer">Dann bekommst du dein Geld zurück.</p>
+                <div class="faq-question" onclick="toggleFaq(this)">Was passiert nach meiner Anfrage?</div>
+                <p class="faq-answer">Wir schauen uns dein Problem an und passen deinen Plan entsprechend an oder geben dir spezifische Tipps.</p>
             </div>
         </div>
 
         <!-- Success Message (hidden by default) -->
         <div class="success-message" id="successMessage">
             <div class="success-icon">✓</div>
-            <h2 class="success-title">Erhalten!</h2>
+            <h2 class="success-title">Danke!</h2>
             <p class="success-text">
-                Du bekommst deine Trainingsanpassung innerhalb von 48 Stunden per E-Mail.
+                Wir haben dein Problem erhalten und melden uns innerhalb von 48 Stunden bei dir per E-Mail.
             </p>
         </div>
     </div>
@@ -1259,83 +781,10 @@
         <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
     </footer>
 
-    <!-- Stripe -->
-    <script src="https://js.stripe.com/v3/"></script>
-
-    <!-- Checkout Popup -->
-    <div class="checkout-overlay" id="checkoutPopup">
-        <div class="checkout-popup">
-            <div class="checkout-header">
-                <button class="checkout-close" onclick="closeCheckoutPopup()">×</button>
-                <h2 class="checkout-title">Trainingsanpassung für <span id="checkoutDogName">deinen Hund</span></h2>
-            </div>
-            
-            <div class="checkout-body">
-                <div class="checkout-plan-card">
-                    <div class="checkout-plan-image">🎯</div>
-                    <div class="checkout-plan-info">
-                        <div class="checkout-plan-name">Individuelle Trainingsanpassung</div>
-                        <div class="checkout-plan-duration">Schriftlich · Innerhalb 48h</div>
-                    </div>
-                    <div class="checkout-plan-price-box">
-                        <div class="checkout-plan-price">€79,99</div>
-                        <div class="checkout-plan-price-sub">einmalig</div>
-                    </div>
-                </div>
-
-                <div class="checkout-features-compact">
-                    <div class="checkout-feature-row">✓ Persönliche Analyse deiner Situation</div>
-                    <div class="checkout-feature-row">✓ Konkrete Empfehlungen vom Trainer</div>
-                    <div class="checkout-feature-row">✓ Antwort innerhalb von 48 Stunden</div>
-                </div>
-
-                <div class="checkout-guarantee-compact">🛡️ Nicht zufrieden? Geld zurück.</div>
-
-                <h3 style="text-align: center; margin-bottom: 8px; font-size: 14px; color: #6B6B6B;">Zahlungsmethode wählen</h3>
-
-                <div class="checkout-error" id="checkoutError"></div>
-
-                <div class="stripe-element-container">
-                    <div id="payment-element"></div>
-                </div>
-
-                <button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">
-                    🔒 Jetzt bezahlen
-                </button>
-
-                <div class="payment-icons">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
-                    <img src="klarna-logo.png" alt="Klarna">
-                </div>
-
-                <button class="checkout-back" onclick="closeCheckoutPopup()">← Zurück</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         // ========== CONFIG ==========
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
-        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
-
-        let stripe = null;
-        let elements = null;
-        let clientSecret = null;
-        let currentAnfrageId = null;
-
-        // Form data storage
-        let formData = {
-            dogName: '',
-            email: '',
-            problem: '',
-            videoFile: null,
-            videoUrl: null,
-            videoFilename: null,
-            videoSizeMb: null
-        };
 
         // ========== TIMELINE ANIMATION ==========
         const timeline = document.querySelector('.timeline');
@@ -1348,7 +797,7 @@
                 }
             });
         }, { threshold: 0.5 });
-        
+
         if (timeline) {
             timelineObserver.observe(timeline);
         }
@@ -1364,6 +813,7 @@
         const dogNameParam = urlParams.get('dog_name') || localStorage.getItem('dogName');
         const emailParam = urlParams.get('email') || localStorage.getItem('userEmail');
         const leadIdParam = urlParams.get('lead_id') || localStorage.getItem('leadId');
+        const selectedPlanParam = localStorage.getItem('selectedPlan');
 
         // Felder vorausfüllen
         if (dogNameParam) {
@@ -1372,119 +822,20 @@
         if (emailParam) {
             document.getElementById('userEmail').value = emailParam;
         }
-
-        // ========== VIDEO UPLOAD ==========
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('videoFile');
-        const selectedFile = document.getElementById('selectedFile');
-        const fileName = document.getElementById('fileName');
-
-        uploadArea.addEventListener('click', () => fileInput.click());
-
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
-
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('video/')) {
-                handleFile(file);
-            }
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files[0]) {
-                handleFile(e.target.files[0]);
-            }
-        });
-
-        function handleFile(file) {
-            if (file.size > 100 * 1024 * 1024) {
-                alert('Das Video ist zu groß. Bitte wähle ein Video unter 100MB.');
-                return;
-            }
-            fileName.textContent = file.name;
-            selectedFile.style.display = 'flex';
-            uploadArea.classList.add('has-file');
+        if (selectedPlanParam) {
+            document.getElementById('selectedPlan').value = selectedPlanParam;
         }
-
-        function removeFile() {
-            fileInput.value = '';
-            selectedFile.style.display = 'none';
-            uploadArea.classList.remove('has-file');
-        }
-
-        // ========== VIDEO UPLOAD TO SUPABASE ==========
-        async function uploadVideoToSupabase(file) {
-            const timestamp = Date.now();
-            const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-            const filePath = `${timestamp}_${safeName}`;
-
-            const response = await fetch(`${SUPABASE_URL}/storage/v1/object/trainer-videos/${filePath}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Content-Type': file.type
-                },
-                body: file
-            });
-
-            if (!response.ok) {
-                throw new Error('Video-Upload fehlgeschlagen');
-            }
-
-            // URL zum Video
-            const videoUrl = `${SUPABASE_URL}/storage/v1/object/trainer-videos/${filePath}`;
-            
-            return {
-                url: videoUrl,
-                filename: file.name,
-                sizeMb: (file.size / (1024 * 1024)).toFixed(2)
-            };
-        }
-
-        // ========== CHECKOUT POPUP ==========
-        function openCheckoutPopup() {
-            document.getElementById('checkoutPopup').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
-            // Hundename im Popup aktualisieren
-            document.getElementById('checkoutDogName').textContent = formData.dogName || 'deinen Hund';
-            
-            // Stripe initialisieren
-            initStripePayment();
-        }
-
-        function closeCheckoutPopup() {
-            document.getElementById('checkoutPopup').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        // Close on overlay click
-        document.getElementById('checkoutPopup').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeCheckoutPopup();
-            }
-        });
 
         // ========== FORM SUBMIT ==========
         async function submitForm() {
             const btn = document.getElementById('submitBtn');
             const dogName = document.getElementById('dogName').value.trim();
             const email = document.getElementById('userEmail').value.trim();
+            const selectedPlan = document.getElementById('selectedPlan').value;
             const problem = document.getElementById('problemDescription').value.trim();
-            const video = fileInput.files[0];
 
             // Validation
-            if (!dogName || !email || !problem) {
+            if (!dogName || !email || !selectedPlan || !problem) {
                 alert('Bitte fülle alle Pflichtfelder aus.');
                 return;
             }
@@ -1494,156 +845,50 @@
                 return;
             }
 
-            // Store form data
-            formData = { 
-                dogName, 
-                email, 
-                problem, 
-                videoFile: video,
-                videoUrl: null,
-                videoFilename: null,
-                videoSizeMb: null
-            };
-
-            // Upload video if present
-            if (video) {
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner"></span> Video wird hochgeladen...';
-
-                try {
-                    const uploadResult = await uploadVideoToSupabase(video);
-                    formData.videoUrl = uploadResult.url;
-                    formData.videoFilename = uploadResult.filename;
-                    formData.videoSizeMb = uploadResult.sizeMb;
-                    console.log('✅ Video hochgeladen:', uploadResult.url);
-                } catch (error) {
-                    console.error('❌ Video-Upload Fehler:', error);
-                    alert('Video-Upload fehlgeschlagen. Bitte versuche es erneut oder fahre ohne Video fort.');
-                    btn.disabled = false;
-                    btn.innerHTML = 'Trainingsanpassung anfordern →';
-                    return;
-                }
-
-                btn.disabled = false;
-                btn.innerHTML = 'Trainingsanpassung anfordern →';
-            }
-
-            // Open checkout popup
-            openCheckoutPopup();
-        }
-
-        // ========== STRIPE PAYMENT ==========
-        async function initStripePayment() {
-            if (!stripe) {
-                stripe = Stripe(STRIPE_PUBLIC_KEY);
-            }
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Wird gesendet...';
 
             try {
-                // Create payment intent via API
-                const response = await fetch('/api/trainer-hilfe-checkout', {
+                // Direkt in Supabase speichern
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/trainer_hilfe_anfragen`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=minimal'
+                    },
                     body: JSON.stringify({
-                        dogName: formData.dogName,
-                        email: formData.email,
-                        problem: formData.problem,
-                        videoUrl: formData.videoUrl,
-                        videoFilename: formData.videoFilename,
-                        videoSizeMb: formData.videoSizeMb,
-                        leadId: leadIdParam,
-                        price: 79.99
+                        email: email,
+                        dog_name: dogName,
+                        problem_description: problem,
+                        selected_plan: selectedPlan,
+                        lead_id: leadIdParam || null,
+                        status: 'pending'
                     })
                 });
 
-                const data = await response.json();
-
-                if (data.error) {
-                    showCheckoutError(data.error);
-                    return;
+                if (!response.ok) {
+                    throw new Error('Speichern fehlgeschlagen');
                 }
 
-                clientSecret = data.clientSecret;
-                currentAnfrageId = data.anfrageId;
+                console.log('✅ Problem erfolgreich gesendet');
 
-                // Create Stripe Elements
-                elements = stripe.elements({
-                    clientSecret: clientSecret,
-                    appearance: {
-                        theme: 'stripe',
-                        variables: {
-                            colorPrimary: '#C4A576',
-                            colorBackground: '#ffffff',
-                            colorText: '#2C2C2E',
-                            colorDanger: '#e74c3c',
-                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                            fontSizeBase: '15px',
-                            borderRadius: '10px'
-                        }
-                    }
-                });
+                // Success anzeigen
+                document.getElementById('formSection').style.display = 'none';
+                document.querySelector('.submit-section').style.display = 'none';
+                document.getElementById('successMessage').classList.add('visible');
 
-                const paymentElement = elements.create('payment', {
-                    layout: 'tabs'
-                });
-                paymentElement.mount('#payment-element');
+                // Nach oben scrollen
+                window.scrollTo({ top: 0, behavior: 'smooth' });
 
             } catch (error) {
-                console.error('Checkout Error:', error);
-                showCheckoutError('Verbindungsfehler. Bitte versuche es erneut.');
+                console.error('❌ Fehler:', error);
+                alert('Etwas ist schiefgelaufen. Bitte versuche es erneut.');
+                btn.disabled = false;
+                btn.innerHTML = 'Mein individuelles Problem abschicken';
             }
         }
-
-        async function submitPayment() {
-            const payBtn = document.getElementById('checkoutPayBtn');
-            payBtn.disabled = true;
-            payBtn.innerHTML = '<span class="spinner"></span> Wird verarbeitet...';
-
-            hideCheckoutError();
-
-            try {
-                const { error } = await stripe.confirmPayment({
-                    elements,
-                    confirmParams: {
-                        return_url: window.location.origin + '/danke-trainer.html?anfrage_id=' + currentAnfrageId
-                    }
-                });
-
-                if (error) {
-                    showCheckoutError(error.message);
-                    payBtn.disabled = false;
-                    payBtn.innerHTML = '🔒 Jetzt bezahlen';
-                }
-                // Bei Erfolg wird automatisch weitergeleitet
-
-            } catch (err) {
-                showCheckoutError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
-                payBtn.disabled = false;
-                payBtn.innerHTML = '🔒 Jetzt bezahlen';
-            }
-        }
-
-        function showCheckoutError(message) {
-            const errorEl = document.getElementById('checkoutError');
-            errorEl.textContent = message;
-            errorEl.classList.add('visible');
-        }
-
-        function hideCheckoutError() {
-            document.getElementById('checkoutError').classList.remove('visible');
-        }
-
-        // ========== SCARCITY COUNTDOWN ==========
-        let spots = 3;
-        const spotsElement = document.getElementById('spotsLeft');
-        
-        setTimeout(() => {
-            spots = 2;
-            spotsElement.textContent = spots;
-            spotsElement.style.transform = 'scale(1.3)';
-            setTimeout(() => {
-                spotsElement.style.transform = 'scale(1)';
-            }, 300);
-        }, 60000);
     </script>
 </body>
 </html>
