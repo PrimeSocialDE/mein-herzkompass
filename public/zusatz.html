@@ -1078,7 +1078,7 @@
                             '<span class="bundle-price-new">€25</span>' +
                             '<span class="bundle-price-save">Du sparst €13!</span>' +
                         '</div>' +
-                        '<button class="bundle-btn" style="background: linear-gradient(135deg, #C4A576, #D4B996);" onclick="buyBundle(\'' + modulesToShow[0] + '\')">Bundle sichern</button>' +
+                        '<button class="bundle-btn" style="background: linear-gradient(135deg, #C4A576, #D4B996);" onclick="buyBundle(\'' + modulesToShow[0] + '\', \'' + modulesToShow[1] + '\')">Bundle sichern</button>' +
                     '</div>' +
                 '</div>';
             }
@@ -1470,8 +1470,8 @@
             }
         }
 
-        // Bundle kaufen (Modul + Prävention)
-        async function buyBundle(module) {
+        // Bundle kaufen (beide Module)
+        async function buyBundle(module1, module2) {
             const btn = event.target;
             btn.textContent = 'Lädt...';
             btn.disabled = true;
@@ -1483,37 +1483,37 @@
                 return;
             }
 
-            currentModule = module + '+anxiety'; // Bundle: Modul + Prävention
-            const data = moduleData[module] || moduleData['anxiety'];
+            currentModule = module1 + '+' + module2; // Bundle: beide Module
+            const data1 = moduleData[module1];
+            const data2 = moduleData[module2];
 
             // Popup für Bundle aktualisieren
             document.getElementById('paymentIcon').textContent = '📦';
             document.getElementById('paymentModuleName').textContent = 'Komplett-Paket';
-            document.querySelector('.payment-product-info p').textContent = data.name + ' + Prävention';
-            document.querySelector('.payment-product-price').textContent = '€24,99';
+            document.querySelector('.payment-product-info p').textContent = data1.name + ' + ' + data2.name;
+            document.querySelector('.payment-product-price').textContent = '€25';
 
-            // Benefits für Bundle
+            // Benefits für Bundle (je 2 von jedem Modul)
             const bundleBenefits = [
-                ...data.benefits.slice(0, 2),
-                'Trennungsangst vorbeugen',
-                'Alleine-bleiben üben'
+                ...data1.benefits.slice(0, 2),
+                ...data2.benefits.slice(0, 2)
             ];
             const benefitsHtml = bundleBenefits.map(b => '<div class="payment-benefit">✓ <span>' + b + '</span></div>').join('');
             document.getElementById('paymentBenefits').innerHTML = benefitsHtml;
 
             try {
-                console.log('📤 Bundle Checkout:', { module, leadId, email: userEmail, bundle: true });
-                
+                console.log('📤 Bundle Checkout:', { module1, module2, leadId, email: userEmail, bundle: true });
+
                 const response = await fetch('/api/upsell-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        module: module + '+anxiety',
+                        module: module1 + '+' + module2,
                         leadId: leadId,
                         email: userEmail,
                         dogName: dogName,
                         bundle: true,
-                        price: 2499 // 24,99€ in Cents
+                        price: 2500 // 25€ in Cents
                     })
                 });
 
