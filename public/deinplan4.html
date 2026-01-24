@@ -2786,8 +2786,15 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             }
 
             // ========== FALLBACK: NEUEN LEAD ERSTELLEN (sollte selten passieren) ==========
+            // WICHTIG: Keinen neuen Lead erstellen wenn keine Quiz-Daten vorhanden
+            const dogNameFromStorage = localStorage.getItem('dogName');
+            if (!dogNameFromStorage || dogNameFromStorage === 'deinen Hund') {
+                console.log('⚠️ Kein dogName vorhanden - Lead wird nicht erstellt');
+                return null;
+            }
+
             const leadData = {
-                dog_name: localStorage.getItem('dogName'),
+                dog_name: dogNameFromStorage,
                 selected_plan: selectedPlan,
                 price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price,
                 timer_expired: timerExpired,

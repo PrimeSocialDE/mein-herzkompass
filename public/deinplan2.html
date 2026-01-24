@@ -531,8 +531,15 @@ async function saveToSupabase() {
     }
 
     // FALLBACK: NEUEN LEAD ERSTELLEN
+    // WICHTIG: Keinen neuen Lead erstellen wenn keine Quiz-Daten vorhanden
+    const dogNameFromStorage = localStorage.getItem('dogName');
+    if (!dogNameFromStorage || dogNameFromStorage === 'deinen Hund') {
+        console.log('⚠️ Kein dogName vorhanden - Lead wird nicht erstellt');
+        return null;
+    }
+
     const leadData = {
-        dog_name: localStorage.getItem('dogName'),
+        dog_name: dogNameFromStorage,
         selected_plan: 'schnellstart',
         price: '€9,99',
         status: 'pending',
