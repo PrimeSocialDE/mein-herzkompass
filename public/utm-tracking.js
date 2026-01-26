@@ -1,4 +1,4 @@
-// ==================== WAUWERK UTM & TRACKING v2.0 ====================
+// ==================== PFOTEN-PLAN UTM & TRACKING v2.0 ====================
 (function() {
     const urlParams = new URLSearchParams(window.location.search);
     
@@ -136,7 +136,7 @@
     } catch(e) {}
     
     // ========== 6. Debug Log ==========
-    console.log('📊 WauWerk Tracking v2.0:', {
+    console.log('📊 Pfoten-Plan Tracking v2.0:', {
         email: localStorage.getItem('userEmail'),
         email_source: localStorage.getItem('email_source'),
         utm_source: localStorage.getItem('utm_source'),
