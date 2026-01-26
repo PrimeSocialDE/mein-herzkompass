@@ -1707,7 +1707,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
 
         <div class="pricing-section">
-            <div class="pricing-card" data-plan="1month" data-price="24.99">
+            <div class="pricing-card" data-plan="1month" data-price="29.99">
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
@@ -1717,7 +1717,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
                             <span class="price-amount">0</span>
-                            <span class="price-cents">,83</span>
+                            <span class="price-cents">,99</span>
                             <span class="price-period">pro Tag</span>
                         </div>
                         <div class="price-old">€1,67</div>
@@ -1725,7 +1725,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
             </div>
 
-            <div class="pricing-card popular selected" data-plan="3month" data-price="29.99">
+            <div class="pricing-card popular selected" data-plan="3month" data-price="39.99">
                 <div class="popular-badge" id="popularBadge">⭐ Für dauerhafte Veränderung</div>
                 <div class="pricing-header">
                     <div class="pricing-left">
@@ -1736,7 +1736,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
                             <span class="price-amount">0</span>
-                            <span class="price-cents">,33</span>
+                            <span class="price-cents">,44</span>
                             <span class="price-period">pro Tag</span>
                         </div>
                         <div class="price-old">€0,89</div>
@@ -1744,7 +1744,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
             </div>
 
-            <div class="pricing-card" data-plan="6month" data-price="49.99">
+            <div class="pricing-card" data-plan="6month" data-price="59.99">
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
@@ -1754,7 +1754,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
                             <span class="price-amount">0</span>
-                            <span class="price-cents">,27</span>
+                            <span class="price-cents">,33</span>
                             <span class="price-period">pro Tag</span>
                         </div>
                         <div class="price-old">€0,67</div>
@@ -2268,9 +2268,9 @@ if (popularBadge) {
         let selectedPlan = '3month';
 
         const planDetails = {
-            '1month': { price: '€24,99', priceNormal: '€49,99', name: '1-Monats-Plan', interval: 'monatlich' },
-            '3month': { price: '€29,99', priceNormal: '€79,99', name: '3-Monats-Plan', interval: 'alle 3 Monate' },
-            '6month': { price: '€49,99', priceNormal: '€119,99', name: '6-Monats-Plan', interval: 'alle 6 Monate' }
+            '1month': { price: '€29,99', priceNormal: '€49,99', name: '1-Monats-Plan', interval: 'monatlich' },
+            '3month': { price: '€39,99', priceNormal: '€79,99', name: '3-Monats-Plan', interval: 'alle 3 Monate' },
+            '6month': { price: '€59,99', priceNormal: '€119,99', name: '6-Monats-Plan', interval: 'alle 6 Monate' }
         };
 
         function switchToNormalPrices() {
@@ -2548,9 +2548,9 @@ if (popularBadge) {
 
             // Tagespreis berechnen
             const dailyPrices = {
-                '1month': { discount: '0,83', normal: '1,67' },
-                '3month': { discount: '0,33', normal: '0,89' },
-                '6month': { discount: '0,27', normal: '0,67' }
+                '1month': { discount: '0,99', normal: '1,67' },
+                '3month': { discount: '0,44', normal: '0,89' },
+                '6month': { discount: '0,33', normal: '0,67' }
             };
             const dailyData = dailyPrices[selectedPlan] || dailyPrices['3month'];
             const dailyPrice = timerExpired ? dailyData.normal : dailyData.discount;
@@ -2786,9 +2786,9 @@ if (popularBadge) {
                         <div class="checkout-plan-personalized">Individuell erstellt für <span id="checkoutDogNamePlan">deinen Hund</span></div>
                     </div>
                     <div class="checkout-plan-price-box">
-                        <div class="checkout-plan-price" id="checkoutPlanPrice">€29,99</div>
+                        <div class="checkout-plan-price" id="checkoutPlanPrice">€39,99</div>
                         <div class="checkout-plan-price-sub">einmalig</div>
-                        <div class="checkout-plan-daily" id="checkoutDailyPrice">≈ 0,33 € pro Tag</div>
+                        <div class="checkout-plan-daily" id="checkoutDailyPrice">≈ 0,44 € pro Tag</div>
                     </div>
                 </div>
 
