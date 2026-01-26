@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
         fb_event_id: fb_event_id || '',
         ttclid: ttclid || ''
       },
-      description: `WauWerk ${planName} für ${dogName || 'Hund'}`,
+      description: `Pfoten-Plan ${planName} für ${dogName || 'Hund'}`,
     });
 
     // Lead in Supabase speichern/updaten falls noch nicht vorhanden

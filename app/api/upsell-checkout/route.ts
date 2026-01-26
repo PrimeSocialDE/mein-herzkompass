@@ -52,7 +52,7 @@ export async function POST(request: Request) {
         // Modul-Name generieren
         let moduleName: string;
         if (isPremium) {
-            moduleName = 'WauWerk Premium - Alle Module + 3 Monate Support';
+            moduleName = 'Pfoten-Plan Premium - Alle Module + 3 Monate Support';
         } else if (isBundle) {
             const mainModule = module.split('+')[0];
             moduleName = 'Komplett-Paket: ' + (moduleNames[mainModule] || mainModule) + ' + Prävention';
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
                 is_premium: isPremium ? 'true' : 'false'
             },
             receipt_email: email,
-            description: 'WauWerk ' + moduleName + ' für ' + (dogName || 'Hund')
+            description: 'Pfoten-Plan ' + moduleName + ' für ' + (dogName || 'Hund')
         });
 
         return NextResponse.json({ 

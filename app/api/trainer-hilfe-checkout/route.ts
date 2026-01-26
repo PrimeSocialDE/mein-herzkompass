@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
         lead_id: leadId || '',
         has_video: videoUrl ? 'true' : 'false'
       },
-      description: `WauWerk Trainingsanpassung für ${dogName || 'Hund'}`,
+      description: `Pfoten-Plan Trainingsanpassung für ${dogName || 'Hund'}`,
     });
 
     // 3. Payment Intent ID in Anfrage speichern
