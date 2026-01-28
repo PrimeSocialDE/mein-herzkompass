@@ -2089,6 +2089,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 
         const defaultBenefits = [
             '✓ ' + dogName + 's Gehorsam schnell verbessern',
+            '✓ <strong>Bei Fragen hilft unser Trainer per E-Mail</strong>',
             '✓ Verhaltensprobleme gezielt lösen',
             '✓ Neue Trainingstechniken für ' + dogName,
             '✓ Stärkere Bindung zu ' + dogName + ' aufbauen',
@@ -2100,6 +2101,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         const benefitsMap = {
             'pulling': [
                 '✓ ' + dogName + 's Leinenziehen effektiv abtrainieren',
+                '✓ <strong>Bei Fragen hilft unser Trainer per E-Mail</strong>',
                 '✓ Entspannte Spaziergänge ohne Zerren',
                 '✓ ' + dogName + ' lernt richtiges Verhalten an der Leine',
                 '✓ Ablenkungen souverän meistern',
@@ -2109,6 +2111,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ],
             'barking': [
                 '✓ ' + dogName + 's übermäßiges Bellen reduzieren',
+                '✓ <strong>Bei Fragen hilft unser Trainer per E-Mail</strong>',
                 '✓ Auslöser für das Bellen verstehen',
                 '✓ ' + dogName + ' lernt Ruhe-Kommandos',
                 '✓ Entspanntere Nachbarschaft',
@@ -2118,6 +2121,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ],
             'aggression': [
                 '✓ ' + dogName + 's aggressives Verhalten verstehen & lösen',
+                '✓ <strong>Bei Fragen hilft unser Trainer per E-Mail</strong>',
                 '✓ Warnsignale frühzeitig erkennen',
                 '✓ Sichere Begegnungen für ' + dogName,
                 '✓ Stresssituationen souverän meistern',
@@ -2127,6 +2131,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ],
             'anxiety': [
                 '✓ ' + dogName + 's Trennungsangst Schritt für Schritt abbauen',
+                '✓ <strong>Bei Fragen hilft unser Trainer per E-Mail</strong>',
                 '✓ ' + dogName + ' lernt alleine zu bleiben',
                 '✓ Zerstörerisches Verhalten stoppen',
                 '✓ ' + dogName + 's Selbstvertrauen stärken',
@@ -2136,6 +2141,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ],
             'jumping': [
                 '✓ ' + dogName + 's Anspringen abtrainieren',
+                '✓ <strong>Bei Fragen hilft unser Trainer per E-Mail</strong>',
                 '✓ ' + dogName + ' lernt ruhige Begrüßung',
                 '✓ Selbstkontrolle bei Aufregung aufbauen',
                 '✓ Besuch entspannt empfangen',
@@ -2145,6 +2151,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ],
             'recall': [
                 '✓ ' + dogName + 's zuverlässigen Rückruf aufbauen',
+                '✓ <strong>Bei Fragen hilft unser Trainer per E-Mail</strong>',
                 '✓ Freilauf ohne Sorgen für ' + dogName,
                 '✓ ' + dogName + ' ignoriert Ablenkungen',
                 '✓ Sofortige Reaktion auf deinen Ruf',
@@ -2154,6 +2161,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ],
             'energy': [
                 '✓ ' + dogName + 's überschüssige Energie abbauen',
+                '✓ <strong>Bei Fragen hilft unser Trainer per E-Mail</strong>',
                 '✓ Mentale Auslastung für ' + dogName,
                 '✓ ' + dogName + ' lernt Ruhe & Entspannung',
                 '✓ Hyperaktivität in den Griff bekommen',
@@ -2163,6 +2171,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ],
             'destructive': [
                 '✓ ' + dogName + 's zerstörerisches Verhalten stoppen',
+                '✓ <strong>Bei Fragen hilft unser Trainer per E-Mail</strong>',
                 '✓ Langeweile bei ' + dogName + ' sinnvoll bekämpfen',
                 '✓ Kauen auf erlaubte Gegenstände umlenken',
                 '✓ Deine Möbel und Schuhe schützen',
@@ -2172,6 +2181,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ],
             'soiling': [
                 '✓ ' + dogName + ' wird zuverlässig stubenrein',
+                '✓ <strong>Bei Fragen hilft unser Trainer per E-Mail</strong>',
                 '✓ Klare Routinen für ' + dogName + 's Toilettengänge',
                 '✓ ' + dogName + 's Signale verstehen',
                 '✓ Unfälle in der Wohnung vermeiden',
@@ -2181,6 +2191,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ],
             'mouthing': [
                 '✓ ' + dogName + ' lernt Sachen liegen zu lassen',
+                '✓ <strong>Bei Fragen hilft unser Trainer per E-Mail</strong>',
                 '✓ Sicheres "Aus"-Kommando aufbauen',
                 '✓ Gefährliche Gegenstände werden ignoriert',
                 '✓ Kein Fressen vom Boden mehr',
@@ -2194,7 +2205,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         const benefitsList = document.getElementById('benefitsList');
         benefits.forEach(benefit => {
             const li = document.createElement('li');
-            li.textContent = benefit;
+            li.innerHTML = benefit;
             benefitsList.appendChild(li);
         });
 
