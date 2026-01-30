@@ -85,13 +85,24 @@
       var hasSession = qs.get('session_id');
       var amountUrl = qs.get('amount');
       var amount = !isNaN(parseFloat(amountUrl)) ? parseFloat(amountUrl) : (parseFloat(localStorage.getItem('price_eur')) || 39.00);
-    
+
       if(hasSession){
+        // Deduplizierung: Nur einmal pro Session tracken
+        var trackingKey = 'wauwerk_purchase_tracked_' + hasSession;
+        if(localStorage.getItem(trackingKey)){
+          console.log('⏭️ Purchase bereits getrackt für session:', hasSession);
+          return;
+        }
+
         fbq('track','Purchase',{ value: amount, currency: 'EUR' });
         safeClarity('purchase',{ amount: amount, source:'stripe_checkout', session_id: hasSession });
         try{ ttq.track('Purchase',{ value: amount, currency: 'EUR' }); }catch(e){}
-    
+
         sendServerEvent(META_CAPI_URL,{ event_name:'Purchase', value: amount, currency:'EUR', session_id: hasSession });
         sendServerEvent(TIKTOK_CAPI_URL,{ event_name:'Purchase', value: amount, currency:'EUR', session_id: hasSession });
+
+        // Als getrackt markieren
+        localStorage.setItem(trackingKey, '1');
+        console.log('✅ Purchase getrackt für session:', hasSession);
       }
     });
