@@ -81,16 +81,27 @@
         }
       });
     
+      // Purchase Tracking - NICHT auf zusatz.html (dort wird es separat gehandhabt)
+      var isZusatzPage = location.pathname.includes('zusatz');
+      if(isZusatzPage){
+        console.log('⏭️ tracking.js: Auf zusatz.html - Purchase wird dort gehandhabt');
+        return;
+      }
+
       var qs = new URLSearchParams(location.search);
       var hasSession = qs.get('session_id');
+      var paymentIntent = qs.get('payment_intent');
       var amountUrl = qs.get('amount');
       var amount = !isNaN(parseFloat(amountUrl)) ? parseFloat(amountUrl) : (parseFloat(localStorage.getItem('price_eur')) || 39.00);
 
-      if(hasSession){
-        // Deduplizierung: Nur einmal pro Session tracken
-        var trackingKey = 'wauwerk_purchase_tracked_' + hasSession;
+      // Gleicher Key wie in zusatz.html für konsistente Deduplizierung
+      var uniqueKey = paymentIntent || hasSession;
+
+      if(uniqueKey){
+        // Deduplizierung: Nur einmal pro Session/Payment tracken
+        var trackingKey = 'wauwerk_purchase_tracked_' + uniqueKey;
         if(localStorage.getItem(trackingKey)){
-          console.log('⏭️ Purchase bereits getrackt für session:', hasSession);
+          console.log('⏭️ Purchase bereits getrackt für:', uniqueKey);
           return;
         }
 
@@ -103,6 +114,6 @@
 
         // Als getrackt markieren
         localStorage.setItem(trackingKey, '1');
-        console.log('✅ Purchase getrackt für session:', hasSession);
+        console.log('✅ Purchase getrackt für:', uniqueKey);
       }
     });
