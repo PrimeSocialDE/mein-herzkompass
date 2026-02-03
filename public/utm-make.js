@@ -94,8 +94,13 @@ onReady(function(){
   });
 
   // 6) Success/Purchase erkennen (Stripe Success URL mit ?session_id=… [&amount=…])
+  // DEDUPLIZIERUNG: Gleicher Key wie in tracking.js und zusatz.html
   var sessionId = getParam('session_id');
-  if(sessionId){
+  var paymentIntent = getParam('payment_intent');
+  var uniqueKey = paymentIntent || sessionId;
+  var makeTrackingKey = 'wauwerk_make_purchase_' + uniqueKey;
+
+  if(uniqueKey && !getLS(makeTrackingKey)){
     var amount = parseFloat(getParam('amount'));
     if(isNaN(amount)) amount = parseFloat(getLS('price_eur')) || DEFAULT_PRICE_EUR;
     sendToMake({
@@ -104,6 +109,7 @@ onReady(function(){
       event_source_url: location.href,
       action_source: 'website',
       session_id: sessionId,
+      payment_intent: paymentIntent,
       price_eur: amount,
       currency: 'EUR',
       page_path: location.pathname,
@@ -123,6 +129,10 @@ onReady(function(){
       },
       user_agent: navigator.userAgent
     });
+    setLS(makeTrackingKey, '1');
+    console.log('✅ Make Purchase gesendet für:', uniqueKey);
+  } else if(uniqueKey) {
+    console.log('⏭️ Make Purchase bereits gesendet für:', uniqueKey);
   }
 
   // 7) Optional: Form-Leads an Make

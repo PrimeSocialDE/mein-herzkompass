@@ -1130,8 +1130,8 @@
         if (isValidPurchase && !localStorage.getItem(trackingKey)) {
             console.log('🔥 Purchase Event feuern:', purchaseValue, 'EUR');
             
-            // Event ID für Meta Deduplizierung
-            const eventId = 'purchase_' + uniqueKey + '_' + Date.now();
+            // Event ID für Meta Deduplizierung (STABIL - ohne Date.now() für korrekte Deduplizierung)
+            const eventId = 'purchase_' + uniqueKey;
             
             if (typeof fbq !== 'undefined') {
                 fbq('track', 'Purchase', {
