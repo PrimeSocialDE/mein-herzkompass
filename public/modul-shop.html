@@ -1027,7 +1027,7 @@
         const moduleData = {
             'anxiety': {
                 icon: '😰',
-                name: 'Alleine bleiben',
+                name: 'Angst',
                 exercises: '6 Übungen',
                 price: 19,
                 oldPrice: 29,
@@ -1037,7 +1037,7 @@
             },
             'pulling': {
                 icon: '🦮',
-                name: 'Leinenführigkeit',
+                name: 'Leine',
                 exercises: '6 Übungen',
                 price: 19,
                 oldPrice: 29,
@@ -1047,7 +1047,7 @@
             },
             'barking': {
                 icon: '🔊',
-                name: 'Anti-Bell Training',
+                name: 'Bellen',
                 exercises: '6 Übungen',
                 price: 19,
                 oldPrice: 29,
@@ -1057,7 +1057,7 @@
             },
             'aggression': {
                 icon: '😤',
-                name: 'Begegnungen meistern',
+                name: 'Aggression',
                 exercises: '6 Übungen',
                 price: 19,
                 oldPrice: 29,
@@ -1067,7 +1067,7 @@
             },
             'recall': {
                 icon: '📣',
-                name: 'Rückruf-Training',
+                name: 'Rückruf',
                 exercises: '6 Übungen',
                 price: 19,
                 oldPrice: 29,
@@ -1077,7 +1077,7 @@
             },
             'jumping': {
                 icon: '🐕',
-                name: 'Anti-Anspring Training',
+                name: 'Springen',
                 exercises: '6 Übungen',
                 price: 19,
                 oldPrice: 29,
@@ -1087,7 +1087,7 @@
             },
             'energy': {
                 icon: '⚡',
-                name: 'Ruhe lernen',
+                name: 'Energie',
                 exercises: '6 Übungen',
                 price: 19,
                 oldPrice: 29,
@@ -1097,7 +1097,7 @@
             },
             'destructive': {
                 icon: '🧸',
-                name: 'Zerstören abgewöhnen',
+                name: 'Zerstörung',
                 exercises: '6 Übungen',
                 price: 19,
                 oldPrice: 29,
@@ -1375,24 +1375,22 @@
             // Kurze, positive Headlines
             let headline = displayName + ' wird das lieben';
 
-            if (moduleName.includes('Alleine')) {
+            if (moduleName.includes('Angst')) {
                 headline = displayName + ' bleibt entspannt alleine';
             } else if (moduleName.includes('Leine')) {
                 headline = 'Entspannte Spaziergänge mit ' + displayName;
             } else if (moduleName.includes('Bell')) {
                 headline = displayName + ' bellt nur noch, wenn nötig';
-            } else if (moduleName.includes('Begegnung')) {
+            } else if (moduleName.includes('Aggression')) {
                 headline = displayName + ' bleibt bei Begegnungen cool';
             } else if (moduleName.includes('Rückruf')) {
                 headline = displayName + ' kommt zuverlässig zurück';
-            } else if (moduleName.includes('Anspring')) {
+            } else if (moduleName.includes('Springen')) {
                 headline = displayName + ' begrüßt Gäste ruhig';
-            } else if (moduleName.includes('Ruhe')) {
+            } else if (moduleName.includes('Energie')) {
                 headline = displayName + ' lernt, runterzufahren';
-            } else if (moduleName.includes('Zerstör')) {
+            } else if (moduleName.includes('Zerstörung')) {
                 headline = 'Schluss mit zerstörten Sachen';
-            } else if (moduleName.includes('aufnehmen') || moduleName.includes('Nichts')) {
-                headline = displayName + ' lässt Gefährliches liegen';
             }
 
             document.querySelector('.dog-name-trust').textContent = displayName;
