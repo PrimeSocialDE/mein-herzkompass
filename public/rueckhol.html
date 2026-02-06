@@ -1257,7 +1257,7 @@
                     </div>
                     <div>
                         <div style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Deine Quiz-Daten sind noch gespeichert!</div>
-                        <div style="font-size: 11px; color: #8B7355;">Dein personalisierter Plan für <strong id="checkoutDogNameFomo">deinen Hund</strong> wartet – <span style="color: #DC2626; font-weight: 600;">nur noch begrenzt reserviert</span></div>
+                        <div style="font-size: 11px; color: #8B7355;">Dein personalisierter Plan für <strong id="checkoutDogNameFomo">deinen Hund</strong> wartet – <span style="color: #DC2626; font-weight: 600;">⏳ Reservierung läuft in <span id="fomoTimer">14:59</span> ab</span></div>
                     </div>
                 </div>
 
@@ -1648,7 +1648,8 @@
             document.getElementById('checkoutPlanBenefit').textContent = planBenefits[selectedPlan] || planBenefits['3month'];
             
             document.getElementById('checkoutOverlay').classList.add('active');
-            
+            startFomoTimer();
+
             // Stripe initialisieren
             if (!stripe) {
                 stripe = Stripe(STRIPE_PUBLIC_KEY);
@@ -1787,6 +1788,28 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeCheckout();
         });
+
+        // FOMO Timer für Checkout
+        let fomoTimerInterval = null;
+        function startFomoTimer() {
+            let timeLeft = 15 * 60; // 15 Minuten
+            const timerEl = document.getElementById('fomoTimer');
+            if (!timerEl) return;
+
+            if (fomoTimerInterval) clearInterval(fomoTimerInterval);
+
+            fomoTimerInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(fomoTimerInterval);
+                    timerEl.textContent = '0:00';
+                    return;
+                }
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                timerEl.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+            }, 1000);
+        }
 
         // Beim Laden ausführen
         loadAndPersonalize();
