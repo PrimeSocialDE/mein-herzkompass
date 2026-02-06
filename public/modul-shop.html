@@ -1105,19 +1105,9 @@
                 benefits: ['Kau-Alternativen', 'Langeweile vorbeugen', 'Klare Grenzen'],
                 desc: 'Schluss mit kaputten Schuhen und zerbissenen Möbeln.'
             },
-            'mouthing': {
-                icon: '🦴',
-                name: 'Nichts aufnehmen',
-                exercises: '6 Übungen',
-                price: 19,
-                oldPrice: 29,
-                category: 'obedience',
-                benefits: ['Aus-Kommando', 'Impulskontrolle', 'Sichere Spaziergänge'],
-                desc: 'Dein Hund lernt, draußen nichts Gefährliches aufzunehmen.'
-            }
         };
 
-        // Bundle Preise
+        // Bundle Preise (max 8 Module)
         const bundlePricing = {
             2: { price: 25, savings: 13 },
             3: { price: 35, savings: 22 },
@@ -1125,8 +1115,7 @@
             5: { price: 55, savings: 40 },
             6: { price: 65, savings: 49 },
             7: { price: 75, savings: 58 },
-            8: { price: 85, savings: 67 },
-            9: { price: 89, savings: 82 }
+            8: { price: 85, savings: 67 }
         };
 
         // ==================== DATEN LADEN (wie rueckhol.html) ====================
@@ -1268,7 +1257,7 @@
                 bundleBtn.textContent = 'Mindestens 2 Module auswählen';
                 bundleBtn.disabled = true;
             } else {
-                const pricing = bundlePricing[count] || bundlePricing[9];
+                const pricing = bundlePricing[count] || bundlePricing[8];
                 document.getElementById('savingsAmount').textContent = '€' + pricing.savings;
                 document.getElementById('bundlePrice').textContent = '€' + pricing.price;
                 bundleBtn.textContent = 'Bundle für €' + pricing.price + ' kaufen';
@@ -1527,7 +1516,7 @@
 
             const btn = document.getElementById('bundleBtn');
             const count = selectedBundleModules.length;
-            const pricing = bundlePricing[count] || bundlePricing[9];
+            const pricing = bundlePricing[count] || bundlePricing[8];
             const originalText = 'Bundle für €' + pricing.price + ' kaufen';
 
             btn.textContent = 'Lädt...';
@@ -1545,7 +1534,7 @@
         async function proceedWithBundlePurchase(btnElement) {
             const btn = btnElement;
             const count = selectedBundleModules.length;
-            const pricing = bundlePricing[count] || bundlePricing[9];
+            const pricing = bundlePricing[count] || bundlePricing[8];
             const originalText = 'Bundle für €' + pricing.price + ' kaufen';
 
             currentModule = selectedBundleModules.join('+');
