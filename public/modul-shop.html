@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zusatzmodule Shop | Pfoten-Plan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ufxcf43805");
+    </script>
+
+    <!-- Meta Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+
+    <!-- TikTok Pixel -->
+    <script>
+        !function (w, d, t) {
+            w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for( var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+            ttq.load('D4RFSQBC77U7SM7UL8A0');
+        }(window, document, 'ttq');
+    </script>
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAF8F5;
+            padding: 20px;
+            padding-bottom: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .dog-name {
+            color: #C4A576;
+            font-weight: 600;
+        }
+
+        /* Info Banner */
+        .info-banner {
+            background: linear-gradient(135deg, #FEF3E7, #FFF9F0);
+            border: 1px solid rgba(196, 165, 118, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .info-banner p {
+            font-size: 14px;
+            color: #8B7355;
+            line-height: 1.5;
+        }
+
+        .info-banner strong {
+            color: #C4A576;
+        }
+
+        .info-features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .info-feature {
+            font-size: 12px;
+            color: #666;
+            background: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        /* Module Grid */
+        .modules-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        /* Module Card */
+        .module-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .module-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .module-icon {
+            width: 48px;
+            height: 48px;
+            background: #FEF3E7;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .module-title-section {
+            flex: 1;
+        }
+
+        .module-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+
+        .module-meta {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .module-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .module-benefits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .benefit-tag {
+            font-size: 11px;
+            color: #444;
+            background: #F5F5F5;
+            padding: 5px 10px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .benefit-tag::before {
+            content: "✓";
+            color: #22C55E;
+            font-weight: 600;
+        }
+
+        .module-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 14px;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .module-price {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .price-old {
+            font-size: 14px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .price-new {
+            font-size: 22px;
+            font-weight: 700;
+            color: #C4A576;
+        }
+
+        .module-btn {
+            background: #C4A576;
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .module-btn:hover {
+            background: #B8956A;
+        }
+
+        .module-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Bundle Section */
+        .bundle-section {
+            margin-bottom: 24px;
+        }
+
+        .bundle-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 2px solid #C4A576;
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bundle-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: linear-gradient(135deg, #C4A576, #D4B996);
+            color: #1a1a1a;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 0 14px 0 12px;
+        }
+
+        .bundle-header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .bundle-header h3 {
+            font-size: 20px;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .bundle-header p {
+            font-size: 13px;
+            color: #C4A576;
+        }
+
+        .bundle-select {
+            margin-bottom: 16px;
+        }
+
+        .bundle-select label {
+            display: block;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .bundle-checkboxes {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .bundle-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .bundle-checkbox:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .bundle-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: #C4A576;
+        }
+
+        .bundle-checkbox-icon {
+            font-size: 18px;
+        }
+
+        .bundle-checkbox-name {
+            flex: 1;
+            font-size: 13px;
+            color: white;
+        }
+
+        .bundle-checkbox-price {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .bundle-summary {
+            background: rgba(196, 165, 118, 0.1);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .bundle-summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        .bundle-summary-row.total {
+            font-size: 16px;
+            font-weight: 700;
+            color: #C4A576;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 0;
+        }
+
+        .bundle-summary-row .savings {
+            color: #22C55E;
+        }
+
+        .bundle-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #C4A576, #D4B996);
+            border: none;
+            color: #1a1a1a;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .bundle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5);
+        }
+
+        .bundle-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Back Link */
+        .back-link {
+            text-align: center;
+            margin-top: 24px;
+            margin-bottom: 30px;
+        }
+
+        .back-link a {
+            font-size: 14px;
+            color: #666;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            color: #C4A576;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 12px;
+            color: #888;
+            border-top: 1px solid #E8E8E8;
+            background: #FAF8F5;
+            margin-top: 20px;
+        }
+
+        .footer a {
+            color: #888;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #C4A576;
+        }
+
+        /* Payment Popup Overlay */
+        .payment-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .payment-overlay.active {
+            display: flex;
+        }
+
+        .payment-popup {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .payment-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .payment-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .payment-close {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .payment-body {
+            padding: 14px 20px;
+        }
+
+        .payment-product {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #FAFAFA;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .payment-product-icon {
+            width: 44px;
+            height: 44px;
+            background: #FEF3E7;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .payment-product-info h3 {
+            font-size: 14px;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+
+        .payment-product-info p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .payment-product-price {
+            margin-left: auto;
+            font-size: 18px;
+            font-weight: 700;
+            color: #C4A576;
+        }
+
+        .payment-benefits {
+            background: #F8F8F8;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+        }
+
+        .payment-benefit {
+            font-size: 12px;
+            color: #333;
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .payment-loading {
+            text-align: center;
+            padding: 30px 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .payment-loading .spinner-large {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #E8E8E8;
+            border-top-color: #C4A576;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        #payment-element {
+            margin-bottom: 12px;
+            min-height: 100px;
+        }
+
+        .payment-error {
+            background: #FEF2F2;
+            color: #DC2626;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .payment-error.visible {
+            display: block;
+        }
+
+        .payment-btn {
+            width: 100%;
+            background: #C4A576;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .payment-btn:hover {
+            background: #B8956A;
+        }
+
+        .payment-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .payment-guarantee {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* Email Input Modal */
+        .email-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 9998;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .email-overlay.active {
+            display: flex;
+        }
+
+        .email-popup {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 380px;
+            padding: 24px;
+            text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+
+        .email-popup h3 {
+            font-size: 18px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .email-popup p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
+        }
+
+        .email-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #E8E8E8;
+            border-radius: 10px;
+            font-size: 15px;
+            margin-bottom: 12px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .email-input:focus {
+            border-color: #C4A576;
+        }
+
+        .email-submit-btn {
+            width: 100%;
+            background: #C4A576;
+            border: none;
+            color: white;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .email-submit-btn:hover {
+            background: #B8956A;
+        }
+
+        .email-close {
+            margin-top: 12px;
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* Payment Trust Box */
+        .payment-trust-box {
+            background: linear-gradient(135deg, #F0FDF4, #ECFDF5);
+            border: 1px solid #BBF7D0;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        .trust-headline {
+            font-size: 14px;
+            font-weight: 600;
+            color: #166534;
+            margin-bottom: 10px;
+        }
+
+        .dog-name-trust {
+            color: #15803D;
+        }
+
+        .trust-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .trust-detail {
+            font-size: 12px;
+            color: #166534;
+        }
+
+        .trust-stats {
+            display: flex;
+            justify-content: center;
+        }
+
+        .trust-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #22C55E;
+        }
+
+        .stat-text {
+            font-size: 11px;
+            color: #166534;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .category-tab {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #E8E8E8;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .category-tab:hover {
+            border-color: #C4A576;
+            color: #C4A576;
+        }
+
+        .category-tab.active {
+            background: #C4A576;
+            border-color: #C4A576;
+            color: white;
+        }
+
+        /* Section Divider */
+        .section-divider {
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+            margin: 24px 0;
+            position: relative;
+        }
+
+        .section-divider::before,
+        .section-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background: #E8E8E8;
+        }
+
+        .section-divider::before {
+            left: 0;
+        }
+
+        .section-divider::after {
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1>Zusatzmodule für <span class="dog-name">deinen Hund</span></h1>
+            <p>Gezieltes Training für spezielle Herausforderungen</p>
+        </div>
+
+        <!-- Info Banner -->
+        <div class="info-banner">
+            <p><strong>Einmalig €19</strong> – kein Abo</p>
+            <div class="info-features">
+                <span class="info-feature">📋 Schritt für Schritt erklärt</span>
+                <span class="info-feature">⏱️ Mit Zeitangaben</span>
+                <span class="info-feature">✨ Erfolge in 2 Wochen</span>
+            </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs">
+            <button class="category-tab active" data-category="all">Alle Module</button>
+            <button class="category-tab" data-category="behavior">Verhalten</button>
+            <button class="category-tab" data-category="obedience">Gehorsam</button>
+            <button class="category-tab" data-category="anxiety">Angst & Stress</button>
+        </div>
+
+        <!-- Module Grid -->
+        <div class="modules-grid" id="modulesGrid">
+            <!-- Wird dynamisch befüllt -->
+        </div>
+
+        <!-- Bundle Section -->
+        <div class="section-divider">oder spare mit Bundle</div>
+
+        <div class="bundle-section">
+            <div class="bundle-card">
+                <span class="bundle-badge">BIS ZU 40% SPAREN</span>
+                <div class="bundle-header">
+                    <h3>Stell dein Bundle zusammen</h3>
+                    <p>Wähle 2+ Module und spare automatisch</p>
+                </div>
+
+                <div class="bundle-select">
+                    <label>Module auswählen:</label>
+                    <div class="bundle-checkboxes" id="bundleCheckboxes">
+                        <!-- Wird dynamisch befüllt -->
+                    </div>
+                </div>
+
+                <div class="bundle-summary" id="bundleSummary">
+                    <div class="bundle-summary-row">
+                        <span>Ausgewählt:</span>
+                        <span id="selectedCount">0 Module</span>
+                    </div>
+                    <div class="bundle-summary-row">
+                        <span>Normalpreis:</span>
+                        <span id="normalPrice">€0</span>
+                    </div>
+                    <div class="bundle-summary-row">
+                        <span>Du sparst:</span>
+                        <span class="savings" id="savingsAmount">€0</span>
+                    </div>
+                    <div class="bundle-summary-row total">
+                        <span>Dein Preis:</span>
+                        <span id="bundlePrice">€0</span>
+                    </div>
+                </div>
+
+                <button class="bundle-btn" id="bundleBtn" disabled onclick="buyCustomBundle()">
+                    Mindestens 2 Module auswählen
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Pfoten-Plan. Alle Rechte vorbehalten.</p>
+        <p><a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a> • <a href="agb.html">AGB</a></p>
+    </footer>
+
+    <!-- Email Input Popup -->
+    <div class="email-overlay" id="emailOverlay">
+        <div class="email-popup">
+            <h3>📧 Deine E-Mail</h3>
+            <p>Gib deine E-Mail ein, damit wir dir das Modul schicken können.</p>
+            <input type="email" class="email-input" id="emailInput" placeholder="deine@email.de">
+            <button class="email-submit-btn" id="emailSubmitBtn" onclick="submitEmail()">Weiter</button>
+            <button class="email-close" onclick="closeEmailPopup()">Abbrechen</button>
+        </div>
+    </div>
+
+    <!-- Payment Popup -->
+    <div class="payment-overlay" id="paymentOverlay">
+        <div class="payment-popup">
+            <div class="payment-header">
+                <span class="payment-title">Modul hinzufügen</span>
+                <button class="payment-close" onclick="closePaymentPopup()">✕</button>
+            </div>
+            <div class="payment-body">
+                <div class="payment-product">
+                    <div class="payment-product-icon" id="paymentIcon">😰</div>
+                    <div class="payment-product-info">
+                        <h3 id="paymentModuleName">Modul</h3>
+                        <p id="paymentModuleMeta">6 Übungen</p>
+                    </div>
+                    <div class="payment-product-price" id="paymentPrice">€19</div>
+                </div>
+
+                <div class="payment-benefits" id="paymentBenefits">
+                    <!-- Wird dynamisch befüllt -->
+                </div>
+
+                <!-- Trust Message -->
+                <div class="payment-trust-box" id="paymentTrustBox">
+                    <div class="trust-headline" id="trustHeadline">🐕 <span class="dog-name-trust">Dein Hund</span> wird das lieben</div>
+                    <div class="trust-stats">
+                        <div class="trust-stat">
+                            <span class="stat-number">94%</span>
+                            <span class="stat-text">sehen Fortschritte in 2 Wochen</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div class="payment-loading" id="paymentLoading">
+                    <div class="spinner-large"></div>
+                    <p>Zahlungsmethoden werden geladen...</p>
+                </div>
+
+                <div id="paymentError" class="payment-error"></div>
+
+                <div id="payment-element"></div>
+
+                <button class="payment-btn" id="paymentBtn" onclick="submitPayment()" style="display: none;">
+                    Jetzt bezahlen
+                </button>
+
+                <div class="payment-guarantee">
+                    Sichere Zahlung • 30 Tage Geld-zurück
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
+
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+        let dogName = localStorage.getItem('dogName') || 'deinen Hund';
+        let userEmail = localStorage.getItem('userEmail') || '';
+        let leadId = localStorage.getItem('leadId') || '';
+
+        let stripe = null;
+        let elements = null;
+        let paymentElement = null;
+        let currentModule = null;
+        let clientSecret = null;
+        let selectedBundleModules = [];
+
+        // Pending-Variablen für Email-Popup
+        let pendingModuleKey = null;
+        let pendingBtnElement = null;
+        let pendingIsBundle = false;
+
+        // Modul-Daten mit Kategorien
+        const moduleData = {
+            'anxiety': {
+                icon: '😰',
+                name: 'Alleine bleiben',
+                exercises: '6 Übungen',
+                price: 19,
+                oldPrice: 29,
+                category: 'anxiety',
+                benefits: ['Sanfter Aufbau', 'Abschiedsrituale', 'Ruhe-Signale'],
+                desc: 'Damit dein Hund entspannt alleine bleibt – ohne Bellen oder Zerstörung.'
+            },
+            'pulling': {
+                icon: '🦮',
+                name: 'Leinenführigkeit',
+                exercises: '6 Übungen',
+                price: 19,
+                oldPrice: 29,
+                category: 'obedience',
+                benefits: ['Bei-Fuß gehen', 'Richtungswechsel', 'Ablenkungen meistern'],
+                desc: 'Schluss mit Ziehen – für entspannte Spaziergänge ohne Stress.'
+            },
+            'barking': {
+                icon: '🔊',
+                name: 'Anti-Bell Training',
+                exercises: '6 Übungen',
+                price: 19,
+                oldPrice: 29,
+                category: 'behavior',
+                benefits: ['Ruhe-Signal', 'Auslöser erkennen', 'Kontrolle gewinnen'],
+                desc: 'Bellt dein Hund zu viel? Lerne, wie du das in den Griff bekommst.'
+            },
+            'aggression': {
+                icon: '😤',
+                name: 'Begegnungen meistern',
+                exercises: '6 Übungen',
+                price: 19,
+                oldPrice: 29,
+                category: 'behavior',
+                benefits: ['Auslöser verstehen', 'Ruhe bewahren', 'Sichere Begegnungen'],
+                desc: 'Für entspannte Begegnungen mit anderen Hunden und Menschen.'
+            },
+            'recall': {
+                icon: '📣',
+                name: 'Rückruf-Training',
+                exercises: '6 Übungen',
+                price: 19,
+                oldPrice: 29,
+                category: 'obedience',
+                benefits: ['Sicherer Rückruf', 'Auch bei Ablenkung', 'Mehr Freilauf'],
+                desc: 'Damit dein Hund zuverlässig kommt – auch wenn Ablenkungen locken.'
+            },
+            'jumping': {
+                icon: '🐕',
+                name: 'Anti-Anspring Training',
+                exercises: '6 Übungen',
+                price: 19,
+                oldPrice: 29,
+                category: 'behavior',
+                benefits: ['Höfliche Begrüßung', 'Vier-Pfoten-Regel', 'Besuchertraining'],
+                desc: 'Dein Hund lernt, Gäste ruhig zu begrüßen statt anzuspringen.'
+            },
+            'energy': {
+                icon: '⚡',
+                name: 'Ruhe lernen',
+                exercises: '6 Übungen',
+                price: 19,
+                oldPrice: 29,
+                category: 'anxiety',
+                benefits: ['Ruheübungen', 'Mentale Auslastung', 'Entspannungssignale'],
+                desc: 'Für Hunde, die nicht zur Ruhe kommen – damit der Alltag entspannter wird.'
+            },
+            'destructive': {
+                icon: '🧸',
+                name: 'Zerstören abgewöhnen',
+                exercises: '6 Übungen',
+                price: 19,
+                oldPrice: 29,
+                category: 'behavior',
+                benefits: ['Kau-Alternativen', 'Langeweile vorbeugen', 'Klare Grenzen'],
+                desc: 'Schluss mit kaputten Schuhen und zerbissenen Möbeln.'
+            },
+            'mouthing': {
+                icon: '🦴',
+                name: 'Nichts aufnehmen',
+                exercises: '6 Übungen',
+                price: 19,
+                oldPrice: 29,
+                category: 'obedience',
+                benefits: ['Aus-Kommando', 'Impulskontrolle', 'Sichere Spaziergänge'],
+                desc: 'Dein Hund lernt, draußen nichts Gefährliches aufzunehmen.'
+            }
+        };
+
+        // Bundle Preise
+        const bundlePricing = {
+            2: { price: 25, savings: 13 },
+            3: { price: 35, savings: 22 },
+            4: { price: 45, savings: 31 },
+            5: { price: 55, savings: 40 },
+            6: { price: 65, savings: 49 },
+            7: { price: 75, savings: 58 },
+            8: { price: 85, savings: 67 },
+            9: { price: 89, savings: 82 }
+        };
+
+        // ==================== DATEN LADEN (wie rueckhol.html) ====================
+        async function loadUserData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const leadIdParam = urlParams.get('lead_id');
+            const emailParam = urlParams.get('email');
+
+            // Aus localStorage laden als Fallback
+            dogName = localStorage.getItem('dogName') || 'deinen Hund';
+            userEmail = localStorage.getItem('userEmail') || '';
+            leadId = leadIdParam || localStorage.getItem('leadId') || '';
+
+            // Aus Supabase laden wenn Parameter vorhanden
+            if (leadIdParam || emailParam) {
+                let queryParam = '';
+                if (leadIdParam) {
+                    queryParam = 'id=eq.' + leadIdParam;
+                } else if (emailParam) {
+                    const decodedEmail = decodeURIComponent(emailParam);
+                    queryParam = 'email=eq.' + encodeURIComponent(decodedEmail);
+                }
+
+                try {
+                    const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?' + queryParam + '&select=*&order=created_at.desc&limit=1', {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data[0]) {
+                            const lead = data[0];
+                            const answers = lead.answers || {};
+
+                            if (answers.dog_name) dogName = answers.dog_name;
+                            if (lead.id) leadId = lead.id;
+                            if (lead.email) userEmail = lead.email;
+
+                            // In localStorage speichern
+                            localStorage.setItem('dogName', dogName);
+                            localStorage.setItem('leadId', leadId);
+                            localStorage.setItem('userEmail', userEmail);
+
+                            console.log('✅ Daten aus Supabase geladen:', { dogName, leadId, email: userEmail });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Supabase error:', error);
+                }
+            }
+
+            // Dog name personalisieren
+            document.querySelectorAll('.dog-name').forEach(el => {
+                el.textContent = dogName;
+            });
+
+            // Initial rendern
+            renderModules();
+            renderBundleCheckboxes();
+        }
+
+        // Module rendern
+        function renderModules(category = 'all') {
+            const container = document.getElementById('modulesGrid');
+            const allModules = Object.keys(moduleData);
+
+            const filteredModules = category === 'all'
+                ? allModules
+                : allModules.filter(m => moduleData[m].category === category);
+
+            let html = '';
+
+            filteredModules.forEach(moduleKey => {
+                const module = moduleData[moduleKey];
+                const benefitsHtml = module.benefits.slice(0, 3).map(b =>
+                    '<span class="benefit-tag">' + b + '</span>'
+                ).join('');
+
+                html += '<div class="module-card" data-module="' + moduleKey + '" data-category="' + module.category + '">' +
+                    '<div class="module-header">' +
+                        '<div class="module-icon">' + module.icon + '</div>' +
+                        '<div class="module-title-section">' +
+                            '<div class="module-name">' + module.name + '</div>' +
+                            '<div class="module-meta">' + module.exercises + ' • 2 Wochen Programm</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<p class="module-desc">' + module.desc + '</p>' +
+                    '<div class="module-benefits">' + benefitsHtml + '</div>' +
+                    '<div class="module-footer">' +
+                        '<div class="module-price">' +
+                            '<span class="price-old">€' + module.oldPrice + '</span>' +
+                            '<span class="price-new">€' + module.price + '</span>' +
+                        '</div>' +
+                        '<button class="module-btn" onclick="buyModule(\'' + moduleKey + '\', this)">Hinzufügen</button>' +
+                    '</div>' +
+                '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Bundle Checkboxen rendern
+        function renderBundleCheckboxes() {
+            const container = document.getElementById('bundleCheckboxes');
+            let html = '';
+
+            Object.keys(moduleData).forEach(moduleKey => {
+                const module = moduleData[moduleKey];
+                html += '<label class="bundle-checkbox">' +
+                    '<input type="checkbox" value="' + moduleKey + '" onchange="updateBundleSummary()">' +
+                    '<span class="bundle-checkbox-icon">' + module.icon + '</span>' +
+                    '<span class="bundle-checkbox-name">' + module.name + '</span>' +
+                    '<span class="bundle-checkbox-price">€' + module.price + '</span>' +
+                '</label>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Bundle Summary updaten
+        function updateBundleSummary() {
+            const checkboxes = document.querySelectorAll('#bundleCheckboxes input:checked');
+            selectedBundleModules = Array.from(checkboxes).map(cb => cb.value);
+            const count = selectedBundleModules.length;
+
+            document.getElementById('selectedCount').textContent = count + ' Module';
+
+            const normalPrice = count * 19;
+            document.getElementById('normalPrice').textContent = '€' + normalPrice;
+
+            const bundleBtn = document.getElementById('bundleBtn');
+
+            if (count < 2) {
+                document.getElementById('savingsAmount').textContent = '€0';
+                document.getElementById('bundlePrice').textContent = '€0';
+                bundleBtn.textContent = 'Mindestens 2 Module auswählen';
+                bundleBtn.disabled = true;
+            } else {
+                const pricing = bundlePricing[count] || bundlePricing[9];
+                document.getElementById('savingsAmount').textContent = '€' + pricing.savings;
+                document.getElementById('bundlePrice').textContent = '€' + pricing.price;
+                bundleBtn.textContent = 'Bundle für €' + pricing.price + ' kaufen';
+                bundleBtn.disabled = false;
+            }
+        }
+
+        // Kategorie-Tabs
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                renderModules(this.dataset.category);
+            });
+        });
+
+        // ==================== EMAIL POPUP FUNCTIONS ====================
+
+        function showEmailPopup(moduleKey, btnElement, isBundle = false) {
+            pendingModuleKey = moduleKey;
+            pendingBtnElement = btnElement;
+            pendingIsBundle = isBundle;
+            document.getElementById('emailInput').value = '';
+            document.getElementById('emailOverlay').classList.add('active');
+        }
+
+        function closeEmailPopup() {
+            document.getElementById('emailOverlay').classList.remove('active');
+            // Button zurücksetzen
+            if (pendingBtnElement) {
+                pendingBtnElement.textContent = pendingIsBundle ? 'Bundle kaufen' : 'Hinzufügen';
+                pendingBtnElement.disabled = false;
+            }
+            pendingModuleKey = null;
+            pendingBtnElement = null;
+            pendingIsBundle = false;
+        }
+
+        function submitEmail() {
+            const emailInput = document.getElementById('emailInput');
+            const email = emailInput.value.trim();
+
+            if (!email || !email.includes('@')) {
+                emailInput.style.borderColor = '#DC2626';
+                return;
+            }
+
+            // Email speichern
+            userEmail = email;
+            localStorage.setItem('userEmail', email);
+
+            // Pending-Werte sichern bevor Popup geschlossen wird
+            const moduleKey = pendingModuleKey;
+            const btnElement = pendingBtnElement;
+            const isBundle = pendingIsBundle;
+
+            // Popup schließen (ohne Reset, da wir die Werte gesichert haben)
+            document.getElementById('emailOverlay').classList.remove('active');
+
+            // Mit dem Kauf fortfahren
+            if (isBundle) {
+                proceedWithBundlePurchase(btnElement);
+            } else {
+                proceedWithModulePurchase(moduleKey, btnElement);
+            }
+
+            // Reset pending vars
+            pendingModuleKey = null;
+            pendingBtnElement = null;
+            pendingIsBundle = false;
+        }
+
+        // ==================== PAYMENT FUNCTIONS ====================
+
+        // Einzelnes Modul kaufen
+        async function buyModule(moduleKey, btnElement) {
+            const btn = btnElement;
+            const originalText = btn.textContent;
+            btn.textContent = 'Lädt...';
+            btn.disabled = true;
+
+            if (!userEmail) {
+                showEmailPopup(moduleKey, btn, false);
+                return;
+            }
+
+            proceedWithModulePurchase(moduleKey, btn);
+        }
+
+        // Cleanup Stripe Elements vor Neuinitialisierung
+        function cleanupStripeElements() {
+            if (paymentElement) {
+                try {
+                    paymentElement.unmount();
+                } catch (e) {
+                    console.log('Unmount ignoriert');
+                }
+                paymentElement = null;
+            }
+            elements = null;
+        }
+
+        // Trust-Box mit Hundenamen aktualisieren
+        function updateTrustBox(moduleName) {
+            const displayName = (dogName && dogName !== 'deinen Hund') ? dogName : 'Dein Hund';
+
+            // Kurze, positive Headlines
+            let headline = displayName + ' wird das lieben';
+
+            if (moduleName.includes('Alleine')) {
+                headline = displayName + ' bleibt entspannt alleine';
+            } else if (moduleName.includes('Leine')) {
+                headline = 'Entspannte Spaziergänge mit ' + displayName;
+            } else if (moduleName.includes('Bell')) {
+                headline = displayName + ' bellt nur noch, wenn nötig';
+            } else if (moduleName.includes('Begegnung')) {
+                headline = displayName + ' bleibt bei Begegnungen cool';
+            } else if (moduleName.includes('Rückruf')) {
+                headline = displayName + ' kommt zuverlässig zurück';
+            } else if (moduleName.includes('Anspring')) {
+                headline = displayName + ' begrüßt Gäste ruhig';
+            } else if (moduleName.includes('Ruhe')) {
+                headline = displayName + ' lernt, runterzufahren';
+            } else if (moduleName.includes('Zerstör')) {
+                headline = 'Schluss mit zerstörten Sachen';
+            } else if (moduleName.includes('aufnehmen') || moduleName.includes('Nichts')) {
+                headline = displayName + ' lässt Gefährliches liegen';
+            }
+
+            document.querySelector('.dog-name-trust').textContent = displayName;
+            document.getElementById('trustHeadline').innerHTML = '🐕 ' + headline;
+        }
+
+        async function proceedWithModulePurchase(moduleKey, btnElement) {
+            const btn = btnElement;
+            const originalText = 'Hinzufügen';
+
+            currentModule = moduleKey;
+            const module = moduleData[moduleKey];
+
+            // Popup SOFORT öffnen mit Loading State
+            document.getElementById('paymentIcon').textContent = module.icon;
+            document.getElementById('paymentModuleName').textContent = module.name;
+            document.getElementById('paymentModuleMeta').textContent = module.exercises + ' • 2 Wochen';
+            document.getElementById('paymentPrice').textContent = '€' + module.price;
+
+            const benefitsHtml = module.benefits.map(b =>
+                '<div class="payment-benefit">✓ <span>' + b + '</span></div>'
+            ).join('');
+            document.getElementById('paymentBenefits').innerHTML = benefitsHtml;
+
+            // Trust-Box mit Hundenamen aktualisieren
+            updateTrustBox(module.name);
+
+            // Reset states
+            document.getElementById('paymentLoading').style.display = 'block';
+            document.getElementById('payment-element').innerHTML = '';
+            document.getElementById('paymentBtn').style.display = 'none';
+            hidePaymentError();
+
+            // Popup öffnen
+            document.getElementById('paymentOverlay').classList.add('active');
+
+            try {
+                const response = await fetch('/api/upsell-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        module: moduleKey,
+                        leadId: leadId,
+                        email: userEmail,
+                        dogName: dogName,
+                        price: module.price * 100
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.error) {
+                    showPaymentError('Fehler: ' + result.error);
+                    document.getElementById('paymentLoading').style.display = 'none';
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+
+                if (!result.clientSecret) {
+                    showPaymentError('Fehler: Keine Zahlungs-Session erhalten');
+                    document.getElementById('paymentLoading').style.display = 'none';
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+
+                clientSecret = result.clientSecret;
+
+                // Cleanup alte Elemente
+                cleanupStripeElements();
+
+                if (!stripe) {
+                    stripe = Stripe(STRIPE_PUBLIC_KEY);
+                }
+
+                elements = stripe.elements({
+                    clientSecret: clientSecret,
+                    appearance: {
+                        theme: 'stripe',
+                        variables: {
+                            colorPrimary: '#C4A576',
+                            colorBackground: '#ffffff',
+                            colorText: '#2C2C2E',
+                            colorDanger: '#e74c3c',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            borderRadius: '8px'
+                        }
+                    },
+                    locale: 'de'
+                });
+
+                paymentElement = elements.create('payment', {
+                    layout: { type: 'tabs', defaultCollapsed: false },
+                    paymentMethodOrder: ['klarna', 'paypal', 'card'],
+                    wallets: { applePay: 'auto', googlePay: 'auto' }
+                });
+
+                paymentElement.mount('#payment-element');
+
+                // Hide loading, show button
+                document.getElementById('paymentLoading').style.display = 'none';
+                document.getElementById('paymentBtn').style.display = 'flex';
+
+                btn.textContent = originalText;
+                btn.disabled = false;
+
+            } catch (err) {
+                console.error('Error:', err);
+                showPaymentError('Fehler beim Laden. Bitte versuche es erneut.');
+                document.getElementById('paymentLoading').style.display = 'none';
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Custom Bundle kaufen
+        async function buyCustomBundle() {
+            if (selectedBundleModules.length < 2) return;
+
+            const btn = document.getElementById('bundleBtn');
+            const count = selectedBundleModules.length;
+            const pricing = bundlePricing[count] || bundlePricing[9];
+            const originalText = 'Bundle für €' + pricing.price + ' kaufen';
+
+            btn.textContent = 'Lädt...';
+            btn.disabled = true;
+
+            if (!userEmail) {
+                showEmailPopup(null, btn, true);
+                return;
+            }
+
+            proceedWithBundlePurchase(btn);
+        }
+
+        // Bundle-Kauf fortsetzen
+        async function proceedWithBundlePurchase(btnElement) {
+            const btn = btnElement;
+            const count = selectedBundleModules.length;
+            const pricing = bundlePricing[count] || bundlePricing[9];
+            const originalText = 'Bundle für €' + pricing.price + ' kaufen';
+
+            currentModule = selectedBundleModules.join('+');
+
+            // Popup SOFORT öffnen
+            document.getElementById('paymentIcon').textContent = '📦';
+            document.getElementById('paymentModuleName').textContent = count + ' Module Bundle';
+            document.getElementById('paymentModuleMeta').textContent = (count * 6) + ' Übungen insgesamt';
+            document.getElementById('paymentPrice').textContent = '€' + pricing.price;
+
+            let allBenefits = [];
+            selectedBundleModules.slice(0, 4).forEach(m => {
+                allBenefits.push(moduleData[m].benefits[0]);
+            });
+            const benefitsHtml = allBenefits.map(b =>
+                '<div class="payment-benefit">✓ <span>' + b + '</span></div>'
+            ).join('');
+            document.getElementById('paymentBenefits').innerHTML = benefitsHtml;
+
+            // Trust-Box aktualisieren
+            updateTrustBox('Komplett-Paket');
+
+            // Reset states
+            document.getElementById('paymentLoading').style.display = 'block';
+            document.getElementById('payment-element').innerHTML = '';
+            document.getElementById('paymentBtn').style.display = 'none';
+            hidePaymentError();
+
+            // Popup öffnen
+            document.getElementById('paymentOverlay').classList.add('active');
+
+            try {
+                const response = await fetch('/api/upsell-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        module: currentModule,
+                        leadId: leadId,
+                        email: userEmail,
+                        dogName: dogName,
+                        bundle: true,
+                        price: pricing.price * 100
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.error) {
+                    showPaymentError('Fehler: ' + result.error);
+                    document.getElementById('paymentLoading').style.display = 'none';
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+
+                if (!result.clientSecret) {
+                    showPaymentError('Fehler: Keine Zahlungs-Session erhalten');
+                    document.getElementById('paymentLoading').style.display = 'none';
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+
+                clientSecret = result.clientSecret;
+
+                // Cleanup alte Elemente
+                cleanupStripeElements();
+
+                if (!stripe) {
+                    stripe = Stripe(STRIPE_PUBLIC_KEY);
+                }
+
+                elements = stripe.elements({
+                    clientSecret: clientSecret,
+                    appearance: {
+                        theme: 'stripe',
+                        variables: {
+                            colorPrimary: '#C4A576',
+                            colorBackground: '#ffffff',
+                            colorText: '#2C2C2E',
+                            colorDanger: '#e74c3c',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            borderRadius: '8px'
+                        }
+                    },
+                    locale: 'de'
+                });
+
+                paymentElement = elements.create('payment', {
+                    layout: { type: 'tabs', defaultCollapsed: false },
+                    paymentMethodOrder: ['klarna', 'paypal', 'card'],
+                    wallets: { applePay: 'auto', googlePay: 'auto' }
+                });
+
+                paymentElement.mount('#payment-element');
+
+                document.getElementById('paymentLoading').style.display = 'none';
+                document.getElementById('paymentBtn').style.display = 'flex';
+
+                btn.textContent = originalText;
+                btn.disabled = false;
+
+            } catch (err) {
+                console.error('Error:', err);
+                showPaymentError('Fehler beim Laden. Bitte versuche es erneut.');
+                document.getElementById('paymentLoading').style.display = 'none';
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Zahlung abschicken
+        async function submitPayment() {
+            const payBtn = document.getElementById('paymentBtn');
+            payBtn.disabled = true;
+            payBtn.innerHTML = '<span class="spinner"></span> Wird verarbeitet...';
+
+            hidePaymentError();
+
+            if (!stripe || !elements) {
+                showPaymentError('Stripe nicht initialisiert. Bitte Seite neu laden.');
+                payBtn.disabled = false;
+                payBtn.innerHTML = 'Jetzt bezahlen';
+                return;
+            }
+
+            try {
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: window.location.origin + '/danke-zusatz.html?module=' + encodeURIComponent(currentModule) + '&lead_id=' + leadId
+                    }
+                });
+
+                if (error) {
+                    showPaymentError(error.message || 'Zahlung fehlgeschlagen');
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = 'Jetzt bezahlen';
+                }
+            } catch (err) {
+                showPaymentError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
+                payBtn.disabled = false;
+                payBtn.innerHTML = 'Jetzt bezahlen';
+            }
+        }
+
+        function showPaymentError(message) {
+            const errorEl = document.getElementById('paymentError');
+            errorEl.textContent = message;
+            errorEl.classList.add('visible');
+        }
+
+        function hidePaymentError() {
+            document.getElementById('paymentError').classList.remove('visible');
+        }
+
+        function closePaymentPopup() {
+            document.getElementById('paymentOverlay').classList.remove('active');
+            if (paymentElement) {
+                paymentElement.unmount();
+                paymentElement = null;
+            }
+        }
+
+        // Overlay schließen bei Klick außerhalb
+        document.getElementById('paymentOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePaymentPopup();
+            }
+        });
+
+        // Email-Overlay schließen bei Klick außerhalb
+        document.getElementById('emailOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEmailPopup();
+            }
+        });
+
+        // Escape-Taste schließt Popups
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePaymentPopup();
+                closeEmailPopup();
+            }
+        });
+
+        // ==================== INIT ====================
+        loadUserData();
+
+        // Track PageView
+        if (typeof fbq !== 'undefined') {
+            fbq('trackCustom', 'ModuleShopView', { dog_name: dogName });
+        }
+        if (typeof ttq !== 'undefined') {
+            ttq.track('ViewContent', { content_name: 'Modul Shop' });
+        }
+    </script>
+</body>
+</html>
