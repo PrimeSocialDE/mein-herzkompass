@@ -1363,12 +1363,20 @@
             if (paymentElement) {
                 try {
                     paymentElement.unmount();
+                    paymentElement.destroy();
                 } catch (e) {
-                    console.log('Unmount ignoriert');
+                    console.log('Cleanup ignoriert:', e);
                 }
                 paymentElement = null;
             }
-            elements = null;
+            if (elements) {
+                elements = null;
+            }
+            // DOM-Container komplett leeren
+            const container = document.getElementById('payment-element');
+            if (container) {
+                container.innerHTML = '';
+            }
         }
 
         // Trust-Box mit Hundenamen aktualisieren
@@ -1494,14 +1502,15 @@
                     wallets: { applePay: 'auto', googlePay: 'auto' }
                 });
 
+                // Warten bis Stripe bereit ist
+                paymentElement.on('ready', function() {
+                    document.getElementById('paymentLoading').style.display = 'none';
+                    document.getElementById('paymentBtn').style.display = 'flex';
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                });
+
                 paymentElement.mount('#payment-element');
-
-                // Hide loading, show button
-                document.getElementById('paymentLoading').style.display = 'none';
-                document.getElementById('paymentBtn').style.display = 'flex';
-
-                btn.textContent = originalText;
-                btn.disabled = false;
 
             } catch (err) {
                 console.error('Error:', err);
@@ -1631,13 +1640,15 @@
                     wallets: { applePay: 'auto', googlePay: 'auto' }
                 });
 
+                // Warten bis Stripe bereit ist
+                paymentElement.on('ready', function() {
+                    document.getElementById('paymentLoading').style.display = 'none';
+                    document.getElementById('paymentBtn').style.display = 'flex';
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                });
+
                 paymentElement.mount('#payment-element');
-
-                document.getElementById('paymentLoading').style.display = 'none';
-                document.getElementById('paymentBtn').style.display = 'flex';
-
-                btn.textContent = originalText;
-                btn.disabled = false;
 
             } catch (err) {
                 console.error('Error:', err);
