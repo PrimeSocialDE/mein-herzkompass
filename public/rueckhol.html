@@ -1250,6 +1250,17 @@
                     </div>
                 </div>
 
+                <!-- Quiz-Daten gespeichert + FOMO -->
+                <div id="quizDataSaved" style="background: linear-gradient(135deg, #FEF3E7, #FFF9F0); border: 1px solid rgba(196, 165, 118, 0.3); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 32px; height: 32px; background: #22C55E; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg style="width: 16px; height: 16px; fill: white;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <div>
+                        <div style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Deine Quiz-Daten sind noch gespeichert!</div>
+                        <div style="font-size: 11px; color: #8B7355;">Dein personalisierter Plan für <strong id="checkoutDogNameFomo">deinen Hund</strong> wartet – <span style="color: #DC2626; font-weight: 600;">nur noch begrenzt reserviert</span></div>
+                    </div>
+                </div>
+
                 <!-- Features kompakt -->
                 <div class="checkout-features-compact">
                     <div class="checkout-feature-row">✓ 20+ Übungen für <span id="checkoutDogProblem">dein Problem</span></div>
@@ -1612,7 +1623,8 @@
             document.getElementById('checkoutPlanDuration').textContent = plan.name;
             document.getElementById('checkoutPrice').textContent = '€' + plan.price;
             document.getElementById('checkoutDogName').textContent = dogName;
-            
+            document.getElementById('checkoutDogNameFomo').textContent = dogName;
+
             // Problem-Text
             const problemNames = {
                 'pulling': 'Leinenziehen',
