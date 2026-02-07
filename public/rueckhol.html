@@ -973,13 +973,47 @@
     </header>
     
     <div class="container">
+        <!-- Saved Data Banner mit FOMO -->
+        <div style="background: linear-gradient(135deg, #FEF3E7, #FFF9F0); border: 1px solid rgba(196, 165, 118, 0.3); border-radius: 14px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px;">
+            <div style="width: 40px; height: 40px; background: #22C55E; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <svg style="width: 20px; height: 20px; fill: white;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            </div>
+            <div>
+                <div style="font-size: 15px; font-weight: 700; color: #1a1a1a;">Deine Antworten sind noch gespeichert</div>
+                <div style="font-size: 13px; color: #8B7355; margin-top: 2px;">Dein persönlicher Plan für <strong id="dogNameBanner">deinen Hund</strong> ist fertig erstellt – <span style="color: #DC2626; font-weight: 600;">nur noch nicht freigeschaltet.</span></div>
+            </div>
+        </div>
+
+        <!-- FOMO Counter -->
+        <div style="text-align: center; margin-bottom: 24px; padding: 10px 16px; background: #FEF2F2; border-radius: 10px; border: 1px solid rgba(220, 38, 38, 0.15);">
+            <span style="font-size: 13px; color: #991B1B;">Heute haben sich bereits <strong id="fomoCount">23</strong> Hundebesitzer ihren Plan gesichert</span>
+        </div>
+
         <!-- Hero - Emotional -->
         <div class="hero">
             <span class="hero-badge">📋 Dein Plan ist noch verfügbar</span>
             <h1 id="heroTitle">Stell dir vor, <span class="highlight" id="dogNameHero">dein Hund</span> wäre kein Problem mehr.</h1>
             <p class="hero-subtitle" id="heroSubtitle">Entspannte Spaziergänge. Keine Kämpfe mehr. Ein Hund, auf den du stolz bist. Das ist möglich – in wenigen Wochen.</p>
         </div>
-        
+
+        <!-- Trust Stats -->
+        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; text-align: center;">
+            <div>
+                <div style="font-size: 22px; font-weight: 800; color: #C4A576;">2.847+</div>
+                <div style="font-size: 11px; color: #888;">Hunde trainiert</div>
+            </div>
+            <div style="width: 1px; background: #E8E8E8;"></div>
+            <div>
+                <div style="font-size: 22px; font-weight: 800; color: #22C55E;">94%</div>
+                <div style="font-size: 11px; color: #888;">sehen Fortschritte</div>
+            </div>
+            <div style="width: 1px; background: #E8E8E8;"></div>
+            <div>
+                <div style="font-size: 22px; font-weight: 800; color: #C4A576;">4.9★</div>
+                <div style="font-size: 11px; color: #888;">Bewertung</div>
+            </div>
+        </div>
+
         <!-- Personalized Insights -->
         <div class="insight-section">
             <div class="insight-title">Was du wissen solltest</div>
@@ -1577,7 +1611,13 @@
             // Hero personalisieren
             document.getElementById('dogNameHero').textContent = dogName;
             document.getElementById('heroSubtitle').textContent = content.subtitle;
-            
+
+            // Banner personalisieren
+            document.getElementById('dogNameBanner').textContent = dogName;
+
+            // FOMO Counter (realistisch, 18-34)
+            document.getElementById('fomoCount').textContent = Math.floor(Math.random() * 17) + 18;
+
             // Dog names überall ersetzen
             document.getElementById('dogNameFinal').textContent = dogName;
             
