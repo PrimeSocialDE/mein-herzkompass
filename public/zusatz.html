@@ -820,8 +820,8 @@
 
         <!-- Upsell -->
         <div class="upsell-box">
-            <div class="limited-offer-banner">
-                🎁 Einmaliges Angebot nur für Neukunden
+            <div class="limited-offer-banner" id="offerBanner">
+                🎁 Einmaliges Angebot – gilt noch <strong id="offerTimer">9:59</strong>
             </div>
 
             <div class="upsell-stat">
@@ -839,8 +839,8 @@
             </div>
         </div>
 
-        <div class="skip">
-            <a href="#" class="skip-btn">Nein danke, nur meinen Plan</a>
+        <div class="skip" id="skipSection" style="opacity: 0; transition: opacity 0.5s;">
+            <a href="#" class="skip-btn" style="background: none; color: #999; font-size: 13px; padding: 12px; text-decoration: underline;">Nein danke, nur meinen Plan</a>
         </div>
     </div>
 
@@ -993,98 +993,96 @@
         console.log('🐕 dog_behaviors:', dogBehaviors);
         console.log('🐕 Alle ausgeschlossenen Probleme:', allUserProblems);
 
-        // Upsell-Optionen rendern (nur die, die der User NICHT hat)
+        // Relevanz-Mapping: Welches Modul passt am besten zum Problem?
+        const relevanceMap = {
+            'pulling':      ['recall', 'energy', 'jumping', 'aggression', 'barking', 'anxiety', 'destructive'],
+            'recall':       ['pulling', 'energy', 'aggression', 'jumping', 'barking', 'anxiety', 'destructive'],
+            'aggression':   ['energy', 'pulling', 'recall', 'anxiety', 'barking', 'jumping', 'destructive'],
+            'anxiety':      ['destructive', 'energy', 'barking', 'pulling', 'recall', 'jumping', 'aggression'],
+            'barking':      ['anxiety', 'energy', 'aggression', 'jumping', 'pulling', 'recall', 'destructive'],
+            'jumping':      ['recall', 'pulling', 'energy', 'barking', 'aggression', 'anxiety', 'destructive'],
+            'energy':       ['pulling', 'destructive', 'recall', 'jumping', 'barking', 'anxiety', 'aggression'],
+            'destructive':  ['anxiety', 'energy', 'barking', 'pulling', 'recall', 'jumping', 'aggression']
+        };
+
+        // Upsell-Optionen rendern: 1 empfohlenes Modul + Bundle
         function renderUpsellOptions() {
             const container = document.getElementById('upsellOptions');
             const allModules = Object.keys(moduleData);
-            
+
             // Filter: Module die der User nicht im Plan hat
             const availableModules = allModules.filter(m => !allUserProblems.includes(m));
-            
-            // Zeige maximal 2 Optionen für Einzelmodule
-            const modulesToShow = availableModules.slice(0, 2);
-            
-            if (modulesToShow.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:#666;padding:20px;">Du hast bereits alle Module! 🎉</p>';
+
+            if (availableModules.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:#666;padding:20px;">Du hast bereits alle Module!</p>';
                 return;
             }
 
+            // Nach Relevanz sortieren
+            const mainProblem = dogProblem || dogGoal || '';
+            const relevanceOrder = relevanceMap[mainProblem] || [];
+
+            const sortedModules = availableModules.sort((a, b) => {
+                const indexA = relevanceOrder.indexOf(a);
+                const indexB = relevanceOrder.indexOf(b);
+                const scoreA = indexA === -1 ? 999 : indexA;
+                const scoreB = indexB === -1 ? 999 : indexB;
+                return scoreA - scoreB;
+            });
+
+            const recommended = sortedModules[0];
+            const second = sortedModules.length > 1 ? sortedModules[1] : null;
+            const recModule = moduleData[recommended];
+
             let html = '';
-            const firstModule = moduleData[modulesToShow[0]];
 
-            // ========== 1. ERSTES EINZELNES MODUL (€19) ==========
-            const pointsHtml = firstModule.benefits.slice(0, 3).map(b => '<span class="option-point">' + b + '</span>').join('');
-
-            html += '<div class="upsell-option">' +
+            // ========== 1. EMPFOHLENES MODUL (prominent) ==========
+            html += '<div style="background: #FFFBF5; border: 2px solid #C4A576; border-radius: 14px; padding: 18px; margin-bottom: 14px; position: relative;">' +
+                '<div style="position: absolute; top: -10px; left: 16px; background: #C4A576; color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 6px;">Empfohlen</div>' +
                 '<div class="option-header">' +
                     '<div class="option-left">' +
-                        '<span class="option-icon">' + firstModule.icon + '</span>' +
-                        '<span class="option-name">' + firstModule.name + '</span>' +
+                        '<span class="option-icon">' + recModule.icon + '</span>' +
+                        '<span class="option-name">' + recModule.name + '</span>' +
                     '</div>' +
-                    '<span class="option-badge">' + firstModule.exercises + '</span>' +
+                    '<span class="option-badge">' + recModule.exercises + '</span>' +
                 '</div>' +
-                '<p class="option-desc">' + firstModule.desc + '</p>' +
-                '<div class="option-points">' + pointsHtml + '</div>' +
+                '<p class="option-desc">' + recModule.desc + '</p>' +
+                '<div class="option-points">' + recModule.benefits.slice(0, 3).map(b => '<span class="option-point">' + b + '</span>').join('') + '</div>' +
                 '<div class="option-footer">' +
                     '<div class="option-price">' +
                         '<span class="option-price-old">€29</span>' +
                         '<span class="option-price-new">€19</span>' +
                     '</div>' +
-                    '<button class="option-btn" onclick="buyUpsell(\'' + modulesToShow[0] + '\')">Hinzufügen</button>' +
+                    '<button class="option-btn" style="background: linear-gradient(135deg, #C4A576, #8B7355); padding: 12px 24px; font-size: 14px;" onclick="buyUpsell(\'' + recommended + '\')">Jetzt hinzufügen</button>' +
                 '</div>' +
             '</div>';
 
-            // ========== 2. ZWEITES EINZELNES MODUL (€19) - falls vorhanden ==========
-            if (modulesToShow.length > 1) {
-                const secondModule = moduleData[modulesToShow[1]];
-                const pointsHtml2 = secondModule.benefits.slice(0, 3).map(b => '<span class="option-point">' + b + '</span>').join('');
-
-                html += '<div class="upsell-option">' +
-                    '<div class="option-header">' +
-                        '<div class="option-left">' +
-                            '<span class="option-icon">' + secondModule.icon + '</span>' +
-                            '<span class="option-name">' + secondModule.name + '</span>' +
-                        '</div>' +
-                        '<span class="option-badge">' + secondModule.exercises + '</span>' +
-                    '</div>' +
-                    '<p class="option-desc">' + secondModule.desc + '</p>' +
-                    '<div class="option-points">' + pointsHtml2 + '</div>' +
-                    '<div class="option-footer">' +
-                        '<div class="option-price">' +
-                            '<span class="option-price-old">€29</span>' +
-                            '<span class="option-price-new">€19</span>' +
-                        '</div>' +
-                        '<button class="option-btn" onclick="buyUpsell(\'' + modulesToShow[1] + '\')">Hinzufügen</button>' +
-                    '</div>' +
-                '</div>';
-            }
-
-            // ========== 3. BUNDLE OPTION (2 Module für €25) - nur wenn 2 Module vorhanden ==========
-            if (modulesToShow.length > 1) {
-                const secondModule = moduleData[modulesToShow[1]];
+            // ========== 2. BUNDLE (2 Module für €25) - als Alternative ==========
+            if (second) {
+                const secModule = moduleData[second];
 
                 html += '<div class="bundle-option" style="border-color: #E8E8E8; background: #FAFAFA;">' +
-                    '<span class="bundle-badge" style="background: #666;">📦 BUNDLE</span>' +
+                    '<span class="bundle-badge" style="background: #666;">Mehr sparen</span>' +
                     '<div class="bundle-header">' +
-                        '<h3 class="bundle-title">2 Extra-Module für ' + dogName + '</h3>' +
-                        '<p class="bundle-subtitle">' + firstModule.name + ' + ' + secondModule.name + '</p>' +
+                        '<h3 class="bundle-title" style="font-size: 16px;">Oder: 2 Module im Bundle</h3>' +
+                        '<p class="bundle-subtitle">' + recModule.name + ' + ' + secModule.name + '</p>' +
                     '</div>' +
                     '<div class="bundle-modules">' +
                         '<div class="bundle-module">' +
-                            '<span class="bundle-module-icon">' + firstModule.icon + '</span>' +
+                            '<span class="bundle-module-icon">' + recModule.icon + '</span>' +
                             '<div class="bundle-module-info">' +
-                                '<h4>' + firstModule.name + '</h4>' +
+                                '<h4>' + recModule.name + '</h4>' +
                                 '<div class="bundle-module-points">' +
-                                    firstModule.benefits.slice(0, 2).map(b => '<span class="bundle-point">' + b + '</span>').join('') +
+                                    recModule.benefits.slice(0, 2).map(b => '<span class="bundle-point">' + b + '</span>').join('') +
                                 '</div>' +
                             '</div>' +
                         '</div>' +
                         '<div class="bundle-module">' +
-                            '<span class="bundle-module-icon">' + secondModule.icon + '</span>' +
+                            '<span class="bundle-module-icon">' + secModule.icon + '</span>' +
                             '<div class="bundle-module-info">' +
-                                '<h4>' + secondModule.name + '</h4>' +
+                                '<h4>' + secModule.name + '</h4>' +
                                 '<div class="bundle-module-points">' +
-                                    secondModule.benefits.slice(0, 2).map(b => '<span class="bundle-point">' + b + '</span>').join('') +
+                                    secModule.benefits.slice(0, 2).map(b => '<span class="bundle-point">' + b + '</span>').join('') +
                                 '</div>' +
                             '</div>' +
                         '</div>' +
@@ -1095,7 +1093,7 @@
                             '<span class="bundle-price-new">€25</span>' +
                             '<span class="bundle-price-save">Du sparst €13!</span>' +
                         '</div>' +
-                        '<button class="bundle-btn" style="background: linear-gradient(135deg, #C4A576, #D4B996);" onclick="buyBundle(\'' + modulesToShow[0] + '\', \'' + modulesToShow[1] + '\')">Bundle sichern</button>' +
+                        '<button class="bundle-btn" style="background: linear-gradient(135deg, #C4A576, #D4B996);" onclick="buyBundle(\'' + recommended + '\', \'' + second + '\')">Bundle sichern</button>' +
                     '</div>' +
                 '</div>';
             }
@@ -1105,6 +1103,26 @@
 
         // Upsell-Optionen beim Laden rendern
         renderUpsellOptions();
+
+        // Countdown-Timer (10 Minuten)
+        (function() {
+            let timeLeft = 10 * 60;
+            const timerEl = document.getElementById('offerTimer');
+            if (!timerEl) return;
+
+            const interval = setInterval(function() {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    timerEl.textContent = '0:00';
+                    document.getElementById('offerBanner').innerHTML = '⏰ Angebot abgelaufen';
+                    return;
+                }
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                timerEl.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+            }, 1000);
+        })();
 
         // Preise je Plan
         const planPrices = {
@@ -1649,6 +1667,12 @@
                 paymentElement = null;
             }
         }
+
+        // Skip Button erst nach 5 Sekunden einblenden
+        setTimeout(function() {
+            const skipEl = document.getElementById('skipSection');
+            if (skipEl) skipEl.style.opacity = '1';
+        }, 5000);
 
         // Skip Button → normale Danke-Seite
         document.querySelector('.skip-btn').addEventListener('click', function(e) {
