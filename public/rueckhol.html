@@ -1546,6 +1546,17 @@
             const urlParams = new URLSearchParams(window.location.search);
             const leadIdParam = urlParams.get('lead_id');
             const emailParam = urlParams.get('email');
+
+            // UTM-Parameter aus URL in localStorage speichern
+            ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(param => {
+                const val = urlParams.get(param);
+                if (val) localStorage.setItem(param, val);
+            });
+            // Click IDs
+            ['fbclid', 'gclid', 'ttclid'].forEach(param => {
+                const val = urlParams.get(param);
+                if (val) localStorage.setItem(param, val);
+            });
             
             dogName = localStorage.getItem('dogName') || 'deinen Hund';
             dogProblem = localStorage.getItem('dogProblem') || '';

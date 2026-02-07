@@ -1124,6 +1124,16 @@
             const leadIdParam = urlParams.get('lead_id');
             const emailParam = urlParams.get('email');
 
+            // UTM-Parameter aus URL in localStorage speichern
+            ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(param => {
+                const val = urlParams.get(param);
+                if (val) localStorage.setItem(param, val);
+            });
+            ['fbclid', 'gclid', 'ttclid'].forEach(param => {
+                const val = urlParams.get(param);
+                if (val) localStorage.setItem(param, val);
+            });
+
             // Aus localStorage laden als Fallback
             dogName = localStorage.getItem('dogName') || 'deinen Hund';
             userEmail = localStorage.getItem('userEmail') || '';
