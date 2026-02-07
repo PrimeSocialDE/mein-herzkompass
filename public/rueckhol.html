@@ -1023,10 +1023,10 @@
                 </div>
             </div>
 
-            <!-- Mini Saved-Data Hinweis -->
-            <div style="background: #F0FDF4; border-radius: 8px; padding: 10px 12px; margin-top: 16px; display: flex; align-items: center; gap: 8px;">
-                <span style="color: #22C55E; font-size: 14px;">✓</span>
-                <span style="font-size: 12px; color: #166534;">Deine Antworten für <strong id="dogNameBanner">deinen Hund</strong> sind gespeichert · <span id="fomoCount">23</span> Pläne heute erstellt</span>
+            <!-- Saved-Data Hinweis -->
+            <div style="background: #F0FDF4; border-radius: 10px; padding: 14px 16px; margin-top: 16px; display: flex; align-items: center; gap: 10px;">
+                <span style="color: #22C55E; font-size: 18px;">✓</span>
+                <span style="font-size: 14px; color: #166534; font-weight: 500;">Deine Antworten für <strong id="dogNameBanner">deinen Hund</strong> sind gespeichert</span>
             </div>
         </div>
 
@@ -1036,6 +1036,26 @@
             <ul class="benefits-list" id="benefitsList">
                 <!-- Wird per JavaScript gefüllt -->
             </ul>
+        </div>
+
+        <!-- Transparenz: Beispielbild & Seitenanzahl -->
+        <div style="background: var(--white); border-radius: 16px; padding: 24px 20px; margin-bottom: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
+            <h2 style="font-size: 18px; font-weight: 700; color: var(--text-dark); text-align: center; margin-bottom: 16px;">So sieht dein Plan aus</h2>
+            <img src="InfoBeispiele.png" alt="Beispiel eines Pfoten-Plan Trainingsplans" style="width: 100%; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <div style="background: #FAF8F5; border: 1px solid #E8E4DF; border-radius: 10px; padding: 14px 16px;">
+                <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--text-dark); border-bottom: 1px solid #E8E4DF;">
+                    <span>1 Monat</span>
+                    <span style="color: #C4A576; font-weight: 600;">ca. 18 Seiten</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--text-dark); border-bottom: 1px solid #E8E4DF;">
+                    <span>3 Monate</span>
+                    <span style="color: #C4A576; font-weight: 600;">ca. 45 Seiten</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--text-dark);">
+                    <span>6 Monate</span>
+                    <span style="color: #C4A576; font-weight: 600;">ca. 57 Seiten</span>
+                </div>
+            </div>
         </div>
 
         <!-- Soft CTA - dezent -->
@@ -1604,9 +1624,6 @@
 
             // Banner personalisieren
             document.getElementById('dogNameBanner').textContent = dogName;
-
-            // FOMO Counter (realistisch, 18-34)
-            document.getElementById('fomoCount').textContent = Math.floor(Math.random() * 17) + 18;
 
             // Dog names überall ersetzen
             document.getElementById('dogNameFinal').textContent = dogName;
