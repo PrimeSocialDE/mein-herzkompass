@@ -23,10 +23,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { 
-      plan, 
-      timerExpired, 
-      dogName, 
+    const {
+      plan,
+      timerExpired,
+      dogName,
       leadId,
       email,
       utm_source,
@@ -39,6 +39,10 @@ export async function POST(req: NextRequest) {
       fb_event_id,
       ttclid
     } = body;
+
+    // DataFast Cookies aus Request lesen
+    const datafastVisitorId = req.cookies.get('datafast_visitor_id')?.value || '';
+    const datafastSessionId = req.cookies.get('datafast_session_id')?.value || '';
 
     // Preis ermitteln
     const priceData = PRICES[plan as keyof typeof PRICES] || PRICES['1month'];
@@ -73,7 +77,9 @@ export async function POST(req: NextRequest) {
         fbp: fbp || '',
         fbc: fbc || '',
         fb_event_id: fb_event_id || '',
-        ttclid: ttclid || ''
+        ttclid: ttclid || '',
+        datafast_visitor_id: datafastVisitorId,
+        datafast_session_id: datafastSessionId
       },
       description: `Pfoten-Plan ${planName} für ${dogName || 'Hund'}`,
     });
