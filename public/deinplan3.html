@@ -3767,9 +3767,50 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             document.getElementById('checkoutError').classList.remove('visible');
         }
 
-        // getMyPlan überschreiben um Checkout Popup zu öffnen
+        // Stripe Payment Links
+        const stripeLinks = {
+            '1month': {
+                discount: 'https://buy.stripe.com/aFaaEW0zY4yvcGM3NR1VK0q',
+                normal:   'https://buy.stripe.com/14A7sKaay3ur6io4RV1VK0k'
+            },
+            '3month': {
+                discount: 'https://buy.stripe.com/eVqeVc96u0ifayEckn1VK0s',
+                normal:   'https://buy.stripe.com/00w8wObeC6GD4agckn1VK0l'
+            },
+            '6month': {
+                discount: 'https://buy.stripe.com/00w00i2I64yveOU7031VK0p',
+                normal:   'https://buy.stripe.com/3cI8wOaay7KH6iofwz1VK0m'
+            }
+        };
+
         async function getMyPlan() {
-            openCheckoutPopup();
+            const ctaBtn = document.querySelector('.cta-button');
+            if (ctaBtn) {
+                ctaBtn.disabled = true;
+                ctaBtn.innerHTML = 'Weiterleitung...';
+            }
+
+            // Lead in Supabase speichern
+            try {
+                const id = await saveToSupabase();
+                if (id) currentLeadId = id;
+            } catch(e) { console.error(e); }
+
+            // Richtigen Stripe Link wählen
+            const planLinks = stripeLinks[selectedPlan] || stripeLinks['3month'];
+            let url = timerExpired ? planLinks.normal : planLinks.discount;
+
+            // Lead-ID und Email als URL-Parameter anhängen
+            const params = new URLSearchParams();
+            if (currentLeadId) params.set('client_reference_id', currentLeadId);
+            const email = localStorage.getItem('userEmail') || '';
+            if (email) params.set('prefilled_email', email);
+
+            if (params.toString()) {
+                url += '?' + params.toString();
+            }
+
+            window.location.href = url;
         }
     </script>
 
