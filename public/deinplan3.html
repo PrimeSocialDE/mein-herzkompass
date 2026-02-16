@@ -3767,27 +3767,12 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             document.getElementById('checkoutError').classList.remove('visible');
         }
 
-        // Stripe Payment Links
-        const stripeLinks = {
-            '1month': {
-                discount: 'https://buy.stripe.com/aFaaEW0zY4yvcGM3NR1VK0q',
-                normal:   'https://buy.stripe.com/14A7sKaay3ur6io4RV1VK0k'
-            },
-            '3month': {
-                discount: 'https://buy.stripe.com/eVqeVc96u0ifayEckn1VK0s',
-                normal:   'https://buy.stripe.com/00w8wObeC6GD4agckn1VK0l'
-            },
-            '6month': {
-                discount: 'https://buy.stripe.com/00w00i2I64yveOU7031VK0p',
-                normal:   'https://buy.stripe.com/3cI8wOaay7KH6iofwz1VK0m'
-            }
-        };
-
+        // Stripe Checkout Session (mit automatischer Steuer per IP)
         async function getMyPlan() {
             const ctaBtn = document.querySelector('.cta-button');
             if (ctaBtn) {
                 ctaBtn.disabled = true;
-                ctaBtn.innerHTML = 'Weiterleitung...';
+                ctaBtn.innerHTML = 'Weiterleitung zu Stripe...';
             }
 
             // Lead in Supabase speichern
@@ -3796,21 +3781,47 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 if (id) currentLeadId = id;
             } catch(e) { console.error(e); }
 
-            // Richtigen Stripe Link wählen
-            const planLinks = stripeLinks[selectedPlan] || stripeLinks['3month'];
-            let url = timerExpired ? planLinks.normal : planLinks.discount;
+            try {
+                const response = await fetch('/api/wauwerk-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plan: selectedPlan,
+                        timerExpired: timerExpired,
+                        dogName: dogName,
+                        leadId: currentLeadId,
+                        email: localStorage.getItem('userEmail') || '',
+                        utm_source: localStorage.getItem('utm_source') || '',
+                        utm_medium: localStorage.getItem('utm_medium') || '',
+                        utm_campaign: localStorage.getItem('utm_campaign') || '',
+                        utm_content: localStorage.getItem('utm_content') || '',
+                        fbclid: localStorage.getItem('fbclid') || '',
+                        fbp: getCookie('_fbp') || '',
+                        fbc: getCookie('_fbc') || '',
+                        fb_event_id: localStorage.getItem('fb_event_id') || '',
+                        ttclid: localStorage.getItem('ttclid') || ''
+                    })
+                });
 
-            // Lead-ID und Email als URL-Parameter anhängen
-            const params = new URLSearchParams();
-            if (currentLeadId) params.set('client_reference_id', currentLeadId);
-            const email = localStorage.getItem('userEmail') || '';
-            if (email) params.set('prefilled_email', email);
+                const data = await response.json();
+                if (data.error) {
+                    alert('Fehler: ' + data.error);
+                    if (ctaBtn) {
+                        ctaBtn.disabled = false;
+                        ctaBtn.innerHTML = 'Trainingsplan freischalten<span class="cta-subtext">Sicher bezahlen & sofort starten</span>';
+                    }
+                    return;
+                }
 
-            if (params.toString()) {
-                url += '?' + params.toString();
+                window.location.href = data.url;
+            } catch (err) {
+                console.error('Checkout Error:', err);
+                alert('Verbindungsfehler. Bitte versuche es erneut.');
+                if (ctaBtn) {
+                    ctaBtn.disabled = false;
+                    ctaBtn.innerHTML = 'Trainingsplan freischalten<span class="cta-subtext">Sicher bezahlen & sofort starten</span>';
+                }
             }
-
-            window.location.href = url;
         }
     </script>
 
