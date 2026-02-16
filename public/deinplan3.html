@@ -3390,6 +3390,12 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         // Back-Button Detection - nur wenn von Stripe
         window.addEventListener('pageshow', function(event) {
             if (localStorage.getItem('wentToStripe') === 'true') {
+                // CTA-Button zurücksetzen
+                const ctaBtn = document.querySelector('.cta-button');
+                if (ctaBtn) {
+                    ctaBtn.disabled = false;
+                    ctaBtn.innerHTML = 'Trainingsplan freischalten<span class="cta-subtext">Sofort per E-Mail · Kein Abo · 30 Tage Garantie</span>';
+                }
                 if (!exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
                     setTimeout(() => {
                         showExitPopup();
@@ -3820,6 +3826,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     return;
                 }
 
+                localStorage.setItem('wentToStripe', 'true');
                 window.location.href = data.url;
             } catch (err) {
                 console.error('Checkout Error:', err);
