@@ -72,12 +72,12 @@ export async function POST(req: NextRequest) {
             product_data: {
               name: `Pfoten-Plan ${planName} für ${dogName || 'deinen Hund'}`,
               description: [
-                plan === '1month' ? '✓ 10+ gezielte Übungen' : '✓ 20+ gezielte Übungen',
+                `✓ ${plan === '1month' ? '10+' : '20+'} gezielte Übungen`,
+                '✓ Sofort per E-Mail nach Kauf',
                 '✓ 24/7 Trainer-Support',
                 '✓ 30 Tage Geld-zurück-Garantie',
                 '✓ Einmalzahlung – kein Abo',
-              ].join(' · '),
-              images: ['https://pfoten-plan.de/logo.png'],
+              ].join('\n'),
             },
           },
           quantity: 1,
