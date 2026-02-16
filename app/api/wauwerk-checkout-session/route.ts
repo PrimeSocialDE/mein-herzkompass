@@ -40,11 +40,6 @@ export async function POST(req: NextRequest) {
       ttclid
     } = body;
 
-    // IP aus Request Headers
-    const customerIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-      || req.headers.get('x-real-ip')
-      || '';
-
     // DataFast Cookies
     const datafastVisitorId = req.cookies.get('datafast_visitor_id')?.value || '';
     const datafastSessionId = req.cookies.get('datafast_session_id')?.value || '';
@@ -82,7 +77,6 @@ export async function POST(req: NextRequest) {
           quantity: 1,
         },
       ],
-      automatic_tax: { enabled: true },
       metadata: {
         lead_id: leadId || '',
         plan: plan,
@@ -104,11 +98,6 @@ export async function POST(req: NextRequest) {
       success_url: `${origin}/zusatz.html?lead_id=${leadId || ''}&redirect_status=succeeded`,
       cancel_url: `${origin}/deinplan3.html`,
     };
-
-    // IP für automatische Steuerberechnung (kein Adressfeld nötig)
-    if (customerIp) {
-      sessionParams.customer_ip_address = customerIp;
-    }
 
     const session = await stripe.checkout.sessions.create(sessionParams);
 
