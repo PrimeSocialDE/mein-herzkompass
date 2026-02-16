@@ -83,17 +83,16 @@
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
 
-        // A/B Test: 70/30 Split (B=deinplan2 bevorzugt)
+        // A/B Test: 50/50 Split (deinplan2 vs deinplan3)
         function getABTestPage() {
             // Prüfe ob schon eine Variante zugewiesen wurde
             let variant = localStorage.getItem('ab_test_pricing');
             if (!variant) {
-                // 70% B (deinplan2), 30% A (deinplan)
-                variant = Math.random() < 0.3 ? 'A' : 'B';
+                variant = Math.random() < 0.5 ? 'A' : 'B';
                 localStorage.setItem('ab_test_pricing', variant);
             }
-            // A = deinplan.html (Tagespreis groß), B = deinplan2.html (optimiert)
-            return variant === 'A' ? 'deinplan.html' : 'deinplan2.html';
+            // A = deinplan2.html (Popup-Checkout), B = deinplan3.html (Stripe-Redirect)
+            return variant === 'A' ? 'deinplan2.html' : 'deinplan3.html';
         }
 
         // Hundename aus localStorage
