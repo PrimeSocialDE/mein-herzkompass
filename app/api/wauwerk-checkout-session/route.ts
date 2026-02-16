@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
                 '✓ 24/7 Trainer-Support',
                 '✓ 30 Tage Geld-zurück-Garantie',
                 '✓ Einmalzahlung – kein Abo',
-              ].join('\n'),
+              ].join(' · '),
             },
           },
           quantity: 1,
