@@ -1629,7 +1629,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     </header>
 
     <div class="timer-bar">
-        <span id="timerLabel">Preis reduziert für:</span> <span id="timer">10:00</span>
+        <span id="timerBarDogName" style="display: block; font-size: 13px; opacity: 0.9;"></span>
+        <span id="timerLabel">Angebot endet in:</span> <span id="timer">10:00</span>
     </div>
 
     <section class="hero-section">
@@ -1713,6 +1714,16 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             <h2 class="benefits-title">Das bekommst du im Plan</h2>
             <ul class="benefits-list" id="benefitsList">
             </ul>
+            <!-- Bonus mit Timer -->
+            <div id="bonusOffer" style="margin-top: 14px; padding: 12px 14px; background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border-radius: 10px; border: 1px solid #F59E0B;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 20px;">🎁</span>
+                    <div>
+                        <p style="font-size: 13px; font-weight: 700; color: #92400E; margin: 0;">+6 Zusatzübungen GRATIS</p>
+                        <p style="font-size: 11px; color: #B45309; margin: 2px 0 0;">Nur wenn du innerhalb von <strong id="bonusTimer">10:00</strong> bestellst</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Social Proof: Sterne + Testimonial kombiniert -->
@@ -1784,7 +1795,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
 
             <div class="pricing-card popular selected" data-plan="3month" data-price="39.99">
-                <div class="popular-badge" id="popularBadge">⭐ Für dauerhafte Veränderung</div>
+                <div class="popular-badge" id="popularBadge">⭐ Von 2.847 Hundebesitzern gewählt</div>
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
@@ -2091,6 +2102,11 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         document.getElementById('dogName2').textContent = dogName;
         document.getElementById('dogName3').textContent = dogName;
         document.getElementById('dogNamePlan').textContent = dogName;
+        const timerBarName = document.getElementById('timerBarDogName');
+        if (timerBarName) {
+            const name = localStorage.getItem('dogName');
+            timerBarName.textContent = name ? name + ' kann schon morgen anders reagieren' : 'Schon morgen erste Veränderungen sehen';
+        }
 
         // Mini-Testimonial problem-spezifisch setzen
         const miniTestimonials = {
@@ -2400,6 +2416,25 @@ if (popularBadge) {
                     minutes.toString().padStart(2, '0') + ':' +
                     seconds.toString().padStart(2, '0');
             }
+            // Bonus-Timer synchronisieren
+            const bonusTimerEl = document.getElementById('bonusTimer');
+            const bonusOffer = document.getElementById('bonusOffer');
+            if (bonusTimerEl && !timerExpired) {
+                if (isEveningMode) {
+                    const h = Math.floor(timeLeft / 3600);
+                    const m = Math.floor((timeLeft % 3600) / 60);
+                    const s = timeLeft % 60;
+                    bonusTimerEl.textContent = h.toString().padStart(2,'0') + ':' + m.toString().padStart(2,'0') + ':' + s.toString().padStart(2,'0');
+                } else {
+                    const m = Math.floor(timeLeft / 60);
+                    const s = timeLeft % 60;
+                    bonusTimerEl.textContent = m.toString().padStart(2,'0') + ':' + s.toString().padStart(2,'0');
+                }
+            }
+            if (bonusOffer && timerExpired) {
+                bonusOffer.style.display = 'none';
+            }
+
             timeLeft--;
             setTimeout(updateTimer, 1000);
         }
