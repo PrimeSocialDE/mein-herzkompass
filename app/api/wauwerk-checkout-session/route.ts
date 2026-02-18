@@ -62,8 +62,12 @@ export async function POST(req: NextRequest) {
     // Stripe Checkout Session erstellen
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: 'payment',
+      payment_method_types: ['card', 'paypal', 'klarna'],
       client_reference_id: leadId || undefined,
       customer_email: email || undefined,
+      custom_text: {
+        submit: { message: '✓ 30 Tage Geld-zurück-Garantie · Einmalzahlung – kein Abo' },
+      },
       line_items: [
         {
           price_data: {
@@ -73,10 +77,9 @@ export async function POST(req: NextRequest) {
               name: `Pfoten-Plan ${planName} für ${dogName || 'deinen Hund'}`,
               description: [
                 `✓ ${plan === '1month' ? '10+' : '20+'} gezielte Übungen`,
+                '✓ 6 Bonus-Alltagstipps gratis dazu',
                 '✓ Sofort per E-Mail nach Kauf',
                 '✓ 24/7 Trainer-Support',
-                '✓ 30 Tage Geld-zurück-Garantie',
-                '✓ Einmalzahlung – kein Abo',
               ].join(' · '),
             },
           },
