@@ -77,9 +77,9 @@ export async function POST(req: NextRequest) {
               name: `Pfoten-Plan ${planName} für ${dogName || 'deinen Hund'}`,
               description: [
                 `✓ ${plan === '1month' ? '10+' : '20+'} gezielte Übungen`,
-                '✓ 6 Bonus-Alltagstipps gratis dazu',
-                '✓ Sofort per E-Mail nach Kauf',
                 '✓ 24/7 Trainer-Support',
+                '✓ Sofort per E-Mail nach Kauf',
+                '✓ 6 Bonus-Alltagstipps gratis dazu',
               ].join(' · '),
             },
           },
