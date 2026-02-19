@@ -826,9 +826,6 @@
 
         <!-- Upsell -->
         <div class="upsell-box">
-            <div class="limited-offer-banner" id="offerBanner">
-                🎁 Einmaliges Angebot – gilt noch <strong id="offerTimer">9:59</strong>
-            </div>
 
             <div class="upsell-stat">
                 <strong>70% aller Hundebesitzer</strong> wünschen sich später, früher mit Prävention begonnen zu haben.
@@ -1110,25 +1107,7 @@
         // Upsell-Optionen beim Laden rendern
         renderUpsellOptions();
 
-        // Countdown-Timer (10 Minuten)
-        (function() {
-            let timeLeft = 10 * 60;
-            const timerEl = document.getElementById('offerTimer');
-            if (!timerEl) return;
-
-            const interval = setInterval(function() {
-                timeLeft--;
-                if (timeLeft <= 0) {
-                    clearInterval(interval);
-                    timerEl.textContent = '0:00';
-                    document.getElementById('offerBanner').innerHTML = '⏰ Angebot abgelaufen';
-                    return;
-                }
-                const mins = Math.floor(timeLeft / 60);
-                const secs = timeLeft % 60;
-                timerEl.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
-            }, 1000);
-        })();
+        // Timer entfernt - Banner bleibt statisch
 
         // Preise je Plan
         const planPrices = {
