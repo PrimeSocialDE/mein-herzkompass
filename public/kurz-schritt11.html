@@ -54,7 +54,8 @@
     </div>
 
     <div class="container">
-        <h1>Dein Plan für <span id="dogName">deinen Hund</span> ist bereit.<br>Wohin dürfen wir ihn senden?</h1>
+        <h1><span id="dogName">Dein Hund</span><span style="color:#C4A576">s</span> persönliche Verhaltensanalyse ist fertig.</h1>
+        <p style="font-size:17px;color:#6B6B6B;margin-bottom:40px;line-height:1.5">Gib deine E-Mail ein, um dein Ergebnis zu sehen und deinen Trainingsplan freizuschalten.</p>
 
         <form id="emailForm">
             <input type="email" class="email-input" id="emailInput" placeholder="Deine E-Mail eingeben" required>
@@ -98,7 +99,7 @@
         // Hundename aus localStorage
         const dogName = localStorage.getItem('dogName');
         if (dogName) {
-            document.getElementById('dogName').textContent = dogName + 's';
+            document.getElementById('dogName').textContent = dogName;
         }
 
         function parseJSON(str) {
