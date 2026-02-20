@@ -400,26 +400,8 @@
                 localStorage.setItem('dogBehaviors', JSON.stringify(allBehaviors));
                 localStorage.setItem('dogProblem', allBehaviors[0] || '');
 
-                // Build stress question
-                const problemTexts = selectedBehaviors.map(b => problemNames[b] || b);
-                
-                // Custom Problem Label für Frage
-                if (customText) {
-                    const diagnosed = diagnoseCustomProblem(customText);
-                    problemTexts.push(diagnosed.label);
-                }
-
-                let questionText;
-                if (problemTexts.length === 1) {
-                    questionText = `Wie sehr stresst dich ${problemTexts[0]} im Alltag?`;
-                } else if (problemTexts.length === 2) {
-                    questionText = `Wie sehr stressen dich ${problemTexts[0]} und ${problemTexts[1]} im Alltag?`;
-                } else {
-                    const lastProblem = problemTexts.pop();
-                    questionText = `Wie sehr stressen dich ${problemTexts.join(', ')} und ${lastProblem} im Alltag?`;
-                }
-                stressTitle.textContent = questionText;
-                stressOverlay.classList.add('active');
+                // Direkt weiter zur nächsten Seite (Slider übersprungen)
+                window.location.href = 'kurz-plan-preview.html';
             }
         });
 
