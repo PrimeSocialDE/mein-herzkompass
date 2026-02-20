@@ -38,6 +38,41 @@
         .star-box { width: 20px; height: 20px; background: #00B67A; display: flex; align-items: center; justify-content: center; }
         .star-box svg { width: 14px; height: 14px; fill: white; }
         .rating-text { font-size: 14px; color: #999; }
+
+        /* Blurred iPad Preview */
+        .analyse-preview { position: relative; margin-top: 40px; }
+        .analyse-preview-lock { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; }
+        .lock-badge { background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 14px; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; backdrop-filter: blur(2px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .lock-badge:hover { transform: scale(1.03); box-shadow: 0 6px 24px rgba(0,0,0,0.4); }
+        .ipad-blurred { filter: blur(5px); pointer-events: none; user-select: none; }
+        .ipad-frame { background: #1a1a1a; border-radius: 24px; padding: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+        .ipad-screen { background: #fff; border-radius: 16px; overflow: hidden; }
+        .screen-header { background: linear-gradient(180deg, #F8F8F8, #F0F0F0); padding: 8px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E0E0E0; }
+        .screen-dots { display: flex; gap: 5px; }
+        .screen-dot { width: 7px; height: 7px; border-radius: 50%; }
+        .screen-dot.red { background: #FF5F57; }
+        .screen-dot.yellow { background: #FFBD2E; }
+        .screen-dot.green { background: #28CA41; }
+        .screen-title { font-size: 10px; color: #999; font-weight: 500; }
+        .plan-content { padding: 18px; }
+        .plan-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid #F0F0F0; }
+        .plan-logo { width: 38px; height: 38px; background: linear-gradient(135deg, #C4A576, #8B7355); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .plan-title { font-size: 13px; font-weight: 700; color: #2C2C2E; }
+        .plan-subtitle { font-size: 10px; color: #999; }
+        .plan-lines { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .plan-line { height: 9px; background: #F0F0F0; border-radius: 5px; }
+        .plan-line:nth-child(1) { width: 100%; }
+        .plan-line:nth-child(2) { width: 85%; }
+        .plan-line:nth-child(3) { width: 92%; }
+        .plan-line:nth-child(4) { width: 70%; }
+        .plan-line:nth-child(5) { width: 88%; }
+        .stats-row { display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #F0F0F0; border-bottom: 1px solid #F0F0F0; margin-bottom: 12px; }
+        .stat-number { font-size: 20px; font-weight: 800; color: #C4A576; }
+        .stat-label { font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+        .plan-checklist { text-align: left; }
+        .check-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 11px; color: #6B6B6B; }
+        .check-icon { width: 16px; height: 16px; background: #C4A576; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; flex-shrink: 0; }
+
         @media (max-width: 500px) { h1 { font-size: 26px; } .logo { margin-top: 30px; margin-bottom: 40px; } }
     </style>
 <script
@@ -65,6 +100,63 @@
         <div class="privacy-note">
             <span class="lock-icon">🔒</span>
             <p class="privacy-text">Deine Daten sind sicher und werden nicht weitergegeben. <a href="datenschutz.html">Datenschutz</a></p>
+        </div>
+
+        <!-- Geblurrtes iPad Plan-Preview -->
+        <div class="analyse-preview">
+            <div class="analyse-preview-lock">
+                <div class="lock-badge">🔒 <span id="lockDogName">Dein Hunds</span> Plan freischalten</div>
+            </div>
+            <div class="ipad-blurred">
+                <div class="ipad-frame">
+                    <div class="ipad-screen">
+                        <div class="screen-header">
+                            <div class="screen-dots">
+                                <div class="screen-dot red"></div>
+                                <div class="screen-dot yellow"></div>
+                                <div class="screen-dot green"></div>
+                            </div>
+                            <div class="screen-title">Trainingsplan.pdf</div>
+                            <div style="width: 40px;"></div>
+                        </div>
+                        <div class="plan-content">
+                            <div class="plan-header">
+                                <div class="plan-logo">🐕</div>
+                                <div>
+                                    <div class="plan-title" id="iPadPlanTitle">Trainingsplan</div>
+                                    <div class="plan-subtitle" id="iPadPlanSubtitle">Fokus: Verhaltenskorrektur</div>
+                                </div>
+                            </div>
+                            <div class="plan-lines">
+                                <div class="plan-line"></div>
+                                <div class="plan-line"></div>
+                                <div class="plan-line"></div>
+                                <div class="plan-line"></div>
+                                <div class="plan-line"></div>
+                            </div>
+                            <div class="stats-row">
+                                <div style="text-align: center;">
+                                    <div class="stat-number">34+</div>
+                                    <div class="stat-label">Seiten</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div class="stat-number">20+</div>
+                                    <div class="stat-label">Übungen</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div class="stat-number">4–6</div>
+                                    <div class="stat-label">Wochen</div>
+                                </div>
+                            </div>
+                            <div class="plan-checklist">
+                                <div class="check-item"><div class="check-icon">✓</div><span>Schritt-für-Schritt Anleitungen</span></div>
+                                <div class="check-item"><div class="check-icon">✓</div><span>Täglicher Trainingsplan</span></div>
+                                <div class="check-item"><div class="check-icon">✓</div><span>Erste Erfolge in 2 Wochen</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="rating-section">
@@ -100,7 +192,38 @@
         const dogName = localStorage.getItem('dogName');
         if (dogName) {
             document.getElementById('dogName').textContent = dogName;
+            document.getElementById('lockDogName').textContent = dogName + 's';
         }
+
+        // iPad-Preview personalisieren
+        const dogProblem = localStorage.getItem('dogProblem') || '';
+        const dogBreed = localStorage.getItem('dogBreed') || '';
+        const focusLabels = {
+            'pulling': 'Leinenführigkeit', 'barking': 'Bellverhalten', 'aggression': 'Aggressionsabbau',
+            'anxiety': 'Trennungsangst', 'jumping': 'Begrüßungstraining', 'recall': 'Rückruftraining',
+            'energy': 'Ruhe & Kontrolle', 'destructive': 'Impulskontrolle',
+            'mouthing': 'Impulskontrolle', 'separation': 'Alleinebleiben'
+        };
+        if (dogBreed && dogBreed !== 'other') {
+            const breedLabels = {
+                'labrador': 'Labrador', 'german_shepherd': 'Schäferhund', 'golden_retriever': 'Golden Retriever',
+                'french_bulldog': 'Franz. Bulldogge', 'chihuahua': 'Chihuahua', 'poodle': 'Pudel',
+                'dachshund': 'Dackel', 'beagle': 'Beagle', 'husky': 'Husky', 'border_collie': 'Border Collie',
+                'mixed': 'Mischling'
+            };
+            const breed = breedLabels[dogBreed] || dogBreed;
+            document.getElementById('iPadPlanTitle').textContent = 'Trainingsplan für ' + breed;
+        }
+        if (dogProblem && focusLabels[dogProblem]) {
+            document.getElementById('iPadPlanSubtitle').textContent = 'Fokus: ' + focusLabels[dogProblem];
+        }
+
+        // Lock-Badge Klick → zum Email-Feld scrollen und fokussieren
+        document.querySelector('.lock-badge').addEventListener('click', function() {
+            const emailInput = document.getElementById('emailInput');
+            emailInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => { emailInput.focus(); }, 400);
+        });
 
         function parseJSON(str) {
             try { return JSON.parse(str || '[]'); } 
