@@ -137,6 +137,106 @@
             line-height: 1.6;
         }
         
+        /* Analyse Section */
+        .analyse-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .analyse-title span { color: var(--primary-brown); }
+        .analyse-subtitle {
+            text-align: center;
+            color: var(--text-medium);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .analyse-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .analyse-card {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 14px;
+        }
+        .analyse-card-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .analyse-card-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .analyse-card.full-width { grid-column: 1 / -1; }
+        .obedience-bar {
+            display: flex;
+            gap: 4px;
+            margin-top: 6px;
+        }
+        .obedience-segment {
+            flex: 1;
+            height: 7px;
+            border-radius: 4px;
+            background: var(--border-light);
+        }
+        .obedience-segment.filled { background: var(--primary-brown); }
+        .obedience-segment.filled-red { background: #E8A598; }
+        .urgency-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .urgency-high { background: #FEE2E2; color: #DC2626; }
+        .urgency-medium { background: #FEF3C7; color: #D97706; }
+        .urgency-low { background: #DCFCE7; color: #16A34A; }
+        .command-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .command-tag {
+            background: var(--background);
+            border: 1px solid var(--border-light);
+            padding: 3px 9px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-medium);
+        }
+        .command-tag.known { background: #DCFCE7; border-color: #BBF7D0; color: #166534; }
+        .analyse-hope {
+            background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
+            border: 1px solid #BBF7D0;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .analyse-hope-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #166534;
+            margin-bottom: 4px;
+        }
+        .analyse-hope-text {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.1;
+        }
+
         /* Insight Section */
         .insight-section {
             background: var(--white);
@@ -285,46 +385,45 @@
             color: var(--text-dark);
         }
         
+        .pricing-total {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-top: 2px;
+        }
+
         .pricing-right {
             text-align: right;
         }
-        
+
         .pricing-price {
             display: flex;
             align-items: baseline;
             justify-content: flex-end;
             gap: 2px;
         }
-        
+
         .price-currency {
             font-size: 16px;
             font-weight: 700;
             color: var(--primary-brown);
         }
-        
+
         .price-amount {
             font-size: 28px;
             font-weight: 800;
             color: var(--primary-brown);
             line-height: 1;
         }
-        
+
         .price-cents {
             font-size: 16px;
             font-weight: 700;
             color: var(--primary-brown);
         }
-        
+
         .price-period {
             font-size: 12px;
             color: var(--text-medium);
-            margin-left: 4px;
-        }
-        
-        .price-old {
-            font-size: 13px;
-            color: var(--text-light);
-            text-decoration: line-through;
         }
 
         /* Disclaimer */
@@ -961,6 +1060,18 @@
             .testimonial-card {
                 padding: 16px;
             }
+
+            .analyse-grid {
+                gap: 8px;
+            }
+
+            .analyse-card {
+                padding: 12px;
+            }
+
+            .analyse-title {
+                font-size: 19px;
+            }
         }
     </style>
 <script
@@ -981,9 +1092,25 @@
     <div class="container">
         <!-- Hero - Emotional -->
         <div class="hero">
-            <span class="hero-badge">📋 Dein Plan ist noch verfügbar</span>
+            <span class="hero-badge">📋 Deine Analyse ist gespeichert</span>
             <h1 id="heroTitle">Stell dir vor, <span class="highlight" id="dogNameHero">dein Hund</span> wäre kein Problem mehr.</h1>
             <p class="hero-subtitle" id="heroSubtitle">Entspannte Spaziergänge. Keine Kämpfe mehr. Ein Hund, auf den du stolz bist. Das ist möglich – in wenigen Wochen.</p>
+        </div>
+
+        <!-- Problem-spezifisches Top-Testimonial -->
+        <div id="topTestimonial" style="background: var(--white); border-radius: 14px; padding: 18px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); border-left: 3px solid #00B67A;">
+            <div style="display: flex; gap: 3px; margin-bottom: 8px;">
+                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: #00B67A;"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: #00B67A;"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: #00B67A;"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: #00B67A;"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: #00B67A;"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+            </div>
+            <p id="topTestimonialText" style="font-size: 15px; color: var(--text-dark); line-height: 1.5; font-style: italic; margin-bottom: 8px;">"Unser Hund hatte draußen viel zu viel Energie und hat jeden Hund angebellt. Der Plan kam direkt per E-Mail und nach etwa 5 Wochen hat er draußen kaum noch Hunde angebellt. Mega Unterschied!"</p>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="topTestimonialName" style="font-size: 13px; font-weight: 600; color: var(--text-dark);">Thomas K.</span>
+                <span id="topTestimonialProblem" style="font-size: 12px; color: var(--primary-brown); font-weight: 500;">Zu viel Energie</span>
+            </div>
         </div>
 
         <!-- Trust Stats -->
@@ -1001,6 +1128,61 @@
             <div>
                 <div style="font-size: 22px; font-weight: 800; color: #C4A576;">4.9★</div>
                 <div style="font-size: 11px; color: #888;">Bewertung</div>
+            </div>
+        </div>
+
+        <!-- ===== PERSÖNLICHE ANALYSE-ZUSAMMENFASSUNG ===== -->
+        <div style="margin-bottom: 30px;">
+            <h2 class="analyse-title"><span id="analyseNameTitle">Dein Hund</span><span>s</span> Analyse</h2>
+            <p class="analyse-subtitle">Basierend auf deinen gespeicherten Quiz-Antworten</p>
+
+            <div class="analyse-grid">
+                <div class="analyse-card">
+                    <div class="analyse-card-label">Erkanntes Problem</div>
+                    <div class="analyse-card-value" id="analyseProblem">Leinenziehen</div>
+                </div>
+                <div class="analyse-card">
+                    <div class="analyse-card-label">Handlungsbedarf</div>
+                    <div id="analyseUrgency"><span class="urgency-badge urgency-high">Hoch</span></div>
+                </div>
+                <div class="analyse-card">
+                    <div class="analyse-card-label">Rasse</div>
+                    <div class="analyse-card-value" id="analyseBreed">–</div>
+                </div>
+                <div class="analyse-card">
+                    <div class="analyse-card-label">Alter</div>
+                    <div class="analyse-card-value" id="analyseAge">–</div>
+                </div>
+                <div class="analyse-card">
+                    <div class="analyse-card-label">Gehorsamkeitslevel</div>
+                    <div class="analyse-card-value"><span id="analyseObedienceText">– von 10</span></div>
+                    <div class="obedience-bar" id="analyseObedienceBar">
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                    </div>
+                </div>
+                <div class="analyse-card">
+                    <div class="analyse-card-label">Empfohlene Dauer</div>
+                    <div class="analyse-card-value" id="analyseDuration">4–6 Wochen</div>
+                </div>
+                <div class="analyse-card full-width" id="analyseCommandsCard" style="display: none;">
+                    <div class="analyse-card-label">Bekannte Kommandos</div>
+                    <div class="command-tags" id="analyseCommandTags"></div>
+                </div>
+            </div>
+
+            <!-- Hoffnungs-Message -->
+            <div class="analyse-hope">
+                <div class="analyse-hope-title" id="analyseHopeTitle">Das lässt sich gezielt abtrainieren</div>
+                <div class="analyse-hope-text" id="analyseHopeText">Bei konsequentem Training sind erste Ergebnisse nach 1–2 Wochen sichtbar. In 4–6 Wochen kann das Problem deutlich reduziert werden.</div>
             </div>
         </div>
 
@@ -1051,7 +1233,7 @@
             <div style="background: #FAF8F5; border: 1px solid #E8E4DF; border-radius: 10px; padding: 14px 16px;">
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--text-dark); border-bottom: 1px solid #E8E4DF;">
                     <span>1 Monat</span>
-                    <span style="color: #C4A576; font-weight: 600;">ca. 18 Seiten</span>
+                    <span style="color: #C4A576; font-weight: 600;">ca. 34 Seiten</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--text-dark); border-bottom: 1px solid #E8E4DF;">
                     <span>3 Monate</span>
@@ -1141,16 +1323,18 @@
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
-                        <span class="pricing-name">1-MONATS-PLAN</span>
+                        <div>
+                            <div class="pricing-name">1-Monats-Plan</div>
+                            <div class="pricing-total">€29,99 einmalig</div>
+                        </div>
                     </div>
                     <div class="pricing-right">
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
                             <span class="price-amount">0</span>
                             <span class="price-cents">,99</span>
-                            <span class="price-period">pro Tag</span>
                         </div>
-                        <div class="price-old">€1,67</div>
+                        <div class="price-period">pro Tag</div>
                     </div>
                 </div>
             </div>
@@ -1160,16 +1344,18 @@
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
-                        <span class="pricing-name">3-MONATS-PLAN</span>
+                        <div>
+                            <div class="pricing-name">3-Monats-Plan</div>
+                            <div class="pricing-total">€39,99 einmalig</div>
+                        </div>
                     </div>
                     <div class="pricing-right">
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
                             <span class="price-amount">0</span>
                             <span class="price-cents">,44</span>
-                            <span class="price-period">pro Tag</span>
                         </div>
-                        <div class="price-old">€0,89</div>
+                        <div class="price-period">pro Tag</div>
                     </div>
                 </div>
             </div>
@@ -1178,16 +1364,18 @@
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
-                        <span class="pricing-name">6-MONATS-PLAN</span>
+                        <div>
+                            <div class="pricing-name">6-Monats-Plan</div>
+                            <div class="pricing-total">€59,99 einmalig</div>
+                        </div>
                     </div>
                     <div class="pricing-right">
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
                             <span class="price-amount">0</span>
                             <span class="price-cents">,33</span>
-                            <span class="price-period">pro Tag</span>
                         </div>
-                        <div class="price-old">€0,67</div>
+                        <div class="price-period">pro Tag</div>
                     </div>
                 </div>
             </div>
@@ -1305,14 +1493,14 @@
                     </div>
                 </div>
 
-                <!-- Quiz-Daten gespeichert + FOMO -->
+                <!-- Quiz-Daten gespeichert -->
                 <div id="quizDataSaved" style="background: linear-gradient(135deg, #FEF3E7, #FFF9F0); border: 1px solid rgba(196, 165, 118, 0.3); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                     <div style="width: 32px; height: 32px; background: #22C55E; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <svg style="width: 16px; height: 16px; fill: white;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                     </div>
                     <div>
-                        <div style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Deine Quiz-Daten sind noch gespeichert!</div>
-                        <div style="font-size: 11px; color: #8B7355;">Dein personalisierter Plan für <strong id="checkoutDogNameFomo">deinen Hund</strong> wartet – <span style="color: #DC2626; font-weight: 600;">⏳ Reservierung läuft in <span id="fomoTimer">14:59</span> ab</span></div>
+                        <div style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Deine Quiz-Daten sind gespeichert</div>
+                        <div style="font-size: 11px; color: #8B7355;">Dein personalisierter Plan für <strong id="checkoutDogNameFomo">deinen Hund</strong> ist bereit</div>
                     </div>
                 </div>
 
@@ -1368,6 +1556,9 @@
         let leadId = '';
         let dogName = 'deinen Hund';
         let dogProblem = '';
+        let dogBreed = '';
+        let dogAge = '';
+        let dogCommands = [];
 
         // Problem-spezifische Inhalte
         const problemContent = {
@@ -1571,6 +1762,9 @@
             
             dogName = localStorage.getItem('dogName') || 'deinen Hund';
             dogProblem = localStorage.getItem('dogProblem') || '';
+            dogBreed = localStorage.getItem('dogBreed') || '';
+            dogAge = localStorage.getItem('dogAge') || '';
+            try { dogCommands = JSON.parse(localStorage.getItem('dogCommands') || '[]'); } catch(e) { dogCommands = []; }
             leadId = leadIdParam || localStorage.getItem('leadId') || '';
             userEmail = localStorage.getItem('userEmail') || '';
             
@@ -1600,16 +1794,22 @@
                             
                             if (answers.dog_name) dogName = answers.dog_name;
                             if (answers.dog_problem) dogProblem = answers.dog_problem;
+                            if (answers.dog_breed) dogBreed = answers.dog_breed;
+                            if (answers.dog_age) dogAge = answers.dog_age;
+                            if (answers.dog_commands && Array.isArray(answers.dog_commands)) dogCommands = answers.dog_commands;
                             if (lead.id) leadId = lead.id;
                             if (lead.email) userEmail = lead.email;
-                            
+
                             // In localStorage speichern
                             localStorage.setItem('dogName', dogName);
                             localStorage.setItem('dogProblem', dogProblem);
+                            localStorage.setItem('dogBreed', dogBreed);
+                            localStorage.setItem('dogAge', dogAge);
+                            localStorage.setItem('dogCommands', JSON.stringify(dogCommands));
                             localStorage.setItem('leadId', leadId);
                             localStorage.setItem('userEmail', userEmail);
-                            
-                            console.log('✅ Daten aus Supabase geladen:', { dogName, dogProblem, leadId });
+
+                            console.log('✅ Daten aus Supabase geladen:', { dogName, dogProblem, dogBreed, dogAge, leadId });
                         }
                     }
                 } catch (error) {
@@ -1666,6 +1866,110 @@
                 li.textContent = benefit.replace(/{dogName}/g, dogName);
                 benefitsList.appendChild(li);
             });
+
+            // ==================== ANALYSE-SECTION BEFÜLLEN ====================
+            // Analyse-Titel
+            document.getElementById('analyseNameTitle').textContent = dogName;
+
+            // Problem
+            const problemLabels = {
+                'pulling': 'Leinenziehen', 'barking': 'Übermäßiges Bellen', 'aggression': 'Aggression',
+                'anxiety': 'Trennungsangst', 'jumping': 'Anspringen', 'recall': 'Kommt nicht zurück',
+                'energy': 'Übermäßige Energie', 'destructive': 'Zerstörerisches Verhalten',
+                'soiling': 'In die Wohnung machen', 'mouthing': 'Unerwünschtes Aufnehmen',
+                'chasing': 'Jagdverhalten', 'separation': 'Trennungsangst',
+                'dog-reactive': 'Reaktiv auf andere Hunde', 'leash-reactive': 'Leinenreaktivität',
+                'resource-guarding': 'Ressourcenverteidigung', 'biting': 'Beißen/Schnappen'
+            };
+            document.getElementById('analyseProblem').textContent = problemLabels[dogProblem] || dogProblem || '–';
+
+            // Rasse
+            const breedLabels = {
+                'labrador': 'Labrador', 'german_shepherd': 'Deutscher Schäferhund',
+                'golden_retriever': 'Golden Retriever', 'french_bulldog': 'Französische Bulldogge',
+                'chihuahua': 'Chihuahua', 'poodle': 'Pudel', 'dachshund': 'Dackel',
+                'beagle': 'Beagle', 'husky': 'Husky', 'border_collie': 'Border Collie',
+                'mixed': 'Mischling', 'other': 'Andere Rasse'
+            };
+            document.getElementById('analyseBreed').textContent = breedLabels[dogBreed] || dogBreed || '–';
+
+            // Alter
+            const ageLabels = {
+                'puppy': 'Welpe (unter 6 Monate)', 'young': '6–12 Monate',
+                'adult': '1–3 Jahre', 'mature': '3–7 Jahre', 'senior': 'Über 7 Jahre'
+            };
+            document.getElementById('analyseAge').textContent = ageLabels[dogAge] || dogAge || '–';
+
+            // Gehorsamkeit
+            const knownCount = dogCommands.length;
+            const obedienceScore = Math.min(10, Math.max(1, knownCount > 0 ? knownCount + 1 : 3));
+            document.getElementById('analyseObedienceText').textContent = obedienceScore + ' von 10';
+            const barSegments = document.querySelectorAll('#analyseObedienceBar .obedience-segment');
+            barSegments.forEach((seg, i) => {
+                seg.classList.remove('filled', 'filled-red');
+                if (i < obedienceScore) {
+                    seg.classList.add(obedienceScore <= 3 ? 'filled-red' : 'filled');
+                }
+            });
+
+            // Handlungsbedarf
+            const highUrgency = ['aggression', 'anxiety', 'separation', 'biting', 'resource-guarding', 'dog-reactive'];
+            const lowUrgency = ['jumping', 'energy'];
+            let urgency = 'medium';
+            if (highUrgency.includes(dogProblem)) urgency = 'high';
+            else if (lowUrgency.includes(dogProblem)) urgency = 'low';
+            const urgencyLabels = { high: 'Hoch', medium: 'Mittel', low: 'Niedrig' };
+            document.getElementById('analyseUrgency').innerHTML =
+                '<span class="urgency-badge urgency-' + urgency + '">' + urgencyLabels[urgency] + '</span>';
+
+            // Empfohlene Dauer
+            const durationMap = { 'high': '6–10 Wochen', 'medium': '4–8 Wochen', 'low': '4–6 Wochen' };
+            document.getElementById('analyseDuration').textContent = durationMap[urgency];
+
+            // Kommandos
+            if (dogCommands.length > 0) {
+                const allCmds = ['sitz', 'platz', 'bleib', 'hier', 'aus', 'nein', 'fuss'];
+                const cmdLabels = { 'sitz': 'Sitz', 'platz': 'Platz', 'bleib': 'Bleib', 'hier': 'Hier', 'aus': 'Aus', 'nein': 'Nein', 'fuss': 'Fuß' };
+                const tagsHtml = allCmds.map(cmd => {
+                    const isKnown = dogCommands.includes(cmd);
+                    return '<span class="command-tag' + (isKnown ? ' known' : '') + '">' + (cmdLabels[cmd] || cmd) + '</span>';
+                }).join('');
+                document.getElementById('analyseCommandTags').innerHTML = tagsHtml;
+                document.getElementById('analyseCommandsCard').style.display = '';
+            }
+
+            // Hoffnungs-Message
+            const hopeTexts = {
+                'pulling': { title: 'Leinenziehen lässt sich gezielt in 4–8 Wochen abtrainieren', text: 'Mit nur 15–20 Minuten am Tag zeigen die meisten Hunde nach 2–3 Wochen deutliche Verbesserungen. In 4–8 Wochen ist entspanntes Gassi-Gehen realistisch.' },
+                'barking': { title: 'Übermäßiges Bellen ist in 4–8 Wochen trainierbar', text: 'Mit nur 15–20 Minuten am Tag sind erste Erfolge nach 2 Wochen sichtbar. In 4–8 Wochen reagiert dein Hund deutlich gelassener.' },
+                'aggression': { title: 'Aggression lässt sich in 6–10 Wochen in den Griff bekommen', text: 'Mit nur 15–20 Minuten am Tag zeigen sich erste Verbesserungen nach 3–4 Wochen. In 6–10 Wochen sind stabile Ergebnisse realistisch.' },
+                'anxiety': { title: 'Trennungsangst lässt sich in 6–10 Wochen lösen', text: 'Mit nur 15–20 Minuten am Tag sind erste Fortschritte nach 2 Wochen möglich. In 6–10 Wochen bleibt dein Hund deutlich entspannter allein.' },
+                'jumping': { title: 'Anspringen lässt sich in 4–6 Wochen abtrainieren', text: 'Mit nur 15–20 Minuten am Tag zeigt die Vier-Pfoten-Regel oft schon nach wenigen Tagen Wirkung. In 4–6 Wochen begrüßt dein Hund Besuch ruhig.' },
+                'recall': { title: 'Ein zuverlässiger Rückruf ist in 4–8 Wochen trainierbar', text: 'Mit nur 15–20 Minuten am Tag zeigen sich erste Erfolge nach 2–3 Wochen. In 4–8 Wochen kommt dein Hund auch unter Ablenkung.' },
+                'energy': { title: 'Hyperaktivität lässt sich in 4–6 Wochen kanalisieren', text: 'Mit nur 15–20 Minuten am Tag zeigt gezielte mentale Auslastung oft schon nach 1–2 Wochen Wirkung. In 4–6 Wochen ist dein Hund deutlich ausgeglichener.' },
+                'destructive': { title: 'Zerstörerisches Verhalten ist in 4–8 Wochen lösbar', text: 'Mit nur 15–20 Minuten am Tag sind schnelle Verbesserungen möglich. In 4–8 Wochen bleiben deine Sachen heil.' }
+            };
+            const defaultHope = { title: 'Das lässt sich gezielt in 4–8 Wochen abtrainieren', text: 'Mit nur 15–20 Minuten am Tag sind erste Ergebnisse nach 1–2 Wochen sichtbar. In 4–8 Wochen kann das Problem deutlich reduziert werden.' };
+            const hope = hopeTexts[dogProblem] || defaultHope;
+            document.getElementById('analyseHopeTitle').textContent = hope.title;
+            document.getElementById('analyseHopeText').textContent = hope.text;
+
+            // ==================== TOP-TESTIMONIAL basierend auf Problem ====================
+            const topTestimonials = {
+                'pulling': { text: '"Unser Labrador hat wie verrückt an der Leine gezogen. Nach 3 Wochen mit dem Plan können wir endlich entspannt spazieren gehen. Die Übungen sind einfach und in 10 Minuten erledigt!"', name: 'Sandra M.', problem: 'Leinenziehen' },
+                'barking': { text: '"Max hat bei jedem Geräusch gebellt – Nachbarn waren genervt. Nach 2 Wochen Training ist er so viel ruhiger. Wir können endlich in Ruhe fernsehen!"', name: 'Thomas K.', problem: 'Übermäßiges Bellen' },
+                'aggression': { text: '"Bella hat jeden Hund angeknurrt. Ich hatte Angst beim Spaziergang. Nach 4 Wochen können wir entspannt an anderen Hunden vorbeigehen. Hätte ich nie geglaubt!"', name: 'Julia R.', problem: 'Aggression' },
+                'anxiety': { text: '"Rocky hat alles zerstört, wenn wir weg waren. Mit den Schritt-für-Schritt-Übungen bleibt er jetzt alleine – nach nur 3 Wochen!"', name: 'Petra S.', problem: 'Trennungsangst' },
+                'jumping': { text: '"Balu hat jeden Besucher angesprungen – peinlich und gefährlich für ältere Leute. Nach 10 Tagen begrüßt er alle mit vier Pfoten am Boden!"', name: 'Anna K.', problem: 'Anspringen' },
+                'recall': { text: '"Charlie kam nie zurück wenn ich gerufen habe. Das Training war einfach umzusetzen – nach 3 Wochen kommt er zuverlässig, auch wenn andere Hunde da sind!"', name: 'Michael S.', problem: 'Rückruf' },
+                'energy': { text: '"Unser Hund hatte draußen viel zu viel Energie und hat jeden Hund angebellt. Der Plan kam direkt per E-Mail und nach etwa 5 Wochen hat er draußen kaum noch Hunde angebellt. Mega Unterschied!"', name: 'Thomas K.', problem: 'Zu viel Energie' },
+                'destructive': { text: '"Keine zerstörten Schuhe mehr! Nach 3 Wochen kaut Fido nur noch auf seinen eigenen Sachen. Die Alternativen-Strategie aus dem Plan war genial!"', name: 'Frank B.', problem: 'Zerstörerisches Verhalten' }
+            };
+            const defaultTopTest = { text: '"Unser Hund hatte draußen viel zu viel Energie und hat jeden Hund angebellt. Der Plan kam direkt per E-Mail und nach etwa 5 Wochen hat er draußen kaum noch Hunde angebellt. Mega Unterschied!"', name: 'Thomas K.', problem: 'Zu viel Energie' };
+            const topTest = topTestimonials[dogProblem] || defaultTopTest;
+            document.getElementById('topTestimonialText').textContent = topTest.text;
+            document.getElementById('topTestimonialName').textContent = topTest.name;
+            document.getElementById('topTestimonialProblem').textContent = topTest.problem;
         }
 
         // Pricing Selection
@@ -1717,7 +2021,6 @@
             document.getElementById('checkoutPlanBenefit').textContent = planBenefits[selectedPlan] || planBenefits['3month'];
             
             document.getElementById('checkoutOverlay').classList.add('active');
-            startFomoTimer();
 
             // Stripe initialisieren
             if (!stripe) {
@@ -1858,27 +2161,6 @@
             if (e.key === 'Escape') closeCheckout();
         });
 
-        // FOMO Timer für Checkout
-        let fomoTimerInterval = null;
-        function startFomoTimer() {
-            let timeLeft = 15 * 60; // 15 Minuten
-            const timerEl = document.getElementById('fomoTimer');
-            if (!timerEl) return;
-
-            if (fomoTimerInterval) clearInterval(fomoTimerInterval);
-
-            fomoTimerInterval = setInterval(() => {
-                timeLeft--;
-                if (timeLeft <= 0) {
-                    clearInterval(fomoTimerInterval);
-                    timerEl.textContent = '0:00';
-                    return;
-                }
-                const mins = Math.floor(timeLeft / 60);
-                const secs = timeLeft % 60;
-                timerEl.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
-            }, 1000);
-        }
 
         // Beim Laden ausführen
         loadAndPersonalize();
