@@ -92,11 +92,11 @@
         
         <div class="score-card">
             <div class="score-header">
-                <span class="score-label">Aktuelles Gehorsamkeitslevel</span>
-                <span class="score-value" id="scoreValue">4 <span>/ 10</span></span>
+                <span class="score-label">Trainierbarkeit</span>
+                <span class="score-value" id="scoreValue">8 <span>/ 10</span></span>
             </div>
             <div class="progress-bar-score">
-                <div class="progress-marker" id="scoreMarker"></div>
+                <div class="progress-marker" id="scoreMarker" style="left: 80%;"></div>
             </div>
             <div class="progress-labels">
                 <span>Niedrig</span>
@@ -105,12 +105,12 @@
             </div>
         </div>
         
-        <div class="warning-box">
+        <div class="warning-box" id="urgencyBox">
             <div class="warning-icon">!</div>
             <div class="warning-text" id="warningText">
-                <strong>Stresslevel <span id="stressDisplay">7</span>/10</strong><br>
-                Je länger du wartest, desto schwerer wird es, <span id="problemTextWarning">das Verhalten</span> abzutrainieren.<br><br>
-                <strong>Durch unseren Plan erhältst du:</strong><br>
+                <strong>Handlungsbedarf: <span id="urgencyDisplay">Hoch</span></strong><br>
+                Je früher du anfängst, desto schneller kann <span id="dogNameWarning">dein Hund</span> <span id="problemTextWarning">das Verhalten</span> ablegen.<br><br>
+                <strong>Das bekommst du:</strong><br>
                 ✓ Individuelle Übungen für <span id="dogNameIncludes">deinen Hund</span><br>
                 ✓ Wochenplan mit täglichen Aufgaben<br>
                 ✓ Schritt-für-Schritt Anleitungen
@@ -135,13 +135,13 @@
                 <span class="info-value" id="commandsDisplay">3</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Dein Plan</span>
-                <span class="info-value" id="durationDisplay">4-8 Wochen</span>
+                <span class="info-label">Erste Verbesserungen</span>
+                <span class="info-value" id="durationDisplay" style="color: #22C55E;">Ab Woche 1</span>
             </div>
         </div>
     </div>
     
-    <a href="kurz-schritt10.html" class="continue-btn">Meinen Plan ansehen →</a>
+    <a href="kurz-schritt10.html" class="continue-btn" id="ctaBtn"><span id="ctaDogName">Dein Hund</span>s Plan jetzt ansehen →</a>
     
     <script>
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
@@ -150,12 +150,19 @@
         const dogProblem = localStorage.getItem('dogProblem') || 'pulling';
         const trainingTime = localStorage.getItem('trainingTime') || '10';
         const dogCommands = JSON.parse(localStorage.getItem('dogCommands') || '[]');
-        const stressLevel = localStorage.getItem('stressLevel') || '5';
-        
         document.getElementById('dogNameTitle').textContent = dogName;
         document.getElementById('dogNameIncludes').textContent = dogName;
+        document.getElementById('dogNameWarning').textContent = dogName;
+        document.getElementById('ctaDogName').textContent = dogName;
         document.getElementById('breedDisplay').textContent = dogBreed;
-        document.getElementById('stressDisplay').textContent = stressLevel;
+
+        // Handlungsbedarf basierend auf Problem
+        const highUrgency = ['aggression', 'anxiety', 'separation', 'biting', 'resource-guarding', 'dog-reactive'];
+        const lowUrgency = ['jumping', 'energy', 'digging', 'marking'];
+        let urgencyLevel = 'Hoch';
+        if (lowUrgency.includes(dogProblem)) urgencyLevel = 'Mittel';
+        if (highUrgency.includes(dogProblem)) urgencyLevel = 'Dringend';
+        document.getElementById('urgencyDisplay').textContent = urgencyLevel;
         
         const ageMap = { 'puppy': 'Welpe', 'young': 'Junghund', 'adult': 'Erwachsen', 'senior': 'Senior' };
         document.getElementById('ageDisplay').textContent = ageMap[dogAge] || 'Erwachsen';
@@ -242,16 +249,12 @@
         const commandCount = dogCommands.includes('none') ? 0 : dogCommands.length;
         document.getElementById('commandsDisplay').textContent = commandCount;
         
-        // Calculate score based on commands (max 5)
-        let score = Math.min(2 + Math.floor(commandCount / 2), 5);
-        if (dogCommands.includes('none')) score = 2;
-        document.getElementById('scoreValue').innerHTML = `${score} <span>/ 10</span>`;
-        document.getElementById('scoreMarker').style.left = `${score * 10}%`;
-        
-        // Dauer basierend auf Trainingszeit
-        const durationMap = { '5': '10-12 Wochen', '10': '8-10 Wochen', '15': '6-8 Wochen', '20': '4-6 Wochen' };
-        const duration = durationMap[trainingTime] || '6-8 Wochen';
-        document.getElementById('durationDisplay').textContent = duration;
+        // Trainierbarkeit: immer hoch (7-9) basierend auf Alter
+        let trainability = 8;
+        if (dogAge === 'puppy' || dogAge === 'young') trainability = 9;
+        if (dogAge === 'senior') trainability = 7;
+        document.getElementById('scoreValue').innerHTML = `${trainability} <span>/ 10</span>`;
+        document.getElementById('scoreMarker').style.left = `${trainability * 10}%`;
     </script>
 </body>
 </html>
