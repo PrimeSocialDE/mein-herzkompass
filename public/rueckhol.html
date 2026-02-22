@@ -137,6 +137,33 @@
             line-height: 1.6;
         }
         
+        /* Proof Slider */
+        .proof-slider {
+            margin: -10px 0 20px;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        .proof-track {
+            display: flex;
+            animation: proofSlide 10s ease-in-out infinite;
+        }
+        .proof-track img {
+            min-width: 100%;
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+        @keyframes proofSlide {
+            0%, 16% { transform: translateX(0); }
+            20%, 36% { transform: translateX(-100%); }
+            40%, 56% { transform: translateX(-200%); }
+            60%, 76% { transform: translateX(-300%); }
+            80%, 96% { transform: translateX(-400%); }
+            100% { transform: translateX(0); }
+        }
+
         /* Analyse Section */
         .analyse-title {
             font-size: 22px;
@@ -298,10 +325,10 @@
 
         .pricing-question {
             text-align: center;
-            font-size: 17px;
-            font-weight: 600;
+            font-size: 24px;
+            font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 16px;
+            margin-bottom: 18px;
         }
         
         .pricing-card {
@@ -1097,19 +1124,14 @@
             <p class="hero-subtitle" id="heroSubtitle">Entspannte Spaziergänge. Keine Kämpfe mehr. Ein Hund, auf den du stolz bist. Das ist möglich – in wenigen Wochen.</p>
         </div>
 
-        <!-- Problem-spezifisches Top-Testimonial -->
-        <div id="topTestimonial" style="background: var(--white); border-radius: 14px; padding: 18px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); border-left: 3px solid #00B67A;">
-            <div style="display: flex; gap: 3px; margin-bottom: 8px;">
-                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: #00B67A;"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: #00B67A;"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: #00B67A;"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: #00B67A;"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-                <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; fill: #00B67A;"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-            </div>
-            <p id="topTestimonialText" style="font-size: 15px; color: var(--text-dark); line-height: 1.5; font-style: italic; margin-bottom: 8px;">"Unser Hund hatte draußen viel zu viel Energie und hat jeden Hund angebellt. Der Plan kam direkt per E-Mail und nach etwa 5 Wochen hat er draußen kaum noch Hunde angebellt. Mega Unterschied!"</p>
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <span id="topTestimonialName" style="font-size: 13px; font-weight: 600; color: var(--text-dark);">Thomas K.</span>
-                <span id="topTestimonialProblem" style="font-size: 12px; color: var(--primary-brown); font-weight: 500;">Zu viel Energie</span>
+        <!-- Proof Slider -->
+        <div class="proof-slider">
+            <div class="proof-track">
+                <img src="proof3-sm.jpg" alt="Kundin mit PfotenPlan auf Tablet" loading="eager">
+                <img src="proof4-sm.jpg" alt="Hundebesitzerin liest PfotenPlan mit Hund" loading="lazy">
+                <img src="proof5-sm.jpg" alt="Hundebesitzerin mit Plan im Park" loading="lazy">
+                <img src="proof6-sm.jpg" alt="Kundin zeigt 6-Monatsplan" loading="lazy">
+                <img src="proof7-sm.jpg" alt="Hundebesitzerin mit Welpe" loading="lazy">
             </div>
         </div>
 
@@ -1133,7 +1155,7 @@
 
         <!-- ===== PERSÖNLICHE ANALYSE-ZUSAMMENFASSUNG ===== -->
         <div style="margin-bottom: 30px;">
-            <h2 class="analyse-title"><span id="analyseNameTitle">Dein Hund</span><span>s</span> Analyse</h2>
+            <h2 class="analyse-title"><span id="analyseNameTitle">Dein Hund</span>'s Analyse</h2>
             <p class="analyse-subtitle">Basierend auf deinen gespeicherten Quiz-Antworten</p>
 
             <div class="analyse-grid">
@@ -1145,15 +1167,15 @@
                     <div class="analyse-card-label">Handlungsbedarf</div>
                     <div id="analyseUrgency"><span class="urgency-badge urgency-high">Hoch</span></div>
                 </div>
-                <div class="analyse-card">
+                <div class="analyse-card" id="analyseBreedCard">
                     <div class="analyse-card-label">Rasse</div>
                     <div class="analyse-card-value" id="analyseBreed">–</div>
                 </div>
-                <div class="analyse-card">
+                <div class="analyse-card" id="analyseAgeCard">
                     <div class="analyse-card-label">Alter</div>
                     <div class="analyse-card-value" id="analyseAge">–</div>
                 </div>
-                <div class="analyse-card">
+                <div class="analyse-card" id="analyseObedienceCard">
                     <div class="analyse-card-label">Gehorsamkeitslevel</div>
                     <div class="analyse-card-value"><span id="analyseObedienceText">– von 10</span></div>
                     <div class="obedience-bar" id="analyseObedienceBar">
@@ -1218,31 +1240,23 @@
             </div>
         </div>
 
-        <!-- Benefits Section - Was du bekommst -->
-        <div class="benefits-box">
-            <h2 class="benefits-title">Das bekommst du im Plan</h2>
-            <ul class="benefits-list" id="benefitsList">
-                <!-- Wird per JavaScript gefüllt -->
-            </ul>
-        </div>
-
-        <!-- Transparenz: Beispielbild & Seitenanzahl -->
+        <!-- Plan-Inhalt Slider (1/3/6 Monate) -->
         <div style="background: var(--white); border-radius: 16px; padding: 24px 20px; margin-bottom: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
-            <h2 style="font-size: 18px; font-weight: 700; color: var(--text-dark); text-align: center; margin-bottom: 16px;">So sieht dein Plan aus</h2>
-            <img src="InfoBeispiele.jpg" alt="Beispiel eines Pfoten-Plan Trainingsplans" style="width: 100%; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <div style="background: #FAF8F5; border: 1px solid #E8E4DF; border-radius: 10px; padding: 14px 16px;">
-                <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--text-dark); border-bottom: 1px solid #E8E4DF;">
-                    <span>1 Monat</span>
-                    <span style="color: #C4A576; font-weight: 600;">ca. 34 Seiten</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--text-dark); border-bottom: 1px solid #E8E4DF;">
-                    <span>3 Monate</span>
-                    <span style="color: #C4A576; font-weight: 600;">ca. 45 Seiten</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--text-dark);">
-                    <span>6 Monate</span>
-                    <span style="color: #C4A576; font-weight: 600;">ca. 57 Seiten</span>
-                </div>
+            <h2 style="font-size: 18px; font-weight: 700; color: var(--text-dark); text-align: center; margin-bottom: 16px;">Was dich in <span id="planSliderDogName">deinem</span> Plan erwartet</h2>
+            <!-- Tabs -->
+            <div style="display: flex; gap: 6px; margin-bottom: 18px; justify-content: center;">
+                <button onclick="showPlanTab(0)" id="planTab0" style="flex: 1; padding: 10px 6px; border-radius: 8px; border: 2px solid var(--primary-brown); background: var(--primary-brown); color: white; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s;">1 Monat</button>
+                <button onclick="showPlanTab(1)" id="planTab1" style="flex: 1; padding: 10px 6px; border-radius: 8px; border: 2px solid var(--border-light); background: var(--white); color: var(--text-medium); font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s;">3 Monate</button>
+                <button onclick="showPlanTab(2)" id="planTab2" style="flex: 1; padding: 10px 6px; border-radius: 8px; border: 2px solid var(--border-light); background: var(--white); color: var(--text-medium); font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s;">6 Monate</button>
+            </div>
+            <!-- Slide Content -->
+            <div id="planSlideContent">
+                <!-- Wird per JS befüllt -->
+            </div>
+            <ul id="planSliderBullets" style="margin-top: 14px; padding: 0 0 0 18px; font-size: 13px; color: var(--text-medium); line-height: 1.7;">
+            </ul>
+            <div style="background: #FAF8F5; border-radius: 10px; padding: 12px 16px; text-align: center; font-size: 13px; color: var(--text-medium); line-height: 1.5; margin-top: 14px;" id="planSliderStats">
+                34 Seiten · 20 Übungen · Täglicher Trainingsplan · Bonus-Spiele
             </div>
         </div>
 
@@ -1858,15 +1872,6 @@
                 }
             });
             
-            // Benefits personalisieren
-            const benefitsList = document.getElementById('benefitsList');
-            benefitsList.innerHTML = '';
-            content.benefits.forEach(benefit => {
-                const li = document.createElement('li');
-                li.textContent = benefit.replace(/{dogName}/g, dogName);
-                benefitsList.appendChild(li);
-            });
-
             // ==================== ANALYSE-SECTION BEFÜLLEN ====================
             // Analyse-Titel
             document.getElementById('analyseNameTitle').textContent = dogName;
@@ -1883,7 +1888,7 @@
             };
             document.getElementById('analyseProblem').textContent = problemLabels[dogProblem] || dogProblem || '–';
 
-            // Rasse
+            // Rasse – ausblenden wenn kein Wert
             const breedLabels = {
                 'labrador': 'Labrador', 'german_shepherd': 'Deutscher Schäferhund',
                 'golden_retriever': 'Golden Retriever', 'french_bulldog': 'Französische Bulldogge',
@@ -1891,26 +1896,40 @@
                 'beagle': 'Beagle', 'husky': 'Husky', 'border_collie': 'Border Collie',
                 'mixed': 'Mischling', 'other': 'Andere Rasse'
             };
-            document.getElementById('analyseBreed').textContent = breedLabels[dogBreed] || dogBreed || '–';
+            const breedValue = breedLabels[dogBreed] || dogBreed;
+            if (breedValue) {
+                document.getElementById('analyseBreed').textContent = breedValue;
+            } else {
+                document.getElementById('analyseBreedCard').style.display = 'none';
+            }
 
-            // Alter
+            // Alter – ausblenden wenn kein Wert
             const ageLabels = {
                 'puppy': 'Welpe (unter 6 Monate)', 'young': '6–12 Monate',
                 'adult': '1–3 Jahre', 'mature': '3–7 Jahre', 'senior': 'Über 7 Jahre'
             };
-            document.getElementById('analyseAge').textContent = ageLabels[dogAge] || dogAge || '–';
+            const ageValue = ageLabels[dogAge] || dogAge;
+            if (ageValue) {
+                document.getElementById('analyseAge').textContent = ageValue;
+            } else {
+                document.getElementById('analyseAgeCard').style.display = 'none';
+            }
 
-            // Gehorsamkeit
+            // Gehorsamkeit – ausblenden wenn keine Kommandos
             const knownCount = dogCommands.length;
-            const obedienceScore = Math.min(10, Math.max(1, knownCount > 0 ? knownCount + 1 : 3));
-            document.getElementById('analyseObedienceText').textContent = obedienceScore + ' von 10';
-            const barSegments = document.querySelectorAll('#analyseObedienceBar .obedience-segment');
-            barSegments.forEach((seg, i) => {
-                seg.classList.remove('filled', 'filled-red');
-                if (i < obedienceScore) {
-                    seg.classList.add(obedienceScore <= 3 ? 'filled-red' : 'filled');
-                }
-            });
+            if (knownCount > 0) {
+                const obedienceScore = Math.min(10, Math.max(1, knownCount + 1));
+                document.getElementById('analyseObedienceText').textContent = obedienceScore + ' von 10';
+                const barSegments = document.querySelectorAll('#analyseObedienceBar .obedience-segment');
+                barSegments.forEach((seg, i) => {
+                    seg.classList.remove('filled', 'filled-red');
+                    if (i < obedienceScore) {
+                        seg.classList.add(obedienceScore <= 3 ? 'filled-red' : 'filled');
+                    }
+                });
+            } else {
+                document.getElementById('analyseObedienceCard').style.display = 'none';
+            }
 
             // Handlungsbedarf
             const highUrgency = ['aggression', 'anxiety', 'separation', 'biting', 'resource-guarding', 'dog-reactive'];
@@ -1954,22 +1973,189 @@
             document.getElementById('analyseHopeTitle').textContent = hope.title;
             document.getElementById('analyseHopeText').textContent = hope.text;
 
-            // ==================== TOP-TESTIMONIAL basierend auf Problem ====================
-            const topTestimonials = {
-                'pulling': { text: '"Unser Labrador hat wie verrückt an der Leine gezogen. Nach 3 Wochen mit dem Plan können wir endlich entspannt spazieren gehen. Die Übungen sind einfach und in 10 Minuten erledigt!"', name: 'Sandra M.', problem: 'Leinenziehen' },
-                'barking': { text: '"Max hat bei jedem Geräusch gebellt – Nachbarn waren genervt. Nach 2 Wochen Training ist er so viel ruhiger. Wir können endlich in Ruhe fernsehen!"', name: 'Thomas K.', problem: 'Übermäßiges Bellen' },
-                'aggression': { text: '"Bella hat jeden Hund angeknurrt. Ich hatte Angst beim Spaziergang. Nach 4 Wochen können wir entspannt an anderen Hunden vorbeigehen. Hätte ich nie geglaubt!"', name: 'Julia R.', problem: 'Aggression' },
-                'anxiety': { text: '"Rocky hat alles zerstört, wenn wir weg waren. Mit den Schritt-für-Schritt-Übungen bleibt er jetzt alleine – nach nur 3 Wochen!"', name: 'Petra S.', problem: 'Trennungsangst' },
-                'jumping': { text: '"Balu hat jeden Besucher angesprungen – peinlich und gefährlich für ältere Leute. Nach 10 Tagen begrüßt er alle mit vier Pfoten am Boden!"', name: 'Anna K.', problem: 'Anspringen' },
-                'recall': { text: '"Charlie kam nie zurück wenn ich gerufen habe. Das Training war einfach umzusetzen – nach 3 Wochen kommt er zuverlässig, auch wenn andere Hunde da sind!"', name: 'Michael S.', problem: 'Rückruf' },
-                'energy': { text: '"Unser Hund hatte draußen viel zu viel Energie und hat jeden Hund angebellt. Der Plan kam direkt per E-Mail und nach etwa 5 Wochen hat er draußen kaum noch Hunde angebellt. Mega Unterschied!"', name: 'Thomas K.', problem: 'Zu viel Energie' },
-                'destructive': { text: '"Keine zerstörten Schuhe mehr! Nach 3 Wochen kaut Fido nur noch auf seinen eigenen Sachen. Die Alternativen-Strategie aus dem Plan war genial!"', name: 'Frank B.', problem: 'Zerstörerisches Verhalten' }
+            // ==================== DYNAMISCHES INHALTSVERZEICHNIS ====================
+            // ==================== PLAN-INHALT SLIDER (1/3/6 Monate) ====================
+            document.getElementById('planSliderDogName').textContent = dogName + 's';
+
+            const planStructures = {
+                'pulling': {
+                    m1: [
+                        { w: '1–2', title: 'Leinenführung stabilisieren', desc: 'Auslöser erkennen, Abstand halten, ruhiges Leinenhandling üben' },
+                        { w: '3–4', title: 'Impulskontrolle & Festigung', desc: 'Richtungswechsel, Begegnungen meistern, entspanntes Gassi' }
+                    ],
+                    m3: [
+                        { w: '1–4', title: 'Sicherheit & Management', desc: 'Leinenführung stabilisieren, Auslöser erkennen, Rückzugsort etablieren' },
+                        { w: '5–8', title: 'Impulskontrolle & Begegnungen', desc: 'Leinenruck-Alternativen, Richtungswechsel, Begegnungen in Ruhe meistern' },
+                        { w: '9–12', title: 'Freilauf & Festigung', desc: 'Entspanntes Gassi ohne Ziehen, Ablenkungen souverän meistern' }
+                    ],
+                    m6: [
+                        { w: '1–2', title: 'Sicherheit & Management', desc: 'Leinenführung stabilisieren, Auslöser erkennen' },
+                        { w: '2–3', title: 'Impulskontrolle aufbauen', desc: 'Richtungswechsel, Leinenruck-Alternativen, ruhiges Führen' },
+                        { w: '4–6', title: 'Freilauf & Alltagssicherheit', desc: 'Begegnungen meistern, entspanntes Gassi, dauerhafte Veränderung' }
+                    ]
+                },
+                'aggression': {
+                    m1: [
+                        { w: '1–2', title: 'Stressreduktion & Abstand', desc: 'Auslöser meiden, Ruhezonen schaffen, Management-Routinen' },
+                        { w: '3–4', title: 'Kontrollierte Begegnungen', desc: 'Distanz halten, Umorientierung üben, erste Fortschritte' }
+                    ],
+                    m3: [
+                        { w: '1–4', title: 'Sicherheit & Stressreduktion', desc: 'Auslöser meiden, Management-Routinen, Ruhezonen und Abstandstraining' },
+                        { w: '5–8', title: 'Kontrollierte Begegnungen', desc: 'Distanz halten, Umorientierung üben, Frustrationstoleranz aufbauen' },
+                        { w: '9–12', title: 'Stabilität im Alltag', desc: 'Begegnungen souverän meistern, Vertrauen festigen, Rückfallprävention' }
+                    ],
+                    m6: [
+                        { w: '1–2', title: 'Sicherheit & Stressreduktion', desc: 'Auslöser meiden, Ruhezonen, Abstandstraining' },
+                        { w: '3–4', title: 'Kontrollierte Begegnungen', desc: 'Umorientierung, Frustrationstoleranz, Distanzübungen' },
+                        { w: '5–6', title: 'Stabilität & Vertrauen', desc: 'Alltagssicherheit, souveräne Begegnungen, Rückfallprävention' }
+                    ]
+                },
+                'barking': {
+                    m1: [
+                        { w: '1–2', title: 'Auslöser erkennen & Ruhe', desc: 'Bell-Trigger identifizieren, Ruhezonen schaffen, Entspannungssignal' },
+                        { w: '3–4', title: 'Alternatives Verhalten', desc: 'Abbruchsignal, Frusttoleranz steigern, gelassenere Reaktionen' }
+                    ],
+                    m3: [
+                        { w: '1–4', title: 'Auslöser erkennen & Ruhe aufbauen', desc: 'Bell-Trigger identifizieren, Ruhezonen schaffen, Entspannungssignal einführen' },
+                        { w: '5–8', title: 'Alternatives Verhalten trainieren', desc: 'Abbruchsignal aufbauen, Frusttoleranz steigern, kontrollierte Begegnungen' },
+                        { w: '9–12', title: 'Alltagssicherheit & Gelassenheit', desc: 'Ruhiges Verhalten in Alltagssituationen, weniger Reaktivität' }
+                    ],
+                    m6: [
+                        { w: '1–2', title: 'Auslöser erkennen & Ruhe', desc: 'Bell-Trigger identifizieren, Entspannungssignal einführen' },
+                        { w: '3–4', title: 'Alternatives Verhalten', desc: 'Abbruchsignal, Frusttoleranz, kontrollierte Situationen' },
+                        { w: '5–6', title: 'Gelassenheit im Alltag', desc: 'Ruhiges Verhalten festigen, weniger Reaktivität an der Tür' }
+                    ]
+                },
+                'anxiety': {
+                    m1: [
+                        { w: '1–2', title: 'Sicherheit & Vertrauen', desc: 'Sichere Rückzugsorte, Entspannungsrituale, kurze Trennungsübungen' },
+                        { w: '3–4', title: 'Alleinbleiben üben', desc: 'Trennungszeiten steigern, Beschäftigung, Abschiedsrituale' }
+                    ],
+                    m3: [
+                        { w: '1–4', title: 'Sicherheit & Vertrauen aufbauen', desc: 'Sichere Rückzugsorte, Entspannungsrituale, kurze Trennungsübungen' },
+                        { w: '5–8', title: 'Alleinbleiben schrittweise üben', desc: 'Trennungszeiten langsam steigern, Beschäftigung, Abschiedsrituale' },
+                        { w: '9–12', title: 'Selbstständigkeit & Routine', desc: 'Längere Abwesenheiten, entspanntes Alleinbleiben, Alltagstransfer' }
+                    ],
+                    m6: [
+                        { w: '1–2', title: 'Sicherheit & Vertrauen', desc: 'Rückzugsorte, Entspannungsrituale, erste Mini-Trennungen' },
+                        { w: '3–4', title: 'Trennungszeiten steigern', desc: 'Von Minuten zu Stunden, Beschäftigung, Routinen' },
+                        { w: '5–6', title: 'Entspanntes Alleinbleiben', desc: 'Längere Abwesenheiten, stabiles Verhalten, Alltagstauglichkeit' }
+                    ]
+                },
+                'energy': {
+                    m1: [
+                        { w: '1–2', title: 'Ruhe lernen & Struktur', desc: 'Ruherituale einführen, mentale Auslastung, Reizüberflutung vermeiden' },
+                        { w: '3–4', title: 'Impulskontrolle & Fokus', desc: 'Warte-Übungen, gezielte Beschäftigung, ausgeglichener Alltag' }
+                    ],
+                    m3: [
+                        { w: '1–4', title: 'Ruhe lernen & Struktur schaffen', desc: 'Ruherituale einführen, mentale Auslastung, Reizüberflutung vermeiden' },
+                        { w: '5–8', title: 'Impulskontrolle & Fokus', desc: 'Warte-Übungen, Frustrationstoleranz, gezielte Beschäftigung' },
+                        { w: '9–12', title: 'Ausgeglichener Alltag', desc: 'Entspannte Spaziergänge, Ruhe als Normalzustand' }
+                    ],
+                    m6: [
+                        { w: '1–2', title: 'Ruhe & Struktur', desc: 'Ruherituale, mentale Auslastung, Reizüberflutung vermeiden' },
+                        { w: '3–4', title: 'Impulskontrolle', desc: 'Warte-Übungen, Frustrationstoleranz, Fokus aufbauen' },
+                        { w: '5–6', title: 'Ausgeglichener Alltag', desc: 'Entspannte Spaziergänge, dauerhafte Ruhe und Balance' }
+                    ]
+                },
+                'dog-reactive': {
+                    m1: [
+                        { w: '1–2', title: 'Abstand & Management', desc: 'Sicherheitsabstand, Auslöser frühzeitig erkennen, Umorientierung' },
+                        { w: '3–4', title: 'Kontrollierte Begegnungen', desc: 'Bogenführung, Stop-Übungen, weniger Reaktivität' }
+                    ],
+                    m3: [
+                        { w: '1–4', title: 'Abstand & Management', desc: 'Sicherheitsabstand halten, Auslöser frühzeitig erkennen, Umorientierung' },
+                        { w: '5–8', title: 'Kontrollierte Begegnungen', desc: 'Bogenführung, Stop-Übungen, Impulskontrolle bei Sichtkontakt' },
+                        { w: '9–12', title: 'Gelassene Hundebegegnungen', desc: 'Ruhiges Vorbeigehen, weniger Reaktivität, Alltagssicherheit' }
+                    ],
+                    m6: [
+                        { w: '1–2', title: 'Abstand & Management', desc: 'Sicherheitsabstand, Umorientierung, Auslöser erkennen' },
+                        { w: '3–4', title: 'Kontrollierte Begegnungen', desc: 'Bogenführung, Stop-Übungen, Impulskontrolle' },
+                        { w: '5–6', title: 'Gelassene Begegnungen', desc: 'Souveränes Vorbeigehen, Alltagssicherheit, Festigung' }
+                    ]
+                }
             };
-            const defaultTopTest = { text: '"Unser Hund hatte draußen viel zu viel Energie und hat jeden Hund angebellt. Der Plan kam direkt per E-Mail und nach etwa 5 Wochen hat er draußen kaum noch Hunde angebellt. Mega Unterschied!"', name: 'Thomas K.', problem: 'Zu viel Energie' };
-            const topTest = topTestimonials[dogProblem] || defaultTopTest;
-            document.getElementById('topTestimonialText').textContent = topTest.text;
-            document.getElementById('topTestimonialName').textContent = topTest.name;
-            document.getElementById('topTestimonialProblem').textContent = topTest.problem;
+            const defaultStructure = {
+                m1: [
+                    { w: '1–2', title: 'Grundlagen & Management', desc: 'Auslöser erkennen, Routinen aufbauen, sichere Basis schaffen' },
+                    { w: '3–4', title: 'Training & Festigung', desc: 'Übungen aufbauen, Impulskontrolle stärken, Alltagstransfer' }
+                ],
+                m3: [
+                    { w: '1–4', title: 'Grundlagen & Management', desc: 'Auslöser erkennen, Routinen aufbauen, sichere Basis schaffen' },
+                    { w: '5–8', title: 'Gezieltes Training', desc: 'Übungen aufbauen, Impulskontrolle stärken, Alltagssituationen üben' },
+                    { w: '9–12', title: 'Festigung & Alltag', desc: 'Gelerntes festigen, schwierigere Situationen meistern, Routine etablieren' }
+                ],
+                m6: [
+                    { w: '1–2', title: 'Grundlagen & Management', desc: 'Auslöser erkennen, Routinen aufbauen, sichere Basis' },
+                    { w: '3–4', title: 'Gezieltes Training', desc: 'Impulskontrolle, Alltagssituationen üben, Fortschritte' },
+                    { w: '5–6', title: 'Festigung & Alltag', desc: 'Gelerntes festigen, dauerhafte Veränderung, Routine' }
+                ]
+            };
+
+            const structure = planStructures[dogProblem] || defaultStructure;
+            const statsPerPlan = {
+                0: '34 Seiten · 20 Übungen · Täglicher Trainingsplan · Bonus-Spiele',
+                1: '45 Seiten · 24 Übungen · Täglicher Trainingsplan · Bonus-Spiele',
+                2: '57 Seiten · 30 Übungen · Täglicher Trainingsplan · Bonus-Spiele'
+            };
+            const planKeys = ['m1', 'm3', 'm6'];
+            const wocheLabel = ['Woche', 'Woche', 'Monat'];
+
+            function renderPlanPhases(phases, isMonths) {
+                const colors = [
+                    'linear-gradient(135deg, #C4A576, #A89270)',
+                    'linear-gradient(135deg, #A89270, #8B7355)',
+                    'linear-gradient(135deg, #22C55E, #16A34A)'
+                ];
+                return phases.map((p, i) => {
+                    const isLast = i === phases.length - 1;
+                    const border = isLast ? '' : 'border-bottom: 1px solid #E8E4DF; padding-bottom: 14px; margin-bottom: 14px;';
+                    const bg = isLast ? colors[2] : colors[i];
+                    return '<div style="display: flex; gap: 14px; ' + border + '">' +
+                        '<div style="min-width: 42px; height: 42px; background: ' + bg + '; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 14px;">' + p.w + '</div>' +
+                        '<div><div style="font-size: 15px; font-weight: 700; color: #1a1a1a; margin-bottom: 2px;">' + p.title + '</div>' +
+                        '<div style="font-size: 13px; color: #555; line-height: 1.4;">' + p.desc + '</div></div></div>';
+                }).join('');
+            }
+
+            const planBullets = [
+                [
+                    'Jede Übung Schritt für Schritt erklärt',
+                    'Alltagstaugliche Einheiten (15–20 Min/Tag)',
+                    'Kompakter Schnellstart für erste Ergebnisse'
+                ],
+                [
+                    'Jede Übung Schritt für Schritt erklärt',
+                    'Alltagstaugliche Einheiten (15–20 Min/Tag)',
+                    'Mehr Zeit für nachhaltige Verhaltensänderung',
+                    'Aufbauende Übungen mit steigender Schwierigkeit'
+                ],
+                [
+                    'Jede Übung Schritt für Schritt erklärt',
+                    'Alltagstaugliche Einheiten (15–20 Min/Tag)',
+                    'Maximale Tiefe für komplexe Verhaltensprobleme',
+                    'Rückfallprävention und langfristige Festigung'
+                ]
+            ];
+
+            let currentPlanTab = 0;
+            window.showPlanTab = function(idx) {
+                currentPlanTab = idx;
+                const key = planKeys[idx];
+                const phases = structure[key];
+                document.getElementById('planSlideContent').innerHTML = renderPlanPhases(phases, idx === 2);
+                document.getElementById('planSliderStats').textContent = statsPerPlan[idx];
+                document.getElementById('planSliderBullets').innerHTML = planBullets[idx].map(b => '<li>' + b + '</li>').join('');
+                [0,1,2].forEach(i => {
+                    const btn = document.getElementById('planTab' + i);
+                    if (i === idx) {
+                        btn.style.background = '#C4A576'; btn.style.color = 'white'; btn.style.borderColor = '#C4A576';
+                    } else {
+                        btn.style.background = 'white'; btn.style.color = '#555'; btn.style.borderColor = '#E8E8E8';
+                    }
+                });
+            };
+            showPlanTab(0);
         }
 
         // Pricing Selection
