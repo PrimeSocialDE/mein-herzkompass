@@ -3034,80 +3034,40 @@ if (popularBadge) {
         let timerExpired = false;
         let isEveningMode = false;
 
-        function checkEveningMode() {
-            const currentHour = new Date().getHours();
-            return currentHour >= 18; // Ab 18 Uhr = Abendmodus
-        }
-
-        function getSecondsUntilMidnight() {
-            const now = new Date();
-            const midnight = new Date(now);
-            midnight.setHours(24, 0, 0, 0);
-            return Math.floor((midnight - now) / 1000);
-        }
-
         function initializeTimer() {
-            isEveningMode = checkEveningMode();
-
-            if (isEveningMode) {
-                // Abends: Countdown bis Mitternacht
-                timeLeft = getSecondsUntilMidnight();
-                document.getElementById('timerLabel').textContent = 'Letzte Chance heute · Sonderpreis endet in:';
+            isEveningMode = false;
+            // Immer 10-Minuten-Countdown
+            const savedStartTime = localStorage.getItem('wauwerk_timerStartTime');
+            const timerDuration = 10 * 60;
+            if (savedStartTime) {
+                const startTime = parseInt(savedStartTime);
+                const currentTime = Date.now();
+                const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+                timeLeft = Math.max(0, timerDuration - elapsedSeconds);
             } else {
-                // Tagsüber: 10-Minuten-Countdown
-                const savedStartTime = localStorage.getItem('wauwerk_timerStartTime');
-                const timerDuration = 10 * 60;
-                if (savedStartTime) {
-                    const startTime = parseInt(savedStartTime);
-                    const currentTime = Date.now();
-                    const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
-                    timeLeft = Math.max(0, timerDuration - elapsedSeconds);
-                } else {
-                    timeLeft = timerDuration;
-                    localStorage.setItem('wauwerk_timerStartTime', Date.now().toString());
-                }
-                document.getElementById('timerLabel').textContent = 'Preis reduziert für:';
+                timeLeft = timerDuration;
+                localStorage.setItem('wauwerk_timerStartTime', Date.now().toString());
             }
+            document.getElementById('timerLabel').textContent = 'Preis reduziert für:';
         }
 
         initializeTimer();
 
         function updateTimer() {
-            // Prüfen ob sich der Modus geändert hat (Mitternacht überschritten)
-            const shouldBeEveningMode = checkEveningMode();
-            if (shouldBeEveningMode !== isEveningMode) {
-                initializeTimer(); // Modus wechseln
-            }
-
             if (timeLeft <= 0) {
-                if (isEveningMode) {
-                    // Mitternacht erreicht - auf Tagesmodus wechseln
-                    initializeTimer();
-                } else {
-                    timerExpired = true;
-                    document.getElementById('timer').textContent = 'ABGELAUFEN';
-                    switchToNormalPrices();
-                    return;
-                }
+                timerExpired = true;
+                document.getElementById('timer').textContent = 'ABGELAUFEN';
+                switchToNormalPrices();
+                return;
             }
 
-            if (isEveningMode) {
-                // Format: HH:MM:SS für Abend-Countdown
-                const hours = Math.floor(timeLeft / 3600);
-                const minutes = Math.floor((timeLeft % 3600) / 60);
-                const seconds = timeLeft % 60;
-                document.getElementById('timer').textContent =
-                    hours.toString().padStart(2, '0') + ':' +
-                    minutes.toString().padStart(2, '0') + ':' +
-                    seconds.toString().padStart(2, '0');
-            } else {
-                // Format: MM:SS für Tages-Countdown
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                document.getElementById('timer').textContent =
-                    minutes.toString().padStart(2, '0') + ':' +
-                    seconds.toString().padStart(2, '0');
-            }
+            // Format: MM:SS
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent =
+                minutes.toString().padStart(2, '0') + ':' +
+                seconds.toString().padStart(2, '0');
+
             timeLeft--;
             setTimeout(updateTimer, 1000);
         }
