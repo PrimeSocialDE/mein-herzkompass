@@ -176,12 +176,12 @@
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
 
-        // A/B Test: 50/50 Split (deinplan2 vs deinplan3)
+        // A/B Test: 70/30 Split (deinplan3 vs deinplan2)
         function getABTestPage() {
             // Prüfe ob schon eine Variante zugewiesen wurde
             let variant = localStorage.getItem('ab_test_pricing');
             if (!variant) {
-                variant = Math.random() < 0.5 ? 'A' : 'B';
+                variant = Math.random() < 0.7 ? 'B' : 'A';
                 localStorage.setItem('ab_test_pricing', variant);
             }
             // A = deinplan2.html (Popup-Checkout), B = deinplan3.html (Stripe-Redirect)
