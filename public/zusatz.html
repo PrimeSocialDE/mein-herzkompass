@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zusatzmodule | Pfoten-Plan</title>
+    <title>Zusatz-Übungen | Pfoten-Plan</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favconHund.png">
 
@@ -828,7 +828,7 @@
         <div class="upsell-box">
 
             <div class="upsell-stat">
-                <strong>70% aller Hundebesitzer</strong> wünschen sich später, früher mit Prävention begonnen zu haben.
+                <strong>70% aller Hundebesitzer</strong> wünschen sich später, früher vorgesorgt zu haben.
             </div>
 
             <div class="upsell-header">
@@ -851,14 +851,14 @@
     <div class="payment-overlay" id="paymentOverlay">
         <div class="payment-popup">
             <div class="payment-header">
-                <span class="payment-title">Zusatzmodul hinzufügen</span>
+                <span class="payment-title">Vorsorge-Übungen hinzufügen</span>
                 <button class="payment-close" onclick="closePaymentPopup()">✕</button>
             </div>
             <div class="payment-body">
                 <div class="payment-product">
                     <div class="payment-product-icon" id="paymentIcon">😰</div>
                     <div class="payment-product-info">
-                        <h3 id="paymentModuleName">Trennungsangst Prävention</h3>
+                        <h3 id="paymentModuleName">Falls dein Hund nicht alleine bleiben kann</h3>
                         <p>8 Übungen • 2 Wochen</p>
                     </div>
                     <div class="payment-product-price">€14,99</div>
@@ -917,66 +917,66 @@
         const moduleData = {
             'anxiety': {
                 icon: '😰',
-                name: 'Notfall-Toolkit: Trennungsangst',
-                exercises: '6 Sofort-Übungen',
-                benefits: ['Was tun wenn dein Hund beim Alleinsein panisch wird', 'Abschiedsrituale die sofort wirken', 'Ruhe-Signale für akute Momente'],
-                desc: 'Was tun, wenn dein Hund jedes Mal ausrastet, sobald du gehst – 6 Sofort-Übungen für akute Momente.'
+                name: 'Falls dein Hund nicht alleine bleiben kann',
+                exercises: '6 Vorsorge-Übungen',
+                benefits: ['Damit dein Hund entspannt bleibt wenn du gehst', 'Abschiedsrituale die von Anfang an wirken', 'Ruhe-Signale bevor Panik entsteht'],
+                desc: 'Viele Hunde entwickeln Probleme beim Alleinsein. Mit diesen 6 Übungen sorgst du vor, bevor es soweit kommt.'
             },
             'pulling': {
                 icon: '🦮',
-                name: 'Notfall-Toolkit: Leinenziehen',
-                exercises: '6 Sofort-Übungen',
-                benefits: ['Was tun wenn dein Hund dich durch die Straße zerrt', 'Die Richtungswechsel-Technik die sofort wirkt', 'Wie du Begegnungen entspannt meisterst'],
-                desc: 'Was tun, wenn jeder Spaziergang zum Kraftakt wird – 6 Sofort-Übungen gegen das Ziehen.'
+                name: 'Falls dein Hund anfängt zu ziehen',
+                exercises: '6 Vorsorge-Übungen',
+                benefits: ['Damit Spaziergänge von Anfang an entspannt bleiben', 'Die Richtungswechsel-Technik bevor das Ziehen zur Gewohnheit wird', 'Begegnungen mit anderen Hunden souverän meistern'],
+                desc: 'Leinenziehen ist eines der häufigsten Probleme. Diese 6 Übungen verhindern, dass es überhaupt erst dazu kommt.'
             },
             'barking': {
                 icon: '🔊',
-                name: 'Notfall-Toolkit: Bellen stoppen',
-                exercises: '6 Sofort-Übungen',
-                benefits: ['Was tun wenn dein Hund bei jedem Geräusch ausflippt', 'Das Ruhe-Signal das sofort funktioniert', 'Wie du Auslöser gezielt entschärfst'],
-                desc: 'Was tun, wenn dein Hund bei jedem Klingeln komplett ausrastet – 6 Sofort-Übungen für Ruhe.'
+                name: 'Falls dein Hund anfängt zu bellen',
+                exercises: '6 Vorsorge-Übungen',
+                benefits: ['Damit dein Hund bei Geräuschen ruhig bleibt', 'Ruhe-Signale bevor Bellen zur Gewohnheit wird', 'Auslöser frühzeitig entschärfen'],
+                desc: 'Ständiges Bellen nervt – dich und die Nachbarn. 6 Übungen damit dein Hund gar nicht erst damit anfängt.'
             },
             'aggression': {
                 icon: '😤',
-                name: 'Notfall-Toolkit: Aggression',
-                exercises: '6 Sofort-Übungen',
-                benefits: ['Was tun wenn dein Hund andere Hunde angeht', 'Wie du gefährliche Situationen sofort entschärfst', 'Impulskontrolle die ab Tag 1 wirkt'],
-                desc: 'Was tun, wenn dein Hund in Stress-Situationen komplett dicht macht – 6 Sofort-Übungen für akute Momente.'
+                name: 'Falls dein Hund aggressiv wird',
+                exercises: '6 Vorsorge-Übungen',
+                benefits: ['Damit Begegnungen mit anderen Hunden entspannt bleiben', 'Brenzlige Situationen früh erkennen und vermeiden', 'Impulskontrolle von Anfang an aufbauen'],
+                desc: 'Aggression entwickelt sich oft schleichend. 6 Übungen damit dein Hund gelassen bleibt – bevor es eskaliert.'
             },
             'recall': {
                 icon: '📣',
-                name: 'Notfall-Toolkit: Rückruf',
-                exercises: '6 Sofort-Übungen',
-                benefits: ['Was tun wenn dein Hund einfach nicht zurückkommt', 'Der Notfall-Rückruf der immer funktioniert', 'Wie du Freilauf wieder möglich machst'],
-                desc: 'Was tun, wenn dein Hund dich komplett ignoriert und nicht zurückkommt – 6 Sofort-Übungen.'
+                name: 'Falls dein Hund nicht mehr hört',
+                exercises: '6 Vorsorge-Übungen',
+                benefits: ['Damit dein Hund zuverlässig zurückkommt wenn du rufst', 'Den Rückruf von Anfang an richtig aufbauen', 'Freilauf ohne Sorgen ermöglichen'],
+                desc: 'Viele Hunde hören irgendwann nicht mehr. 6 Übungen damit der Rückruf von Anfang an zuverlässig sitzt.'
             },
             'jumping': {
                 icon: '🐕',
-                name: 'Notfall-Toolkit: Anspringen',
-                exercises: '6 Sofort-Übungen',
-                benefits: ['Was tun wenn dein Hund jeden Besucher umwirft', 'Die Vier-Pfoten-Regel die sofort wirkt', 'Wie Gäste deinen Hund richtig begrüßen'],
-                desc: 'Was tun, wenn dein Hund jeden anspringt und nicht aufhört – 6 Sofort-Übungen für ruhige Begrüßungen.'
+                name: 'Falls dein Hund anfängt anzuspringen',
+                exercises: '6 Vorsorge-Übungen',
+                benefits: ['Damit dein Hund Besucher ruhig begrüßt', 'Die Vier-Pfoten-Regel von Anfang an lernen', 'Entspannte Begrüßungen statt Chaos'],
+                desc: 'Anspringen ist süß beim Welpen – aber nicht mehr beim großen Hund. 6 Übungen damit es gar nicht erst zur Gewohnheit wird.'
             },
             'energy': {
                 icon: '⚡',
-                name: 'Notfall-Toolkit: Hyperaktivität',
-                exercises: '6 Sofort-Übungen',
-                benefits: ['Was tun wenn dein Hund einfach nicht runterfährt', 'Ruheübungen die in 5 Minuten wirken', 'Mentale Auslastung statt endlosem Rennen'],
-                desc: 'Was tun, wenn dein Hund komplett aufgedreht ist und nicht zur Ruhe kommt – 6 Sofort-Übungen.'
+                name: 'Falls dein Hund nicht zur Ruhe kommt',
+                exercises: '6 Vorsorge-Übungen',
+                benefits: ['Damit dein Hund lernt sich zu entspannen', 'Ruheübungen bevor Unruhe zum Dauerzustand wird', 'Kopfarbeit für einen ausgeglichenen Hund'],
+                desc: 'Manche Hunde werden immer hibbeliger statt ruhiger. 6 Übungen damit dein Hund von Anfang an lernt, runterzufahren.'
             },
             'destructive': {
                 icon: '🧸',
-                name: 'Notfall-Toolkit: Zerstören',
-                exercises: '6 Sofort-Übungen',
-                benefits: ['Was tun wenn dein Hund alles kaputt macht', 'Sofort-Alternativen die funktionieren', 'Wie du dein Zuhause schützt ohne einzusperren'],
-                desc: 'Was tun, wenn dein Hund Möbel und Schuhe zerstört sobald du nicht hinschaust – 6 Sofort-Übungen.'
+                name: 'Falls dein Hund Sachen zerstört',
+                exercises: '6 Vorsorge-Übungen',
+                benefits: ['Damit Schuhe und Möbel heil bleiben', 'Die richtigen Alternativen von Anfang an anbieten', 'Zerstören vorbeugen statt hinterher schimpfen'],
+                desc: 'Zerstörte Schuhe, Kissen, Möbel – das muss nicht sein. 6 Übungen damit dein Hund gar nicht erst auf die Idee kommt.'
             },
             'mouthing': {
                 icon: '🦴',
-                name: 'Notfall-Toolkit: Aufnehmen',
-                exercises: '6 Sofort-Übungen',
-                benefits: ['Was tun wenn dein Hund draußen alles frisst', 'Das Aus-Kommando das sofort sitzt', 'Wie du gefährliches Fressen verhinderst'],
-                desc: 'Was tun, wenn dein Hund unterwegs alles ins Maul nimmt – 6 Sofort-Übungen gegen Aufnehmen.'
+                name: 'Falls dein Hund draußen alles frisst',
+                exercises: '6 Vorsorge-Übungen',
+                benefits: ['Damit dein Hund draußen nichts Gefährliches aufnimmt', 'Das Aus-Kommando von Anfang an üben', 'Giftköder-Schutz durch Vorbeugung'],
+                desc: 'Giftköder, Müll, tote Tiere – das kann gefährlich werden. 6 Übungen damit dein Hund lernt, nichts aufzunehmen.'
             }
         };
 
@@ -1017,7 +1017,7 @@
             const availableModules = allModules.filter(m => !allUserProblems.includes(m));
 
             if (availableModules.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:#666;padding:20px;">Du hast bereits alle Module!</p>';
+                container.innerHTML = '<p style="text-align:center;color:#666;padding:20px;">Du hast bereits alle Übungen!</p>';
                 return;
             }
 
@@ -1067,7 +1067,7 @@
                 html += '<div class="bundle-option" style="border-color: #E8E8E8; background: #FAFAFA;">' +
                     '<span class="bundle-badge" style="background: #666;">Mehr sparen</span>' +
                     '<div class="bundle-header">' +
-                        '<h3 class="bundle-title" style="font-size: 16px;">Oder: 2 Module im Bundle</h3>' +
+                        '<h3 class="bundle-title" style="font-size: 16px;">Oder: Beide zusammen im Sparpaket</h3>' +
                         '<p class="bundle-subtitle">' + recModule.name + ' + ' + secModule.name + '</p>' +
                     '</div>' +
                     '<div class="bundle-modules">' +
@@ -1233,20 +1233,20 @@
         // Dynamische Texte basierend auf Alter
         const ageContent = {
             'puppy': {
-                stat: '<strong>70% aller Welpen</strong> entwickeln später Verhaltensprobleme.',
-                header: 'Da ' + dogName + ' noch ein Welpe ist, kannst du jetzt vorbeugen:'
+                stat: '<strong>70% aller Welpen</strong> entwickeln später Verhaltensprobleme. Jetzt vorbeugen ist der beste Schutz.',
+                header: 'Damit ' + dogName + ' diese Probleme gar nicht erst entwickelt:'
             },
             'young': {
-                stat: '<strong>Junge Hunde lernen am schnellsten.</strong> Schlechte Gewohnheiten jetzt stoppen ist einfacher als später.',
-                header: 'Da ' + dogName + ' noch jung ist, ist jetzt der beste Zeitpunkt:'
+                stat: '<strong>Junge Hunde</strong> können schnell schlechte Gewohnheiten entwickeln. Jetzt vorbeugen ist einfacher als später korrigieren.',
+                header: 'Damit ' + dogName + ' diese Probleme gar nicht erst entwickelt:'
             },
             'adult': {
-                stat: '<strong>Auch erwachsene Hunde lernen dazu.</strong> Mit den richtigen Methoden siehst du schnell Fortschritte.',
-                header: 'Für ' + dogName + ' empfehlen wir:'
+                stat: '<strong>Auch bei erwachsenen Hunden</strong> können neue Probleme auftreten. Jetzt vorbeugen ist einfacher als später korrigieren.',
+                header: 'Sei vorbereitet – für den Fall, dass ' + dogName + ' das entwickelt:'
             },
             'senior': {
-                stat: '<strong>Alte Hunde, neue Tricks?</strong> Absolut! Sanftes Training funktioniert in jedem Alter.',
-                header: 'Speziell für ' + dogName + ' als älteren Hund:'
+                stat: '<strong>Auch ältere Hunde</strong> können plötzlich neue Verhaltensweisen zeigen. Besser vorbereitet sein.',
+                header: 'Sei vorbereitet – für den Fall, dass ' + dogName + ' das entwickelt:'
             }
         };
 
