@@ -1838,7 +1838,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </button>
 
         <div class="payment-logos">
-            <img src="sepa-logo.png" alt="SEPA">
             <img src="paypal-logo.png" alt="PayPal">
             <img src="visa-logo.png" alt="Visa">
             <img src="klarna-logo.png" alt="Klarna">
@@ -1846,8 +1845,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             <img src="applepay.png" alt="Apple Pay">
             <img src="googlepay.png" alt="Google Pay">
         </div>
+        <div style="text-align: center; font-size: 11px; color: #999; margin-top: 4px;">Per Überweisung zahlen? Wähle Klarna und dann deine Bank.</div>
 
-        <div class="testimonials-section">
+        <div class="testimonials-section" style="margin-top: 40px;">
             <div class="section-header">
                 <h2 class="section-title">Echte Erfolgsgeschichten</h2>
                 <p class="section-subtitle">mit unserem Trainingsplan</p>
@@ -2740,6 +2740,8 @@ if (popularBadge) {
             const emailDisplay = document.getElementById('checkoutEmailDisplay');
             if (emailHint && emailDisplay && userEmail) {
                 emailDisplay.textContent = userEmail;
+                const emailDogName = document.getElementById('checkoutEmailDogName');
+                if (emailDogName) emailDogName.textContent = dogName + 's';
                 emailHint.style.display = '';
             } else if (emailHint) {
                 emailHint.style.display = 'none';
@@ -2934,7 +2936,7 @@ if (popularBadge) {
                 </button>
 
                 <div id="checkoutEmailHint" style="text-align: center; font-size: 11px; color: #888; margin-top: 6px;">
-                    Dein Plan wird direkt an <strong id="checkoutEmailDisplay"></strong> gesendet
+                    <span id="checkoutEmailDogName">Dein</span> Plan wird direkt an <strong id="checkoutEmailDisplay"></strong> gesendet
                 </div>
 
                 <div class="payment-icons">
