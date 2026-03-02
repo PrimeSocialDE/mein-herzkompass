@@ -2752,14 +2752,24 @@ if (popularBadge) {
             document.getElementById('checkoutStep2').classList.add('active');
 
             document.getElementById('checkoutPopup').classList.add('active');
+            scrollYBeforePopup = window.scrollY;
+            document.body.style.position = 'fixed';
+            document.body.style.top = '-' + scrollYBeforePopup + 'px';
+            document.body.style.width = '100%';
             document.body.style.overflow = 'hidden';
 
             goToPaymentStep();
         }
 
+        let scrollYBeforePopup = 0;
+
         function closeCheckoutPopup() {
             document.getElementById('checkoutPopup').classList.remove('active');
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
             document.body.style.overflow = '';
+            window.scrollTo(0, scrollYBeforePopup);
             if (!sessionStorage.getItem('exitPopupShown')) {
                 setTimeout(() => { showExitPopup(); }, 300);
             }
@@ -2940,9 +2950,9 @@ if (popularBadge) {
                 </div>
 
                 <div class="payment-icons">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
+                    <img src="visa-logo.png" alt="Visa">
+                    <img src="mastercard-logo.png" alt="Mastercard">
+                    <img src="paypal-logo.png" alt="PayPal">
                     <img src="klarna-logo.png" alt="Klarna">
                     <img src="applepay.png" alt="Apple Pay">
                 </div>
