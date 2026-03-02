@@ -2729,10 +2729,20 @@ if (popularBadge) {
 
             userEmail = localStorage.getItem('userEmail') || '';
 
-            // Button-Text mit Hundename
-            const checkoutBtnText = document.getElementById('checkoutBtnText');
-            if (checkoutBtnText) {
-                checkoutBtnText.textContent = 'Training mit ' + dogName + ' starten';
+            // Button-Preis setzen
+            const checkoutBtnPrice = document.getElementById('checkoutBtnPrice');
+            if (checkoutBtnPrice) {
+                checkoutBtnPrice.textContent = '€' + price.toFixed(2).replace('.', ',');
+            }
+
+            // E-Mail-Hinweis anzeigen
+            const emailHint = document.getElementById('checkoutEmailHint');
+            const emailDisplay = document.getElementById('checkoutEmailDisplay');
+            if (emailHint && emailDisplay && userEmail) {
+                emailDisplay.textContent = userEmail;
+                emailHint.style.display = '';
+            } else if (emailHint) {
+                emailHint.style.display = 'none';
             }
 
             document.getElementById('checkoutStepEmail').classList.add('hidden');
@@ -2909,24 +2919,9 @@ if (popularBadge) {
                     </div>
                 </div>
 
-                <!-- Plan Hint Box -->
-                <div class="checkout-plan-hint" id="checkoutPlanHint" style="text-align: center; padding: 8px 12px; background: linear-gradient(135deg, #FFF9F0 0%, #FFF5E6 100%); border-radius: 8px; font-size: 12px; color: var(--dark-brown); margin-bottom: 6px; font-weight: 500;">
-                    ⭐ Ideales Tempo für dauerhafte Ergebnisse
+                <div style="text-align: center; padding: 8px 10px; background: #f0fdf4; border-radius: 8px; font-size: 12px; color: #166534; margin-bottom: 10px; font-weight: 600;">
+                    🛡️ 30 Tage Garantie · Einmalzahlung · Kein Abo
                 </div>
-
-                <div class="checkout-features-compact" style="margin-bottom: 6px;">
-                    <div class="checkout-feature-row">✓ <span id="checkoutExerciseCount">20+</span> gezielte Übungen <span id="checkoutDogProblem2" class="problem-highlight">gegen dein Problem</span></div>
-                    <div class="checkout-feature-row">✓ <span id="checkoutPlanBenefit">Klarer 12-Wochen-Fahrplan mit festen Phasen</span></div>
-                    <div class="checkout-feature-row">✓ Persönliche Hilfe, wenn du beim Training nicht weiterkommst</div>
-                </div>
-
-                <div class="checkout-guarantee-compact" style="margin-bottom: 6px;">🛡️ 30 Tage Geld-zurück-Garantie</div>
-
-                <div style="text-align: center; padding: 6px 10px; background: #f0fdf4; border-radius: 6px; font-size: 11px; color: #166534; margin-bottom: 10px; font-weight: 500;">
-                    ✓ Einmalzahlung – kein Abo · ✓ Lebenslanger Zugang
-                </div>
-
-                <h3 style="text-align: center; margin-bottom: 6px; font-size: 14px; color: #6B6B6B;">Zahlungsmethode wählen</h3>
 
                 <div class="checkout-error" id="checkoutError"></div>
 
@@ -2935,17 +2930,20 @@ if (popularBadge) {
                 </div>
 
                 <button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">
-                    🐕 <span id="checkoutBtnText">Training starten</span>
+                    Jetzt sicher bezahlen – <span id="checkoutBtnPrice">€39,99</span>
                 </button>
+
+                <div id="checkoutEmailHint" style="text-align: center; font-size: 11px; color: #888; margin-top: 6px;">
+                    Dein Plan wird direkt an <strong id="checkoutEmailDisplay"></strong> gesendet
+                </div>
 
                 <div class="payment-icons">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
                     <img src="klarna-logo.png" alt="Klarna">
+                    <img src="applepay.png" alt="Apple Pay">
                 </div>
-
-                <button class="checkout-back" onclick="closeCheckoutPopup()">Ich brauche noch einen Moment</button>
             </div>
         </div>
     </div>
