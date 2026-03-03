@@ -514,60 +514,46 @@ fbq('track', 'PageView');
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         document.getElementById('dogNameTitle').textContent = dogName;
 
-        // Load problem from localStorage
+        // Load problems from localStorage
         const dogProblem = localStorage.getItem('dogProblem') || '';
+        const dogBehaviors = (() => { try { return JSON.parse(localStorage.getItem('dogBehaviors') || '[]'); } catch(e) { return []; } })();
         const territorialAggression = localStorage.getItem('territorialAggression') || '';
-        
+
+        const problemMap = {
+            'pulling': 'Leinenziehen', 'barking': 'Übermäßiges Bellen', 'aggression': 'Aggression',
+            'anxiety': 'Trennungsangst', 'jumping': 'Anspringen', 'recall': 'Rückruf-Probleme',
+            'energy': 'Übermäßige Energie', 'destructive': 'Zerstörerisches Verhalten',
+            'soiling': 'Unsauberkeit', 'mouthing': 'Unerwünschtes Aufnehmen',
+            'visitor-anxiety': 'Angst bei Besuch', 'thunder-anxiety': 'Gewitterangst',
+            'noise-sensitivity': 'Geräuschempfindlichkeit', 'general-anxiety': 'Allgemeine Ängstlichkeit',
+            'stranger-anxiety': 'Angst vor Fremden', 'anxious-overreaction': 'Ängstliche Überreaktion',
+            'separation': 'Trennungsangst', 'chasing': 'Jagdverhalten',
+            'chasing-movement': 'Jagt Bewegungen', 'prey-drive': 'Starker Jagdtrieb',
+            'chasing-cars': 'Jagt Autos/Fahrräder', 'eating-unwanted': 'Frisst Unerwünschtes',
+            'eating-trash': 'Frisst aus dem Müll', 'eating-objects': 'Frisst Gegenstände',
+            'postman-reactive': 'Reaktiv auf Postboten', 'dog-reactive': 'Reaktiv auf andere Hunde',
+            'leash-reactive': 'Leinenreaktivität', 'overreaction': 'Überreaktion auf Reize',
+            'vocalization': 'Übermäßiges Lautgeben', 'resource-guarding': 'Ressourcenverteidigung',
+            'biting': 'Beißen/Schnappen', 'digging': 'Buddeln',
+            'marking': 'Markieren in der Wohnung', 'custom-other': 'Sonstiges Verhalten'
+        };
+
+        // Alle Probleme als Labels
+        const allProblemLabels = dogBehaviors.map(b => problemMap[b] || b).filter(Boolean);
         let problemText = 'Ungehorsam';
-        
+
         if (territorialAggression === 'yes') {
             problemText = 'Territoriale Aggression';
+        } else if (allProblemLabels.length >= 3) {
+            problemText = allProblemLabels[0] + ' & ' + (allProblemLabels.length - 1) + ' weitere Probleme';
+        } else if (allProblemLabels.length === 2) {
+            problemText = allProblemLabels[0] + ' & ' + allProblemLabels[1];
+        } else if (allProblemLabels.length === 1) {
+            problemText = allProblemLabels[0];
         } else if (dogProblem) {
-            const problemMap = {
-                // Standard
-                'pulling': 'Leinenziehen',
-                'barking': 'Übermäßiges Bellen',
-                'aggression': 'Aggression',
-                'anxiety': 'Trennungsangst',
-                'jumping': 'Anspringen',
-                'recall': 'Rückruf-Probleme',
-                'energy': 'Übermäßige Energie',
-                'destructive': 'Zerstörerisches Verhalten',
-                'soiling': 'Unsauberkeit',
-                'mouthing': 'Unerwünschtes Aufnehmen',
-                // Custom Angst
-                'visitor-anxiety': 'Angst bei Besuch',
-                'thunder-anxiety': 'Gewitterangst',
-                'noise-sensitivity': 'Geräuschempfindlichkeit',
-                'general-anxiety': 'Allgemeine Ängstlichkeit',
-                'stranger-anxiety': 'Angst vor Fremden',
-                'anxious-overreaction': 'Ängstliche Überreaktion',
-                'separation': 'Trennungsangst',
-                // Custom Jagd
-                'chasing': 'Jagdverhalten',
-                'chasing-movement': 'Jagt Bewegungen',
-                'prey-drive': 'Starker Jagdtrieb',
-                'chasing-cars': 'Jagt Autos/Fahrräder',
-                // Custom Fressen
-                'eating-unwanted': 'Frisst Unerwünschtes',
-                'eating-trash': 'Frisst aus dem Müll',
-                'eating-objects': 'Frisst Gegenstände',
-                // Custom Reaktivität
-                'postman-reactive': 'Reaktiv auf Postboten',
-                'dog-reactive': 'Reaktiv auf andere Hunde',
-                'leash-reactive': 'Leinenreaktivität',
-                'overreaction': 'Überreaktion auf Reize',
-                // Custom Sonstiges
-                'vocalization': 'Übermäßiges Lautgeben',
-                'resource-guarding': 'Ressourcenverteidigung',
-                'biting': 'Beißen/Schnappen',
-                'digging': 'Buddeln',
-                'marking': 'Markieren in der Wohnung',
-                'custom-other': 'Sonstiges Verhalten'
-            };
             problemText = problemMap[dogProblem] || dogProblem;
         }
-        
+
         document.getElementById('problemText').textContent = problemText;
 
         // Calculate target date (30 days from now)
@@ -590,7 +576,7 @@ fbq('track', 'PageView');
             ipadTitle.textContent = 'Trainingsplan für ' + dogName;
         }
 
-        // Fokus-Label
+        // Fokus-Label (Multi-Problem)
         const focusLabels = {
             'pulling': 'Leinenführigkeit', 'barking': 'Bellverhalten', 'aggression': 'Aggressionsabbau',
             'anxiety': 'Trennungsangst', 'jumping': 'Begrüßungstraining', 'recall': 'Rückruf',
@@ -599,7 +585,16 @@ fbq('track', 'PageView');
             'dog-reactive': 'Hundebegegnungen', 'leash-reactive': 'Leinentraining',
             'resource-guarding': 'Ressourcen-Training', 'biting': 'Beißhemmung'
         };
-        document.getElementById('ipadPlanFocus').textContent = 'Fokus: ' + (focusLabels[dogProblem] || 'Verhaltenskorrektur');
+        const allFocusLabels = dogBehaviors.map(b => focusLabels[b]).filter(Boolean);
+        let focusText;
+        if (allFocusLabels.length >= 3) {
+            focusText = allFocusLabels[0] + ', ' + allFocusLabels[1] + ' & mehr';
+        } else if (allFocusLabels.length === 2) {
+            focusText = allFocusLabels[0] + ' & ' + allFocusLabels[1];
+        } else {
+            focusText = focusLabels[dogProblem] || 'Verhaltenskorrektur';
+        }
+        document.getElementById('ipadPlanFocus').textContent = 'Fokus: ' + focusText;
 
         // Dynamische Value-Items aus Quiz-Daten
         const trainingTime = localStorage.getItem('trainingTime') || '10';
