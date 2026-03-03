@@ -605,11 +605,10 @@ fbq('track', 'PageView');
         const ageLabel = ageLabels[dogAge] || 'Hund';
 
         // Breed + Age Zeile
-        let breedAgeText = 'Abgestimmt auf deinen ' + ageLabel;
-        let breedAgeDesc = 'Alter & Entwicklungsstand berücksichtigt';
+        let breedAgeText = 'Abgestimmt auf ' + dogName;
+        let breedAgeDesc = ageLabel.charAt(0).toUpperCase() + ageLabel.slice(1) + ' · Alter berücksichtigt';
         if (dogBreed && dogBreed !== 'Andere Rasse') {
-            breedAgeText = 'Abgestimmt auf ' + dogBreed;
-            breedAgeDesc = ageLabel.charAt(0).toUpperCase() + ageLabel.slice(1) + ' · Alter & Rasse berücksichtigt';
+            breedAgeDesc = dogBreed + ' · ' + ageLabel.charAt(0).toUpperCase() + ageLabel.slice(1) + ' · Alter & Rasse berücksichtigt';
         }
 
         // Kommandos-Zeile: nur fehlende Kommandos anzeigen
