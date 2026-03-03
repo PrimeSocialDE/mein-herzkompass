@@ -106,188 +106,129 @@
             margin-bottom: 30px;
         }
 
-        /* Chart Container */
-        .chart-container {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            padding: 25px 20px;
+        /* iPad Frame */
+        .ipad-frame {
+            background: #1a1a1a;
+            border-radius: 24px;
+            padding: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: ipadIn 0.5s ease 0.3s forwards;
         }
+        @keyframes ipadIn { to { opacity: 1; transform: translateY(0); } }
 
-        /* Legend */
-        .chart-legend {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin-bottom: 20px;
+        .ipad-screen {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
         }
-
-        .legend-item {
+        .ipad-header {
+            background: linear-gradient(180deg, #F8F8F8, #F0F0F0);
+            padding: 8px 14px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .legend-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .legend-dot.plan {
-            background: linear-gradient(135deg, #4CAF50, #81C784);
-        }
-
-        .legend-dot.selbst {
-            background: linear-gradient(135deg, #E57373, #FFAB91);
-        }
-
-        .legend-text.plan {
-            color: var(--accent-green);
-        }
-
-        .legend-text.selbst {
-            color: var(--accent-red);
-        }
-
-        .chart-wrapper {
-            position: relative;
-            height: 250px;
-            margin-bottom: 15px;
-        }
-
-        .y-axis {
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 30px;
-            width: 25px;
-            display: flex;
-            flex-direction: column;
             justify-content: space-between;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-light);
+            border-bottom: 1px solid #E0E0E0;
         }
+        .ipad-dots { display: flex; gap: 5px; }
+        .ipad-dot { width: 7px; height: 7px; border-radius: 50%; }
+        .ipad-title { font-size: 11px; color: #999; font-weight: 500; }
 
-        .chart-area {
-            position: absolute;
-            left: 35px;
-            right: 0;
-            top: 0;
-            bottom: 30px;
+        .ipad-body { padding: 18px; }
+
+        .ipad-plan-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 16px; padding-bottom: 12px;
+            border-bottom: 2px solid #F0F0F0;
         }
-
-        .grid-line {
-            position: absolute;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: var(--border-light);
-        }
-
-        .chart-svg {
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            overflow: visible;
-        }
-
-        .x-axis {
-            position: absolute;
-            left: 35px;
-            right: 0;
-            bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-light);
-            text-transform: uppercase;
-        }
-
-        .end-badge {
-            position: absolute;
-            right: 0;
-            top: 0;
-            background: rgba(76, 175, 80, 0.15);
-            border-radius: 8px;
-            padding: 6px 12px;
-            opacity: 0;
-            transform: scale(0.8);
-        }
-
-        .end-badge-text {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--accent-green);
-        }
-
-        .chart-note {
-            font-size: 13px;
-            color: var(--text-light);
-            font-style: italic;
-            text-align: center;
-        }
-
-        /* Benefits Section */
-        .benefits-section {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            padding: 30px 20px;
-            margin-bottom: 20px;
-        }
-
-        .benefits-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 20px;
-        }
-
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .benefit-box {
-            background: var(--background);
+        .ipad-plan-logo {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
             border-radius: 10px;
-            padding: 18px 15px;
-            text-align: center;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+        .ipad-plan-title { font-size: 14px; font-weight: 700; color: var(--text-dark); }
+        .ipad-plan-subtitle { font-size: 11px; color: var(--warm-brown); font-weight: 500; }
+
+        /* Chart Phase */
+        .ipad-chart {
+            transition: opacity 0.4s ease;
+        }
+        .ipad-chart.hidden { opacity: 0; display: none; }
+        .ipad-chart-title {
+            font-size: 12px; font-weight: 600; color: var(--text-dark);
+            margin-bottom: 14px; text-align: center;
+        }
+        .ipad-chart-bars { display: flex; align-items: flex-end; justify-content: center; gap: 12px; height: 120px; margin-bottom: 12px; }
+        .ipad-bar-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .ipad-bar-pair { display: flex; gap: 4px; align-items: flex-end; height: 100px; }
+        .ipad-bar {
+            width: 18px; border-radius: 4px 4px 0 0;
+            transition: height 1s ease;
+        }
+        .ipad-bar.plan { background: linear-gradient(180deg, var(--warm-brown), var(--light-brown)); }
+        .ipad-bar.selbst { background: #E0E0E0; }
+        .ipad-bar-label { font-size: 9px; color: var(--text-light); }
+        .ipad-chart-legend {
+            display: flex; justify-content: center; gap: 16px; font-size: 10px; color: var(--text-medium);
+        }
+        .ipad-legend-dot {
+            width: 8px; height: 8px; border-radius: 2px; display: inline-block; margin-right: 4px; vertical-align: middle;
         }
 
-        .benefit-icon {
-            font-size: 28px;
-            margin-bottom: 10px;
+        /* Value-Items */
+        .ipad-weeks { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .ipad-week {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; background: #FAFAFA; border-radius: 8px;
+            opacity: 0; transform: translateX(-8px);
         }
+        .ipad-week.show { animation: weekIn 0.3s ease forwards; }
+        @keyframes weekIn { to { opacity: 1; transform: translateX(0); } }
 
-        .benefit-box-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 4px;
+        .ipad-week-icon {
+            width: 24px; height: 24px;
+            background: #E8F5E9; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent-green); font-size: 13px; flex-shrink: 0;
         }
+        .ipad-week-text { font-size: 13px; color: var(--text-dark); font-weight: 600; }
+        .ipad-week-desc { font-size: 11px; color: var(--text-medium); }
 
-        .benefit-box-text {
-            font-size: 12px;
-            color: var(--text-medium);
-            line-height: 1.4;
+        /* Stats */
+        .ipad-stats {
+            display: flex; justify-content: space-around;
+            padding-top: 14px; border-top: 1px solid #F0F0F0;
         }
+        .ipad-stat { text-align: center; }
+        .ipad-stat-num { font-size: 20px; font-weight: 800; color: var(--warm-brown); }
+        .ipad-stat-label { font-size: 10px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .benefits-note {
-            font-size: 13px;
-            color: var(--text-medium);
-            line-height: 1.6;
-            text-align: center;
-            padding-top: 15px;
-            border-top: 1px solid var(--border-light);
+        /* Progress */
+        .plan-progress {
+            background: var(--white); border-radius: var(--border-radius);
+            padding: 16px 20px; margin-bottom: 20px;
+        }
+        .plan-progress-header {
+            display: flex; justify-content: space-between;
+            font-size: 14px; font-weight: 600; color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        .plan-progress-pct { color: var(--warm-brown); }
+        .plan-progress-bar {
+            height: 8px; background: var(--border-light);
+            border-radius: 4px; overflow: hidden;
+        }
+        .plan-progress-fill {
+            height: 100%; width: 0%;
+            background: linear-gradient(90deg, var(--warm-brown), var(--light-brown));
+            border-radius: 4px; transition: width 0.1s ease;
+        }
+        .plan-progress-status {
+            margin-top: 8px; font-size: 13px; color: var(--text-medium);
         }
 
         /* Team Section */
@@ -399,10 +340,6 @@
                 font-size: 22px;
             }
 
-            .chart-wrapper {
-                height: 220px;
-            }
-
             .team-stats {
                 gap: 20px;
             }
@@ -449,132 +386,97 @@ fbq('track', 'PageView');
         <p class="page-subtitle">Mit dem Plan, den wir für <strong id="dogNameTitle">deinen Hund</strong> erstellen, lässt sich <span class="problem-highlight" id="problemText">das Problem</span> innerhalb der nächsten 30 Tage lösen.</p>
         <p class="target-date" id="targetDate">20. Januar 2026</p>
 
-        <!-- Chart mit Vergleich -->
-        <div class="chart-container">
-            <!-- Legend -->
-            <div class="chart-legend">
-                <div class="legend-item">
-                    <div class="legend-dot plan"></div>
-                    <span class="legend-text plan">Mit Pfoten-Plan</span>
+        <!-- iPad Plan Preview -->
+        <div class="ipad-frame">
+            <div class="ipad-screen">
+                <div class="ipad-header">
+                    <div class="ipad-dots">
+                        <div class="ipad-dot" style="background:#FF5F57;"></div>
+                        <div class="ipad-dot" style="background:#FFBD2E;"></div>
+                        <div class="ipad-dot" style="background:#28CA41;"></div>
+                    </div>
+                    <div class="ipad-title">Trainingsplan.pdf</div>
+                    <div style="width:40px;"></div>
                 </div>
-                <div class="legend-item">
-                    <div class="legend-dot selbst"></div>
-                    <span class="legend-text selbst">Ohne Plan</span>
-                </div>
-            </div>
+                <div class="ipad-body">
+                    <div class="ipad-plan-header">
+                        <div class="ipad-plan-logo">🐕</div>
+                        <div>
+                            <div class="ipad-plan-title" id="ipadPlanTitle">Trainingsplan</div>
+                            <div class="ipad-plan-subtitle" id="ipadPlanFocus">Fokus: Verhaltenskorrektur</div>
+                        </div>
+                    </div>
 
-            <div class="chart-wrapper">
-                <!-- Y-Axis -->
-                <div class="y-axis">
-                    <span>10</span>
-                    <span>8</span>
-                    <span>6</span>
-                    <span>4</span>
-                </div>
+                    <!-- Phase 1: Chart -->
+                    <div class="ipad-chart" id="ipadChart">
+                        <div class="ipad-chart-title">Fortschritt: Mit Plan vs. Ohne Plan</div>
+                        <div class="ipad-chart-bars">
+                            <div class="ipad-bar-group">
+                                <div class="ipad-bar-pair">
+                                    <div class="ipad-bar plan" id="bar-plan-1" style="height:0"></div>
+                                    <div class="ipad-bar selbst" id="bar-selbst-1" style="height:0"></div>
+                                </div>
+                                <div class="ipad-bar-label">Woche 1</div>
+                            </div>
+                            <div class="ipad-bar-group">
+                                <div class="ipad-bar-pair">
+                                    <div class="ipad-bar plan" id="bar-plan-2" style="height:0"></div>
+                                    <div class="ipad-bar selbst" id="bar-selbst-2" style="height:0"></div>
+                                </div>
+                                <div class="ipad-bar-label">Woche 2</div>
+                            </div>
+                            <div class="ipad-bar-group">
+                                <div class="ipad-bar-pair">
+                                    <div class="ipad-bar plan" id="bar-plan-3" style="height:0"></div>
+                                    <div class="ipad-bar selbst" id="bar-selbst-3" style="height:0"></div>
+                                </div>
+                                <div class="ipad-bar-label">Woche 3</div>
+                            </div>
+                            <div class="ipad-bar-group">
+                                <div class="ipad-bar-pair">
+                                    <div class="ipad-bar plan" id="bar-plan-4" style="height:0"></div>
+                                    <div class="ipad-bar selbst" id="bar-selbst-4" style="height:0"></div>
+                                </div>
+                                <div class="ipad-bar-label">Woche 4</div>
+                            </div>
+                        </div>
+                        <div class="ipad-chart-legend">
+                            <span><span class="ipad-legend-dot" style="background:var(--warm-brown);"></span>Mit Plan</span>
+                            <span><span class="ipad-legend-dot" style="background:#E0E0E0;"></span>Ohne Plan</span>
+                        </div>
+                    </div>
 
-                <!-- Chart Area -->
-                <div class="chart-area">
-                    <!-- Grid Lines -->
-                    <div class="grid-line" style="top: 0%;"></div>
-                    <div class="grid-line" style="top: 33.3%;"></div>
-                    <div class="grid-line" style="top: 66.6%;"></div>
-                    <div class="grid-line" style="top: 100%;"></div>
+                    <!-- Phase 2: Value Items -->
+                    <div class="ipad-weeks" id="ipadWeeks" style="display:none;"></div>
 
-                    <!-- SVG Chart -->
-                    <svg class="chart-svg" viewBox="0 0 400 200" preserveAspectRatio="none" id="chartSvg">
-                        <defs>
-                            <!-- Gradient für Plan-Linie (grün) -->
-                            <linearGradient id="lineGradientPlan" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" style="stop-color:#81C784"/>
-                                <stop offset="100%" style="stop-color:#4CAF50"/>
-                            </linearGradient>
-                            <!-- Gradient für Selbst-Linie (rot/orange) -->
-                            <linearGradient id="lineGradientSelbst" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" style="stop-color:#FFAB91"/>
-                                <stop offset="100%" style="stop-color:#E57373"/>
-                            </linearGradient>
-                            <!-- Area Gradient Plan -->
-                            <linearGradient id="areaGradientPlan" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:0.2"/>
-                                <stop offset="100%" style="stop-color:#4CAF50;stop-opacity:0"/>
-                            </linearGradient>
-                        </defs>
-                        
-                        <!-- Selbst-Linie (schlechter Verlauf - zuerst, damit Plan darüber liegt) -->
-                        <path id="linePathSelbst" 
-                              fill="none"
-                              stroke="url(#lineGradientSelbst)"
-                              stroke-width="4"
-                              stroke-linecap="round"
-                              stroke-dasharray="8,6"
-                              d="M0,160 Q80,155 160,145 Q240,135 320,130 Q360,128 400,125"
-                              opacity="0"/>
-                        
-                        <!-- Area Fill Plan -->
-                        <path id="areaPath" fill="url(#areaGradientPlan)" d="M0,160 Q100,130 200,70 T400,10 L400,200 L0,200 Z" opacity="0"/>
-                        
-                        <!-- Plan-Linie (guter Verlauf) -->
-                        <path id="linePath" 
-                              fill="none"
-                              stroke="url(#lineGradientPlan)"
-                              stroke-width="5"
-                              stroke-linecap="round"
-                              d="M0,160 Q100,130 200,70 T400,10"/>
-                        
-                        <!-- Start Circle -->
-                        <circle id="startCircle" cx="0" cy="160" r="10" fill="#FFFFFF" stroke="#81C784" stroke-width="3" opacity="0"/>
-                        
-                        <!-- End Circle Plan -->
-                        <circle id="endCirclePlan" cx="400" cy="10" r="10" fill="#FFFFFF" stroke="#4CAF50" stroke-width="3" opacity="0"/>
-                        
-                        <!-- End Circle Selbst -->
-                        <circle id="endCircleSelbst" cx="400" cy="125" r="8" fill="#FFFFFF" stroke="#E57373" stroke-width="3" opacity="0"/>
-                    </svg>
-
-                    <!-- End Badge -->
-                    <div class="end-badge" id="endBadge">
-                        <span class="end-badge-text">✓ Ziel erreicht!</span>
+                    <div class="ipad-stats">
+                        <div class="ipad-stat">
+                            <div class="ipad-stat-num">20+</div>
+                            <div class="ipad-stat-label">Übungen</div>
+                        </div>
+                        <div class="ipad-stat">
+                            <div class="ipad-stat-num">4+</div>
+                            <div class="ipad-stat-label">Wochen</div>
+                        </div>
+                        <div class="ipad-stat">
+                            <div class="ipad-stat-num">✓</div>
+                            <div class="ipad-stat-label">Support</div>
+                        </div>
                     </div>
                 </div>
-
-                <!-- X-Axis -->
-                <div class="x-axis">
-                    <span>Jetzt</span>
-                    <span>Woche 1</span>
-                    <span>Woche 2</span>
-                    <span>Tag 30</span>
-                </div>
             </div>
-
-            <p class="chart-note">Vergleich: Strukturierter Plan vs. Selbstversuche</p>
         </div>
 
-        <!-- Benefits Section -->
-        <div class="benefits-section">
-            <h2 class="benefits-title">Das erhältst du:</h2>
-            <div class="benefits-grid">
-                <div class="benefit-box">
-                    <div class="benefit-icon">📋</div>
-                    <div class="benefit-box-title">Persönlicher Plan</div>
-                    <div class="benefit-box-text">Auf deinen Hund zugeschnitten</div>
-                </div>
-                <div class="benefit-box">
-                    <div class="benefit-icon">🎯</div>
-                    <div class="benefit-box-title">Klare Struktur</div>
-                    <div class="benefit-box-text">Du weißt, was als Nächstes kommt</div>
-                </div>
-                <div class="benefit-box">
-                    <div class="benefit-icon">💪</div>
-                    <div class="benefit-box-title">Über 20 Übungen</div>
-                    <div class="benefit-box-text">Für verschiedene Situationen</div>
-                </div>
-                <div class="benefit-box">
-                    <div class="benefit-icon">⏱️</div>
-                    <div class="benefit-box-title">Alltagstauglich</div>
-                    <div class="benefit-box-text">Passt in euren Alltag</div>
-                </div>
+        <!-- Progress -->
+        <div class="plan-progress">
+            <div class="plan-progress-header">
+                <span>Plan-Erstellung</span>
+                <span class="plan-progress-pct" id="planProgressPct">0%</span>
             </div>
-            <p class="benefits-note">Training braucht Zeit und Geduld. Unser Plan hilft dir dabei, dranzubleiben – mit kleinen Schritten, die sich gut anfühlen. Für dich und für deinen Hund.</p>
+            <div class="plan-progress-bar">
+                <div class="plan-progress-fill" id="planProgressFill"></div>
+            </div>
+            <div class="plan-progress-status" id="planProgressStatus">Verarbeite deine Angaben...</div>
         </div>
 
         <!-- Team Section -->
@@ -605,7 +507,7 @@ fbq('track', 'PageView');
         </div>
     </div>
 
-    <a href="laden.html" class="continue-button">Weiter zu deinem Plan →</a>
+    <a href="laden.html" class="continue-button" id="continueBtn" style="opacity:0.4; pointer-events:none;">Weiter zu deinem Plan →</a>
 
     <script>
         // Load dog name
@@ -679,68 +581,144 @@ fbq('track', 'PageView');
         document.getElementById('targetDate').textContent = 
             targetDate.getDate() + '. ' + months[targetDate.getMonth()] + ' ' + targetDate.getFullYear();
 
-        // Animation beim Laden der Seite
-        window.addEventListener('load', function() {
-            const linePath = document.getElementById('linePath');
-            const linePathSelbst = document.getElementById('linePathSelbst');
-            const areaPath = document.getElementById('areaPath');
-            const startCircle = document.getElementById('startCircle');
-            const endCirclePlan = document.getElementById('endCirclePlan');
-            const endCircleSelbst = document.getElementById('endCircleSelbst');
-            const endBadge = document.getElementById('endBadge');
+        // iPad: Plan-Titel personalisieren
+        const dogBreed = localStorage.getItem('dogBreed') || '';
+        const ipadTitle = document.getElementById('ipadPlanTitle');
+        if (dogBreed && dogBreed !== 'Andere Rasse') {
+            ipadTitle.textContent = 'Trainingsplan für ' + dogBreed;
+        } else {
+            ipadTitle.textContent = 'Trainingsplan für ' + dogName;
+        }
 
-            // Line Length berechnen
-            const lineLength = linePath.getTotalLength();
-            const lineLengthSelbst = linePathSelbst.getTotalLength();
+        // Fokus-Label
+        const focusLabels = {
+            'pulling': 'Leinenführigkeit', 'barking': 'Bellverhalten', 'aggression': 'Aggressionsabbau',
+            'anxiety': 'Trennungsangst', 'jumping': 'Begrüßungstraining', 'recall': 'Rückruf',
+            'energy': 'Ruhe & Kontrolle', 'destructive': 'Impulskontrolle', 'soiling': 'Stubenreinheit',
+            'mouthing': 'Impulskontrolle', 'separation': 'Alleinebleiben', 'chasing': 'Jagdkontrolle',
+            'dog-reactive': 'Hundebegegnungen', 'leash-reactive': 'Leinentraining',
+            'resource-guarding': 'Ressourcen-Training', 'biting': 'Beißhemmung'
+        };
+        document.getElementById('ipadPlanFocus').textContent = 'Fokus: ' + (focusLabels[dogProblem] || 'Verhaltenskorrektur');
 
-            // Lines verstecken
-            linePath.style.strokeDasharray = lineLength;
-            linePath.style.strokeDashoffset = lineLength;
-            linePathSelbst.style.strokeDasharray = lineLengthSelbst;
-            linePathSelbst.style.strokeDashoffset = lineLengthSelbst;
+        // Dynamische Value-Items aus Quiz-Daten
+        const trainingTime = localStorage.getItem('trainingTime') || '10';
+        const dogAge = localStorage.getItem('dogAge') || '';
+        const dogCommands = (() => { try { return JSON.parse(localStorage.getItem('dogCommands') || '[]'); } catch(e) { return []; } })();
 
-            // 1. Start-Kreis einblenden
-            setTimeout(() => {
-                startCircle.style.transition = 'opacity 0.3s ease-out';
-                startCircle.style.opacity = '1';
-            }, 300);
+        const ageLabels = { 'puppy': 'Welpen', 'young': 'Junghund', 'adult': 'erwachsenen Hund', 'senior': 'Senior' };
+        const ageLabel = ageLabels[dogAge] || 'Hund';
 
-            // 2. Beide Linien gleichzeitig zeichnen
-            setTimeout(() => {
-                // Selbst-Linie einblenden
-                linePathSelbst.style.transition = 'stroke-dashoffset 2.5s ease-out, opacity 0.3s';
-                linePathSelbst.style.opacity = '1';
-                linePathSelbst.style.strokeDashoffset = '0';
-                
-                // Plan-Linie zeichnen
-                linePath.style.transition = 'stroke-dashoffset 2s ease-out';
-                linePath.style.strokeDashoffset = '0';
-            }, 600);
+        // Breed + Age Zeile
+        let breedAgeText = 'Abgestimmt auf deinen ' + ageLabel;
+        let breedAgeDesc = 'Alter & Entwicklungsstand berücksichtigt';
+        if (dogBreed && dogBreed !== 'Andere Rasse') {
+            breedAgeText = 'Abgestimmt auf ' + dogBreed;
+            breedAgeDesc = ageLabel.charAt(0).toUpperCase() + ageLabel.slice(1) + ' · Alter & Rasse berücksichtigt';
+        }
 
-            // 3. End-Kreise einblenden
-            setTimeout(() => {
-                endCircleSelbst.style.transition = 'opacity 0.3s ease-out';
-                endCircleSelbst.style.opacity = '1';
-            }, 2200);
+        // Kommandos-Zeile: nur fehlende Kommandos anzeigen
+        const cmdLabels = {
+            'name': 'Name', 'come': 'Komm', 'sit': 'Sitz', 'place': 'Platz',
+            'stay': 'Bleib', 'heel': 'Fuß', 'down': 'Leg dich', 'wait': 'Warte',
+            'paw': 'Pfote', 'leave': 'Lass es', 'stop': 'Stopp'
+        };
+        const allCmdKeys = Object.keys(cmdLabels);
+        const knownSet = new Set(dogCommands);
+        const missingCmds = allCmdKeys.filter(k => !knownSet.has(k));
+        const missingLabels = missingCmds.map(k => cmdLabels[k]);
 
-            setTimeout(() => {
-                endCirclePlan.style.transition = 'opacity 0.3s ease-out';
-                endCirclePlan.style.opacity = '1';
-            }, 2400);
+        let cmdText, cmdDesc;
+        if (knownSet.has('none') || missingCmds.length === allCmdKeys.length) {
+            cmdText = 'Grundkommandos von Null aufbauen';
+            cmdDesc = missingLabels.slice(0, 5).join(', ') + ' & mehr';
+        } else if (missingCmds.length === 0) {
+            cmdText = 'Alle Kommandos bekannt – Feinschliff inklusive';
+            cmdDesc = 'Wir vertiefen & festigen das Gelernte';
+        } else {
+            cmdText = missingCmds.length + ' neue Kommandos lernen';
+            cmdDesc = missingLabels.slice(0, 4).join(', ') + (missingCmds.length > 4 ? ' & mehr' : '');
+        }
 
-            // 4. Fläche einblenden
-            setTimeout(() => {
-                areaPath.style.transition = 'opacity 0.6s ease-out';
-                areaPath.style.opacity = '1';
-            }, 2500);
+        const valueItems = [
+            { text: '20 Übungen gegen ' + problemText, desc: 'Schritt für Schritt aufgebaut · ' + trainingTime + ' Min. pro Tag' },
+            { text: breedAgeText, desc: breedAgeDesc },
+            { text: 'Nur ' + trainingTime + ' Min. am Tag nötig', desc: 'Kurze Einheiten, die in jeden Alltag passen' },
+            { text: cmdText, desc: cmdDesc },
+            { text: '24/7 Trainer-Hilfe inklusive', desc: 'Bei Fragen, Schwierigkeiten oder speziellen Situationen' }
+        ];
 
-            // 5. End-Badge einblenden
-            setTimeout(() => {
-                endBadge.style.transition = 'opacity 0.4s ease-out, transform 0.4s ease-out';
-                endBadge.style.opacity = '1';
-                endBadge.style.transform = 'scale(1)';
-            }, 2800);
+        // Value-Items vorbereiten (noch nicht sichtbar)
+        const ipadWeeks = document.getElementById('ipadWeeks');
+        valueItems.forEach((item) => {
+            const el = document.createElement('div');
+            el.className = 'ipad-week';
+            el.innerHTML = `<div class="ipad-week-icon">✓</div><div><div class="ipad-week-text">${item.text}</div><div class="ipad-week-desc">${item.desc}</div></div>`;
+            ipadWeeks.appendChild(el);
         });
+
+        // === PHASE 1: Chart animieren ===
+        const planHeights = [30, 55, 78, 95]; // % – steigend
+        const selbstHeights = [20, 22, 18, 15]; // % – stagniert/sinkt
+
+        setTimeout(() => {
+            for (let i = 1; i <= 4; i++) {
+                const planBar = document.getElementById('bar-plan-' + i);
+                const selbstBar = document.getElementById('bar-selbst-' + i);
+                setTimeout(() => {
+                    planBar.style.height = planHeights[i-1] + 'px';
+                    selbstBar.style.height = selbstHeights[i-1] + 'px';
+                }, (i - 1) * 400);
+            }
+        }, 600);
+
+        // === PHASE 2: Nach 4.5s Switch zu Value-Items ===
+        setTimeout(() => {
+            const chart = document.getElementById('ipadChart');
+            chart.style.opacity = '0';
+            setTimeout(() => {
+                chart.style.display = 'none';
+                ipadWeeks.style.display = 'flex';
+                // Value-Items nacheinander einblenden
+                const items = ipadWeeks.querySelectorAll('.ipad-week');
+                items.forEach((el, i) => {
+                    setTimeout(() => el.classList.add('show'), i * 250);
+                });
+                // Button aktivieren nach letztem Item
+                setTimeout(() => {
+                    const btn = document.getElementById('continueBtn');
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                    btn.style.transition = 'opacity 0.4s ease';
+                }, items.length * 250 + 200);
+            }, 400);
+        }, 4500);
+
+        // Progress Animation auf 95%
+        const pFill = document.getElementById('planProgressFill');
+        const pPct = document.getElementById('planProgressPct');
+        const pStatus = document.getElementById('planProgressStatus');
+        let prog = 0;
+        const statusMsgs = [
+            { at: 0, text: 'Verarbeite deine Angaben...' },
+            { at: 25, text: 'Analysiere Fortschrittsprognose...' },
+            { at: 50, text: 'Erstelle Übungen für ' + problemText + '...' },
+            { at: 75, text: 'Personalisierung abschließen...' },
+            { at: 90, text: 'Fast fertig...' }
+        ];
+        function animProg() {
+            if (prog < 95) {
+                prog++;
+                pFill.style.width = prog + '%';
+                pPct.textContent = prog + '%';
+                const msg = statusMsgs.filter(s => s.at <= prog).pop();
+                if (msg) pStatus.textContent = msg.text;
+                setTimeout(animProg, 40);
+            } else {
+                pStatus.innerHTML = '<span style="color: var(--warm-brown);">✓</span> Plan zu 95% fertig – fehlt nur noch der letzte Schritt';
+            }
+        }
+        setTimeout(animProg, 500);
     </script>
 </body>
 </html>
