@@ -861,7 +861,7 @@
                         <h3 id="paymentModuleName">Falls dein Hund nicht alleine bleiben kann</h3>
                         <p>8 Übungen • 2 Wochen</p>
                     </div>
-                    <div class="payment-product-price">€14,99</div>
+                    <div class="payment-product-price">€19,99</div>
                 </div>
 
                 <!-- Modul Benefits -->
@@ -896,8 +896,7 @@
         
         const dogName = localStorage.getItem('dogName') || 'Luna';
         const dogAge = localStorage.getItem('dogAge') || 'puppy';
-        const dogBreed = localStorage.getItem('dogBreed') || '';
-
+        
         // leadId aus URL oder localStorage
         const urlParamsInit = new URLSearchParams(window.location.search);
         const leadId = urlParamsInit.get('lead_id') || localStorage.getItem('leadId') || '';
@@ -914,81 +913,67 @@
         let currentModule = null;
         let clientSecret = null;
 
-        // Ernährungsguide Daten
-        const nutritionGuide = {
-            icon: '🥗',
-            name: 'Ernährungsguide für ' + dogName,
-            exercises: 'Futterplan + Rezepte',
-            benefits: [
-                'Futterplan abgestimmt auf ' + (dogBreed && dogBreed !== 'Andere Rasse' ? dogBreed : dogName),
-                'Beruhigende Lebensmittel die das Training beschleunigen',
-                'Rezepte: Gesunde Hundekekse zum Selbermachen',
-                'Fütterungszeiten abgestimmt auf den Trainingsplan'
-            ],
-            desc: 'Die richtige Ernährung beeinflusst Verhalten, Energie und Trainierbarkeit. Dieser Guide zeigt dir genau, was du füttern solltest – abgestimmt auf ' + dogName + '.'
-        };
-
         // Modul-Daten mit Benefits
         const moduleData = {
             'anxiety': {
                 icon: '😰',
-                name: 'Falls dein Hund Trennungsangst entwickelt',
+                name: 'Falls dein Hund nicht alleine bleiben kann',
                 exercises: '6 Vorsorge-Übungen',
                 benefits: ['Damit dein Hund entspannt bleibt wenn du gehst', 'Abschiedsrituale die von Anfang an wirken', 'Ruhe-Signale bevor Panik entsteht'],
                 desc: 'Viele Hunde entwickeln Probleme beim Alleinsein. Mit diesen 6 Übungen sorgst du vor, bevor es soweit kommt.'
             },
             'pulling': {
                 icon: '🦮',
-                name: 'Falls Leinenziehen zum Problem wird',
+                name: 'Falls dein Hund anfängt zu ziehen',
                 exercises: '6 Vorsorge-Übungen',
                 benefits: ['Damit Spaziergänge von Anfang an entspannt bleiben', 'Die Richtungswechsel-Technik bevor das Ziehen zur Gewohnheit wird', 'Begegnungen mit anderen Hunden souverän meistern'],
                 desc: 'Leinenziehen ist eines der häufigsten Probleme. Diese 6 Übungen verhindern, dass es überhaupt erst dazu kommt.'
             },
             'barking': {
                 icon: '🔊',
-                name: 'Falls übermäßiges Bellen entsteht',
+                name: 'Falls dein Hund anfängt zu bellen',
                 exercises: '6 Vorsorge-Übungen',
                 benefits: ['Damit dein Hund bei Geräuschen ruhig bleibt', 'Ruhe-Signale bevor Bellen zur Gewohnheit wird', 'Auslöser frühzeitig entschärfen'],
                 desc: 'Ständiges Bellen nervt – dich und die Nachbarn. 6 Übungen damit dein Hund gar nicht erst damit anfängt.'
             },
             'aggression': {
                 icon: '😤',
-                name: 'Falls dein Hund Aggression entwickelt',
+                name: 'Falls dein Hund aggressiv wird',
                 exercises: '6 Vorsorge-Übungen',
                 benefits: ['Damit Begegnungen mit anderen Hunden entspannt bleiben', 'Brenzlige Situationen früh erkennen und vermeiden', 'Impulskontrolle von Anfang an aufbauen'],
                 desc: 'Aggression entwickelt sich oft schleichend. 6 Übungen damit dein Hund gelassen bleibt – bevor es eskaliert.'
             },
             'recall': {
                 icon: '📣',
-                name: 'Falls der Rückruf in Zukunft nachlässt',
+                name: 'Falls dein Hund nicht mehr hört',
                 exercises: '6 Vorsorge-Übungen',
                 benefits: ['Damit dein Hund zuverlässig zurückkommt wenn du rufst', 'Den Rückruf von Anfang an richtig aufbauen', 'Freilauf ohne Sorgen ermöglichen'],
                 desc: 'Viele Hunde hören irgendwann nicht mehr. 6 Übungen damit der Rückruf von Anfang an zuverlässig sitzt.'
             },
             'jumping': {
                 icon: '🐕',
-                name: 'Falls Anspringen zur Gewohnheit wird',
+                name: 'Falls dein Hund anfängt anzuspringen',
                 exercises: '6 Vorsorge-Übungen',
                 benefits: ['Damit dein Hund Besucher ruhig begrüßt', 'Die Vier-Pfoten-Regel von Anfang an lernen', 'Entspannte Begrüßungen statt Chaos'],
                 desc: 'Anspringen ist süß beim Welpen – aber nicht mehr beim großen Hund. 6 Übungen damit es gar nicht erst zur Gewohnheit wird.'
             },
             'energy': {
                 icon: '⚡',
-                name: 'Falls dein Hund Unruhe entwickelt',
+                name: 'Falls dein Hund nicht zur Ruhe kommt',
                 exercises: '6 Vorsorge-Übungen',
                 benefits: ['Damit dein Hund lernt sich zu entspannen', 'Ruheübungen bevor Unruhe zum Dauerzustand wird', 'Kopfarbeit für einen ausgeglichenen Hund'],
                 desc: 'Manche Hunde werden immer hibbeliger statt ruhiger. 6 Übungen damit dein Hund von Anfang an lernt, runterzufahren.'
             },
             'destructive': {
                 icon: '🧸',
-                name: 'Falls Zerstörungsverhalten entsteht',
+                name: 'Falls dein Hund Sachen zerstört',
                 exercises: '6 Vorsorge-Übungen',
                 benefits: ['Damit Schuhe und Möbel heil bleiben', 'Die richtigen Alternativen von Anfang an anbieten', 'Zerstören vorbeugen statt hinterher schimpfen'],
                 desc: 'Zerstörte Schuhe, Kissen, Möbel – das muss nicht sein. 6 Übungen damit dein Hund gar nicht erst auf die Idee kommt.'
             },
             'mouthing': {
                 icon: '🦴',
-                name: 'Falls dein Hund anfängt alles aufzunehmen',
+                name: 'Falls dein Hund draußen alles frisst',
                 exercises: '6 Vorsorge-Übungen',
                 benefits: ['Damit dein Hund draußen nichts Gefährliches aufnimmt', 'Das Aus-Kommando von Anfang an üben', 'Giftköder-Schutz durch Vorbeugung'],
                 desc: 'Giftköder, Müll, tote Tiere – das kann gefährlich werden. 6 Übungen damit dein Hund lernt, nichts aufzunehmen.'
@@ -1023,85 +1008,69 @@
             'destructive':  ['anxiety', 'energy', 'barking', 'pulling', 'recall', 'jumping', 'aggression']
         };
 
-        // Upsell-Optionen rendern: Ernährungsguide + Verhaltens-Modul + Bundle
+        // Upsell-Optionen rendern: 1 empfohlenes Modul + Bundle
         function renderUpsellOptions() {
             const container = document.getElementById('upsellOptions');
             const allModules = Object.keys(moduleData);
+
+            // Filter: Module die der User nicht im Plan hat
             const availableModules = allModules.filter(m => !allUserProblems.includes(m));
+
+            if (availableModules.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:#666;padding:20px;">Du hast bereits alle Übungen!</p>';
+                return;
+            }
 
             // Nach Relevanz sortieren
             const mainProblem = dogProblem || dogGoal || '';
             const relevanceOrder = relevanceMap[mainProblem] || [];
+
             const sortedModules = availableModules.sort((a, b) => {
                 const indexA = relevanceOrder.indexOf(a);
                 const indexB = relevanceOrder.indexOf(b);
-                return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+                const scoreA = indexA === -1 ? 999 : indexA;
+                const scoreB = indexB === -1 ? 999 : indexB;
+                return scoreA - scoreB;
             });
 
-            const recommended = sortedModules.length > 0 ? sortedModules[0] : null;
-            const recModule = recommended ? moduleData[recommended] : null;
+            const recommended = sortedModules[0];
+            const second = sortedModules.length > 1 ? sortedModules[1] : null;
+            const recModule = moduleData[recommended];
 
             let html = '';
 
-            // ========== 1. ERNÄHRUNGSGUIDE (primary, empfohlen) ==========
+            // ========== 1. EMPFOHLENES MODUL (prominent) ==========
             html += '<div style="background: #FFFBF5; border: 2px solid #C4A576; border-radius: 14px; padding: 18px; margin-bottom: 14px; position: relative;">' +
                 '<div style="position: absolute; top: -10px; left: 16px; background: #C4A576; color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 6px;">Empfohlen</div>' +
                 '<div class="option-header">' +
                     '<div class="option-left">' +
-                        '<span class="option-icon">' + nutritionGuide.icon + '</span>' +
-                        '<span class="option-name">' + nutritionGuide.name + '</span>' +
+                        '<span class="option-icon">' + recModule.icon + '</span>' +
+                        '<span class="option-name">' + recModule.name + '</span>' +
                     '</div>' +
-                    '<span class="option-badge">' + nutritionGuide.exercises + '</span>' +
+                    '<span class="option-badge">' + recModule.exercises + '</span>' +
                 '</div>' +
-                '<p class="option-desc">' + nutritionGuide.desc + '</p>' +
-                '<div class="option-points">' + nutritionGuide.benefits.map(b => '<span class="option-point">' + b + '</span>').join('') + '</div>' +
+                '<p class="option-desc">' + recModule.desc + '</p>' +
+                '<div class="option-points">' + recModule.benefits.slice(0, 3).map(b => '<span class="option-point">' + b + '</span>').join('') + '</div>' +
                 '<div class="option-footer">' +
                     '<div class="option-price">' +
-                        '<span class="option-price-old">€29</span>' +
-                        '<span class="option-price-new">€14,99</span>' +
+                        '<span class="option-price-old">€39</span>' +
+                        '<span class="option-price-new">€19,99</span>' +
                     '</div>' +
-                    '<button class="option-btn" style="background: linear-gradient(135deg, #C4A576, #8B7355); padding: 12px 24px; font-size: 14px;" onclick="buyNutrition()">Jetzt hinzufügen</button>' +
+                    '<button class="option-btn" style="background: linear-gradient(135deg, #C4A576, #8B7355); padding: 12px 24px; font-size: 14px;" onclick="buyUpsell(\'' + recommended + '\')">Jetzt hinzufügen</button>' +
                 '</div>' +
             '</div>';
 
-            // ========== 2. VERHALTENS-MODUL (secondary) ==========
-            if (recModule) {
-                html += '<div class="upsell-option">' +
-                    '<div class="option-header">' +
-                        '<div class="option-left">' +
-                            '<span class="option-icon">' + recModule.icon + '</span>' +
-                            '<span class="option-name">' + recModule.name + '</span>' +
-                        '</div>' +
-                        '<span class="option-badge">' + recModule.exercises + '</span>' +
-                    '</div>' +
-                    '<p class="option-desc">' + recModule.desc + '</p>' +
-                    '<div class="option-points">' + recModule.benefits.slice(0, 3).map(b => '<span class="option-point">' + b + '</span>').join('') + '</div>' +
-                    '<div class="option-footer">' +
-                        '<div class="option-price">' +
-                            '<span class="option-price-old">€29</span>' +
-                            '<span class="option-price-new">€14,99</span>' +
-                        '</div>' +
-                        '<button class="option-btn" onclick="buyUpsell(\'' + recommended + '\')">Hinzufügen</button>' +
-                    '</div>' +
-                '</div>';
+            // ========== 2. BUNDLE (2 Module für €24,99) - als Alternative ==========
+            if (second) {
+                const secModule = moduleData[second];
 
-                // ========== 3. BUNDLE (Ernährungsguide + Modul für €24,99) ==========
-                html += '<div class="bundle-option">' +
-                    '<span class="bundle-badge">Spare €5</span>' +
+                html += '<div class="bundle-option" style="border-color: #E8E8E8; background: #FAFAFA;">' +
+                    '<span class="bundle-badge" style="background: #666;">Mehr sparen</span>' +
                     '<div class="bundle-header">' +
-                        '<h3 class="bundle-title">Beides zusammen im Sparpaket</h3>' +
-                        '<p class="bundle-subtitle">' + nutritionGuide.name + ' + ' + recModule.name + '</p>' +
+                        '<h3 class="bundle-title" style="font-size: 16px;">Oder: Beide zusammen im Sparpaket</h3>' +
+                        '<p class="bundle-subtitle">' + recModule.name + ' + ' + secModule.name + '</p>' +
                     '</div>' +
                     '<div class="bundle-modules">' +
-                        '<div class="bundle-module">' +
-                            '<span class="bundle-module-icon">' + nutritionGuide.icon + '</span>' +
-                            '<div class="bundle-module-info">' +
-                                '<h4>' + nutritionGuide.name + '</h4>' +
-                                '<div class="bundle-module-points">' +
-                                    nutritionGuide.benefits.slice(0, 2).map(b => '<span class="bundle-point">' + b + '</span>').join('') +
-                                '</div>' +
-                            '</div>' +
-                        '</div>' +
                         '<div class="bundle-module">' +
                             '<span class="bundle-module-icon">' + recModule.icon + '</span>' +
                             '<div class="bundle-module-info">' +
@@ -1111,14 +1080,23 @@
                                 '</div>' +
                             '</div>' +
                         '</div>' +
+                        '<div class="bundle-module">' +
+                            '<span class="bundle-module-icon">' + secModule.icon + '</span>' +
+                            '<div class="bundle-module-info">' +
+                                '<h4>' + secModule.name + '</h4>' +
+                                '<div class="bundle-module-points">' +
+                                    secModule.benefits.slice(0, 2).map(b => '<span class="bundle-point">' + b + '</span>').join('') +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
                     '</div>' +
                     '<div class="bundle-footer">' +
                         '<div class="bundle-price">' +
-                            '<span class="bundle-price-old">Statt €29,98</span>' +
+                            '<span class="bundle-price-old">Statt €39,98</span>' +
                             '<span class="bundle-price-new">€24,99</span>' +
-                            '<span class="bundle-price-save">Du sparst €5!</span>' +
+                            '<span class="bundle-price-save">Du sparst €15!</span>' +
                         '</div>' +
-                        '<button class="bundle-btn" onclick="buyBundle(\'nutrition\', \'' + recommended + '\')">Bundle sichern</button>' +
+                        '<button class="bundle-btn" style="background: linear-gradient(135deg, #C4A576, #D4B996);" onclick="buyBundle(\'' + recommended + '\', \'' + second + '\')">Bundle sichern</button>' +
                     '</div>' +
                 '</div>';
             }
@@ -1255,20 +1233,20 @@
         // Dynamische Texte basierend auf Alter
         const ageContent = {
             'puppy': {
-                stat: '<strong>Wusstest du?</strong> Was dein Welpe frisst, beeinflusst direkt sein Verhalten. Die falsche Ernährung kann jedes Training wirkungslos machen.',
-                header: 'Mach ' + dogName + 's Training komplett:'
+                stat: '<strong>70% aller Welpen</strong> entwickeln später Verhaltensprobleme. Jetzt vorbeugen ist der beste Schutz.',
+                header: 'Damit ' + dogName + ' diese Probleme gar nicht erst entwickelt:'
             },
             'young': {
-                stat: '<strong>Wusstest du?</strong> Die falsche Ernährung kann bei Junghunden Unruhe und Problemverhalten verstärken – die richtige beschleunigt dein Training.',
-                header: 'Mach ' + dogName + 's Training komplett:'
+                stat: '<strong>Junge Hunde</strong> können schnell schlechte Gewohnheiten entwickeln. Jetzt vorbeugen ist einfacher als später korrigieren.',
+                header: 'Damit ' + dogName + ' diese Probleme gar nicht erst entwickelt:'
             },
             'adult': {
-                stat: '<strong>Wusstest du?</strong> Bestimmte Lebensmittel verstärken Stress und Unruhe – andere beruhigen deinen Hund nachweislich und beschleunigen das Training.',
-                header: 'Mach ' + dogName + 's Training komplett:'
+                stat: '<strong>Auch bei erwachsenen Hunden</strong> können neue Probleme auftreten. Jetzt vorbeugen ist einfacher als später korrigieren.',
+                header: 'Sei vorbereitet – für den Fall, dass ' + dogName + ' das entwickelt:'
             },
             'senior': {
-                stat: '<strong>Wusstest du?</strong> Gerade bei älteren Hunden beeinflusst die Ernährung Verhalten und Trainierbarkeit enorm. Das Richtige füttern macht den Unterschied.',
-                header: 'Mach ' + dogName + 's Training komplett:'
+                stat: '<strong>Auch ältere Hunde</strong> können plötzlich neue Verhaltensweisen zeigen. Besser vorbereitet sein.',
+                header: 'Sei vorbereitet – für den Fall, dass ' + dogName + ' das entwickelt:'
             }
         };
 
@@ -1406,105 +1384,6 @@
             }
         }
 
-        // Ernährungsguide kaufen
-        async function buyNutrition() {
-            const btn = event.target;
-            btn.textContent = 'Lädt...';
-            btn.disabled = true;
-
-            if (!userEmail) {
-                alert('Bitte zuerst E-Mail eingeben.');
-                btn.textContent = 'Jetzt hinzufügen';
-                btn.disabled = false;
-                return;
-            }
-
-            currentModule = 'nutrition';
-
-            // Popup aktualisieren
-            document.getElementById('paymentIcon').textContent = nutritionGuide.icon;
-            document.getElementById('paymentModuleName').textContent = nutritionGuide.name;
-            document.querySelector('.payment-product-info p').textContent = nutritionGuide.exercises;
-            document.querySelector('.payment-product-price').textContent = '€14,99';
-
-            // Benefits aktualisieren
-            const benefitsHtml = nutritionGuide.benefits.map(b => '<div class="payment-benefit">✓ <span>' + b + '</span></div>').join('');
-            document.getElementById('paymentBenefits').innerHTML = benefitsHtml;
-
-            // Popup Title
-            document.querySelector('.payment-title').textContent = 'Ernährungsguide hinzufügen';
-
-            try {
-                const response = await fetch('/api/upsell-checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        module: 'nutrition',
-                        leadId: leadId,
-                        email: userEmail,
-                        dogName: dogName,
-                        price: 1499
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.error) {
-                    alert('Fehler: ' + result.error);
-                    btn.textContent = 'Jetzt hinzufügen';
-                    btn.disabled = false;
-                    return;
-                }
-
-                if (!result.clientSecret) {
-                    alert('Fehler: Keine Zahlungs-Session erhalten');
-                    btn.textContent = 'Jetzt hinzufügen';
-                    btn.disabled = false;
-                    return;
-                }
-
-                clientSecret = result.clientSecret;
-
-                if (!stripe) {
-                    stripe = Stripe(STRIPE_PUBLIC_KEY);
-                }
-
-                elements = stripe.elements({
-                    clientSecret: clientSecret,
-                    appearance: {
-                        theme: 'stripe',
-                        variables: {
-                            colorPrimary: '#C4A576',
-                            colorBackground: '#ffffff',
-                            colorText: '#2C2C2E',
-                            colorDanger: '#e74c3c',
-                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                            borderRadius: '8px'
-                        }
-                    },
-                    locale: 'de'
-                });
-
-                paymentElement = elements.create('payment', {
-                    layout: { type: 'tabs', defaultCollapsed: false },
-                    paymentMethodOrder: ['klarna', 'paypal', 'card'],
-                    wallets: { applePay: 'auto', googlePay: 'auto' }
-                });
-
-                paymentElement.mount('#payment-element');
-                document.getElementById('paymentOverlay').classList.add('active');
-
-                btn.textContent = 'Jetzt hinzufügen';
-                btn.disabled = false;
-
-            } catch (err) {
-                console.error('Nutrition Error:', err);
-                alert('Fehler beim Laden. Bitte versuche es erneut.');
-                btn.textContent = 'Jetzt hinzufügen';
-                btn.disabled = false;
-            }
-        }
-
         // Payment Popup öffnen
         async function buyUpsell(module) {
             const btn = event.target;
@@ -1625,8 +1504,8 @@
             }
 
             currentModule = module1 + '+' + module2; // Bundle: beide Module
-            const data1 = module1 === 'nutrition' ? nutritionGuide : moduleData[module1];
-            const data2 = module2 === 'nutrition' ? nutritionGuide : moduleData[module2];
+            const data1 = moduleData[module1];
+            const data2 = moduleData[module2];
 
             // Popup für Bundle aktualisieren
             document.getElementById('paymentIcon').textContent = '📦';

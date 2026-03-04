@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         } else if (isBundle) {
             amount = 2499; // €24,99
         } else {
-            amount = 1499; // €14,99
+            amount = 1999; // €19,99
         }
 
         // Modul-Name generieren
