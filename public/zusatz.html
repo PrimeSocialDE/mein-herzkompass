@@ -496,6 +496,11 @@
             text-align: center;
         }
 
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
         .option-btn:hover {
             background: #B8956A;
         }
@@ -1081,7 +1086,7 @@
 
             // Social Proof
             html += '<div style="text-align: center; margin-top: 14px; font-size: 13px; color: #666;">' +
-                '<span style="color: #C4A576; font-weight: 600;">347 Hundebesitzer</span> haben dieses Modul zu ihrem Plan hinzugefügt' +
+                '<span style="display: inline-block; width: 8px; height: 8px; background: #22C55E; border-radius: 50%; margin-right: 6px; box-shadow: 0 0 6px rgba(34,197,94,0.6); animation: livePulse 2s infinite;"></span><span style="color: #C4A576; font-weight: 600;">347 Hundebesitzer</span> haben dieses Modul zu ihrem Plan hinzugefügt' +
             '</div>';
 
             container.innerHTML = html;
