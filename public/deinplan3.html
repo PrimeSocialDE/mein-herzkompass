@@ -2224,6 +2224,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
         <div style="text-align: center; font-size: 11px; color: #999; margin-top: 4px;">Per Überweisung zahlen? Wähle Klarna und dann deine Bank.</div>
 
+
         <!-- ========== Testimonials (ausführlicher, weiter unten) ========== -->
         <div class="testimonials-section">
             <div class="section-header">
@@ -2386,6 +2387,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             Trainingsplan freischalten
             <span class="cta-subtext">Sofort per E-Mail · Kein Abo · 30 Tage Garantie</span>
         </button>
+
     </div>
 
     <footer class="footer">
@@ -2968,7 +2970,7 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         // ==================== DYNAMISCHER POPULAR BADGE ====================
         const popularBadge = document.getElementById('popularBadge');
 if (popularBadge) {
-    popularBadge.textContent = '⭐ Für dauerhafte Veränderung';
+    popularBadge.innerHTML = '<span style="display: inline-block; width: 7px; height: 7px; background: #22C55E; border-radius: 50%; box-shadow: 0 0 5px rgba(34,197,94,0.6); animation: livePulse 2s infinite; margin-right: 5px;"></span>Heute 20+ mal gekauft';
 }
         
         // Problem-Label in Stat-Boxen aktualisieren
@@ -3860,7 +3862,10 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     </div>
 
                     <!-- 30 Tage Garantie Badge -->
-                    <div class="checkout-guarantee-compact" style="margin-bottom: 6px;">🛡️ 30 Tage Geld-zurück-Garantie</div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                        <div class="checkout-guarantee-compact" style="flex: 1; margin-bottom: 0;">🛡️ 30 Tage Garantie</div>
+                        <div class="checkout-guarantee-compact" style="flex: 1; margin-bottom: 0;"><span style="display: inline-block; width: 7px; height: 7px; background: #22C55E; border-radius: 50%; box-shadow: 0 0 5px rgba(34,197,94,0.6); animation: livePulse 2s infinite; margin-right: 4px;"></span>Heute 20+ mal gekauft</div>
+                    </div>
 
                     <div style="text-align: center; padding: 6px 10px; background: #f0fdf4; border-radius: 6px; font-size: 11px; color: #166534; margin-bottom: 10px; font-weight: 500;">
                         ✓ Einmalzahlung – kein Abo · ✓ Lebenslanger Zugang
