@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deine Verhaltensanalyse | Pfoten-Plan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --text-light: #999999;
+            --background: #FFFFFF;
+            --white: #FFFFFF;
+            --border-light: #E8E4DF;
+            --light-brown: #D4B996;
+            --warm-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --accent-red: #E8A598;
+            --accent-green: #A8C5A0;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: var(--white);
+            padding: 16px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .logo-image { width: 36px; height: 36px; border-radius: 8px; }
+        .logo-text { font-size: 24px; font-weight: 800; color: var(--text-dark); }
+
+        /* ===== HERO / VORHER-NACHHER ===== */
+        .hero-section {
+            background: linear-gradient(180deg, #F5EDE3 0%, #FFFFFF 100%);
+            padding: 30px 20px 40px;
+        }
+        .comparison-container {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            position: relative;
+        }
+        .comparison-side { flex: 1; text-align: center; }
+        .comparison-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .badge-now { background: var(--white); color: var(--text-dark); border: 1px solid var(--border-light); }
+        .badge-goal { background: var(--warm-brown); color: var(--white); }
+        .comparison-image {
+            width: 100%;
+            height: 320px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        .image-now { background: linear-gradient(135deg, #F0DED0 0%, #F5E8DD 100%); }
+        .image-goal { background: linear-gradient(135deg, #E8DCCC 0%, #F0E6DA 100%); }
+        .comparison-arrows {
+            position: absolute;
+            left: 50%;
+            top: 45%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 26px;
+            z-index: 10;
+        }
+        .comparison-arrows span {
+            color: var(--warm-brown);
+            opacity: 0.4;
+            animation: lightUp 2s ease-in-out infinite;
+        }
+        .comparison-arrows span:nth-child(1) { animation-delay: 0s; }
+        .comparison-arrows span:nth-child(2) { animation-delay: 0.15s; }
+        .comparison-arrows span:nth-child(3) { animation-delay: 0.3s; }
+        .comparison-arrows span:nth-child(4) { animation-delay: 0.45s; }
+        .comparison-arrows span:nth-child(5) { animation-delay: 0.6s; }
+        .comparison-arrows span:nth-child(6) { animation-delay: 0.75s; }
+        @keyframes lightUp {
+            0%, 100% { opacity: 0.4; text-shadow: none; }
+            50% { opacity: 1; text-shadow: 0 0 15px rgba(196, 165, 118, 0.9), 0 0 25px rgba(196, 165, 118, 0.6); }
+        }
+        .stat-box {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .stat-label { font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 4px; }
+        .stat-value { font-size: 14px; color: var(--text-medium); }
+        .stat-bar {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            padding: 4px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            background: var(--white);
+        }
+        .stat-bar-segment { flex: 1; height: 6px; border-radius: 3px; background: var(--border-light); }
+        .stat-bar-segment.active-red { background: var(--accent-red); }
+        .stat-bar-segment.active-green { background: #4CAF50; }
+
+        /* ===== CONTAINER ===== */
+        .container { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+
+        /* ===== ANALYSE SECTION ===== */
+        .analyse-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .analyse-title span { color: var(--warm-brown); }
+        .analyse-subtitle {
+            text-align: center;
+            color: var(--text-medium);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        /* Analyse Cards */
+        .analyse-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .analyse-card {
+            background: #FAFAFA;
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 16px;
+        }
+        .analyse-card-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        .analyse-card-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .analyse-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* Gehorsamkeits-Balken */
+        .obedience-bar {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        .obedience-segment {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--border-light);
+        }
+        .obedience-segment.filled { background: var(--warm-brown); }
+        .obedience-segment.filled-red { background: var(--accent-red); }
+
+        /* Handlungsbedarf Badge */
+        .urgency-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .urgency-high { background: #FEE2E2; color: #DC2626; }
+        .urgency-medium { background: #FEF3C7; color: #D97706; }
+        .urgency-low { background: #DCFCE7; color: #16A34A; }
+
+        /* Analyse Text */
+        .analyse-text {
+            background: #F9F7F5;
+            border-left: 3px solid var(--warm-brown);
+            padding: 16px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin-bottom: 30px;
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+        }
+
+        /* Kommandos Tags */
+        .command-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .command-tag {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-medium);
+        }
+        .command-tag.known { background: #DCFCE7; border-color: #BBF7D0; color: #166534; }
+
+        /* ===== TRAININGSPLAN PREVIEW ===== */
+        .plan-section {
+            margin-bottom: 30px;
+        }
+        .plan-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .week-card {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 18px;
+            margin-bottom: 12px;
+        }
+        .week-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .week-badge {
+            background: var(--warm-brown);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+        .week-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .exercise-list { list-style: none; }
+        .exercise-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid #F5F5F5;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+        .exercise-item:last-child { border-bottom: none; }
+        .exercise-icon { font-size: 16px; }
+
+        /* Blurred Weeks */
+        .week-blurred {
+            position: relative;
+            overflow: hidden;
+        }
+        .week-blurred .week-content {
+            filter: blur(6px);
+            user-select: none;
+            pointer-events: none;
+        }
+        .week-lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            z-index: 2;
+        }
+
+        /* CTA Overlay über geblurrtem Bereich */
+        .plan-cta-overlay {
+            background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.95) 30%, #FFFFFF 100%);
+            padding: 40px 20px 20px;
+            margin-top: -40px;
+            position: relative;
+            z-index: 3;
+            text-align: center;
+        }
+        .plan-cta-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+        .plan-cta-price {
+            font-size: 14px;
+            color: var(--text-medium);
+            margin-bottom: 16px;
+        }
+
+        /* ===== CTA BUTTON ===== */
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 18px 30px;
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            margin-bottom: 12px;
+            transition: transform 0.2s;
+        }
+        .cta-button:hover { transform: scale(1.02); }
+        .cta-subtext {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            opacity: 0.85;
+            margin-top: 4px;
+        }
+        .glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { box-shadow: 0 4px 15px rgba(196, 165, 118, 0.3); }
+            to { box-shadow: 0 4px 25px rgba(196, 165, 118, 0.6); }
+        }
+
+        /* ===== DISCLAIMER / GUARANTEE ===== */
+        .disclaimer {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+        .disclaimer a { color: var(--warm-brown); }
+
+        .guarantee {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            border-radius: var(--border-radius);
+            padding: 14px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #166534;
+            margin-bottom: 16px;
+        }
+        .guarantee svg { width: 24px; height: 24px; fill: #166534; flex-shrink: 0; }
+
+        /* ===== PAYMENT LOGOS ===== */
+        .payment-logos {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .payment-logos img { height: 22px; opacity: 0.5; }
+
+        /* ===== SOCIAL PROOF ===== */
+        .social-proof-section { margin-bottom: 30px; }
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-medium);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .testimonial-name { font-size: 15px; font-weight: 700; color: var(--text-dark); }
+        .testimonial-problem { font-size: 12px; color: var(--text-light); }
+        .testimonial-problem span { color: var(--warm-brown); font-weight: 600; }
+        .testimonial-text { font-size: 14px; color: var(--text-medium); line-height: 1.5; }
+        .testimonial-image-single {
+            width: 100%;
+            height: 180px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .trustpilot-mini {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            background: #F9F7F5;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .tp-stars { display: flex; gap: 3px; }
+        .tp-star-box {
+            width: 18px;
+            height: 18px;
+            background: #00B67A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2px;
+        }
+        .tp-star-box svg { width: 11px; height: 11px; fill: white; }
+        .tp-text { font-size: 12px; color: var(--text-light); }
+
+        /* ===== EMAIL CAPTURE (optional) ===== */
+        .email-section {
+            background: #FAFAFA;
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .email-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+        .email-section-sub {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-bottom: 16px;
+        }
+        .email-form {
+            display: flex;
+            gap: 8px;
+        }
+        .email-input {
+            flex: 1;
+            padding: 14px 16px;
+            font-size: 15px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            outline: none;
+            background: var(--white);
+        }
+        .email-input:focus { border-color: var(--warm-brown); }
+        .email-btn {
+            padding: 14px 20px;
+            background: var(--warm-brown);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .email-privacy {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 10px;
+        }
+        .email-privacy a { color: var(--warm-brown); }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 13px;
+            color: var(--text-light);
+            border-top: 1px solid var(--border-light);
+        }
+        .footer a { color: var(--text-light); text-decoration: none; }
+        .footer a:hover { color: var(--warm-brown); }
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 500px) {
+            .comparison-image { height: 220px; }
+            .analyse-title { font-size: 20px; }
+            .analyse-grid { gap: 8px; }
+            .analyse-card { padding: 12px; }
+            .email-form { flex-direction: column; }
+            .email-btn { width: 100%; padding: 14px; }
+        }
+    </style>
+<script
+  defer
+  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+  data-domain="pfoten-plan.de"
+  src="https://datafa.st/js/script.js">
+</script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">
+            <img src="logo.png" alt="Pfoten-Plan Logo" class="logo-image">
+            <span class="logo-text">Pfoten-Plan</span>
+        </div>
+    </header>
+
+    <!-- Vorher / Nachher -->
+    <section class="hero-section">
+        <div class="comparison-container">
+            <div class="comparison-side">
+                <span class="comparison-badge badge-now">Jetzt</span>
+                <div class="comparison-image image-now">
+                    <img src="Vorher.jpg" alt="Vorher" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label"><span id="dogName1">Dein Hund</span> – <span id="problemLabel1">Gehorsam</span></div>
+                    <div class="stat-value" id="problemValue1">Niedrig</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-segment active-red"></div>
+                        <div class="stat-bar-segment"></div>
+                        <div class="stat-bar-segment"></div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Trainingslevel</div>
+                    <div class="stat-value">Anfänger</div>
+                </div>
+            </div>
+
+            <div class="comparison-arrows">
+                <span>››</span><span>››</span><span>››</span><span>››</span><span>››</span><span>››</span>
+            </div>
+
+            <div class="comparison-side">
+                <span class="comparison-badge badge-goal">Dein Ziel</span>
+                <div class="comparison-image image-goal">
+                    <img src="Nachher.jpg" alt="Nachher" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label"><span id="dogName2">Dein Hund</span> – <span id="problemLabel2">Gehorsam</span></div>
+                    <div class="stat-value" id="problemValue2">Normal</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-segment active-green"></div>
+                        <div class="stat-bar-segment active-green"></div>
+                        <div class="stat-bar-segment active-green"></div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Trainingslevel</div>
+                    <div class="stat-value">Fortgeschritten</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <!-- ===== PERSÖNLICHE ANALYSE ===== -->
+        <h1 class="analyse-title"><span id="dogNameTitle">Luna</span><span style="color: var(--warm-brown);">s</span> persönliche Verhaltensanalyse</h1>
+        <p class="analyse-subtitle">Basierend auf deinen Quiz-Antworten</p>
+
+        <div class="analyse-grid">
+            <div class="analyse-card">
+                <div class="analyse-card-label">Erkanntes Problem</div>
+                <div class="analyse-card-value" id="analyseProblems">Leinenziehen</div>
+            </div>
+            <div class="analyse-card">
+                <div class="analyse-card-label">Handlungsbedarf</div>
+                <div id="urgencyBadge"><span class="urgency-badge urgency-high">Hoch</span></div>
+            </div>
+            <div class="analyse-card">
+                <div class="analyse-card-label">Rasse</div>
+                <div class="analyse-card-value" id="analyseBreed">Labrador</div>
+            </div>
+            <div class="analyse-card">
+                <div class="analyse-card-label">Alter</div>
+                <div class="analyse-card-value" id="analyseAge">1-3 Jahre</div>
+            </div>
+            <div class="analyse-card">
+                <div class="analyse-card-label">Gehorsamkeitslevel</div>
+                <div class="analyse-card-value"><span id="obedienceText">4 von 10</span></div>
+                <div class="obedience-bar" id="obedienceBar">
+                    <div class="obedience-segment filled"></div>
+                    <div class="obedience-segment filled"></div>
+                    <div class="obedience-segment filled"></div>
+                    <div class="obedience-segment filled"></div>
+                    <div class="obedience-segment"></div>
+                    <div class="obedience-segment"></div>
+                    <div class="obedience-segment"></div>
+                    <div class="obedience-segment"></div>
+                    <div class="obedience-segment"></div>
+                    <div class="obedience-segment"></div>
+                </div>
+            </div>
+            <div class="analyse-card">
+                <div class="analyse-card-label">Empfohlene Dauer</div>
+                <div class="analyse-card-value" id="analyseDuration">4–8 Wochen</div>
+            </div>
+            <div class="analyse-card full-width">
+                <div class="analyse-card-label">Bekannte Kommandos</div>
+                <div class="command-tags" id="commandTags">
+                    <span class="command-tag known">Sitz</span>
+                    <span class="command-tag known">Platz</span>
+                    <span class="command-tag">Bleib</span>
+                    <span class="command-tag">Hier</span>
+                    <span class="command-tag">Aus</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="analyse-text" id="analyseText">
+            Hunde mit diesem Profil reagieren besonders gut auf positive Verstärkung mit kurzen, regelmäßigen Trainingseinheiten. Bei konsequentem Training sind erste Ergebnisse nach 1–2 Wochen sichtbar. Besonders wichtig ist bei Leinenziehen der Fokus auf Impulskontrolle und Richtungswechsel-Übungen.
+        </div>
+
+        <!-- ===== TRAININGSPLAN PREVIEW (geblurrt) ===== -->
+        <div class="plan-section">
+            <h2 class="plan-title">Dein persönlicher 30-Tage Trainingsplan</h2>
+
+            <!-- Woche 1: sichtbar -->
+            <div class="week-card">
+                <div class="week-card-header">
+                    <span class="week-badge">Woche 1</span>
+                    <span class="week-title">Grundlagen & Vertrauensaufbau</span>
+                </div>
+                <ul class="exercise-list" id="week1Exercises">
+                    <li class="exercise-item"><span class="exercise-icon">🎯</span> Blickkontakt-Training (5 Min/Tag)</li>
+                    <li class="exercise-item"><span class="exercise-icon">🦮</span> Richtungswechsel bei Leinenzug</li>
+                    <li class="exercise-item"><span class="exercise-icon">🧘</span> Ruhe-Signal aufbauen</li>
+                    <li class="exercise-item"><span class="exercise-icon">🏠</span> Impulskontrolle an der Haustür</li>
+                </ul>
+            </div>
+
+            <!-- Woche 2: teilweise geblurrt -->
+            <div class="week-card week-blurred">
+                <div class="week-lock-overlay">🔒</div>
+                <div class="week-content">
+                    <div class="week-card-header">
+                        <span class="week-badge" style="background: var(--text-light);">Woche 2</span>
+                        <span class="week-title">Problemverhalten gezielt angehen</span>
+                    </div>
+                    <ul class="exercise-list">
+                        <li class="exercise-item"><span class="exercise-icon">📋</span> Ablenkungstraining Stufe 1</li>
+                        <li class="exercise-item"><span class="exercise-icon">📋</span> Begegnungstraining mit Distanz</li>
+                        <li class="exercise-item"><span class="exercise-icon">📋</span> Leinenführung in neuer Umgebung</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Woche 3: geblurrt -->
+            <div class="week-card week-blurred">
+                <div class="week-lock-overlay">🔒</div>
+                <div class="week-content">
+                    <div class="week-card-header">
+                        <span class="week-badge" style="background: var(--text-light);">Woche 3</span>
+                        <span class="week-title">Fortgeschrittene Übungen</span>
+                    </div>
+                    <ul class="exercise-list">
+                        <li class="exercise-item"><span class="exercise-icon">📋</span> Freilauf-Training vorbereiten</li>
+                        <li class="exercise-item"><span class="exercise-icon">📋</span> Rückruf unter Ablenkung</li>
+                        <li class="exercise-item"><span class="exercise-icon">📋</span> Begegnungen ohne Leine</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Woche 4: geblurrt -->
+            <div class="week-card week-blurred">
+                <div class="week-lock-overlay">🔒</div>
+                <div class="week-content">
+                    <div class="week-card-header">
+                        <span class="week-badge" style="background: var(--text-light);">Woche 4</span>
+                        <span class="week-title">Festigung & Alltagstransfer</span>
+                    </div>
+                    <ul class="exercise-list">
+                        <li class="exercise-item"><span class="exercise-icon">📋</span> Training in Alltagssituationen</li>
+                        <li class="exercise-item"><span class="exercise-icon">📋</span> Langfristige Routinen aufbauen</li>
+                        <li class="exercise-item"><span class="exercise-icon">📋</span> Notfall-Strategien festigen</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Overlay -->
+        <div class="plan-cta-overlay">
+            <div class="plan-cta-text">Trainingsplan freischalten</div>
+            <div class="plan-cta-price">Alle 30 Übungen + persönliche Anleitung · ab €29,99 einmalig</div>
+        </div>
+
+        <a href="deinplan3.html" class="cta-button glow" style="display: block; text-align: center;">
+            Meinen Trainingsplan freischalten
+            <span class="cta-subtext">Einmalzahlung · Kein Abo · 30 Tage Geld-zurück-Garantie</span>
+        </a>
+
+        <div class="disclaimer">
+            ✓ <strong style="color: #166534;">Einmalzahlung</strong> – kein Abo, <strong style="color: #166534;">lebenslanger Zugang</strong> · <strong style="color: #166534;">24/7 Support</strong> · 30 Tage Geld-zurück-Garantie
+        </div>
+
+        <div class="payment-logos">
+            <img src="sepa-logo.png" alt="SEPA">
+            <img src="paypal-logo.png" alt="PayPal">
+            <img src="visa-logo.png" alt="Visa">
+            <img src="klarna-logo.png" alt="Klarna">
+            <img src="mastercard-logo.png" alt="Mastercard">
+            <img src="applepay.png" alt="Apple Pay">
+            <img src="googlepay.png" alt="Google Pay">
+        </div>
+
+        <!-- ===== SOCIAL PROOF ===== -->
+        <div class="social-proof-section">
+            <h2 class="section-title">Echte Erfolgsgeschichten</h2>
+            <p class="section-subtitle">mit unserem Trainingsplan</p>
+
+            <div class="trustpilot-mini">
+                <div class="tp-stars">
+                    <div class="tp-star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                    <div class="tp-star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                    <div class="tp-star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                    <div class="tp-star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                    <div class="tp-star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                </div>
+                <span class="tp-text">4.8/5 bei 3.400+ Hundebesitzern</span>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-image-single">
+                    <img src="Testimonial1.jpg" alt="Bella Vorher/Nachher" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                </div>
+                <div class="testimonial-header">
+                    <div>
+                        <div class="testimonial-name">Bella</div>
+                        <div class="testimonial-problem">Problem: <span>Leinenaggression</span></div>
+                    </div>
+                </div>
+                <p class="testimonial-text">Mein Hund hat früher jeden anderen Hund angebellt. Nach 3 Wochen mit dem Plan können wir endlich entspannt spazieren gehen. Die Übungen sind einfach und effektiv!</p>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-image-single">
+                    <img src="Testimonial2.jpg" alt="Max Vorher/Nachher" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+                </div>
+                <div class="testimonial-header">
+                    <div>
+                        <div class="testimonial-name">Max</div>
+                        <div class="testimonial-problem">Problem: <span>Hyperaktivität</span></div>
+                    </div>
+                </div>
+                <p class="testimonial-text">Max war ständig aufgedreht und konnte nicht stillsitzen. Die täglichen 10-Minuten-Übungen haben wahre Wunder gewirkt. Jetzt ist er viel ausgeglichener!</p>
+            </div>
+        </div>
+
+        <!-- Zweiter CTA -->
+        <a href="deinplan3.html" class="cta-button glow" style="display: block; text-align: center;">
+            Trainingsplan freischalten
+            <span class="cta-subtext">Sofort per E-Mail · Kein Abo · 30 Tage Garantie</span>
+        </a>
+
+        <!-- ===== OPTIONALE EMAIL-CAPTURE ===== -->
+        <div class="email-section">
+            <div class="email-section-title">Deine Analyse als PDF erhalten?</div>
+            <div class="email-section-sub">Wir senden dir die komplette Verhaltensanalyse kostenlos per E-Mail.</div>
+            <form class="email-form" id="emailForm">
+                <input type="email" class="email-input" id="emailInput" placeholder="Deine E-Mail" required>
+                <button type="submit" class="email-btn" id="emailBtn">Senden</button>
+            </form>
+            <div class="email-privacy">🔒 Kein Spam. <a href="datenschutz.html">Datenschutzerklärung</a></div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Pfoten-Plan. Alle Rechte vorbehalten.</p>
+        <p><a href="datenschutz.html">Datenschutz</a> · <a href="impressum.html">Impressum</a> · <a href="agb.html">AGB</a></p>
+    </footer>
+
+    <script src="cookie-banner.js" defer></script>
+    <script>
+        // ===== DATEN AUS LOCALSTORAGE =====
+        const dogName = localStorage.getItem('dogName') || 'Luna';
+        const dogBreed = localStorage.getItem('dogBreed') || '';
+        const dogAge = localStorage.getItem('dogAge') || '';
+        const dogProblem = localStorage.getItem('dogProblem') || 'pulling';
+        const dogCommands = JSON.parse(localStorage.getItem('dogCommands') || '[]');
+        const dogGender = localStorage.getItem('dogGender') || '';
+        const hadTraining = localStorage.getItem('hadTraining') || '';
+
+        // ===== HUNDENAME EINSETZEN =====
+        document.getElementById('dogNameTitle').textContent = dogName;
+        document.getElementById('dogName1').textContent = dogName;
+        document.getElementById('dogName2').textContent = dogName;
+
+        // ===== PROBLEM-MAPPING =====
+        const problemLabels = {
+            'pulling': 'Leinenziehen',
+            'barking': 'Übermäßiges Bellen',
+            'aggression': 'Aggression',
+            'anxiety': 'Trennungsangst',
+            'jumping': 'Anspringen',
+            'recall': 'Kommt nicht zurück',
+            'energy': 'Übermäßige Energie',
+            'destructive': 'Zerstörerisches Verhalten',
+            'soiling': 'In die Wohnung machen',
+            'mouthing': 'Unerwünschtes Aufnehmen',
+            'chasing': 'Jagdverhalten',
+            'separation': 'Trennungsangst',
+            'dog-reactive': 'Reaktiv auf andere Hunde',
+            'leash-reactive': 'Leinenreaktivität',
+            'resource-guarding': 'Ressourcenverteidigung',
+            'biting': 'Beißen/Schnappen'
+        };
+
+        const problemText = problemLabels[dogProblem] || dogProblem;
+        document.getElementById('analyseProblems').textContent = problemText;
+        document.getElementById('problemLabel1').textContent = problemText;
+        document.getElementById('problemLabel2').textContent = problemText;
+
+        // ===== RASSE =====
+        const breedLabels = {
+            'labrador': 'Labrador',
+            'german_shepherd': 'Deutscher Schäferhund',
+            'golden_retriever': 'Golden Retriever',
+            'french_bulldog': 'Französische Bulldogge',
+            'chihuahua': 'Chihuahua',
+            'poodle': 'Pudel',
+            'dachshund': 'Dackel',
+            'beagle': 'Beagle',
+            'husky': 'Husky',
+            'border_collie': 'Border Collie',
+            'mixed': 'Mischling',
+            'other': 'Andere Rasse'
+        };
+        document.getElementById('analyseBreed').textContent = breedLabels[dogBreed] || dogBreed || 'Nicht angegeben';
+
+        // ===== ALTER =====
+        const ageLabels = {
+            'puppy': 'Welpe (unter 6 Monate)',
+            'young': '6–12 Monate',
+            'adult': '1–3 Jahre',
+            'mature': '3–7 Jahre',
+            'senior': 'Über 7 Jahre'
+        };
+        document.getElementById('analyseAge').textContent = ageLabels[dogAge] || dogAge || 'Nicht angegeben';
+
+        // ===== GEHORSAMKEIT (basierend auf bekannten Kommandos) =====
+        const knownCount = dogCommands.length;
+        const obedienceScore = Math.min(10, Math.max(1, knownCount > 0 ? knownCount + 1 : 3));
+        document.getElementById('obedienceText').textContent = obedienceScore + ' von 10';
+
+        const barSegments = document.querySelectorAll('#obedienceBar .obedience-segment');
+        barSegments.forEach((seg, i) => {
+            seg.classList.remove('filled', 'filled-red');
+            if (i < obedienceScore) {
+                seg.classList.add(obedienceScore <= 3 ? 'filled-red' : 'filled');
+            }
+        });
+
+        // ===== HANDLUNGSBEDARF =====
+        const highUrgency = ['aggression', 'anxiety', 'separation', 'biting', 'resource-guarding', 'dog-reactive'];
+        const lowUrgency = ['jumping', 'energy'];
+        let urgency = 'medium';
+        if (highUrgency.includes(dogProblem)) urgency = 'high';
+        else if (lowUrgency.includes(dogProblem)) urgency = 'low';
+
+        const urgencyLabels = { high: 'Hoch', medium: 'Mittel', low: 'Niedrig' };
+        document.getElementById('urgencyBadge').innerHTML =
+            '<span class="urgency-badge urgency-' + urgency + '">' + urgencyLabels[urgency] + '</span>';
+
+        // ===== EMPFOHLENE DAUER =====
+        const durationMap = {
+            'high': '6–10 Wochen',
+            'medium': '4–8 Wochen',
+            'low': '3–6 Wochen'
+        };
+        document.getElementById('analyseDuration').textContent = durationMap[urgency];
+
+        // ===== KOMMANDOS =====
+        const allCommands = ['sitz', 'platz', 'bleib', 'hier', 'aus', 'nein', 'fuss'];
+        const commandLabels = { 'sitz': 'Sitz', 'platz': 'Platz', 'bleib': 'Bleib', 'hier': 'Hier', 'aus': 'Aus', 'nein': 'Nein', 'fuss': 'Fuß' };
+
+        if (dogCommands.length > 0) {
+            const tagsHtml = allCommands.map(cmd => {
+                const isKnown = dogCommands.includes(cmd);
+                return '<span class="command-tag' + (isKnown ? ' known' : '') + '">' + (commandLabels[cmd] || cmd) + '</span>';
+            }).join('');
+            document.getElementById('commandTags').innerHTML = tagsHtml;
+        }
+
+        // ===== ANALYSE-TEXT =====
+        const analyseTexts = {
+            'pulling': 'Hunde mit Leinenzieh-Problematik reagieren besonders gut auf Richtungswechsel-Techniken und Impulskontroll-Übungen. Bei konsequentem Training sind erste Ergebnisse nach 1–2 Wochen sichtbar.',
+            'barking': 'Übermäßiges Bellen ist oft ein Zeichen von Unsicherheit oder Unterforderung. Mit gezieltem Ruhe-Signal-Training und Auslöser-Management sind deutliche Verbesserungen in 2–3 Wochen realistisch.',
+            'aggression': 'Aggressives Verhalten erfordert ein strukturiertes Training mit klarem Trigger-Management. Bei konsequenter Umsetzung der Übungen sind erste Verbesserungen nach 2–3 Wochen sichtbar.',
+            'anxiety': 'Trennungsangst lässt sich durch schrittweises Alleinsein-Training und Ruhe-Rituale gut behandeln. Erste Erfolge zeigen sich oft schon nach 1–2 Wochen.',
+            'jumping': 'Anspringen ist ein häufiges Problem, das sich mit der Vier-Pfoten-Regel schnell verbessern lässt. Die meisten Hunde zeigen schon nach wenigen Tagen deutliche Fortschritte.',
+            'recall': 'Rückruf-Training erfordert Geduld und konsequenten Aufbau. Mit positiver Verstärkung und dem richtigen Belohnungssystem sind erste Erfolge nach 2–3 Wochen zu erwarten.',
+            'energy': 'Übermäßige Energie lässt sich durch gezielte mentale Auslastung und Ruheübungen kanalisieren. Viele Hundebesitzer berichten schon nach 1 Woche von einem ausgeglicheneren Hund.',
+            'destructive': 'Zerstörerisches Verhalten ist oft ein Zeichen von Langeweile oder Stress. Mit den richtigen Beschäftigungs-Alternativen und Grenzen sind schnelle Verbesserungen möglich.'
+        };
+        const text = analyseTexts[dogProblem] || 'Hunde mit diesem Profil reagieren besonders gut auf positive Verstärkung mit kurzen, regelmäßigen Trainingseinheiten. Bei konsequentem Training sind erste Ergebnisse nach 1–2 Wochen sichtbar.';
+        document.getElementById('analyseText').textContent = text;
+
+        // ===== WOCHE-1 ÜBUNGEN DYNAMISCH =====
+        const week1Map = {
+            'pulling': [
+                { icon: '🎯', text: 'Blickkontakt-Training (5 Min/Tag)' },
+                { icon: '🦮', text: 'Richtungswechsel bei Leinenzug' },
+                { icon: '🧘', text: 'Ruhe-Signal aufbauen' },
+                { icon: '🏠', text: 'Impulskontrolle an der Haustür' }
+            ],
+            'barking': [
+                { icon: '🎯', text: 'Ruhe-Kommando einführen' },
+                { icon: '🔊', text: 'Auslöser-Desensibilisierung' },
+                { icon: '🧘', text: 'Entspannungsübung auf der Decke' },
+                { icon: '🦴', text: 'Belohnung für ruhiges Verhalten' }
+            ],
+            'aggression': [
+                { icon: '🎯', text: 'Trigger-Erkennung & Distanz-Training' },
+                { icon: '🧘', text: 'Impulskontrolle mit Futter-Übung' },
+                { icon: '🦮', text: 'Sichere Begegnung auf Distanz' },
+                { icon: '🏠', text: 'Ruhe-Zone im Zuhause einrichten' }
+            ],
+            'anxiety': [
+                { icon: '🎯', text: 'Kurzes Alleinsein üben (1–2 Min)' },
+                { icon: '🧘', text: 'Abschiedsritual ohne Drama' },
+                { icon: '🦴', text: 'Kong-Training für Beschäftigung' },
+                { icon: '🏠', text: 'Sicherer Rückzugsort einrichten' }
+            ],
+            'jumping': [
+                { icon: '🎯', text: 'Vier-Pfoten-Regel einführen' },
+                { icon: '🧘', text: 'Ruhige Begrüßung trainieren' },
+                { icon: '🦮', text: 'Besuchertraining Stufe 1' },
+                { icon: '🏠', text: 'Impulskontrolle an der Tür' }
+            ],
+            'recall': [
+                { icon: '🎯', text: 'Rückruf-Signal aufbauen' },
+                { icon: '🦴', text: 'Hochwertige Belohnung einführen' },
+                { icon: '🦮', text: 'Rückruf im Garten/Flur üben' },
+                { icon: '🧘', text: 'Aufmerksamkeits-Training' }
+            ],
+            'energy': [
+                { icon: '🎯', text: 'Entspannungs-Signal einführen' },
+                { icon: '🧘', text: 'Decken-Training (5 Min/Tag)' },
+                { icon: '🦴', text: 'Schnüffelspiel zur Auslastung' },
+                { icon: '🏠', text: 'Ruhe-Routine nach Spaziergang' }
+            ],
+            'destructive': [
+                { icon: '🎯', text: 'Kau-Alternativen bereitstellen' },
+                { icon: '🧘', text: 'Langeweile-Prävention' },
+                { icon: '🦴', text: 'Beschäftigungs-Spielzeug einführen' },
+                { icon: '🏠', text: 'Grenzen setzen ohne Strafe' }
+            ]
+        };
+
+        const exercises = week1Map[dogProblem] || week1Map['pulling'];
+        document.getElementById('week1Exercises').innerHTML = exercises.map(e =>
+            '<li class="exercise-item"><span class="exercise-icon">' + e.icon + '</span> ' + e.text + '</li>'
+        ).join('');
+
+        // ===== EMAIL FORM =====
+        document.getElementById('emailForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('emailInput').value.trim();
+            if (!email) return;
+
+            const btn = document.getElementById('emailBtn');
+            btn.textContent = 'Wird gesendet...';
+            btn.disabled = true;
+
+            localStorage.setItem('userEmail', email);
+
+            // Supabase speichern
+            try {
+                const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+                const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+                const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        dog_name: dogName,
+                        status: 'analyse_email',
+                        answers: {
+                            email: email,
+                            dog_name: dogName,
+                            dog_age: dogAge,
+                            dog_breed: dogBreed,
+                            dog_problem: dogProblem,
+                            dog_commands: dogCommands,
+                            source: 'deinplan5_analyse_pdf'
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data[0]?.id) localStorage.setItem('leadId', data[0].id);
+                }
+            } catch (err) {
+                console.log('Supabase error:', err);
+            }
+
+            btn.textContent = '✓ Gesendet!';
+            btn.style.background = '#22C55E';
+        });
+    </script>
+</body>
+</html>
