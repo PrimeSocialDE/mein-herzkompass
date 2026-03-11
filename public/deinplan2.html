@@ -1662,6 +1662,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 <span>››</span>
                 <span>››</span>
                 <span>››</span>
+                <div style="font-size: 11px; color: #C4A576; font-weight: 700; margin-top: 4px; white-space: nowrap;">In 4–6 Wochen</div>
             </div>
 
             <div class="comparison-side">
@@ -2305,23 +2306,23 @@ if (popularBadge) {
         document.getElementById('problemLabel2').textContent = problemText;
 
         const problemValueMap = {
-            'pulling': { bad: 'Stark', good: 'Kontrolliert' },
-            'barking': { bad: 'Häufig', good: 'Ruhig' },
-            'aggression': { bad: 'Kritisch', good: 'Friedlich' },
-            'anxiety': { bad: 'Stark', good: 'Entspannt' },
-            'jumping': { bad: 'Ständig', good: 'Kontrolliert' },
-            'recall': { bad: 'Ignoriert', good: 'Zuverlässig' },
-            'energy': { bad: 'Übermäßig', good: 'Ausgeglichen' },
-            'destructive': { bad: 'Häufig', good: 'Gestoppt' },
-            'soiling': { bad: 'Regelmäßig', good: 'Stubenrein' },
-            'mouthing': { bad: 'Ständig', good: 'Kontrolliert' }
+            'pulling': { bad: 'Stress pur', good: 'Entspannt' },
+            'barking': { bad: 'Stress pur', good: 'Ruhig & entspannt' },
+            'aggression': { bad: 'Stress pur', good: 'Friedlich' },
+            'anxiety': { bad: 'Stress pur', good: 'Entspannt' },
+            'jumping': { bad: 'Stress pur', good: 'Harmonie' },
+            'recall': { bad: 'Braucht Training', good: 'Zuverlässig' },
+            'energy': { bad: 'Stress pur', good: 'Ausgeglichen' },
+            'destructive': { bad: 'Stress pur', good: 'Harmonie' },
+            'soiling': { bad: 'Braucht Training', good: 'Stubenrein' },
+            'mouthing': { bad: 'Braucht Training', good: 'Harmonie' }
         };
 
-        const defaultValues = { bad: 'Kritisch', good: 'Gelöst' };
+        const defaultValues = { bad: 'Braucht Training', good: 'Harmonie' };
         const values = problemValueMap[dogProblem] || defaultValues;
 
         if (territorialAggression === 'yes') {
-            document.getElementById('problemValue1').textContent = 'Kritisch';
+            document.getElementById('problemValue1').textContent = 'Stress pur';
             document.getElementById('problemValue2').textContent = 'Friedlich';
         } else {
             document.getElementById('problemValue1').textContent = values.bad;
