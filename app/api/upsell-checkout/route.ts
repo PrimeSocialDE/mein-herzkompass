@@ -14,7 +14,9 @@ const moduleNames: Record<string, string> = {
     jumping: 'Anti-Anspring Training',
     energy: 'Energie-Management',
     destructive: 'Anti-Zerstörungs Training',
-    mouthing: 'Anti-Aufnehm Training'
+    mouthing: 'Anti-Aufnehm Training',
+    'video-analyse': 'Persönliche Video-Analyse',
+    'notfall-karten': '10 Notfall-Karten'
 };
 
 export async function POST(request: Request) {

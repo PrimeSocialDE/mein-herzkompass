@@ -350,6 +350,16 @@
             const problemText = problemNames[mainProblem] || mainProblem;
             document.getElementById('mainProblemName').textContent = problemText + '-Training';
         }
+
+        // Upsell 1 Modul in localStorage speichern für danke-final.html
+        if (module) {
+            localStorage.setItem('upsell1_module', module.split('+')[0]);
+        }
+
+        // Nach 2 Sekunden weiter zu Upsell 2 (Video-Analyse)
+        setTimeout(function() {
+            window.location.href = 'upsell2.html?lead_id=' + (leadId || '');
+        }, 2000);
     </script>
 </body>
 </html>

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notfall-Karten | Pfoten-Plan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+
+    <!-- Google tag -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+
+    <!-- Meta Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+        (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAF8F5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 440px;
+            margin: 0 auto;
+        }
+
+        /* Plan gesichert Banner */
+        .secured-banner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .secured-banner .check {
+            width: 28px;
+            height: 28px;
+            background: #22C55E;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .secured-banner .check svg {
+            width: 14px;
+            height: 14px;
+            color: white;
+        }
+
+        .secured-banner p {
+            font-size: 14px;
+            color: #166534;
+            font-weight: 600;
+        }
+
+        /* Downsell Card */
+        .downsell-card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px 22px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            margin-bottom: 16px;
+        }
+
+        .downsell-card h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1a1a1a;
+            line-height: 1.3;
+            margin-bottom: 12px;
+        }
+
+        .downsell-desc {
+            font-size: 15px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 22px;
+        }
+
+        /* Example Cards */
+        .examples {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .example-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            background: #FAFAFA;
+            border-radius: 12px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .example-icon {
+            width: 40px;
+            height: 40px;
+            background: #FEF3E7;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .example-info {
+            flex: 1;
+        }
+
+        .example-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+
+        .example-steps {
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* How it works */
+        .how-it-works {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px;
+            background: #F8F6F3;
+            border-radius: 10px;
+            margin-bottom: 24px;
+        }
+
+        .how-it-works span {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Price */
+        .price-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .price-amount {
+            font-size: 32px;
+            font-weight: 800;
+            color: #C4A576;
+        }
+
+        .price-info {
+            font-size: 13px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        /* CTA */
+        .cta-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #C4A576, #8B7355);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.4);
+        }
+
+        .cta-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .guarantee-text {
+            text-align: center;
+            font-size: 12px;
+            color: #166534;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        /* Skip */
+        .skip-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+            background: none;
+            border: none;
+            padding: 12px;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+
+        .skip-btn:hover {
+            color: #666;
+        }
+
+        /* Payment Overlay */
+        .payment-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .payment-overlay.active {
+            display: flex;
+        }
+
+        .payment-popup {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 440px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .payment-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .payment-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .payment-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .payment-body {
+            padding: 20px;
+        }
+
+        .payment-product {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: #FAFAFA;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .payment-product-icon {
+            font-size: 28px;
+        }
+
+        .payment-product-info h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .payment-product-info p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .payment-product-price {
+            margin-left: auto;
+            font-size: 18px;
+            font-weight: 700;
+            color: #C4A576;
+        }
+
+        .payment-error {
+            background: #FEF2F2;
+            color: #DC2626;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            display: none;
+            margin-bottom: 12px;
+        }
+
+        .payment-error.visible {
+            display: block;
+        }
+
+        .payment-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #C4A576, #8B7355);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+
+        .payment-btn:disabled {
+            opacity: 0.7;
+        }
+
+        .payment-guarantee {
+            text-align: center;
+            font-size: 12px;
+            color: #166534;
+            margin-top: 12px;
+            font-weight: 500;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+<script
+  defer
+  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+  data-domain="pfoten-plan.de"
+  src="https://datafa.st/js/script.js">
+</script>
+</head>
+<body>
+    <div class="container">
+        <!-- Plan gesichert -->
+        <div class="secured-banner">
+            <div class="check">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <p>Dein Trainingsplan ist gesichert</p>
+        </div>
+
+        <!-- Downsell Card -->
+        <div class="downsell-card">
+            <h2>Okay – aber das hier könnte dir sofort helfen</h2>
+
+            <p class="downsell-desc">
+                Die <strong>10 häufigsten Notfall-Situationen</strong> mit Hund.
+                Jede Karte gibt dir eine klare 3-Schritt-Anleitung.
+                Zum Ausdrucken oder aufs Handy speichern.
+            </p>
+
+            <!-- Examples -->
+            <div class="examples">
+                <div class="example-card">
+                    <div class="example-icon">🚪</div>
+                    <div class="example-info">
+                        <div class="example-title">Hund bellt an der Tür</div>
+                        <div class="example-steps">3 Schritte → sofort ruhig</div>
+                    </div>
+                </div>
+                <div class="example-card">
+                    <div class="example-icon">💨</div>
+                    <div class="example-info">
+                        <div class="example-title">Hund zieht plötzlich los</div>
+                        <div class="example-steps">3 Schritte → sofort stoppen</div>
+                    </div>
+                </div>
+                <div class="example-card">
+                    <div class="example-icon">🐕</div>
+                    <div class="example-info">
+                        <div class="example-title">Hund bellt anderen Hund an</div>
+                        <div class="example-steps">3 Schritte → Situation entschärfen</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="how-it-works">
+                <span>📋</span>
+                <span>10 Karten · PDF zum Ausdrucken · Sofort per E-Mail</span>
+            </div>
+
+            <!-- Price -->
+            <div class="price-section">
+                <div class="price-amount">€9,99</div>
+                <div class="price-info">Einmalzahlung · Kein Abo</div>
+            </div>
+
+            <!-- CTA -->
+            <button class="cta-btn" id="ctaBtn" onclick="buyNotfallKarten()">
+                Notfall-Karten mitnehmen – €9,99
+            </button>
+
+            <div class="guarantee-text">
+                🛡️ 30 Tage Geld-zurück-Garantie
+            </div>
+        </div>
+
+        <!-- Skip -->
+        <button class="skip-btn" id="skipBtn" style="opacity: 0; transition: opacity 0.5s;" onclick="skipToFinal()">
+            Nein danke, ich starte nur mit dem Plan
+        </button>
+    </div>
+
+    <!-- Payment Popup -->
+    <div class="payment-overlay" id="paymentOverlay">
+        <div class="payment-popup">
+            <div class="payment-header">
+                <span class="payment-title">Notfall-Karten sichern</span>
+                <button class="payment-close" onclick="closePaymentPopup()">✕</button>
+            </div>
+            <div class="payment-body">
+                <div class="payment-product">
+                    <div class="payment-product-icon">🆘</div>
+                    <div class="payment-product-info">
+                        <h3>10 Notfall-Karten</h3>
+                        <p>PDF · Sofort per E-Mail</p>
+                    </div>
+                    <div class="payment-product-price">€9,99</div>
+                </div>
+
+                <div id="paymentError" class="payment-error"></div>
+                <div id="payment-element"></div>
+
+                <button class="payment-btn" id="paymentBtn" onclick="submitPayment()">
+                    🔒 Jetzt bezahlen
+                </button>
+
+                <div class="payment-guarantee">
+                    🛡️ Sichere Zahlung • 30 Tage Geld-zurück
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+        const dogName = localStorage.getItem('dogName') || 'deinen Hund';
+        const userEmail = localStorage.getItem('userEmail') || '';
+        const leadId = new URLSearchParams(window.location.search).get('lead_id') || localStorage.getItem('leadId') || '';
+
+        let stripe = null;
+        let elements = null;
+        let paymentElement = null;
+        let clientSecret = null;
+
+        // Skip Button nach 3 Sekunden einblenden
+        setTimeout(() => {
+            document.getElementById('skipBtn').style.opacity = '1';
+        }, 3000);
+
+        function skipToFinal() {
+            window.location.href = 'danke-final.html?lead_id=' + leadId;
+        }
+
+        async function buyNotfallKarten() {
+            const btn = document.getElementById('ctaBtn');
+            btn.textContent = 'Lädt...';
+            btn.disabled = true;
+
+            if (!userEmail) {
+                alert('Fehler: Keine E-Mail gefunden.');
+                btn.textContent = 'Notfall-Karten mitnehmen – €9,99';
+                btn.disabled = false;
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/upsell-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        module: 'notfall-karten',
+                        leadId: leadId,
+                        email: userEmail,
+                        dogName: dogName,
+                        price: 999
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.error || !result.clientSecret) {
+                    alert('Fehler beim Laden. Bitte versuche es erneut.');
+                    btn.textContent = 'Notfall-Karten mitnehmen – €9,99';
+                    btn.disabled = false;
+                    return;
+                }
+
+                clientSecret = result.clientSecret;
+
+                if (!stripe) stripe = Stripe(STRIPE_PUBLIC_KEY);
+
+                elements = stripe.elements({
+                    clientSecret: clientSecret,
+                    appearance: {
+                        theme: 'stripe',
+                        variables: {
+                            colorPrimary: '#C4A576',
+                            colorBackground: '#ffffff',
+                            colorText: '#2C2C2E',
+                            colorDanger: '#e74c3c',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            borderRadius: '8px'
+                        }
+                    },
+                    locale: 'de'
+                });
+
+                paymentElement = elements.create('payment', {
+                    layout: { type: 'tabs', defaultCollapsed: false },
+                    paymentMethodOrder: ['klarna', 'paypal', 'card'],
+                    wallets: { applePay: 'auto', googlePay: 'auto' }
+                });
+
+                paymentElement.mount('#payment-element');
+                document.getElementById('paymentOverlay').classList.add('active');
+
+                btn.textContent = 'Notfall-Karten mitnehmen – €9,99';
+                btn.disabled = false;
+
+            } catch (err) {
+                console.error('Error:', err);
+                alert('Fehler beim Laden.');
+                btn.textContent = 'Notfall-Karten mitnehmen – €9,99';
+                btn.disabled = false;
+            }
+        }
+
+        async function submitPayment() {
+            const payBtn = document.getElementById('paymentBtn');
+            payBtn.disabled = true;
+            payBtn.innerHTML = '<span class="spinner"></span> Wird verarbeitet...';
+            document.getElementById('paymentError').classList.remove('visible');
+
+            if (!stripe || !elements) {
+                showError('Stripe nicht initialisiert. Bitte Seite neu laden.');
+                payBtn.disabled = false;
+                payBtn.innerHTML = '🔒 Jetzt bezahlen';
+                return;
+            }
+
+            try {
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: window.location.origin + '/danke-final.html?downsell=true&lead_id=' + leadId
+                    }
+                });
+
+                if (error) {
+                    showError(error.message || 'Zahlung fehlgeschlagen');
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '🔒 Jetzt bezahlen';
+                }
+            } catch (err) {
+                showError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
+                payBtn.disabled = false;
+                payBtn.innerHTML = '🔒 Jetzt bezahlen';
+            }
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('paymentError');
+            el.textContent = msg;
+            el.classList.add('visible');
+        }
+
+        function closePaymentPopup() {
+            document.getElementById('paymentOverlay').classList.remove('active');
+            if (paymentElement) { paymentElement.unmount(); paymentElement = null; }
+        }
+
+        document.getElementById('paymentOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closePaymentPopup();
+        });
+    </script>
+</body>
+</html>
