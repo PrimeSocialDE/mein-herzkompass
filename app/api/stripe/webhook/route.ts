@@ -270,6 +270,16 @@ async function handleCheckoutFailed(session: Stripe.Checkout.Session) {
 }
 
 async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
+  // === UPSELL PAYMENT HANDLING ===
+  const isUpsell = paymentIntent.metadata?.type === 'upsell';
+  const isPremium = paymentIntent.metadata?.type === 'premium';
+
+  if (isUpsell || isPremium) {
+    await handleUpsellPaymentSuccess(paymentIntent);
+    return;
+  }
+
+  // === REGULAR PAYMENT HANDLING ===
   const referenceId = paymentIntent.metadata?.order_id || paymentIntent.metadata?.lead_id;
   if (!referenceId) {
     console.error("Keine Reference-ID in PaymentIntent gefunden");
@@ -279,7 +289,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
   const { table, data: existingRecord } = await findLeadOrOrder(referenceId);
   if (!table) return;
 
-  // ⬇️ NEU: Skip wenn bereits paid
+  // Skip wenn bereits paid
   if (existingRecord.status === 'paid') {
     console.log(`⚠️ ${referenceId} bereits paid - überspringe (payment_intent.succeeded)`);
     return;
@@ -292,10 +302,10 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
   if (stripe) {
     try {
       const charges = await stripe.charges.list({ payment_intent: paymentIntent.id, limit: 1 });
-      
+
       if (charges.data.length > 0) {
         const charge = charges.data[0];
-        
+
         if (charge.billing_details) {
           customerEmail = customerEmail || charge.billing_details.email;
           customerName = charge.billing_details.name;
@@ -304,7 +314,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
         if (charge.payment_method_details?.paypal) {
           const paypal = charge.payment_method_details.paypal;
           customerEmail = customerEmail || paypal.payer_email;
-          
+
           const paypalName = (paypal.payer_name as any);
           if (paypalName && !customerName) {
             customerName = `${paypalName.given_name || ''} ${paypalName.surname || ''}`.trim();
@@ -333,7 +343,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     }
 
     const { error } = await supabase.from(table).update(updateData).eq("id", referenceId);
-    
+
     if (error) {
       console.error("Fehler beim Aktualisieren via PaymentIntent:", error);
     } else {
@@ -349,6 +359,140 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     }
   } catch (err) {
     console.error("Fehler bei PaymentIntent-Verarbeitung:", err);
+  }
+}
+
+// === UPSELL PAYMENT HANDLER ===
+async function handleUpsellPaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
+  console.log("🛒 === UPSELL PAYMENT SUCCESS ===");
+
+  const leadId = paymentIntent.metadata?.lead_id;
+  const module = paymentIntent.metadata?.module;
+  const email = paymentIntent.metadata?.email;
+  const isPremium = paymentIntent.metadata?.is_premium === 'true';
+
+  console.log("🛒 Lead ID:", leadId);
+  console.log("🛒 Module:", module);
+  console.log("🛒 Email:", email);
+  console.log("🛒 Is Premium:", isPremium);
+
+  if (!leadId && !email) {
+    console.error("❌ Keine Lead-ID oder Email für Upsell gefunden");
+    return;
+  }
+
+  try {
+    // Lead finden
+    let leadData = null;
+
+    if (leadId) {
+      const { data, error } = await supabase
+        .from("wauwerk_leads")
+        .select("*")
+        .eq("id", leadId)
+        .single();
+
+      if (!error && data) {
+        leadData = data;
+      }
+    }
+
+    // Fallback: über Email suchen
+    if (!leadData && email) {
+      const { data, error } = await supabase
+        .from("wauwerk_leads")
+        .select("*")
+        .eq("email", email)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (!error && data) {
+        leadData = data;
+      }
+    }
+
+    if (!leadData) {
+      console.error("❌ Lead nicht gefunden für Upsell");
+      return;
+    }
+
+    console.log("✅ Lead gefunden:", leadData.id);
+
+    // Bestehende upsell_modules holen (kann Array oder String sein)
+    let existingModules: string[] = [];
+    if (leadData.upsell_modules) {
+      if (Array.isArray(leadData.upsell_modules)) {
+        existingModules = leadData.upsell_modules;
+      } else if (typeof leadData.upsell_modules === 'string') {
+        existingModules = leadData.upsell_modules.split(',').filter(Boolean);
+      }
+    }
+
+    // Neue Module hinzufügen
+    const newModules = module ? module.split('+') : [];
+    if (isPremium) {
+      newModules.push('premium');
+    }
+
+    // Duplikate vermeiden
+    const allModules = [...new Set([...existingModules, ...newModules])];
+
+    console.log("🛒 Bestehende Module:", existingModules);
+    console.log("🛒 Neue Module:", newModules);
+    console.log("🛒 Alle Module:", allModules);
+
+    // Update in Supabase
+    const { error: updateError } = await supabase
+      .from("wauwerk_leads")
+      .update({
+        upsell_modules: allModules,
+        upsell_paid_at: new Date().toISOString(),
+        upsell_payment_intent: paymentIntent.id,
+      })
+      .eq("id", leadData.id);
+
+    if (updateError) {
+      console.error("❌ Fehler beim Updaten der upsell_modules:", updateError);
+    } else {
+      console.log("✅ upsell_modules erfolgreich aktualisiert:", allModules);
+    }
+
+    // Notfall-Karten: PDF generieren und versenden
+    if (module === 'notfall-karten' && email) {
+      console.log("📄 Notfall-Karten Delivery triggern...");
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}` : 'https://pfoten-plan.de';
+        await fetch(`${baseUrl}/api/notfall-karten/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email,
+            dogName: paymentIntent.metadata?.dog_name || 'deinen Hund',
+            leadId: leadData.id,
+          }),
+        });
+        console.log("✅ Notfall-Karten Delivery getriggert");
+      } catch (deliveryErr) {
+        console.error("❌ Notfall-Karten Delivery Fehler:", deliveryErr);
+      }
+    }
+
+    // Make benachrichtigen
+    await notifyMake(leadData.id, {
+      source: "upsell_payment",
+      type: isPremium ? "premium" : "upsell",
+      module: module,
+      modules: allModules,
+      email: email,
+      stripe_payment_intent: paymentIntent.id,
+    });
+
+    console.log("🛒 === UPSELL PAYMENT SUCCESS ENDE ===");
+
+  } catch (err) {
+    console.error("❌ Fehler bei Upsell-Verarbeitung:", err);
   }
 }
 
