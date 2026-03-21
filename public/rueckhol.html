@@ -1109,6 +1109,12 @@
 </script>
 </head>
 <body>
+    <!-- Sticky Countdown Banner -->
+    <div id="countdownBanner" style="position: sticky; top: 0; z-index: 9998; background: linear-gradient(135deg, #1a1a1a, #2d2d2d); color: white; padding: 10px 16px; text-align: center; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+        <span>Dein persönlicher Rabatt läuft ab in</span>
+        <span id="countdownTimer" style="background: #C4A576; color: white; padding: 4px 10px; border-radius: 6px; font-weight: 800; font-size: 15px; letter-spacing: 1px; min-width: 60px;">14:59</span>
+    </div>
+
     <header class="header">
         <a href="index.html" class="logo">
             <img src="logo.png" alt="Pfoten-Plan Logo" class="logo-image">
@@ -1240,23 +1246,76 @@
             </div>
         </div>
 
-        <!-- Plan-Inhalt Slider (1/3/6 Monate) -->
-        <div style="background: var(--white); border-radius: 16px; padding: 24px 20px; margin-bottom: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
+        <!-- Plan-Inhalt iPad -->
+        <div style="margin-bottom: 30px;">
             <h2 style="font-size: 18px; font-weight: 700; color: var(--text-dark); text-align: center; margin-bottom: 16px;">Was dich in <span id="planSliderDogName">deinem</span> Plan erwartet</h2>
-            <!-- Tabs -->
-            <div style="display: flex; gap: 6px; margin-bottom: 18px; justify-content: center;">
-                <button onclick="showPlanTab(0)" id="planTab0" style="flex: 1; padding: 10px 6px; border-radius: 8px; border: 2px solid var(--primary-brown); background: var(--primary-brown); color: white; font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s;">1 Monat</button>
-                <button onclick="showPlanTab(1)" id="planTab1" style="flex: 1; padding: 10px 6px; border-radius: 8px; border: 2px solid var(--border-light); background: var(--white); color: var(--text-medium); font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s;">3 Monate</button>
-                <button onclick="showPlanTab(2)" id="planTab2" style="flex: 1; padding: 10px 6px; border-radius: 8px; border: 2px solid var(--border-light); background: var(--white); color: var(--text-medium); font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s;">6 Monate</button>
-            </div>
-            <!-- Slide Content -->
-            <div id="planSlideContent">
-                <!-- Wird per JS befüllt -->
-            </div>
-            <ul id="planSliderBullets" style="margin-top: 14px; padding: 0 0 0 18px; font-size: 13px; color: var(--text-medium); line-height: 1.7;">
-            </ul>
-            <div style="background: #FAF8F5; border-radius: 10px; padding: 12px 16px; text-align: center; font-size: 13px; color: var(--text-medium); line-height: 1.5; margin-top: 14px;" id="planSliderStats">
-                34 Seiten · 10 Übungen · Täglicher Trainingsplan · Bonus-Spiele
+
+            <!-- iPad Frame -->
+            <div style="background: #1a1a1a; border-radius: 24px; padding: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+                <div style="background: #fff; border-radius: 16px; overflow: hidden;">
+                    <!-- iPad Header -->
+                    <div style="background: linear-gradient(180deg, #F8F8F8, #F0F0F0); padding: 8px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E0E0E0;">
+                        <div style="display: flex; gap: 5px;">
+                            <div style="width: 7px; height: 7px; border-radius: 50%; background: #FF5F57;"></div>
+                            <div style="width: 7px; height: 7px; border-radius: 50%; background: #FFBD2E;"></div>
+                            <div style="width: 7px; height: 7px; border-radius: 50%; background: #28CA41;"></div>
+                        </div>
+                        <div style="font-size: 11px; color: #999; font-weight: 500;">Trainingsplan.pdf</div>
+                        <div style="width: 40px;"></div>
+                    </div>
+
+                    <!-- iPad Body -->
+                    <div style="padding: 18px;">
+                        <!-- Plan Header -->
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #F0F0F0;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #C4A576, #8B7355); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🐕</div>
+                            <div>
+                                <div style="font-size: 14px; font-weight: 700; color: #2C2C2E;" id="ipadPlanTitle">Trainingsplan</div>
+                                <div style="font-size: 11px; color: #C4A576; font-weight: 500;" id="ipadPlanFocus">Personalisiert für deinen Hund</div>
+                            </div>
+                        </div>
+
+                        <!-- Plan Tabs -->
+                        <div style="display: flex; gap: 4px; margin-bottom: 18px; background: #F0F0F0; border-radius: 10px; padding: 3px;">
+                            <button onclick="selectIpadTab('1month')" id="ipadTab1" class="ipad-plan-tab" style="flex: 1; padding: 8px 4px; border-radius: 8px; border: none; background: transparent; color: #888; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s;">1 Monat</button>
+                            <button onclick="selectIpadTab('3month')" id="ipadTab3" class="ipad-plan-tab" style="flex: 1; padding: 8px 4px; border-radius: 8px; border: none; background: #C4A576; color: white; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s;">3 Monate</button>
+                            <button onclick="selectIpadTab('6month')" id="ipadTab6" class="ipad-plan-tab" style="flex: 1; padding: 8px 4px; border-radius: 8px; border: none; background: transparent; color: #888; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s;">6 Monate</button>
+                        </div>
+
+                        <!-- Fortschritts-Chart -->
+                        <div style="margin-bottom: 16px;">
+                            <div style="font-size: 12px; font-weight: 600; color: #2C2C2E; margin-bottom: 12px; text-align: center;" id="ipadChartTitle">Erwarteter Fortschritt über 12 Wochen</div>
+                            <div style="display: flex; align-items: flex-end; justify-content: center; gap: 6px; height: 110px; margin-bottom: 10px;" id="ipadChartBars">
+                                <!-- Bars per JS -->
+                            </div>
+                            <div style="display: flex; justify-content: center; gap: 16px; font-size: 10px; color: #888;">
+                                <span><span style="display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: linear-gradient(180deg, #C4A576, #D4B996); margin-right: 4px; vertical-align: middle;"></span>Mit Plan</span>
+                                <span><span style="display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: #E0E0E0; margin-right: 4px; vertical-align: middle;"></span>Ohne Plan</span>
+                            </div>
+                        </div>
+
+                        <!-- Plan Features -->
+                        <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px;" id="ipadPlanFeatures">
+                            <!-- Per JS -->
+                        </div>
+
+                        <!-- Stats -->
+                        <div style="display: flex; justify-content: space-around; padding-top: 14px; border-top: 1px solid #F0F0F0;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 20px; font-weight: 800; color: #C4A576;" id="ipadStatExercises">20+</div>
+                                <div style="font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Übungen</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 20px; font-weight: 800; color: #C4A576;" id="ipadStatWeeks">12</div>
+                                <div style="font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Wochen</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 20px; font-weight: 800; color: #C4A576;">✓</div>
+                                <div style="font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Support</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1339,7 +1398,7 @@
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">1-Monats-Plan</div>
-                            <div class="pricing-total">€29,99 einmalig</div>
+                            <div class="pricing-total"><span style="text-decoration: line-through; color: #999; font-size: 12px;">€49,99</span> <strong style="color: #C4A576;">€29,99</strong> einmalig</div>
                         </div>
                     </div>
                     <div class="pricing-right">
@@ -1354,13 +1413,13 @@
             </div>
 
             <div class="pricing-card popular selected" data-plan="3month" data-price="39.99">
-                <div class="popular-badge">⭐ Für dauerhafte Veränderung</div>
+                <div class="popular-badge">Für dauerhafte Veränderung</div>
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">3-Monats-Plan</div>
-                            <div class="pricing-total">€39,99 einmalig</div>
+                            <div class="pricing-total"><span style="text-decoration: line-through; color: #999; font-size: 12px;">€79,99</span> <strong style="color: #C4A576;">€39,99</strong> einmalig</div>
                         </div>
                     </div>
                     <div class="pricing-right">
@@ -1380,7 +1439,7 @@
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">6-Monats-Plan</div>
-                            <div class="pricing-total">€59,99 einmalig</div>
+                            <div class="pricing-total"><span style="text-decoration: line-through; color: #999; font-size: 12px;">€119,99</span> <strong style="color: #C4A576;">€59,99</strong> einmalig</div>
                         </div>
                     </div>
                     <div class="pricing-right">
@@ -1992,189 +2051,141 @@
             document.getElementById('analyseHopeTitle').textContent = hope.title;
             document.getElementById('analyseHopeText').textContent = hope.text;
 
-            // ==================== DYNAMISCHES INHALTSVERZEICHNIS ====================
-            // ==================== PLAN-INHALT SLIDER (1/3/6 Monate) ====================
+            // ==================== iPad PLAN-INHALT ====================
             document.getElementById('planSliderDogName').textContent = dogName + 's';
+            document.getElementById('ipadPlanTitle').textContent = dogName + 's Trainingsplan';
 
-            const planStructures = {
-                'pulling': {
-                    m1: [
-                        { w: '1–2', title: 'Leinenführung stabilisieren', desc: 'Auslöser erkennen, Abstand halten, ruhiges Leinenhandling üben' },
-                        { w: '3–4', title: 'Impulskontrolle & Festigung', desc: 'Richtungswechsel, Begegnungen meistern, entspanntes Gassi' }
+            const ipadTabData = {
+                '1month': {
+                    chartTitle: 'Erwarteter Fortschritt über 4 Wochen',
+                    weeks: 4, exercises: '10+',
+                    bars: [
+                        { plan: 30, selbst: 10 },
+                        { plan: 55, selbst: 15 },
+                        { plan: 75, selbst: 18 },
+                        { plan: 85, selbst: 20 }
                     ],
-                    m3: [
-                        { w: '1–4', title: 'Sicherheit & Management', desc: 'Leinenführung stabilisieren, Auslöser erkennen, Rückzugsort etablieren' },
-                        { w: '5–8', title: 'Impulskontrolle & Begegnungen', desc: 'Leinenruck-Alternativen, Richtungswechsel, Begegnungen in Ruhe meistern' },
-                        { w: '9–12', title: 'Freilauf & Festigung', desc: 'Entspanntes Gassi ohne Ziehen, Ablenkungen souverän meistern' }
-                    ],
-                    m6: [
-                        { w: '1–2', title: 'Sicherheit & Management', desc: 'Leinenführung stabilisieren, Auslöser erkennen' },
-                        { w: '2–3', title: 'Impulskontrolle aufbauen', desc: 'Richtungswechsel, Leinenruck-Alternativen, ruhiges Führen' },
-                        { w: '4–6', title: 'Freilauf & Alltagssicherheit', desc: 'Begegnungen meistern, entspanntes Gassi, dauerhafte Veränderung' }
+                    features: [
+                        { icon: '📋', text: 'Grundlagen-Training für schnelle Ergebnisse' },
+                        { icon: '🎯', text: 'Fokus auf dein Hauptproblem' },
+                        { icon: '📅', text: 'Täglicher Schritt-für-Schritt Plan' },
+                        { icon: '🖨️', text: 'PDF zum Ausdrucken oder am Handy lesen' },
+                        { icon: '✓', text: '34 Seiten · 10 Übungen · Bonus-Spiele' }
                     ]
                 },
-                'aggression': {
-                    m1: [
-                        { w: '1–2', title: 'Stressreduktion & Abstand', desc: 'Auslöser meiden, Ruhezonen schaffen, Management-Routinen' },
-                        { w: '3–4', title: 'Kontrollierte Begegnungen', desc: 'Distanz halten, Umorientierung üben, erste Fortschritte' }
+                '3month': {
+                    chartTitle: 'Erwarteter Fortschritt über 12 Wochen',
+                    weeks: 12, exercises: '20+',
+                    barStep: 2,
+                    bars: [
+                        { plan: 30, selbst: 8 },
+                        { plan: 55, selbst: 12 },
+                        { plan: 75, selbst: 16 },
+                        { plan: 88, selbst: 18 },
+                        { plan: 95, selbst: 20 },
+                        { plan: 99, selbst: 22 }
                     ],
-                    m3: [
-                        { w: '1–4', title: 'Sicherheit & Stressreduktion', desc: 'Auslöser meiden, Management-Routinen, Ruhezonen und Abstandstraining' },
-                        { w: '5–8', title: 'Kontrollierte Begegnungen', desc: 'Distanz halten, Umorientierung üben, Frustrationstoleranz aufbauen' },
-                        { w: '9–12', title: 'Stabilität im Alltag', desc: 'Begegnungen souverän meistern, Vertrauen festigen, Rückfallprävention' }
-                    ],
-                    m6: [
-                        { w: '1–2', title: 'Sicherheit & Stressreduktion', desc: 'Auslöser meiden, Ruhezonen, Abstandstraining' },
-                        { w: '3–4', title: 'Kontrollierte Begegnungen', desc: 'Umorientierung, Frustrationstoleranz, Distanzübungen' },
-                        { w: '5–6', title: 'Stabilität & Vertrauen', desc: 'Alltagssicherheit, souveräne Begegnungen, Rückfallprävention' }
+                    features: [
+                        { icon: '📋', text: 'Vollständiges Training mit Aufbau-Phasen' },
+                        { icon: '🎯', text: 'Hauptproblem + Zusatzverhalten abdecken' },
+                        { icon: '📅', text: 'Woche-für-Woche Trainingsplan' },
+                        { icon: '🔄', text: 'Festigung & Rückfall-Prävention' },
+                        { icon: '🖨️', text: 'PDF zum Ausdrucken oder am Handy lesen' },
+                        { icon: '✓', text: '45 Seiten · 20 Übungen · Bonus-Spiele' }
                     ]
                 },
-                'barking': {
-                    m1: [
-                        { w: '1–2', title: 'Auslöser erkennen & Ruhe', desc: 'Bell-Trigger identifizieren, Ruhezonen schaffen, Entspannungssignal' },
-                        { w: '3–4', title: 'Alternatives Verhalten', desc: 'Abbruchsignal, Frusttoleranz steigern, gelassenere Reaktionen' }
+                '6month': {
+                    chartTitle: 'Erwarteter Fortschritt über 24 Wochen',
+                    weeks: 24, exercises: '30+',
+                    barStep: 4,
+                    bars: [
+                        { plan: 20, selbst: 5 },
+                        { plan: 40, selbst: 9 },
+                        { plan: 58, selbst: 12 },
+                        { plan: 72, selbst: 14 },
+                        { plan: 84, selbst: 16 },
+                        { plan: 93, selbst: 18 }
                     ],
-                    m3: [
-                        { w: '1–4', title: 'Auslöser erkennen & Ruhe aufbauen', desc: 'Bell-Trigger identifizieren, Ruhezonen schaffen, Entspannungssignal einführen' },
-                        { w: '5–8', title: 'Alternatives Verhalten trainieren', desc: 'Abbruchsignal aufbauen, Frusttoleranz steigern, kontrollierte Begegnungen' },
-                        { w: '9–12', title: 'Alltagssicherheit & Gelassenheit', desc: 'Ruhiges Verhalten in Alltagssituationen, weniger Reaktivität' }
-                    ],
-                    m6: [
-                        { w: '1–2', title: 'Auslöser erkennen & Ruhe', desc: 'Bell-Trigger identifizieren, Entspannungssignal einführen' },
-                        { w: '3–4', title: 'Alternatives Verhalten', desc: 'Abbruchsignal, Frusttoleranz, kontrollierte Situationen' },
-                        { w: '5–6', title: 'Gelassenheit im Alltag', desc: 'Ruhiges Verhalten festigen, weniger Reaktivität an der Tür' }
-                    ]
-                },
-                'anxiety': {
-                    m1: [
-                        { w: '1–2', title: 'Sicherheit & Vertrauen', desc: 'Sichere Rückzugsorte, Entspannungsrituale, kurze Trennungsübungen' },
-                        { w: '3–4', title: 'Alleinbleiben üben', desc: 'Trennungszeiten steigern, Beschäftigung, Abschiedsrituale' }
-                    ],
-                    m3: [
-                        { w: '1–4', title: 'Sicherheit & Vertrauen aufbauen', desc: 'Sichere Rückzugsorte, Entspannungsrituale, kurze Trennungsübungen' },
-                        { w: '5–8', title: 'Alleinbleiben schrittweise üben', desc: 'Trennungszeiten langsam steigern, Beschäftigung, Abschiedsrituale' },
-                        { w: '9–12', title: 'Selbstständigkeit & Routine', desc: 'Längere Abwesenheiten, entspanntes Alleinbleiben, Alltagstransfer' }
-                    ],
-                    m6: [
-                        { w: '1–2', title: 'Sicherheit & Vertrauen', desc: 'Rückzugsorte, Entspannungsrituale, erste Mini-Trennungen' },
-                        { w: '3–4', title: 'Trennungszeiten steigern', desc: 'Von Minuten zu Stunden, Beschäftigung, Routinen' },
-                        { w: '5–6', title: 'Entspanntes Alleinbleiben', desc: 'Längere Abwesenheiten, stabiles Verhalten, Alltagstauglichkeit' }
-                    ]
-                },
-                'energy': {
-                    m1: [
-                        { w: '1–2', title: 'Ruhe lernen & Struktur', desc: 'Ruherituale einführen, mentale Auslastung, Reizüberflutung vermeiden' },
-                        { w: '3–4', title: 'Impulskontrolle & Fokus', desc: 'Warte-Übungen, gezielte Beschäftigung, ausgeglichener Alltag' }
-                    ],
-                    m3: [
-                        { w: '1–4', title: 'Ruhe lernen & Struktur schaffen', desc: 'Ruherituale einführen, mentale Auslastung, Reizüberflutung vermeiden' },
-                        { w: '5–8', title: 'Impulskontrolle & Fokus', desc: 'Warte-Übungen, Frustrationstoleranz, gezielte Beschäftigung' },
-                        { w: '9–12', title: 'Ausgeglichener Alltag', desc: 'Entspannte Spaziergänge, Ruhe als Normalzustand' }
-                    ],
-                    m6: [
-                        { w: '1–2', title: 'Ruhe & Struktur', desc: 'Ruherituale, mentale Auslastung, Reizüberflutung vermeiden' },
-                        { w: '3–4', title: 'Impulskontrolle', desc: 'Warte-Übungen, Frustrationstoleranz, Fokus aufbauen' },
-                        { w: '5–6', title: 'Ausgeglichener Alltag', desc: 'Entspannte Spaziergänge, dauerhafte Ruhe und Balance' }
-                    ]
-                },
-                'dog-reactive': {
-                    m1: [
-                        { w: '1–2', title: 'Abstand & Management', desc: 'Sicherheitsabstand, Auslöser frühzeitig erkennen, Umorientierung' },
-                        { w: '3–4', title: 'Kontrollierte Begegnungen', desc: 'Bogenführung, Stop-Übungen, weniger Reaktivität' }
-                    ],
-                    m3: [
-                        { w: '1–4', title: 'Abstand & Management', desc: 'Sicherheitsabstand halten, Auslöser frühzeitig erkennen, Umorientierung' },
-                        { w: '5–8', title: 'Kontrollierte Begegnungen', desc: 'Bogenführung, Stop-Übungen, Impulskontrolle bei Sichtkontakt' },
-                        { w: '9–12', title: 'Gelassene Hundebegegnungen', desc: 'Ruhiges Vorbeigehen, weniger Reaktivität, Alltagssicherheit' }
-                    ],
-                    m6: [
-                        { w: '1–2', title: 'Abstand & Management', desc: 'Sicherheitsabstand, Umorientierung, Auslöser erkennen' },
-                        { w: '3–4', title: 'Kontrollierte Begegnungen', desc: 'Bogenführung, Stop-Übungen, Impulskontrolle' },
-                        { w: '5–6', title: 'Gelassene Begegnungen', desc: 'Souveränes Vorbeigehen, Alltagssicherheit, Festigung' }
+                    features: [
+                        { icon: '📋', text: 'Komplettes Rundum-Training' },
+                        { icon: '🎯', text: 'Alle Problembereiche systematisch lösen' },
+                        { icon: '📅', text: 'Langzeit-Plan mit Meilensteinen' },
+                        { icon: '🔄', text: 'Fortgeschrittene Übungen & Perfektion' },
+                        { icon: '🏆', text: 'Bonus: Trick-Training & Beschäftigung' },
+                        { icon: '🖨️', text: 'PDF zum Ausdrucken oder am Handy lesen' },
+                        { icon: '✓', text: '57 Seiten · 30 Übungen · Bonus-Spiele' }
                     ]
                 }
             };
-            const defaultStructure = {
-                m1: [
-                    { w: '1–2', title: 'Grundlagen & Management', desc: 'Auslöser erkennen, Routinen aufbauen, sichere Basis schaffen' },
-                    { w: '3–4', title: 'Training & Festigung', desc: 'Übungen aufbauen, Impulskontrolle stärken, Alltagstransfer' }
-                ],
-                m3: [
-                    { w: '1–4', title: 'Grundlagen & Management', desc: 'Auslöser erkennen, Routinen aufbauen, sichere Basis schaffen' },
-                    { w: '5–8', title: 'Gezieltes Training', desc: 'Übungen aufbauen, Impulskontrolle stärken, Alltagssituationen üben' },
-                    { w: '9–12', title: 'Festigung & Alltag', desc: 'Gelerntes festigen, schwierigere Situationen meistern, Routine etablieren' }
-                ],
-                m6: [
-                    { w: '1–2', title: 'Grundlagen & Management', desc: 'Auslöser erkennen, Routinen aufbauen, sichere Basis' },
-                    { w: '3–4', title: 'Gezieltes Training', desc: 'Impulskontrolle, Alltagssituationen üben, Fortschritte' },
-                    { w: '5–6', title: 'Festigung & Alltag', desc: 'Gelerntes festigen, dauerhafte Veränderung, Routine' }
-                ]
-            };
 
-            const structure = planStructures[dogProblem] || defaultStructure;
-            const statsPerPlan = {
-                0: '34 Seiten · 10 Übungen · Täglicher Trainingsplan · Bonus-Spiele',
-                1: '45 Seiten · 20 Übungen · Täglicher Trainingsplan · Bonus-Spiele',
-                2: '57 Seiten · 30 Übungen · Täglicher Trainingsplan · Bonus-Spiele'
-            };
-            const planKeys = ['m1', 'm3', 'm6'];
-            const wocheLabel = ['Woche', 'Woche', 'Monat'];
+            // CSS für Feature-Animation
+            const ipadAnimStyle = document.createElement('style');
+            ipadAnimStyle.textContent = '@keyframes ipadFeatureIn { to { opacity: 1; transform: translateX(0); } }';
+            document.head.appendChild(ipadAnimStyle);
 
-            function renderPlanPhases(phases, isMonths) {
-                const colors = [
-                    'linear-gradient(135deg, #C4A576, #A89270)',
-                    'linear-gradient(135deg, #A89270, #8B7355)',
-                    'linear-gradient(135deg, #22C55E, #16A34A)'
-                ];
-                return phases.map((p, i) => {
-                    const isLast = i === phases.length - 1;
-                    const border = isLast ? '' : 'border-bottom: 1px solid #E8E4DF; padding-bottom: 14px; margin-bottom: 14px;';
-                    const bg = isLast ? colors[2] : colors[i];
-                    return '<div style="display: flex; gap: 14px; ' + border + '">' +
-                        '<div style="min-width: 42px; height: 42px; background: ' + bg + '; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 14px;">' + p.w + '</div>' +
-                        '<div><div style="font-size: 15px; font-weight: 700; color: #1a1a1a; margin-bottom: 2px;">' + p.title + '</div>' +
-                        '<div style="font-size: 13px; color: #555; line-height: 1.4;">' + p.desc + '</div></div></div>';
-                }).join('');
-            }
+            window.selectIpadTab = function(planKey) {
+                const data = ipadTabData[planKey];
+                if (!data) return;
 
-            const planBullets = [
-                [
-                    'Jede Übung Schritt für Schritt erklärt',
-                    'Alltagstaugliche Einheiten (15–20 Min/Tag)',
-                    'Kompakter Schnellstart für erste Ergebnisse'
-                ],
-                [
-                    'Jede Übung Schritt für Schritt erklärt',
-                    'Alltagstaugliche Einheiten (15–20 Min/Tag)',
-                    'Mehr Zeit für nachhaltige Verhaltensänderung',
-                    'Aufbauende Übungen mit steigender Schwierigkeit'
-                ],
-                [
-                    'Jede Übung Schritt für Schritt erklärt',
-                    'Alltagstaugliche Einheiten (15–20 Min/Tag)',
-                    'Maximale Tiefe für komplexe Verhaltensprobleme',
-                    'Rückfallprävention und langfristige Festigung'
-                ]
-            ];
-
-            let currentPlanTab = 0;
-            window.showPlanTab = function(idx) {
-                currentPlanTab = idx;
-                const key = planKeys[idx];
-                const phases = structure[key];
-                document.getElementById('planSlideContent').innerHTML = renderPlanPhases(phases, idx === 2);
-                document.getElementById('planSliderStats').textContent = statsPerPlan[idx];
-                document.getElementById('planSliderBullets').innerHTML = planBullets[idx].map(b => '<li>' + b + '</li>').join('');
-                [0,1,2].forEach(i => {
-                    const btn = document.getElementById('planTab' + i);
-                    if (i === idx) {
-                        btn.style.background = '#C4A576'; btn.style.color = 'white'; btn.style.borderColor = '#C4A576';
-                    } else {
-                        btn.style.background = 'white'; btn.style.color = '#555'; btn.style.borderColor = '#E8E8E8';
-                    }
+                // Tabs stylen
+                document.querySelectorAll('.ipad-plan-tab').forEach(t => {
+                    t.style.background = 'transparent';
+                    t.style.color = '#888';
+                    t.style.fontWeight = '600';
                 });
+                const tabId = 'ipadTab' + planKey.replace('month', '');
+                const activeTab = document.getElementById(tabId);
+                if (activeTab) {
+                    activeTab.style.background = '#C4A576';
+                    activeTab.style.color = 'white';
+                    activeTab.style.fontWeight = '700';
+                }
+
+                // Chart
+                document.getElementById('ipadChartTitle').textContent = data.chartTitle;
+
+                const barsContainer = document.getElementById('ipadChartBars');
+                const bars = data.bars;
+                const step = data.barStep || 1;
+                const barWidth = bars.length > 8 ? 12 : 18;
+                const barGap = bars.length > 8 ? 3 : 6;
+
+                let barsHtml = '';
+                bars.forEach((bar, i) => {
+                    const weekNum = (i + 1) * step;
+                    const showLabel = true;
+                    barsHtml += '<div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">' +
+                        '<div style="display: flex; gap: ' + barGap + 'px; align-items: flex-end; height: 90px;">' +
+                            '<div class="ipad-bar-anim" style="width: ' + barWidth + 'px; height: 0; border-radius: 3px 3px 0 0; background: linear-gradient(180deg, #C4A576, #D4B996); transition: height 0.6s ease ' + (i * 0.06) + 's;" data-h="' + bar.plan + '"></div>' +
+                            '<div class="ipad-bar-anim" style="width: ' + barWidth + 'px; height: 0; border-radius: 3px 3px 0 0; background: #E0E0E0; transition: height 0.6s ease ' + (i * 0.06) + 's;" data-h="' + bar.selbst + '"></div>' +
+                        '</div>' +
+                        '<div style="font-size: 9px; color: #999;">' + (showLabel ? 'W' + weekNum : '') + '</div>' +
+                    '</div>';
+                });
+                barsContainer.innerHTML = barsHtml;
+
+                // Bars animieren
+                setTimeout(() => {
+                    barsContainer.querySelectorAll('.ipad-bar-anim').forEach(b => {
+                        b.style.height = b.dataset.h + '%';
+                    });
+                }, 50);
+
+                // Features
+                document.getElementById('ipadPlanFeatures').innerHTML = data.features.map((f, i) =>
+                    '<div style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #FAFAFA; border-radius: 8px; opacity: 0; transform: translateX(-8px); animation: ipadFeatureIn 0.3s ease ' + (i * 0.08) + 's forwards;">' +
+                        '<span style="font-size: 14px; width: 20px; text-align: center;">' + f.icon + '</span>' +
+                        '<span style="font-size: 13px; color: #2C2C2E; font-weight: 500;">' + f.text + '</span>' +
+                    '</div>'
+                ).join('');
+
+                // Stats
+                document.getElementById('ipadStatExercises').textContent = data.exercises;
+                document.getElementById('ipadStatWeeks').textContent = data.weeks;
             };
-            showPlanTab(0);
+
+            // Initial laden
+            selectIpadTab('3month');
         }
 
         // Pricing Selection
@@ -2369,6 +2380,43 @@
 
         // Beim Laden ausführen
         loadAndPersonalize();
+
+        // ==================== COUNTDOWN TIMER ====================
+        (function() {
+            const TIMER_KEY = 'rueckhol_timer_end';
+            const TIMER_DURATION = 15 * 60 * 1000; // 15 Minuten
+
+            let endTime = localStorage.getItem(TIMER_KEY);
+            if (!endTime || parseInt(endTime) < Date.now()) {
+                endTime = Date.now() + TIMER_DURATION;
+                localStorage.setItem(TIMER_KEY, endTime);
+            } else {
+                endTime = parseInt(endTime);
+            }
+
+            const timerEl = document.getElementById('countdownTimer');
+            const bannerEl = document.getElementById('countdownBanner');
+
+            function updateTimer() {
+                const remaining = endTime - Date.now();
+                if (remaining <= 0) {
+                    timerEl.textContent = '0:00';
+                    timerEl.style.background = '#DC2626';
+                    return;
+                }
+                const mins = Math.floor(remaining / 60000);
+                const secs = Math.floor((remaining % 60000) / 1000);
+                timerEl.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+
+                // Letzte 2 Minuten: Timer rot blinken
+                if (remaining < 120000) {
+                    timerEl.style.background = '#DC2626';
+                }
+            }
+
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        })();
     </script>
 </body>
 </html>
