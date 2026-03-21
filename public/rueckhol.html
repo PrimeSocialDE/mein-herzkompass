@@ -1319,6 +1319,50 @@
             </div>
         </div>
 
+        <!-- Übungs-Preview -->
+        <div style="background: white; border-radius: 16px; padding: 24px 20px; margin-bottom: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
+            <div style="text-align: center; margin-bottom: 18px;">
+                <span style="display: inline-block; background: linear-gradient(135deg, #FEF3E7, #FFF9F0); color: #8B7355; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 12px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Vorschau aus deinem Plan</span>
+                <h2 style="font-size: 18px; font-weight: 700; color: #1a1a1a; line-height: 1.3;" id="exercisePreviewTitle">So sieht eine Übung aus</h2>
+            </div>
+
+            <!-- Übungs-Card -->
+            <div style="border: 1px solid #E8E8E8; border-radius: 12px; overflow: hidden;">
+                <!-- Übungs-Header -->
+                <div style="background: linear-gradient(135deg, #C4A576, #8B7355); padding: 14px 16px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 22px;" id="exerciseIcon">🦮</span>
+                    <div>
+                        <div style="font-size: 15px; font-weight: 700; color: white;" id="exerciseName">Übung laden...</div>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.8);" id="exerciseMeta">Dauer: 10 Min · Schwierigkeit: Leicht</div>
+                    </div>
+                </div>
+
+                <!-- Sichtbare Schritte -->
+                <div style="padding: 16px;" id="exerciseStepsVisible">
+                    <!-- Per JS -->
+                </div>
+
+                <!-- Geblurrte Schritte -->
+                <div style="position: relative; padding: 0 16px 16px;">
+                    <div id="exerciseStepsBlurred" style="filter: blur(5px); pointer-events: none; user-select: none; opacity: 0.6;">
+                        <!-- Per JS -->
+                    </div>
+                    <!-- Overlay -->
+                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.95) 60%);">
+                        <div style="font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px;" id="exerciseBlurText">+ 3 weitere Schritte</div>
+                        <div style="font-size: 12px; color: #888; margin-bottom: 12px;">Alle Schritte im Plan freischalten</div>
+                        <button onclick="document.getElementById('pricingSection').scrollIntoView({behavior: 'smooth'})" style="background: linear-gradient(135deg, #C4A576, #8B7355); color: white; border: none; padding: 10px 24px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">
+                            Plan freischalten
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 12px; font-size: 12px; color: #888;">
+                Diese Übung ist eine von <strong id="exerciseTotal">20+</strong> aus deinem personalisierten Plan
+            </div>
+        </div>
+
         <!-- Soft CTA - dezent -->
         <div class="soft-cta">
             <p class="soft-cta-text">Bereit für den ersten Schritt?</p>
@@ -2186,6 +2230,156 @@
 
             // Initial laden
             selectIpadTab('3month');
+
+            // ==================== ÜBUNGS-PREVIEW ====================
+            const exerciseData = {
+                'pulling': {
+                    icon: '🦮',
+                    name: 'Die Richtungswechsel-Technik',
+                    meta: 'Dauer: 10 Min · Schwierigkeit: Leicht · Draußen',
+                    title: 'So sieht eine Übung für ' + dogName + 's Leinentraining aus',
+                    steps: [
+                        { num: 1, title: 'Startposition einnehmen', desc: 'Stell dich mit ' + dogName + ' an einer ruhigen Stelle auf. Leine locker halten, nicht wickeln. ' + dogName + ' soll neben dir stehen.' },
+                        { num: 2, title: 'Loslaufen & beobachten', desc: 'Geh langsam los. Sobald ' + dogName + ' anfängt zu ziehen und die Leine sich spannt – sofort stehen bleiben.' },
+                        { num: 3, title: 'Richtung wechseln', desc: 'Dreh dich um 180° und geh in die andere Richtung. Ohne Kommentar, ohne Ruck. Einfach umdrehen.' },
+                        { num: 4, title: 'Markieren & belohnen', desc: 'Sobald ' + dogName + ' wieder neben dir läuft und die Leine locker ist: sofort Leckerli + "Fein!".' },
+                        { num: 5, title: 'Wiederholen & steigern', desc: 'Das Ganze 5-8x pro Spaziergang. Nach 3-4 Tagen merkst du: ' + dogName + ' schaut öfter zu dir, bevor die Leine spannt.' }
+                    ]
+                },
+                'barking': {
+                    icon: '🔇',
+                    name: 'Das Ruhe-Signal aufbauen',
+                    meta: 'Dauer: 8 Min · Schwierigkeit: Leicht · Drinnen',
+                    title: 'So sieht eine Übung für ' + dogName + 's Anti-Bell-Training aus',
+                    steps: [
+                        { num: 1, title: 'Auslöser erkennen', desc: 'Beobachte, wann ' + dogName + ' bellt. Türklingel? Andere Hunde? Geräusche? Notiere die 3 häufigsten Auslöser.' },
+                        { num: 2, title: 'Ruhe-Wort einführen', desc: 'Wähle ein Wort wie "Ruhe" oder "Still". Sag es in einem ruhigen, tiefen Ton – nie schreien.' },
+                        { num: 3, title: 'Timing nutzen', desc: 'Warte auf eine natürliche Pause im Bellen. In genau dieser Sekunde: "Ruhe" sagen + sofort Leckerli.' },
+                        { num: 4, title: 'Verknüpfung stärken', desc: dogName + ' lernt: Wenn ich aufhöre zu bellen und "Ruhe" kommt, bekomme ich etwas Gutes.' },
+                        { num: 5, title: 'Schwierigkeit steigern', desc: 'Nach 5-7 Tagen: Übe mit leisen Auslösern (Türklingel-Video leise abspielen). Langsam steigern.' }
+                    ]
+                },
+                'aggression': {
+                    icon: '🛡️',
+                    name: 'Die Sicherheitsabstand-Methode',
+                    meta: 'Dauer: 15 Min · Schwierigkeit: Mittel · Draußen',
+                    title: 'So sieht eine Übung für ' + dogName + 's Aggressionstraining aus',
+                    steps: [
+                        { num: 1, title: 'Sicherheitsabstand finden', desc: 'Geh mit ' + dogName + ' spazieren. Sobald ihr einen anderen Hund seht: Wie weit muss der Abstand sein, damit ' + dogName + ' noch ruhig bleibt? Das ist dein Startabstand.' },
+                        { num: 2, title: 'Beobachten & belohnen', desc: 'Bleib auf diesem Abstand stehen. Solange ' + dogName + ' ruhig bleibt und den anderen Hund nur anschaut: durchgehend Leckerli geben.' },
+                        { num: 3, title: 'Umorientierung üben', desc: 'Sag ' + dogName + 's Namen. Schaut er zu dir? Sofort 3 Leckerli hintereinander + großes Lob.' },
+                        { num: 4, title: 'Bogen laufen', desc: 'Geh in einem großen Bogen am anderen Hund vorbei. Nicht frontal drauf zu. ' + dogName + ' lernt: Wir gehen vorbei, kein Grund zur Aufregung.' },
+                        { num: 5, title: 'Abstand verkürzen', desc: 'Erst nach 7-10 erfolgreichen Durchgängen: Geh 2 Meter näher ran. Nie mehr als das auf einmal.' }
+                    ]
+                },
+                'anxiety': {
+                    icon: '🏠',
+                    name: 'Mini-Trennungen üben',
+                    meta: 'Dauer: 10 Min · Schwierigkeit: Leicht · Drinnen',
+                    title: 'So sieht eine Übung für ' + dogName + 's Trennungstraining aus',
+                    steps: [
+                        { num: 1, title: 'Ruheplatz einrichten', desc: 'Leg ' + dogName + 's Lieblingsdecke an einen ruhigen Ort. Gib ein Leckerli darauf. ' + dogName + ' soll lernen: Dieser Platz ist sicher und positiv.' },
+                        { num: 2, title: 'Kurz den Raum verlassen', desc: 'Geh für 3 Sekunden in den Flur. Tür auf lassen. Komm zurück, bevor ' + dogName + ' unruhig wird. Leckerli.' },
+                        { num: 3, title: 'Dauer steigern', desc: '5 Sekunden. Dann 10. Dann 20. Immer nur steigern, wenn ' + dogName + ' beim letzten Mal ruhig geblieben ist.' },
+                        { num: 4, title: 'Tür schließen', desc: 'Erst wenn 30 Sekunden ohne Stress klappen: Tür kurz schließen. 5 Sekunden. Zurück. Belohnen.' },
+                        { num: 5, title: 'Alltagsrituale ändern', desc: 'Schuhe anziehen, Schlüssel nehmen – aber NICHT gehen. ' + dogName + ' lernt: Diese Signale bedeuten nicht immer Trennung.' }
+                    ]
+                },
+                'energy': {
+                    icon: '🧘',
+                    name: 'Die Entspannungsdecke',
+                    meta: 'Dauer: 10 Min · Schwierigkeit: Leicht · Drinnen',
+                    title: 'So sieht eine Übung für ' + dogName + 's Ruhetraining aus',
+                    steps: [
+                        { num: 1, title: 'Decke platzieren', desc: 'Leg eine bestimmte Decke an ' + dogName + 's Lieblingsplatz. Diese Decke wird ab jetzt das "Ruhe-Signal" – nur für Entspannung.' },
+                        { num: 2, title: 'Belohne jede Ruhe', desc: 'Sobald ' + dogName + ' sich auf die Decke legt: leise ein Leckerli neben die Schnauze legen. Kein Lob, kein Aufheben. Nur stille Belohnung.' },
+                        { num: 3, title: 'Dauer aufbauen', desc: 'Erst 10 Sekunden Ruhe belohnen. Dann 30. Dann 1 Minute. Immer nur steigern, wenn ' + dogName + ' es schafft.' },
+                        { num: 4, title: 'Ablenkung einbauen', desc: 'Nach 5-7 Tagen: Übe wenn jemand vorbeigeht. ' + dogName + ' bleibt auf der Decke? Jackpot – 5 Leckerli hintereinander.' },
+                        { num: 5, title: 'Decke mitnehmen', desc: 'Die Decke funktioniert jetzt als mobiles Ruhe-Signal. Im Café, bei Besuch, im Auto. ' + dogName + ' kennt: Decke = Entspannung.' }
+                    ]
+                },
+                'recall': {
+                    icon: '📣',
+                    name: 'Der Rückruf-Aufbau',
+                    meta: 'Dauer: 10 Min · Schwierigkeit: Leicht · Drinnen → Draußen',
+                    title: 'So sieht eine Übung für ' + dogName + 's Rückruf-Training aus',
+                    steps: [
+                        { num: 1, title: 'Neues Rückruf-Wort wählen', desc: 'Wähle ein frisches Wort, das du noch nie benutzt hast (z.B. "Hierher!" oder "Zack!"). Altes "Komm" ist wahrscheinlich schon verbrannt.' },
+                        { num: 2, title: 'Drinnen starten', desc: 'Sag das Wort in fröhlichem Ton. Sobald ' + dogName + ' zu dir kommt: Party! 5 Leckerli, Lob, Freude. Jeder Rückruf = Jackpot.' },
+                        { num: 3, title: 'Distanz aufbauen', desc: 'Übe aus verschiedenen Räumen. ' + dogName + ' im Wohnzimmer, du in der Küche. Rückruf-Wort → Belohnung.' },
+                        { num: 4, title: 'Nach draußen', desc: 'Erst im Garten oder an einer Schleppleine. Nie ohne Sicherung in den ersten 3 Wochen.' },
+                        { num: 5, title: 'Regel: Nie bestrafen', desc: 'Egal wie lange ' + dogName + ' braucht – wenn er kommt, gibt es IMMER Belohnung. Nie schimpfen nach einem Rückruf.' }
+                    ]
+                },
+                'jumping': {
+                    icon: '🐕',
+                    name: 'Die Vier-Pfoten-Regel',
+                    meta: 'Dauer: 8 Min · Schwierigkeit: Leicht · Drinnen',
+                    title: 'So sieht eine Übung für ' + dogName + 's Anti-Anspring-Training aus',
+                    steps: [
+                        { num: 1, title: 'Grundregel setzen', desc: dogName + ' bekommt ab sofort NUR Aufmerksamkeit wenn alle vier Pfoten am Boden sind. Springt er hoch: sofort wegdrehen, kein Blickkontakt.' },
+                        { num: 2, title: 'Richtiges Verhalten belohnen', desc: 'Sobald ' + dogName + ' mit allen vier Pfoten auf dem Boden steht oder sitzt: sofort Leckerli + ruhiges "Fein".' },
+                        { num: 3, title: 'Begrüßung üben', desc: 'Komm zur Tür rein. ' + dogName + ' springt? Dreh dich um, geh nochmal raus. Wiederhole bis er ruhig bleibt.' },
+                        { num: 4, title: 'Sitz als Alternative', desc: 'Trainiere "Sitz" bei Begrüßung. ' + dogName + ' setzt sich? Dann erst streicheln. Er lernt: Sitzen bringt Aufmerksamkeit.' },
+                        { num: 5, title: 'Besucher einweihen', desc: 'Alle im Haushalt müssen mitmachen. Eine Person die hochspringen belohnt macht den ganzen Fortschritt kaputt.' }
+                    ]
+                },
+                'destructive': {
+                    icon: '🧸',
+                    name: 'Die Alternativ-Beschäftigung',
+                    meta: 'Dauer: 10 Min · Schwierigkeit: Leicht · Drinnen',
+                    title: 'So sieht eine Übung für ' + dogName + 's Anti-Zerstörungs-Training aus',
+                    steps: [
+                        { num: 1, title: 'Erlaubtes Kauspielzeug bereitstellen', desc: 'Leg 2-3 verschiedene Kauspielzeuge an ' + dogName + 's Platz. Kongs, Kauknochen, Schleckmatten. Zeig ihm: DAS darfst du kauen.' },
+                        { num: 2, title: 'Beim Kauen belohnen', desc: 'Kaut ' + dogName + ' am Spielzeug? Leises Lob + ab und zu ein extra Leckerli dazulegen. Verknüpfung: Spielzeug kauen = gut.' },
+                        { num: 3, title: 'Verbotenes tauschen', desc: 'Nimmt ' + dogName + ' einen Schuh? Nicht schimpfen. Ruhig das Wort "Tausch" sagen und ein Kauspielzeug anbieten. Sofort belohnen beim Tausch.' },
+                        { num: 4, title: 'Auslöser erkennen', desc: 'Wann zerstört ' + dogName + ' Dinge? Langeweile? Stress? Alleine? Notiere die Muster – das zeigt dir die echte Ursache.' },
+                        { num: 5, title: 'Kopfarbeit einbauen', desc: 'Suchspiele, Futtersuche im Garten, Schnüffeldecke. 15 Minuten Kopfarbeit machen müder als 1 Stunde Spaziergang.' }
+                    ]
+                },
+                'dog-reactive': {
+                    icon: '🐕‍🦺',
+                    name: 'Die Bogenführung',
+                    meta: 'Dauer: 15 Min · Schwierigkeit: Mittel · Draußen',
+                    title: 'So sieht eine Übung für ' + dogName + 's Hundebegegnungs-Training aus',
+                    steps: [
+                        { num: 1, title: 'Abstand checken', desc: 'Anderer Hund in Sicht? Stopp. Ist ' + dogName + ' noch ansprechbar? Wenn ja: perfekter Abstand. Wenn nein: mehr Distanz.' },
+                        { num: 2, title: 'Aufmerksamkeit holen', desc: 'Sag ' + dogName + 's Namen. Schaut er zu dir statt zum anderen Hund? Sofort 3 Leckerli + ruhiges Lob.' },
+                        { num: 3, title: 'Bogen laufen', desc: 'Geh in einem weiten Bogen am anderen Hund vorbei. Nie frontal drauf zu. Das reduziert ' + dogName + 's Stresslevel sofort.' },
+                        { num: 4, title: 'Erfolge feiern', desc: 'Habt ihr einen Hund passiert ohne Ausraster? Jackpot-Belohnung: 5 Leckerli, Stimme, Party. ' + dogName + ' soll denken: Das war großartig!' },
+                        { num: 5, title: 'Distanz langsam verkürzen', desc: 'Erst nach 10+ stressfreien Begegnungen: 2 Meter näher. Nie zu schnell steigern. Geduld ist der Schlüssel.' }
+                    ]
+                }
+            };
+
+            // Default-Übung falls Problem nicht gemappt
+            const defaultExercise = exerciseData['pulling'];
+
+            // Übung rendern
+            const exercise = exerciseData[dogProblem] || defaultExercise;
+
+            document.getElementById('exercisePreviewTitle').textContent = exercise.title;
+            document.getElementById('exerciseIcon').textContent = exercise.icon;
+            document.getElementById('exerciseName').textContent = exercise.name;
+            document.getElementById('exerciseMeta').textContent = exercise.meta;
+
+            // Sichtbare Schritte (1-2)
+            const visibleSteps = exercise.steps.slice(0, 2);
+            const blurredSteps = exercise.steps.slice(2);
+
+            function renderStep(step) {
+                return '<div style="display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid #F0F0F0;">' +
+                    '<div style="width: 28px; height: 28px; background: linear-gradient(135deg, #C4A576, #8B7355); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700; flex-shrink: 0;">' + step.num + '</div>' +
+                    '<div style="flex: 1;">' +
+                        '<div style="font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px;">' + step.title + '</div>' +
+                        '<div style="font-size: 13px; color: #666; line-height: 1.5;">' + step.desc + '</div>' +
+                    '</div>' +
+                '</div>';
+            }
+
+            document.getElementById('exerciseStepsVisible').innerHTML = visibleSteps.map(renderStep).join('');
+            document.getElementById('exerciseStepsBlurred').innerHTML = blurredSteps.map(renderStep).join('');
+            document.getElementById('exerciseBlurText').textContent = '+ ' + blurredSteps.length + ' weitere Schritte';
         }
 
         // Pricing Selection
