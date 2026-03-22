@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
                 `✓ ${plan === '1month' ? '10+' : '20+'} gezielte Übungen`,
                 '✓ 24/7 Trainer-Support',
                 '✓ Sofort per E-Mail nach Kauf',
-                '✓ 6 Bonus-Alltagstipps gratis dazu',
+                '✓ Kein Abo – lebenslanger Zugang',
               ].join(' · '),
             },
           },
