@@ -219,16 +219,15 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
       console.log("🔍 Aktualisierte Daten:", JSON.stringify(updatedData, null, 2));
       console.log(`${table} ${referenceId} erfolgreich als bezahlt markiert`);
       
-      // Make nur für orders informieren
-      if (table === 'orders') {
-        await notifyMake(referenceId, {
-          source: "checkout.session",
-          email: updateData.email ?? null,
-          name: updateData.name ?? null,
-          stripe_session_id: session.id,
-          stripe_payment_intent: updateData.stripe_payment_intent ?? null,
-        });
-      }
+      // Make benachrichtigen (orders + wauwerk_leads)
+      await notifyMake(referenceId, {
+        source: "checkout.session",
+        table: table,
+        email: updateData.email ?? null,
+        name: updateData.name ?? updateData.customer_name ?? null,
+        stripe_session_id: session.id,
+        stripe_payment_intent: updateData.stripe_payment_intent ?? null,
+      });
     }
     
     console.log("🔍 === CHECKOUT SUCCESS DEBUG ENDE ===");
@@ -348,14 +347,13 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
       console.error("Fehler beim Aktualisieren via PaymentIntent:", error);
     } else {
       console.log(`${table} ${referenceId} via PaymentIntent aktualisiert`);
-      if (table === 'orders') {
-        await notifyMake(referenceId, {
-          source: "payment_intent",
-          email: updateData.email ?? null,
-          name: updateData.name ?? null,
-          stripe_payment_intent: paymentIntent.id,
-        });
-      }
+      await notifyMake(referenceId, {
+        source: "payment_intent",
+        table: table,
+        email: updateData.email ?? null,
+        name: updateData.name ?? updateData.customer_name ?? null,
+        stripe_payment_intent: paymentIntent.id,
+      });
     }
   } catch (err) {
     console.error("Fehler bei PaymentIntent-Verarbeitung:", err);
@@ -462,8 +460,8 @@ async function handleUpsellPaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     if (module === 'notfall-karten' && email) {
       console.log("📄 Notfall-Karten Delivery triggern...");
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}` : 'https://pfoten-plan.de';
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+          || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://pfoten-plan.de');
         await fetch(`${baseUrl}/api/notfall-karten/generate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -558,14 +556,13 @@ async function handleChargeSuccess(charge: Stripe.Charge) {
       console.error("Fehler beim Aktualisieren via Charge:", error);
     } else {
       console.log(`${table} ${referenceId} via Charge aktualisiert`);
-      if (table === 'orders') {
-        await notifyMake(referenceId, {
-          source: "charge",
-          email: updateData.email ?? null,
-          name: updateData.name ?? null,
-          charge_id: charge.id,
-        });
-      }
+      await notifyMake(referenceId, {
+        source: "charge",
+        table: table,
+        email: updateData.email ?? null,
+        name: updateData.name ?? updateData.customer_name ?? null,
+        charge_id: charge.id,
+      });
     }
   } catch (err) {
     console.error("Fehler bei Charge-Verarbeitung:", err);
