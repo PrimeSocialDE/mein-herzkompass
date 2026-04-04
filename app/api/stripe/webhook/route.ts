@@ -228,8 +228,30 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
         stripe_session_id: session.id,
         stripe_payment_intent: updateData.stripe_payment_intent ?? null,
       });
+
+      // Oster-Bonus: Notfall-Karten gratis bei wauwerk_leads-Käufen
+      const emailForKarten = updateData.email || existingRecord.email || customerEmail;
+      if (table === 'wauwerk_leads' && emailForKarten) {
+        console.log("🐣 Oster-Bonus: Notfall-Karten gratis versenden...");
+        try {
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+            || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://pfoten-plan.de');
+          await fetch(`${baseUrl}/api/notfall-karten/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: emailForKarten,
+              dogName: session.metadata?.dog_name || existingRecord.dog_name || 'deinen Hund',
+              leadId: referenceId,
+            }),
+          });
+          console.log("✅ Oster-Bonus Notfall-Karten versendet an", emailForKarten);
+        } catch (bonusErr) {
+          console.error("❌ Oster-Bonus Notfall-Karten Fehler:", bonusErr);
+        }
+      }
     }
-    
+
     console.log("🔍 === CHECKOUT SUCCESS DEBUG ENDE ===");
   } catch (err) {
     console.error("Supabase-Fehler bei Checkout Session:", err);
@@ -354,6 +376,28 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
         name: updateData.name ?? updateData.customer_name ?? null,
         stripe_payment_intent: paymentIntent.id,
       });
+
+      // Oster-Bonus: Notfall-Karten gratis bei wauwerk_leads-Käufen
+      const emailForKarten = updateData.email || existingRecord.email || paymentIntent.metadata?.email;
+      if (table === 'wauwerk_leads' && emailForKarten) {
+        console.log("🐣 Oster-Bonus: Notfall-Karten gratis versenden...");
+        try {
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+            || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://pfoten-plan.de');
+          await fetch(`${baseUrl}/api/notfall-karten/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: emailForKarten,
+              dogName: paymentIntent.metadata?.dog_name || existingRecord.dog_name || 'deinen Hund',
+              leadId: referenceId,
+            }),
+          });
+          console.log("✅ Oster-Bonus Notfall-Karten versendet an", emailForKarten);
+        } catch (bonusErr) {
+          console.error("❌ Oster-Bonus Notfall-Karten Fehler:", bonusErr);
+        }
+      }
     }
   } catch (err) {
     console.error("Fehler bei PaymentIntent-Verarbeitung:", err);
