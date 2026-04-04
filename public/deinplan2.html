@@ -74,7 +74,7 @@
         }
 
         .timer-bar {
-            background: var(--dark-brown);
+            background: linear-gradient(135deg, #5B8C3E 0%, #3D6B2E 100%);
             color: var(--white);
             padding: 12px 20px;
             text-align: center;
@@ -84,6 +84,10 @@
         .timer-bar span {
             font-weight: 700;
             color: #F5E6D3;
+        }
+
+        .timer-bar .easter-icon {
+            margin-right: 6px;
         }
 
         .hero-section {
@@ -1997,8 +2001,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
     </header>
 
-    <div class="timer-bar">
-        <span id="timerLabel">Preis reduziert für:</span> <span id="timer">10:00</span>
+    <div class="timer-bar" id="easterBanner">
+        <span class="easter-icon">🐣</span> <span id="timerLabel">Oster-Rabatt endet in:</span> <span id="timer">10:00</span>
     </div>
 
     <section class="hero-section">
@@ -3050,7 +3054,10 @@ if (popularBadge) {
                 timeLeft = timerDuration;
                 localStorage.setItem('wauwerk_timerStartTime', Date.now().toString());
             }
-            document.getElementById('timerLabel').textContent = 'Preis reduziert für:';
+            // Oster-Sale: bis 06.04.2026 23:59 Uhr
+            const easterEnd = new Date('2026-04-07T00:00:00');
+            const isEaster = Date.now() < easterEnd.getTime();
+            document.getElementById('timerLabel').textContent = isEaster ? 'Oster-Rabatt endet in:' : 'Preis reduziert für:';
         }
 
         initializeTimer();
