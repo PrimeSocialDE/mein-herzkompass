@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Plan Korrektur</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #F5F1EC;
+            color: #2C2C2E;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        h1 {
+            font-size: 24px;
+            color: #C4A576;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #6B6B6B;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: #2C2C2E;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #D4D0CB;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            background: #fff;
+            transition: border-color 0.2s;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #C4A576;
+        }
+        textarea { resize: vertical; min-height: 100px; }
+        .field { margin-bottom: 20px; }
+        .row { display: flex; gap: 16px; }
+        .row .field { flex: 1; }
+
+        /* Login */
+        #login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+        .login-box {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+        }
+        .login-box h1 { margin-bottom: 24px; }
+        .login-box input { margin-bottom: 16px; }
+        .login-error {
+            color: #c0392b;
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        /* Drop zone */
+        .drop-zone {
+            border: 2px dashed #D4D0CB;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            background: #fff;
+            position: relative;
+        }
+        .drop-zone.dragover {
+            border-color: #C4A576;
+            background: #FAF6F0;
+        }
+        .drop-zone.has-file {
+            border-color: #C4A576;
+            background: #FAF6F0;
+        }
+        .drop-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .drop-zone-text {
+            color: #6B6B6B;
+            font-size: 15px;
+        }
+        .drop-zone-text strong { color: #C4A576; }
+        .file-name {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #C4A576;
+            font-weight: 600;
+        }
+
+        /* Button */
+        .btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: #C4A576;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+        }
+        .btn:hover { background: #B08F5F; }
+        .btn:disabled { background: #D4D0CB; cursor: not-allowed; }
+        .btn-secondary {
+            background: transparent;
+            color: #C4A576;
+            border: 1px solid #C4A576;
+            padding: 8px 20px;
+            font-size: 14px;
+        }
+        .btn-secondary:hover { background: #FAF6F0; }
+
+        /* Result */
+        #result-area { display: none; margin-top: 32px; }
+        .result-box {
+            background: #fff;
+            border: 1px solid #D4D0CB;
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .result-header h2 {
+            font-size: 18px;
+            color: #C4A576;
+        }
+        .result-text {
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #2C2C2E;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .copy-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2C2C2E;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .copy-toast.show { opacity: 1; }
+
+        /* Loading */
+        .spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: #6B6B6B;
+        }
+        .spinner.active { display: block; }
+        .spinner-dot {
+            display: inline-block;
+            width: 10px; height: 10px;
+            background: #C4A576;
+            border-radius: 50%;
+            margin: 0 4px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .spinner-dot:nth-child(1) { animation-delay: -0.32s; }
+        .spinner-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .error-msg {
+            background: #fdf0ef;
+            color: #c0392b;
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login-screen">
+    <div class="login-box">
+        <h1>Admin Login</h1>
+        <input type="password" id="pw-input" placeholder="Passwort eingeben" onkeydown="if(event.key==='Enter')doLogin()">
+        <div class="login-error" id="login-error">Falsches Passwort</div>
+        <button class="btn" onclick="doLogin()" style="width:100%">Einloggen</button>
+    </div>
+</div>
+
+<!-- Main Tool -->
+<div id="main-tool" style="display:none">
+    <div class="container">
+        <h1>Plan Korrektur Tool</h1>
+        <p class="subtitle">PDF hochladen, Beschwerde eingeben, korrigierten Plan erhalten.</p>
+
+        <form id="korrektur-form" onsubmit="submitForm(event)">
+            <!-- PDF Upload -->
+            <div class="field">
+                <label>Trainingsplan PDF *</label>
+                <div class="drop-zone" id="drop-zone">
+                    <input type="file" id="pdf-input" accept="application/pdf">
+                    <div class="drop-zone-text">
+                        <strong>Klicken</strong> oder PDF hierher ziehen
+                    </div>
+                    <div class="file-name" id="file-name"></div>
+                </div>
+            </div>
+
+            <!-- Complaint -->
+            <div class="field">
+                <label>Kundenbeschwerde / Korrekturanweisung *</label>
+                <textarea id="complaint" placeholder="z.B. Kunde hat 'Leinenziehen' ausgewaehlt, aber der Plan enthaelt Uebungen fuer 'Trennungsangst'. Bitte korrigieren."></textarea>
+            </div>
+
+            <!-- Optional fields -->
+            <div class="row">
+                <div class="field">
+                    <label>Kundenname (optional)</label>
+                    <input type="text" id="customer-name" placeholder="Max Mustermann">
+                </div>
+                <div class="field">
+                    <label>Hundename (optional)</label>
+                    <input type="text" id="dog-name" placeholder="Bello">
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Hundeproblem (optional)</label>
+                <select id="dog-problem">
+                    <option value="">-- Nicht angegeben --</option>
+                    <option value="pulling">Leinenziehen</option>
+                    <option value="barking">Bellen</option>
+                    <option value="aggression">Aggression</option>
+                    <option value="anxiety">Trennungsangst</option>
+                    <option value="recall">Rueckruf</option>
+                    <option value="jumping">Anspringen</option>
+                    <option value="energy">Ueberaktivitaet</option>
+                    <option value="destructive">Zerstoererisches Verhalten</option>
+                    <option value="mouthing">Beissen / Mouthing</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn" id="submit-btn">Plan korrigieren</button>
+        </form>
+
+        <!-- Loading -->
+        <div class="spinner" id="spinner">
+            <div>
+                <span class="spinner-dot"></span>
+                <span class="spinner-dot"></span>
+                <span class="spinner-dot"></span>
+            </div>
+            <p style="margin-top:16px">Plan wird analysiert und korrigiert... Das kann bis zu 60 Sekunden dauern.</p>
+        </div>
+
+        <!-- Error -->
+        <div class="error-msg" id="error-msg"></div>
+
+        <!-- Result -->
+        <div id="result-area">
+            <div class="result-box">
+                <div class="result-header">
+                    <h2>Korrigierter Plan</h2>
+                    <button class="btn btn-secondary" onclick="copyResult()">Als Text kopieren</button>
+                </div>
+                <div class="result-text" id="result-text"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="copy-toast" id="copy-toast">Text kopiert!</div>
+
+<script>
+    const PASS = 'pfoten2024';
+
+    function doLogin() {
+        const val = document.getElementById('pw-input').value;
+        if (val === PASS) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-tool').style.display = 'block';
+        } else {
+            document.getElementById('login-error').style.display = 'block';
+        }
+    }
+
+    // Drop zone
+    const dropZone = document.getElementById('drop-zone');
+    const pdfInput = document.getElementById('pdf-input');
+    const fileNameEl = document.getElementById('file-name');
+
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length && e.dataTransfer.files[0].type === 'application/pdf') {
+            pdfInput.files = e.dataTransfer.files;
+            showFileName(e.dataTransfer.files[0].name);
+        }
+    });
+    pdfInput.addEventListener('change', () => {
+        if (pdfInput.files.length) showFileName(pdfInput.files[0].name);
+    });
+    function showFileName(name) {
+        fileNameEl.textContent = name;
+        dropZone.classList.add('has-file');
+    }
+
+    // Submit
+    async function submitForm(e) {
+        e.preventDefault();
+        const pdf = pdfInput.files[0];
+        const complaint = document.getElementById('complaint').value.trim();
+
+        if (!pdf) return alert('Bitte eine PDF-Datei hochladen.');
+        if (!complaint) return alert('Bitte eine Beschwerde / Korrekturanweisung eingeben.');
+
+        const formData = new FormData();
+        formData.append('pdf', pdf);
+        formData.append('complaint', complaint);
+
+        const customerName = document.getElementById('customer-name').value.trim();
+        const dogName = document.getElementById('dog-name').value.trim();
+        const dogProblem = document.getElementById('dog-problem').value;
+
+        if (customerName) formData.append('customerName', customerName);
+        if (dogName) formData.append('dogName', dogName);
+        if (dogProblem) formData.append('dogProblem', dogProblem);
+
+        document.getElementById('submit-btn').disabled = true;
+        document.getElementById('spinner').classList.add('active');
+        document.getElementById('result-area').style.display = 'none';
+        document.getElementById('error-msg').style.display = 'none';
+
+        try {
+            const res = await fetch('/api/admin/plan-korrektur', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Unbekannter Fehler');
+
+            document.getElementById('result-text').textContent = data.correctedPlan;
+            document.getElementById('result-area').style.display = 'block';
+        } catch (err) {
+            document.getElementById('error-msg').textContent = 'Fehler: ' + err.message;
+            document.getElementById('error-msg').style.display = 'block';
+        } finally {
+            document.getElementById('submit-btn').disabled = false;
+            document.getElementById('spinner').classList.remove('active');
+        }
+    }
+
+    // Copy
+    function copyResult() {
+        const text = document.getElementById('result-text').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.getElementById('copy-toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        });
+    }
+</script>
+</body>
+</html>
