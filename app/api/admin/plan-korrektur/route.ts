@@ -68,7 +68,7 @@ Deine Aufgabe:
     userMessage += `BESCHWERDE / KORREKTURANWEISUNG:\n${complaint}\n\nBitte analysiere den angehaengten Trainingsplan und erstelle eine korrigierte Version, die die oben genannte Beschwerde/Anweisung beruecksichtigt.`;
 
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6-20250514',
       max_tokens: 8000,
       system: systemPrompt,
       messages: [
