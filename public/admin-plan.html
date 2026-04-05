@@ -358,27 +358,35 @@
         if (!pdf) return alert('Bitte eine PDF-Datei hochladen.');
         if (!complaint) return alert('Bitte eine Beschwerde / Korrekturanweisung eingeben.');
 
-        const formData = new FormData();
-        formData.append('pdf', pdf);
-        formData.append('complaint', complaint);
-
         const customerName = document.getElementById('customer-name').value.trim();
         const dogName = document.getElementById('dog-name').value.trim();
         const dogProblem = document.getElementById('dog-problem').value;
-
-        if (customerName) formData.append('customerName', customerName);
-        if (dogName) formData.append('dogName', dogName);
-        if (dogProblem) formData.append('dogProblem', dogProblem);
 
         document.getElementById('submit-btn').disabled = true;
         document.getElementById('spinner').classList.add('active');
         document.getElementById('result-area').style.display = 'none';
         document.getElementById('error-msg').style.display = 'none';
 
+        // PDF als Base64 lesen
+        const reader = new FileReader();
+        reader.onload = async function() {
+            const base64 = reader.result.split(',')[1];
+            await sendRequest(base64, complaint, customerName, dogName, dogProblem);
+        };
+        reader.readAsDataURL(pdf);
+    }
+
+    async function sendRequest(pdfBase64, complaint, customerName, dogName, dogProblem) {
         try {
+            const body = { pdfBase64, complaint };
+            if (customerName) body.customerName = customerName;
+            if (dogName) body.dogName = dogName;
+            if (dogProblem) body.dogProblem = dogProblem;
+
             const res = await fetch('/api/admin/plan-korrektur', {
                 method: 'POST',
-                body: formData
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Unbekannter Fehler');

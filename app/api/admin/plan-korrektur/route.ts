@@ -15,24 +15,18 @@ const PROBLEM_LABELS: Record<string, string> = {
 
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData();
+    const body = await req.json();
 
-    const pdfFile = formData.get('pdf') as File | null;
-    const complaint = formData.get('complaint') as string | null;
-    const customerName = formData.get('customerName') as string | null;
-    const dogName = formData.get('dogName') as string | null;
-    const dogProblem = formData.get('dogProblem') as string | null;
+    const { pdfBase64, complaint, customerName, dogName, dogProblem } = body;
 
-    if (!pdfFile) {
+    if (!pdfBase64) {
       return NextResponse.json({ error: 'Keine PDF-Datei hochgeladen.' }, { status: 400 });
     }
     if (!complaint) {
       return NextResponse.json({ error: 'Keine Beschwerde angegeben.' }, { status: 400 });
     }
 
-    // Convert PDF to base64
-    const arrayBuffer = await pdfFile.arrayBuffer();
-    const base64Data = Buffer.from(arrayBuffer).toString('base64');
+    const base64Data = pdfBase64;
 
     // Build context string
     let context = '';
