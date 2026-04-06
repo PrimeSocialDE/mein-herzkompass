@@ -361,6 +361,11 @@
         if (!pdf) return alert('Bitte eine PDF-Datei hochladen.');
         if (!complaint) return alert('Bitte eine Beschwerde / Korrekturanweisung eingeben.');
 
+        // Max 3MB (wird als Base64 ~4MB → unter Vercel 4.5MB Limit)
+        if (pdf.size > 3 * 1024 * 1024) {
+            return alert('PDF ist zu groß (max. 3 MB). Bitte eine kleinere Version hochladen.');
+        }
+
         const customerName = document.getElementById('customer-name').value.trim();
         const dogName = document.getElementById('dog-name').value.trim();
         const dogProblem = document.getElementById('dog-problem').value;
@@ -391,7 +396,9 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
-            const data = await res.json();
+            const text = await res.text();
+            let data;
+            try { data = JSON.parse(text); } catch { throw new Error('Server-Fehler: ' + text.substring(0, 200)); }
             if (!res.ok) throw new Error(data.error || 'Unbekannter Fehler');
 
             document.getElementById('result-text').textContent = data.correctedPlan;
