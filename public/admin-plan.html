@@ -470,20 +470,22 @@ Worauf du achten solltest
 - [3-4 Punkte]
 
 Go's
-- [3-5 Punkte]
+- [genau 3 Punkte]
 
 No Go's
-- [3-5 Punkte]
+- [genau 3 Punkte]
 
 === (Seitenumbruch)
 LETZTE SEITE - ABSCHLUSS:
 3-4 Absätze motivierender Abschlusstext.
 
 WEITERE REGELN:
-- Alles auf Deutsch, Du-Form
+- Alles auf Deutsch, Du-Form - KEINE englischen Begriffe verwenden (kein "Trigger", "Recall", "Impulse Control" etc. - immer die deutsche Entsprechung nutzen)
 - Den Hundenamen aus dem Original übernehmen
 - Praxisnah und konkret, keine allgemeinen Floskeln
 - 6 Übungen pro Plan, aufeinander aufbauend
+- Go's und No Go's immer genau 3 Punkte, nicht mehr
+- LAYOUT: Die linke Spalte enthält Übungstitel, Beschreibung, Schritt für Schritt (1-6). Die rechte Spalte enthält "Wie oft und wie lange", "Worauf du achten solltest", "Go's", "No Go's". So ergibt sich ein sauberes 2-Spalten-Layout.
 - Gib NUR den Plan aus, keine Meta-Kommentare`,
                     messages: [{
                         role: 'user',
@@ -541,21 +543,15 @@ WEITERE REGELN:
             const isExercise = i >= 2 && i <= 7;
             const isAbschluss = i === pages.length - 1 && i > 7;
 
-            // Text in HTML-Absätze formatieren
-            let content = pageText
-                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                .replace(/^(Übung \d+:.*)/gm, '<h2 class="exercise-title">$1</h2>')
-                .replace(/^(Schritt für Schritt)/gm, '<h3>$1</h3>')
-                .replace(/^(Wie oft und wie lange)/gm, '<h3>$1</h3>')
-                .replace(/^(Worauf du achten solltest)/gm, '<h3>$1</h3>')
-                .replace(/^(Go's)/gm, '<h3 class="gos">$1</h3>')
-                .replace(/^(No Go's)/gm, '<h3 class="nogos">$1</h3>')
-                .replace(/^(Einleitung|Abschluss)/gm, '<h2>$1</h2>')
-                .replace(/^(\d+\.\s.+)/gm, '<p class="step"><strong>$1</strong></p>')
-                .replace(/^- (.+)/gm, '<li>$1</li>')
-                .replace(/(<li>.*<\/li>\n?)+/gs, (m) => '<ul>' + m + '</ul>')
-                .replace(/\n{2,}/g, '</p><p>')
-                .replace(/\n/g, '<br>');
+            function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+            function formatBlock(t) {
+                return esc(t)
+                    .replace(/^(\d+\.\s.+)/gm, '<p class="step"><strong>$1</strong></p>')
+                    .replace(/^- (.+)/gm, '<li>$1</li>')
+                    .replace(/(<li>.*<\/li>\n?)+/gs, m => '<ul>' + m + '</ul>')
+                    .replace(/\n{2,}/g, '</p><p>')
+                    .replace(/\n/g, '<br>');
+            }
 
             if (isTitle) {
                 pagesHtml += '<div class="page title-page">' +
@@ -563,10 +559,46 @@ WEITERE REGELN:
                     '<h1>' + dogName + '\'s persönlicher<br>Zusatz-Plan</h1>' +
                     '<div class="title-divider"></div>' +
                     '</div></div>';
-            } else {
+            } else if (isExercise) {
+                // Übungsseite: 2-Spalten (Schritte links, Tipps rechts)
+                const lines = pageText.split('\n');
+                let title = '', desc = '', leftContent = '', rightContent = '';
+                let section = 'top';
+
+                for (const line of lines) {
+                    if (line.match(/^Übung \d+:/)) { title = line; continue; }
+                    if (line.match(/^Schritt für Schritt/)) { section = 'steps'; leftContent += '<h3>Schritt für Schritt</h3>'; continue; }
+                    if (line.match(/^Wie oft und wie lange/)) { section = 'right'; rightContent += '<h3>Wie oft und wie lange</h3>'; continue; }
+                    if (line.match(/^Worauf du achten solltest/)) { rightContent += '<h3>Worauf du achten solltest</h3>'; section = 'right'; continue; }
+                    if (line.match(/^Go's/)) { rightContent += '<h3 class="gos">Go\'s</h3>'; section = 'right'; continue; }
+                    if (line.match(/^No Go's/)) { rightContent += '<h3 class="nogos">No Go\'s</h3>'; section = 'right'; continue; }
+
+                    if (section === 'top' && line.trim()) { desc += esc(line) + '<br>'; }
+                    else if (section === 'steps' && line.trim()) {
+                        if (line.match(/^\d+\./)) leftContent += '<p class="step"><strong>' + esc(line) + '</strong></p>';
+                        else leftContent += '<p>' + esc(line) + '</p>';
+                    }
+                    else if (section === 'right' && line.trim()) {
+                        if (line.startsWith('- ')) rightContent += '<li>' + esc(line.substring(2)) + '</li>';
+                        else rightContent += '<p>' + esc(line) + '</p>';
+                    }
+                }
+                // Listen wrappen
+                rightContent = rightContent.replace(/(<li>.*?<\/li>)+/gs, m => '<ul>' + m + '</ul>');
+
                 pagesHtml += '<div class="page">' +
                     '<div class="page-header"><span class="paw">🐾</span> <span>Pfoten-Plan</span></div>' +
-                    '<div class="page-content"><p>' + content + '</p></div>' +
+                    '<h2 class="exercise-title">' + esc(title) + '</h2>' +
+                    '<p class="exercise-desc">' + desc + '</p>' +
+                    '<div class="two-col"><div class="col-left">' + leftContent + '</div><div class="col-right">' + rightContent + '</div></div>' +
+                    '<div class="page-number">' + (i + 1) + '</div>' +
+                    '</div>';
+            } else {
+                // Einleitung / Abschluss: einspaltig
+                let content = formatBlock(pageText);
+                pagesHtml += '<div class="page">' +
+                    '<div class="page-header"><span class="paw">🐾</span> <span>Pfoten-Plan</span></div>' +
+                    '<div class="page-content single-col"><p>' + content + '</p></div>' +
                     '<div class="page-number">' + (i + 1) + '</div>' +
                     '</div>';
             }
@@ -606,8 +638,26 @@ WEITERE REGELN:
         margin-top: 12mm;
         font-size: 11px;
         line-height: 1.4;
-        column-count: 2;
-        column-gap: 25px;
+    }
+    .page-content.single-col {
+        max-width: 80%;
+    }
+
+    .two-col {
+        display: flex;
+        gap: 25px;
+        margin-top: 4px;
+    }
+    .col-left { flex: 1.2; }
+    .col-right { flex: 1; }
+    .exercise-title {
+        margin-top: 14mm;
+    }
+    .exercise-desc {
+        font-size: 11px;
+        line-height: 1.4;
+        margin-bottom: 6px;
+        color: #333;
     }
 
     .title-page {
@@ -622,8 +672,8 @@ WEITERE REGELN:
         width: 200px; height: 3px; background: #C4A576; margin-top: 16px;
     }
 
-    h2 { font-size: 15px; font-weight: 800; color: #1a1a1a; margin: 0 0 6px 0; column-span: all; }
-    .exercise-title { font-size: 17px; font-weight: 800; color: #1a1a1a; margin: 0 0 8px 0; column-span: all; }
+    h2 { font-size: 15px; font-weight: 800; color: #1a1a1a; margin: 0 0 6px 0; }
+    .exercise-title { font-size: 17px; font-weight: 800; color: #1a1a1a; margin: 0 0 6px 0; }
     h3 { font-size: 11px; font-weight: 700; color: #1a1a1a; margin: 8px 0 2px 0; }
     h3.gos { color: #166534; }
     h3.nogos { color: #DC2626; }
