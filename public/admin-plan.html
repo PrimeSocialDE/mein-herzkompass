@@ -459,22 +459,26 @@ Schreibe einen warmen, persönlichen Einleitungstext in 3 Abschnitten. Der Text 
 ABSCHNITT 1 (4-5 Sätze):
 Erkläre das Problem des Hundes einfühlsam. Zeige Verständnis ("Das kennen viele Hundebesitzer"). Erkläre warum dieser Plan anders ist als allgemeine Tipps aus dem Internet - er ist genau auf diesen Hund zugeschnitten. Mach Mut, dass Veränderung möglich ist, auch wenn es sich gerade schwer anfühlt.
 
-ABSCHNITT 2 - "Dein 3-Monats-Fahrplan" (als übersichtliche Auflistung):
+ABSCHNITT 2 - Schreibe die Überschrift "Dein 3-Monats-Fahrplan" als eigene Zeile. Dann für jeden Monat:
 
-Monat 1 (Woche 1-4): Übung 1 und 2
-Hier legst du die Grundlagen. Trainiere jede Übung täglich 5-10 Minuten. Starte in ruhiger Umgebung ohne Ablenkung.
+Schreibe "Monat 1 (Woche 1-4): Übung 1 und 2" als eigene fettgedruckte Zeile.
+Dann eine Leerzeile, dann 2-3 Sätze Erklärung. Dann eine Leerzeile vor dem nächsten Monat.
 
-Monat 2 (Woche 5-8): Übung 3 und 4
-Jetzt wird es alltagsnäher. Du baust auf den Grundlagen auf und trainierst in realistischeren Situationen. Die Übungen aus Monat 1 wiederholst du dabei weiter.
+Schreibe "Monat 2 (Woche 5-8): Übung 3 und 4" als eigene fettgedruckte Zeile.
+Dann eine Leerzeile, dann 2-3 Sätze. Dann Leerzeile.
 
-Monat 3 (Woche 9-12): Übung 5 und 6
-Festigung und Feinschliff. Du trainierst jetzt auch unter Ablenkung und in schwierigeren Situationen. Am Ende dieses Monats solltest du deutliche Fortschritte sehen.
+Schreibe "Monat 3 (Woche 9-12): Übung 5 und 6" als eigene fettgedruckte Zeile.
+Dann eine Leerzeile, dann 2-3 Sätze.
 
-ABSCHNITT 3 - "Tipps für den Erfolg" (4 kurze Punkte mit je einem Satz Erklärung):
+ABSCHNITT 3 - Schreibe die Überschrift "Tipps für den Erfolg" als eigene Zeile. Dann 4 Punkte, jeder Punkt so:
+
+Schreibe den Tipp-Titel fett, dann Doppelpunkt, dann die Erklärung in derselben Zeile. Nach jedem Punkt eine Leerzeile.
+
+Die 4 Punkte:
 - Kurz und regelmäßig: 5-10 Minuten täglich bringen mehr als eine lange Einheit am Wochenende
-- Immer positiv aufhören: Beende jede Einheit mit einem Erfolgserlebnis für deinen Hund
-- Rückschritte gehören dazu: Wenn es mal nicht klappt, geh einen Schritt zurück und wiederhole
-- Du bist nicht allein: Bei Fragen erreichst du unser Trainer-Team per E-Mail an support@pfoten-plan.de
+- Immer positiv aufhören: Beende jede Einheit mit einem Erfolgserlebnis
+- Rückschritte gehören dazu: Wenn es mal nicht klappt, geh einen Schritt zurück
+- Du bist nicht allein: Bei Fragen erreichst du uns per E-Mail an support@pfoten-plan.de
 
 === (Seitenumbruch)
 SEITEN 3-8 - JE EINE ÜBUNG PRO SEITE:
@@ -578,10 +582,15 @@ WEITERE REGELN:
             function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
             function formatBlock(t) {
                 return esc(t)
+                    // Überschriften wie "So nutzt du diesen Plan", "Dein 3-Monats-Fahrplan", "Tipps für den Erfolg", "Abschluss"
+                    .replace(/^(So nutzt du diesen Plan|Dein 3-Monats-Fahrplan|Tipps für den Erfolg|Abschluss|Worum es geht)$/gm, '<h2 class="intro-heading">$1</h2>')
+                    // Monat-Zeilen und fette Tipp-Titel
+                    .replace(/^(Monat \d+ .+)$/gm, '<p class="month-title"><strong>$1</strong></p>')
+                    .replace(/^(Kurz und regelmäßig:|Immer positiv aufhören:|Rückschritte gehören dazu:|Du bist nicht allein:)/gm, '<strong>$1</strong>')
                     .replace(/^(\d+\.\s.+)/gm, '<p class="step"><strong>$1</strong></p>')
                     .replace(/^- (.+)/gm, '<li>$1</li>')
                     .replace(/(<li>.*<\/li>\n?)+/gs, m => '<ul>' + m + '</ul>')
-                    .replace(/\n{2,}/g, '</p><p>')
+                    .replace(/\n{2,}/g, '</p><p class="spaced">')
                     .replace(/\n/g, '<br>');
             }
 
@@ -665,7 +674,11 @@ WEITERE REGELN:
             }
             #pdf-pages .page-header .paw { font-size: 14px; }
             #pdf-pages .page-content { margin-top: 30px; font-size: 12px; line-height: 1.5; }
-            #pdf-pages .page-content.single-col { max-width: 75%; }
+            #pdf-pages .page-content.single-col { max-width: 80%; }
+            #pdf-pages .intro-heading { font-size: 16px; font-weight: 800; color: #1a1a1a; margin: 14px 0 6px 0; }
+            #pdf-pages .intro-heading:first-child { margin-top: 0; }
+            #pdf-pages .month-title { margin: 10px 0 2px 0; font-size: 11px; }
+            #pdf-pages .spaced { margin-top: 6px; }
             #pdf-pages .two-col { display: flex; gap: 30px; margin-top: 6px; }
             #pdf-pages .col-left { flex: 1.2; }
             #pdf-pages .col-right { flex: 1; }
