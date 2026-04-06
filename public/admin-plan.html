@@ -318,57 +318,55 @@
 
 <script>
     const PASS = 'pfoten2024';
+    let droppedFile = null;
+    let toolReady = false;
 
-    // Auto-Login wenn schon mal eingeloggt
-    if (localStorage.getItem('admin_logged_in') === 'true') {
+    function showTool() {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-tool').style.display = 'block';
+        if (!toolReady) {
+            toolReady = true;
+            const dropZone = document.getElementById('drop-zone');
+            const pdfInput = document.getElementById('pdf-input');
+            const fileNameEl = document.getElementById('file-name');
+            if (dropZone) {
+                dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+                dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+                dropZone.addEventListener('drop', e => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                    const file = e.dataTransfer.files[0];
+                    if (file && (file.type === 'application/pdf' || file.name.endsWith('.pdf'))) {
+                        droppedFile = file;
+                        fileNameEl.textContent = file.name;
+                        dropZone.classList.add('has-file');
+                    }
+                });
+                pdfInput.addEventListener('change', () => {
+                    droppedFile = null;
+                    if (pdfInput.files.length) {
+                        fileNameEl.textContent = pdfInput.files[0].name;
+                        dropZone.classList.add('has-file');
+                    }
+                });
+            }
+        }
     }
 
     function doLogin() {
         const val = document.getElementById('pw-input').value;
         if (val === PASS) {
             localStorage.setItem('admin_logged_in', 'true');
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-tool').style.display = 'block';
-            initTool();
+            showTool();
         } else {
             document.getElementById('login-error').style.display = 'block';
         }
     }
 
-    // Auto-Login: auch Tool initialisieren
+    // Auto-Login
     if (localStorage.getItem('admin_logged_in') === 'true') {
-        initTool();
+        showTool();
     }
-
-    let droppedFile = null;
-    function initTool() {
-        const dropZone = document.getElementById('drop-zone');
-        const pdfInput = document.getElementById('pdf-input');
-        const fileNameEl = document.getElementById('file-name');
-        if (!dropZone) return;
-
-        dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-        dropZone.addEventListener('drop', e => {
-            e.preventDefault();
-        dropZone.classList.remove('dragover');
-        const file = e.dataTransfer.files[0];
-        if (file && (file.type === 'application/pdf' || file.name.endsWith('.pdf'))) {
-            droppedFile = file;
-            showFileName(file.name);
-        }
-        });
-        pdfInput.addEventListener('change', () => {
-            droppedFile = null;
-            if (pdfInput.files.length) showFileName(pdfInput.files[0].name);
-        });
-        function showFileName(name) {
-            fileNameEl.textContent = name;
-            dropZone.classList.add('has-file');
-        }
-    } // Ende initTool
 
     const PROBLEM_LABELS = {
         pulling: 'Leinenziehen', barking: 'Bellen', aggression: 'Aggression',
@@ -379,7 +377,8 @@
     // Submit
     async function submitForm(e) {
         e.preventDefault();
-        const pdf = pdfInput.files[0] || droppedFile;
+        const pdfInput = document.getElementById('pdf-input');
+        const pdf = (pdfInput && pdfInput.files[0]) || droppedFile;
         const complaint = document.getElementById('complaint').value.trim();
 
         if (!pdf) return alert('Bitte eine PDF-Datei hochladen.');
