@@ -232,6 +232,23 @@
 <!-- Main Tool -->
 <div id="main-tool" style="display:none">
     <div class="container">
+
+        <!-- Plan nochmal versenden -->
+        <div style="background: #fff; border: 2px solid #C4A576; border-radius: 12px; padding: 20px; margin-bottom: 32px;">
+            <h2 style="font-size: 16px; color: #C4A576; margin-bottom: 4px;">Plan nochmal versenden</h2>
+            <p style="font-size: 13px; color: #6B6B6B; margin-bottom: 14px;">Triggert den Make-Webhook erneut, damit der Plan nochmal generiert und verschickt wird.</p>
+            <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px;">
+                    <label style="font-size: 12px;">E-Mail des Kunden *</label>
+                    <input type="email" id="resend-email" placeholder="kunde@beispiel.de" style="margin-top: 4px;">
+                </div>
+                <button class="btn" onclick="resendPlan()" id="resend-btn" style="padding: 10px 20px; white-space: nowrap;">Plan versenden</button>
+            </div>
+            <div id="resend-result" style="display: none; margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 13px;"></div>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #E8E4DF; margin-bottom: 32px;">
+
         <h1>Plan Korrektur Tool</h1>
         <p class="subtitle">PDF hochladen, Beschwerde eingeben, korrigierten Plan erhalten.</p>
 
@@ -620,6 +637,40 @@ WEITERE REGELN:
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 2000);
         });
+    }
+
+    async function resendPlan() {
+        const email = document.getElementById('resend-email').value.trim();
+        if (!email) return alert('Bitte eine E-Mail eingeben.');
+
+        const btn = document.getElementById('resend-btn');
+        const result = document.getElementById('resend-result');
+        btn.disabled = true;
+        btn.textContent = 'Wird gesucht...';
+        result.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/admin/resend-plan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Fehler');
+
+            result.style.background = '#F0FDF4';
+            result.style.color = '#166534';
+            result.textContent = data.message;
+            result.style.display = 'block';
+        } catch (err) {
+            result.style.background = '#FEF2F2';
+            result.style.color = '#DC2626';
+            result.textContent = 'Fehler: ' + err.message;
+            result.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Plan versenden';
+        }
     }
 
     function copyEmail() {
