@@ -331,36 +331,44 @@
             localStorage.setItem('admin_logged_in', 'true');
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('main-tool').style.display = 'block';
+            initTool();
         } else {
             document.getElementById('login-error').style.display = 'block';
         }
     }
 
-    // Drop zone
-    const dropZone = document.getElementById('drop-zone');
-    const pdfInput = document.getElementById('pdf-input');
-    const fileNameEl = document.getElementById('file-name');
+    // Auto-Login: auch Tool initialisieren
+    if (localStorage.getItem('admin_logged_in') === 'true') {
+        initTool();
+    }
 
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
     let droppedFile = null;
-    dropZone.addEventListener('drop', e => {
-        e.preventDefault();
+    function initTool() {
+        const dropZone = document.getElementById('drop-zone');
+        const pdfInput = document.getElementById('pdf-input');
+        const fileNameEl = document.getElementById('file-name');
+        if (!dropZone) return;
+
+        dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
         dropZone.classList.remove('dragover');
         const file = e.dataTransfer.files[0];
         if (file && (file.type === 'application/pdf' || file.name.endsWith('.pdf'))) {
             droppedFile = file;
             showFileName(file.name);
         }
-    });
-    pdfInput.addEventListener('change', () => {
-        droppedFile = null; // file input hat Vorrang
-        if (pdfInput.files.length) showFileName(pdfInput.files[0].name);
-    });
-    function showFileName(name) {
-        fileNameEl.textContent = name;
-        dropZone.classList.add('has-file');
-    }
+        });
+        pdfInput.addEventListener('change', () => {
+            droppedFile = null;
+            if (pdfInput.files.length) showFileName(pdfInput.files[0].name);
+        });
+        function showFileName(name) {
+            fileNameEl.textContent = name;
+            dropZone.classList.add('has-file');
+        }
+    } // Ende initTool
 
     const PROBLEM_LABELS = {
         pulling: 'Leinenziehen', barking: 'Bellen', aggression: 'Aggression',
