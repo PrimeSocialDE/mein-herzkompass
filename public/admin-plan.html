@@ -426,10 +426,26 @@
 
 WICHTIG - FORMATIERUNG:
 - Verwende KEIN Markdown. Keine Hashtags (#), keine Sterne (*/**), keine Unterstriche (_).
-- Schreibe reinen Text mit klaren Absätzen und Zeilenumbrüchen.
-- Überschriften als eigene Zeile, OHNE Sonderzeichen davor.
+- Trenne jede Seite mit einer Zeile die nur === enthält.
+- Schreibe reinen Text mit klaren Absätzen.
 
-STRUKTUR PRO ÜBUNG (halte dich exakt daran):
+GESAMTSTRUKTUR DES PLANS:
+
+=== (Seitenumbruch)
+SEITE 1 - TITELSEITE:
+[Hundename]'s persönlicher Zusatz-Plan
+
+=== (Seitenumbruch)
+SEITE 2 - EINLEITUNG:
+Schreibe 2-3 Absätze:
+- Was das Hauptproblem ist und warum dieser Plan hilft
+- Wie der Plan aufgebaut ist (6 Übungen, aufeinander aufbauend)
+- Wie man die Übungen zeitlich einteilt (z.B. bei 3-Monats-Plan: Woche 1-2 Übung 1+2, Woche 3-4 Übung 3+4, usw.)
+- Wann und wie oft man trainieren soll (täglich 5-10 Min)
+- Ein motivierender Satz
+
+=== (Seitenumbruch)
+SEITEN 3-8 - JE EINE ÜBUNG PRO SEITE:
 
 Übung [Nummer]: [Titel] – [Untertitel]
 
@@ -445,35 +461,30 @@ Schritt für Schritt
 2. [Schritt-Titel]
 [Erklärung]
 
-(usw. bis 6 Schritte)
+(6 Schritte insgesamt)
 
 Wie oft und wie lange
-- [Punkt 1]
-- [Punkt 2]
-- [Punkt 3]
+- [3-4 Punkte]
 
 Worauf du achten solltest
-- [Punkt 1]
-- [Punkt 2]
-- [Punkt 3]
+- [3-4 Punkte]
 
 Go's
-- [Punkt 1]
-- [Punkt 2]
-- [Punkt 3]
+- [3-5 Punkte]
 
 No Go's
-- [Punkt 1]
-- [Punkt 2]
-- [Punkt 3]
+- [3-5 Punkte]
+
+=== (Seitenumbruch)
+LETZTE SEITE - ABSCHLUSS:
+3-4 Absätze motivierender Abschlusstext.
 
 WEITERE REGELN:
 - Alles auf Deutsch, Du-Form
 - Den Hundenamen aus dem Original übernehmen
 - Praxisnah und konkret, keine allgemeinen Floskeln
-- 6 Übungen pro Zusatz-Plan
-- Am Ende einen kurzen Abschluss-Text
-- Gib NUR den korrigierten Plan aus, keine Meta-Kommentare`,
+- 6 Übungen pro Plan, aufeinander aufbauend
+- Gib NUR den Plan aus, keine Meta-Kommentare`,
                     messages: [{
                         role: 'user',
                         content: [
@@ -520,22 +531,121 @@ WEITERE REGELN:
         const text = document.getElementById('result-text').textContent;
         const dogName = document.getElementById('dog-name').value.trim() || 'Hund';
 
+        // Seiten aufteilen bei ===
+        const pages = text.split(/={3,}/).map(p => p.trim()).filter(p => p.length > 0);
+
+        let pagesHtml = '';
+        pages.forEach((pageText, i) => {
+            const isTitle = i === 0;
+            const isIntro = i === 1;
+            const isExercise = i >= 2 && i <= 7;
+            const isAbschluss = i === pages.length - 1 && i > 7;
+
+            // Text in HTML-Absätze formatieren
+            let content = pageText
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/^(Übung \d+:.*)/gm, '<h2 class="exercise-title">$1</h2>')
+                .replace(/^(Schritt für Schritt)/gm, '<h3>$1</h3>')
+                .replace(/^(Wie oft und wie lange)/gm, '<h3>$1</h3>')
+                .replace(/^(Worauf du achten solltest)/gm, '<h3>$1</h3>')
+                .replace(/^(Go's)/gm, '<h3 class="gos">$1</h3>')
+                .replace(/^(No Go's)/gm, '<h3 class="nogos">$1</h3>')
+                .replace(/^(Einleitung|Abschluss)/gm, '<h2>$1</h2>')
+                .replace(/^(\d+\.\s.+)/gm, '<p class="step"><strong>$1</strong></p>')
+                .replace(/^- (.+)/gm, '<li>$1</li>')
+                .replace(/(<li>.*<\/li>\n?)+/gs, (m) => '<ul>' + m + '</ul>')
+                .replace(/\n{2,}/g, '</p><p>')
+                .replace(/\n/g, '<br>');
+
+            if (isTitle) {
+                pagesHtml += '<div class="page title-page">' +
+                    '<div class="title-content">' +
+                    '<h1>' + dogName + '\'s persönlicher<br>Zusatz-Plan</h1>' +
+                    '<div class="title-divider"></div>' +
+                    '</div></div>';
+            } else {
+                pagesHtml += '<div class="page">' +
+                    '<div class="page-header"><span class="paw">🐾</span> <span>Pfoten-Plan</span></div>' +
+                    '<div class="page-content"><p>' + content + '</p></div>' +
+                    '<div class="page-number">' + (i + 1) + '</div>' +
+                    '</div>';
+            }
+        });
+
         const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <html><head><title>Korrigierter Plan - ${dogName}</title>
-            <style>
-                @page { margin: 2cm; }
-                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a; font-size: 13px; line-height: 1.7; }
-                .header { background: #C4A576; color: white; padding: 12px 20px; text-align: center; font-weight: 700; font-size: 14px; margin: -2cm -2cm 20px -2cm; padding: 16px 2cm; }
-                pre { white-space: pre-wrap; word-wrap: break-word; font-family: inherit; font-size: 13px; }
-            </style></head>
-            <body>
-                <div class="header">Pfoten-Plan - Korrigierter Plan für ${dogName}</div>
-                <pre>${text}</pre>
-            </body></html>
-        `);
+        printWindow.document.write(`<!DOCTYPE html>
+<html><head><title>Zusatz-Plan - ${dogName}</title>
+<style>
+    @page { margin: 0; size: A4 landscape; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a; }
+
+    .page {
+        width: 297mm; height: 210mm;
+        padding: 20mm 25mm 20mm 25mm;
+        page-break-after: always;
+        position: relative;
+        background: #FAF8F5;
+        overflow: hidden;
+    }
+    .page:last-child { page-break-after: auto; }
+
+    .page-header {
+        background: #C4A576;
+        position: absolute; top: 0; left: 0; right: 0;
+        padding: 10px 25mm;
+        text-align: center;
+        color: white;
+        font-weight: 700;
+        font-size: 14px;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .page-header .paw { font-size: 16px; }
+
+    .page-content {
+        margin-top: 15mm;
+        font-size: 12px;
+        line-height: 1.55;
+        column-count: 2;
+        column-gap: 25px;
+    }
+
+    .title-page {
+        display: flex; align-items: center; justify-content: center;
+        background: #FAF8F5;
+    }
+    .title-page .page-header { display: none; }
+    .title-content { text-align: left; }
+    .title-content h1 {
+        font-size: 42px; font-weight: 800; color: #1a1a1a; line-height: 1.2;
+    }
+    .title-divider {
+        width: 200px; height: 3px; background: #C4A576; margin-top: 16px;
+    }
+
+    h2 { font-size: 16px; font-weight: 800; color: #1a1a1a; margin: 0 0 8px 0; column-span: all; }
+    .exercise-title { font-size: 18px; font-weight: 800; color: #1a1a1a; margin: 0 0 10px 0; column-span: all; }
+    h3 { font-size: 13px; font-weight: 700; color: #1a1a1a; margin: 12px 0 4px 0; }
+    h3.gos { color: #166534; }
+    h3.nogos { color: #DC2626; }
+
+    p { margin-bottom: 6px; font-size: 12px; }
+    .step { margin: 4px 0; }
+    ul { padding-left: 14px; margin: 2px 0 8px 0; }
+    li { font-size: 11.5px; margin-bottom: 2px; }
+
+    .page-number {
+        position: absolute; bottom: 12px; right: 25mm;
+        font-size: 12px; font-weight: 700; color: #999;
+    }
+
+    @media print {
+        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+</style></head>
+<body>${pagesHtml}</body></html>`);
         printWindow.document.close();
-        setTimeout(() => { printWindow.print(); }, 500);
+        setTimeout(() => { printWindow.print(); }, 600);
     }
 </script>
 </body>
