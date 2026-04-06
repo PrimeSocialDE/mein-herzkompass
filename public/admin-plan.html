@@ -240,7 +240,7 @@
             <div class="field">
                 <label>Trainingsplan PDF *</label>
                 <div class="drop-zone" id="drop-zone">
-                    <input type="file" id="pdf-input" accept="application/pdf">
+                    <input type="file" id="pdf-input" accept=".pdf">
                     <div class="drop-zone-text">
                         <strong>Klicken</strong> oder PDF hierher ziehen
                     </div>
@@ -333,15 +333,18 @@
 
     dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
     dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    let droppedFile = null;
     dropZone.addEventListener('drop', e => {
         e.preventDefault();
         dropZone.classList.remove('dragover');
-        if (e.dataTransfer.files.length && e.dataTransfer.files[0].type === 'application/pdf') {
-            pdfInput.files = e.dataTransfer.files;
-            showFileName(e.dataTransfer.files[0].name);
+        const file = e.dataTransfer.files[0];
+        if (file && (file.type === 'application/pdf' || file.name.endsWith('.pdf'))) {
+            droppedFile = file;
+            showFileName(file.name);
         }
     });
     pdfInput.addEventListener('change', () => {
+        droppedFile = null; // file input hat Vorrang
         if (pdfInput.files.length) showFileName(pdfInput.files[0].name);
     });
     function showFileName(name) {
@@ -352,7 +355,7 @@
     // Submit
     async function submitForm(e) {
         e.preventDefault();
-        const pdf = pdfInput.files[0];
+        const pdf = pdfInput.files[0] || droppedFile;
         const complaint = document.getElementById('complaint').value.trim();
 
         if (!pdf) return alert('Bitte eine PDF-Datei hochladen.');
