@@ -352,6 +352,12 @@
         dropZone.classList.add('has-file');
     }
 
+    const PROBLEM_LABELS = {
+        pulling: 'Leinenziehen', barking: 'Bellen', aggression: 'Aggression',
+        anxiety: 'Trennungsangst', recall: 'Rückruf', jumping: 'Anspringen',
+        energy: 'Überaktivität', destructive: 'Zerstörerisches Verhalten', mouthing: 'Beißen / Mouthing'
+    };
+
     // Submit
     async function submitForm(e) {
         e.preventDefault();
@@ -360,11 +366,7 @@
 
         if (!pdf) return alert('Bitte eine PDF-Datei hochladen.');
         if (!complaint) return alert('Bitte eine Beschwerde / Korrekturanweisung eingeben.');
-
-        // Max 3MB (wird als Base64 ~4MB → unter Vercel 4.5MB Limit)
-        if (pdf.size > 3 * 1024 * 1024) {
-            return alert('PDF ist zu groß (max. 3 MB). Bitte eine kleinere Version hochladen.');
-        }
+        if (pdf.size > 10 * 1024 * 1024) return alert('PDF ist zu groß (max. 10 MB).');
 
         const customerName = document.getElementById('customer-name').value.trim();
         const dogName = document.getElementById('dog-name').value.trim();
@@ -386,22 +388,60 @@
 
     async function sendRequest(pdfBase64, complaint, customerName, dogName, dogProblem) {
         try {
-            const body = { pdfBase64, complaint };
-            if (customerName) body.customerName = customerName;
-            if (dogName) body.dogName = dogName;
-            if (dogProblem) body.dogProblem = dogProblem;
-
-            const res = await fetch('/api/admin/plan-korrektur', {
+            // API Key vom Server holen
+            const keyRes = await fetch('/api/admin/plan-korrektur', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
+                body: JSON.stringify({ action: 'get-key' })
             });
-            const text = await res.text();
-            let data;
-            try { data = JSON.parse(text); } catch { throw new Error('Server-Fehler: ' + text.substring(0, 200)); }
-            if (!res.ok) throw new Error(data.error || 'Unbekannter Fehler');
+            const keyData = await keyRes.json();
+            if (!keyData.apiKey) throw new Error('API Key nicht verfügbar');
 
-            document.getElementById('result-text').textContent = data.correctedPlan;
+            // Context bauen
+            let context = '';
+            if (customerName) context += 'Kundenname: ' + customerName + '\n';
+            if (dogName) context += 'Hundename: ' + dogName + '\n';
+            if (dogProblem && PROBLEM_LABELS[dogProblem]) context += 'Hundeproblem: ' + PROBLEM_LABELS[dogProblem] + '\n';
+
+            let userMessage = '';
+            if (context) userMessage += 'ZUSATZINFORMATIONEN:\n' + context + '\n';
+            userMessage += 'BESCHWERDE / KORREKTURANWEISUNG:\n' + complaint + '\n\nBitte analysiere den angehaengten Trainingsplan und erstelle eine korrigierte Version.';
+
+            // Direkt an Anthropic API senden (umgeht Vercel Body-Limit)
+            const res = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': keyData.apiKey,
+                    'anthropic-version': '2023-06-01',
+                    'anthropic-dangerous-direct-browser-access': 'true'
+                },
+                body: JSON.stringify({
+                    model: 'claude-sonnet-4-6-20250514',
+                    max_tokens: 8000,
+                    system: 'Du bist ein erfahrener Hundetrainer-Assistent. Analysiere den Trainingsplan, verstehe die Beschwerde, und erstelle eine korrigierte Version. Behalte die Struktur bei. Alles auf Deutsch. Gib NUR den korrigierten Plan aus.',
+                    messages: [{
+                        role: 'user',
+                        content: [
+                            {
+                                type: 'document',
+                                source: { type: 'base64', media_type: 'application/pdf', data: pdfBase64 }
+                            },
+                            { type: 'text', text: userMessage }
+                        ]
+                    }]
+                })
+            });
+
+            if (!res.ok) {
+                const errText = await res.text();
+                throw new Error('API Fehler (' + res.status + '): ' + errText.substring(0, 300));
+            }
+
+            const data = await res.json();
+            const correctedPlan = data.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
+
+            document.getElementById('result-text').textContent = correctedPlan;
             document.getElementById('result-area').style.display = 'block';
         } catch (err) {
             document.getElementById('error-msg').textContent = 'Fehler: ' + err.message;
