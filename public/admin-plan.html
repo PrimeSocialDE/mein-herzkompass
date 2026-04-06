@@ -435,7 +435,7 @@
                 },
                 body: JSON.stringify({
                     model: 'claude-sonnet-4-20250514',
-                    max_tokens: 8000,
+                    max_tokens: 12000,
                     system: `Du bist ein erfahrener Hundetrainer-Assistent. Analysiere den Trainingsplan, verstehe die Beschwerde, und erstelle eine korrigierte Version.
 
 WICHTIG - FORMATIERUNG:
@@ -470,6 +470,9 @@ Dann eine Leerzeile, dann 2-3 Sätze. Dann Leerzeile.
 Schreibe "Monat 3 (Woche 9-12): Übung 5 und 6" als eigene fettgedruckte Zeile.
 Dann eine Leerzeile, dann 2-3 Sätze.
 
+Schreibe "Bonus: Fortgeschrittene Übungen 7-9" als eigene fettgedruckte Zeile.
+Dann eine Leerzeile, dann 1-2 Sätze: Für Hunde die die Grundlagen beherrschen. Diese Übungen kannst du ab Monat 2-3 ergänzen oder nach den 3 Monaten als Aufbau nutzen.
+
 ABSCHNITT 3 - Schreibe die Überschrift "Tipps für den Erfolg" als eigene Zeile. Dann 4 Punkte, jeder Punkt so:
 
 Schreibe den Tipp-Titel fett, dann Doppelpunkt, dann die Erklärung in derselben Zeile. Nach jedem Punkt eine Leerzeile.
@@ -481,7 +484,11 @@ Die 4 Punkte:
 - Du bist nicht allein: Bei Fragen erreichst du uns per E-Mail an support@pfoten-plan.de
 
 === (Seitenumbruch)
-SEITEN 3-8 - JE EINE ÜBUNG PRO SEITE:
+SEITEN 3-8 - GRUNDLAGEN (je eine Übung pro Seite):
+
+Die ersten 6 Übungen sind die Basis. Sie starten einfach und werden progressiv schwieriger. Übung 1-2 sind Grundlagen, 3-4 Alltagsintegration, 5-6 fortgeschrittener.
+
+Format pro Übung:
 
 Übung [Nummer]: [Titel] – [Untertitel]
 
@@ -493,9 +500,6 @@ Schritt für Schritt
 1. [Schritt-Titel]
 [Erklärung Zeile 1]
 [Erklärung Zeile 2]
-
-2. [Schritt-Titel]
-[Erklärung]
 
 (6 Schritte insgesamt)
 
@@ -512,6 +516,27 @@ No Go's
 - [genau 3 Punkte]
 
 === (Seitenumbruch)
+SEITE 9 - ÜBERGANGSSEITE:
+
+Titel: "Bereit für mehr? Fortgeschrittene Übungen"
+
+Schreibe 2-3 Absätze:
+- Erkläre dass die folgenden 3 Übungen für Hunde gedacht sind, die die Grundlagen bereits beherrschen
+- Wann man damit starten sollte (wenn Übung 1-6 zuverlässig klappen)
+- Diese Übungen sind anspruchsvoller und trainieren unter realistischen, schwierigeren Bedingungen
+- Man kann sie als Ergänzung ab Monat 2-3 einbauen oder nach den 3 Monaten als Aufbau nutzen
+
+=== (Seitenumbruch)
+SEITEN 10-12 - FORTGESCHRITTENE ÜBUNGEN (je eine pro Seite):
+
+3 weitere Übungen im selben Format wie oben (Schritt für Schritt, Go's, No Go's etc.)
+Diese Übungen müssen DEUTLICH schwieriger sein als Übung 1-6:
+- Mehr Ablenkung, realistischere Situationen, höherer Schwierigkeitsgrad
+- Übungen die unter Stress, mit anderen Hunden, in unbekannter Umgebung funktionieren
+- Für Hunde die die Basics schon können und eine echte Herausforderung brauchen
+Nummeriere sie als Übung 7, 8, 9.
+
+=== (Seitenumbruch)
 LETZTE SEITE - ABSCHLUSS:
 Titel: "Abschluss"
 
@@ -526,7 +551,7 @@ WEITERE REGELN:
 - Alles auf Deutsch, Du-Form - KEINE englischen Begriffe verwenden (kein "Trigger", "Recall", "Impulse Control" etc. - immer die deutsche Entsprechung nutzen)
 - Den Hundenamen aus dem Original übernehmen
 - Praxisnah und konkret, keine allgemeinen Floskeln
-- 6 Übungen pro Plan, aufeinander aufbauend
+- 6 Grundlagen-Übungen + 3 Fortgeschrittene Übungen, alle aufeinander aufbauend
 - Go's und No Go's immer genau 3 Punkte, nicht mehr
 - LAYOUT: Die linke Spalte enthält Übungstitel, Beschreibung, Schritt für Schritt (1-6). Die rechte Spalte enthält "Wie oft und wie lange", "Worauf du achten solltest", "Go's", "No Go's". So ergibt sich ein sauberes 2-Spalten-Layout.
 - Gib NUR den Plan aus, keine Meta-Kommentare`,
