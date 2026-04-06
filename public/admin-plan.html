@@ -300,11 +300,21 @@
 
         <!-- Result -->
         <div id="result-area">
+            <!-- E-Mail Vorschau -->
+            <div class="result-box" style="margin-bottom: 16px; border: 2px solid #C4A576;">
+                <div class="result-header">
+                    <h2 style="font-size: 15px;">E-Mail Vorlage</h2>
+                    <button class="btn btn-secondary" onclick="copyEmail()" style="padding: 6px 12px; font-size: 12px;">E-Mail kopieren</button>
+                </div>
+                <div class="result-text" id="email-text" style="font-size: 13px; line-height: 1.6; white-space: pre-wrap;"></div>
+            </div>
+
+            <!-- Plan -->
             <div class="result-box">
                 <div class="result-header">
                     <h2>Korrigierter Plan</h2>
                     <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-secondary" onclick="copyResult()">Als Text kopieren</button>
+                        <button class="btn btn-secondary" onclick="copyResult()">Plan kopieren</button>
                         <button class="btn" onclick="downloadPDF()" style="padding: 8px 16px; font-size: 13px;">Als PDF speichern</button>
                     </div>
                 </div>
@@ -577,6 +587,20 @@ WEITERE REGELN:
             const correctedPlan = data.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
 
             document.getElementById('result-text').textContent = correctedPlan;
+
+            // E-Mail Vorlage generieren
+            const dn = document.getElementById('dog-name').value.trim() || 'Ihren Hund';
+            const cn = document.getElementById('customer-name').value.trim();
+            const anrede = cn ? ('Hallo ' + cn.split(' ')[0]) : 'Hallo';
+            const emailText = anrede + ',\n\n' +
+                'vielen Dank für deine Nachricht. Wir haben uns das angeschaut und den Trainingsplan für ' + dn + ' überarbeitet.\n\n' +
+                'Im Anhang findest du die neue Version mit angepassten Übungen, die besser zu ' + dn + ' und eurer Situation passen.\n\n' +
+                'Schau dir den Plan in Ruhe an. Falls du noch Fragen hast oder etwas unklar ist, melde dich jederzeit bei uns.\n\n' +
+                'Liebe Grüße\n' +
+                'Dein Pfoten-Plan Team\n' +
+                'support@pfoten-plan.de';
+            document.getElementById('email-text').textContent = emailText;
+
             document.getElementById('result-area').style.display = 'block';
         } catch (err) {
             document.getElementById('error-msg').textContent = 'Fehler: ' + err.message;
@@ -592,6 +616,17 @@ WEITERE REGELN:
         const text = document.getElementById('result-text').textContent;
         navigator.clipboard.writeText(text).then(() => {
             const toast = document.getElementById('copy-toast');
+            toast.textContent = 'Plan kopiert!';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        });
+    }
+
+    function copyEmail() {
+        const text = document.getElementById('email-text').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.getElementById('copy-toast');
+            toast.textContent = 'E-Mail kopiert!';
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 2000);
         });
