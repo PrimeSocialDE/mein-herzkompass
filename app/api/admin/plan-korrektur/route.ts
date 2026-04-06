@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 
+export const maxDuration = 120;
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '20mb',
+    },
+  },
+};
+
 const PROBLEM_LABELS: Record<string, string> = {
   pulling: 'Leinenziehen',
   barking: 'Bellen',
@@ -70,7 +80,7 @@ Deine Aufgabe:
           role: 'user',
           content: [
             {
-              type: 'document',
+              type: 'document' as any,
               source: {
                 type: 'base64',
                 media_type: 'application/pdf',
@@ -96,6 +106,8 @@ Deine Aufgabe:
   } catch (error: unknown) {
     console.error('Plan correction error:', error);
     const message = error instanceof Error ? error.message : 'Interner Serverfehler';
-    return NextResponse.json({ error: message }, { status: 500 });
+    const stack = error instanceof Error ? error.stack : '';
+    console.error('Stack:', stack);
+    return NextResponse.json({ error: message, details: String(error) }, { status: 500 });
   }
 }
