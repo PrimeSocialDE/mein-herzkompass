@@ -608,7 +608,7 @@ WEITERE REGELN:
         pages.forEach((pageText, i) => {
             const isTitle = i === 0;
             const isIntro = i === 1;
-            const isExercise = i >= 2 && i <= 7;
+            const isExercise = pageText.match(/^Übung \d+:/m);
             const isAbschluss = i === pages.length - 1 && i > 7;
 
             function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
