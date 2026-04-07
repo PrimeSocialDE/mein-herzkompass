@@ -122,6 +122,7 @@
             <div class="breed-card" data-breed="Jack Russell Terrier">Jack Russell Terrier</div>
             <div class="breed-card" data-breed="Shih Tzu">Shih Tzu</div>
             <div class="breed-card" data-breed="Yorkshire Terrier">Yorkshire Terrier</div>
+            <div class="breed-card" data-breed="Airedale Terrier">Airedale Terrier</div>
             <div class="breed-card" data-breed="Akita">Akita</div>
             <div class="breed-card" data-breed="Alaskan Malamute">Alaskan Malamute</div>
             <div class="breed-card" data-breed="American Staffordshire Terrier">American Staffordshire Terrier</div>
@@ -223,6 +224,15 @@
             <div class="breed-card" data-breed="Zwergpudel">Zwergpudel</div>
             <div class="breed-card" data-breed="Andere Rasse">Andere Rasse / Weiß nicht</div>
         </div>
+
+        <!-- Custom Rasse eingeben -->
+        <div id="customBreedSection" style="margin-top: 16px; padding: 14px 16px; background: #FDFCFA; border: 1px solid var(--border-light); border-radius: 12px;">
+            <p style="font-size: 13px; color: var(--text-medium); margin-bottom: 8px; font-weight: 600;">Rasse nicht in der Liste? Hier eintragen:</p>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="customBreedInput" placeholder="z.B. Airedale Terrier" style="flex: 1; padding: 10px 12px; border: 1px solid var(--border-light); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none;">
+                <button id="customBreedSubmit" style="padding: 10px 18px; background: var(--primary-brown); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap;">Weiter →</button>
+            </div>
+        </div>
     </div>
     <script>
         // Personalisieren basierend auf Alter
@@ -249,17 +259,45 @@
         });
         
         let isNavigating = false;
+        function selectBreed(breed) {
+            if (isNavigating) return;
+            isNavigating = true;
+            localStorage.setItem('dogBreed', breed);
+            setTimeout(() => {
+                window.location.href = 'kurz-schritt3.html';
+            }, 150);
+        }
+
         breedCards.forEach(card => {
             card.addEventListener('click', function(e) {
                 e.preventDefault();
                 if (isNavigating) return;
-                isNavigating = true;
                 this.classList.add('clicked');
-                localStorage.setItem('dogBreed', this.dataset.breed);
-                setTimeout(() => {
-                    window.location.href = 'kurz-schritt3.html';
-                }, 150);
+                selectBreed(this.dataset.breed);
             });
+        });
+
+        // Custom Breed Eingabe
+        const customInput = document.getElementById('customBreedInput');
+        const customSubmit = document.getElementById('customBreedSubmit');
+
+        function submitCustomBreed() {
+            const value = customInput.value.trim();
+            if (!value) {
+                customInput.focus();
+                return;
+            }
+            customSubmit.disabled = true;
+            customSubmit.textContent = '...';
+            selectBreed(value);
+        }
+
+        customSubmit.addEventListener('click', submitCustomBreed);
+        customInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitCustomBreed();
+            }
         });
     </script>
 </body>
