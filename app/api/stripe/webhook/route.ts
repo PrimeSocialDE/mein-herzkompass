@@ -229,14 +229,12 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
         stripe_payment_intent: updateData.stripe_payment_intent ?? null,
       });
 
-      // Oster-Bonus: Notfall-Karten gratis bei wauwerk_leads-Käufen
+      // Bonus: Notfall-Karten gratis bei wauwerk_leads-Käufen
       const emailForKarten = updateData.email || existingRecord.email || customerEmail;
       if (table === 'wauwerk_leads' && emailForKarten) {
-        console.log("🐣 Oster-Bonus: Notfall-Karten gratis versenden...");
+        console.log("🎁 Bonus: Notfall-Karten gratis versenden an", emailForKarten);
         try {
-          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-            || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://pfoten-plan.de');
-          await fetch(`${baseUrl}/api/notfall-karten/generate`, {
+          const kartenRes = await fetch('https://www.pfoten-plan.de/api/notfall-karten/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -245,9 +243,14 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
               leadId: referenceId,
             }),
           });
-          console.log("✅ Oster-Bonus Notfall-Karten versendet an", emailForKarten);
+          if (kartenRes.ok) {
+            console.log("✅ Bonus Notfall-Karten erfolgreich versendet an", emailForKarten);
+          } else {
+            const errText = await kartenRes.text();
+            console.error("❌ Bonus Notfall-Karten HTTP-Fehler:", kartenRes.status, errText);
+          }
         } catch (bonusErr) {
-          console.error("❌ Oster-Bonus Notfall-Karten Fehler:", bonusErr);
+          console.error("❌ Bonus Notfall-Karten Exception:", bonusErr);
         }
       }
     }
@@ -377,14 +380,12 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
         stripe_payment_intent: paymentIntent.id,
       });
 
-      // Oster-Bonus: Notfall-Karten gratis bei wauwerk_leads-Käufen
+      // Bonus: Notfall-Karten gratis bei wauwerk_leads-Käufen
       const emailForKarten = updateData.email || existingRecord.email || paymentIntent.metadata?.email;
       if (table === 'wauwerk_leads' && emailForKarten) {
-        console.log("🐣 Oster-Bonus: Notfall-Karten gratis versenden...");
+        console.log("🎁 Bonus: Notfall-Karten gratis versenden an", emailForKarten);
         try {
-          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-            || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://pfoten-plan.de');
-          await fetch(`${baseUrl}/api/notfall-karten/generate`, {
+          const kartenRes = await fetch('https://www.pfoten-plan.de/api/notfall-karten/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -393,9 +394,14 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
               leadId: referenceId,
             }),
           });
-          console.log("✅ Oster-Bonus Notfall-Karten versendet an", emailForKarten);
+          if (kartenRes.ok) {
+            console.log("✅ Bonus Notfall-Karten erfolgreich versendet an", emailForKarten);
+          } else {
+            const errText = await kartenRes.text();
+            console.error("❌ Bonus Notfall-Karten HTTP-Fehler:", kartenRes.status, errText);
+          }
         } catch (bonusErr) {
-          console.error("❌ Oster-Bonus Notfall-Karten Fehler:", bonusErr);
+          console.error("❌ Bonus Notfall-Karten Exception:", bonusErr);
         }
       }
     }
@@ -504,9 +510,8 @@ async function handleUpsellPaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     if (module === 'notfall-karten' && email) {
       console.log("📄 Notfall-Karten Delivery triggern...");
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-          || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://pfoten-plan.de');
-        await fetch(`${baseUrl}/api/notfall-karten/generate`, {
+        const baseUrl = 'https://www.pfoten-plan.de';
+        const deliveryRes = await fetch(`${baseUrl}/api/notfall-karten/generate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -515,7 +520,12 @@ async function handleUpsellPaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
             leadId: leadData.id,
           }),
         });
-        console.log("✅ Notfall-Karten Delivery getriggert");
+        if (deliveryRes.ok) {
+          console.log("✅ Notfall-Karten Delivery erfolgreich an", email);
+        } else {
+          const errText = await deliveryRes.text();
+          console.error("❌ Notfall-Karten Delivery HTTP-Fehler:", deliveryRes.status, errText);
+        }
       } catch (deliveryErr) {
         console.error("❌ Notfall-Karten Delivery Fehler:", deliveryErr);
       }
