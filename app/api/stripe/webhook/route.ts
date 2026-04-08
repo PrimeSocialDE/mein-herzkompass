@@ -229,30 +229,6 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
         stripe_payment_intent: updateData.stripe_payment_intent ?? null,
       });
 
-      // Bonus: Notfall-Karten gratis bei wauwerk_leads-Käufen
-      const emailForKarten = updateData.email || existingRecord.email || customerEmail;
-      if (table === 'wauwerk_leads' && emailForKarten) {
-        console.log("🎁 Bonus: Notfall-Karten gratis versenden an", emailForKarten);
-        try {
-          const kartenRes = await fetch('https://www.pfoten-plan.de/api/notfall-karten/generate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: emailForKarten,
-              dogName: session.metadata?.dog_name || existingRecord.dog_name || 'deinen Hund',
-              leadId: referenceId,
-            }),
-          });
-          if (kartenRes.ok) {
-            console.log("✅ Bonus Notfall-Karten erfolgreich versendet an", emailForKarten);
-          } else {
-            const errText = await kartenRes.text();
-            console.error("❌ Bonus Notfall-Karten HTTP-Fehler:", kartenRes.status, errText);
-          }
-        } catch (bonusErr) {
-          console.error("❌ Bonus Notfall-Karten Exception:", bonusErr);
-        }
-      }
     }
 
     console.log("🔍 === CHECKOUT SUCCESS DEBUG ENDE ===");
@@ -380,30 +356,6 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
         stripe_payment_intent: paymentIntent.id,
       });
 
-      // Bonus: Notfall-Karten gratis bei wauwerk_leads-Käufen
-      const emailForKarten = updateData.email || existingRecord.email || paymentIntent.metadata?.email;
-      if (table === 'wauwerk_leads' && emailForKarten) {
-        console.log("🎁 Bonus: Notfall-Karten gratis versenden an", emailForKarten);
-        try {
-          const kartenRes = await fetch('https://www.pfoten-plan.de/api/notfall-karten/generate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: emailForKarten,
-              dogName: paymentIntent.metadata?.dog_name || existingRecord.dog_name || 'deinen Hund',
-              leadId: referenceId,
-            }),
-          });
-          if (kartenRes.ok) {
-            console.log("✅ Bonus Notfall-Karten erfolgreich versendet an", emailForKarten);
-          } else {
-            const errText = await kartenRes.text();
-            console.error("❌ Bonus Notfall-Karten HTTP-Fehler:", kartenRes.status, errText);
-          }
-        } catch (bonusErr) {
-          console.error("❌ Bonus Notfall-Karten Exception:", bonusErr);
-        }
-      }
     }
   } catch (err) {
     console.error("Fehler bei PaymentIntent-Verarbeitung:", err);
