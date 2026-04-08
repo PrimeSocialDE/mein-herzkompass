@@ -1567,6 +1567,7 @@
         <div class="payment-logos">
             <img src="sepa-logo.png" alt="SEPA">
             <img src="visa-logo.png" alt="Visa">
+            <img src="paypal-logo.png" alt="PayPal">
             <img src="klarna-logo.png" alt="Klarna">
             <img src="mastercard-logo.png" alt="Mastercard">
             <img src="applepay.png" alt="Apple Pay">
@@ -1698,7 +1699,8 @@
                 <div class="payment-icons">
                     <img src="visa-logo.png" alt="Visa">
                     <img src="mastercard-logo.png" alt="Mastercard">
-                    <img src="klarna-logo.png" alt="Klarna">
+                    <img src="paypal-logo.png" alt="PayPal">
+            <img src="klarna-logo.png" alt="Klarna">
                 </div>
 
                 <button class="checkout-back" onclick="closeCheckout()">← Zurück</button>
@@ -2538,7 +2540,7 @@
                 
                 paymentElement = elements.create('payment', {
                     layout: { type: 'tabs', defaultCollapsed: false },
-                    paymentMethodOrder: ['klarna', 'card'],
+                    paymentMethodOrder: ['klarna', 'paypal', 'card'],
                     wallets: { applePay: 'auto', googlePay: 'auto' }
                 });
                 

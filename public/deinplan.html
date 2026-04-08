@@ -1923,6 +1923,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         <div class="payment-logos">
             <img src="sepa-logo.png" alt="SEPA">
             <img src="visa-logo.png" alt="Visa">
+            <img src="paypal-logo.png" alt="PayPal">
             <img src="klarna-logo.png" alt="Klarna">
             <img src="mastercard-logo.png" alt="Mastercard">
             <img src="applepay.png" alt="Apple Pay">
@@ -3064,7 +3065,7 @@ if (popularBadge) {
 
                 paymentElement = elements.create('payment', {
                     layout: { type: 'tabs', defaultCollapsed: false },
-                    paymentMethodOrder: ['klarna', 'card'],
+                    paymentMethodOrder: ['klarna', 'paypal', 'card'],
                     wallets: { applePay: 'auto', googlePay: 'auto' }
                 });
 
@@ -3180,7 +3181,8 @@ if (popularBadge) {
                     <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal">
-                    <img src="klarna-logo.png" alt="Klarna">
+                    <img src="paypal-logo.png" alt="PayPal">
+            <img src="klarna-logo.png" alt="Klarna">
                 </div>
 
                 <button class="checkout-back" onclick="closeCheckoutPopup()">Ich brauche noch einen Moment</button>
