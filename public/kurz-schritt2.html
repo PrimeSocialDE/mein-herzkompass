@@ -259,12 +259,25 @@
         });
         
         let isNavigating = false;
+
+        // A/B Test: 30% sehen Trust-Zwischenseite, 70% gehen direkt weiter
+        function getTrustVariant() {
+            let variant = localStorage.getItem('ab_test_trust');
+            if (!variant) {
+                variant = Math.random() < 0.30 ? 'A' : 'B';
+                localStorage.setItem('ab_test_trust', variant);
+            }
+            // A = Trust-Seite (kurz-schritt2b), B = direkt zu Schritt 3
+            return variant === 'A' ? 'kurz-schritt2b.html' : 'kurz-schritt3.html';
+        }
+
         function selectBreed(breed) {
             if (isNavigating) return;
             isNavigating = true;
             localStorage.setItem('dogBreed', breed);
+            const targetPage = getTrustVariant();
             setTimeout(() => {
-                window.location.href = 'kurz-schritt2b.html';
+                window.location.href = targetPage;
             }, 150);
         }
 
