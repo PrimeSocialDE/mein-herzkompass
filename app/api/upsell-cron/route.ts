@@ -306,6 +306,57 @@ export async function GET(request: Request) {
       }
     }
 
+    // Daily summary email — nur bei tatsächlichen Sends oder Fehlern (keine leeren Reports)
+    if (totalSent > 0 || errors.length > 0) {
+      const byType: Record<string, number> = {};
+      queue.slice(0, totalSent).forEach((q) => {
+        byType[q.item.type] = (byType[q.item.type] || 0) + 1;
+      });
+
+      const breakdown = Object.entries(byType)
+        .map(([t, n]) => `<li style="padding:4px 0;">${t}: <strong>${n}</strong></li>`)
+        .join("");
+
+      const errorBlock = errors.length > 0
+        ? `<div style="background:#FEF2F2;border-left:3px solid #DC2626;padding:12px 16px;margin-top:16px;border-radius:6px;">
+             <strong style="color:#DC2626;">⚠ ${errors.length} Fehler:</strong>
+             <ul style="margin:8px 0 0;padding-left:20px;font-size:12px;color:#555;">
+               ${errors.slice(0, 10).map((e) => `<li>${e}</li>`).join("")}
+               ${errors.length > 10 ? `<li>... und ${errors.length - 10} weitere</li>` : ""}
+             </ul>
+           </div>`
+        : "";
+
+      const summaryHtml = `<!DOCTYPE html><html><body style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;padding:24px;background:#FAF8F5;">
+        <h2 style="color:#C4A576;margin:0 0 16px;">Upsell-Kampagne: Daily Report</h2>
+        <div style="background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+          <p style="margin:0 0 12px;font-size:14px;color:#555;">${new Date().toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</p>
+          <div style="display:flex;gap:16px;margin-bottom:16px;">
+            <div><div style="font-size:32px;font-weight:800;color:#C4A576;">${totalSent}</div><div style="font-size:12px;color:#888;">gesendet heute</div></div>
+            <div><div style="font-size:32px;font-weight:800;color:#333;">${schedules.length}</div><div style="font-size:12px;color:#888;">enrolled total</div></div>
+          </div>
+          ${breakdown ? `<div style="border-top:1px solid #eee;padding-top:12px;"><strong style="font-size:13px;color:#333;">Breakdown:</strong><ul style="margin:8px 0 0;padding-left:20px;font-size:13px;color:#555;">${breakdown}</ul></div>` : ""}
+          ${errorBlock}
+        </div>
+        <p style="font-size:11px;color:#999;text-align:center;margin-top:16px;">Automatisch vom Upsell-Cron · pfoten-plan.de</p>
+      </body></html>`;
+
+      try {
+        await fetch("https://api.brevo.com/v3/smtp/email", {
+          method: "POST",
+          headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sender: { name: "Pfoten-Plan Cron", email: "support@pfoten-plan.de" },
+            to: [{ email: "kontakt@primesocial.de" }],
+            subject: `[Upsell] ${totalSent} Emails gesendet${errors.length ? ` · ${errors.length} Fehler` : ""}`,
+            htmlContent: summaryHtml,
+          }),
+        });
+      } catch (e) {
+        console.error("Summary email error:", e);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       leadsScheduled: schedules.length,
@@ -316,6 +367,19 @@ export async function GET(request: Request) {
     });
   } catch (err) {
     console.error("Upsell cron error:", err);
+    // Auch bei hartem Cron-Fehler eine Warn-Mail schicken
+    try {
+      await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sender: { name: "Pfoten-Plan Cron", email: "support@pfoten-plan.de" },
+          to: [{ email: "kontakt@primesocial.de" }],
+          subject: "[Upsell] ⚠ Cron-Fehler — Kampagne steht",
+          htmlContent: `<div style="font-family:sans-serif;padding:20px;"><h2 style="color:#DC2626;">Upsell-Cron fehlgeschlagen</h2><p>Der tägliche Upsell-Cron ist mit einem Fehler abgebrochen. Heute gingen keine Emails raus.</p><pre style="background:#FEF2F2;padding:12px;border-radius:6px;font-size:12px;">${String(err).slice(0, 500)}</pre><p>Bitte in Vercel Logs nachschauen und ggf. manuell neu triggern.</p></div>`,
+        }),
+      });
+    } catch {}
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
