@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ernährungsplan | Pfoten-Plan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ufxcf43805");
+    </script>
+
+    <!-- Meta Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAF8F5;
+            min-height: 100vh;
+            color: #2C2C2E;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 24px 16px 40px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding: 16px 0;
+        }
+
+        .header-logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: #C4A576;
+            letter-spacing: -0.5px;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .hero-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #2C2C2E;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .hero p {
+            font-size: 15px;
+            color: #888;
+        }
+
+        /* Product Card */
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+
+        .benefits {
+            margin-bottom: 20px;
+        }
+
+        .benefit {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #F0F0F0;
+            font-size: 14px;
+            color: #444;
+        }
+
+        .benefit:last-child {
+            border-bottom: none;
+        }
+
+        .benefit-check {
+            color: #22C55E;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        /* Price */
+        .price-section {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #F0F0F0;
+            margin-bottom: 20px;
+        }
+
+        .price-old {
+            font-size: 16px;
+            color: #999;
+            text-decoration: line-through;
+            margin-bottom: 4px;
+        }
+
+        .price-new {
+            font-size: 32px;
+            font-weight: 800;
+            color: #C4A576;
+        }
+
+        .price-info {
+            font-size: 13px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        /* CTA */
+        .cta-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #C4A576, #8B7355);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(196,165,118,0.4);
+        }
+
+        .cta-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Guarantee */
+        .guarantee {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #22C55E;
+            font-weight: 500;
+        }
+
+        /* Payment Overlay */
+        .payment-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .payment-overlay.active {
+            display: flex;
+        }
+
+        .payment-popup {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .payment-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .payment-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .payment-close {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .payment-body {
+            padding: 14px 20px;
+        }
+
+        .payment-product {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #FAFAFA;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .payment-product-icon {
+            width: 44px;
+            height: 44px;
+            background: #FEF3E7;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .payment-product-info h3 {
+            font-size: 14px;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+
+        .payment-product-info p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .payment-product-price {
+            margin-left: auto;
+            font-size: 18px;
+            font-weight: 700;
+            color: #C4A576;
+        }
+
+        .payment-benefits {
+            background: #F8F8F8;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+        }
+
+        .payment-benefit {
+            font-size: 12px;
+            color: #333;
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #payment-element {
+            margin-bottom: 12px;
+        }
+
+        .payment-error {
+            background: #FEF2F2;
+            color: #DC2626;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .payment-error.visible {
+            display: block;
+        }
+
+        .payment-btn {
+            width: 100%;
+            background: #C4A576;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .payment-btn:hover { background: #B8956A; }
+        .payment-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .payment-guarantee {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Thank You */
+        .thank-you {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .thank-you.active {
+            display: block;
+        }
+
+        .thank-you-check {
+            width: 64px;
+            height: 64px;
+            background: #22C55E;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .thank-you-check svg {
+            width: 32px;
+            height: 32px;
+            color: white;
+        }
+
+        .thank-you h1 {
+            font-size: 22px;
+            color: #2C2C2E;
+            margin-bottom: 8px;
+        }
+
+        .thank-you p {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .main-content { display: block; }
+        .main-content.hidden { display: none; }
+
+        /* Mini Quiz */
+        .quiz-section { margin-bottom: 24px; }
+        .quiz-title { font-size: 16px; font-weight: 700; color: #2C2C2E; margin-bottom: 4px; }
+        .quiz-subtitle { font-size: 13px; color: #999; margin-bottom: 16px; }
+        .quiz-step { display: none; }
+        .quiz-step.active { display: block; }
+        .quiz-question { font-size: 14px; font-weight: 600; color: #2C2C2E; margin-bottom: 12px; }
+        .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+        .quiz-option { background: white; border: 2px solid #E8E8E8; border-radius: 12px; padding: 14px 16px; cursor: pointer; font-size: 14px; color: #444; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+        .quiz-option:hover { border-color: #C4A576; background: #FFFBF5; }
+        .quiz-option.selected { border-color: #C4A576; background: #FFFBF5; }
+        .quiz-option-icon { font-size: 20px; }
+        .quiz-input { width: 100%; padding: 14px 16px; border: 2px solid #E8E8E8; border-radius: 12px; font-size: 16px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+        .quiz-input:focus { border-color: #C4A576; }
+        .quiz-input-suffix { display: flex; align-items: center; gap: 8px; }
+        .quiz-input-suffix span { font-size: 14px; color: #999; font-weight: 600; }
+        .quiz-next { background: #C4A576; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 14px; transition: background 0.2s; }
+        .quiz-next:hover { background: #8B7355; }
+        .quiz-next:disabled { opacity: 0.4; cursor: not-allowed; }
+        .quiz-progress { display: flex; gap: 6px; margin-bottom: 14px; }
+        .quiz-dot { flex: 1; height: 4px; border-radius: 2px; background: #E8E8E8; }
+        .quiz-dot.done { background: #C4A576; }
+        .quiz-result { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; }
+        .quiz-result-title { font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 6px; }
+        .quiz-result-info { font-size: 12px; color: #555; }
+
+        .product-section { display: none; }
+        .product-section.visible { display: block; }
+    </style>
+</head>
+<body>
+
+    <!-- Thank You -->
+    <div class="container">
+        <div class="thank-you" id="thankYou">
+            <div class="thank-you-check">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h1>Vielen Dank!</h1>
+            <p>Dein Ernährungsplan wird jetzt erstellt und in wenigen Minuten an deine Email gesendet.</p>
+            <p style="margin-top:16px;font-size:13px;color:#999;">Schau auch im Spam-Ordner nach, falls du nichts findest.</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <div class="container">
+            <div class="header">
+                <div class="header-logo">Pfoten-Plan</div>
+            </div>
+
+            <div class="hero">
+                <div class="hero-icon">🥗</div>
+                <h1 id="heroTitle">Ernährungsplan</h1>
+                <p>Personalisiert auf Rasse, Alter und Aktivität</p>
+            </div>
+
+            <!-- Mini Quiz -->
+            <div class="quiz-section" id="quizSection">
+                <div class="quiz-title">Noch 3 kurze Fragen zu <span id="quizDogName">deinem Hund</span></div>
+                <div class="quiz-subtitle">Damit wir den Plan genau auf deinen Hund zuschneiden können</div>
+                <div class="quiz-progress">
+                    <div class="quiz-dot done" id="dot1"></div>
+                    <div class="quiz-dot" id="dot2"></div>
+                    <div class="quiz-dot" id="dot3"></div>
+                </div>
+
+                <!-- Frage 1: Gewicht -->
+                <div class="quiz-step active" id="step1">
+                    <div class="quiz-question">Wie viel wiegt <span class="qDogName">dein Hund</span> ungefähr?</div>
+                    <div style="font-size:12px;color:#999;margin-bottom:10px;">Muss nicht exakt sein - eine grobe Schätzung reicht völlig aus.</div>
+                    <div class="quiz-input-suffix">
+                        <input type="number" class="quiz-input" id="weightInput" placeholder="z.B. 25" min="1" max="100">
+                        <span>kg</span>
+                    </div>
+                    <button class="quiz-next" id="nextBtn1" onclick="quizNext(1)">Weiter</button>
+                </div>
+
+                <!-- Frage 2: Aktivität -->
+                <div class="quiz-step" id="step2">
+                    <div class="quiz-question">Wie aktiv ist <span class="qDogName">dein Hund</span>?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectActivity(this, 'wenig')">
+                            <span class="quiz-option-icon">🛋️</span>
+                            <div><div style="font-weight:600;">Eher gemütlich</div><div style="font-size:12px;color:#999;">Kurze Spaziergänge, viel Ruhe</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectActivity(this, 'normal')">
+                            <span class="quiz-option-icon">🚶</span>
+                            <div><div style="font-weight:600;">Normal aktiv</div><div style="font-size:12px;color:#999;">1-2 Stunden Bewegung täglich</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectActivity(this, 'sehr')">
+                            <span class="quiz-option-icon">🏃</span>
+                            <div><div style="font-weight:600;">Sehr aktiv</div><div style="font-size:12px;color:#999;">Sport, Agility, viel Auslauf</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frage 3: Allergien -->
+                <div class="quiz-step" id="step3">
+                    <div class="quiz-question">Hat <span class="qDogName">dein Hund</span> bekannte Allergien oder Unverträglichkeiten?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectAllergy(this, 'keine')">
+                            <span class="quiz-option-icon">✅</span>
+                            <div style="font-weight:600;">Keine bekannt</div>
+                        </div>
+                        <div class="quiz-option" onclick="selectAllergy(this, 'getreide')">
+                            <span class="quiz-option-icon">🌾</span>
+                            <div style="font-weight:600;">Getreide-Unverträglichkeit</div>
+                        </div>
+                        <div class="quiz-option" onclick="selectAllergy(this, 'huhn')">
+                            <span class="quiz-option-icon">🍗</span>
+                            <div style="font-weight:600;">Hühnerfleisch-Allergie</div>
+                        </div>
+                        <div class="quiz-option" onclick="selectAllergy(this, 'andere')">
+                            <span class="quiz-option-icon">📝</span>
+                            <div style="font-weight:600;">Andere</div>
+                        </div>
+                    </div>
+                    <div id="allergyCustom" style="display:none;margin-top:10px;">
+                        <input type="text" class="quiz-input" id="allergyInput" placeholder="Welche Allergie/Unverträglichkeit?">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ergebnis nach Quiz -->
+            <div class="quiz-result" id="quizResult" style="display:none;">
+                <div class="quiz-result-title">Daten für den Ernährungsplan gespeichert</div>
+                <div class="quiz-result-info" id="quizResultInfo"></div>
+            </div>
+
+            <!-- Produkt (erst nach Quiz sichtbar) -->
+            <div class="product-section" id="productSection">
+
+            <!-- Personalisierte Zusammenfassung -->
+            <div style="background:linear-gradient(135deg,#FFFBF5,#FEF3E7);border:1px solid #E8DCC8;border-radius:14px;padding:18px 20px;margin-bottom:16px;">
+                <div style="font-size:12px;font-weight:700;color:#8B7355;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Dein persönlicher Plan</div>
+                <div style="font-size:17px;font-weight:800;color:#2C2C2E;margin-bottom:10px;" id="personalTitle">Ernährungsplan für deinen Hund</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;" id="personalTags"></div>
+            </div>
+
+            <div class="product-card">
+                <div style="font-size:14px;color:#555;line-height:1.6;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #F0F0F0;" id="personalIntro">Wir erstellen jetzt einen Ernährungsplan, der genau auf deinen Hund zugeschnitten ist.</div>
+
+                <div class="benefits" id="personalBenefits">
+                    <div class="benefit"><span class="benefit-check">✓</span> <span id="benefit1">Tagesplan mit genauen Futtermengen</span></div>
+                    <div class="benefit"><span class="benefit-check">✓</span> <span id="benefit2">8 gesunde Snacks + 5 Rezepte</span></div>
+                    <div class="benefit"><span class="benefit-check">✓</span> Wochenplan zum Ausdrucken</div>
+                    <div class="benefit"><span class="benefit-check">✓</span> Was dein Hund nicht essen darf (10 Lebensmittel)</div>
+                    <div class="benefit"><span class="benefit-check">✓</span> Einkaufsliste mit konkreten Empfehlungen</div>
+                    <div class="benefit"><span class="benefit-check">✓</span> <span id="benefit6">Häufige Fehler vermeiden</span></div>
+                </div>
+
+                <div class="price-section">
+                    <div class="price-old">€49,99</div>
+                    <div class="price-new">€24,99</div>
+                    <div class="price-info">Einmalzahlung · Sofort per E-Mail</div>
+                </div>
+
+                <button class="cta-btn" onclick="buyProduct()" id="personalCta">Plan für deinen Hund freischalten</button>
+                <div class="guarantee">30 Tage Geld-zurück · Einmalzahlung · Sofort per Email</div>
+            </div>
+            </div><!-- /product-section -->
+        </div>
+    </div>
+
+    <!-- Payment Overlay -->
+    <div class="payment-overlay" id="paymentOverlay">
+        <div class="payment-popup">
+            <div class="payment-header">
+                <span class="payment-title">Ernährungsplan sichern</span>
+                <button class="payment-close" onclick="closePaymentPopup()">✕</button>
+            </div>
+            <div class="payment-body">
+                <div class="payment-product">
+                    <div class="payment-product-icon">🥗</div>
+                    <div class="payment-product-info">
+                        <h3 id="paymentProductName">Ernährungsplan</h3>
+                        <p>Personalisiert für deinen Hund</p>
+                    </div>
+                    <div class="payment-product-price">€24,99</div>
+                </div>
+
+                <div class="payment-benefits" id="paymentBenefits">
+                    <div class="payment-benefit">✓ <span>Tagesplan für Fütterung</span></div>
+                    <div class="payment-benefit">✓ <span>Empfohlene Futtermengen</span></div>
+                    <div class="payment-benefit">✓ <span>Gesunde Snacks & Leckerlis</span></div>
+                </div>
+
+                <div id="payment-element"></div>
+                <div class="payment-error" id="paymentError"></div>
+
+                <button class="payment-btn" id="paymentBtn" onclick="confirmPayment()">
+                    🔒 Jetzt bezahlen
+                </button>
+
+                <div class="payment-guarantee">
+                    🔒 Sichere Zahlung · 30 Tage Geld-zurück
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
+        const PRODUCT_TYPE = 'ernaehrung';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const userEmail = urlParams.get('email') || '';
+        const leadId = urlParams.get('lead_id') || '';
+        const dogName = urlParams.get('dogName') || urlParams.get('dog_name') || localStorage.getItem('dogName') || 'deinen Hund';
+
+        let stripe = null;
+        let elements = null;
+        let paymentElement = null;
+        let clientSecret = null;
+
+        // Supabase read-only: Lead-Daten laden (ohne zu schreiben)
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+        // UTM / URL-Parameter für Pre-Fill aus Email-Kampagne
+        let dogBreed = urlParams.get('breed') || urlParams.get('dog_breed') || localStorage.getItem('dogBreed') || '';
+        let dogAge = urlParams.get('age') || urlParams.get('dog_age') || localStorage.getItem('dogAge') || '';
+        let dogWeight = urlParams.get('weight') || urlParams.get('dog_weight') || '';
+        let dogActivity = urlParams.get('activity') || urlParams.get('dog_activity') || '';
+        let dogAllergy = urlParams.get('allergy') || urlParams.get('dog_allergy') || '';
+
+        // UTM Tracking
+        const utmSource = urlParams.get('utm_source') || '';
+        const utmMedium = urlParams.get('utm_medium') || '';
+        const utmCampaign = urlParams.get('utm_campaign') || '';
+
+        // Wenn alle Quiz-Daten schon aus URL da sind, Quiz überspringen
+        const quizSkipped = dogWeight && dogActivity && dogAllergy;
+
+        // Lead-Daten aus Supabase laden (read-only)
+        if (leadId) {
+            fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}&select=dog_name,answers`, {
+                headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+            }).then(r => r.json()).then(data => {
+                if (data[0]) {
+                    const lead = data[0];
+                    if (lead.dog_name && (!dogName || dogName === 'deinen Hund')) {
+                        document.querySelectorAll('.qDogName').forEach(el => el.textContent = lead.dog_name);
+                        document.getElementById('quizDogName').textContent = lead.dog_name;
+                    }
+                    if (lead.answers) {
+                        if (lead.answers.dog_breed) dogBreed = lead.answers.dog_breed;
+                        if (lead.answers.dog_age) dogAge = lead.answers.dog_age;
+                    }
+                }
+            }).catch(() => {});
+        }
+
+        // Personalize
+        const titleEl = document.getElementById('heroTitle');
+        if (dogName && dogName !== 'deinen Hund') {
+            titleEl.textContent = 'Ernährungsplan für ' + dogName;
+            document.getElementById('paymentProductName').textContent = 'Ernährungsplan für ' + dogName;
+            document.querySelectorAll('.qDogName').forEach(el => el.textContent = dogName);
+            document.getElementById('quizDogName').textContent = dogName;
+        }
+
+        // Quiz überspringen wenn alle Daten aus URL kommen (Email-Kampagne mit Pre-Fill)
+        if (quizSkipped) {
+            setTimeout(() => finishQuiz(), 100);
+        }
+
+        // ===== MINI QUIZ =====
+        function quizNext(step) {
+            if (step === 1) {
+                const w = document.getElementById('weightInput').value;
+                if (!w || w < 1) { document.getElementById('weightInput').focus(); return; }
+                dogWeight = w + 'kg';
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step2').classList.add('active');
+                document.getElementById('dot2').classList.add('done');
+            }
+        }
+
+        function selectActivity(el, value) {
+            document.querySelectorAll('#step2 .quiz-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            dogActivity = value;
+            setTimeout(() => {
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step3').classList.add('active');
+                document.getElementById('dot3').classList.add('done');
+            }, 300);
+        }
+
+        function selectAllergy(el, value) {
+            document.querySelectorAll('#step3 .quiz-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            if (value === 'andere') {
+                document.getElementById('allergyCustom').style.display = 'block';
+                dogAllergy = '';
+                // Wait for input
+                const input = document.getElementById('allergyInput');
+                input.focus();
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && input.value.trim()) {
+                        dogAllergy = input.value.trim();
+                        finishQuiz();
+                    }
+                });
+                // Also add a button
+                if (!document.getElementById('allergyNextBtn')) {
+                    const btn = document.createElement('button');
+                    btn.className = 'quiz-next';
+                    btn.id = 'allergyNextBtn';
+                    btn.textContent = 'Weiter';
+                    btn.onclick = () => { dogAllergy = input.value.trim() || 'Andere'; finishQuiz(); };
+                    document.getElementById('allergyCustom').appendChild(btn);
+                }
+                return;
+            }
+            const labels = { 'keine': 'Keine bekannt', 'getreide': 'Getreide', 'huhn': 'Hühnerfleisch' };
+            dogAllergy = labels[value] || value;
+            setTimeout(finishQuiz, 300);
+        }
+
+        function finishQuiz() {
+            document.getElementById('quizSection').style.display = 'none';
+            document.getElementById('quizResult').style.display = 'none';
+
+            const actLabels = { 'wenig': 'Wenig aktiv', 'normal': 'Normal aktiv', 'sehr': 'Sehr aktiv' };
+            const actLabel = actLabels[dogActivity] || dogActivity;
+
+            // Titel personalisieren
+            const name = dogName !== 'deinen Hund' ? dogName : 'deinen Hund';
+            document.getElementById('personalTitle').textContent = 'Ernährungsplan für ' + name;
+
+            // Tags befüllen
+            const tags = [];
+            if (dogBreed) tags.push(dogBreed);
+            if (dogWeight) tags.push(dogWeight);
+            if (actLabel) tags.push(actLabel);
+            if (dogAllergy && dogAllergy !== 'Keine bekannt') tags.push('Allergie: ' + dogAllergy);
+            document.getElementById('personalTags').innerHTML = tags.map(t =>
+                '<span style="background:white;border:1px solid #E8DCC8;color:#8B7355;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;">' + t + '</span>'
+            ).join('');
+
+            // Intro-Text je nach Gewicht personalisieren
+            const w = parseInt(dogWeight) || 0;
+            let intro = '';
+            if (w > 0 && w < 10) {
+                intro = 'Für ' + name + ' (' + dogWeight + ') ist die richtige Portionsgröße besonders wichtig - kleine Hunde brauchen konzentrierte Nährstoffe und weniger Volumen. Wir haben den Plan genau darauf abgestimmt.';
+            } else if (w >= 10 && w < 25) {
+                intro = 'Für ' + name + ' (' + dogWeight + ') haben wir den Plan auf einen mittelgroßen Hund zugeschnitten. Die Futtermengen und Nährstoffverteilung sind perfekt abgestimmt.';
+            } else if (w >= 25) {
+                intro = 'Für ' + name + ' (' + dogWeight + ') ist die richtige Ernährung entscheidend für gesunde Gelenke und konstante Energie. Der Plan enthält alles was ein ' + (dogBreed || 'großer Hund') + ' in diesem Gewichtsbereich braucht.';
+            } else {
+                intro = 'Wir erstellen jetzt den Ernährungsplan, zugeschnitten auf ' + name + '.';
+            }
+            document.getElementById('personalIntro').textContent = intro;
+
+            // Benefits personalisieren
+            if (w > 0) {
+                document.getElementById('benefit1').textContent = 'Genaue Futtermengen für ' + dogWeight;
+            }
+            if (dogActivity === 'sehr') {
+                document.getElementById('benefit2').textContent = '8 energiereiche Snacks + 5 Rezepte';
+            } else if (dogActivity === 'wenig') {
+                document.getElementById('benefit2').textContent = '8 kalorienarme Snacks + 5 Rezepte';
+            }
+            if (dogAllergy && dogAllergy !== 'Keine bekannt') {
+                document.getElementById('benefit6').textContent = 'Hinweise zur ' + (dogAllergy === 'Getreide' ? 'getreidefreien' : dogAllergy === 'Hühnerfleisch' ? 'hühnerfreien' : 'allergiefreundlichen') + ' Fütterung';
+            }
+
+            // CTA personalisieren
+            document.getElementById('personalCta').textContent = 'Plan für ' + name + ' freischalten';
+
+            // Show product
+            document.getElementById('productSection').classList.add('visible');
+            // Scroll to product
+            setTimeout(() => {
+                document.getElementById('productSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        // Check success
+        if (urlParams.get('success') === 'true' || urlParams.get('redirect_status') === 'succeeded') {
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('thankYou').classList.add('active');
+
+            // Trigger purchase handler with quiz data
+            const piId = urlParams.get('payment_intent') || '';
+            fetch('/api/upsell-product-purchase', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    paymentIntentId: piId,
+                    type: PRODUCT_TYPE,
+                    email: userEmail,
+                    leadId: leadId,
+                    dogName: dogName,
+                    dogBreed: urlParams.get('breed') || dogBreed || '',
+                    dogAge: dogAge || '',
+                    dogWeight: urlParams.get('weight') || '',
+                    dogActivity: urlParams.get('activity') || '',
+                    dogAllergy: urlParams.get('allergy') || ''
+                })
+            }).then(r => r.json()).then(d => {
+                console.log('Purchase handler response:', d);
+            }).catch(err => {
+                console.error('Purchase handler error:', err);
+            });
+
+            // Track conversion
+            if (typeof fbq !== 'undefined') fbq('track', 'Purchase', { value: 24.99, currency: 'EUR', content_name: 'Ernährungsplan' });
+            if (typeof gtag !== 'undefined') gtag('event', 'conversion', { send_to: 'AW-17806525009/upsell_ernaehrung', value: 24.99, currency: 'EUR' });
+        }
+
+        async function buyProduct() {
+            const btn = document.querySelector('.cta-btn');
+            btn.textContent = 'Lädt...';
+            btn.disabled = true;
+
+            document.getElementById('paymentOverlay').classList.add('active');
+
+            try {
+                const response = await fetch('/api/upsell-product-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: PRODUCT_TYPE,
+                        email: userEmail,
+                        leadId: leadId,
+                        dogName: dogName,
+                        dogBreed: dogBreed,
+                        dogAge: dogAge,
+                        dogWeight: dogWeight,
+                        dogActivity: dogActivity,
+                        dogAllergy: dogAllergy,
+                        utm_source: utmSource,
+                        utm_medium: utmMedium,
+                        utm_campaign: utmCampaign
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.error || !result.clientSecret) {
+                    alert('Fehler: ' + (result.error || 'Keine Zahlungs-Session erhalten'));
+                    btn.textContent = 'Jetzt sichern';
+                    btn.disabled = false;
+                    closePaymentPopup();
+                    return;
+                }
+
+                clientSecret = result.clientSecret;
+
+                if (!stripe) {
+                    stripe = Stripe(STRIPE_PUBLIC_KEY);
+                }
+
+                elements = stripe.elements({
+                    clientSecret: clientSecret,
+                    appearance: {
+                        theme: 'stripe',
+                        variables: {
+                            colorPrimary: '#C4A576',
+                            colorBackground: '#ffffff',
+                            colorText: '#2C2C2E',
+                            colorDanger: '#e74c3c',
+                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            borderRadius: '8px'
+                        }
+                    },
+                    locale: 'de'
+                });
+
+                paymentElement = elements.create('payment', {
+                    layout: { type: 'tabs', defaultCollapsed: false },
+                    paymentMethodOrder: ['klarna', 'paypal', 'card'],
+                    wallets: { applePay: 'auto', googlePay: 'auto' }
+                });
+
+                paymentElement.mount('#payment-element');
+                btn.textContent = 'Jetzt sichern';
+                btn.disabled = false;
+
+            } catch (err) {
+                console.error('Checkout error:', err);
+                alert('Fehler beim Laden. Bitte versuche es erneut.');
+                btn.textContent = 'Jetzt sichern';
+                btn.disabled = false;
+                closePaymentPopup();
+            }
+        }
+
+        async function confirmPayment() {
+            const payBtn = document.getElementById('paymentBtn');
+            payBtn.disabled = true;
+            payBtn.innerHTML = '<div class="spinner"></div> Wird verarbeitet...';
+            hidePaymentError();
+
+            if (!stripe || !elements) {
+                showPaymentError('Stripe nicht initialisiert. Bitte Seite neu laden.');
+                payBtn.disabled = false;
+                payBtn.innerHTML = '🔒 Jetzt bezahlen';
+                return;
+            }
+
+            try {
+                const returnUrl = window.location.origin + '/upsell-ernaehrung.html?success=true&email=' + encodeURIComponent(userEmail) + '&lead_id=' + encodeURIComponent(leadId) + '&weight=' + encodeURIComponent(dogWeight) + '&activity=' + encodeURIComponent(dogActivity) + '&allergy=' + encodeURIComponent(dogAllergy) + '&breed=' + encodeURIComponent(dogBreed);
+
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: returnUrl
+                    }
+                });
+
+                if (error) {
+                    showPaymentError(error.message || 'Zahlung fehlgeschlagen');
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '🔒 Jetzt bezahlen';
+                }
+            } catch (err) {
+                showPaymentError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
+                payBtn.disabled = false;
+                payBtn.innerHTML = '🔒 Jetzt bezahlen';
+            }
+        }
+
+        function showPaymentError(message) {
+            const el = document.getElementById('paymentError');
+            el.textContent = message;
+            el.classList.add('visible');
+        }
+
+        function hidePaymentError() {
+            document.getElementById('paymentError').classList.remove('visible');
+        }
+
+        function closePaymentPopup() {
+            document.getElementById('paymentOverlay').classList.remove('active');
+            if (paymentElement) {
+                paymentElement.unmount();
+                paymentElement = null;
+            }
+        }
+
+        document.getElementById('paymentOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closePaymentPopup();
+        });
+    </script>
+</body>
+</html>
