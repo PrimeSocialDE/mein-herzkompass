@@ -96,6 +96,25 @@
         .thank-you p { font-size: 15px; color: #666; line-height: 1.6; }
         .main-content { display: block; }
         .main-content.hidden { display: none; }
+
+        /* Mini Quiz */
+        .quiz-section { margin-bottom: 24px; }
+        .quiz-title { font-size: 16px; font-weight: 700; color: #2C2C2E; margin-bottom: 4px; }
+        .quiz-subtitle { font-size: 13px; color: #999; margin-bottom: 16px; }
+        .quiz-step { display: none; }
+        .quiz-step.active { display: block; }
+        .quiz-question { font-size: 14px; font-weight: 600; color: #2C2C2E; margin-bottom: 12px; }
+        .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+        .quiz-option { background: white; border: 2px solid #E8E8E8; border-radius: 12px; padding: 14px 16px; cursor: pointer; font-size: 14px; color: #444; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+        .quiz-option:hover { border-color: #C4A576; background: #FFFBF5; }
+        .quiz-option.selected { border-color: #C4A576; background: #FFFBF5; }
+        .quiz-option-icon { font-size: 20px; }
+        .quiz-progress { display: flex; gap: 6px; margin-bottom: 14px; }
+        .quiz-dot { flex: 1; height: 4px; border-radius: 2px; background: #E8E8E8; }
+        .quiz-dot.done { background: #C4A576; }
+
+        .product-section { display: none; }
+        .product-section.visible { display: block; }
     </style>
 </head>
 <body>
@@ -121,6 +140,85 @@
                 <div style="display:inline-block;background:#FEF2F2;color:#DC2626;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:14px;">Notfall-Vorsorge</div>
                 <h1 id="heroTitle" style="margin-bottom:10px;">Wenn jede Sekunde zählt.</h1>
                 <p style="font-size:15px;color:#666;line-height:1.6;">Weißt du was zu tun ist, wenn <span class="heroDogName">dein Hund</span> etwas Giftiges frisst? Oder ein Bienenstich anschwillt?</p>
+            </div>
+
+            <!-- Mini Quiz -->
+            <div class="quiz-section" id="quizSection">
+                <div class="quiz-title">3 kurze Fragen zu <span id="quizDogName">deinem Hund</span></div>
+                <div class="quiz-subtitle">Damit der Guide genau auf die typischen Risiken zugeschnitten ist</div>
+                <div class="quiz-progress">
+                    <div class="quiz-dot done" id="dot1"></div>
+                    <div class="quiz-dot" id="dot2"></div>
+                    <div class="quiz-dot" id="dot3"></div>
+                </div>
+
+                <!-- Frage 1: Größe -->
+                <div class="quiz-step active" id="step1">
+                    <div class="quiz-question">Wie groß ist <span class="qDogName">dein Hund</span>?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectSize(this, 'klein')">
+                            <span class="quiz-option-icon">🐕</span>
+                            <div><div style="font-weight:600;">Klein</div><div style="font-size:12px;color:#999;">Unter 10 kg (z.B. Dackel, Chihuahua)</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectSize(this, 'mittel')">
+                            <span class="quiz-option-icon">🐕‍🦺</span>
+                            <div><div style="font-weight:600;">Mittel</div><div style="font-size:12px;color:#999;">10 - 25 kg (z.B. Beagle, Border Collie)</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectSize(this, 'gross')">
+                            <span class="quiz-option-icon">🐕‍🦮</span>
+                            <div><div style="font-weight:600;">Groß</div><div style="font-size:12px;color:#999;">Über 25 kg (z.B. Labrador, Schäferhund)</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frage 2: Alter -->
+                <div class="quiz-step" id="step2">
+                    <div class="quiz-question">Wie alt ist <span class="qDogName">dein Hund</span>?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectAge(this, 'welpe')">
+                            <span class="quiz-option-icon">🐶</span>
+                            <div><div style="font-weight:600;">Welpe</div><div style="font-size:12px;color:#999;">Unter 1 Jahr</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectAge(this, 'erwachsen')">
+                            <span class="quiz-option-icon">🐕</span>
+                            <div><div style="font-weight:600;">Erwachsen</div><div style="font-size:12px;color:#999;">1 - 7 Jahre</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectAge(this, 'senior')">
+                            <span class="quiz-option-icon">🦴</span>
+                            <div><div style="font-weight:600;">Senior</div><div style="font-size:12px;color:#999;">Über 7 Jahre</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frage 3: Lebensraum -->
+                <div class="quiz-step" id="step3">
+                    <div class="quiz-question">Wo ist <span class="qDogName">dein Hund</span> meistens unterwegs?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectEnv(this, 'stadt')">
+                            <span class="quiz-option-icon">🏙️</span>
+                            <div><div style="font-weight:600;">Stadt</div><div style="font-size:12px;color:#999;">Park, Gehweg, Straßen</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectEnv(this, 'garten')">
+                            <span class="quiz-option-icon">🏡</span>
+                            <div><div style="font-weight:600;">Haus mit Garten</div><div style="font-size:12px;color:#999;">Eigener Garten, ländlicher Bereich</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectEnv(this, 'wald')">
+                            <span class="quiz-option-icon">🌲</span>
+                            <div><div style="font-weight:600;">Wald & Natur</div><div style="font-size:12px;color:#999;">Wanderungen, Wald-Spaziergänge</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alles nach Quiz sichtbar -->
+            <div class="product-section" id="productSection">
+
+            <!-- Personalisierte Zusammenfassung -->
+            <div style="background:linear-gradient(135deg,#FFFBF5,#FEF3E7);border:1px solid #E8DCC8;border-radius:14px;padding:18px 20px;margin-bottom:16px;">
+                <div style="font-size:12px;font-weight:700;color:#8B7355;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Dein persönlicher Guide</div>
+                <div style="font-size:17px;font-weight:800;color:#2C2C2E;margin-bottom:10px;" id="personalTitle">Erste-Hilfe Guide für deinen Hund</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;" id="personalTags"></div>
+                <div style="font-size:12px;color:#666;line-height:1.6;margin-top:12px;padding-top:12px;border-top:1px solid #E8DCC8;" id="personalIntro"></div>
             </div>
 
             <!-- Problem: Der Moment der Panik -->
@@ -253,6 +351,7 @@
                 <div style="font-size:12px;font-weight:700;color:#DC2626;margin-bottom:4px;">Warum jetzt und nicht später?</div>
                 <div style="font-size:12px;color:#555;line-height:1.6;">Notfälle kommen ohne Vorwarnung. Wer den Guide erst im Ernstfall sucht, hat ihn nicht - und verliert wertvolle Minuten. Die beste Versicherung ist die, die man HAT bevor man sie braucht.</div>
             </div>
+            </div><!-- /product-section -->
         </div>
     </div>
 
@@ -293,10 +392,102 @@
         const leadId = urlParams.get('lead_id') || '';
         const dogName = urlParams.get('dogName') || urlParams.get('dog_name') || localStorage.getItem('dogName') || 'deinen Hund';
 
+        // Quiz-Daten
+        let dogSize = urlParams.get('size') || '';
+        let dogAge = urlParams.get('age') || '';
+        let dogEnv = urlParams.get('env') || '';
+
+        function updateDogNameUI(name) {
+            document.getElementById('heroTitle').textContent = 'Wenn jede Sekunde zählt. Auch für ' + name + '.';
+            document.querySelectorAll('.heroDogName').forEach(el => el.textContent = name);
+            document.querySelectorAll('.qDogName').forEach(el => el.textContent = name);
+            document.getElementById('quizDogName').textContent = name;
+        }
+
         // Personalisieren
         if (dogName && dogName !== 'deinen Hund') {
-            document.getElementById('heroTitle').textContent = 'Wenn jede Sekunde zählt. Auch für ' + dogName + '.';
-            document.querySelectorAll('.heroDogName').forEach(el => el.textContent = dogName);
+            updateDogNameUI(dogName);
+        }
+
+        // Quiz überspringen wenn alle Daten in URL
+        const quizSkipped = dogSize && dogAge && dogEnv;
+
+        function selectSize(el, value) {
+            document.querySelectorAll('#step1 .quiz-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            dogSize = value;
+            setTimeout(() => {
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step2').classList.add('active');
+                document.getElementById('dot2').classList.add('done');
+            }, 300);
+        }
+
+        function selectAge(el, value) {
+            document.querySelectorAll('#step2 .quiz-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            dogAge = value;
+            setTimeout(() => {
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step3').classList.add('active');
+                document.getElementById('dot3').classList.add('done');
+            }, 300);
+        }
+
+        function selectEnv(el, value) {
+            document.querySelectorAll('#step3 .quiz-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            dogEnv = value;
+            setTimeout(finishQuiz, 300);
+        }
+
+        function finishQuiz() {
+            document.getElementById('quizSection').style.display = 'none';
+
+            const sizeLabels = { klein: 'Kleiner Hund', mittel: 'Mittlerer Hund', gross: 'Großer Hund' };
+            const ageLabels = { welpe: 'Welpe', erwachsen: 'Erwachsen', senior: 'Senior' };
+            const envLabels = { stadt: 'Stadt', garten: 'Garten', wald: 'Wald & Natur' };
+
+            // Titel
+            const name = dogName !== 'deinen Hund' ? dogName : 'deinen Hund';
+            document.getElementById('personalTitle').textContent = 'Erste-Hilfe Guide für ' + name;
+
+            // Tags
+            const tags = [];
+            if (dogSize) tags.push(sizeLabels[dogSize] || dogSize);
+            if (dogAge) tags.push(ageLabels[dogAge] || dogAge);
+            if (dogEnv) tags.push(envLabels[dogEnv] || dogEnv);
+            document.getElementById('personalTags').innerHTML = tags.map(t =>
+                '<span style="background:white;border:1px solid #E8DCC8;color:#8B7355;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;">' + t + '</span>'
+            ).join('');
+
+            // Personalisierte Intro je nach Größe/Alter/Umgebung
+            let intro = '';
+            const risks = [];
+            if (dogSize === 'klein') risks.push('Unterkühlung');
+            if (dogSize === 'gross') risks.push('Magendrehung');
+            if (dogAge === 'welpe') risks.push('Verschlucken kleiner Gegenstände');
+            if (dogAge === 'senior') risks.push('Herz-Kreislauf-Probleme');
+            if (dogEnv === 'stadt') risks.push('Giftköder');
+            if (dogEnv === 'garten') risks.push('giftige Pflanzen');
+            if (dogEnv === 'wald') risks.push('Zecken & Schlangenbisse');
+
+            if (risks.length > 0) {
+                intro = 'Der Guide geht besonders auf Risiken ein, die für ' + name + ' relevant sind: ' + risks.join(', ') + '.';
+            } else {
+                intro = 'Alle wichtigen Notfälle speziell auf ' + name + ' zugeschnitten.';
+            }
+            document.getElementById('personalIntro').textContent = intro;
+
+            // Show product
+            document.getElementById('productSection').classList.add('visible');
+            setTimeout(() => {
+                document.getElementById('productSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        if (quizSkipped) {
+            setTimeout(() => finishQuiz(), 100);
         }
 
         // Supabase read-only bei Email-Kampagne
@@ -324,7 +515,12 @@
             fetch('/api/upsell-product-purchase', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ paymentIntentId: piId, type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName })
+                body: JSON.stringify({
+                    paymentIntentId: piId, type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName,
+                    dogSize: urlParams.get('size') || dogSize,
+                    dogAge: urlParams.get('age') || dogAge,
+                    dogEnv: urlParams.get('env') || dogEnv
+                })
             }).then(r => r.json()).then(d => console.log('Purchase handler:', d)).catch(err => console.error('Purchase error:', err));
             if (typeof fbq !== 'undefined') fbq('track', 'Purchase', { value: 14.99, currency: 'EUR', content_name: 'Erste-Hilfe Guide' });
             if (typeof gtag !== 'undefined') gtag('event', 'conversion', { send_to: 'AW-17806525009/upsell_erstehilfe', value: 14.99, currency: 'EUR' });
@@ -338,7 +534,7 @@
                 const response = await fetch('/api/upsell-product-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName })
+                    body: JSON.stringify({ type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName, dogSize, dogAge, dogEnv })
                 });
                 const result = await response.json();
                 if (result.error || !result.clientSecret) { alert('Fehler: ' + (result.error || 'Keine Zahlungs-Session')); btn.textContent = 'Jetzt sichern'; btn.disabled = false; closePaymentPopup(); return; }
@@ -356,7 +552,7 @@
             payBtn.disabled = true; payBtn.innerHTML = '<div class="spinner"></div> Wird verarbeitet...'; hidePaymentError();
             if (!stripe || !elements) { showPaymentError('Stripe nicht initialisiert.'); payBtn.disabled = false; payBtn.innerHTML = '🔒 Jetzt bezahlen'; return; }
             try {
-                const returnUrl = window.location.origin + '/upsell-erstehilfe.html?success=true&email=' + encodeURIComponent(userEmail) + '&lead_id=' + encodeURIComponent(leadId);
+                const returnUrl = window.location.origin + '/upsell-erstehilfe.html?success=true&email=' + encodeURIComponent(userEmail) + '&lead_id=' + encodeURIComponent(leadId) + '&size=' + encodeURIComponent(dogSize) + '&age=' + encodeURIComponent(dogAge) + '&env=' + encodeURIComponent(dogEnv) + '&dogName=' + encodeURIComponent(dogName);
                 const { error } = await stripe.confirmPayment({ elements, confirmParams: { return_url: returnUrl } });
                 if (error) { showPaymentError(error.message || 'Zahlung fehlgeschlagen'); payBtn.disabled = false; payBtn.innerHTML = '🔒 Jetzt bezahlen'; }
             } catch (err) { showPaymentError('Zahlung fehlgeschlagen.'); payBtn.disabled = false; payBtn.innerHTML = '🔒 Jetzt bezahlen'; }
