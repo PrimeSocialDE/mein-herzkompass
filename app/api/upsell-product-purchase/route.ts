@@ -21,10 +21,18 @@ function buildClaudePrompt(
   type: string,
   dogName: string,
   breed: string,
-  age: string
+  age: string,
+  weight: string = '',
+  activity: string = '',
+  allergy: string = ''
 ): string {
+  const actLabels: Record<string, string> = { wenig: 'wenig aktiv', normal: 'normal aktiv', sehr: 'sehr aktiv' };
+  const actDisplay = actLabels[activity] || activity || 'normal aktiv';
+  const weightDisplay = weight || 'unbekannt';
+  const allergyDisplay = allergy && allergy !== 'Keine bekannt' ? `Allergie/Unverträglichkeit: ${allergy}` : 'Keine bekannten Allergien';
+
   const prompts: Record<string, string> = {
-    ernaehrung: `Erstelle einen personalisierten Ernährungsplan für einen ${breed} namens ${dogName}, Alter: ${age}. Enthält: Tagesplan für Fütterung, empfohlene Futtermengen, gesunde Snacks, was der Hund nicht essen darf, Fütterungszeiten. Alles auf Deutsch, praktisch und direkt umsetzbar. Keine Markdown-Formatierung.`,
+    ernaehrung: `Erstelle einen personalisierten Ernährungsplan für ${dogName} (${breed}, Alter: ${age}, Gewicht: ${weightDisplay}, Aktivität: ${actDisplay}, ${allergyDisplay}). Enthält: Tagesplan für Fütterung mit konkreten Grammangaben passend zum Gewicht, empfohlene Futtermengen, gesunde Snacks, was der Hund nicht essen darf, Fütterungszeiten. Berücksichtige die Aktivität und Allergien bei den Empfehlungen. Alles auf Deutsch, praktisch und direkt umsetzbar. Keine Markdown-Formatierung.`,
     zweithund: `Erstelle einen Guide für Hundebesitzer die einen zweiten Hund aufnehmen möchten. Der erste Hund heißt ${dogName} (${breed}). Enthält: Welche Rassen passen, Eingewöhnung Schritt für Schritt, häufige Fehler, Ressourcen-Aufteilung, Timeline für die ersten 4 Wochen.`,
     abo: `Erstelle saisonale Trainingstipps und Übungen für den aktuellen Monat für ${dogName}. Enthält: 4 saisonale Übungen, Gesundheitstipps für die Jahreszeit, Aktivitäts-Ideen.`,
     reise: `Erstelle einen Reise-Guide für Hundebesitzer mit ${dogName}. Enthält: Vorbereitung, Packliste, Auto/Zug/Flugzeug Tipps, Unterkunft mit Hund, Notfall-Nummern, Einreisebestimmungen EU.`,
@@ -54,7 +62,10 @@ async function generateContentWithClaude(
   type: string,
   dogName: string,
   breed: string,
-  age: string
+  age: string,
+  weight: string = '',
+  activity: string = '',
+  allergy: string = ''
 ): Promise<string> {
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -70,7 +81,7 @@ async function generateContentWithClaude(
       messages: [
         {
           role: "user",
-          content: buildClaudePrompt(type, dogName, breed, age),
+          content: buildClaudePrompt(type, dogName, breed, age, weight, activity, allergy),
         },
       ],
     }),
@@ -172,6 +183,11 @@ export async function POST(request: Request) {
       email,
       leadId,
       dogName: rawDogName,
+      dogBreed: quizBreed,
+      dogAge: quizAge,
+      dogWeight,
+      dogActivity,
+      dogAllergy,
     } = body;
 
     if (!type || !email) {
@@ -220,9 +236,9 @@ export async function POST(request: Request) {
       }
     }
 
-    // 2. Get lead data for personalization
-    let breed = "Hund";
-    let age = "unbekannt";
+    // 2. Get lead data for personalization (Quiz-Daten haben Vorrang)
+    let breed = quizBreed || "Hund";
+    let age = quizAge || "unbekannt";
 
     if (leadId) {
       const { data: lead } = await supabase
@@ -232,24 +248,31 @@ export async function POST(request: Request) {
         .single();
 
       if (lead) {
-        if (lead.breed) breed = lead.breed;
-        else if (lead.answers?.breed) breed = lead.answers.breed;
-        else if (lead.answers?.dog_breed) breed = lead.answers.dog_breed;
+        if (!quizBreed) {
+          if (lead.breed) breed = lead.breed;
+          else if (lead.answers?.breed) breed = lead.answers.breed;
+          else if (lead.answers?.dog_breed) breed = lead.answers.dog_breed;
+        }
 
-        if (lead.answers?.age) age = lead.answers.age;
-        else if (lead.answers?.dog_age) age = lead.answers.dog_age;
+        if (!quizAge) {
+          if (lead.answers?.age) age = lead.answers.age;
+          else if (lead.answers?.dog_age) age = lead.answers.dog_age;
+        }
       }
     }
 
-    // 3. Generate content with Claude
+    // 3. Generate content with Claude (mit Quiz-Daten!)
     console.log(
-      `Generating ${type} content for ${dogName} (${breed}, ${age})...`
+      `Generating ${type} content for ${dogName} (${breed}, ${age}, ${dogWeight || '?'}, ${dogActivity || '?'})...`
     );
     const generatedText = await generateContentWithClaude(
       type,
       dogName,
       breed,
-      age
+      age,
+      dogWeight,
+      dogActivity,
+      dogAllergy
     );
 
     // 4. Convert to HTML and send via Brevo
