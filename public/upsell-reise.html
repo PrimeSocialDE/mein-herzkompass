@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reise-Guide | Pfoten-Plan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ufxcf43805");
+    </script>
+
+    <!-- Meta Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #FAF8F5; min-height: 100vh; color: #2C2C2E; }
+        .container { max-width: 500px; margin: 0 auto; padding: 24px 16px 40px; }
+        .header { text-align: center; margin-bottom: 24px; padding: 16px 0; }
+        .header-logo { font-size: 20px; font-weight: 800; color: #C4A576; letter-spacing: -0.5px; }
+        .hero { text-align: center; margin-bottom: 24px; }
+        .hero-icon { font-size: 56px; margin-bottom: 16px; }
+        .hero h1 { font-size: 24px; font-weight: 800; color: #2C2C2E; margin-bottom: 8px; line-height: 1.3; }
+        .hero p { font-size: 15px; color: #888; }
+        .product-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 20px; }
+        .benefits { margin-bottom: 20px; }
+        .benefit { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #F0F0F0; font-size: 14px; color: #444; }
+        .benefit:last-child { border-bottom: none; }
+        .benefit-check { color: #22C55E; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+        .price-section { text-align: center; padding: 20px 0; border-top: 1px solid #F0F0F0; margin-bottom: 20px; }
+        .price-old { font-size: 16px; color: #999; text-decoration: line-through; margin-bottom: 4px; }
+        .price-new { font-size: 32px; font-weight: 800; color: #C4A576; }
+        .price-info { font-size: 13px; color: #888; margin-top: 4px; }
+        .cta-btn { width: 100%; background: linear-gradient(135deg, #C4A576, #8B7355); color: white; border: none; padding: 16px 24px; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .cta-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(196,165,118,0.4); }
+        .cta-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        .guarantee { text-align: center; margin-top: 12px; font-size: 12px; color: #22C55E; font-weight: 500; }
+        .payment-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
+        .payment-overlay.active { display: flex; }
+        .payment-popup { background: white; border-radius: 16px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; position: relative; }
+        .payment-header { padding: 14px 20px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+        .payment-title { font-size: 16px; font-weight: 600; color: #1a1a1a; }
+        .payment-close { width: 28px; height: 28px; border: none; background: #f5f5f5; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #666; }
+        .payment-body { padding: 14px 20px; }
+        .payment-product { display: flex; align-items: center; gap: 12px; padding: 12px; background: #FAFAFA; border-radius: 10px; margin-bottom: 12px; }
+        .payment-product-icon { width: 44px; height: 44px; background: #FEF3E7; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .payment-product-info h3 { font-size: 14px; color: #1a1a1a; margin-bottom: 2px; }
+        .payment-product-info p { font-size: 12px; color: #666; }
+        .payment-product-price { margin-left: auto; font-size: 18px; font-weight: 700; color: #C4A576; }
+        .payment-benefits { background: #F8F8F8; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
+        .payment-benefit { font-size: 12px; color: #333; padding: 4px 0; display: flex; align-items: center; gap: 6px; }
+        #payment-element { margin-bottom: 12px; }
+        .payment-error { background: #FEF2F2; color: #DC2626; padding: 10px; border-radius: 8px; font-size: 12px; margin-bottom: 12px; display: none; }
+        .payment-error.visible { display: block; }
+        .payment-btn { width: 100%; background: #C4A576; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .payment-btn:hover { background: #B8956A; }
+        .payment-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .payment-guarantee { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; font-size: 11px; color: #666; }
+        .spinner { width: 18px; height: 18px; border: 2px solid white; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .thank-you { display: none; text-align: center; padding: 40px 20px; }
+        .thank-you.active { display: block; }
+        .thank-you-check { width: 64px; height: 64px; background: #22C55E; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .thank-you-check svg { width: 32px; height: 32px; color: white; }
+        .thank-you h1 { font-size: 22px; color: #2C2C2E; margin-bottom: 8px; }
+        .thank-you p { font-size: 15px; color: #666; line-height: 1.6; }
+        .main-content { display: block; }
+        .main-content.hidden { display: none; }
+
+        /* Mini Quiz */
+        .quiz-section { margin-bottom: 24px; }
+        .quiz-title { font-size: 16px; font-weight: 700; color: #2C2C2E; margin-bottom: 4px; }
+        .quiz-subtitle { font-size: 13px; color: #999; margin-bottom: 16px; }
+        .quiz-step { display: none; }
+        .quiz-step.active { display: block; }
+        .quiz-question { font-size: 14px; font-weight: 600; color: #2C2C2E; margin-bottom: 12px; }
+        .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+        .quiz-option { background: white; border: 2px solid #E8E8E8; border-radius: 12px; padding: 14px 16px; cursor: pointer; font-size: 14px; color: #444; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+        .quiz-option:hover { border-color: #C4A576; background: #FFFBF5; }
+        .quiz-option.selected { border-color: #C4A576; background: #FFFBF5; }
+        .quiz-option-icon { font-size: 20px; }
+        .quiz-progress { display: flex; gap: 6px; margin-bottom: 14px; }
+        .quiz-dot { flex: 1; height: 4px; border-radius: 2px; background: #E8E8E8; }
+        .quiz-dot.done { background: #C4A576; }
+
+        .product-section { display: none; }
+        .product-section.visible { display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="thank-you" id="thankYou">
+            <div class="thank-you-check">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h1>Vielen Dank!</h1>
+            <p>Dein Reise-Guide wird jetzt erstellt und in wenigen Minuten an deine Email gesendet.</p>
+            <p style="margin-top:16px;font-size:13px;color:#999;">Schau auch im Spam-Ordner nach, falls du nichts findest.</p>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="container">
+            <div class="header">
+                <div class="header-logo">Pfoten-Plan</div>
+            </div>
+
+            <div class="hero">
+                <div style="display:inline-block;background:#FEF3E7;color:#8B7355;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:14px;">Reise-Guide</div>
+                <h1 id="heroTitle" style="margin-bottom:10px;">Entspannt unterwegs.</h1>
+                <p style="font-size:15px;color:#666;line-height:1.6;">Weißt du genau was <span class="heroDogName">dein Hund</span> auf Reisen braucht? Dokumente, Vorbereitung, Notfall-Plan?</p>
+            </div>
+
+            <!-- Mini Quiz -->
+            <div class="quiz-section" id="quizSection">
+                <div class="quiz-title">3 kurze Fragen zu eurer Reise</div>
+                <div class="quiz-subtitle">Damit der Guide genau zu <span id="quizDogName">deinem Hund</span> und eurer Reiseart passt</div>
+                <div class="quiz-progress">
+                    <div class="quiz-dot done" id="dot1"></div>
+                    <div class="quiz-dot" id="dot2"></div>
+                    <div class="quiz-dot" id="dot3"></div>
+                </div>
+
+                <!-- Frage 1: Reiseart -->
+                <div class="quiz-step active" id="step1">
+                    <div class="quiz-question">Wie reist ihr meistens?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectArt(this, 'auto')">
+                            <span class="quiz-option-icon">🚗</span>
+                            <div><div style="font-weight:600;">Auto</div><div style="font-size:12px;color:#999;">Kurze Trips oder längere Fahrten</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectArt(this, 'zug')">
+                            <span class="quiz-option-icon">🚆</span>
+                            <div><div style="font-weight:600;">Zug</div><div style="font-size:12px;color:#999;">Bahn innerhalb Deutschlands / EU</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectArt(this, 'flugzeug')">
+                            <span class="quiz-option-icon">✈️</span>
+                            <div><div style="font-weight:600;">Flugzeug</div><div style="font-size:12px;color:#999;">Kabine oder Frachtraum</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectArt(this, 'wohnmobil')">
+                            <span class="quiz-option-icon">🚐</span>
+                            <div><div style="font-weight:600;">Wohnmobil / Camping</div><div style="font-size:12px;color:#999;">Roadtrip mit Übernachtung</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frage 2: Reiseziel -->
+                <div class="quiz-step" id="step2">
+                    <div class="quiz-question">Wohin geht's?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectZiel(this, 'deutschland')">
+                            <span class="quiz-option-icon">🏞️</span>
+                            <div><div style="font-weight:600;">Innerhalb Deutschlands</div><div style="font-size:12px;color:#999;">Ostsee, Alpen, Städtetrip</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectZiel(this, 'eu')">
+                            <span class="quiz-option-icon">🇪🇺</span>
+                            <div><div style="font-weight:600;">EU-Ausland</div><div style="font-size:12px;color:#999;">Italien, Österreich, Frankreich, etc.</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectZiel(this, 'fernreise')">
+                            <span class="quiz-option-icon">🌍</span>
+                            <div><div style="font-weight:600;">Außerhalb der EU</div><div style="font-size:12px;color:#999;">UK, Schweiz, Übersee</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frage 3: Reisedauer -->
+                <div class="quiz-step" id="step3">
+                    <div class="quiz-question">Wie lange seid ihr unterwegs?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectDauer(this, 'wochenende')">
+                            <span class="quiz-option-icon">📅</span>
+                            <div><div style="font-weight:600;">Wochenend-Trip</div><div style="font-size:12px;color:#999;">2 - 4 Tage</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectDauer(this, 'kurzurlaub')">
+                            <span class="quiz-option-icon">🗓️</span>
+                            <div><div style="font-weight:600;">1 - 2 Wochen</div><div style="font-size:12px;color:#999;">Klassischer Urlaub</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectDauer(this, 'lang')">
+                            <span class="quiz-option-icon">📆</span>
+                            <div><div style="font-weight:600;">Länger als 2 Wochen</div><div style="font-size:12px;color:#999;">Längere Abwesenheit / Auswanderung</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alles nach Quiz sichtbar -->
+            <div class="product-section" id="productSection">
+
+            <!-- Personalisierte Zusammenfassung -->
+            <div style="background:linear-gradient(135deg,#FFFBF5,#FEF3E7);border:1px solid #E8DCC8;border-radius:14px;padding:18px 20px;margin-bottom:16px;">
+                <div style="font-size:12px;font-weight:700;color:#8B7355;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Dein persönlicher Guide</div>
+                <div style="font-size:17px;font-weight:800;color:#2C2C2E;margin-bottom:10px;" id="personalTitle">Reise-Guide für deinen Hund</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;" id="personalTags"></div>
+                <div style="font-size:12px;color:#666;line-height:1.6;margin-top:12px;padding-top:12px;border-top:1px solid #E8DCC8;" id="personalIntro"></div>
+            </div>
+
+            <!-- Problem-Szenario -->
+            <div style="background:white;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+                <div style="text-align:center;margin-bottom:16px;">
+                    <div style="font-size:14px;font-weight:800;color:#1a1a1a;">Das typische Szenario</div>
+                </div>
+                <p style="font-size:13px;color:#555;line-height:1.7;margin-bottom:12px;">Urlaub steht an. <span class="heroDogName">Dein Hund</span> soll mit. Du packst Futter, Leine, Decke - fertig, denkst du.</p>
+                <p style="font-size:13px;color:#555;line-height:1.7;"><strong style="color:#1a1a1a;">Dann wird's unterwegs unangenehm:</strong> Reiseübelkeit auf der Autobahn. Hotel will plötzlich den EU-Heimtierausweis sehen. An der Grenze fehlt die Tollwut-Impfung. Der Urlaub ist vorbei bevor er anfängt.</p>
+            </div>
+
+            <!-- Was drin ist -->
+            <div style="background:white;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+                <div style="text-align:center;margin-bottom:16px;">
+                    <div style="display:inline-block;background:#FEF3E7;color:#8B7355;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;">Was drin ist</div>
+                    <div style="font-size:15px;font-weight:800;color:#1a1a1a;">15 Seiten kompakte Reise-Hilfe</div>
+                </div>
+
+                <div style="background:#FAF8F5;border-radius:10px;padding:14px 16px;margin-bottom:10px;">
+                    <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">🧳 Komplette Packliste</div>
+                    <div style="font-size:12px;color:#666;line-height:1.5;">4 Kategorien mit Checkboxen - einmal drucken, nie wieder was vergessen.</div>
+                </div>
+
+                <div style="background:#FAF8F5;border-radius:10px;padding:14px 16px;margin-bottom:10px;">
+                    <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">😰 Reise-Angst überwinden</div>
+                    <div style="font-size:12px;color:#666;line-height:1.5;">5 konkrete Übungen gegen Zittern, Hecheln, Unruhe im Fahrzeug.</div>
+                </div>
+
+                <div style="background:#FAF8F5;border-radius:10px;padding:14px 16px;margin-bottom:10px;">
+                    <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">🚗 Transport-Tipps</div>
+                    <div style="font-size:12px;color:#666;line-height:1.5;">Auto, Zug, Flugzeug - mit Vorbereitung & Do's/Don'ts.</div>
+                </div>
+
+                <div style="background:#FAF8F5;border-radius:10px;padding:14px 16px;margin-bottom:10px;">
+                    <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">🇪🇺 EU-Einreisebestimmungen</div>
+                    <div style="font-size:12px;color:#666;line-height:1.5;">6 beliebte Reiseländer mit allen Anforderungen auf einen Blick.</div>
+                </div>
+
+                <div style="background:#FAF8F5;border-radius:10px;padding:14px 16px;">
+                    <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">🆘 Notfall-Handling unterwegs</div>
+                    <div style="font-size:12px;color:#666;line-height:1.5;">Reiseübelkeit, Stress, Durchfall - mit sofort umsetzbaren Lösungen.</div>
+                </div>
+            </div>
+
+            <!-- Pricing Card -->
+            <div class="product-card">
+                <div class="price-section" style="border-top:none;padding-top:0;">
+                    <div class="price-old">€39,99</div>
+                    <div class="price-new">€19,99</div>
+                    <div class="price-info">Einmalzahlung · Sofort per Email</div>
+                </div>
+
+                <button class="cta-btn" onclick="buyProduct()">Reise-Guide sichern</button>
+                <div class="guarantee">30 Tage Geld-zurück · Kein Abo</div>
+            </div>
+
+            <!-- Warum jetzt -->
+            <div style="background:#FFFBF5;border-left:3px solid #C4A576;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
+                <div style="font-size:12px;font-weight:700;color:#8B7355;margin-bottom:4px;">Warum jetzt vorbereiten?</div>
+                <div style="font-size:12px;color:#555;line-height:1.6;">Die Reise-Vorbereitung sollte 4 Wochen vor Abfahrt starten - besonders bei Auslandsreisen. Je früher du anfängst, desto entspannter wird <span class="heroDogName">dein Hund</span> am Abreisetag.</div>
+            </div>
+            </div><!-- /product-section -->
+        </div>
+    </div>
+
+    <div class="payment-overlay" id="paymentOverlay">
+        <div class="payment-popup">
+            <div class="payment-header">
+                <span class="payment-title">Reise-Guide sichern</span>
+                <button class="payment-close" onclick="closePaymentPopup()">✕</button>
+            </div>
+            <div class="payment-body">
+                <div class="payment-product">
+                    <div class="payment-product-icon">✈️</div>
+                    <div class="payment-product-info">
+                        <h3>Reise-Guide</h3>
+                        <p>Stressfrei unterwegs mit Hund</p>
+                    </div>
+                    <div class="payment-product-price">€19,99</div>
+                </div>
+                <div class="payment-benefits" id="paymentBenefits">
+                    <div class="payment-benefit">✓ <span>Auto, Zug & Flugzeug Tipps</span></div>
+                    <div class="payment-benefit">✓ <span>Komplette Packliste</span></div>
+                    <div class="payment-benefit">✓ <span>EU-Einreisebestimmungen</span></div>
+                </div>
+                <div id="payment-element"></div>
+                <div class="payment-error" id="paymentError"></div>
+                <button class="payment-btn" id="paymentBtn" onclick="confirmPayment()">🔒 Jetzt bezahlen</button>
+                <div class="payment-guarantee">🔒 Sichere Zahlung · 30 Tage Geld-zurück</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
+        const PRODUCT_TYPE = 'reise';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const userEmail = urlParams.get('email') || '';
+        const leadId = urlParams.get('lead_id') || '';
+        const dogName = urlParams.get('dogName') || urlParams.get('dog_name') || localStorage.getItem('dogName') || 'deinen Hund';
+
+        // Quiz-Daten
+        let reiseArt = urlParams.get('art') || '';
+        let reiseZiel = urlParams.get('ziel') || '';
+        let reiseDauer = urlParams.get('dauer') || '';
+
+        function updateDogNameUI(name) {
+            document.getElementById('heroTitle').textContent = 'Entspannt unterwegs. Auch mit ' + name + '.';
+            document.querySelectorAll('.heroDogName').forEach(el => el.textContent = name);
+            document.getElementById('quizDogName').textContent = name;
+        }
+
+        // Personalisieren
+        if (dogName && dogName !== 'deinen Hund') {
+            updateDogNameUI(dogName);
+        }
+
+        // Quiz überspringen wenn alle Daten in URL
+        const quizSkipped = reiseArt && reiseZiel && reiseDauer;
+
+        function selectArt(el, value) {
+            document.querySelectorAll('#step1 .quiz-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            reiseArt = value;
+            setTimeout(() => {
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step2').classList.add('active');
+                document.getElementById('dot2').classList.add('done');
+            }, 300);
+        }
+
+        function selectZiel(el, value) {
+            document.querySelectorAll('#step2 .quiz-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            reiseZiel = value;
+            setTimeout(() => {
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step3').classList.add('active');
+                document.getElementById('dot3').classList.add('done');
+            }, 300);
+        }
+
+        function selectDauer(el, value) {
+            document.querySelectorAll('#step3 .quiz-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            reiseDauer = value;
+            setTimeout(finishQuiz, 300);
+        }
+
+        function finishQuiz() {
+            document.getElementById('quizSection').style.display = 'none';
+
+            const artLabels = { auto: 'Auto', zug: 'Zug', flugzeug: 'Flugzeug', wohnmobil: 'Wohnmobil' };
+            const zielLabels = { deutschland: 'Deutschland', eu: 'EU-Ausland', fernreise: 'Außerhalb EU' };
+            const dauerLabels = { wochenende: 'Wochenend-Trip', kurzurlaub: '1-2 Wochen', lang: 'Länger als 2 Wochen' };
+
+            // Titel
+            const name = dogName !== 'deinen Hund' ? dogName : 'deinen Hund';
+            document.getElementById('personalTitle').textContent = 'Reise-Guide für ' + name;
+
+            // Tags
+            const tags = [];
+            if (reiseArt) tags.push(artLabels[reiseArt] || reiseArt);
+            if (reiseZiel) tags.push(zielLabels[reiseZiel] || reiseZiel);
+            if (reiseDauer) tags.push(dauerLabels[reiseDauer] || reiseDauer);
+            document.getElementById('personalTags').innerHTML = tags.map(t =>
+                '<span style="background:white;border:1px solid #E8DCC8;color:#8B7355;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;">' + t + '</span>'
+            ).join('');
+
+            // Personalisierte Intro
+            let intro = '';
+            if (reiseArt === 'flugzeug') {
+                intro = 'Da ihr fliegt, liegt der Fokus auf Airline-Bestimmungen, Transportbox-Gewöhnung und Stress-Reduktion während des Flugs.';
+            } else if (reiseArt === 'auto' && reiseDauer === 'lang') {
+                intro = 'Für lange Autofahrten mit ' + name + ' - mit Pausen-Rhythmus, Reiseübelkeit-Vorbeugung und stressfreiem Routing.';
+            } else if (reiseArt === 'wohnmobil') {
+                intro = 'Perfekt für den Roadtrip mit ' + name + ' - mit Ruhezonen, Hitzeschutz und Camping-Etikette.';
+            } else if (reiseZiel === 'fernreise') {
+                intro = 'Da ihr außerhalb der EU reist, gibt es besondere Einreisebestimmungen. Der Guide zeigt Schritt für Schritt was du vorbereiten musst.';
+            } else if (reiseZiel === 'eu') {
+                intro = 'Für die Reise ins EU-Ausland mit ' + name + ' - mit EU-Heimtierausweis-Check, Impfvorgaben und Notfall-Nummern vor Ort.';
+            } else {
+                intro = 'Der Guide deckt eure Reise mit ' + name + ' komplett ab - von Vorbereitung bis Notfall unterwegs.';
+            }
+            document.getElementById('personalIntro').textContent = intro;
+
+            // Show product
+            document.getElementById('productSection').classList.add('visible');
+            setTimeout(() => {
+                document.getElementById('productSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        if (quizSkipped) {
+            setTimeout(() => finishQuiz(), 100);
+        }
+
+        // Supabase read-only bei Email-Kampagne
+        const utmSource = urlParams.get('utm_source') || '';
+        const utmMedium = urlParams.get('utm_medium') || '';
+        const cameFromEmail = utmSource === 'brevo' || utmMedium === 'email';
+        if (cameFromEmail && leadId) {
+            fetch(`https://xomsibpyksrzrnixbdwf.supabase.co/rest/v1/wauwerk_leads?id=eq.${leadId}&select=dog_name`, {
+                headers: { 'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE' }
+            }).then(r => r.json()).then(d => {
+                if (d[0] && d[0].dog_name) {
+                    updateDogNameUI(d[0].dog_name);
+                }
+            }).catch(() => {});
+        }
+
+        let stripe = null, elements = null, paymentElement = null, clientSecret = null;
+
+        if (urlParams.get('success') === 'true' || urlParams.get('redirect_status') === 'succeeded') {
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('thankYou').classList.add('active');
+            const piId = urlParams.get('payment_intent') || '';
+            fetch('/api/upsell-product-purchase', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    paymentIntentId: piId, type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName,
+                    reiseArt: urlParams.get('art') || reiseArt,
+                    reiseZiel: urlParams.get('ziel') || reiseZiel,
+                    reiseDauer: urlParams.get('dauer') || reiseDauer
+                })
+            }).then(r => r.json()).then(d => console.log('Purchase handler:', d)).catch(err => console.error('Purchase error:', err));
+            if (typeof fbq !== 'undefined') fbq('track', 'Purchase', { value: 19.99, currency: 'EUR', content_name: 'Reise-Guide' });
+            if (typeof gtag !== 'undefined') gtag('event', 'conversion', { send_to: 'AW-17806525009/upsell_reise', value: 19.99, currency: 'EUR' });
+        }
+
+        async function buyProduct() {
+            const btn = document.querySelector('.cta-btn');
+            btn.textContent = 'Lädt...'; btn.disabled = true;
+            document.getElementById('paymentOverlay').classList.add('active');
+            try {
+                const response = await fetch('/api/upsell-product-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName, reiseArt, reiseZiel, reiseDauer })
+                });
+                const result = await response.json();
+                if (result.error || !result.clientSecret) { alert('Fehler: ' + (result.error || 'Keine Zahlungs-Session')); btn.textContent = 'Reise-Guide sichern'; btn.disabled = false; closePaymentPopup(); return; }
+                clientSecret = result.clientSecret;
+                if (!stripe) stripe = Stripe(STRIPE_PUBLIC_KEY);
+                elements = stripe.elements({ clientSecret, appearance: { theme: 'stripe', variables: { colorPrimary: '#C4A576', colorBackground: '#ffffff', colorText: '#2C2C2E', colorDanger: '#e74c3c', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', borderRadius: '8px' } }, locale: 'de' });
+                paymentElement = elements.create('payment', { layout: { type: 'tabs', defaultCollapsed: false }, paymentMethodOrder: ['klarna', 'paypal', 'card'], wallets: { applePay: 'auto', googlePay: 'auto' } });
+                paymentElement.mount('#payment-element');
+                btn.textContent = 'Reise-Guide sichern'; btn.disabled = false;
+            } catch (err) { console.error('Checkout error:', err); alert('Fehler beim Laden.'); btn.textContent = 'Reise-Guide sichern'; btn.disabled = false; closePaymentPopup(); }
+        }
+
+        async function confirmPayment() {
+            const payBtn = document.getElementById('paymentBtn');
+            payBtn.disabled = true; payBtn.innerHTML = '<div class="spinner"></div> Wird verarbeitet...'; hidePaymentError();
+            if (!stripe || !elements) { showPaymentError('Stripe nicht initialisiert.'); payBtn.disabled = false; payBtn.innerHTML = '🔒 Jetzt bezahlen'; return; }
+            try {
+                const returnUrl = window.location.origin + '/upsell-reise.html?success=true&email=' + encodeURIComponent(userEmail) + '&lead_id=' + encodeURIComponent(leadId) + '&art=' + encodeURIComponent(reiseArt) + '&ziel=' + encodeURIComponent(reiseZiel) + '&dauer=' + encodeURIComponent(reiseDauer) + '&dogName=' + encodeURIComponent(dogName);
+                const { error } = await stripe.confirmPayment({ elements, confirmParams: { return_url: returnUrl } });
+                if (error) { showPaymentError(error.message || 'Zahlung fehlgeschlagen'); payBtn.disabled = false; payBtn.innerHTML = '🔒 Jetzt bezahlen'; }
+            } catch (err) { showPaymentError('Zahlung fehlgeschlagen.'); payBtn.disabled = false; payBtn.innerHTML = '🔒 Jetzt bezahlen'; }
+        }
+
+        function showPaymentError(msg) { const el = document.getElementById('paymentError'); el.textContent = msg; el.classList.add('visible'); }
+        function hidePaymentError() { document.getElementById('paymentError').classList.remove('visible'); }
+        function closePaymentPopup() { document.getElementById('paymentOverlay').classList.remove('active'); if (paymentElement) { paymentElement.unmount(); paymentElement = null; } }
+        document.getElementById('paymentOverlay').addEventListener('click', function(e) { if (e.target === this) closePaymentPopup(); });
+    </script>
+</body>
+</html>

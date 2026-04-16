@@ -24,18 +24,28 @@ function buildClaudePrompt(
   age: string,
   weight: string = '',
   activity: string = '',
-  allergy: string = ''
+  allergy: string = '',
+  reiseArt: string = '',
+  reiseZiel: string = '',
+  reiseDauer: string = ''
 ): string {
   const actLabels: Record<string, string> = { wenig: 'wenig aktiv', normal: 'normal aktiv', sehr: 'sehr aktiv' };
   const actDisplay = actLabels[activity] || activity || 'normal aktiv';
   const weightDisplay = weight || 'unbekannt';
   const allergyDisplay = allergy && allergy !== 'Keine bekannt' ? `Allergie/Unverträglichkeit: ${allergy}` : 'Keine bekannten Allergien';
 
+  const artLabels: Record<string, string> = { auto: 'Auto', zug: 'Zug', flugzeug: 'Flugzeug', wohnmobil: 'Wohnmobil/Camping' };
+  const zielLabels: Record<string, string> = { deutschland: 'innerhalb Deutschlands', eu: 'EU-Ausland', fernreise: 'außerhalb der EU' };
+  const dauerLabels: Record<string, string> = { wochenende: 'Wochenend-Trip (2-4 Tage)', kurzurlaub: '1-2 Wochen', lang: 'länger als 2 Wochen' };
+  const reiseArtDisplay = artLabels[reiseArt] || reiseArt || 'Auto';
+  const reiseZielDisplay = zielLabels[reiseZiel] || reiseZiel || 'innerhalb Deutschlands';
+  const reiseDauerDisplay = dauerLabels[reiseDauer] || reiseDauer || '1-2 Wochen';
+
   const prompts: Record<string, string> = {
     ernaehrung: `Erstelle einen personalisierten Ernährungsplan für ${dogName} (${breed}, Alter: ${age}, Gewicht: ${weightDisplay}, Aktivität: ${actDisplay}, ${allergyDisplay}). Enthält: Tagesplan für Fütterung mit konkreten Grammangaben passend zum Gewicht, empfohlene Futtermengen, gesunde Snacks, was der Hund nicht essen darf, Fütterungszeiten. Berücksichtige die Aktivität und Allergien bei den Empfehlungen. Alles auf Deutsch, praktisch und direkt umsetzbar. Keine Markdown-Formatierung.`,
     zweithund: `Erstelle einen Guide für Hundebesitzer die einen zweiten Hund aufnehmen möchten. Der erste Hund heißt ${dogName} (${breed}). Enthält: Welche Rassen passen, Eingewöhnung Schritt für Schritt, häufige Fehler, Ressourcen-Aufteilung, Timeline für die ersten 4 Wochen.`,
     abo: `Erstelle saisonale Trainingstipps und Übungen für den aktuellen Monat für ${dogName}. Enthält: 4 saisonale Übungen, Gesundheitstipps für die Jahreszeit, Aktivitäts-Ideen.`,
-    reise: `Erstelle einen Reise-Guide für Hundebesitzer mit ${dogName}. Enthält: Vorbereitung, Packliste, Auto/Zug/Flugzeug Tipps, Unterkunft mit Hund, Notfall-Nummern, Einreisebestimmungen EU.`,
+    reise: `Erstelle einen Reise-Guide für ${dogName} (${breed}). Reiseart: ${reiseArtDisplay}. Reiseziel: ${reiseZielDisplay}. Reisedauer: ${reiseDauerDisplay}. Enthält: Vorbereitung passend zur Reiseart, Packliste, Transport-spezifische Tipps (${reiseArtDisplay}), Notfall-Nummern, Einreisebestimmungen passend zum Reiseziel (${reiseZielDisplay}), Übungen gegen Reiseangst, Reiseübelkeit-Vorbeugung. Alles auf Deutsch, praktisch und direkt umsetzbar. Keine Markdown-Formatierung.`,
     erstehilfe: `Erstelle einen Erste-Hilfe Guide für Hundebesitzer von ${dogName}. Enthält: Die 10 wichtigsten Notfälle (Vergiftung, Hitzschlag, Verletzung, Insektenstich, Verschlucken, Durchfall, Erbrechen, Zeckenbiss, Pfotenverletzung, Schock), jeweils mit Sofort-Maßnahmen in 3-5 Schritten. Wann zum Tierarzt. Notfall-Apotheke für Hunde.`,
   };
 
@@ -65,7 +75,10 @@ async function generateContentWithClaude(
   age: string,
   weight: string = '',
   activity: string = '',
-  allergy: string = ''
+  allergy: string = '',
+  reiseArt: string = '',
+  reiseZiel: string = '',
+  reiseDauer: string = ''
 ): Promise<string> {
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -81,7 +94,7 @@ async function generateContentWithClaude(
       messages: [
         {
           role: "user",
-          content: buildClaudePrompt(type, dogName, breed, age, weight, activity, allergy),
+          content: buildClaudePrompt(type, dogName, breed, age, weight, activity, allergy, reiseArt, reiseZiel, reiseDauer),
         },
       ],
     }),
@@ -188,6 +201,9 @@ export async function POST(request: Request) {
       dogWeight,
       dogActivity,
       dogAllergy,
+      reiseArt,
+      reiseZiel,
+      reiseDauer,
     } = body;
 
     if (!type || !email) {
@@ -263,7 +279,7 @@ export async function POST(request: Request) {
 
     // 3. Generate content with Claude (mit Quiz-Daten!)
     console.log(
-      `Generating ${type} content for ${dogName} (${breed}, ${age}, ${dogWeight || '?'}, ${dogActivity || '?'})...`
+      `Generating ${type} content for ${dogName} (${breed}, ${age}, ${dogWeight || '?'}, ${dogActivity || '?'}, reise: ${reiseArt || '-'}/${reiseZiel || '-'}/${reiseDauer || '-'})...`
     );
     const generatedText = await generateContentWithClaude(
       type,
@@ -272,7 +288,10 @@ export async function POST(request: Request) {
       age,
       dogWeight,
       dogActivity,
-      dogAllergy
+      dogAllergy,
+      reiseArt,
+      reiseZiel,
+      reiseDauer
     );
 
     // 4. Convert to HTML and send via Brevo

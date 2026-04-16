@@ -8,6 +8,29 @@ export const dynamic = "force-dynamic";
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+// Helper: Neuen Paid-Lead in Upsell-Campaign aufnehmen (nur für wauwerk_leads)
+// Idempotent dank UNIQUE(lead_id) constraint — doppelte Inserts werden ignoriert
+async function enrollInUpsellCampaign(table: string, leadId: string, email: string | null | undefined) {
+  if (table !== "wauwerk_leads" || !email) return;
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const { error } = await supabase.from("upsell_schedule").insert({
+      lead_id: leadId,
+      user_email: email,
+      upsell_start_date: today,
+      source: "new",
+    });
+    // "duplicate key" errors sind ok (idempotent), andere nicht
+    if (error && !String(error.message || "").toLowerCase().includes("duplicate")) {
+      console.error("Upsell enroll error:", error);
+    } else if (!error) {
+      console.log(`→ Upsell-Kampagne enrollment: ${email} (start ${today})`);
+    }
+  } catch (e) {
+    console.error("Upsell enroll exception:", e);
+  }
+}
+
 // Helper: Make nur benachrichtigen wenn URL gesetzt ist
 async function notifyMake(orderId: string, payload: Record<string, any>) {
   const url = process.env.MAKE_WEBHOOK_URL;
@@ -218,7 +241,10 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
       console.log("✅ Supabase Update erfolgreich!");
       console.log("🔍 Aktualisierte Daten:", JSON.stringify(updatedData, null, 2));
       console.log(`${table} ${referenceId} erfolgreich als bezahlt markiert`);
-      
+
+      // Upsell-Kampagne enrollment
+      await enrollInUpsellCampaign(table, referenceId, updateData.email);
+
       // Make benachrichtigen (orders + wauwerk_leads)
       await notifyMake(referenceId, {
         source: "checkout.session",
@@ -348,6 +374,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
       console.error("Fehler beim Aktualisieren via PaymentIntent:", error);
     } else {
       console.log(`${table} ${referenceId} via PaymentIntent aktualisiert`);
+      await enrollInUpsellCampaign(table, referenceId, updateData.email);
       await notifyMake(referenceId, {
         source: "payment_intent",
         table: table,
@@ -562,6 +589,7 @@ async function handleChargeSuccess(charge: Stripe.Charge) {
       console.error("Fehler beim Aktualisieren via Charge:", error);
     } else {
       console.log(`${table} ${referenceId} via Charge aktualisiert`);
+      await enrollInUpsellCampaign(table, referenceId, updateData.email);
       await notifyMake(referenceId, {
         source: "charge",
         table: table,
