@@ -171,21 +171,21 @@
                     </div>
                 </div>
 
-                <!-- Frage 2: Alter -->
+                <!-- Frage 2: Tierarzt-Erreichbarkeit -->
                 <div class="quiz-step" id="step2">
-                    <div class="quiz-question">Wie alt ist <span class="qDogName">dein Hund</span>?</div>
+                    <div class="quiz-question">Wie schnell erreichst du im Notfall einen Tierarzt?</div>
                     <div class="quiz-options">
-                        <div class="quiz-option" onclick="selectAge(this, 'welpe')">
-                            <span class="quiz-option-icon">🐶</span>
-                            <div><div style="font-weight:600;">Welpe</div><div style="font-size:12px;color:#999;">Unter 1 Jahr</div></div>
+                        <div class="quiz-option" onclick="selectVet(this, 'nah')">
+                            <span class="quiz-option-icon">🏥</span>
+                            <div><div style="font-weight:600;">Sehr schnell</div><div style="font-size:12px;color:#999;">Unter 15 Minuten (Stadt)</div></div>
                         </div>
-                        <div class="quiz-option" onclick="selectAge(this, 'erwachsen')">
-                            <span class="quiz-option-icon">🐕</span>
-                            <div><div style="font-weight:600;">Erwachsen</div><div style="font-size:12px;color:#999;">1 - 7 Jahre</div></div>
+                        <div class="quiz-option" onclick="selectVet(this, 'mittel')">
+                            <span class="quiz-option-icon">🚗</span>
+                            <div><div style="font-weight:600;">Mittel</div><div style="font-size:12px;color:#999;">15 - 45 Minuten</div></div>
                         </div>
-                        <div class="quiz-option" onclick="selectAge(this, 'senior')">
-                            <span class="quiz-option-icon">🦴</span>
-                            <div><div style="font-weight:600;">Senior</div><div style="font-size:12px;color:#999;">Über 7 Jahre</div></div>
+                        <div class="quiz-option" onclick="selectVet(this, 'weit')">
+                            <span class="quiz-option-icon">🛣️</span>
+                            <div><div style="font-weight:600;">Länger unterwegs</div><div style="font-size:12px;color:#999;">Über 45 Minuten oder unsicher</div></div>
                         </div>
                     </div>
                 </div>
@@ -394,7 +394,7 @@
 
         // Quiz-Daten
         let dogSize = urlParams.get('size') || '';
-        let dogAge = urlParams.get('age') || '';
+        let vetDistance = urlParams.get('vet') || '';
         let dogEnv = urlParams.get('env') || '';
 
         function updateDogNameUI(name) {
@@ -410,7 +410,7 @@
         }
 
         // Quiz überspringen wenn alle Daten in URL
-        const quizSkipped = dogSize && dogAge && dogEnv;
+        const quizSkipped = dogSize && vetDistance && dogEnv;
 
         function selectSize(el, value) {
             document.querySelectorAll('#step1 .quiz-option').forEach(o => o.classList.remove('selected'));
@@ -423,10 +423,10 @@
             }, 300);
         }
 
-        function selectAge(el, value) {
+        function selectVet(el, value) {
             document.querySelectorAll('#step2 .quiz-option').forEach(o => o.classList.remove('selected'));
             el.classList.add('selected');
-            dogAge = value;
+            vetDistance = value;
             setTimeout(() => {
                 document.getElementById('step2').classList.remove('active');
                 document.getElementById('step3').classList.add('active');
@@ -445,7 +445,7 @@
             document.getElementById('quizSection').style.display = 'none';
 
             const sizeLabels = { klein: 'Kleiner Hund', mittel: 'Mittlerer Hund', gross: 'Großer Hund' };
-            const ageLabels = { welpe: 'Welpe', erwachsen: 'Erwachsen', senior: 'Senior' };
+            const vetLabels = { nah: 'Tierarzt nah', mittel: 'Tierarzt mittel', weit: 'Tierarzt weit' };
             const envLabels = { stadt: 'Stadt', garten: 'Garten', wald: 'Wald & Natur' };
 
             // Titel
@@ -455,24 +455,26 @@
             // Tags
             const tags = [];
             if (dogSize) tags.push(sizeLabels[dogSize] || dogSize);
-            if (dogAge) tags.push(ageLabels[dogAge] || dogAge);
+            if (vetDistance) tags.push(vetLabels[vetDistance] || vetDistance);
             if (dogEnv) tags.push(envLabels[dogEnv] || dogEnv);
             document.getElementById('personalTags').innerHTML = tags.map(t =>
                 '<span style="background:white;border:1px solid #E8DCC8;color:#8B7355;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;">' + t + '</span>'
             ).join('');
 
-            // Personalisierte Intro je nach Größe/Alter/Umgebung
+            // Personalisierte Intro
             let intro = '';
             const risks = [];
             if (dogSize === 'klein') risks.push('Unterkühlung');
             if (dogSize === 'gross') risks.push('Magendrehung');
-            if (dogAge === 'welpe') risks.push('Verschlucken kleiner Gegenstände');
-            if (dogAge === 'senior') risks.push('Herz-Kreislauf-Probleme');
             if (dogEnv === 'stadt') risks.push('Giftköder');
             if (dogEnv === 'garten') risks.push('giftige Pflanzen');
             if (dogEnv === 'wald') risks.push('Zecken & Schlangenbisse');
 
-            if (risks.length > 0) {
+            if (vetDistance === 'weit') {
+                intro = 'Da dein Tierarzt weiter weg ist, legt der Guide besonderen Fokus auf Stabilisierung im Notfall - damit ' + name + ' den Weg übersteht.';
+            } else if (vetDistance === 'nah' && risks.length > 0) {
+                intro = 'Mit schnellem Tierarzt-Zugang + Fokus auf typische Risiken für ' + name + ': ' + risks.join(', ') + '.';
+            } else if (risks.length > 0) {
                 intro = 'Der Guide geht besonders auf Risiken ein, die für ' + name + ' relevant sind: ' + risks.join(', ') + '.';
             } else {
                 intro = 'Alle wichtigen Notfälle speziell auf ' + name + ' zugeschnitten.';
@@ -518,7 +520,7 @@
                 body: JSON.stringify({
                     paymentIntentId: piId, type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName,
                     dogSize: urlParams.get('size') || dogSize,
-                    dogAge: urlParams.get('age') || dogAge,
+                    vetDistance: urlParams.get('vet') || vetDistance,
                     dogEnv: urlParams.get('env') || dogEnv
                 })
             }).then(r => r.json()).then(d => console.log('Purchase handler:', d)).catch(err => console.error('Purchase error:', err));
@@ -534,7 +536,7 @@
                 const response = await fetch('/api/upsell-product-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName, dogSize, dogAge, dogEnv })
+                    body: JSON.stringify({ type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName, dogSize, vetDistance, dogEnv })
                 });
                 const result = await response.json();
                 if (result.error || !result.clientSecret) { alert('Fehler: ' + (result.error || 'Keine Zahlungs-Session')); btn.textContent = 'Jetzt sichern'; btn.disabled = false; closePaymentPopup(); return; }
@@ -552,7 +554,7 @@
             payBtn.disabled = true; payBtn.innerHTML = '<div class="spinner"></div> Wird verarbeitet...'; hidePaymentError();
             if (!stripe || !elements) { showPaymentError('Stripe nicht initialisiert.'); payBtn.disabled = false; payBtn.innerHTML = '🔒 Jetzt bezahlen'; return; }
             try {
-                const returnUrl = window.location.origin + '/upsell-erstehilfe.html?success=true&email=' + encodeURIComponent(userEmail) + '&lead_id=' + encodeURIComponent(leadId) + '&size=' + encodeURIComponent(dogSize) + '&age=' + encodeURIComponent(dogAge) + '&env=' + encodeURIComponent(dogEnv) + '&dogName=' + encodeURIComponent(dogName);
+                const returnUrl = window.location.origin + '/upsell-erstehilfe.html?success=true&email=' + encodeURIComponent(userEmail) + '&lead_id=' + encodeURIComponent(leadId) + '&size=' + encodeURIComponent(dogSize) + '&vet=' + encodeURIComponent(vetDistance) + '&env=' + encodeURIComponent(dogEnv) + '&dogName=' + encodeURIComponent(dogName);
                 const { error } = await stripe.confirmPayment({ elements, confirmParams: { return_url: returnUrl } });
                 if (error) { showPaymentError(error.message || 'Zahlung fehlgeschlagen'); payBtn.disabled = false; payBtn.innerHTML = '🔒 Jetzt bezahlen'; }
             } catch (err) { showPaymentError('Zahlung fehlgeschlagen.'); payBtn.disabled = false; payBtn.innerHTML = '🔒 Jetzt bezahlen'; }
