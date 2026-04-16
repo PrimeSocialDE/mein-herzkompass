@@ -462,6 +462,39 @@
                 <p>Personalisiert auf Rasse, Alter und Aktivität</p>
             </div>
 
+            <!-- Vorteils-Vergleich: Personalisierter Plan vs. Normales Futter -->
+            <div style="background:white;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+                <div style="text-align:center;margin-bottom:16px;">
+                    <div style="font-size:15px;font-weight:800;color:#2C2C2E;margin-bottom:2px;">Warum ein personalisierter Plan?</div>
+                    <div style="font-size:12px;color:#888;">Pauschales Futter vs. individueller Plan</div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <!-- Links: Pauschales Futter -->
+                    <div style="background:#FEF2F2;border-radius:10px;padding:14px 12px;border-left:3px solid #DC2626;">
+                        <div style="font-size:12px;font-weight:700;color:#DC2626;margin-bottom:10px;text-align:center;">Pauschales Futter</div>
+                        <div style="font-size:11px;color:#555;line-height:1.5;margin-bottom:8px;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:#DC2626;font-weight:700;">✗</span>Gleiche Menge für alle Hunde</div>
+                        <div style="font-size:11px;color:#555;line-height:1.5;margin-bottom:8px;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:#DC2626;font-weight:700;">✗</span>Füllstoffe & Zucker</div>
+                        <div style="font-size:11px;color:#555;line-height:1.5;margin-bottom:8px;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:#DC2626;font-weight:700;">✗</span>Keine Rücksicht auf Rasse</div>
+                        <div style="font-size:11px;color:#555;line-height:1.5;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:#DC2626;font-weight:700;">✗</span>Übergewicht & Mangel</div>
+                    </div>
+
+                    <!-- Rechts: Personalisierter Plan -->
+                    <div style="background:#F0FDF4;border-radius:10px;padding:14px 12px;border-left:3px solid #22C55E;">
+                        <div style="font-size:12px;font-weight:700;color:#166534;margin-bottom:10px;text-align:center;">Dein Plan</div>
+                        <div style="font-size:11px;color:#2C2C2E;line-height:1.5;margin-bottom:8px;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:#22C55E;font-weight:700;">✓</span>Exakte Menge für <span class="comparisonDogName">deinen Hund</span></div>
+                        <div style="font-size:11px;color:#2C2C2E;line-height:1.5;margin-bottom:8px;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:#22C55E;font-weight:700;">✓</span>Was wirklich drin sein muss</div>
+                        <div style="font-size:11px;color:#2C2C2E;line-height:1.5;margin-bottom:8px;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:#22C55E;font-weight:700;">✓</span>Rasse-spezifisch angepasst</div>
+                        <div style="font-size:11px;color:#2C2C2E;line-height:1.5;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:#22C55E;font-weight:700;">✓</span>Gesundes Gewicht & Fell</div>
+                    </div>
+                </div>
+
+                <!-- Stat-Banner unten -->
+                <div style="background:#FFFBF5;border-radius:10px;padding:12px 14px;margin-top:12px;text-align:center;">
+                    <div style="font-size:12px;color:#555;line-height:1.5;"><strong style="color:#8B7355;">73% der Hunde</strong> in Deutschland werden falsch ernährt - meist durch pauschales Futter. <strong style="color:#2C2C2E;">Änder das für <span class="comparisonDogName">deinen Hund</span>.</strong></div>
+                </div>
+            </div>
+
             <!-- Mini Quiz -->
             <div class="quiz-section" id="quizSection">
                 <div class="quiz-title">Noch 3 kurze Fragen zu <span id="quizDogName">deinem Hund</span></div>
@@ -813,6 +846,7 @@
             titleEl.textContent = 'Ernährungsplan für ' + dogName;
             document.getElementById('paymentProductName').textContent = 'Ernährungsplan für ' + dogName;
             document.querySelectorAll('.qDogName').forEach(el => el.textContent = dogName);
+            document.querySelectorAll('.comparisonDogName').forEach(el => el.textContent = dogName);
             document.getElementById('quizDogName').textContent = dogName;
         }
 
