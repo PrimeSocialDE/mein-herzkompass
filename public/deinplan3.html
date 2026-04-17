@@ -1998,7 +1998,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     </header>
 
     <div class="timer-bar">
-        <span id="timerLabel">Dein Plan wird gelöscht in:</span> <span id="timer">10:00</span>
+        <span id="timerLabel">Dein Rabatt endet in:</span> <span id="timer">10:00</span>
     </div>
 
     <section class="hero-section">
@@ -3096,13 +3096,13 @@ if (popularBadge) {
                 timeLeft = timerDuration;
                 localStorage.setItem('wauwerk_timerStartTime', Date.now().toString());
             }
-            // Personalisierter Timer-Label mit Hundename (Loss-Aversion)
-            let timerLabel = 'Dein Plan wird gelöscht in:';
+            // Personalisierter Timer-Label mit Hundename
+            let timerLabel = 'Dein Rabatt endet in:';
             if (dogName && dogName !== 'deinen Hund') {
                 const lastChar = dogName.slice(-1).toLowerCase();
                 const needsApostrophe = ['s', 'ß', 'x', 'z'].includes(lastChar);
                 const possessive = needsApostrophe ? `${dogName}'` : `${dogName}s`;
-                timerLabel = `${possessive} Plan wird gelöscht in:`;
+                timerLabel = `${possessive} Rabatt endet in:`;
             }
             document.getElementById('timerLabel').textContent = timerLabel;
         }
@@ -3112,7 +3112,7 @@ if (popularBadge) {
         function updateTimer() {
             if (timeLeft <= 0) {
                 timerExpired = true;
-                document.getElementById('timer').textContent = 'GELÖSCHT';
+                document.getElementById('timer').textContent = 'ABGELAUFEN';
                 switchToNormalPrices();
                 return;
             }
