@@ -454,26 +454,26 @@
         }
 
         .price-currency {
-            font-size: 16px;
+            font-size: 12px;
             font-weight: 700;
             color: var(--text-dark);
         }
 
         .price-amount {
-            font-size: 28px;
-            font-weight: 800;
+            font-size: 18px;
+            font-weight: 700;
             color: var(--text-dark);
             line-height: 1;
         }
 
         .price-cents {
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 700;
             color: var(--text-dark);
         }
 
         .price-period {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-light);
             text-transform: uppercase;
             font-weight: 600;
@@ -2147,16 +2147,16 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">1-Monats-Plan</div>
-                            <div class="pricing-total">€29,99 einmalig</div>
+                            <div class="pricing-total">€0,99 pro Tag</div>
                         </div>
                     </div>
                     <div class="pricing-right">
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
-                            <span class="price-amount">0</span>
+                            <span class="price-amount">29</span>
                             <span class="price-cents">,99</span>
                         </div>
-                        <div class="price-period">pro Tag</div>
+                        <div class="price-period">einmalig</div>
                     </div>
                 </div>
             </div>
@@ -2167,16 +2167,16 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">3-Monats-Plan</div>
-                            <div class="pricing-total">€39,99 einmalig</div>
+                            <div class="pricing-total">€0,44 pro Tag</div>
                         </div>
                     </div>
                     <div class="pricing-right">
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
-                            <span class="price-amount">0</span>
-                            <span class="price-cents">,44</span>
+                            <span class="price-amount">39</span>
+                            <span class="price-cents">,99</span>
                         </div>
-                        <div class="price-period">pro Tag</div>
+                        <div class="price-period">einmalig</div>
                     </div>
                 </div>
             </div>
@@ -2188,16 +2188,16 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">6-Monats-Plan</div>
-                            <div class="pricing-total">€59,99 einmalig</div>
+                            <div class="pricing-total">€0,33 pro Tag</div>
                         </div>
                     </div>
                     <div class="pricing-right">
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
-                            <span class="price-amount">0</span>
-                            <span class="price-cents">,33</span>
+                            <span class="price-amount">59</span>
+                            <span class="price-cents">,99</span>
                         </div>
-                        <div class="price-period">pro Tag</div>
+                        <div class="price-period">einmalig</div>
                     </div>
                 </div>
             </div>
@@ -3110,22 +3110,22 @@ if (popularBadge) {
     const cards = document.querySelectorAll('.pricing-card');
 
     // cards[0] = 1-Monat, cards[1] = 3-Monat, cards[2] = 6-Monat
-    // 1-Monat: ≈€1,67/Tag, €49,99 einmalig
-    cards[0].querySelector('.price-amount').textContent = '1';
-    cards[0].querySelector('.price-cents').textContent = ',67';
-    cards[0].querySelector('.pricing-total').textContent = '€49,99 einmalig';
+    // 1-Monat: €49,99 einmalig (≈€1,67/Tag)
+    cards[0].querySelector('.price-amount').textContent = '49';
+    cards[0].querySelector('.price-cents').textContent = ',99';
+    cards[0].querySelector('.pricing-total').textContent = '€1,67 pro Tag';
     cards[0].dataset.price = '49.99';
 
-    // 3-Monat: ≈€0,89/Tag, €79,99 einmalig
-    cards[1].querySelector('.price-amount').textContent = '0';
-    cards[1].querySelector('.price-cents').textContent = ',89';
-    cards[1].querySelector('.pricing-total').textContent = '€79,99 einmalig';
+    // 3-Monat: €79,99 einmalig (≈€0,89/Tag)
+    cards[1].querySelector('.price-amount').textContent = '79';
+    cards[1].querySelector('.price-cents').textContent = ',99';
+    cards[1].querySelector('.pricing-total').textContent = '€0,89 pro Tag';
     cards[1].dataset.price = '79.99';
 
-    // 6-Monat: ≈€0,67/Tag, €119,99 einmalig
-    cards[2].querySelector('.price-amount').textContent = '0';
-    cards[2].querySelector('.price-cents').textContent = ',67';
-    cards[2].querySelector('.pricing-total').textContent = '€119,99 einmalig';
+    // 6-Monat: €119,99 einmalig (≈€0,67/Tag)
+    cards[2].querySelector('.price-amount').textContent = '119';
+    cards[2].querySelector('.price-cents').textContent = ',99';
+    cards[2].querySelector('.pricing-total').textContent = '€0,67 pro Tag';
     cards[2].dataset.price = '119.99';
 }
         
