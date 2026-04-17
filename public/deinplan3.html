@@ -2056,7 +2056,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 
     <div class="container">
         <div class="title-section">
-            <h1 class="main-title">Dein personalisierter Trainingsplan für <span id="dogName3">deinen Hund</span> – wähle deinen Plan</h1>
+            <h1 class="main-title">Dein personalisierter Trainingsplan für <span id="dogName3">deinen Hund</span></h1>
+            <p class="outcome-promise" style="display:inline-block;font-size:14px;color:#8B7355;font-weight:700;background:#FFFBF5;border:1px solid #EBDDC4;padding:8px 14px;border-radius:20px;margin:10px 0 6px;line-height:1.35;">🎯 <span id="outcomeHeadline">In 4 Wochen ein entspannter Hund</span></p>
             <p class="preview-hint">Das ist eine Vorschau deines persönlichen Trainingsplans.<br>Die individuellen Übungen basieren auf deinen Antworten und sind nach Kauf verfügbar.</p>
             
             <div class="goal-badges">
@@ -2126,6 +2127,24 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
             </div>
             <p style="font-size: 11px; color: var(--text-medium); text-align: center; margin-top: 12px; line-height: 1.4;">Tausende Hundebesitzer sehen bereits nach 1–2 Wochen<br><strong style="color: var(--text-dark);">echte Veränderungen im Verhalten.</strong></p>
+        </div>
+
+        <!-- ========== Social Proof Bar ========== -->
+        <div class="social-proof-bar" style="display:flex;justify-content:space-around;align-items:center;gap:8px;background:white;border-radius:12px;padding:12px 10px;margin-bottom:16px;box-shadow:0 2px 10px rgba(0,0,0,0.05);border:1px solid #F0EBE3;">
+            <div style="text-align:center;flex:1;">
+                <div style="font-size:16px;font-weight:800;color:#1a1a1a;line-height:1;">2.000+</div>
+                <div style="font-size:10px;color:#888;margin-top:3px;line-height:1.2;">Pläne<br>erstellt</div>
+            </div>
+            <div style="width:1px;height:32px;background:#EEE;"></div>
+            <div style="text-align:center;flex:1;">
+                <div style="font-size:13px;color:#F5B800;line-height:1;letter-spacing:1px;">★★★★★</div>
+                <div style="font-size:10px;color:#888;margin-top:4px;line-height:1.2;"><strong style="color:#1a1a1a;">4.8/5</strong> · 847 Reviews</div>
+            </div>
+            <div style="width:1px;height:32px;background:#EEE;"></div>
+            <div style="text-align:center;flex:1;">
+                <div style="font-size:18px;line-height:1;">🇩🇪</div>
+                <div style="font-size:10px;color:#888;margin-top:3px;line-height:1.2;">Entwickelt<br>in Deutschland</div>
+            </div>
         </div>
 
         <!-- ========== Pricing Section ========== -->
@@ -2199,6 +2218,25 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         </div>
                         <div class="price-period">einmalig</div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preis-Anker: Vergleich mit Alternativen -->
+        <div style="background:#F8F6F2;border-radius:10px;padding:14px 16px;margin:14px 0 16px;border-left:3px solid #C4A576;">
+            <div style="font-size:11px;color:#8B7355;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Im Vergleich</div>
+            <div style="display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#555;">
+                <div style="text-align:center;flex:1;">
+                    <div style="color:#999;text-decoration:line-through;">€80/h</div>
+                    <div style="margin-top:2px;">Hundetrainer</div>
+                </div>
+                <div style="text-align:center;flex:1;border-left:1px solid #E8E0D2;border-right:1px solid #E8E0D2;padding:0 8px;">
+                    <div style="color:#999;text-decoration:line-through;">€150+</div>
+                    <div style="margin-top:2px;">Hundeschule</div>
+                </div>
+                <div style="text-align:center;flex:1;">
+                    <div style="color:#C4A576;font-weight:800;">ab €0,33/Tag</div>
+                    <div style="margin-top:2px;color:#1a1a1a;font-weight:600;">Dein Plan</div>
                 </div>
             </div>
         </div>
@@ -3462,6 +3500,40 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             document.querySelector('.exit-popup').classList.remove('animate');
             localStorage.removeItem('wentToStripe');
         }
+
+        // Hero-Outcome-Badge aus emotionalHeadlines füllen (gleiche Map wie Exit-Popup)
+        (function() {
+            const outcomeEl = document.getElementById('outcomeHeadline');
+            if (outcomeEl) {
+                const headline = emotionalHeadlines[dogProblem] || 'In 4 Wochen ein entspannter Hund';
+                outcomeEl.textContent = headline;
+            }
+        })();
+
+        // Exit-Intent Trigger: Desktop mouseleave oben + Mobile nach 35s ohne Pricing-Interaktion
+        (function() {
+            let pricingInteracted = false;
+            document.querySelectorAll('.pricing-card, .cta-button').forEach(function(el) {
+                el.addEventListener('click', function() { pricingInteracted = true; });
+            });
+
+            // Desktop: mouseleave zum oberen Rand
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            if (!isMobile) {
+                document.addEventListener('mouseleave', function(e) {
+                    if (e.clientY <= 0 && !exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
+                        showExitPopup();
+                    }
+                });
+            } else {
+                // Mobile: Timer-basiert (35s, nur wenn User noch nicht mit Preisen interagiert hat)
+                setTimeout(function() {
+                    if (!pricingInteracted && !exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
+                        showExitPopup();
+                    }
+                }, 35000);
+            }
+        })();
 
         // ==================== CHECKOUT POPUP ====================
         
