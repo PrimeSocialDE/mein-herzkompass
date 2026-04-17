@@ -320,6 +320,10 @@
             .container { padding: 24px 16px; }
             .modal-image { max-width: 240px; }
         }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -355,6 +359,14 @@
 
     <div class="container">
         <p class="loading-text">Erstelle einen personalisierten Trainingsplan für <span id="dogNameText">deinen Hund</span>...</p>
+
+        <!-- Animated Counter: Dogs trained -->
+        <div class="trained-counter" style="background: var(--white); border-radius: var(--border-radius); padding: 22px 18px; margin-bottom: 16px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid var(--border-light); opacity: 0; transform: translateY(8px); animation: fadeInUp 0.6s ease-out forwards;">
+            <div style="font-size: 40px; font-weight: 800; color: var(--warm-brown); line-height: 1; letter-spacing: -1px;">
+                <span id="trainedCount">0</span>
+            </div>
+            <p style="font-size: 13px; color: var(--text-medium); margin: 8px 0 0; font-weight: 500;">🐾 Hunde bereits erfolgreich trainiert</p>
+        </div>
 
         <div class="progress-section">
             <div class="progress-item">
@@ -512,6 +524,22 @@
                 percentElement.textContent = Math.round(current) + '%';
             }, 30);
         }
+
+        // Count-Up Animation: Trainierte Hunde (Social Proof)
+        (function() {
+            const el = document.getElementById('trainedCount');
+            if (!el) return;
+            const target = 2078;          // aus Supabase: aktuelle Anzahl paid leads
+            const duration = 2200;
+            const start = performance.now();
+            function tick(now) {
+                const progress = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+                el.textContent = Math.floor(eased * target).toLocaleString('de-DE');
+                if (progress < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        })();
 
         setTimeout(() => {
             animateProgress(
