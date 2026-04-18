@@ -3769,6 +3769,27 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 ctaBtn.innerHTML = 'Weiter zur Kasse...';
             }
 
+            // Meta Pixel: InitiateCheckout event (für Retargeting & Optimierung)
+            try {
+                const priceMap = {
+                    '1month': { d: 29.99, n: 49.99 },
+                    '3month': { d: 39.99, n: 79.99 },
+                    '6month': { d: 59.99, n: 119.99 }
+                };
+                const val = timerExpired ? priceMap[selectedPlan].n : priceMap[selectedPlan].d;
+                const eventId = 'ic_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+                localStorage.setItem('fb_event_id_ic', eventId);
+                if (typeof fbq !== 'undefined') {
+                    fbq('track', 'InitiateCheckout', {
+                        value: val,
+                        currency: 'EUR',
+                        content_name: selectedPlan,
+                        content_category: 'Trainingsplan',
+                        num_items: 1
+                    }, { eventID: eventId });
+                }
+            } catch(e) { console.error('IC track error:', e); }
+
             // Lead in Supabase speichern
             try {
                 const id = await saveToSupabase();
