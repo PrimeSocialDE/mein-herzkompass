@@ -523,6 +523,7 @@
                 <!-- Frage 1: Gewicht -->
                 <div class="quiz-step active" id="step1">
                     <div class="quiz-question">Wie viel wiegt <span class="qDogName">dein Hund</span> ungefähr?</div>
+                    <div id="breedWeightHint" style="display:none;font-size:12px;color:#8B7355;background:#FFFBF5;border-left:3px solid #C4A576;padding:8px 12px;border-radius:6px;margin-bottom:10px;line-height:1.45;"></div>
                     <div style="font-size:12px;color:#999;margin-bottom:10px;">Muss nicht exakt sein - eine grobe Schätzung reicht völlig aus.</div>
                     <div class="quiz-input-suffix">
                         <input type="number" class="quiz-input" id="weightInput" placeholder="z.B. 25" min="1" max="100">
@@ -864,6 +865,72 @@
         // Sofort mit vorhandenen Daten personalisieren
         updateDogNameUI();
 
+        // Breed → typical weight range (kg)
+        const breedWeights = {
+            'labrador': { min: 25, max: 36, avg: 30 },
+            'golden retriever': { min: 25, max: 34, avg: 30 },
+            'deutscher schäferhund': { min: 22, max: 40, avg: 32 },
+            'schäferhund': { min: 22, max: 40, avg: 32 },
+            'dackel': { min: 5, max: 10, avg: 8 },
+            'dachshund': { min: 5, max: 10, avg: 8 },
+            'chihuahua': { min: 1.5, max: 3, avg: 2.5 },
+            'französische bulldogge': { min: 8, max: 14, avg: 11 },
+            'bulldogge': { min: 18, max: 25, avg: 22 },
+            'mops': { min: 6, max: 8, avg: 7 },
+            'berner sennenhund': { min: 35, max: 50, avg: 42 },
+            'beagle': { min: 9, max: 14, avg: 11 },
+            'yorkshire terrier': { min: 2, max: 3, avg: 2.5 },
+            'husky': { min: 16, max: 27, avg: 22 },
+            'jack russell': { min: 6, max: 8, avg: 7 },
+            'border collie': { min: 14, max: 20, avg: 17 },
+            'australian shepherd': { min: 18, max: 30, avg: 24 },
+            'pudel': { min: 5, max: 25, avg: 15 },
+            'dobermann': { min: 32, max: 45, avg: 38 },
+            'boxer': { min: 25, max: 32, avg: 28 },
+            'rottweiler': { min: 35, max: 60, avg: 45 },
+            'cocker spaniel': { min: 12, max: 15, avg: 13 },
+            'cavalier king charles': { min: 5, max: 8, avg: 7 },
+            'shih tzu': { min: 4, max: 7, avg: 6 },
+            'havaneser': { min: 4, max: 6, avg: 5 },
+            'bichon': { min: 5, max: 8, avg: 6 },
+            'malteser': { min: 2, max: 4, avg: 3 },
+            'dalmatiner': { min: 16, max: 32, avg: 25 },
+            'spitz': { min: 3, max: 20, avg: 10 },
+            'hovawart': { min: 30, max: 50, avg: 40 },
+            'rhodesian ridgeback': { min: 30, max: 39, avg: 35 },
+            'kaukasischer owtscharka': { min: 45, max: 80, avg: 60 },
+            'chow chow': { min: 20, max: 32, avg: 26 },
+            'shiba inu': { min: 8, max: 11, avg: 10 },
+            'shar pei': { min: 18, max: 29, avg: 23 },
+            'magyar vizsla': { min: 20, max: 30, avg: 25 },
+            'english bulldog': { min: 22, max: 25, avg: 23 },
+            'großer münsterländer': { min: 28, max: 36, avg: 32 },
+            'weimaraner': { min: 25, max: 40, avg: 32 },
+            'mischling': { min: 10, max: 25, avg: 15 }
+        };
+
+        function getBreedWeight(breed) {
+            if (!breed) return null;
+            const key = breed.toLowerCase().trim();
+            if (breedWeights[key]) return { breed, ...breedWeights[key] };
+            for (const k in breedWeights) {
+                if (key.includes(k) || k.includes(key)) return { breed, ...breedWeights[k] };
+            }
+            return null;
+        }
+
+        function applyBreedWeight() {
+            const wi = document.getElementById('weightInput');
+            const hint = document.getElementById('breedWeightHint');
+            if (!wi || !hint) return;
+            const info = getBreedWeight(dogBreed);
+            if (!info) return;
+            // Nur pre-fillen wenn User noch nichts eingegeben hat
+            if (!wi.value) wi.value = info.avg;
+            hint.innerHTML = '💡 <strong>' + info.breed + '</strong> wiegt typisch <strong>' + info.min + '-' + info.max + ' kg</strong>. Du kannst das anpassen falls dein Hund anders ist.';
+            hint.style.display = 'block';
+        }
+
         // Lead-Daten aus Supabase laden
         function applyLeadData(lead) {
             if (!lead) return;
@@ -876,7 +943,11 @@
                 if (lead.answers.dog_breed && !dogBreed) dogBreed = lead.answers.dog_breed;
                 if (lead.answers.dog_age && !dogAge) dogAge = lead.answers.dog_age;
             }
+            applyBreedWeight();
         }
+
+        // Auch sofort bei URL-param breeds anwenden
+        if (dogBreed) applyBreedWeight();
 
         async function loadLeadById(id) {
             try {
