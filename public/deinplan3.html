@@ -1955,6 +1955,18 @@
                 font-size: 10px;
             }
         }
+
+        /* Sticky Mobile CTA — nur auf mobile, mit Slide-Up-Animation */
+        @keyframes stickyCtaSlideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @media (min-width: 769px) {
+            #stickyMobileCta { display: none !important; }
+        }
+        body.has-sticky-cta {
+            padding-bottom: 80px;
+        }
     </style>
 <!-- Meta Pixel Code -->
 <script>
@@ -1990,6 +2002,16 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 </head>
 
 <body>
+    <!-- Sticky Mobile CTA (erscheint ab 60% Scroll, nur mobile) -->
+    <div id="stickyMobileCta" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;background:white;border-top:1px solid #E8E0D2;box-shadow:0 -4px 20px rgba(0,0,0,0.1);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0)) 14px;animation:stickyCtaSlideUp 0.35s ease-out;">
+        <button id="stickyMobileCtaBtn" onclick="getMyPlan()" style="width:100%;background:linear-gradient(135deg,#C4A576,#8B7355);color:#fff;border:none;border-radius:12px;padding:14px 18px;font-size:16px;font-weight:800;letter-spacing:0.3px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(196,165,118,0.4);">
+            <span id="stickyMobileCtaMain">Plan für deinen Hund sichern →</span>
+        </button>
+        <div style="text-align:center;font-size:11px;color:#666;margin-top:6px;">
+            <span id="stickyMobileCtaPrice">€39,99</span> · 30 Tage Geld-zurück · Kein Abo
+        </div>
+    </div>
+
     <header class="header">
         <div class="logo">
             <img src="logo.png" alt="Pfoten-Plan Logo" class="logo-image">
@@ -3153,7 +3175,57 @@ if (popularBadge) {
 
             // Übungsanzahl in Benefits-Liste aktualisieren
             updateExerciseCount(selectedPlan);
+
+            // Sticky Mobile CTA Preis aktualisieren
+            updateStickyCta();
         }
+
+        function updateStickyCta() {
+            const stickyMain = document.getElementById('stickyMobileCtaMain');
+            const stickyPrice = document.getElementById('stickyMobileCtaPrice');
+            if (!stickyMain || !stickyPrice) return;
+            const name = (dogName && dogName !== 'deinen Hund') ? dogName : 'deinen Hund';
+            stickyMain.textContent = 'Plan für ' + name + ' sichern →';
+            // Preis aus aktuell selektiertem Plan + Timer-State
+            const priceMap = {
+                '1month': { d: '€29,99', n: '€49,99' },
+                '3month': { d: '€39,99', n: '€79,99' },
+                '6month': { d: '€59,99', n: '€119,99' }
+            };
+            const p = priceMap[selectedPlan] || priceMap['6month'];
+            stickyPrice.textContent = (typeof timerExpired !== 'undefined' && timerExpired) ? p.n : p.d;
+        }
+
+        // Sticky CTA: Show/Hide basierend auf Scroll-Position
+        (function() {
+            const isMobile = window.innerWidth <= 768;
+            if (!isMobile) return;
+            const sticky = document.getElementById('stickyMobileCta');
+            const pricingSection = document.querySelector('.pricing-section');
+            if (!sticky || !pricingSection) return;
+
+            let shown = false;
+            function checkScroll() {
+                const pricingBottom = pricingSection.getBoundingClientRect().bottom;
+                const viewportHeight = window.innerHeight;
+                // Zeige sticky CTA wenn User an pricing-section vorbeigescrollt ist
+                // (pricing-Section ist komplett oben verschwunden)
+                const shouldShow = pricingBottom < viewportHeight * 0.3;
+                if (shouldShow && !shown) {
+                    sticky.style.display = 'block';
+                    document.body.classList.add('has-sticky-cta');
+                    shown = true;
+                    updateStickyCta();
+                } else if (!shouldShow && shown) {
+                    sticky.style.display = 'none';
+                    document.body.classList.remove('has-sticky-cta');
+                    shown = false;
+                }
+            }
+            window.addEventListener('scroll', checkScroll, { passive: true });
+            window.addEventListener('resize', checkScroll);
+            checkScroll();
+        })();
 
         function updateExerciseCount(plan) {
             const exerciseCount = plan === '1month' ? '10+' : '20+';
