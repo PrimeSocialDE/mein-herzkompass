@@ -880,7 +880,7 @@
 
         async function loadLeadByEmail(email) {
             try {
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?email=eq.${encodeURIComponent(email)}&status=in.(paid,plan_sent)&order=paid_at.desc&limit=1&select=id,dog_name,answers`, {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?email=ilike.${encodeURIComponent(email)}&status=in.(paid,plan_sent)&order=paid_at.desc&limit=1&select=id,dog_name,answers`, {
                     headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
                 });
                 const data = await res.json();

@@ -542,7 +542,7 @@
                     submit.disabled = true; submit.textContent = 'Lade...';
                     errEl.style.display = 'none';
                     try {
-                        const res = await fetch(`${SB_URL}/rest/v1/wauwerk_leads?email=eq.${encodeURIComponent(email)}&status=in.(paid,plan_sent)&order=paid_at.desc&limit=1&select=dog_name`, { headers: SB_HEADERS });
+                        const res = await fetch(`${SB_URL}/rest/v1/wauwerk_leads?email=ilike.${encodeURIComponent(email)}&status=in.(paid,plan_sent)&order=paid_at.desc&limit=1&select=dog_name`, { headers: SB_HEADERS });
                         const data = await res.json();
                         if (data[0] && data[0].dog_name) {
                             applyLead(data[0]);
