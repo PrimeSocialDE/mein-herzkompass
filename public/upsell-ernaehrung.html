@@ -809,7 +809,7 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const userEmail = urlParams.get('email') || '';
-        const leadId = urlParams.get('lead_id') || '';
+        let leadId = urlParams.get('lead_id') || '';
         let dogName = urlParams.get('dogName') || urlParams.get('dog_name') || localStorage.getItem('dogName') || 'deinen Hund';
 
         let stripe = null;
