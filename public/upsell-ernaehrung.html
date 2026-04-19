@@ -437,6 +437,21 @@
 </head>
 <body>
 
+    <!-- Email-Gate für QR-Traffic (nur sichtbar wenn utm_source=pdf_plan ohne lead_id) -->
+    <div id="emailGate" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:white;border-radius:16px;max-width:380px;width:100%;padding:28px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+            <div style="font-size:40px;margin-bottom:10px;">🐾</div>
+            <h2 style="font-size:20px;font-weight:800;color:#2C2C2E;margin:0 0 8px;">Willkommen zurück!</h2>
+            <p style="font-size:14px;color:#666;line-height:1.5;margin:0 0 18px;">Gib deine E-Mail ein, damit wir deinen personalisierten Ernährungsplan vorbereiten.</p>
+            <form id="emailGateForm" style="display:flex;flex-direction:column;gap:10px;">
+                <input type="email" id="emailGateInput" required placeholder="deine@email.de" style="width:100%;padding:14px 16px;border:2px solid #E8E8E8;border-radius:10px;font-size:15px;font-family:inherit;box-sizing:border-box;" autofocus>
+                <div id="emailGateError" style="display:none;font-size:12px;color:#DC2626;text-align:left;"></div>
+                <button type="submit" id="emailGateSubmit" style="background:#C4A576;color:white;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">Plan laden →</button>
+            </form>
+            <p style="font-size:11px;color:#999;margin:14px 0 0;line-height:1.5;">Wir nutzen deine Daten aus dem Trainingsplan-Quiz. Kein Newsletter, keine Weitergabe.</p>
+        </div>
+    </div>
+
     <!-- Thank You -->
     <div class="container">
         <div class="thank-you" id="thankYou">
@@ -821,8 +836,10 @@
         // Wenn alle Quiz-Daten schon aus URL da sind, Quiz überspringen
         const quizSkipped = dogWeight && dogActivity && dogAllergy;
 
-        // Nur über Email-Kampagne werden Daten aus Supabase geladen
+        // Trusted sources: Email-Kampagne, PDF-QR, oder Newsletter-Link
         const cameFromEmail = utmSource === 'brevo' || utmMedium === 'email' || urlParams.get('src') === 'email';
+        const cameFromPdf = utmSource === 'pdf_plan' || utmSource === 'pdf';
+        const isReturningCustomer = cameFromEmail || cameFromPdf;
 
         function updateDogNameUI() {
             if (dogName && dogName !== 'deinen Hund') {
@@ -837,23 +854,67 @@
         // Sofort mit vorhandenen Daten personalisieren
         updateDogNameUI();
 
-        // Lead-Daten aus Supabase laden NUR wenn via Email-Kampagne
-        if (cameFromEmail && leadId) {
-            fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}&select=dog_name,answers`, {
-                headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
-            }).then(r => r.json()).then(data => {
-                if (data[0]) {
-                    const lead = data[0];
-                    if (lead.dog_name) {
-                        dogName = lead.dog_name;
-                        updateDogNameUI();
-                    }
-                    if (lead.answers) {
-                        if (lead.answers.dog_breed && !dogBreed) dogBreed = lead.answers.dog_breed;
-                        if (lead.answers.dog_age && !dogAge) dogAge = lead.answers.dog_age;
-                    }
+        // Lead-Daten aus Supabase laden
+        function applyLeadData(lead) {
+            if (!lead) return;
+            if (lead.id) leadId = lead.id;
+            if (lead.dog_name) {
+                dogName = lead.dog_name;
+                updateDogNameUI();
+            }
+            if (lead.answers) {
+                if (lead.answers.dog_breed && !dogBreed) dogBreed = lead.answers.dog_breed;
+                if (lead.answers.dog_age && !dogAge) dogAge = lead.answers.dog_age;
+            }
+        }
+
+        async function loadLeadById(id) {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${id}&select=id,dog_name,answers`, {
+                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+                });
+                const data = await res.json();
+                if (data[0]) applyLeadData(data[0]);
+            } catch (e) {}
+        }
+
+        async function loadLeadByEmail(email) {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?email=eq.${encodeURIComponent(email)}&status=in.(paid,plan_sent)&order=paid_at.desc&limit=1&select=id,dog_name,answers`, {
+                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+                });
+                const data = await res.json();
+                if (data[0]) { applyLeadData(data[0]); return true; }
+                return false;
+            } catch (e) { return false; }
+        }
+
+        // 1) Lead_id in URL → direkt laden (egal ob Email oder QR)
+        if (isReturningCustomer && leadId) {
+            loadLeadById(leadId);
+        }
+        // 2) QR-Traffic OHNE lead_id → Email-Gate einblenden
+        else if (cameFromPdf && !leadId) {
+            const gate = document.getElementById('emailGate');
+            gate.style.display = 'flex';
+            document.getElementById('emailGateForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const input = document.getElementById('emailGateInput');
+                const submit = document.getElementById('emailGateSubmit');
+                const errEl = document.getElementById('emailGateError');
+                const email = (input.value || '').trim().toLowerCase();
+                if (!email.includes('@')) return;
+                submit.disabled = true; submit.textContent = 'Lade...';
+                errEl.style.display = 'none';
+                const found = await loadLeadByEmail(email);
+                if (found) {
+                    gate.style.display = 'none';
+                } else {
+                    errEl.textContent = 'Keine Daten gefunden. Nutze die E-Mail mit der du den Plan gekauft hast.';
+                    errEl.style.display = 'block';
+                    submit.disabled = false; submit.textContent = 'Plan laden →';
                 }
-            }).catch(() => {});
+            });
         }
 
         // Quiz überspringen wenn alle Daten aus URL kommen (Email-Kampagne mit Pre-Fill)
