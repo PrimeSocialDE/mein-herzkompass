@@ -292,6 +292,16 @@
 
                 <button class="cta-btn" onclick="buyProduct()">Reise-Guide sichern</button>
                 <div class="guarantee">30 Tage Geld-zurück · Kein Abo</div>
+                <div class="payment-trust" style="display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;opacity:0.7;">
+                    <img src="sepa-logo.png" alt="SEPA" style="height:16px;">
+                    <img src="visa-logo.png" alt="Visa" style="height:16px;">
+                    <img src="paypal-logo.png" alt="PayPal" style="height:16px;">
+                    <img src="klarna-logo.png" alt="Klarna" style="height:16px;">
+                    <img src="mastercard-logo.png" alt="Mastercard" style="height:16px;">
+                    <img src="applepay.png" alt="Apple Pay" style="height:16px;">
+                    <img src="googlepay.png" alt="Google Pay" style="height:16px;">
+                </div>
+                <div style="text-align:center;margin-top:10px;font-size:11px;color:#888;">🔒 Sichere SSL-Zahlung über Stripe</div>
             </div>
 
             <!-- Warum jetzt -->
@@ -336,9 +346,9 @@
         const PRODUCT_TYPE = 'reise';
 
         const urlParams = new URLSearchParams(window.location.search);
-        const userEmail = urlParams.get('email') || '';
-        const leadId = urlParams.get('lead_id') || '';
-        const dogName = urlParams.get('dogName') || urlParams.get('dog_name') || localStorage.getItem('dogName') || 'deinen Hund';
+        let userEmail = urlParams.get('email') || '';
+        let leadId = urlParams.get('lead_id') || '';
+        let dogName = urlParams.get('dogName') || urlParams.get('dog_name') || localStorage.getItem('dogName') || 'deinen Hund';
 
         // Quiz-Daten
         let reiseArt = urlParams.get('art') || '';
@@ -462,10 +472,12 @@
                     submit.disabled = true; submit.textContent = 'Lade...';
                     errEl.style.display = 'none';
                     try {
-                        const res = await fetch(`${SB_URL}/rest/v1/wauwerk_leads?email=ilike.${encodeURIComponent(email)}&order=created_at.desc&limit=1&select=dog_name`, { headers: SB_HEADERS });
+                        const res = await fetch(`${SB_URL}/rest/v1/wauwerk_leads?email=ilike.${encodeURIComponent(email)}&order=created_at.desc&limit=1&select=id,dog_name`, { headers: SB_HEADERS });
                         const data = await res.json();
-                        if (data[0] && data[0].dog_name) {
-                            updateDogNameUI(data[0].dog_name);
+                        if (data[0]) {
+                            userEmail = email;
+                            if (data[0].id) leadId = data[0].id;
+                            if (data[0].dog_name) { dogName = data[0].dog_name; updateDogNameUI(data[0].dog_name); }
                             gate.style.display = 'none';
                         } else {
                             errEl.textContent = 'Keine Daten gefunden. Nutze die E-Mail mit der du den Plan gekauft hast.';

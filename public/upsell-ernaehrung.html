@@ -713,6 +713,16 @@
 
                 <button class="cta-btn" onclick="buyProduct()" id="personalCta">Plan für deinen Hund freischalten</button>
                 <div class="guarantee">30 Tage Geld-zurück · Einmalzahlung · Sofort per Email</div>
+                <div class="payment-trust" style="display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;opacity:0.7;">
+                    <img src="sepa-logo.png" alt="SEPA" style="height:16px;">
+                    <img src="visa-logo.png" alt="Visa" style="height:16px;">
+                    <img src="paypal-logo.png" alt="PayPal" style="height:16px;">
+                    <img src="klarna-logo.png" alt="Klarna" style="height:16px;">
+                    <img src="mastercard-logo.png" alt="Mastercard" style="height:16px;">
+                    <img src="applepay.png" alt="Apple Pay" style="height:16px;">
+                    <img src="googlepay.png" alt="Google Pay" style="height:16px;">
+                </div>
+                <div style="text-align:center;margin-top:10px;font-size:11px;color:#888;">🔒 Sichere SSL-Zahlung über Stripe</div>
             </div>
             </div><!-- /product-section -->
         </div>
@@ -808,7 +818,7 @@
         const PRODUCT_TYPE = 'ernaehrung';
 
         const urlParams = new URLSearchParams(window.location.search);
-        const userEmail = urlParams.get('email') || '';
+        let userEmail = urlParams.get('email') || '';
         let leadId = urlParams.get('lead_id') || '';
         let dogName = urlParams.get('dogName') || urlParams.get('dog_name') || localStorage.getItem('dogName') || 'deinen Hund';
 
@@ -908,6 +918,7 @@
                 errEl.style.display = 'none';
                 const found = await loadLeadByEmail(email);
                 if (found) {
+                    userEmail = email;
                     gate.style.display = 'none';
                 } else {
                     errEl.textContent = 'Keine Daten gefunden. Nutze die E-Mail mit der du den Plan gekauft hast.';
