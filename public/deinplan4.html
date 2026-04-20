@@ -2414,7 +2414,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ✓ <strong style="color: #166534;">Einmalzahlung</strong> – kein Abo, <strong style="color: #166534;">lebenslanger Zugang</strong> • <strong style="color: #166534;">24/7 Support</strong> • <a href="agb.html">AGB</a>
         </div>
 
-        <button class="cta-button glow" onclick="getMyPlan()">
+        <button class="cta-button glow" onclick="showCheckoutSummary()">
             Trainingsplan freischalten
             <span class="cta-subtext">Sofort per E-Mail · Kein Abo · 30 Tage Garantie</span>
         </button>
@@ -2644,7 +2644,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
         </div>
 
-        <button class="cta-button glow" onclick="getMyPlan()">
+        <button class="cta-button glow" onclick="showCheckoutSummary()">
             Trainingsplan freischalten
             <span class="cta-subtext">Sofort per E-Mail · Kein Abo · 30 Tage Garantie</span>
         </button>
@@ -4392,6 +4392,76 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         }
 
         // Stripe Checkout Session (mit automatischer Steuer per IP)
+        // ============ SUMMARY MODAL (Pre-Stripe Step) ============
+        function showCheckoutSummary() {
+            // Plan-Details für Modal befüllen
+            const priceMap = {
+                '1month': { discount: 29.99, normal: 49.99, name: 'INTENSIV-PLAN' },
+                '3month': { discount: 39.99, normal: 79.99, name: 'EMPFOHLEN' },
+                '6month': { discount: 59.99, normal: 119.99, name: 'ENTSPANNT-PLAN' }
+            };
+            const p = priceMap[selectedPlan] || priceMap['3month'];
+            const price = (typeof timerExpired !== 'undefined' && timerExpired) ? p.normal : p.discount;
+            const dogNameDisplay = (dogName && dogName !== 'deinen Hund') ? dogName : 'deinen Hund';
+
+            const nameEl = document.getElementById('summaryPlanName');
+            const dogEl = document.getElementById('summaryPlanDog');
+            const priceEl = document.getElementById('summaryPlanPrice');
+            if (nameEl) nameEl.textContent = p.name + ' · Trainingsplan';
+            if (dogEl) dogEl.textContent = 'Für ' + dogNameDisplay;
+            if (priceEl) priceEl.textContent = '€' + price.toFixed(2).replace('.', ',');
+
+            // Checkbox-State reset + Summary refresh
+            const cb = document.getElementById('orderBump');
+            if (cb) cb.checked = false;
+            updateSummaryTotal();
+
+            // Modal anzeigen
+            const modal = document.getElementById('summaryModal');
+            if (modal) modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSummaryModal() {
+            const modal = document.getElementById('summaryModal');
+            if (modal) modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        const ORDER_BUMP_PRICE_EUR = 9.99;
+        function updateSummaryTotal() {
+            const priceMap = {
+                '1month': { discount: 29.99, normal: 49.99 },
+                '3month': { discount: 39.99, normal: 79.99 },
+                '6month': { discount: 59.99, normal: 119.99 }
+            };
+            const p = priceMap[selectedPlan] || priceMap['3month'];
+            const base = (typeof timerExpired !== 'undefined' && timerExpired) ? p.normal : p.discount;
+            const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
+            const effectiveBase = exitDiscount ? Math.round(base * 85) / 100 : base;
+            const bumpChecked = document.getElementById('orderBump')?.checked || false;
+            const total = effectiveBase + (bumpChecked ? ORDER_BUMP_PRICE_EUR : 0);
+            const totalEl = document.getElementById('summaryTotal');
+            if (totalEl) totalEl.textContent = '€' + total.toFixed(2).replace('.', ',');
+        }
+
+        function confirmSummaryAndCheckout() {
+            const btn = document.getElementById('summaryPayBtn');
+            if (btn) { btn.disabled = true; btn.textContent = 'Lädt...'; }
+            closeSummaryModal();
+            getMyPlan();
+        }
+
+        // Overlay-Klick schließt Modal
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('summaryModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) closeSummaryModal();
+                });
+            }
+        });
+
         async function getMyPlan() {
             const ctaBtn = document.querySelector('.cta-button');
             if (ctaBtn) {
@@ -4428,6 +4498,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
             try {
                 const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
+                const bumpChecked = document.getElementById('orderBump')?.checked || false;
                 const response = await fetch('/api/wauwerk-checkout-session', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -4438,6 +4509,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         leadId: currentLeadId,
                         email: localStorage.getItem('userEmail') || '',
                         exitDiscount: exitDiscount,
+                        orderBump: bumpChecked,
+                        bumpType: 'tagebuch',
                         utm_source: localStorage.getItem('utm_source') || '',
                         utm_medium: localStorage.getItem('utm_medium') || '',
                         utm_campaign: localStorage.getItem('utm_campaign') || '',
@@ -4615,7 +4688,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 <span class="benefit-tag">✓ Support inklusive</span>
             </div>
 
-            <button class="exit-popup-cta" onclick="claimExitBonus(); closeExitPopup(); document.querySelector('.cta-button').click();">
+            <button class="exit-popup-cta" onclick="claimExitBonus(); closeExitPopup(); getMyPlan();">
                 Mit 15% Rabatt sichern →
             </button>
             <button class="exit-popup-skip" onclick="closeExitPopup()">
@@ -4623,6 +4696,70 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             </button>
         </div>
     </div>
+
+    <!-- Summary-Modal: vor Stripe-Redirect, zeigt Plan + Order-Bump -->
+    <div id="summaryModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9995;align-items:flex-end;justify-content:center;padding:0;">
+        <div style="background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;padding:22px 22px 28px;box-shadow:0 -8px 30px rgba(0,0,0,0.15);animation:summaryModalSlideUp 0.3s ease-out;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+                <div style="font-size:16px;font-weight:800;color:#1a1a1a;">Deine Bestellung</div>
+                <button onclick="closeSummaryModal()" aria-label="Schließen" style="width:32px;height:32px;border:none;background:#F5F5F5;border-radius:50%;font-size:18px;color:#666;cursor:pointer;">×</button>
+            </div>
+
+            <!-- Produkt-Summary -->
+            <div style="background:#FAF8F3;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+                    <div style="flex:1;">
+                        <div style="font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:2px;" id="summaryPlanName">3-Monats-Plan</div>
+                        <div style="font-size:12px;color:#666;" id="summaryPlanDog">Für deinen Hund</div>
+                    </div>
+                    <div style="font-size:17px;font-weight:800;color:#1a1a1a;" id="summaryPlanPrice">€39,99</div>
+                </div>
+            </div>
+
+            <!-- Order-Bump: Trainings-Tagebuch (dezent) -->
+            <label for="orderBump" style="display:flex;gap:12px;background:#FFFBF5;border:1px solid #E6D5B3;border-radius:10px;padding:14px 16px;margin-bottom:14px;cursor:pointer;align-items:flex-start;">
+                <input type="checkbox" id="orderBump" onchange="updateSummaryTotal()" style="margin-top:3px;width:20px;height:20px;cursor:pointer;accent-color:#C4A576;flex-shrink:0;">
+                <div style="flex:1;">
+                    <div style="display:inline-block;background:#E67946;color:#fff;padding:2px 8px;border-radius:12px;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Empfehlung</div>
+                    <div style="font-size:14px;font-weight:800;color:#1a1a1a;margin-bottom:3px;line-height:1.3;">
+                        Trainings-Tagebuch dazu
+                    </div>
+                    <div style="font-size:12px;color:#666;line-height:1.5;margin-bottom:6px;">
+                        90-Tage Fortschritts-Tagebuch zum Ausdrucken. Wöchentliche Reflexions-Fragen. So siehst du die Erfolge schwarz auf weiß.
+                    </div>
+                    <div style="font-size:12px;">
+                        <span style="color:#999;text-decoration:line-through;">€14,99</span>
+                        <span style="color:#E67946;font-weight:800;margin-left:6px;">nur +€9,99</span>
+                    </div>
+                </div>
+            </label>
+
+            <!-- Gesamt-Summary -->
+            <div style="border-top:1px solid #E8E0D2;padding-top:12px;margin-bottom:16px;">
+                <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:#1a1a1a;">
+                    <span>Gesamt</span>
+                    <span id="summaryTotal">€39,99</span>
+                </div>
+                <div style="font-size:11px;color:#888;margin-top:4px;">Einmalzahlung · 30 Tage Geld-zurück-Garantie</div>
+            </div>
+
+            <button id="summaryPayBtn" onclick="confirmSummaryAndCheckout()" style="width:100%;background:linear-gradient(135deg,#C4A576,#8B7355);color:#fff;border:none;border-radius:12px;padding:16px 18px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:0.3px;box-shadow:0 4px 14px rgba(196,165,118,0.4);">
+                Weiter zur Zahlung →
+            </button>
+            <div style="text-align:center;margin-top:10px;font-size:11px;color:#888;">🔒 Sichere Zahlung via Stripe · SEPA · PayPal · Klarna · Karte</div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes summaryModalSlideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        @media (min-width: 600px) {
+            #summaryModal { align-items: center !important; padding: 20px !important; }
+            #summaryModal > div { border-radius: 16px !important; }
+        }
+    </style>
 
 </body>
 </html>

@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
       leadId,
       email,
       orderBump,
+      bumpType,
       exitDiscount,
       utm_source,
       utm_medium,
@@ -42,11 +43,26 @@ export async function POST(req: NextRequest) {
       ttclid
     } = body;
 
-    // Order-Bump Konfiguration: Notfall-Karten €9,99 (aktuell nicht im Frontend sichtbar)
+    // Order-Bump Konfiguration (dynamisch je nach bumpType)
     const ORDER_BUMP_PRICE_CENTS = 999; // €9,99
     const bumpApplied = orderBump === true || orderBump === 'true';
-    const bumpModuleName = 'Notfall-Karten';
-    const bumpDescription = '10 Notfall-Karten zum Ausdrucken — Sofort-Hilfe bei Aggression, Panik, Verletzung';
+    const effectiveBumpType = (bumpType || 'tagebuch').toLowerCase();
+    const BUMP_DETAILS: Record<string, { name: string; desc: string; id: string }> = {
+      tagebuch: {
+        id: 'tagebuch',
+        name: 'Trainings-Tagebuch',
+        desc: '90-Tage Fortschritts-Tagebuch zum Ausdrucken · Wöchentliche Reflexions-Fragen'
+      },
+      notfallkarten: {
+        id: 'notfallkarten',
+        name: 'Notfall-Karten',
+        desc: '10 Notfall-Karten zum Ausdrucken — Sofort-Hilfe bei Aggression, Panik, Verletzung'
+      }
+    };
+    const bumpDetails = BUMP_DETAILS[effectiveBumpType] || BUMP_DETAILS.tagebuch;
+    const bumpModuleName = bumpDetails.name;
+    const bumpDescription = bumpDetails.desc;
+    const bumpMetadataId = bumpDetails.id;
 
     // Exit-Popup Rabatt (15% auf Plan-Preis)
     const exitDiscountApplied = exitDiscount === true || exitDiscount === 'true';
@@ -119,7 +135,7 @@ export async function POST(req: NextRequest) {
         dog_name: dogName || '',
         timer_expired: timerExpired ? 'true' : 'false',
         email: email || '',
-        order_bump: bumpApplied ? 'notfallkarten' : '',
+        order_bump: bumpApplied ? bumpMetadataId : '',
         order_bump_amount_cents: bumpApplied ? String(ORDER_BUMP_PRICE_CENTS) : '0',
         exit_discount_15: exitDiscountApplied ? 'true' : 'false',
         base_amount_cents: String(baseAmount),
@@ -142,7 +158,7 @@ export async function POST(req: NextRequest) {
           plan: plan,
           dog_name: dogName || '',
           email: email || '',
-          order_bump: bumpApplied ? 'notfallkarten' : '',
+          order_bump: bumpApplied ? bumpMetadataId : '',
           order_bump_amount_cents: bumpApplied ? String(ORDER_BUMP_PRICE_CENTS) : '0',
         },
       },
