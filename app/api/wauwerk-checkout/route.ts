@@ -37,7 +37,8 @@ export async function POST(req: NextRequest) {
       fbp,
       fbc,
       fb_event_id,
-      ttclid
+      ttclid,
+      orderBump      // NEU: Order-Bump Flag (Antizieh-Modul +€12)
     } = body;
 
     // DataFast Cookies aus Request lesen
@@ -46,15 +47,27 @@ export async function POST(req: NextRequest) {
 
     // Preis ermitteln
     const priceData = PRICES[plan as keyof typeof PRICES] || PRICES['1month'];
-    const amount = timerExpired ? priceData.normal : priceData.discount;
+    let amount = timerExpired ? priceData.normal : priceData.discount;
+
+    // Order-Bump: Antizieh-Modul +€12 (1200 cents)
+    const ORDER_BUMP_PRICE_CENTS = 1200;
+    const ORDER_BUMP_ID = 'antizieh_modul';
+    let orderBumpApplied = false;
+    if (orderBump === true || orderBump === 'true') {
+      amount += ORDER_BUMP_PRICE_CENTS;
+      orderBumpApplied = true;
+    }
 
     // Plan-Namen
     const planNames: Record<string, string> = {
       '1month': '1-Monats-Plan',
-      '3month': '3-Monats-Plan', 
+      '3month': '3-Monats-Plan',
       '6month': '6-Monats-Plan'
     };
     const planName = planNames[plan] || '1-Monats-Plan';
+    const description = orderBumpApplied
+      ? `Pfoten-Plan ${planName} + Antizieh-Modul für ${dogName || 'Hund'}`
+      : `Pfoten-Plan ${planName} für ${dogName || 'Hund'}`;
 
     // PaymentIntent erstellen
     const paymentIntent = await stripe.paymentIntents.create({
@@ -79,9 +92,11 @@ export async function POST(req: NextRequest) {
         fb_event_id: fb_event_id || '',
         ttclid: ttclid || '',
         datafast_visitor_id: datafastVisitorId,
-        datafast_session_id: datafastSessionId
+        datafast_session_id: datafastSessionId,
+        order_bump: orderBumpApplied ? ORDER_BUMP_ID : '',
+        order_bump_amount_cents: orderBumpApplied ? String(ORDER_BUMP_PRICE_CENTS) : '0'
       },
-      description: `Pfoten-Plan ${planName} für ${dogName || 'Hund'}`,
+      description,
     });
 
     // Lead in Supabase speichern/updaten falls noch nicht vorhanden

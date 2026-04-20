@@ -8,6 +8,111 @@ export const dynamic = "force-dynamic";
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+// Helper: Order-Bump ausliefern wenn metadata.order_bump gesetzt ist
+// Wird aus handlePaymentSuccess aufgerufen (PaymentIntent-Event)
+async function deliverOrderBumpIfPurchased(paymentIntent: any) {
+  const bumpId = paymentIntent?.metadata?.order_bump;
+  if (!bumpId) return;
+
+  const email = paymentIntent?.metadata?.email;
+  const dogName = paymentIntent?.metadata?.dog_name || "deinen Hund";
+  const leadId = paymentIntent?.metadata?.lead_id;
+
+  if (!email) {
+    console.error("Order-Bump gekauft aber keine Email in metadata:", paymentIntent.id);
+    return;
+  }
+
+  console.log(`📦 Order-Bump Lieferung gestartet: ${bumpId} → ${email} (${dogName})`);
+
+  // Idempotenz: in wauwerk_leads.answers vermerken dass schon ausgeliefert
+  if (leadId) {
+    try {
+      const { data: lead } = await supabase
+        .from("wauwerk_leads")
+        .select("answers")
+        .eq("id", leadId)
+        .single();
+      const answers = (lead?.answers || {}) as Record<string, any>;
+      if (answers.order_bump_delivered_at) {
+        console.log(`Bump bereits geliefert an ${email} — skip`);
+        return;
+      }
+    } catch (e) {
+      // Falls check fehlschlägt, trotzdem versuchen zu liefern
+    }
+  }
+
+  // Mapping Bump-ID → Delivery-Action
+  // Für 'antizieh_modul' schicken wir erstmal ein Email-Notification an den User + CC intern
+  // (das tatsächliche PDF/Content kann später ergänzt werden)
+  try {
+    const BREVO_API_KEY = process.env.BREVO_API_KEY;
+    if (!BREVO_API_KEY) {
+      console.error("BREVO_API_KEY fehlt — Bump-Email wird nicht gesendet");
+      return;
+    }
+
+    let subject = "";
+    let htmlContent = "";
+    if (bumpId === "antizieh_modul") {
+      subject = `Dein Antizieh-Modul für ${dogName} ist bald fertig!`;
+      htmlContent = `
+        <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:500px;margin:0 auto;padding:20px;color:#1a1a1a;">
+          <h1 style="font-size:22px;margin:0 0 12px;">Danke für deinen Kauf! 🐾</h1>
+          <p style="font-size:15px;color:#555;line-height:1.6;">Du hast das <strong>Antizieh-Modul für ${dogName}</strong> zusätzlich dazu gebucht — perfekte Wahl.</p>
+          <div style="background:#FFFBF5;border-left:4px solid #C4A576;padding:14px 18px;border-radius:8px;margin:18px 0;">
+            <p style="font-size:14px;color:#555;margin:0;">Das Modul kommt in einer separaten E-Mail direkt nach deinem Trainingsplan. Schau in den nächsten 10 Minuten in deinem Postfach nach.</p>
+          </div>
+          <p style="font-size:13px;color:#888;">Pfoten-Plan · support@pfoten-plan.de</p>
+        </div>`;
+    } else {
+      console.log(`Unbekannte Bump-ID: ${bumpId} — keine Delivery konfiguriert`);
+      return;
+    }
+
+    const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sender: { name: "Pfoten-Plan", email: "support@pfoten-plan.de" },
+        to: [{ email }],
+        cc: [{ email: "kontakt@primesocial.de" }],
+        subject,
+        htmlContent
+      })
+    });
+
+    if (brevoRes.ok) {
+      console.log(`✓ Order-Bump confirmation email gesendet an ${email}`);
+      // Idempotenz-Flag setzen
+      if (leadId) {
+        const { data: lead } = await supabase
+          .from("wauwerk_leads")
+          .select("answers")
+          .eq("id", leadId)
+          .single();
+        const answers = (lead?.answers || {}) as Record<string, any>;
+        await supabase
+          .from("wauwerk_leads")
+          .update({
+            answers: {
+              ...answers,
+              order_bump_delivered: bumpId,
+              order_bump_delivered_at: new Date().toISOString(),
+              order_bump_amount_cents: paymentIntent.metadata?.order_bump_amount_cents || "0"
+            }
+          })
+          .eq("id", leadId);
+      }
+    } else {
+      console.error(`Brevo-Fehler bei Bump-Email: ${brevoRes.status}`, await brevoRes.text());
+    }
+  } catch (e) {
+    console.error("Bump-Delivery Error:", e);
+  }
+}
+
 // Helper: Notfallkarten gratis senden wenn User über Exit-Popup-Bonus gekauft hat
 // Checkt lead.answers.exit_bonus_notfallkarten Flag, ruft Notfallkarten-API
 async function sendNotfallkartenIfBonus(table: string, leadId: string) {
@@ -420,6 +525,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
       console.log(`${table} ${referenceId} via PaymentIntent aktualisiert`);
       await enrollInUpsellCampaign(table, referenceId, updateData.email);
       await sendNotfallkartenIfBonus(table, referenceId);
+      await deliverOrderBumpIfPurchased(paymentIntent);
       await notifyMake(referenceId, {
         source: "payment_intent",
         table: table,

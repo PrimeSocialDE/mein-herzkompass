@@ -4042,6 +4042,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         let paymentElement = null;
         let currentLeadId = null;
         let clientSecret = null;
+        let currentPaymentIntentId = null;  // Für Order-Bump Update-Call
         let userEmail = null;
 
         // Preise
@@ -4238,7 +4239,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 }
                 
                 clientSecret = data.clientSecret;
-                
+                currentPaymentIntentId = data.paymentIntentId;  // Für Bump-Update merken
+
                 // Event ID (payment_intent) und fb_event_id in answers updaten
                 if (currentLeadId && data.paymentIntentId) {
                     const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
@@ -4335,24 +4337,46 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             const payBtn = document.getElementById('checkoutPayBtn');
             payBtn.disabled = true;
             payBtn.innerHTML = '<span class="spinner"></span> Wird verarbeitet...';
-            
+
             hideCheckoutError();
-            
+
             try {
+                // Order-Bump: PaymentIntent-Betrag updaten bevor confirmed wird
+                const bumpChecked = document.getElementById('orderBump')?.checked || false;
+                if (currentPaymentIntentId) {
+                    try {
+                        const updRes = await fetch('/api/wauwerk-checkout-update-bump', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                paymentIntentId: currentPaymentIntentId,
+                                orderBump: bumpChecked
+                            })
+                        });
+                        const updData = await updRes.json();
+                        if (!updRes.ok) {
+                            console.error('Bump-Update fehlgeschlagen:', updData);
+                            // Wir fahren trotzdem fort — Stripe würde sonst mit altem Betrag laufen
+                        }
+                    } catch (e) {
+                        console.error('Bump-Update Error:', e);
+                    }
+                }
+
                 const { error } = await stripe.confirmPayment({
                     elements,
                     confirmParams: {
                         return_url: window.location.origin + '/zusatz.html?lead_id=' + currentLeadId
                     }
                 });
-                
+
                 if (error) {
                     showCheckoutError(error.message);
                     payBtn.disabled = false;
                     payBtn.innerHTML = '🔒 Jetzt bezahlen';
                 }
                 // Bei Erfolg wird automatisch weitergeleitet
-                
+
             } catch (err) {
                 showCheckoutError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
                 payBtn.disabled = false;
