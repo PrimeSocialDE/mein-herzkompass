@@ -3544,16 +3544,16 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             localStorage.removeItem('wentToStripe');
         }
 
-        // Exit-Popup Bonus (Notfallkarten gratis) beanspruchen
+        // Exit-Popup Bonus (Trainer-Sprechstunde gratis) beanspruchen
         function claimExitBonus() {
-            localStorage.setItem('exit_bonus_notfallkarten', 'true');
+            localStorage.setItem('exit_bonus_trainer_consultation', 'true');
             try {
                 const answers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
-                answers.exit_bonus_notfallkarten = true;
+                answers.exit_bonus_trainer_consultation = true;
                 answers.exit_bonus_claimed_at = new Date().toISOString();
                 localStorage.setItem('wauwerk_answers', JSON.stringify(answers));
             } catch (e) {}
-            console.log('✓ Notfallkarten-Bonus claim gespeichert');
+            console.log('✓ Trainer-Sprechstunde claim gespeichert');
         }
 
         // Hero-Outcome-Badge aus emotionalHeadlines füllen (gleiche Map wie Exit-Popup)
@@ -4060,13 +4060,13 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         <div class="exit-popup">
             <button class="exit-popup-close" onclick="closeExitPopup()">×</button>
 
-            <!-- Free-Bonus-Banner: Notfallkarten gratis -->
-            <div style="background:linear-gradient(135deg,#FEF4F0,#FFE8DC);border:2px solid #DC2626;border-radius:12px;padding:16px 16px;margin-bottom:18px;display:flex;gap:14px;align-items:center;text-align:left;">
-                <div style="font-size:38px;flex-shrink:0;line-height:1;">🏥</div>
+            <!-- Free-Bonus-Banner: Persönliche Trainer-Sprechstunde -->
+            <div style="background:linear-gradient(135deg,#F0F7FA,#DFE9F0);border:2px solid #2C5F7E;border-radius:12px;padding:16px 16px;margin-bottom:18px;display:flex;gap:14px;align-items:center;text-align:left;">
+                <div style="font-size:38px;flex-shrink:0;line-height:1;">👨‍🏫</div>
                 <div style="flex:1;">
-                    <div style="font-size:11px;color:#DC2626;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">GRATIS DAZU · NUR JETZT</div>
-                    <div style="font-size:17px;font-weight:800;color:#1a1a1a;line-height:1.25;margin-bottom:4px;">Erste-Hilfe Notfallkarten</div>
-                    <div style="font-size:12px;color:#666;line-height:1.45;">Die 10 häufigsten Hunde-Notfälle als Karten zum Ausdrucken. Normalerweise <strong style="color:#1a1a1a;">€9,99</strong> — bei deinem Kauf heute <strong style="color:#DC2626;">inklusive</strong>.</div>
+                    <div style="font-size:11px;color:#2C5F7E;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">GRATIS DAZU · NUR JETZT</div>
+                    <div style="font-size:17px;font-weight:800;color:#1a1a1a;line-height:1.25;margin-bottom:4px;">Persönliche Trainer-Sprechstunde</div>
+                    <div style="font-size:12px;color:#666;line-height:1.45;">Schreib deine wichtigste Frage, bekomm eine individuelle Antwort von einem zertifizierten Hundetrainer binnen 48h. Wert: <strong style="color:#1a1a1a;">€29</strong> — bei deinem Kauf heute <strong style="color:#2C5F7E;">inklusive</strong>.</div>
                 </div>
             </div>
 
@@ -4122,7 +4122,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             </div>
 
             <button class="exit-popup-cta" onclick="claimExitBonus(); closeExitPopup(); document.querySelector('.cta-button').click();">
-                Plan + Notfallkarten sichern
+                Plan + Trainer-Sprechstunde sichern
             </button>
             <button class="exit-popup-skip" onclick="closeExitPopup()">
                 Nein danke, ich überlege noch

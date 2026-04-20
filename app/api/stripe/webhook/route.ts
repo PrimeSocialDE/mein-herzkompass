@@ -53,31 +53,52 @@ async function deliverOrderBumpIfPurchased(paymentIntent: any) {
       return;
     }
 
-    // Problem-Intensiv-Modul Labels für Email
-    const moduleLabels: Record<string, string> = {
-      pulling: "Antizieh-Intensiv-Modul",
-      aggression: "Aggressions-Stop Intensiv-Modul",
-      barking: "Bell-Kontrolle Intensiv-Modul",
-      anxiety: "Trennungsangst-Masterclass",
-      jumping: "Sprung-Kontrolle Intensiv-Modul",
-      recall: "Rückruf-Masterclass",
-      energy: "Energie-Management Intensiv-Modul",
-      destructive: "Impuls-Kontrolle Intensiv-Modul",
-      soiling: "Stubenreinheit-Intensiv-Modul",
-      mouthing: "Aufnehmen-Stop Intensiv-Modul",
-      default: "Verhaltens-Intensiv-Modul"
-    };
-    const bumpProblem = (bumpId.replace(/^intensiv_/, "") || "default").toLowerCase();
-    const moduleName = moduleLabels[bumpProblem] || moduleLabels.default;
+    // Wenn Notfallkarten als Bump gekauft → direkt die existierende Notfallkarten-API rufen
+    if (bumpId === "notfallkarten") {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://pfoten-plan.de";
+        const notfallRes = await fetch(`${baseUrl}/api/notfall-karten/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, dogName }),
+        });
+        if (notfallRes.ok) {
+          console.log(`🏥 Notfall-Karten (Paid-Bump) gesendet an ${email}`);
+          // Delivery-Flag in Supabase setzen
+          if (leadId) {
+            const { data: lead } = await supabase
+              .from("wauwerk_leads")
+              .select("answers")
+              .eq("id", leadId)
+              .single();
+            const prev = (lead?.answers || {}) as Record<string, any>;
+            await supabase
+              .from("wauwerk_leads")
+              .update({
+                answers: {
+                  ...prev,
+                  order_bump_delivered: "notfallkarten",
+                  order_bump_delivered_at: new Date().toISOString(),
+                  notfallkarten_sent_at: new Date().toISOString(),
+                }
+              })
+              .eq("id", leadId);
+          }
+        } else {
+          console.error(`Notfallkarten-Versand fehlgeschlagen: ${notfallRes.status}`);
+        }
+      } catch (e) {
+        console.error("Notfallkarten-Bump-Delivery Error:", e);
+      }
+      return; // Early exit — Email kommt direkt über notfall-karten API
+    }
 
-    const subject = `Dein ${moduleName} für ${dogName} kommt gleich!`;
+    // Fallback für andere Bump-Types (z.B. zukünftige Produkte)
+    const subject = `Dein Bonus für ${dogName} kommt gleich!`;
     const htmlContent = `
         <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:500px;margin:0 auto;padding:20px;color:#1a1a1a;">
           <h1 style="font-size:22px;margin:0 0 12px;">Danke für deinen Kauf! 🐾</h1>
-          <p style="font-size:15px;color:#555;line-height:1.6;">Du hast das <strong>${moduleName} für ${dogName}</strong> zusätzlich dazu gebucht — perfekte Wahl für eine tiefere Transformation.</p>
-          <div style="background:#FFFBF5;border-left:4px solid #C4A576;padding:14px 18px;border-radius:8px;margin:18px 0;">
-            <p style="font-size:14px;color:#555;margin:0;">Das Modul kommt in einer separaten E-Mail direkt nach deinem Trainingsplan. Schau in den nächsten 10 Minuten in deinem Postfach nach.</p>
-          </div>
+          <p style="font-size:15px;color:#555;line-height:1.6;">Dein Bonus-Modul für <strong>${dogName}</strong> kommt in einer separaten E-Mail.</p>
           <p style="font-size:13px;color:#888;">Pfoten-Plan · support@pfoten-plan.de</p>
         </div>`;
 

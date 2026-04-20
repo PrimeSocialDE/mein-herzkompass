@@ -2414,19 +2414,23 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ✓ <strong style="color: #166534;">Einmalzahlung</strong> – kein Abo, <strong style="color: #166534;">lebenslanger Zugang</strong> • <strong style="color: #166534;">24/7 Support</strong> • <a href="agb.html">AGB</a>
         </div>
 
-        <!-- ORDER BUMP: Problem-Intensiv-Modul (vor CTA sichtbar) -->
-        <label id="orderBumpWrap" for="orderBump" style="display:flex;gap:12px;background:linear-gradient(135deg,#FFFBF5,#FEF3E7);border:2px dashed #C4A576;border-radius:10px;padding:14px 14px;margin:0 0 14px;cursor:pointer;align-items:flex-start;">
-            <input type="checkbox" id="orderBump" style="margin-top:3px;width:22px;height:22px;cursor:pointer;accent-color:#C4A576;flex-shrink:0;">
+        <!-- ORDER BUMP: Notfall-Karten (vor CTA sichtbar) -->
+        <label id="orderBumpWrap" for="orderBump" style="display:flex;gap:12px;background:linear-gradient(135deg,#FEF4F0,#FFE8DC);border:2px dashed #DC2626;border-radius:10px;padding:14px 14px;margin:0 0 14px;cursor:pointer;align-items:flex-start;">
+            <input type="checkbox" id="orderBump" style="margin-top:3px;width:22px;height:22px;cursor:pointer;accent-color:#DC2626;flex-shrink:0;">
             <div style="flex:1;">
+                <div style="font-size:11px;color:#DC2626;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">🆘 Für den Ernstfall</div>
                 <div style="font-size:14px;font-weight:800;color:#1a1a1a;margin-bottom:3px;line-height:1.3;">
-                    <span id="orderBumpTitle">Intensiv-Modul dazu</span>
-                    <span style="background:#C4A576;color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;margin-left:4px;font-weight:700;letter-spacing:0.5px;">+€19</span>
+                    Notfall-Karten dazu
                 </div>
                 <div style="font-size:12px;color:#666;line-height:1.5;margin-bottom:6px;">
-                    <span id="orderBumpDesc">10 Premium-Übungen zum gezielten Training.</span>
+                    10 Karten zum Ausdrucken: Was tun bei Aggression, Panik, Verletzung. Immer griffbereit im Geldbeutel.
+                </div>
+                <div style="font-size:12px;margin-bottom:4px;">
+                    <span style="color:#999;text-decoration:line-through;">Sonst: €14</span>
+                    <span style="color:#DC2626;font-weight:800;margin-left:6px;">Jetzt einmalig: +€9,99</span>
                 </div>
                 <div style="font-size:11px;color:#8B7355;font-weight:600;">
-                    🔥 Nur im Checkout — nicht später einzeln erhältlich
+                    🎯 Wenn's drauf ankommt, bereit sein
                 </div>
             </div>
         </label>
@@ -4003,17 +4007,16 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             localStorage.removeItem('wentToStripe');
         }
 
-        // Exit-Popup Bonus (Notfallkarten gratis) beanspruchen
+        // Exit-Popup Bonus (Trainer-Sprechstunde gratis) beanspruchen
         function claimExitBonus() {
-            localStorage.setItem('exit_bonus_notfallkarten', 'true');
-            // In wauwerk_answers merken damit's beim saveToSupabase mitgeht
+            localStorage.setItem('exit_bonus_trainer_consultation', 'true');
             try {
                 const answers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
-                answers.exit_bonus_notfallkarten = true;
+                answers.exit_bonus_trainer_consultation = true;
                 answers.exit_bonus_claimed_at = new Date().toISOString();
                 localStorage.setItem('wauwerk_answers', JSON.stringify(answers));
             } catch (e) {}
-            console.log('✓ Notfallkarten-Bonus claim gespeichert');
+            console.log('✓ Trainer-Sprechstunde claim gespeichert');
         }
 
         // Hero-Outcome-Badge aus emotionalHeadlines füllen (gleiche Map wie Exit-Popup)
@@ -4322,34 +4325,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             }
         }
 
-        // Order-Bump: State + Live-Update der Summary
-        const ORDER_BUMP_PRICE = 19;
-
-        // Dynamisches Problem-Intensiv-Modul basierend auf User's Hauptproblem
-        const BUMP_MODULES = {
-            'pulling':     { title: 'Antizieh-Intensiv-Modul dazu',       desc: '10 Premium-Übungen speziell für hartnäckiges Leinenziehen.' },
-            'aggression':  { title: 'Aggressions-Stop Intensiv dazu',     desc: '10 Premium-Übungen für entspannte Hundebegegnungen.' },
-            'barking':     { title: 'Bell-Kontrolle Intensiv dazu',       desc: '10 Premium-Übungen gegen übermäßiges Bellen.' },
-            'anxiety':     { title: 'Trennungsangst-Masterclass dazu',    desc: '10 Premium-Übungen für entspanntes Alleinbleiben.' },
-            'jumping':     { title: 'Sprung-Kontrolle Intensiv dazu',     desc: '10 Premium-Übungen gegen Anspringen von Menschen.' },
-            'recall':      { title: 'Rückruf-Masterclass dazu',           desc: '10 Premium-Übungen für zuverlässigen Rückruf.' },
-            'energy':      { title: 'Energie-Management Intensiv dazu',   desc: '10 Premium-Übungen gegen Hyperaktivität & Unruhe.' },
-            'destructive': { title: 'Impuls-Kontrolle Intensiv dazu',     desc: '10 Premium-Übungen gegen zerstörerisches Verhalten.' },
-            'soiling':     { title: 'Stubenreinheit-Intensiv dazu',       desc: '10 Premium-Übungen für schnelle Stubenreinheit.' },
-            'mouthing':    { title: 'Aufnehmen-Stop Intensiv dazu',       desc: '10 Premium-Übungen gegen Aufnehmen unerlaubter Dinge.' },
-            'default':     { title: 'Verhaltens-Intensiv-Modul dazu',     desc: '10 Premium-Übungen zum gezielten Training bei deinem Problem.' }
-        };
-
-        (function populateBumpModule() {
-            const problemKey = (localStorage.getItem('customProblemKey') || localStorage.getItem('dogProblem') || 'default').toLowerCase();
-            const mod = BUMP_MODULES[problemKey] || BUMP_MODULES['default'];
-            const titleEl = document.getElementById('orderBumpTitle');
-            const descEl = document.getElementById('orderBumpDesc');
-            const rowLabelEl = document.getElementById('orderBumpRowLabel');
-            if (titleEl) titleEl.textContent = mod.title;
-            if (descEl) descEl.textContent = mod.desc;
-            if (rowLabelEl) rowLabelEl.textContent = '+ ' + mod.title.replace(' dazu', '');
-        })();
+        // Order-Bump: Notfall-Karten €9,99 (statisch)
+        const ORDER_BUMP_PRICE = 9.99;
+        const ORDER_BUMP_ID = 'notfallkarten';
         function getBasePlanPrice() {
             const priceMap = {
                 '1month': { d: 29.99, n: 49.99 },
@@ -4476,7 +4454,6 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
             try {
                 const bumpChecked = document.getElementById('orderBump')?.checked || false;
-                const bumpProblem = (localStorage.getItem('customProblemKey') || localStorage.getItem('dogProblem') || 'default').toLowerCase();
                 const response = await fetch('/api/wauwerk-checkout-session', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -4487,7 +4464,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         leadId: currentLeadId,
                         email: localStorage.getItem('userEmail') || '',
                         orderBump: bumpChecked,
-                        bumpProblem: bumpProblem,
+                        bumpType: 'notfallkarten',
                         utm_source: localStorage.getItem('utm_source') || '',
                         utm_medium: localStorage.getItem('utm_medium') || '',
                         utm_campaign: localStorage.getItem('utm_campaign') || '',
@@ -4606,8 +4583,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                             <span id="orderBasePrice">€39,99</span>
                         </div>
                         <div id="orderBumpRow" style="display:none;justify-content:space-between;color:#666;margin-bottom:3px;">
-                            <span id="orderBumpRowLabel">+ Intensiv-Modul</span>
-                            <span>€19,00</span>
+                            <span>+ Notfall-Karten</span>
+                            <span>€9,99</span>
                         </div>
                         <div style="display:flex;justify-content:space-between;font-weight:800;color:#1a1a1a;padding-top:6px;border-top:1px solid #E8E0D2;">
                             <span>Gesamt</span>
@@ -4640,13 +4617,13 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
     <div class="exit-popup-overlay" id="exitPopup">
         <div class="exit-popup">
             <button class="exit-popup-close" onclick="closeExitPopup()">×</button>
-            <!-- Free-Bonus-Banner: Notfallkarten gratis -->
-            <div style="background:linear-gradient(135deg,#FEF4F0,#FFE8DC);border:2px solid #DC2626;border-radius:12px;padding:16px 16px;margin-bottom:18px;display:flex;gap:14px;align-items:center;text-align:left;">
-                <div style="font-size:38px;flex-shrink:0;line-height:1;">🏥</div>
+            <!-- Free-Bonus-Banner: Persönliche Trainer-Sprechstunde -->
+            <div style="background:linear-gradient(135deg,#F0F7FA,#DFE9F0);border:2px solid #2C5F7E;border-radius:12px;padding:16px 16px;margin-bottom:18px;display:flex;gap:14px;align-items:center;text-align:left;">
+                <div style="font-size:38px;flex-shrink:0;line-height:1;">👨‍🏫</div>
                 <div style="flex:1;">
-                    <div style="font-size:11px;color:#DC2626;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">GRATIS DAZU · NUR JETZT</div>
-                    <div style="font-size:17px;font-weight:800;color:#1a1a1a;line-height:1.25;margin-bottom:4px;">Erste-Hilfe Notfallkarten</div>
-                    <div style="font-size:12px;color:#666;line-height:1.45;">Die 10 häufigsten Hunde-Notfälle als Karten zum Ausdrucken. Normalerweise <strong style="color:#1a1a1a;">€9,99</strong> — bei deinem Kauf heute <strong style="color:#DC2626;">inklusive</strong>.</div>
+                    <div style="font-size:11px;color:#2C5F7E;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">GRATIS DAZU · NUR JETZT</div>
+                    <div style="font-size:17px;font-weight:800;color:#1a1a1a;line-height:1.25;margin-bottom:4px;">Persönliche Trainer-Sprechstunde</div>
+                    <div style="font-size:12px;color:#666;line-height:1.45;">Schreib deine wichtigste Frage, bekomm eine individuelle Antwort von einem zertifizierten Hundetrainer binnen 48h. Wert: <strong style="color:#1a1a1a;">€29</strong> — bei deinem Kauf heute <strong style="color:#2C5F7E;">inklusive</strong>.</div>
                 </div>
             </div>
 
@@ -4702,7 +4679,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             </div>
 
             <button class="exit-popup-cta" onclick="claimExitBonus(); closeExitPopup(); document.querySelector('.cta-button').click();">
-                Plan + Notfallkarten sichern
+                Plan + Trainer-Sprechstunde sichern
             </button>
             <button class="exit-popup-skip" onclick="closeExitPopup()">
                 Nein danke, ich überlege noch
