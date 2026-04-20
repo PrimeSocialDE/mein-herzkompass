@@ -3986,6 +3986,19 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             localStorage.removeItem('wentToStripe');
         }
 
+        // Exit-Popup Bonus (Notfallkarten gratis) beanspruchen
+        function claimExitBonus() {
+            localStorage.setItem('exit_bonus_notfallkarten', 'true');
+            // In wauwerk_answers merken damit's beim saveToSupabase mitgeht
+            try {
+                const answers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
+                answers.exit_bonus_notfallkarten = true;
+                answers.exit_bonus_claimed_at = new Date().toISOString();
+                localStorage.setItem('wauwerk_answers', JSON.stringify(answers));
+            } catch (e) {}
+            console.log('✓ Notfallkarten-Bonus claim gespeichert');
+        }
+
         // Hero-Outcome-Badge aus emotionalHeadlines füllen (gleiche Map wie Exit-Popup)
         (function() {
             const outcomeEl = document.getElementById('outcomeHeadline');
@@ -4615,8 +4628,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 <span class="benefit-tag">✓ Support inklusive</span>
             </div>
 
-            <button class="exit-popup-cta" onclick="closeExitPopup(); document.querySelector('.cta-button').click();">
-                Trainingsplan freischalten
+            <button class="exit-popup-cta" onclick="claimExitBonus(); closeExitPopup(); document.querySelector('.cta-button').click();">
+                Plan + Notfallkarten sichern
             </button>
             <button class="exit-popup-skip" onclick="closeExitPopup()">
                 Nein danke, ich überlege noch

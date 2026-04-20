@@ -8,6 +8,49 @@ export const dynamic = "force-dynamic";
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+// Helper: Notfallkarten gratis senden wenn User über Exit-Popup-Bonus gekauft hat
+// Checkt lead.answers.exit_bonus_notfallkarten Flag, ruft Notfallkarten-API
+async function sendNotfallkartenIfBonus(table: string, leadId: string) {
+  if (table !== "wauwerk_leads") return;
+  try {
+    const { data: lead } = await supabase
+      .from("wauwerk_leads")
+      .select("email, dog_name, answers")
+      .eq("id", leadId)
+      .single();
+
+    if (!lead || !lead.email) return;
+    const answers = (lead.answers || {}) as Record<string, any>;
+    if (!answers.exit_bonus_notfallkarten) return;
+
+    // Prüfen ob schon gesendet (idempotent via answers-Flag)
+    if (answers.notfallkarten_sent_at) {
+      console.log(`Notfallkarten bereits gesendet an ${lead.email} — skip`);
+      return;
+    }
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://pfoten-plan.de";
+    const res = await fetch(`${baseUrl}/api/notfall-karten/generate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: lead.email, dogName: lead.dog_name || "deinen Hund" }),
+    });
+
+    if (res.ok) {
+      console.log(`🏥 Notfallkarten-Bonus versendet an ${lead.email}`);
+      // Flag setzen damit nicht doppelt geschickt wird
+      await supabase
+        .from("wauwerk_leads")
+        .update({ answers: { ...answers, notfallkarten_sent_at: new Date().toISOString() } })
+        .eq("id", leadId);
+    } else {
+      console.error(`Notfallkarten-Versand fehlgeschlagen: ${res.status}`);
+    }
+  } catch (e) {
+    console.error("Notfallkarten-Bonus error:", e);
+  }
+}
+
 // Helper: Neuen Paid-Lead in Upsell-Campaign aufnehmen (nur für wauwerk_leads)
 // Idempotent dank UNIQUE(lead_id) constraint — doppelte Inserts werden ignoriert
 async function enrollInUpsellCampaign(table: string, leadId: string, email: string | null | undefined) {
@@ -244,6 +287,7 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
 
       // Upsell-Kampagne enrollment
       await enrollInUpsellCampaign(table, referenceId, updateData.email);
+      await sendNotfallkartenIfBonus(table, referenceId);
 
       // Make benachrichtigen (orders + wauwerk_leads)
       await notifyMake(referenceId, {
@@ -375,6 +419,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     } else {
       console.log(`${table} ${referenceId} via PaymentIntent aktualisiert`);
       await enrollInUpsellCampaign(table, referenceId, updateData.email);
+      await sendNotfallkartenIfBonus(table, referenceId);
       await notifyMake(referenceId, {
         source: "payment_intent",
         table: table,
@@ -590,6 +635,7 @@ async function handleChargeSuccess(charge: Stripe.Charge) {
     } else {
       console.log(`${table} ${referenceId} via Charge aktualisiert`);
       await enrollInUpsellCampaign(table, referenceId, updateData.email);
+      await sendNotfallkartenIfBonus(table, referenceId);
       await notifyMake(referenceId, {
         source: "charge",
         table: table,
