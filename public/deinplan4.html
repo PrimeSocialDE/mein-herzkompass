@@ -4219,6 +4219,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         dogName: dogName,
                         leadId: currentLeadId,
                         email: userEmail || localStorage.getItem('userEmail') || '',
+                        bumpProblem: (localStorage.getItem('customProblemKey') || localStorage.getItem('dogProblem') || 'default').toLowerCase(),
                         utm_source: localStorage.getItem('utm_source') || '',
                         utm_medium: localStorage.getItem('utm_medium') || '',
                         utm_campaign: localStorage.getItem('utm_campaign') || '',
@@ -4305,7 +4306,33 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         }
 
         // Order-Bump: State + Live-Update der Summary
-        const ORDER_BUMP_PRICE = 12;
+        const ORDER_BUMP_PRICE = 19;
+
+        // Dynamisches Problem-Intensiv-Modul basierend auf User's Hauptproblem
+        const BUMP_MODULES = {
+            'pulling':     { title: 'Antizieh-Intensiv-Modul dazu',       desc: '10 Premium-Übungen speziell für hartnäckiges Leinenziehen.' },
+            'aggression':  { title: 'Aggressions-Stop Intensiv dazu',     desc: '10 Premium-Übungen für entspannte Hundebegegnungen.' },
+            'barking':     { title: 'Bell-Kontrolle Intensiv dazu',       desc: '10 Premium-Übungen gegen übermäßiges Bellen.' },
+            'anxiety':     { title: 'Trennungsangst-Masterclass dazu',    desc: '10 Premium-Übungen für entspanntes Alleinbleiben.' },
+            'jumping':     { title: 'Sprung-Kontrolle Intensiv dazu',     desc: '10 Premium-Übungen gegen Anspringen von Menschen.' },
+            'recall':      { title: 'Rückruf-Masterclass dazu',           desc: '10 Premium-Übungen für zuverlässigen Rückruf.' },
+            'energy':      { title: 'Energie-Management Intensiv dazu',   desc: '10 Premium-Übungen gegen Hyperaktivität & Unruhe.' },
+            'destructive': { title: 'Impuls-Kontrolle Intensiv dazu',     desc: '10 Premium-Übungen gegen zerstörerisches Verhalten.' },
+            'soiling':     { title: 'Stubenreinheit-Intensiv dazu',       desc: '10 Premium-Übungen für schnelle Stubenreinheit.' },
+            'mouthing':    { title: 'Aufnehmen-Stop Intensiv dazu',       desc: '10 Premium-Übungen gegen Aufnehmen unerlaubter Dinge.' },
+            'default':     { title: 'Verhaltens-Intensiv-Modul dazu',     desc: '10 Premium-Übungen zum gezielten Training bei deinem Problem.' }
+        };
+
+        (function populateBumpModule() {
+            const problemKey = (localStorage.getItem('customProblemKey') || localStorage.getItem('dogProblem') || 'default').toLowerCase();
+            const mod = BUMP_MODULES[problemKey] || BUMP_MODULES['default'];
+            const titleEl = document.getElementById('orderBumpTitle');
+            const descEl = document.getElementById('orderBumpDesc');
+            const rowLabelEl = document.getElementById('orderBumpRowLabel');
+            if (titleEl) titleEl.textContent = mod.title;
+            if (descEl) descEl.textContent = mod.desc;
+            if (rowLabelEl) rowLabelEl.textContent = '+ ' + mod.title.replace(' dazu', '');
+        })();
         function getBasePlanPrice() {
             const priceMap = {
                 '1month': { d: 29.99, n: 49.99 },
@@ -4350,7 +4377,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                                 paymentIntentId: currentPaymentIntentId,
-                                orderBump: bumpChecked
+                                orderBump: bumpChecked,
+                                bumpProblem: (localStorage.getItem('customProblemKey') || localStorage.getItem('dogProblem') || 'default').toLowerCase()
                             })
                         });
                         const updData = await updRes.json();
@@ -4534,18 +4562,18 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         <div id="payment-element"></div>
                     </div>
 
-                    <!-- ORDER BUMP: Antizieh-Modul als Zusatz (+€12) -->
+                    <!-- ORDER BUMP: Problem-Intensiv-Modul dynamisch (+€19) -->
                     <label id="orderBumpWrap" for="orderBump" style="display:flex;gap:12px;background:linear-gradient(135deg,#FFFBF5,#FEF3E7);border:2px dashed #C4A576;border-radius:10px;padding:14px 14px;margin:14px 0;cursor:pointer;align-items:flex-start;">
                         <input type="checkbox" id="orderBump" style="margin-top:3px;width:20px;height:20px;cursor:pointer;accent-color:#C4A576;">
                         <div style="flex:1;">
                             <div style="font-size:13px;font-weight:800;color:#1a1a1a;margin-bottom:3px;">
-                                ☑ Antizieh-Modul dazu <span style="background:#C4A576;color:#fff;padding:1px 6px;border-radius:4px;font-size:10px;margin-left:4px;">-37%</span>
+                                ☑ <span id="orderBumpTitle">Intensiv-Modul dazu</span>
                             </div>
                             <div style="font-size:12px;color:#666;line-height:1.45;margin-bottom:6px;">
-                                10 Spezial-Übungen fürs Leinentraining. Sonst €19. <strong>Jetzt einmalig nur +€12</strong> wenn du jetzt bestellst.
+                                <span id="orderBumpDesc">10 Premium-Übungen zum gezielten Training.</span> <strong>Einmalig nur +€19</strong> — nur hier im Checkout.
                             </div>
                             <div style="font-size:11px;color:#8B7355;font-weight:600;">
-                                🔥 87% unserer Käufer nehmen es dazu
+                                🔥 Passt perfekt zu deinem Plan
                             </div>
                         </div>
                     </label>
@@ -4557,8 +4585,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                             <span id="orderBasePrice">€39,99</span>
                         </div>
                         <div id="orderBumpRow" style="display:none;justify-content:space-between;color:#666;margin-bottom:3px;">
-                            <span>+ Antizieh-Modul</span>
-                            <span>€12,00</span>
+                            <span id="orderBumpRowLabel">+ Intensiv-Modul</span>
+                            <span>€19,00</span>
                         </div>
                         <div style="display:flex;justify-content:space-between;font-weight:800;color:#1a1a1a;padding-top:6px;border-top:1px solid #E8E0D2;">
                             <span>Gesamt</span>

@@ -49,9 +49,11 @@ export async function POST(req: NextRequest) {
     const priceData = PRICES[plan as keyof typeof PRICES] || PRICES['1month'];
     let amount = timerExpired ? priceData.normal : priceData.discount;
 
-    // Order-Bump: Antizieh-Modul +€12 (1200 cents)
-    const ORDER_BUMP_PRICE_CENTS = 1200;
-    const ORDER_BUMP_ID = 'antizieh_modul';
+    // Order-Bump: Problem-Intensiv-Modul +€19 (1900 cents)
+    const ORDER_BUMP_PRICE_CENTS = 1900;
+    // Dog-Problem aus body lesen (für dynamisches Bump-Modul)
+    const bumpProblem = body.bumpProblem || 'default';
+    const ORDER_BUMP_ID = `intensiv_${bumpProblem}`;
     let orderBumpApplied = false;
     if (orderBump === true || orderBump === 'true') {
       amount += ORDER_BUMP_PRICE_CENTS;
@@ -66,7 +68,7 @@ export async function POST(req: NextRequest) {
     };
     const planName = planNames[plan] || '1-Monats-Plan';
     const description = orderBumpApplied
-      ? `Pfoten-Plan ${planName} + Antizieh-Modul für ${dogName || 'Hund'}`
+      ? `Pfoten-Plan ${planName} + Intensiv-Modul für ${dogName || 'Hund'}`
       : `Pfoten-Plan ${planName} für ${dogName || 'Hund'}`;
 
     // PaymentIntent erstellen

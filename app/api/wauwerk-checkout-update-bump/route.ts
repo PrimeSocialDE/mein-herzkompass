@@ -11,8 +11,7 @@ const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null;
 
-const ORDER_BUMP_PRICE_CENTS = 1200;
-const ORDER_BUMP_ID = "antizieh_modul";
+const ORDER_BUMP_PRICE_CENTS = 1900;
 
 export async function POST(req: NextRequest) {
   if (!stripe) {
@@ -20,7 +19,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { paymentIntentId, orderBump } = await req.json();
+    const { paymentIntentId, orderBump, bumpProblem } = await req.json();
 
     if (!paymentIntentId) {
       return NextResponse.json({ error: "paymentIntentId fehlt" }, { status: 400 });
@@ -58,8 +57,10 @@ export async function POST(req: NextRequest) {
     };
     const plan = intent.metadata?.plan || '1month';
     const dogName = intent.metadata?.dog_name || 'Hund';
+    const effectiveProblem = bumpProblem || intent.metadata?.bump_problem || "default";
+    const bumpId = `intensiv_${effectiveProblem}`;
     const description = wantBump
-      ? `Pfoten-Plan ${planNames[plan] || plan} + Antizieh-Modul für ${dogName}`
+      ? `Pfoten-Plan ${planNames[plan] || plan} + Intensiv-Modul für ${dogName}`
       : `Pfoten-Plan ${planNames[plan] || plan} für ${dogName}`;
 
     const updated = await stripe.paymentIntents.update(paymentIntentId, {
@@ -67,8 +68,9 @@ export async function POST(req: NextRequest) {
       description,
       metadata: {
         ...intent.metadata,
-        order_bump: wantBump ? ORDER_BUMP_ID : "",
+        order_bump: wantBump ? bumpId : "",
         order_bump_amount_cents: wantBump ? String(ORDER_BUMP_PRICE_CENTS) : "0",
+        bump_problem: effectiveProblem,
       },
     });
 

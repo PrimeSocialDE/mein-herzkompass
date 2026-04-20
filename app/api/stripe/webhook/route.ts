@@ -53,23 +53,33 @@ async function deliverOrderBumpIfPurchased(paymentIntent: any) {
       return;
     }
 
-    let subject = "";
-    let htmlContent = "";
-    if (bumpId === "antizieh_modul") {
-      subject = `Dein Antizieh-Modul für ${dogName} ist bald fertig!`;
-      htmlContent = `
+    // Problem-Intensiv-Modul Labels für Email
+    const moduleLabels: Record<string, string> = {
+      pulling: "Antizieh-Intensiv-Modul",
+      aggression: "Aggressions-Stop Intensiv-Modul",
+      barking: "Bell-Kontrolle Intensiv-Modul",
+      anxiety: "Trennungsangst-Masterclass",
+      jumping: "Sprung-Kontrolle Intensiv-Modul",
+      recall: "Rückruf-Masterclass",
+      energy: "Energie-Management Intensiv-Modul",
+      destructive: "Impuls-Kontrolle Intensiv-Modul",
+      soiling: "Stubenreinheit-Intensiv-Modul",
+      mouthing: "Aufnehmen-Stop Intensiv-Modul",
+      default: "Verhaltens-Intensiv-Modul"
+    };
+    const bumpProblem = (bumpId.replace(/^intensiv_/, "") || "default").toLowerCase();
+    const moduleName = moduleLabels[bumpProblem] || moduleLabels.default;
+
+    const subject = `Dein ${moduleName} für ${dogName} kommt gleich!`;
+    const htmlContent = `
         <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:500px;margin:0 auto;padding:20px;color:#1a1a1a;">
           <h1 style="font-size:22px;margin:0 0 12px;">Danke für deinen Kauf! 🐾</h1>
-          <p style="font-size:15px;color:#555;line-height:1.6;">Du hast das <strong>Antizieh-Modul für ${dogName}</strong> zusätzlich dazu gebucht — perfekte Wahl.</p>
+          <p style="font-size:15px;color:#555;line-height:1.6;">Du hast das <strong>${moduleName} für ${dogName}</strong> zusätzlich dazu gebucht — perfekte Wahl für eine tiefere Transformation.</p>
           <div style="background:#FFFBF5;border-left:4px solid #C4A576;padding:14px 18px;border-radius:8px;margin:18px 0;">
             <p style="font-size:14px;color:#555;margin:0;">Das Modul kommt in einer separaten E-Mail direkt nach deinem Trainingsplan. Schau in den nächsten 10 Minuten in deinem Postfach nach.</p>
           </div>
           <p style="font-size:13px;color:#888;">Pfoten-Plan · support@pfoten-plan.de</p>
         </div>`;
-    } else {
-      console.log(`Unbekannte Bump-ID: ${bumpId} — keine Delivery konfiguriert`);
-      return;
-    }
 
     const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
