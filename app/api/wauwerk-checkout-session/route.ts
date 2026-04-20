@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
       dogName,
       leadId,
       email,
+      orderBump,
+      bumpProblem,
       utm_source,
       utm_medium,
       utm_campaign,
@@ -39,6 +41,25 @@ export async function POST(req: NextRequest) {
       fb_event_id,
       ttclid
     } = body;
+
+    // Order-Bump Konfiguration
+    const ORDER_BUMP_PRICE_CENTS = 1900; // €19
+    const bumpApplied = orderBump === true || orderBump === 'true';
+    const effectiveBumpProblem = (bumpProblem || 'default').toLowerCase();
+    const BUMP_MODULE_LABELS: Record<string, string> = {
+      pulling: 'Antizieh-Intensiv-Modul',
+      aggression: 'Aggressions-Stop Intensiv-Modul',
+      barking: 'Bell-Kontrolle Intensiv-Modul',
+      anxiety: 'Trennungsangst-Masterclass',
+      jumping: 'Sprung-Kontrolle Intensiv-Modul',
+      recall: 'Rückruf-Masterclass',
+      energy: 'Energie-Management Intensiv-Modul',
+      destructive: 'Impuls-Kontrolle Intensiv-Modul',
+      soiling: 'Stubenreinheit-Intensiv-Modul',
+      mouthing: 'Aufnehmen-Stop Intensiv-Modul',
+      default: 'Verhaltens-Intensiv-Modul'
+    };
+    const bumpModuleName = BUMP_MODULE_LABELS[effectiveBumpProblem] || BUMP_MODULE_LABELS.default;
 
     // DataFast Cookies
     const datafastVisitorId = req.cookies.get('datafast_visitor_id')?.value || '';
@@ -85,13 +106,28 @@ export async function POST(req: NextRequest) {
           },
           quantity: 1,
         },
-      ],
+        // Order-Bump als zweites line_item wenn angehakt
+        ...(bumpApplied ? [{
+          price_data: {
+            currency: 'eur',
+            unit_amount: ORDER_BUMP_PRICE_CENTS,
+            product_data: {
+              name: bumpModuleName,
+              description: '10 Premium-Übungen als Deep-Dive für dein Hauptproblem · Nur im Checkout erhältlich',
+            },
+          },
+          quantity: 1,
+        }] : []),
+      ] as any,
       metadata: {
         lead_id: leadId || '',
         plan: plan,
         dog_name: dogName || '',
         timer_expired: timerExpired ? 'true' : 'false',
         email: email || '',
+        order_bump: bumpApplied ? `intensiv_${effectiveBumpProblem}` : '',
+        bump_problem: effectiveBumpProblem,
+        order_bump_amount_cents: bumpApplied ? String(ORDER_BUMP_PRICE_CENTS) : '0',
         utm_source: utm_source || '',
         utm_medium: utm_medium || '',
         utm_campaign: utm_campaign || '',
@@ -103,6 +139,18 @@ export async function POST(req: NextRequest) {
         ttclid: ttclid || '',
         datafast_visitor_id: datafastVisitorId,
         datafast_session_id: datafastSessionId
+      },
+      // Metadata auch auf PaymentIntent propagieren (für Webhook)
+      payment_intent_data: {
+        metadata: {
+          lead_id: leadId || '',
+          plan: plan,
+          dog_name: dogName || '',
+          email: email || '',
+          order_bump: bumpApplied ? `intensiv_${effectiveBumpProblem}` : '',
+          bump_problem: effectiveBumpProblem,
+          order_bump_amount_cents: bumpApplied ? String(ORDER_BUMP_PRICE_CENTS) : '0',
+        },
       },
       success_url: `${origin}/zusatz.html?lead_id=${leadId || ''}&redirect_status=succeeded`,
       cancel_url: `${origin}/deinplan3.html`,
