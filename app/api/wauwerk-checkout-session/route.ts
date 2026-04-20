@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
       leadId,
       email,
       orderBump,
+      exitDiscount,
       utm_source,
       utm_medium,
       utm_campaign,
@@ -41,11 +42,14 @@ export async function POST(req: NextRequest) {
       ttclid
     } = body;
 
-    // Order-Bump Konfiguration: Notfall-Karten €9,99
+    // Order-Bump Konfiguration: Notfall-Karten €9,99 (aktuell nicht im Frontend sichtbar)
     const ORDER_BUMP_PRICE_CENTS = 999; // €9,99
     const bumpApplied = orderBump === true || orderBump === 'true';
     const bumpModuleName = 'Notfall-Karten';
     const bumpDescription = '10 Notfall-Karten zum Ausdrucken — Sofort-Hilfe bei Aggression, Panik, Verletzung';
+
+    // Exit-Popup Rabatt (15% auf Plan-Preis)
+    const exitDiscountApplied = exitDiscount === true || exitDiscount === 'true';
 
     // DataFast Cookies
     const datafastVisitorId = req.cookies.get('datafast_visitor_id')?.value || '';
@@ -53,7 +57,11 @@ export async function POST(req: NextRequest) {
 
     // Preis ermitteln
     const priceData = PRICES[plan as keyof typeof PRICES] || PRICES['1month'];
-    const amount = timerExpired ? priceData.normal : priceData.discount;
+    const baseAmount = timerExpired ? priceData.normal : priceData.discount;
+    // 15% Exit-Discount anwenden falls User via Exit-Popup kommt
+    const amount = exitDiscountApplied
+      ? Math.round(baseAmount * 0.85)  // -15%
+      : baseAmount;
 
     // Plan-Namen
     const planNames: Record<string, string> = {
@@ -113,6 +121,8 @@ export async function POST(req: NextRequest) {
         email: email || '',
         order_bump: bumpApplied ? 'notfallkarten' : '',
         order_bump_amount_cents: bumpApplied ? String(ORDER_BUMP_PRICE_CENTS) : '0',
+        exit_discount_15: exitDiscountApplied ? 'true' : 'false',
+        base_amount_cents: String(baseAmount),
         utm_source: utm_source || '',
         utm_medium: utm_medium || '',
         utm_campaign: utm_campaign || '',

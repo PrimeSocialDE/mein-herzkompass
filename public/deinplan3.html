@@ -3544,16 +3544,16 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             localStorage.removeItem('wentToStripe');
         }
 
-        // Exit-Popup Bonus (Trainer-Sprechstunde gratis) beanspruchen
+        // Exit-Popup Rabatt beanspruchen (15% werden beim Checkout real angewendet)
         function claimExitBonus() {
-            localStorage.setItem('exit_bonus_trainer_consultation', 'true');
+            localStorage.setItem('exit_discount_15', 'true');
             try {
                 const answers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
-                answers.exit_bonus_trainer_consultation = true;
-                answers.exit_bonus_claimed_at = new Date().toISOString();
+                answers.exit_discount_15 = true;
+                answers.exit_discount_claimed_at = new Date().toISOString();
                 localStorage.setItem('wauwerk_answers', JSON.stringify(answers));
             } catch (e) {}
-            console.log('✓ Trainer-Sprechstunde claim gespeichert');
+            console.log('✓ 15%-Rabatt claim gespeichert');
         }
 
         // Hero-Outcome-Badge aus emotionalHeadlines füllen (gleiche Map wie Exit-Popup)
@@ -3931,6 +3931,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             } catch(e) { console.error(e); }
 
             try {
+                const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
                 const response = await fetch('/api/wauwerk-checkout-session', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -3940,6 +3941,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         dogName: dogName,
                         leadId: currentLeadId,
                         email: localStorage.getItem('userEmail') || '',
+                        exitDiscount: exitDiscount,
                         utm_source: localStorage.getItem('utm_source') || '',
                         utm_medium: localStorage.getItem('utm_medium') || '',
                         utm_campaign: localStorage.getItem('utm_campaign') || '',
@@ -4060,14 +4062,11 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         <div class="exit-popup">
             <button class="exit-popup-close" onclick="closeExitPopup()">×</button>
 
-            <!-- Free-Bonus-Banner: Persönliche Trainer-Sprechstunde -->
-            <div style="background:linear-gradient(135deg,#F0F7FA,#DFE9F0);border:2px solid #2C5F7E;border-radius:12px;padding:16px 16px;margin-bottom:18px;display:flex;gap:14px;align-items:center;text-align:left;">
-                <div style="font-size:38px;flex-shrink:0;line-height:1;">👨‍🏫</div>
-                <div style="flex:1;">
-                    <div style="font-size:11px;color:#2C5F7E;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">GRATIS DAZU · NUR JETZT</div>
-                    <div style="font-size:17px;font-weight:800;color:#1a1a1a;line-height:1.25;margin-bottom:4px;">Persönliche Trainer-Sprechstunde</div>
-                    <div style="font-size:12px;color:#666;line-height:1.45;">Schreib deine wichtigste Frage, bekomm eine individuelle Antwort von einem zertifizierten Hundetrainer binnen 48h. Wert: <strong style="color:#1a1a1a;">€29</strong> — bei deinem Kauf heute <strong style="color:#2C5F7E;">inklusive</strong>.</div>
-                </div>
+            <!-- 15% Rabatt-Banner (real - wird beim Checkout angewendet) -->
+            <div style="background:linear-gradient(135deg,#FFFBF5,#FEF3E7);border:1px solid #C4A576;border-radius:12px;padding:20px 18px;margin-bottom:20px;text-align:center;">
+                <div style="font-size:11px;color:#8B7355;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Warte — dein Angebot</div>
+                <div style="font-size:34px;font-weight:800;color:#1a1a1a;line-height:1;margin-bottom:6px;letter-spacing:-1px;">–15% Rabatt</div>
+                <div style="font-size:13px;color:#666;line-height:1.45;">Wird beim Kauf <strong style="color:#1a1a1a;">automatisch abgezogen</strong>. Nur für dich in den nächsten 3 Minuten.</div>
             </div>
 
             <h3 class="exit-popup-title">Stell dir vor: <span class="highlight" id="popupHeadline">In 4 Wochen ein entspannter Hund</span></h3>
@@ -4122,7 +4121,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             </div>
 
             <button class="exit-popup-cta" onclick="claimExitBonus(); closeExitPopup(); document.querySelector('.cta-button').click();">
-                Plan + Trainer-Sprechstunde sichern
+                Mit 15% Rabatt sichern →
             </button>
             <button class="exit-popup-skip" onclick="closeExitPopup()">
                 Nein danke, ich überlege noch
