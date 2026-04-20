@@ -3973,21 +3973,6 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             
             document.getElementById('exitPopup').classList.add('active');
 
-            // Popup-Timer mit echtem Countdown synchronisieren
-            const realTimer = document.getElementById('timer');
-            const popupTimer = document.getElementById('exitPopupTimer');
-            if (realTimer && popupTimer) {
-                popupTimer.textContent = realTimer.textContent;
-                // Alle Sekunde synchronisieren solange Popup offen ist
-                const syncInterval = setInterval(() => {
-                    if (!document.getElementById('exitPopup').classList.contains('active')) {
-                        clearInterval(syncInterval);
-                        return;
-                    }
-                    popupTimer.textContent = realTimer.textContent;
-                }, 1000);
-            }
-
             // Trigger line animation
             const popup = document.querySelector('.exit-popup');
             popup.classList.remove('animate');
@@ -4569,11 +4554,14 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
     <div class="exit-popup-overlay" id="exitPopup">
         <div class="exit-popup">
             <button class="exit-popup-close" onclick="closeExitPopup()">×</button>
-            <!-- Urgency-Banner (ehrlich, ohne Discount-Code) -->
-            <div style="background:linear-gradient(135deg,#FEF3E7,#FFE8CC);border:2px solid #C4A576;border-radius:12px;padding:14px 16px;margin-bottom:18px;text-align:center;">
-                <div style="font-size:11px;color:#8B7355;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">EXKLUSIV FÜR DICH</div>
-                <div style="font-size:22px;font-weight:800;color:#1a1a1a;line-height:1.2;margin-bottom:4px;">Dein Rabatt gilt noch <span id="exitPopupTimer">10:00</span></div>
-                <div style="font-size:12px;color:#666;">Danach kostet der Plan regulär — bereits beim Scrollen siehst du den reduzierten Preis.</div>
+            <!-- Free-Bonus-Banner: Notfallkarten gratis -->
+            <div style="background:linear-gradient(135deg,#FEF4F0,#FFE8DC);border:2px solid #DC2626;border-radius:12px;padding:16px 16px;margin-bottom:18px;display:flex;gap:14px;align-items:center;text-align:left;">
+                <div style="font-size:38px;flex-shrink:0;line-height:1;">🏥</div>
+                <div style="flex:1;">
+                    <div style="font-size:11px;color:#DC2626;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">GRATIS DAZU · NUR JETZT</div>
+                    <div style="font-size:17px;font-weight:800;color:#1a1a1a;line-height:1.25;margin-bottom:4px;">Erste-Hilfe Notfallkarten</div>
+                    <div style="font-size:12px;color:#666;line-height:1.45;">Die 10 häufigsten Hunde-Notfälle als Karten zum Ausdrucken. Normalerweise <strong style="color:#1a1a1a;">€9,99</strong> — bei deinem Kauf heute <strong style="color:#DC2626;">inklusive</strong>.</div>
+                </div>
             </div>
 
             <h3 class="exit-popup-title">Stell dir vor: <span class="highlight" id="popupHeadline">In 4 Wochen ein entspannter Hund</span></h3>
