@@ -2448,8 +2448,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     <!-- VIDEO 1 -->
                     <div class="video-testimonial">
                         <div class="video-testimonial-container">
-                            <video id="testimonialVideo" playsinline preload="metadata" poster="video-thumbnail.png">
-                                <source src="WauWerkTestimonial.mp4" type="video/mp4">
+                            <video id="testimonialVideo" playsinline preload="metadata">
+                                <source src="WauWerkTestimonial.mp4#t=0.5" type="video/mp4">
                             </video>
                             <div class="video-testimonial-badge">Kundenstimme</div>
                             <div class="video-play-overlay" id="videoPlayOverlay" onclick="playTestimonialVideo()">
@@ -2467,8 +2467,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     <!-- VIDEO 2 (Platzhalter: PfotenPlanTestimonial2.mp4 hochladen) -->
                     <div class="video-testimonial">
                         <div class="video-testimonial-container">
-                            <video id="testimonialVideo2" playsinline preload="metadata" poster="video-thumbnail.png">
-                                <source src="WebVideo2.mp4" type="video/mp4">
+                            <video id="testimonialVideo2" playsinline preload="metadata">
+                                <source src="WebVideo2.mp4#t=0.5" type="video/mp4">
                             </video>
                             <div class="video-testimonial-badge">Kundenstimme</div>
                             <div class="video-play-overlay" id="videoPlayOverlay2" onclick="playTestimonialVideo2()">
@@ -2486,8 +2486,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     <!-- VIDEO 3 (Platzhalter: PfotenPlanTestimonial3.mp4 hochladen) -->
                     <div class="video-testimonial">
                         <div class="video-testimonial-container">
-                            <video id="testimonialVideo3" playsinline preload="metadata" poster="video-thumbnail.png">
-                                <source src="Webvideo3.mp4" type="video/mp4">
+                            <video id="testimonialVideo3" playsinline preload="metadata">
+                                <source src="Webvideo3.mp4#t=0.5" type="video/mp4">
                             </video>
                             <div class="video-testimonial-badge">Kundenstimme</div>
                             <div class="video-play-overlay" id="videoPlayOverlay3" onclick="playTestimonialVideo3()">
@@ -2719,18 +2719,38 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             else { video.pause(); overlay.classList.remove('hidden'); }
         }
         
-        // Video Click Handler (für Pause wenn Video läuft)
-        document.getElementById('testimonialVideo').addEventListener('click', function() {
-            const overlay = document.getElementById('videoPlayOverlay');
-            if (!this.paused) {
-                this.pause();
-                overlay.classList.remove('hidden');
-            }
-        });
-        
-        // Overlay wieder zeigen wenn Video endet
-        document.getElementById('testimonialVideo').addEventListener('ended', function() {
-            document.getElementById('videoPlayOverlay').classList.remove('hidden');
+        // Video Click Handler (für Pause wenn Video läuft) — für alle 3 Videos
+        [
+            { video: 'testimonialVideo', overlay: 'videoPlayOverlay' },
+            { video: 'testimonialVideo2', overlay: 'videoPlayOverlay2' },
+            { video: 'testimonialVideo3', overlay: 'videoPlayOverlay3' }
+        ].forEach(({ video, overlay }) => {
+            const v = document.getElementById(video);
+            const o = document.getElementById(overlay);
+            if (!v || !o) return;
+            // Native Controls aktivieren nach dem ersten Play (iOS-Kompatibilität)
+            v.addEventListener('play', function() {
+                v.setAttribute('controls', 'controls');
+                o.classList.add('hidden');
+            });
+            // Bei Click auf Video pausieren
+            v.addEventListener('click', function() {
+                if (!v.paused) {
+                    v.pause();
+                    o.classList.remove('hidden');
+                    v.removeAttribute('controls');
+                }
+            });
+            // Bei Pause Button clicken auch Overlay zeigen
+            v.addEventListener('pause', function() {
+                if (v.ended || v.currentTime === 0) return;
+                o.classList.remove('hidden');
+            });
+            // Overlay wieder zeigen wenn Video endet
+            v.addEventListener('ended', function() {
+                o.classList.remove('hidden');
+                v.removeAttribute('controls');
+            });
         });
 
         // ==================== LOAD DATA FROM SUPABASE IF COMING FROM EMAIL ====================
