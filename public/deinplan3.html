@@ -3565,29 +3565,18 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             }
         })();
 
-        // Exit-Intent Trigger: Desktop mouseleave oben + Mobile nach 35s ohne Pricing-Interaktion
+        // Exit-Intent Trigger: NUR echter Exit — kein Auto-Timer
         (function() {
-            let pricingInteracted = false;
-            document.querySelectorAll('.pricing-card, .cta-button').forEach(function(el) {
-                el.addEventListener('click', function() { pricingInteracted = true; });
-            });
-
-            // Desktop: mouseleave zum oberen Rand
             const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
             if (!isMobile) {
+                // Desktop: mouseleave zum oberen Rand (echter Exit)
                 document.addEventListener('mouseleave', function(e) {
                     if (e.clientY <= 0 && !exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
                         showExitPopup();
                     }
                 });
-            } else {
-                // Mobile: Timer-basiert (35s, nur wenn User noch nicht mit Preisen interagiert hat)
-                setTimeout(function() {
-                    if (!pricingInteracted && !exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
-                        showExitPopup();
-                    }
-                }, 35000);
             }
+            // Mobile: KEIN Auto-Timer — Popup kommt nur via Stripe-Return (separater Trigger)
         })();
 
         // ==================== CHECKOUT POPUP ====================
