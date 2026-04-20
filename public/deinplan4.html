@@ -2414,27 +2414,6 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ✓ <strong style="color: #166534;">Einmalzahlung</strong> – kein Abo, <strong style="color: #166534;">lebenslanger Zugang</strong> • <strong style="color: #166534;">24/7 Support</strong> • <a href="agb.html">AGB</a>
         </div>
 
-        <!-- ORDER BUMP: Notfall-Karten (vor CTA sichtbar) -->
-        <label id="orderBumpWrap" for="orderBump" style="display:flex;gap:12px;background:linear-gradient(135deg,#FEF4F0,#FFE8DC);border:2px dashed #DC2626;border-radius:10px;padding:14px 14px;margin:0 0 14px;cursor:pointer;align-items:flex-start;">
-            <input type="checkbox" id="orderBump" style="margin-top:3px;width:22px;height:22px;cursor:pointer;accent-color:#DC2626;flex-shrink:0;">
-            <div style="flex:1;">
-                <div style="font-size:11px;color:#DC2626;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">🆘 Für den Ernstfall</div>
-                <div style="font-size:14px;font-weight:800;color:#1a1a1a;margin-bottom:3px;line-height:1.3;">
-                    Notfall-Karten dazu
-                </div>
-                <div style="font-size:12px;color:#666;line-height:1.5;margin-bottom:6px;">
-                    10 Karten zum Ausdrucken: Was tun bei Aggression, Panik, Verletzung. Immer griffbereit im Geldbeutel.
-                </div>
-                <div style="font-size:12px;margin-bottom:4px;">
-                    <span style="color:#999;text-decoration:line-through;">Sonst: €14</span>
-                    <span style="color:#DC2626;font-weight:800;margin-left:6px;">Jetzt einmalig: +€9,99</span>
-                </div>
-                <div style="font-size:11px;color:#8B7355;font-weight:600;">
-                    🎯 Wenn's drauf ankommt, bereit sein
-                </div>
-            </div>
-        </label>
-
         <button class="cta-button glow" onclick="getMyPlan()">
             Trainingsplan freischalten
             <span class="cta-subtext">Sofort per E-Mail · Kein Abo · 30 Tage Garantie</span>
@@ -4453,7 +4432,6 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             } catch(e) { console.error(e); }
 
             try {
-                const bumpChecked = document.getElementById('orderBump')?.checked || false;
                 const response = await fetch('/api/wauwerk-checkout-session', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -4463,8 +4441,6 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         dogName: dogName,
                         leadId: currentLeadId,
                         email: localStorage.getItem('userEmail') || '',
-                        orderBump: bumpChecked,
-                        bumpType: 'notfallkarten',
                         utm_source: localStorage.getItem('utm_source') || '',
                         utm_medium: localStorage.getItem('utm_medium') || '',
                         utm_campaign: localStorage.getItem('utm_campaign') || '',
