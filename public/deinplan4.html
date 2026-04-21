@@ -4125,25 +4125,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             }
         })();
 
-        // Exit-Intent Trigger: Desktop mouseleave oben + Mobile nach 35s ohne Pricing-Interaktion
-        (function() {
-            let pricingInteracted = false;
-            document.querySelectorAll('.pricing-card, .cta-button').forEach(function(el) {
-                el.addEventListener('click', function() { pricingInteracted = true; });
-            });
-
-            // Desktop: mouseleave zum oberen Rand
-            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            if (!isMobile) {
-                document.addEventListener('mouseleave', function(e) {
-                    if (e.clientY <= 0 && !exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
-                        showExitPopup();
-                    }
-                });
-            }
-            // Mobile: KEIN Auto-Timer — nur via Back-Button von Stripe (separater Trigger)
-            // Das vermeidet falsche Triggers beim normalen Scrollen
-        })();
+        // Exit-Popup: KEINE sonstigen Trigger mehr (kein mouseleave, kein Timer).
+        // Popup feuert ausschließlich über den Stripe-Rückkehr-Check oben.
 
         // ==================== CHECKOUT POPUP ====================
         
@@ -4295,13 +4278,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         function closeCheckoutPopup() {
             document.getElementById('checkoutPopup').classList.remove('active');
             document.body.style.overflow = '';
-            
-            // Exit Popup zeigen wenn Checkout geschlossen wird
-            if (!sessionStorage.getItem('exitPopupShown')) {
-                setTimeout(() => {
-                    showExitPopup();
-                }, 300);
-            }
+            // Kein Auto-Exit-Popup mehr beim Schließen — Popup gibt's nur nach Stripe-Return.
         }
 
         async function goToPaymentStep() {
