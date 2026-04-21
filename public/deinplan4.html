@@ -539,6 +539,11 @@
         }
 
         /* CTA Loading-Animation während Checkout */
+        .cta-loading-row {
+            display: inline-flex;
+            align-items: baseline;
+            white-space: nowrap;
+        }
         .cta-loading-text {
             display: inline-block;
             animation: ctaTextFade 1.8s ease-in-out infinite;
@@ -4549,7 +4554,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             ];
             let idx = 0;
             const render = (i) => {
-                btn.innerHTML = '<span class="cta-loading-text">' + messages[i] + '</span><span class="cta-loading-dots"><span>.</span><span>.</span><span>.</span></span>';
+                btn.innerHTML = '<span class="cta-loading-row"><span class="cta-loading-text">' + messages[i] + '</span><span class="cta-loading-dots"><span>.</span><span>.</span><span>.</span></span></span>';
             };
             render(0);
             if (ctaLoadingInterval) clearInterval(ctaLoadingInterval);
