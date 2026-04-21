@@ -184,20 +184,13 @@
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
 
-        // A/B Test v2: 50/50 Split (deinplan3 vs deinplan4)
+        // A/B Test v2 PAUSIERT: Alle User auf deinplan3 (Baseline), deinplan4 raus bis Fix
         function getABTestPage() {
-            // Prüfe ob schon eine Variante zugewiesen wurde (neuer Key für neuen Test)
-            let variant = localStorage.getItem('ab_test_pricing_v2');
-            if (!variant) {
-                variant = Math.random() < 0.50 ? 'A' : 'B';
-                localStorage.setItem('ab_test_pricing_v2', variant);
-                // Legacy-Key auch setzen für Konsistenz in Supabase-Tracking
-                if (!localStorage.getItem('ab_test_pricing')) {
-                    localStorage.setItem('ab_test_pricing', variant);
-                }
+            localStorage.setItem('ab_test_pricing_v2', 'A');
+            if (!localStorage.getItem('ab_test_pricing')) {
+                localStorage.setItem('ab_test_pricing', 'A');
             }
-            // A = deinplan3.html (Baseline / bisheriger Winner), B = deinplan4.html (neue Optimierungen)
-            return variant === 'A' ? 'deinplan3.html' : 'deinplan4.html';
+            return 'deinplan3.html';
         }
 
         // Hundename aus localStorage
