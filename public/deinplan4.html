@@ -538,6 +538,33 @@
             letter-spacing: 0;
         }
 
+        /* CTA Loading-Animation während Checkout */
+        .cta-loading-text {
+            display: inline-block;
+            animation: ctaTextFade 1.8s ease-in-out infinite;
+        }
+        .cta-loading-dots {
+            display: inline-block;
+            margin-left: 2px;
+        }
+        .cta-loading-dots > span {
+            display: inline-block;
+            animation: ctaDotPulse 1.2s ease-in-out infinite;
+            opacity: 0.25;
+        }
+        .cta-loading-dots > span:nth-child(2) { animation-delay: 0.2s; }
+        .cta-loading-dots > span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes ctaDotPulse {
+            0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+            40%           { opacity: 1;    transform: translateY(-2px); }
+        }
+        @keyframes ctaTextFade {
+            0%        { opacity: 0; transform: translateY(4px); }
+            15%, 85%  { opacity: 1; transform: translateY(0); }
+            100%      { opacity: 0; transform: translateY(-4px); }
+        }
+
         .cta-button:hover {
             background: var(--dark-brown);
             transform: translateY(-2px);
@@ -3883,6 +3910,10 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 const ref = document.referrer || '';
                 const qp = new URLSearchParams(window.location.search);
                 const hasStripeParams = qp.has('redirect_status') || qp.has('payment_intent') || qp.has('payment_intent_client_secret');
+                // Stripe-Cancel-Redirect setzt redirect_status=canceled → wentToStripe bleibt
+                if (qp.get('redirect_status') === 'canceled') {
+                    localStorage.setItem('wentToStripe', 'true');
+                }
                 const cameFromStripe = /(?:^|\.)stripe\.com/i.test(new URL(ref || 'about:blank', window.location.href).hostname || '');
                 if (!cameFromStripe && !hasStripeParams) {
                     localStorage.removeItem('wentToStripe');
@@ -4506,11 +4537,36 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             }
         });
 
+        // CTA-Loading-Animation: Text rotiert, Dots pulsen
+        let ctaLoadingInterval = null;
+        function startCtaLoadingAnimation(btn) {
+            if (!btn) return;
+            const messages = [
+                'Weiter zur Kasse',
+                'Sichere Verbindung',
+                'Zahlungsoptionen laden',
+                'Fast geschafft'
+            ];
+            let idx = 0;
+            const render = (i) => {
+                btn.innerHTML = '<span class="cta-loading-text">' + messages[i] + '</span><span class="cta-loading-dots"><span>.</span><span>.</span><span>.</span></span>';
+            };
+            render(0);
+            if (ctaLoadingInterval) clearInterval(ctaLoadingInterval);
+            ctaLoadingInterval = setInterval(() => {
+                idx = (idx + 1) % messages.length;
+                render(idx);
+            }, 1800);
+        }
+        function stopCtaLoadingAnimation() {
+            if (ctaLoadingInterval) { clearInterval(ctaLoadingInterval); ctaLoadingInterval = null; }
+        }
+
         async function getMyPlan() {
             const ctaBtn = document.querySelector('.cta-button');
             if (ctaBtn) {
                 ctaBtn.disabled = true;
-                ctaBtn.innerHTML = 'Weiter zur Kasse...';
+                startCtaLoadingAnimation(ctaBtn);
             }
 
             // Meta Pixel: InitiateCheckout event (für Retargeting & Optimierung)
@@ -4545,6 +4601,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 const bumpChecked = document.getElementById('orderBump')?.checked || false;
                 const tagebuchDaysMap = { '1month': 30, '3month': 90, '6month': 180 };
                 const bumpDays = tagebuchDaysMap[selectedPlan] || 90;
+                // Cancel-URL: User landet nach Abbruch wieder auf dieser Seite
+                const cancelPath = window.location.pathname + (window.location.search || '');
                 const response = await fetch('/api/wauwerk-checkout-session', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -4558,6 +4616,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         orderBump: bumpChecked,
                         bumpType: 'tagebuch',
                         bumpDays: bumpDays,
+                        cancelPath: cancelPath,
                         utm_source: localStorage.getItem('utm_source') || '',
                         utm_medium: localStorage.getItem('utm_medium') || '',
                         utm_campaign: localStorage.getItem('utm_campaign') || '',
@@ -4573,6 +4632,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 const data = await response.json();
                 if (data.error) {
                     alert('Fehler: ' + data.error);
+                    stopCtaLoadingAnimation();
                     if (ctaBtn) {
                         ctaBtn.disabled = false;
                         ctaBtn.innerHTML = 'Trainingsplan freischalten<span class="cta-subtext">Sicher bezahlen & sofort starten</span>';
@@ -4585,6 +4645,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             } catch (err) {
                 console.error('Checkout Error:', err);
                 alert('Verbindungsfehler. Bitte versuche es erneut.');
+                stopCtaLoadingAnimation();
                 if (ctaBtn) {
                     ctaBtn.disabled = false;
                     ctaBtn.innerHTML = 'Trainingsplan freischalten<span class="cta-subtext">Sicher bezahlen & sofort starten</span>';

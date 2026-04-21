@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
       bumpType,
       bumpDays,
       exitDiscount,
+      cancelPath,
       utm_source,
       utm_medium,
       utm_campaign,
@@ -169,7 +170,14 @@ export async function POST(req: NextRequest) {
         },
       },
       success_url: `${origin}/zusatz.html?lead_id=${leadId || ''}&redirect_status=succeeded`,
-      cancel_url: `${origin}/deinplan3.html`,
+      // Cancel führt zurück auf die Seite, von der der User kam (Default: deinplan3)
+      cancel_url: (() => {
+        const safePath = typeof cancelPath === 'string' && cancelPath.startsWith('/') && !cancelPath.includes('://')
+          ? cancelPath
+          : '/deinplan3.html';
+        const joiner = safePath.includes('?') ? '&' : '?';
+        return `${origin}${safePath}${joiner}redirect_status=canceled`;
+      })(),
     };
 
     const session = await stripe.checkout.sessions.create(sessionParams);

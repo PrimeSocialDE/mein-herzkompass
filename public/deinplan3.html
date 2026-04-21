@@ -3921,6 +3921,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
             try {
                 const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
+                const cancelPath = window.location.pathname + (window.location.search || '');
                 const response = await fetch('/api/wauwerk-checkout-session', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -3931,6 +3932,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         leadId: currentLeadId,
                         email: localStorage.getItem('userEmail') || '',
                         exitDiscount: exitDiscount,
+                        cancelPath: cancelPath,
                         utm_source: localStorage.getItem('utm_source') || '',
                         utm_medium: localStorage.getItem('utm_medium') || '',
                         utm_campaign: localStorage.getItem('utm_campaign') || '',
