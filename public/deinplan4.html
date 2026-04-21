@@ -4692,7 +4692,11 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
             try {
                 const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
-                const bumpChecked = document.getElementById('orderBump')?.checked || false;
+                // Bump-State: DOM-Checkbox, sonst persisted localStorage (z.B. wenn Modal übersprungen wurde)
+                const cbEl = document.getElementById('orderBump');
+                const bumpChecked = cbEl
+                    ? cbEl.checked
+                    : localStorage.getItem('order_bump_checked') === 'true';
                 const tagebuchDaysMap = { '1month': 30, '3month': 90, '6month': 180 };
                 const bumpDays = tagebuchDaysMap[selectedPlan] || 90;
                 // Cancel-URL: User landet nach Abbruch wieder auf dieser Seite
@@ -4870,7 +4874,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 <span class="benefit-tag">✓ Support inklusive</span>
             </div>
 
-            <button class="exit-popup-cta" onclick="claimExitBonus(); closeExitPopup(); getMyPlan();">
+            <button class="exit-popup-cta" onclick="claimExitBonus(); closeExitPopup(); showCheckoutSummary();">
                 Mit 15% Rabatt sichern →
             </button>
             <button class="exit-popup-skip" onclick="closeExitPopup()">
