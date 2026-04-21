@@ -3980,55 +3980,56 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             goToTpSlide(tpCurrentSlide);
         }, 4000);
 
-        // Exit-Intent Popup Logic - nur wenn vom Checkout/Stripe zurück
+        // Exit-Intent Popup: triggert NUR beim Rückkehr von Stripe
         let exitPopupShown = false;
 
-        // Stale Flags von alten Sessions aufräumen:
-        // Wenn User NICHT von Stripe kommt (kein Stripe-Host im referrer) und
-        // auch keine Stripe-Redirect-Params in URL sind → wentToStripe + exit_discount_15 löschen.
-        // Der 15%-Exit-Discount gilt nur innerhalb eines Stripe-Return-Flows.
-        (function cleanupStaleStripeFlag() {
+        // Signale, dass der User gerade von Stripe zurückkommt:
+        //  1) URL enthält redirect_status=canceled (Stripe-cancel_url-Redirect)
+        //  2) document.referrer ist stripe.com (Browser-Back-Button von Stripe)
+        function checkIfJustReturnedFromStripe() {
             try {
-                const ref = document.referrer || '';
                 const qp = new URLSearchParams(window.location.search);
-                const hasStripeParams = qp.has('redirect_status') || qp.has('payment_intent') || qp.has('payment_intent_client_secret');
-                // Stripe-Cancel-Redirect setzt redirect_status=canceled → wentToStripe bleibt
-                if (qp.get('redirect_status') === 'canceled') {
-                    localStorage.setItem('wentToStripe', 'true');
-                }
-                const cameFromStripe = /(?:^|\.)stripe\.com/i.test(new URL(ref || 'about:blank', window.location.href).hostname || '');
-                if (!cameFromStripe && !hasStripeParams) {
-                    localStorage.removeItem('wentToStripe');
-                    localStorage.removeItem('exit_discount_15');
-                    localStorage.removeItem('order_bump_checked');
-                }
+                if (qp.get('redirect_status') === 'canceled') return true;
+                const ref = document.referrer || '';
+                if (!ref) return false;
+                const host = new URL(ref, window.location.href).hostname || '';
+                return /(?:^|\.)stripe\.com$/i.test(host);
+            } catch (e) {
+                return false;
+            }
+        }
+
+        const justReturnedFromStripe = checkIfJustReturnedFromStripe();
+
+        // Alle "alten" Flags bei Fresh-Entry aufräumen (kein Stripe-Return) —
+        // verhindert Popup-Spuk bei späteren Besuchen.
+        if (!justReturnedFromStripe) {
+            try {
+                localStorage.removeItem('wentToStripe');
+                localStorage.removeItem('exit_discount_15');
+                localStorage.removeItem('order_bump_checked');
             } catch (e) {}
-        })();
+        }
 
-        // Prüfen ob User von Stripe zurückkommt
-        const fromStripe = localStorage.getItem('wentToStripe') === 'true';
-
-        if (fromStripe && !sessionStorage.getItem('exitPopupShown')) {
-            // User kam von Stripe zurück ohne zu kaufen - Popup sofort zeigen
+        // Initialer Popup-Trigger nur bei bestätigtem Stripe-Return
+        if (justReturnedFromStripe && !sessionStorage.getItem('exitPopupShown')) {
             setTimeout(() => {
                 showExitPopup();
             }, 500);
         }
 
-        // Back-Button Detection - nur wenn von Stripe
+        // Back-Button / BFCache-Restore: CTA-Button resetten & Popup ggf. zeigen
         window.addEventListener('pageshow', function(event) {
-            if (localStorage.getItem('wentToStripe') === 'true') {
-                // CTA-Button zurücksetzen
-                const ctaBtn = document.querySelector('.cta-button');
-                if (ctaBtn) {
-                    ctaBtn.disabled = false;
-                    ctaBtn.innerHTML = 'Trainingsplan freischalten<span class="cta-subtext">Sofort per E-Mail · Kein Abo · 30 Tage Garantie</span>';
-                }
-                if (!exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
-                    setTimeout(() => {
-                        showExitPopup();
-                    }, 300);
-                }
+            const ctaBtn = document.querySelector('.cta-button');
+            if (ctaBtn && ctaBtn.disabled) {
+                ctaBtn.disabled = false;
+                ctaBtn.innerHTML = 'Trainingsplan freischalten<span class="cta-subtext">Sofort per E-Mail · Kein Abo · 30 Tage Garantie</span>';
+            }
+            // Nur wenn wir JETZT gerade von Stripe zurückkommen und Popup noch nicht gezeigt
+            if (checkIfJustReturnedFromStripe() && !exitPopupShown && !sessionStorage.getItem('exitPopupShown')) {
+                setTimeout(() => {
+                    showExitPopup();
+                }, 300);
             }
         });
 
