@@ -1,0 +1,549 @@
+// Personalisierter Trainings-Tagebuch-PDF-Generator.
+// Ports die Logik aus generate-tagebuch-pdf.mjs in eine TS-Library,
+// damit die API-Route (/api/tagebuch/generate) das PDF on-the-fly pro Käufer erzeugen kann.
+
+import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import type { PDFFont, PDFPage } from "pdf-lib";
+
+const A4_W = 595.28;
+const A4_H = 841.89;
+
+const DARK_BROWN   = rgb(36 / 255, 23 / 255, 20 / 255);
+const GOLD         = rgb(196 / 255, 165 / 255, 118 / 255);
+const GOLD_DARK    = rgb(139 / 255, 115 / 255, 85 / 255);
+const ORANGE       = rgb(230 / 255, 121 / 255, 70 / 255);
+const TEXT_DARK    = rgb(26 / 255, 26 / 255, 26 / 255);
+const TEXT_MEDIUM  = rgb(100 / 255, 100 / 255, 100 / 255);
+const TEXT_LIGHT   = rgb(150 / 255, 150 / 255, 150 / 255);
+const WHITE        = rgb(1, 1, 1);
+const BG_CREAM     = rgb(250 / 255, 248 / 255, 243 / 255);
+const BG_WARM      = rgb(255 / 255, 251 / 255, 245 / 255);
+const BORDER_LIGHT = rgb(232 / 255, 220 / 255, 200 / 255);
+const LINE_LIGHT   = rgb(210 / 255, 200 / 255, 185 / 255);
+
+const WEEK_QUOTES = [
+  "Der erste Schritt ist immer der schwerste. Du hast ihn gemacht.",
+  "Jede Wiederholung baut die neue Gewohnheit. Bleib dran.",
+  "Drei Wochen — dein Hund gewöhnt sich an die neue Routine.",
+  "Nach 30 Tagen bildet sich eine echte Gewohnheit. Halt durch.",
+  "Ein Monat geschafft. Du bist in der Kontinuität angekommen.",
+  "Kleine Siege addieren sich. Jeder Tag zählt.",
+  "Die Woche der Geduld — lass dir Zeit, Fortschritt ist nicht linear.",
+  "Acht Wochen zeigen: das ist keine Eintagsfliege.",
+  "Der Durchbruch passiert oft genau jetzt. Halte die Spannung.",
+  "Die Kurve flacht ab — das ist normal. Dranbleiben.",
+  "Halbzeit, oder fast am Ziel — der Unterschied ist sichtbar.",
+  "Die letzten Meter sind oft die wichtigsten. Finish stark.",
+];
+
+function periodLabel(weeks: number): string {
+  if (weeks === 4)  return "4 Wochen";
+  if (weeks === 12) return "3 Monate";
+  if (weeks === 24) return "6 Monate";
+  return weeks + " Wochen";
+}
+
+function wrapText(text: string, font: PDFFont, size: number, maxWidth: number): string[] {
+  const words = String(text).split(" ");
+  const lines: string[] = [];
+  let line = "";
+  for (const w of words) {
+    const test = line ? line + " " + w : w;
+    if (font.widthOfTextAtSize(test, size) > maxWidth && line) {
+      lines.push(line);
+      line = w;
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function drawRoundedRect(page: PDFPage, x: number, y: number, w: number, h: number, r: number, color: any) {
+  if (r > w / 2) r = w / 2;
+  if (r > h / 2) r = h / 2;
+  page.drawRectangle({ x: x + r, y, width: w - 2 * r, height: h, color });
+  page.drawRectangle({ x, y: y + r, width: w, height: h - 2 * r, color });
+  page.drawCircle({ x: x + r,     y: y + r,     size: r, color });
+  page.drawCircle({ x: x + w - r, y: y + r,     size: r, color });
+  page.drawCircle({ x: x + r,     y: y + h - r, size: r, color });
+  page.drawCircle({ x: x + w - r, y: y + h - r, size: r, color });
+}
+
+function drawRoundedBorder(page: PDFPage, x: number, y: number, w: number, h: number, r: number, color: any, thickness = 1) {
+  page.drawLine({ start: { x: x + r, y },           end: { x: x + w - r, y },           thickness, color });
+  page.drawLine({ start: { x: x + r, y: y + h },    end: { x: x + w - r, y: y + h },    thickness, color });
+  page.drawLine({ start: { x, y: y + r },           end: { x, y: y + h - r },           thickness, color });
+  page.drawLine({ start: { x: x + w, y: y + r },    end: { x: x + w, y: y + h - r },    thickness, color });
+}
+
+function drawCheckbox(page: PDFPage, x: number, y: number, size: number, color: any = GOLD_DARK) {
+  page.drawRectangle({ x, y, width: size, height: size, color: WHITE });
+  page.drawLine({ start: { x, y },             end: { x: x + size, y },           thickness: 1, color });
+  page.drawLine({ start: { x, y: y + size },   end: { x: x + size, y: y + size }, thickness: 1, color });
+  page.drawLine({ start: { x, y },             end: { x, y: y + size },           thickness: 1, color });
+  page.drawLine({ start: { x: x + size, y },   end: { x: x + size, y: y + size }, thickness: 1, color });
+}
+
+function drawWriteLine(page: PDFPage, x: number, y: number, w: number) {
+  page.drawLine({ start: { x, y }, end: { x: x + w, y }, thickness: 0.6, color: LINE_LIGHT });
+}
+
+function drawScale(page: PDFPage, x: number, y: number, font: PDFFont) {
+  const count = 10;
+  const step = 18;
+  const r = 7;
+  for (let i = 0; i < count; i++) {
+    const cx = x + i * step + r;
+    page.drawCircle({ x: cx, y, size: r, borderColor: GOLD_DARK, borderWidth: 0.8, color: WHITE });
+    const num = String(i + 1);
+    const nw  = font.widthOfTextAtSize(num, 8);
+    page.drawText(num, { x: cx - nw / 2, y: y - 2.5, size: 8, font, color: TEXT_MEDIUM });
+  }
+}
+
+function drawPaw(page: PDFPage, cx: number, cy: number, scale = 1, color: any = GOLD) {
+  const pad = 10 * scale;
+  const toe = 5 * scale;
+  page.drawEllipse({ x: cx, y: cy - pad * 0.3, xScale: pad, yScale: pad * 0.8, color });
+  page.drawCircle({ x: cx - pad * 1.1, y: cy + pad * 0.7,  size: toe,       color });
+  page.drawCircle({ x: cx - pad * 0.4, y: cy + pad * 1.2,  size: toe * 1.1, color });
+  page.drawCircle({ x: cx + pad * 0.4, y: cy + pad * 1.2,  size: toe * 1.1, color });
+  page.drawCircle({ x: cx + pad * 1.1, y: cy + pad * 0.7,  size: toe,       color });
+}
+
+function drawPageFooter(page: PDFPage, pageNr: number, totalPages: number, font: PDFFont) {
+  const txt = `Tagebuch · Seite ${pageNr}/${totalPages} · Pfoten-Plan`;
+  const w = font.widthOfTextAtSize(txt, 9);
+  page.drawText(txt, { x: (A4_W - w) / 2, y: 24, size: 9, font, color: TEXT_LIGHT });
+  page.drawRectangle({ x: 0, y: 0, width: A4_W, height: 3, color: GOLD });
+}
+
+export interface TagebuchParams {
+  dogName: string;
+  dogBreed?: string;
+  dogAge?: string;
+  mainProblem?: string;
+  weeks: number; // 4, 12, or 24
+}
+
+export async function generateTagebuchPdf(params: TagebuchParams): Promise<Uint8Array> {
+  const DOG_NAME     = (params.dogName     || "deinem Hund").trim();
+  const DOG_BREED    = (params.dogBreed    || "Mischling").trim();
+  const DOG_AGE      = (params.dogAge      || "—").trim();
+  const MAIN_PROBLEM = (params.mainProblem || "Leinenziehen").trim();
+  const WEEKS        = Math.max(1, Math.min(52, Number(params.weeks) || 4));
+  const TOTAL_DAYS   = WEEKS * 7;
+  const PERIOD       = periodLabel(WEEKS);
+
+  const doc        = await PDFDocument.create();
+  const fontReg    = await doc.embedFont(StandardFonts.Helvetica);
+  const fontBold   = await doc.embedFont(StandardFonts.HelveticaBold);
+  const fontItalic = await doc.embedFont(StandardFonts.HelveticaOblique);
+
+  const MARGIN = 50;
+  const CONTENT_W = A4_W - 2 * MARGIN;
+  const TOTAL_PAGES = 4 + WEEKS * 2;
+
+  // ===== PAGE 1 — COVER =====
+  {
+    const p = doc.addPage([A4_W, A4_H]);
+    const HEADER_H = 320;
+    p.drawRectangle({ x: 0, y: A4_H - HEADER_H, width: A4_W, height: HEADER_H, color: DARK_BROWN });
+    p.drawRectangle({ x: 0, y: A4_H - HEADER_H - 3, width: A4_W, height: 3, color: GOLD });
+
+    p.drawText("PFOTEN-PLAN", { x: MARGIN, y: A4_H - 60, size: 11, font: fontBold, color: GOLD, characterSpacing: 2.2 } as any);
+    p.drawText("pfoten-plan.de", {
+      x: A4_W - MARGIN - fontReg.widthOfTextAtSize("pfoten-plan.de", 10),
+      y: A4_H - 60, size: 10, font: fontReg, color: rgb(200/255, 180/255, 150/255),
+    });
+
+    const title = "Dein Trainings-Tagebuch";
+    const tw = fontBold.widthOfTextAtSize(title, 30);
+    p.drawText(title, { x: (A4_W - tw) / 2, y: A4_H - 140, size: 30, font: fontBold, color: WHITE });
+
+    const subTop = `${PERIOD} zu einem ruhigeren Hund`;
+    const stw = fontReg.widthOfTextAtSize(subTop, 13);
+    p.drawText(subTop, { x: (A4_W - stw) / 2, y: A4_H - 170, size: 13, font: fontReg, color: rgb(220/255, 200/255, 170/255) });
+
+    drawPaw(p, A4_W / 2, A4_H - 230, 1.3, GOLD);
+
+    p.drawRectangle({ x: 0, y: 0, width: A4_W, height: A4_H - HEADER_H - 3, color: BG_CREAM });
+
+    const fuer = "Für";
+    const fw = fontReg.widthOfTextAtSize(fuer, 18);
+    p.drawText(fuer, { x: (A4_W - fw) / 2, y: A4_H - HEADER_H - 90, size: 18, font: fontReg, color: TEXT_MEDIUM });
+
+    const nameSize = 44;
+    const nw = fontBold.widthOfTextAtSize(DOG_NAME, nameSize);
+    p.drawText(DOG_NAME, { x: (A4_W - nw) / 2, y: A4_H - HEADER_H - 150, size: nameSize, font: fontBold, color: DARK_BROWN });
+
+    p.drawRectangle({ x: (A4_W - 60) / 2, y: A4_H - HEADER_H - 170, width: 60, height: 2, color: GOLD });
+
+    const tags = [DOG_BREED, DOG_AGE, MAIN_PROBLEM].filter(Boolean);
+    const tagGap = 10;
+    const tagFontSize = 11;
+    const tagPadX = 12;
+    const tagH = 24;
+    const tagWidths = tags.map((t) => fontBold.widthOfTextAtSize(t, tagFontSize) + tagPadX * 2);
+    const totalTagsW = tagWidths.reduce((a, b) => a + b, 0) + tagGap * (tags.length - 1);
+    let tagX = (A4_W - totalTagsW) / 2;
+    const tagY = A4_H - HEADER_H - 220;
+    for (let i = 0; i < tags.length; i++) {
+      drawRoundedRect(p, tagX, tagY, tagWidths[i], tagH, 12, WHITE);
+      p.drawRectangle({ x: tagX, y: tagY, width: tagWidths[i], height: 1.2, color: GOLD });
+      const tx = tagX + tagPadX;
+      p.drawText(tags[i], { x: tx, y: tagY + 7, size: tagFontSize, font: fontBold, color: DARK_BROWN });
+      tagX += tagWidths[i] + tagGap;
+    }
+
+    const blurb = `Notiere jeden Tag kurz, was geklappt hat. In ${TOTAL_DAYS} Tagen\nschaust du zurück und siehst den Fortschritt schwarz auf weiß.`;
+    const blurbLines = blurb.split("\n");
+    let by = 170;
+    for (const line of blurbLines) {
+      const lw = fontReg.widthOfTextAtSize(line, 12);
+      p.drawText(line, { x: (A4_W - lw) / 2, y: by, size: 12, font: fontReg, color: TEXT_MEDIUM });
+      by -= 18;
+    }
+
+    drawPaw(p, A4_W / 2, 100, 0.7, GOLD);
+    p.drawRectangle({ x: 0, y: 0, width: A4_W, height: 8, color: GOLD });
+  }
+
+  // ===== PAGE 2 — So nutzt du dein Tagebuch =====
+  {
+    const p = doc.addPage([A4_W, A4_H]);
+    p.drawRectangle({ x: 0, y: 0, width: A4_W, height: A4_H, color: WHITE });
+    p.drawRectangle({ x: 0, y: A4_H - 6, width: A4_W, height: 6, color: GOLD });
+
+    let y = A4_H - 70;
+    p.drawText("So nutzt du dein Tagebuch", { x: MARGIN, y, size: 24, font: fontBold, color: DARK_BROWN });
+    y -= 14;
+    p.drawRectangle({ x: MARGIN, y, width: 50, height: 2, color: GOLD });
+    y -= 28;
+    const intro = `Dieses Tagebuch begleitet dich und ${DOG_NAME} durch die nächsten ${PERIOD}. Es braucht keine Stunden — 2 Minuten pro Tag reichen.`;
+    const introLines = wrapText(intro, fontReg, 12, CONTENT_W);
+    for (const l of introLines) {
+      p.drawText(l, { x: MARGIN, y, size: 12, font: fontReg, color: TEXT_MEDIUM });
+      y -= 17;
+    }
+    y -= 20;
+
+    const steps = [
+      { t: "Jeden Tag kurz eintragen", d: "2 Minuten reichen. Ein Haken, eine Beobachtung — mehr nicht. Dranbleiben schlägt Perfektion." },
+      { t: "Abend oder Morgen — find deinen Rhythmus", d: "Manche tragen abends ein, andere beim Morgenkaffee. Was für dich funktioniert, ist richtig." },
+      { t: "Erfolge feiern, auch die kleinen", d: "Hat dein Hund heute nur 2 Sekunden ruhig an der Leine gewartet? Das zählt. Kleine Siege addieren sich." },
+      { t: `Nach ${PERIOD} Fortschritt vergleichen`, d: "Auf der letzten Seite vergleichst du Start und Ende. Du wirst überrascht sein, wie viel sich bewegt hat." },
+    ];
+
+    for (let i = 0; i < steps.length; i++) {
+      const s = steps[i];
+      p.drawCircle({ x: MARGIN + 16, y: y - 4, size: 14, color: GOLD });
+      const nr = String(i + 1);
+      const nw = fontBold.widthOfTextAtSize(nr, 13);
+      p.drawText(nr, { x: MARGIN + 16 - nw / 2, y: y - 9, size: 13, font: fontBold, color: WHITE });
+
+      p.drawText(s.t, { x: MARGIN + 42, y: y - 2, size: 13.5, font: fontBold, color: DARK_BROWN });
+      y -= 20;
+      const dLines = wrapText(s.d, fontReg, 11, CONTENT_W - 42);
+      for (const l of dLines) {
+        p.drawText(l, { x: MARGIN + 42, y, size: 11, font: fontReg, color: TEXT_MEDIUM });
+        y -= 15;
+      }
+      y -= 18;
+    }
+
+    const boxH = 80;
+    const boxY = 120;
+    drawRoundedRect(p, MARGIN, boxY, CONTENT_W, boxH, 10, BG_WARM);
+    p.drawRectangle({ x: MARGIN, y: boxY, width: 4, height: boxH, color: ORANGE });
+
+    p.drawText("Warum ein Tagebuch?", { x: MARGIN + 18, y: boxY + boxH - 24, size: 13, font: fontBold, color: DARK_BROWN });
+    const stat = "94 % der Halter, die ein Tagebuch führen, schaffen den Plan komplett.";
+    const stl = wrapText(stat, fontReg, 11.5, CONTENT_W - 36);
+    let sy = boxY + boxH - 44;
+    for (const line of stl) {
+      p.drawText(line, { x: MARGIN + 18, y: sy, size: 11.5, font: fontReg, color: TEXT_DARK });
+      sy -= 15;
+    }
+
+    drawPageFooter(p, 2, TOTAL_PAGES, fontReg);
+  }
+
+  // ===== PAGE 3 — Baseline =====
+  {
+    const p = doc.addPage([A4_W, A4_H]);
+    p.drawRectangle({ x: 0, y: 0, width: A4_W, height: A4_H, color: WHITE });
+    p.drawRectangle({ x: 0, y: A4_H - 6, width: A4_W, height: 6, color: GOLD });
+
+    let y = A4_H - 70;
+    p.drawText("Startpunkt: Wo stehen wir heute?", { x: MARGIN, y, size: 22, font: fontBold, color: DARK_BROWN });
+    y -= 14;
+    p.drawRectangle({ x: MARGIN, y, width: 50, height: 2, color: GOLD });
+    y -= 26;
+    p.drawText("Einmalig auszufüllen an Tag 1 — die Baseline für deinen Fortschritt.", {
+      x: MARGIN, y, size: 11, font: fontItalic, color: TEXT_MEDIUM,
+    });
+    y -= 28;
+
+    const scales = [
+      `Wie problematisch ist ${MAIN_PROBLEM} aktuell?   (1 = kaum  ·  10 = extrem)`,
+      "Wie oft triggert das Problem pro Tag?   (1 = selten  ·  10 = ständig)",
+      "Wie gestresst bist du dadurch?   (1 = gar nicht  ·  10 = sehr)",
+    ];
+
+    for (const label of scales) {
+      const labelLines = wrapText(label, fontBold, 11, CONTENT_W);
+      for (const l of labelLines) {
+        p.drawText(l, { x: MARGIN, y, size: 11, font: fontBold, color: TEXT_DARK });
+        y -= 15;
+      }
+      y -= 4;
+      drawScale(p, MARGIN + 5, y - 6, fontReg);
+      y -= 36;
+    }
+
+    const fields = [
+      `Mein größter Wunsch für die nächsten ${PERIOD} mit ${DOG_NAME}:`,
+      "Was habe ich schon probiert?",
+    ];
+    const LINES_PER_FIELD = 3;
+    for (const fLabel of fields) {
+      p.drawText(fLabel, { x: MARGIN, y, size: 11, font: fontBold, color: TEXT_DARK });
+      y -= 18;
+      for (let i = 0; i < LINES_PER_FIELD; i++) {
+        drawWriteLine(p, MARGIN, y, CONTENT_W);
+        y -= 22;
+      }
+      y -= 8;
+    }
+
+    y = 120;
+    p.drawText("Datum Tag 1:", { x: MARGIN, y, size: 11, font: fontBold, color: TEXT_DARK });
+    drawWriteLine(p, MARGIN + 85, y - 3, 160);
+    p.drawText("Unterschrift:", { x: MARGIN + 280, y, size: 11, font: fontBold, color: TEXT_DARK });
+    drawWriteLine(p, MARGIN + 360, y - 3, CONTENT_W - 360);
+
+    drawPageFooter(p, 3, TOTAL_PAGES, fontReg);
+  }
+
+  // ===== Wochen-Seiten =====
+  for (let week = 1; week <= WEEKS; week++) {
+    // Linke Seite: Tages-Tracker
+    {
+      const p = doc.addPage([A4_W, A4_H]);
+      p.drawRectangle({ x: 0, y: 0, width: A4_W, height: A4_H, color: WHITE });
+      p.drawRectangle({ x: 0, y: A4_H - 6, width: A4_W, height: 6, color: GOLD });
+
+      let y = A4_H - 70;
+      const badgeW = 78;
+      const badgeH = 28;
+      drawRoundedRect(p, MARGIN, y - 22, badgeW, badgeH, 6, DARK_BROWN);
+      const badgeTxt = `WOCHE ${week}`;
+      const btw = fontBold.widthOfTextAtSize(badgeTxt, 11);
+      p.drawText(badgeTxt, { x: MARGIN + (badgeW - btw) / 2, y: y - 15, size: 11, font: fontBold, color: GOLD, characterSpacing: 1.2 } as any);
+
+      const head = `Woche ${week} von ${WEEKS}`;
+      p.drawText(head, { x: MARGIN + badgeW + 14, y: y - 14, size: 22, font: fontBold, color: DARK_BROWN });
+      y -= 40;
+      p.drawRectangle({ x: MARGIN, y, width: CONTENT_W, height: 1, color: BORDER_LIGHT });
+      y -= 20;
+
+      p.drawText("Diese Woche fokussiere ich mich auf …", { x: MARGIN, y, size: 11, font: fontBold, color: TEXT_DARK });
+      y -= 16;
+      drawWriteLine(p, MARGIN, y, CONTENT_W);
+      y -= 20;
+      drawWriteLine(p, MARGIN, y, CONTENT_W);
+      y -= 22;
+
+      const days = ["Tag 1", "Tag 2", "Tag 3", "Tag 4", "Tag 5", "Tag 6", "Tag 7"];
+      const rowH = 54;
+      for (let i = 0; i < days.length; i++) {
+        const rowY = y - rowH;
+        drawRoundedRect(p, MARGIN, rowY, CONTENT_W, rowH - 4, 6, BG_CREAM);
+
+        p.drawText(days[i], { x: MARGIN + 12, y: rowY + rowH - 20, size: 11, font: fontBold, color: DARK_BROWN });
+        p.drawText("Datum:", { x: MARGIN + 58, y: rowY + rowH - 20, size: 9.5, font: fontReg, color: TEXT_MEDIUM });
+        drawWriteLine(p, MARGIN + 94, rowY + rowH - 23, 70);
+
+        const cbSize = 10;
+        const cbStartX = MARGIN + 180;
+        const cbGap = 112;
+        const labels = ["Übung gemacht", "Erfolg gehabt", "Rückschritt"];
+        for (let c = 0; c < labels.length; c++) {
+          const cbX = cbStartX + c * cbGap;
+          const cbY = rowY + rowH - 24;
+          drawCheckbox(p, cbX, cbY, cbSize);
+          p.drawText(labels[c], { x: cbX + cbSize + 5, y: cbY + 1.5, size: 9.5, font: fontReg, color: TEXT_DARK });
+        }
+
+        p.drawText("Beobachtung:", { x: MARGIN + 12, y: rowY + 12, size: 9.5, font: fontBold, color: TEXT_MEDIUM });
+        drawWriteLine(p, MARGIN + 82, rowY + 10, CONTENT_W - 94);
+
+        y = rowY;
+      }
+
+      y -= 24;
+      const quote = "„" + WEEK_QUOTES[(week - 1) % WEEK_QUOTES.length] + "\"";
+      const qLines = wrapText(quote, fontItalic, 12, CONTENT_W - 40);
+      for (const l of qLines) {
+        const lw = fontItalic.widthOfTextAtSize(l, 12);
+        p.drawText(l, { x: (A4_W - lw) / 2, y, size: 12, font: fontItalic, color: GOLD_DARK });
+        y -= 16;
+      }
+
+      drawPageFooter(p, 3 + (week - 1) * 2 + 1, TOTAL_PAGES, fontReg);
+    }
+
+    // Rechte Seite: Reflexion
+    {
+      const p = doc.addPage([A4_W, A4_H]);
+      p.drawRectangle({ x: 0, y: 0, width: A4_W, height: A4_H, color: WHITE });
+      p.drawRectangle({ x: 0, y: A4_H - 6, width: A4_W, height: 6, color: GOLD });
+
+      let y = A4_H - 70;
+      p.drawText(`Wochen-Reflexion · Woche ${week}`, { x: MARGIN, y, size: 20, font: fontBold, color: DARK_BROWN });
+      y -= 14;
+      p.drawRectangle({ x: MARGIN, y, width: 50, height: 2, color: GOLD });
+      y -= 20;
+      p.drawText("Am Ende der Woche auszufüllen — ehrlich zu dir selbst.", {
+        x: MARGIN, y, size: 11, font: fontItalic, color: TEXT_MEDIUM,
+      });
+      y -= 26;
+
+      const questions = [
+        { q: "Was hat diese Woche besonders gut geklappt?", lines: 3 },
+        { q: "Was war schwierig?",                           lines: 3 },
+        { q: "Welche Übung war am effektivsten?",            lines: 2 },
+      ];
+      for (const item of questions) {
+        p.drawText(item.q, { x: MARGIN, y, size: 11.5, font: fontBold, color: TEXT_DARK });
+        y -= 16;
+        for (let i = 0; i < item.lines; i++) {
+          drawWriteLine(p, MARGIN, y, CONTENT_W);
+          y -= 22;
+        }
+        y -= 6;
+      }
+
+      p.drawText("Skala 1–10: Wie zufrieden bin ich mit dieser Woche?", {
+        x: MARGIN, y, size: 11.5, font: fontBold, color: TEXT_DARK,
+      });
+      y -= 22;
+      drawScale(p, MARGIN + 5, y, fontReg);
+      y -= 40;
+
+      p.drawText("Erfolgs-Sticker — male aus oder hake ab, was diese Woche gelungen ist:", {
+        x: MARGIN, y, size: 10.5, font: fontBold, color: TEXT_DARK,
+      });
+      y -= 22;
+      const stickers = ["Drangeblieben", "1 kleiner Sieg", "Ruhe bewahrt", "Geduld", "Neuer Versuch", "Erkenntnis", "Fortschritt"];
+      const stickerW = 68;
+      const stickerH = 46;
+      const stickerGap = 8;
+      const perRow = Math.floor((CONTENT_W + stickerGap) / (stickerW + stickerGap));
+      let sx = MARGIN;
+      let sy = y - stickerH;
+      for (let i = 0; i < stickers.length; i++) {
+        if (i > 0 && i % perRow === 0) {
+          sx = MARGIN;
+          sy -= stickerH + stickerGap;
+        }
+        drawRoundedRect(p, sx, sy, stickerW, stickerH, 8, BG_CREAM);
+        p.drawCircle({ x: sx + stickerW / 2, y: sy + stickerH - 14, size: 7, color: GOLD });
+        const lbl = stickers[i];
+        const lw = fontReg.widthOfTextAtSize(lbl, 8);
+        p.drawText(lbl, { x: sx + (stickerW - lw) / 2, y: sy + 10, size: 8, font: fontReg, color: TEXT_DARK });
+        sx += stickerW + stickerGap;
+      }
+
+      drawPageFooter(p, 3 + (week - 1) * 2 + 2, TOTAL_PAGES, fontReg);
+    }
+  }
+
+  // ===== Abschluss =====
+  {
+    const p = doc.addPage([A4_W, A4_H]);
+    p.drawRectangle({ x: 0, y: 0, width: A4_W, height: A4_H, color: WHITE });
+    p.drawRectangle({ x: 0, y: A4_H - 6, width: A4_W, height: 6, color: GOLD });
+
+    let y = A4_H - 70;
+    p.drawText(`Deine Reise in ${PERIOD}`, { x: MARGIN, y, size: 24, font: fontBold, color: DARK_BROWN });
+    y -= 14;
+    p.drawRectangle({ x: MARGIN, y, width: 50, height: 2, color: GOLD });
+    y -= 26;
+    const introEnd = `Trag die gleichen Werte wie an Tag 1 erneut ein. Vergleich Start und Ende — so siehst du schwarz auf weiß, was sich bei ${DOG_NAME} verändert hat.`;
+    const introLines = wrapText(introEnd, fontReg, 11.5, CONTENT_W);
+    for (const l of introLines) {
+      p.drawText(l, { x: MARGIN, y, size: 11.5, font: fontReg, color: TEXT_MEDIUM });
+      y -= 16;
+    }
+    y -= 14;
+
+    const colW = CONTENT_W / 3;
+    const col1X = MARGIN;
+    const col2X = MARGIN + colW;
+    const col3X = MARGIN + colW * 2;
+
+    drawRoundedRect(p, MARGIN, y - 26, CONTENT_W, 26, 4, DARK_BROWN);
+    p.drawText("Thema", { x: col1X + 12, y: y - 18, size: 10.5, font: fontBold, color: GOLD });
+    p.drawText("Start (Tag 1)", { x: col2X + 12, y: y - 18, size: 10.5, font: fontBold, color: GOLD });
+    p.drawText(`Ende (Tag ${TOTAL_DAYS})`, { x: col3X + 12, y: y - 18, size: 10.5, font: fontBold, color: GOLD });
+    y -= 30;
+
+    const topics = [
+      `Problem „${MAIN_PROBLEM}" (1–10)`,
+      "Häufigkeit pro Tag (1–10)",
+      "Mein Stress-Level (1–10)",
+    ];
+    for (const topic of topics) {
+      drawRoundedRect(p, MARGIN, y - 36, CONTENT_W, 36, 4, BG_CREAM);
+
+      const tLines = wrapText(topic, fontBold, 10.5, colW - 24);
+      let ty = y - 16;
+      for (const l of tLines) {
+        p.drawText(l, { x: col1X + 12, y: ty, size: 10.5, font: fontBold, color: TEXT_DARK });
+        ty -= 12;
+      }
+      drawRoundedRect(p, col2X + 12, y - 27, 40, 20, 4, WHITE);
+      drawRoundedBorder(p, col2X + 12, y - 27, 40, 20, 4, LINE_LIGHT, 0.8);
+      drawRoundedRect(p, col3X + 12, y - 27, 40, 20, 4, WHITE);
+      drawRoundedBorder(p, col3X + 12, y - 27, 40, 20, 4, LINE_LIGHT, 0.8);
+      p.drawText("/10", { x: col2X + 58, y: y - 22, size: 10, font: fontReg, color: TEXT_MEDIUM });
+      p.drawText("/10", { x: col3X + 58, y: y - 22, size: 10, font: fontReg, color: TEXT_MEDIUM });
+
+      y -= 42;
+    }
+    y -= 14;
+
+    p.drawText(`Was ist nach ${PERIOD} anders mit ${DOG_NAME}?`, {
+      x: MARGIN, y, size: 11.5, font: fontBold, color: TEXT_DARK,
+    });
+    y -= 16;
+    for (let i = 0; i < 3; i++) {
+      drawWriteLine(p, MARGIN, y, CONTENT_W);
+      y -= 22;
+    }
+
+    const endBoxY = 110;
+    const endBoxH = 78;
+    drawRoundedRect(p, MARGIN, endBoxY, CONTENT_W, endBoxH, 10, DARK_BROWN);
+    const endTitle = "Jetzt ist die Gewohnheit gebaut.";
+    const etw = fontBold.widthOfTextAtSize(endTitle, 16);
+    p.drawText(endTitle, { x: (A4_W - etw) / 2, y: endBoxY + endBoxH - 26, size: 16, font: fontBold, color: GOLD });
+
+    const endSub = `Mach weiter. Die ${PERIOD} sind das Fundament — der Rest baut sich darauf auf.`;
+    const esLines = wrapText(endSub, fontReg, 11, CONTENT_W - 40);
+    let esy = endBoxY + endBoxH - 46;
+    for (const l of esLines) {
+      const lw = fontReg.widthOfTextAtSize(l, 11);
+      p.drawText(l, { x: (A4_W - lw) / 2, y: esy, size: 11, font: fontReg, color: WHITE });
+      esy -= 14;
+    }
+
+    drawPageFooter(p, TOTAL_PAGES, TOTAL_PAGES, fontReg);
+  }
+
+  return await doc.save();
+}

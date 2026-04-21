@@ -53,10 +53,11 @@ async function deliverOrderBumpIfPurchased(paymentIntent: any) {
       return;
     }
 
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://pfoten-plan.de";
+
     // Wenn Notfallkarten als Bump gekauft → direkt die existierende Notfallkarten-API rufen
     if (bumpId === "notfallkarten") {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://pfoten-plan.de";
         const notfallRes = await fetch(`${baseUrl}/api/notfall-karten/generate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -64,7 +65,6 @@ async function deliverOrderBumpIfPurchased(paymentIntent: any) {
         });
         if (notfallRes.ok) {
           console.log(`🏥 Notfall-Karten (Paid-Bump) gesendet an ${email}`);
-          // Delivery-Flag in Supabase setzen
           if (leadId) {
             const { data: lead } = await supabase
               .from("wauwerk_leads")
@@ -90,7 +90,50 @@ async function deliverOrderBumpIfPurchased(paymentIntent: any) {
       } catch (e) {
         console.error("Notfallkarten-Bump-Delivery Error:", e);
       }
-      return; // Early exit — Email kommt direkt über notfall-karten API
+      return;
+    }
+
+    // Wenn Tagebuch als Bump gekauft → Tagebuch-API mit bump_days aus Metadata
+    if (bumpId === "tagebuch") {
+      try {
+        const bumpDaysRaw = paymentIntent.metadata?.bump_days || "30";
+        const bumpDays = parseInt(bumpDaysRaw, 10) || 30;
+        const tagebuchRes = await fetch(`${baseUrl}/api/tagebuch/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, dogName, leadId, bumpDays }),
+        });
+        if (tagebuchRes.ok) {
+          console.log(`📓 Tagebuch (${bumpDays}d) gesendet an ${email}`);
+          if (leadId) {
+            const { data: lead } = await supabase
+              .from("wauwerk_leads")
+              .select("answers")
+              .eq("id", leadId)
+              .single();
+            const prev = (lead?.answers || {}) as Record<string, any>;
+            await supabase
+              .from("wauwerk_leads")
+              .update({
+                answers: {
+                  ...prev,
+                  order_bump_delivered: "tagebuch",
+                  order_bump_delivered_at: new Date().toISOString(),
+                  order_bump_amount_cents: paymentIntent.metadata?.order_bump_amount_cents || "0",
+                  tagebuch_weeks: bumpDays >= 180 ? 24 : bumpDays >= 90 ? 12 : 4,
+                  tagebuch_sent_at: new Date().toISOString(),
+                }
+              })
+              .eq("id", leadId);
+          }
+        } else {
+          const err = await tagebuchRes.text();
+          console.error(`Tagebuch-Versand fehlgeschlagen: ${tagebuchRes.status}`, err);
+        }
+      } catch (e) {
+        console.error("Tagebuch-Bump-Delivery Error:", e);
+      }
+      return;
     }
 
     // Fallback für andere Bump-Types (z.B. zukünftige Produkte)
