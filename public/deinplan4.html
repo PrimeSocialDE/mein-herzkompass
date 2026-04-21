@@ -4391,15 +4391,28 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 '6month': { discount: 59.99, normal: 119.99, name: 'ENTSPANNT-PLAN' }
             };
             const p = priceMap[selectedPlan] || priceMap['3month'];
-            const price = (typeof timerExpired !== 'undefined' && timerExpired) ? p.normal : p.discount;
+            const basePrice = (typeof timerExpired !== 'undefined' && timerExpired) ? p.normal : p.discount;
+            const exitDiscountActive = localStorage.getItem('exit_discount_15') === 'true';
+            const effectivePrice = exitDiscountActive ? Math.round(basePrice * 85) / 100 : basePrice;
             const dogNameDisplay = (dogName && dogName !== 'deinen Hund') ? dogName : 'deinen Hund';
 
             const nameEl = document.getElementById('summaryPlanName');
             const dogEl = document.getElementById('summaryPlanDog');
             const priceEl = document.getElementById('summaryPlanPrice');
+            const priceOrigEl = document.getElementById('summaryPlanPriceOrig');
+            const discountBadge = document.getElementById('summaryDiscountBadge');
             if (nameEl) nameEl.textContent = p.name + ' · Trainingsplan';
             if (dogEl) dogEl.textContent = 'Für ' + dogNameDisplay;
-            if (priceEl) priceEl.textContent = '€' + price.toFixed(2).replace('.', ',');
+            if (priceEl) priceEl.textContent = '€' + effectivePrice.toFixed(2).replace('.', ',');
+            if (priceOrigEl) {
+                if (exitDiscountActive) {
+                    priceOrigEl.style.display = 'block';
+                    priceOrigEl.textContent = '€' + basePrice.toFixed(2).replace('.', ',');
+                } else {
+                    priceOrigEl.style.display = 'none';
+                }
+            }
+            if (discountBadge) discountBadge.style.display = exitDiscountActive ? 'inline-block' : 'none';
 
             // Tagebuch-Dauer passend zum gewählten Plan
             const tagebuchDaysMap = { '1month': 30, '3month': 90, '6month': 180 };
@@ -4444,6 +4457,21 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             const total = effectiveBase + (bumpChecked ? ORDER_BUMP_PRICE_EUR : 0);
             const totalEl = document.getElementById('summaryTotal');
             if (totalEl) totalEl.textContent = '€' + total.toFixed(2).replace('.', ',');
+
+            // Plan-Card-Preis live synchron halten (falls Checkbox/Discount sich ändern)
+            const priceEl = document.getElementById('summaryPlanPrice');
+            if (priceEl) priceEl.textContent = '€' + effectiveBase.toFixed(2).replace('.', ',');
+            const priceOrigEl = document.getElementById('summaryPlanPriceOrig');
+            if (priceOrigEl) {
+                if (exitDiscount) {
+                    priceOrigEl.style.display = 'block';
+                    priceOrigEl.textContent = '€' + base.toFixed(2).replace('.', ',');
+                } else {
+                    priceOrigEl.style.display = 'none';
+                }
+            }
+            const discountBadge = document.getElementById('summaryDiscountBadge');
+            if (discountBadge) discountBadge.style.display = exitDiscount ? 'inline-block' : 'none';
         }
 
         function confirmSummaryAndCheckout() {
@@ -4695,8 +4723,12 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     <div style="flex:1;">
                         <div style="font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:2px;" id="summaryPlanName">3-Monats-Plan</div>
                         <div style="font-size:12px;color:#666;" id="summaryPlanDog">Für deinen Hund</div>
+                        <div id="summaryDiscountBadge" style="display:none;margin-top:6px;background:#E67946;color:#fff;padding:2px 8px;border-radius:12px;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;">-15% Rabatt aktiv</div>
                     </div>
-                    <div style="font-size:17px;font-weight:800;color:#1a1a1a;" id="summaryPlanPrice">€39,99</div>
+                    <div style="text-align:right;white-space:nowrap;">
+                        <div id="summaryPlanPriceOrig" style="display:none;font-size:13px;color:#999;text-decoration:line-through;font-weight:500;margin-bottom:2px;"></div>
+                        <div style="font-size:17px;font-weight:800;color:#1a1a1a;" id="summaryPlanPrice">€39,99</div>
+                    </div>
                 </div>
             </div>
 
