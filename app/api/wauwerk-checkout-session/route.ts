@@ -79,10 +79,13 @@ export async function POST(req: NextRequest) {
     // Preis ermitteln
     const priceData = PRICES[plan as keyof typeof PRICES] || PRICES['1month'];
     const baseAmount = timerExpired ? priceData.normal : priceData.discount;
-    // 15% Exit-Discount anwenden falls User via Exit-Popup kommt
+    // 15% Exit-Discount auf BEIDES anwenden (Plan + Bump), falls aktiv
     const amount = exitDiscountApplied
       ? Math.round(baseAmount * 0.85)  // -15%
       : baseAmount;
+    const effectiveBumpCents = exitDiscountApplied
+      ? Math.round(ORDER_BUMP_PRICE_CENTS * 0.85)
+      : ORDER_BUMP_PRICE_CENTS;
 
     // Plan-Namen
     const planNames: Record<string, string> = {
@@ -125,11 +128,11 @@ export async function POST(req: NextRequest) {
           },
           quantity: 1,
         },
-        // Order-Bump als zweites line_item wenn angehakt (Notfall-Karten)
+        // Order-Bump als zweites line_item wenn angehakt (mit ggf. 15% Exit-Discount)
         ...(bumpApplied ? [{
           price_data: {
             currency: 'eur',
-            unit_amount: ORDER_BUMP_PRICE_CENTS,
+            unit_amount: effectiveBumpCents,
             product_data: {
               name: bumpModuleName,
               description: bumpDescription,
@@ -145,7 +148,7 @@ export async function POST(req: NextRequest) {
         timer_expired: timerExpired ? 'true' : 'false',
         email: email || '',
         order_bump: bumpApplied ? bumpMetadataId : '',
-        order_bump_amount_cents: bumpApplied ? String(ORDER_BUMP_PRICE_CENTS) : '0',
+        order_bump_amount_cents: bumpApplied ? String(effectiveBumpCents) : '0',
         bump_days: bumpApplied && effectiveBumpType === 'tagebuch' ? String(effectiveBumpDays) : '',
         exit_discount_15: exitDiscountApplied ? 'true' : 'false',
         base_amount_cents: String(baseAmount),
@@ -169,7 +172,7 @@ export async function POST(req: NextRequest) {
           dog_name: dogName || '',
           email: email || '',
           order_bump: bumpApplied ? bumpMetadataId : '',
-          order_bump_amount_cents: bumpApplied ? String(ORDER_BUMP_PRICE_CENTS) : '0',
+          order_bump_amount_cents: bumpApplied ? String(effectiveBumpCents) : '0',
           bump_days: bumpApplied && effectiveBumpType === 'tagebuch' ? String(effectiveBumpDays) : '',
         },
       },

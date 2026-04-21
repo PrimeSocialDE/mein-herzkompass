@@ -4000,6 +4000,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 if (!cameFromStripe && !hasStripeParams) {
                     localStorage.removeItem('wentToStripe');
                     localStorage.removeItem('exit_discount_15');
+                    localStorage.removeItem('order_bump_checked');
                 }
             } catch (e) {}
         })();
@@ -4551,9 +4552,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             if (titleEl) titleEl.textContent = tagebuchDays + '-Tage Trainings-Tagebuch dazu';
             if (descEl) descEl.textContent = 'Fortschritts-Tagebuch für volle ' + tagebuchDays + ' Tage zum Ausdrucken. Wöchentliche Reflexions-Fragen. So siehst du die Erfolge schwarz auf weiß.';
 
-            // Checkbox-State reset + Summary refresh
+            // Checkbox-State: letzte Auswahl aus localStorage wiederherstellen
             const cb = document.getElementById('orderBump');
-            if (cb) cb.checked = false;
+            if (cb) cb.checked = localStorage.getItem('order_bump_checked') === 'true';
             updateSummaryTotal();
 
             // Modal anzeigen
@@ -4583,9 +4584,19 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
             const effectiveBase = exitDiscount ? Math.round(base * 85) / 100 : base;
             const bumpChecked = document.getElementById('orderBump')?.checked || false;
-            const total = effectiveBase + (bumpChecked ? ORDER_BUMP_PRICE_EUR : 0);
+            // Auswahl persistieren, damit sie bei Stripe-Return erhalten bleibt
+            localStorage.setItem('order_bump_checked', bumpChecked ? 'true' : 'false');
+
+            // 15% auch auf den Bump-Preis anwenden
+            const bumpEffective = exitDiscount ? Math.round(ORDER_BUMP_PRICE_EUR * 85) / 100 : ORDER_BUMP_PRICE_EUR;
+
+            const total = effectiveBase + (bumpChecked ? bumpEffective : 0);
             const totalEl = document.getElementById('summaryTotal');
             if (totalEl) totalEl.textContent = '€' + total.toFixed(2).replace('.', ',');
+
+            // Bump-Preis im Label mit Rabatt anzeigen
+            const bumpPriceEl = document.getElementById('summaryBumpPrice');
+            if (bumpPriceEl) bumpPriceEl.textContent = 'nur +€' + bumpEffective.toFixed(2).replace('.', ',');
 
             // Plan-Card-Preis live synchron halten (falls Checkbox/Discount sich ändern)
             const priceEl = document.getElementById('summaryPlanPrice');
@@ -4904,7 +4915,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     </div>
                     <div style="font-size:12px;">
                         <span style="color:#999;text-decoration:line-through;">€14,99</span>
-                        <span style="color:#E67946;font-weight:800;margin-left:6px;">nur +€9,99</span>
+                        <span id="summaryBumpPrice" style="color:#E67946;font-weight:800;margin-left:6px;">nur +€9,99</span>
                     </div>
                 </div>
             </label>
