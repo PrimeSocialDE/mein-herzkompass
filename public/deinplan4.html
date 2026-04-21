@@ -4016,12 +4016,14 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         const justReturnedFromStripe = checkIfJustReturnedFromStripe();
 
         // Alle "alten" Flags bei Fresh-Entry aufräumen (kein Stripe-Return) —
-        // verhindert Popup-Spuk bei späteren Besuchen.
+        // verhindert Popup-Spuk bei späteren Besuchen und setzt "Popup gesehen" zurück,
+        // damit es beim nächsten Stripe-Return wieder triggern kann.
         if (!justReturnedFromStripe) {
             try {
                 localStorage.removeItem('wentToStripe');
                 localStorage.removeItem('exit_discount_15');
                 localStorage.removeItem('order_bump_checked');
+                sessionStorage.removeItem('exitPopupShown');
             } catch (e) {}
         }
 
