@@ -4612,36 +4612,16 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         <div id="payment-element"></div>
                     </div>
 
-                    <!-- ORDER BUMP: Problem-Intensiv-Modul dynamisch (+€19) -->
-                    <label id="orderBumpWrap" for="orderBump" style="display:flex;gap:12px;background:linear-gradient(135deg,#FFFBF5,#FEF3E7);border:2px dashed #C4A576;border-radius:10px;padding:14px 14px;margin:14px 0;cursor:pointer;align-items:flex-start;">
-                        <input type="checkbox" id="orderBump" style="margin-top:3px;width:20px;height:20px;cursor:pointer;accent-color:#C4A576;">
-                        <div style="flex:1;">
-                            <div style="font-size:13px;font-weight:800;color:#1a1a1a;margin-bottom:3px;">
-                                ☑ <span id="orderBumpTitle">Intensiv-Modul dazu</span>
-                            </div>
-                            <div style="font-size:12px;color:#666;line-height:1.45;margin-bottom:6px;">
-                                <span id="orderBumpDesc">10 Premium-Übungen zum gezielten Training.</span> <strong>Einmalig nur +€19</strong> — nur hier im Checkout.
-                            </div>
-                            <div style="font-size:11px;color:#8B7355;font-weight:600;">
-                                🔥 Passt perfekt zu deinem Plan
-                            </div>
-                        </div>
+                    <!-- DEAD CODE: Alter Checkout-Popup Bump - wird nie angezeigt (openCheckoutPopup nicht aufrufbar). IDs umbenannt damit keine Kollision mit Summary-Modal Bump. -->
+                    <label id="oldOrderBumpWrap" style="display:none;" for="oldOrderBump">
+                        <input type="checkbox" id="oldOrderBump">
+                        <span id="oldOrderBumpTitle"></span>
+                        <span id="oldOrderBumpDesc"></span>
                     </label>
-
-                    <!-- Dynamische Order-Summary -->
-                    <div id="orderSummary" style="background:#FAF8F3;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;">
-                        <div style="display:flex;justify-content:space-between;color:#666;margin-bottom:3px;">
-                            <span>Trainingsplan</span>
-                            <span id="orderBasePrice">€39,99</span>
-                        </div>
-                        <div id="orderBumpRow" style="display:none;justify-content:space-between;color:#666;margin-bottom:3px;">
-                            <span>+ Notfall-Karten</span>
-                            <span>€9,99</span>
-                        </div>
-                        <div style="display:flex;justify-content:space-between;font-weight:800;color:#1a1a1a;padding-top:6px;border-top:1px solid #E8E0D2;">
-                            <span>Gesamt</span>
-                            <span id="orderTotal">€39,99</span>
-                        </div>
+                    <div id="oldOrderSummary" style="display:none;">
+                        <span id="oldOrderBasePrice"></span>
+                        <div id="oldOrderBumpRow"></div>
+                        <span id="oldOrderTotal"></span>
                     </div>
 
                     <button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">
