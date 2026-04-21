@@ -2852,8 +2852,8 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
                     label: 'Gegen Ziehen an der Leine',
                     problem: 'Ziehen an der Leine',
                     name: 'Die Richtungswechsel-Methode',
-                    s1t: 'Starte an lockerer Leine',
-                    s1d: 'Gehe langsam los. Dein Hund soll neben dir laufen, die Leine darf durchhängen.',
+                    s1t: 'Starte mit {{name}} an lockerer Leine',
+                    s1d: 'Gehe langsam los. {{name}} soll neben dir laufen, die Leine darf durchhängen.',
                     s2t: 'Sobald {{name}} zieht: Richtungswechsel',
                     s2d: 'Drehe dich ruhig um und gehe in die entgegengesetzte Richtung – ohne etwas zu sagen.'
                 },
@@ -2861,7 +2861,7 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
                     label: 'Gegen übermäßiges Bellen',
                     problem: 'Bellen',
                     name: 'Die Ruhe-Signal-Methode',
-                    s1t: 'Ignoriere den ersten Bell-Impuls',
+                    s1t: 'Ignoriere {{name}} beim ersten Bell-Impuls',
                     s1d: 'Reagiere nicht auf das Bellen. Keine Aufmerksamkeit, kein Blickkontakt, keine Worte.',
                     s2t: 'Sobald {{name}} kurz ruhig ist: Belohnung',
                     s2d: 'Schon 2 Sekunden Stille reichen. Gib sofort ein Leckerli und sprich ruhig.'
@@ -2870,17 +2870,17 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
                     label: 'Gegen Aggression bei Begegnungen',
                     problem: 'Aggression',
                     name: 'Die Distanz-Technik',
-                    s1t: 'Erkenne die kritische Distanz',
-                    s1d: 'Finde heraus, ab welcher Entfernung dein Hund noch ruhig bleiben kann.',
-                    s2t: 'Bleibe knapp unter der Schwelle',
+                    s1t: 'Finde {{name}}s kritische Distanz',
+                    s1d: 'Beobachte, ab welcher Entfernung {{name}} noch ruhig bleiben kann.',
+                    s2t: 'Bleibe knapp unter {{name}}s Schwelle',
                     s2d: 'Trainiere immer innerhalb dieser Entfernung und belohne ruhiges Verhalten sofort.'
                 },
                 'anxiety': {
                     label: 'Gegen Trennungsangst',
                     problem: 'Trennungsangst',
                     name: 'Die Ruhezone-Routine',
-                    s1t: 'Definiere einen sicheren Ort',
-                    s1d: 'Decke, Box oder Bett – ein Platz, an dem sich dein Hund entspannen kann.',
+                    s1t: 'Definiere {{name}}s sicheren Ort',
+                    s1d: 'Decke, Box oder Bett – ein Platz, an dem sich {{name}} entspannen kann.',
                     s2t: 'Verbinde den Ort mit Ruhe',
                     s2d: 'Führe {{name}} 2x täglich ruhig hin und gib etwas zum Kauen.'
                 },
@@ -2888,8 +2888,8 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
                     label: 'Gegen Anspringen',
                     problem: 'Anspringen',
                     name: 'Die Ignorier-Methode',
-                    s1t: 'Drehe dich sofort weg beim Springen',
-                    s1d: 'Keine Reaktion, kein Wort. Dreh dem Hund einfach den Rücken zu.',
+                    s1t: 'Drehe dich weg, wenn {{name}} springt',
+                    s1d: 'Keine Reaktion, kein Wort. Dreh {{name}} einfach den Rücken zu.',
                     s2t: 'Bei allen 4 Pfoten auf dem Boden: Lob',
                     s2d: 'Sobald {{name}} ruhig steht, begrüße ihn freundlich und mit Aufmerksamkeit.'
                 },
@@ -2897,8 +2897,8 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
                     label: 'Für zuverlässigen Rückruf',
                     problem: 'Rückruf',
                     name: 'Die Namens-Verstärker-Methode',
-                    s1t: 'Rufe in ruhiger Umgebung',
-                    s1d: 'Wähle einen Moment ohne Ablenkung. Rufe einmal, klar und positiv.',
+                    s1t: 'Rufe {{name}} in ruhiger Umgebung',
+                    s1d: 'Wähle einen Moment ohne Ablenkung. Sag den Namen einmal, klar und positiv.',
                     s2t: 'Belohne sofort bei Reaktion',
                     s2d: 'Wenn {{name}} schaut oder kommt: sofort Leckerli und viel Lob.'
                 },
@@ -2906,8 +2906,8 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
                     label: 'Gegen übermäßige Energie',
                     problem: 'Hyperaktivität',
                     name: 'Die Gedanken-Auslastung',
-                    s1t: 'Starte eine Schnüffel-Übung',
-                    s1d: 'Verstecke Leckerli in der Wohnung oder im Garten. Dein Hund sucht sie selbst.',
+                    s1t: 'Starte eine Schnüffel-Übung mit {{name}}',
+                    s1d: 'Verstecke Leckerli in der Wohnung oder im Garten. {{name}} sucht sie selbst.',
                     s2t: 'Lass {{name}} selbst lösen',
                     s2d: 'Nicht helfen, nicht drängen – Schnüffeln lastet mehr aus als 1 Stunde Spaziergang.'
                 },
@@ -2915,8 +2915,8 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
                     label: 'Gegen zerstörerisches Verhalten',
                     problem: 'Zerstörung',
                     name: 'Die Impuls-Kontrolle',
-                    s1t: 'Biete sichere Alternativen',
-                    s1d: 'Kauknochen, Kong, Nylabones – immer griffbereit platzieren.',
+                    s1t: 'Biete {{name}} sichere Alternativen',
+                    s1d: 'Kauknochen, Kong, Nylabones – immer griffbereit platzieren, damit {{name}} sie findet.',
                     s2t: 'Lenke {{name}} auf die Alternative um',
                     s2d: 'Kein Schimpfen. Nur ruhig zur erlaubten Kaumöglichkeit führen.'
                 },
@@ -2924,8 +2924,8 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
                     label: 'Für Stubenreinheit',
                     problem: 'Unsauberkeit',
                     name: 'Die Signal-Trainings-Methode',
-                    s1t: 'Führe feste Rausgeh-Zeiten ein',
-                    s1d: 'Nach dem Aufstehen, Essen und Schlafen: sofort raus. 6-8x am Tag.',
+                    s1t: 'Führe für {{name}} feste Rausgeh-Zeiten ein',
+                    s1d: 'Nach dem Aufstehen, Essen und Schlafen: sofort raus. 6–8x am Tag.',
                     s2t: 'Lobe draußen sofort beim Lösen',
                     s2d: 'Sobald {{name}} draußen macht: Leckerli und lobe stark.'
                 },
@@ -2933,8 +2933,8 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
                     label: 'Gegen Aufnehmen von Gefundenem',
                     problem: 'Aufnehmen unerlaubter Dinge',
                     name: 'Die "Aus"-Kommando Methode',
-                    s1t: 'Starte mit einem Tauschgeschäft',
-                    s1d: 'Zuhause: biete ein Leckerli an wenn dein Hund Spielzeug im Maul hat.',
+                    s1t: 'Starte ein Tauschgeschäft mit {{name}}',
+                    s1d: 'Zuhause: biete ein Leckerli an wenn {{name}} Spielzeug im Maul hat.',
                     s2t: 'Sag "Aus" beim Tausch',
                     s2d: 'Bei jedem Tausch das Wort "Aus" nutzen. Später klappt es ohne Leckerli.'
                 }
@@ -2948,8 +2948,8 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
 
             if (exerciseNameEl) exerciseNameEl.textContent = ex.name;
             if (problemLabelEl) problemLabelEl.textContent = ex.label;
-            if (step1TitleEl) step1TitleEl.textContent = ex.s1t;
-            if (step1DescEl) step1DescEl.textContent = ex.s1d;
+            if (step1TitleEl) step1TitleEl.textContent = replaceName(ex.s1t);
+            if (step1DescEl) step1DescEl.textContent = replaceName(ex.s1d);
             if (step2TitleEl) {
                 // Erhält "Sobald {{name}} zieht: Richtungswechsel" mit Span für den Namen
                 const title = replaceName(ex.s2t);
