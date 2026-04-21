@@ -504,10 +504,32 @@
         }
 
         .price-old {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-light);
             text-decoration: line-through;
+            font-weight: 600;
+            line-height: 1;
+            margin-bottom: 2px;
+            display: none;
         }
+        .price-old.visible {
+            display: block;
+        }
+        .pricing-savings {
+            display: none;
+            font-size: 10px;
+            font-weight: 800;
+            color: #fff;
+            background: #E67946;
+            padding: 2px 7px;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+            text-transform: uppercase;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+        .pricing-savings.visible { display: inline-block; }
 
         .cta-button {
             width: 100%;
@@ -2351,16 +2373,18 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
 
         <div class="pricing-section">
-            <div class="pricing-card" data-plan="1month" data-price="29.99">
+            <div class="pricing-card" data-plan="1month" data-price="29.99" data-normal="49.99">
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">INTENSIV-PLAN</div>
                             <div class="pricing-total">€0,99 pro Tag · <strong style="color:var(--text-dark);">Training für 1 Monat</strong></div>
+                            <span class="pricing-savings">Spare €20</span>
                         </div>
                     </div>
                     <div class="pricing-right">
+                        <div class="price-old">€49,99</div>
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
                             <span class="price-amount">29</span>
@@ -2374,7 +2398,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
             </div>
 
-            <div class="pricing-card popular selected" data-plan="3month" data-price="39.99">
+            <div class="pricing-card popular selected" data-plan="3month" data-price="39.99" data-normal="79.99">
                 <div class="popular-badge" id="popularBadge">⭐ Empfohlen</div>
                 <div class="pricing-header">
                     <div class="pricing-left">
@@ -2382,9 +2406,11 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div>
                             <div class="pricing-name">EMPFOHLEN</div>
                             <div class="pricing-total">€0,44 pro Tag · <strong style="color:var(--text-dark);">Training für 3 Monate</strong></div>
+                            <span class="pricing-savings">Spare €40</span>
                         </div>
                     </div>
                     <div class="pricing-right">
+                        <div class="price-old">€79,99</div>
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
                             <span class="price-amount">39</span>
@@ -2398,16 +2424,18 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
             </div>
 
-            <div class="pricing-card" data-plan="6month" data-price="59.99">
+            <div class="pricing-card" data-plan="6month" data-price="59.99" data-normal="119.99">
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">ENTSPANNT-PLAN</div>
                             <div class="pricing-total">€0,33 pro Tag · <strong style="color:var(--text-dark);">Training für 6 Monate</strong></div>
+                            <span class="pricing-savings">Spare €60</span>
                         </div>
                     </div>
                     <div class="pricing-right">
+                        <div class="price-old">€119,99</div>
                         <div class="pricing-price">
                             <span class="price-currency">€</span>
                             <span class="price-amount">59</span>
@@ -3596,32 +3624,95 @@ if (popularBadge) {
             }
         };
 
+        // Formatierungs-Helper: €29,99
+        function formatEurNum(n) {
+            return '€' + n.toFixed(2).replace('.', ',');
+        }
+
+        // Zentrale Pricing-Logik: berechnet für jede Card den aktuellen Preis inkl.
+        // Timer-Ende (Rabatt weg) und Exit-Discount (zusätzliche 15%), rendert sauber.
+        // Strikethrough-Originalpreis wird gezeigt, solange es einen echten Rabatt gibt.
+        function updatePricingDisplay() {
+            const cards = document.querySelectorAll('.pricing-card');
+            const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
+            const trainingLabel = (text) => ' · <strong style="color:var(--text-dark);">' + text + '</strong>';
+
+            const planMeta = {
+                '1month': { discount: 29.99, normal: 49.99, dailyDisc: '€0,99', dailyNorm: '€1,67', label: 'Training für 1 Monat' },
+                '3month': { discount: 39.99, normal: 79.99, dailyDisc: '€0,44', dailyNorm: '€0,89', label: 'Training für 3 Monate' },
+                '6month': { discount: 59.99, normal: 119.99, dailyDisc: '€0,33', dailyNorm: '€0,67', label: 'Training für 6 Monate' }
+            };
+
+            cards.forEach((card) => {
+                const plan = card.dataset.plan;
+                const meta = planMeta[plan];
+                if (!meta) return;
+
+                // Base-Preis = was eigentlich gilt (Timer-State)
+                const base = timerExpired ? meta.normal : meta.discount;
+                // Effektivpreis = nach Exit-Discount
+                const effective = exitDiscount ? Math.round(base * 85) / 100 : base;
+                // "Original" für Strikethrough = immer der Normalpreis, wenn ein Rabatt greift
+                const showStrike = base < meta.normal || exitDiscount;
+                const strikeVal = meta.normal;
+
+                // Spar-Betrag (nur bei Rabatt)
+                const savings = meta.normal - effective;
+                const savingsInt = Math.round(savings);
+
+                // --- Strikethrough setzen ---
+                const oldEl = card.querySelector('.price-old');
+                if (oldEl) {
+                    if (showStrike && effective < strikeVal) {
+                        oldEl.textContent = formatEurNum(strikeVal);
+                        oldEl.classList.add('visible');
+                    } else {
+                        oldEl.classList.remove('visible');
+                    }
+                }
+
+                // --- Spar-Badge setzen ---
+                const savingsEl = card.querySelector('.pricing-savings');
+                if (savingsEl) {
+                    if (showStrike && savingsInt > 0) {
+                        savingsEl.textContent = 'Spare €' + savingsInt + (exitDiscount ? ' · −15% aktiv' : '');
+                        savingsEl.classList.add('visible');
+                    } else {
+                        savingsEl.classList.remove('visible');
+                    }
+                }
+
+                // --- Hauptpreis in € / XX / ,YY zerlegen ---
+                const amountStr = effective.toFixed(2);
+                const [eur, cent] = amountStr.split('.');
+                const amountEl = card.querySelector('.price-amount');
+                const centsEl = card.querySelector('.price-cents');
+                if (amountEl) amountEl.textContent = eur;
+                if (centsEl) centsEl.textContent = ',' + cent;
+
+                // --- Tagespreis-Zeile nach Timer-State ---
+                const totalEl = card.querySelector('.pricing-total');
+                if (totalEl) {
+                    const daily = timerExpired ? meta.dailyNorm : meta.dailyDisc;
+                    totalEl.innerHTML = daily + ' pro Tag' + trainingLabel(meta.label);
+                }
+
+                // data-price auf aktuellen Effektivpreis updaten (für Tracking)
+                card.dataset.price = effective.toFixed(2);
+            });
+
+            // Sticky Mobile CTA mit-updaten, falls sichtbar
+            if (typeof updateStickyCta === 'function') updateStickyCta();
+        }
+
+        // Kompatibilität: switchToNormalPrices war der alte Timer-Expiry-Hook
         function switchToNormalPrices() {
-    const cards = document.querySelectorAll('.pricing-card');
-
-    // Tagespreis + "Training für X" aktualisieren
-    const trainingLabel = (text) => ' · <strong style="color:var(--text-dark);">' + text + '</strong>';
-
-    // 1-Monat: €49,99 (≈€1,67/Tag)
-    cards[0].querySelector('.price-amount').textContent = '49';
-    cards[0].querySelector('.price-cents').textContent = ',99';
-    cards[0].querySelector('.pricing-total').innerHTML = '€1,67 pro Tag' + trainingLabel('Training für 1 Monat');
-    cards[0].dataset.price = '49.99';
-
-    // 3-Monat: €79,99 (≈€0,89/Tag)
-    cards[1].querySelector('.price-amount').textContent = '79';
-    cards[1].querySelector('.price-cents').textContent = ',99';
-    cards[1].querySelector('.pricing-total').innerHTML = '€0,89 pro Tag' + trainingLabel('Training für 3 Monate');
-    cards[1].dataset.price = '79.99';
-
-    // 6-Monat: €119,99 (≈€0,67/Tag)
-    cards[2].querySelector('.price-amount').textContent = '119';
-    cards[2].querySelector('.price-cents').textContent = ',99';
-    cards[2].querySelector('.pricing-total').innerHTML = '€0,67 pro Tag' + trainingLabel('Training für 6 Monate');
-    cards[2].dataset.price = '119.99';
-}
+            updatePricingDisplay();
+        }
         
         updateTimer();
+        // Initial Pricing-Cards mit Strikethrough / Spar-Badge rendern
+        updatePricingDisplay();
 
         function selectPlan(card) {
             // Wenn bereits ausgewählt -> direkt zum Checkout
@@ -3647,14 +3738,17 @@ if (popularBadge) {
             if (!stickyMain || !stickyPrice) return;
             const name = (dogName && dogName !== 'deinen Hund') ? dogName : 'deinen Hund';
             stickyMain.textContent = 'Plan für ' + name + ' sichern →';
-            // Preis aus aktuell selektiertem Plan + Timer-State
+            // Preis inkl. Exit-Discount berechnen
             const priceMap = {
-                '1month': { d: '€29,99', n: '€49,99' },
-                '3month': { d: '€39,99', n: '€79,99' },
-                '6month': { d: '€59,99', n: '€119,99' }
+                '1month': { d: 29.99, n: 49.99 },
+                '3month': { d: 39.99, n: 79.99 },
+                '6month': { d: 59.99, n: 119.99 }
             };
             const p = priceMap[selectedPlan] || priceMap['3month'];
-            stickyPrice.textContent = (typeof timerExpired !== 'undefined' && timerExpired) ? p.n : p.d;
+            const base = (typeof timerExpired !== 'undefined' && timerExpired) ? p.n : p.d;
+            const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
+            const effective = exitDiscount ? Math.round(base * 85) / 100 : base;
+            stickyPrice.textContent = formatEurNum(effective);
         }
 
         // Sticky CTA: Show/Hide basierend auf Scroll-Position
@@ -4034,6 +4128,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 localStorage.setItem('wauwerk_answers', JSON.stringify(answers));
             } catch (e) {}
             console.log('✓ 15%-Rabatt claim gespeichert');
+            // Pricing-Cards + Sticky-CTA sofort mit neuem Rabatt neu rendern
+            if (typeof updatePricingDisplay === 'function') updatePricingDisplay();
         }
 
         // Hero-Outcome-Badge aus emotionalHeadlines füllen (gleiche Map wie Exit-Popup)
