@@ -11,5 +11,13 @@
       "path": "/api/upsell-cron?secret=pfoten-cron-2024",
       "schedule": "0 9 * * *"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.pfoten-plan.de" }],
+      "destination": "https://pfoten-plan.de/:path*",
+      "permanent": true
+    }
   ]
 }

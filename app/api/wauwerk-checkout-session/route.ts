@@ -92,8 +92,12 @@ export async function POST(req: NextRequest) {
     };
     const planName = planNames[plan] || '1-Monats-Plan';
 
-    // Origin für Redirect-URLs
-    const origin = req.headers.get('origin') || 'https://pfoten-plan.de';
+    // Origin für Redirect-URLs — IMMER Apex-Domain, weil SSL-Cert nur pfoten-plan.de abdeckt
+    // (www.pfoten-plan.de würde "Diese Verbindung ist nicht privat" auslösen)
+    const rawOrigin = req.headers.get('origin') || 'https://pfoten-plan.de';
+    const origin = rawOrigin.includes('pfoten-plan.de')
+      ? 'https://pfoten-plan.de'
+      : rawOrigin;
 
     // Stripe Checkout Session erstellen
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
