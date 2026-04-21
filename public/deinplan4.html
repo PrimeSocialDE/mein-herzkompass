@@ -3601,7 +3601,20 @@ if (popularBadge) {
         }
         
         const pricingCards = document.querySelectorAll('.pricing-card');
-        let selectedPlan = '3month';  // EMPFOHLEN als Default (Anker-Effekt)
+        // selectedPlan: aus sessionStorage restaurieren (z.B. nach Stripe-Cancel-Reload),
+        // sonst EMPFOHLEN als Default (Anker-Effekt)
+        let selectedPlan = '3month';
+        try {
+            const savedPlan = sessionStorage.getItem('selectedPlan');
+            if (savedPlan === '1month' || savedPlan === '3month' || savedPlan === '6month') {
+                selectedPlan = savedPlan;
+                // Visuelle Selection auf die korrekte Card umstellen
+                pricingCards.forEach((c) => {
+                    if (c.dataset.plan === selectedPlan) c.classList.add('selected');
+                    else c.classList.remove('selected');
+                });
+            }
+        } catch (e) {}
 
         const planDetails = {
             '1month': {
@@ -3710,6 +3723,7 @@ if (popularBadge) {
             pricingCards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             selectedPlan = card.dataset.plan;
+            try { sessionStorage.setItem('selectedPlan', selectedPlan); } catch (e) {}
 
             // Übungsanzahl in Benefits-Liste aktualisieren
             updateExerciseCount(selectedPlan);
