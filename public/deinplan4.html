@@ -3629,12 +3629,10 @@ if (popularBadge) {
             return '€' + n.toFixed(2).replace('.', ',');
         }
 
-        // Zentrale Pricing-Logik: berechnet für jede Card den aktuellen Preis inkl.
-        // Timer-Ende (Rabatt weg) und Exit-Discount (zusätzliche 15%), rendert sauber.
-        // Strikethrough-Originalpreis wird gezeigt, solange es einen echten Rabatt gibt.
+        // Pricing-Cards: nur Timer-State (Rabatt/Normal). Exit-Discount greift ausschließlich
+        // im Summary-Modal + Stripe-Checkout, nicht auf den Cards (analog deinplan3).
         function updatePricingDisplay() {
             const cards = document.querySelectorAll('.pricing-card');
-            const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
             const trainingLabel = (text) => ' · <strong style="color:var(--text-dark);">' + text + '</strong>';
 
             const planMeta = {
@@ -3648,60 +3646,48 @@ if (popularBadge) {
                 const meta = planMeta[plan];
                 if (!meta) return;
 
-                // Base-Preis = was eigentlich gilt (Timer-State)
-                const base = timerExpired ? meta.normal : meta.discount;
-                // Effektivpreis = nach Exit-Discount
-                const effective = exitDiscount ? Math.round(base * 85) / 100 : base;
-                // "Original" für Strikethrough = immer der Normalpreis, wenn ein Rabatt greift
-                const showStrike = base < meta.normal || exitDiscount;
-                const strikeVal = meta.normal;
+                const current = timerExpired ? meta.normal : meta.discount;
+                const showStrike = !timerExpired; // Strikethrough nur solange Timer läuft (Rabatt aktiv)
 
-                // Spar-Betrag (nur bei Rabatt)
-                const savings = meta.normal - effective;
-                const savingsInt = Math.round(savings);
-
-                // --- Strikethrough setzen ---
+                // Strikethrough-Originalpreis
                 const oldEl = card.querySelector('.price-old');
                 if (oldEl) {
-                    if (showStrike && effective < strikeVal) {
-                        oldEl.textContent = formatEurNum(strikeVal);
+                    if (showStrike) {
+                        oldEl.textContent = formatEurNum(meta.normal);
                         oldEl.classList.add('visible');
                     } else {
                         oldEl.classList.remove('visible');
                     }
                 }
 
-                // --- Spar-Badge setzen ---
+                // Spar-Badge (nur während Timer läuft)
                 const savingsEl = card.querySelector('.pricing-savings');
                 if (savingsEl) {
-                    if (showStrike && savingsInt > 0) {
-                        savingsEl.textContent = 'Spare €' + savingsInt + (exitDiscount ? ' · −15% aktiv' : '');
+                    if (showStrike) {
+                        savingsEl.textContent = 'Spare €' + Math.round(meta.normal - meta.discount);
                         savingsEl.classList.add('visible');
                     } else {
                         savingsEl.classList.remove('visible');
                     }
                 }
 
-                // --- Hauptpreis in € / XX / ,YY zerlegen ---
-                const amountStr = effective.toFixed(2);
-                const [eur, cent] = amountStr.split('.');
+                // Hauptpreis
+                const [eur, cent] = current.toFixed(2).split('.');
                 const amountEl = card.querySelector('.price-amount');
                 const centsEl = card.querySelector('.price-cents');
                 if (amountEl) amountEl.textContent = eur;
                 if (centsEl) centsEl.textContent = ',' + cent;
 
-                // --- Tagespreis-Zeile nach Timer-State ---
+                // Tages-Preis
                 const totalEl = card.querySelector('.pricing-total');
                 if (totalEl) {
                     const daily = timerExpired ? meta.dailyNorm : meta.dailyDisc;
                     totalEl.innerHTML = daily + ' pro Tag' + trainingLabel(meta.label);
                 }
 
-                // data-price auf aktuellen Effektivpreis updaten (für Tracking)
-                card.dataset.price = effective.toFixed(2);
+                card.dataset.price = current.toFixed(2);
             });
 
-            // Sticky Mobile CTA mit-updaten, falls sichtbar
             if (typeof updateStickyCta === 'function') updateStickyCta();
         }
 
@@ -3738,17 +3724,13 @@ if (popularBadge) {
             if (!stickyMain || !stickyPrice) return;
             const name = (dogName && dogName !== 'deinen Hund') ? dogName : 'deinen Hund';
             stickyMain.textContent = 'Plan für ' + name + ' sichern →';
-            // Preis inkl. Exit-Discount berechnen
             const priceMap = {
-                '1month': { d: 29.99, n: 49.99 },
-                '3month': { d: 39.99, n: 79.99 },
-                '6month': { d: 59.99, n: 119.99 }
+                '1month': { d: '€29,99', n: '€49,99' },
+                '3month': { d: '€39,99', n: '€79,99' },
+                '6month': { d: '€59,99', n: '€119,99' }
             };
             const p = priceMap[selectedPlan] || priceMap['3month'];
-            const base = (typeof timerExpired !== 'undefined' && timerExpired) ? p.n : p.d;
-            const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
-            const effective = exitDiscount ? Math.round(base * 85) / 100 : base;
-            stickyPrice.textContent = formatEurNum(effective);
+            stickyPrice.textContent = (typeof timerExpired !== 'undefined' && timerExpired) ? p.n : p.d;
         }
 
         // Sticky CTA: Show/Hide basierend auf Scroll-Position
@@ -4001,9 +3983,10 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         // Exit-Intent Popup Logic - nur wenn vom Checkout/Stripe zurück
         let exitPopupShown = false;
 
-        // Stale wentToStripe von alten Sessions aufräumen:
+        // Stale Flags von alten Sessions aufräumen:
         // Wenn User NICHT von Stripe kommt (kein Stripe-Host im referrer) und
-        // auch keine Stripe-Redirect-Params in URL sind, Flag löschen.
+        // auch keine Stripe-Redirect-Params in URL sind → wentToStripe + exit_discount_15 löschen.
+        // Der 15%-Exit-Discount gilt nur innerhalb eines Stripe-Return-Flows.
         (function cleanupStaleStripeFlag() {
             try {
                 const ref = document.referrer || '';
@@ -4016,6 +3999,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 const cameFromStripe = /(?:^|\.)stripe\.com/i.test(new URL(ref || 'about:blank', window.location.href).hostname || '');
                 if (!cameFromStripe && !hasStripeParams) {
                     localStorage.removeItem('wentToStripe');
+                    localStorage.removeItem('exit_discount_15');
                 }
             } catch (e) {}
         })();
@@ -4128,8 +4112,6 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 localStorage.setItem('wauwerk_answers', JSON.stringify(answers));
             } catch (e) {}
             console.log('✓ 15%-Rabatt claim gespeichert');
-            // Pricing-Cards + Sticky-CTA sofort mit neuem Rabatt neu rendern
-            if (typeof updatePricingDisplay === 'function') updatePricingDisplay();
         }
 
         // Hero-Outcome-Badge aus emotionalHeadlines füllen (gleiche Map wie Exit-Popup)
