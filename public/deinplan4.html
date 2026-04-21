@@ -3874,17 +3874,32 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
         // Exit-Intent Popup Logic - nur wenn vom Checkout/Stripe zurück
         let exitPopupShown = false;
-        
+
+        // Stale wentToStripe von alten Sessions aufräumen:
+        // Wenn User NICHT von Stripe kommt (kein Stripe-Host im referrer) und
+        // auch keine Stripe-Redirect-Params in URL sind, Flag löschen.
+        (function cleanupStaleStripeFlag() {
+            try {
+                const ref = document.referrer || '';
+                const qp = new URLSearchParams(window.location.search);
+                const hasStripeParams = qp.has('redirect_status') || qp.has('payment_intent') || qp.has('payment_intent_client_secret');
+                const cameFromStripe = /(?:^|\.)stripe\.com/i.test(new URL(ref || 'about:blank', window.location.href).hostname || '');
+                if (!cameFromStripe && !hasStripeParams) {
+                    localStorage.removeItem('wentToStripe');
+                }
+            } catch (e) {}
+        })();
+
         // Prüfen ob User von Stripe zurückkommt
         const fromStripe = localStorage.getItem('wentToStripe') === 'true';
-        
+
         if (fromStripe && !sessionStorage.getItem('exitPopupShown')) {
             // User kam von Stripe zurück ohne zu kaufen - Popup sofort zeigen
             setTimeout(() => {
                 showExitPopup();
             }, 500);
         }
-        
+
         // Back-Button Detection - nur wenn von Stripe
         window.addEventListener('pageshow', function(event) {
             if (localStorage.getItem('wentToStripe') === 'true') {
