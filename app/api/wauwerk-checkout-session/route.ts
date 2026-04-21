@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
       email,
       orderBump,
       bumpType,
+      bumpDays,
       exitDiscount,
       utm_source,
       utm_medium,
@@ -47,11 +48,14 @@ export async function POST(req: NextRequest) {
     const ORDER_BUMP_PRICE_CENTS = 999; // €9,99
     const bumpApplied = orderBump === true || orderBump === 'true';
     const effectiveBumpType = (bumpType || 'tagebuch').toLowerCase();
+    // Tagebuch-Dauer passend zum Plan (Fallback je nach Plan)
+    const planDaysMap: Record<string, number> = { '1month': 30, '3month': 90, '6month': 180 };
+    const effectiveBumpDays = Number(bumpDays) > 0 ? Number(bumpDays) : (planDaysMap[plan] || 90);
     const BUMP_DETAILS: Record<string, { name: string; desc: string; id: string }> = {
       tagebuch: {
         id: 'tagebuch',
-        name: 'Trainings-Tagebuch',
-        desc: '90-Tage Fortschritts-Tagebuch zum Ausdrucken · Wöchentliche Reflexions-Fragen'
+        name: `${effectiveBumpDays}-Tage Trainings-Tagebuch`,
+        desc: `Fortschritts-Tagebuch für volle ${effectiveBumpDays} Tage zum Ausdrucken · Wöchentliche Reflexions-Fragen`
       },
       notfallkarten: {
         id: 'notfallkarten',
@@ -137,6 +141,7 @@ export async function POST(req: NextRequest) {
         email: email || '',
         order_bump: bumpApplied ? bumpMetadataId : '',
         order_bump_amount_cents: bumpApplied ? String(ORDER_BUMP_PRICE_CENTS) : '0',
+        bump_days: bumpApplied && effectiveBumpType === 'tagebuch' ? String(effectiveBumpDays) : '',
         exit_discount_15: exitDiscountApplied ? 'true' : 'false',
         base_amount_cents: String(baseAmount),
         utm_source: utm_source || '',
@@ -160,6 +165,7 @@ export async function POST(req: NextRequest) {
           email: email || '',
           order_bump: bumpApplied ? bumpMetadataId : '',
           order_bump_amount_cents: bumpApplied ? String(ORDER_BUMP_PRICE_CENTS) : '0',
+          bump_days: bumpApplied && effectiveBumpType === 'tagebuch' ? String(effectiveBumpDays) : '',
         },
       },
       success_url: `${origin}/zusatz.html?lead_id=${leadId || ''}&redirect_status=succeeded`,

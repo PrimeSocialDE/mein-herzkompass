@@ -4414,6 +4414,14 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             if (dogEl) dogEl.textContent = 'Für ' + dogNameDisplay;
             if (priceEl) priceEl.textContent = '€' + price.toFixed(2).replace('.', ',');
 
+            // Tagebuch-Dauer passend zum gewählten Plan
+            const tagebuchDaysMap = { '1month': 30, '3month': 90, '6month': 180 };
+            const tagebuchDays = tagebuchDaysMap[selectedPlan] || 90;
+            const titleEl = document.getElementById('summaryTagebuchTitle');
+            const descEl = document.getElementById('summaryTagebuchDesc');
+            if (titleEl) titleEl.textContent = tagebuchDays + '-Tage Trainings-Tagebuch dazu';
+            if (descEl) descEl.textContent = 'Fortschritts-Tagebuch für volle ' + tagebuchDays + ' Tage zum Ausdrucken. Wöchentliche Reflexions-Fragen. So siehst du die Erfolge schwarz auf weiß.';
+
             // Checkbox-State reset + Summary refresh
             const cb = document.getElementById('orderBump');
             if (cb) cb.checked = false;
@@ -4505,6 +4513,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             try {
                 const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
                 const bumpChecked = document.getElementById('orderBump')?.checked || false;
+                const tagebuchDaysMap = { '1month': 30, '3month': 90, '6month': 180 };
+                const bumpDays = tagebuchDaysMap[selectedPlan] || 90;
                 const response = await fetch('/api/wauwerk-checkout-session', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -4517,6 +4527,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         exitDiscount: exitDiscount,
                         orderBump: bumpChecked,
                         bumpType: 'tagebuch',
+                        bumpDays: bumpDays,
                         utm_source: localStorage.getItem('utm_source') || '',
                         utm_medium: localStorage.getItem('utm_medium') || '',
                         utm_campaign: localStorage.getItem('utm_campaign') || '',
@@ -4685,7 +4696,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
     <!-- Summary-Modal: vor Stripe-Redirect, zeigt Plan + Order-Bump -->
     <div id="summaryModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:10000;align-items:flex-end;justify-content:center;padding:0;">
-        <div style="background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;padding:22px 22px 28px;box-shadow:0 -8px 30px rgba(0,0,0,0.15);animation:summaryModalSlideUp 0.3s ease-out;">
+        <div style="background:#fff;border-radius:16px 16px 0 0;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;padding:20px 20px calc(16px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(0,0,0,0.15);animation:summaryModalSlideUp 0.3s ease-out;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
                 <div style="font-size:16px;font-weight:800;color:#1a1a1a;">Deine Bestellung</div>
                 <button onclick="closeSummaryModal()" aria-label="Schließen" style="width:32px;height:32px;border:none;background:#F5F5F5;border-radius:50%;font-size:18px;color:#666;cursor:pointer;">×</button>
@@ -4707,10 +4718,10 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 <input type="checkbox" id="orderBump" onchange="updateSummaryTotal()" style="margin-top:3px;width:20px;height:20px;cursor:pointer;accent-color:#C4A576;flex-shrink:0;">
                 <div style="flex:1;">
                     <div style="display:inline-block;background:#E67946;color:#fff;padding:2px 8px;border-radius:12px;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Empfehlung</div>
-                    <div style="font-size:14px;font-weight:800;color:#1a1a1a;margin-bottom:3px;line-height:1.3;">
+                    <div id="summaryTagebuchTitle" style="font-size:14px;font-weight:800;color:#1a1a1a;margin-bottom:3px;line-height:1.3;">
                         Trainings-Tagebuch dazu
                     </div>
-                    <div style="font-size:12px;color:#666;line-height:1.5;margin-bottom:6px;">
+                    <div id="summaryTagebuchDesc" style="font-size:12px;color:#666;line-height:1.5;margin-bottom:6px;">
                         90-Tage Fortschritts-Tagebuch zum Ausdrucken. Wöchentliche Reflexions-Fragen. So siehst du die Erfolge schwarz auf weiß.
                     </div>
                     <div style="font-size:12px;">
@@ -4732,7 +4743,16 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             <button id="summaryPayBtn" onclick="confirmSummaryAndCheckout()" style="width:100%;background:linear-gradient(135deg,#C4A576,#8B7355);color:#fff;border:none;border-radius:12px;padding:16px 18px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:0.3px;box-shadow:0 4px 14px rgba(196,165,118,0.4);">
                 Weiter zur Zahlung →
             </button>
-            <div style="text-align:center;margin-top:10px;font-size:11px;color:#888;">🔒 Sichere Zahlung via Stripe · SEPA · PayPal · Klarna · Karte</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:nowrap;margin-top:12px;">
+                <img src="sepa-logo.png" alt="SEPA" style="height:20px;width:auto;opacity:0.75;border-radius:4px;">
+                <img src="visa-logo.png" alt="Visa" style="height:20px;width:auto;opacity:0.75;border-radius:4px;">
+                <img src="paypal-logo.png" alt="PayPal" style="height:20px;width:auto;opacity:0.75;border-radius:4px;">
+                <img src="klarna-logo.png" alt="Klarna" style="height:20px;width:auto;opacity:0.75;border-radius:4px;">
+                <img src="mastercard-logo.png" alt="Mastercard" style="height:20px;width:auto;opacity:0.75;border-radius:4px;">
+                <img src="applepay.png" alt="Apple Pay" style="height:20px;width:auto;opacity:0.75;border-radius:4px;">
+                <img src="googlepay.png" alt="Google Pay" style="height:20px;width:auto;opacity:0.75;border-radius:4px;">
+            </div>
+            <div style="text-align:center;margin-top:8px;font-size:11px;color:#888;">🔒 Sichere Zahlung via Stripe</div>
         </div>
     </div>
 
