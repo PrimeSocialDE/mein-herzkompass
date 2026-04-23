@@ -468,6 +468,19 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
       await enrollInUpsellCampaign(table, referenceId, updateData.email);
       await sendNotfallkartenIfBonus(table, referenceId);
 
+      // Order-Bump auch vom Checkout-Session-Event aus ausliefern.
+      // Grund: checkout.session.completed kommt oft VOR payment_intent.succeeded,
+      // markiert den Lead als paid, und payment_intent.succeeded wird danach
+      // per "bereits paid"-Guard geskippt → Bump-Delivery würde sonst nie triggern.
+      // deliverOrderBumpIfPurchased ist idempotent (answers.order_bump_delivered_at).
+      await deliverOrderBumpIfPurchased({
+        id: session.id,
+        metadata: {
+          ...session.metadata,
+          email: updateData.email || session.metadata?.email || "",
+        },
+      });
+
       // Make benachrichtigen (orders + wauwerk_leads)
       await notifyMake(referenceId, {
         source: "checkout.session",
