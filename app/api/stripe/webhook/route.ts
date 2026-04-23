@@ -372,18 +372,31 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
   }
 
   const { table, data: existingRecord } = await findLeadOrOrder(referenceId);
-  
+
   if (!table) {
     console.error("❌ ID nicht in Datenbank gefunden:", referenceId);
     return;
   }
 
-  // ⬇️ NEU: Skip wenn bereits paid
+  // Bump-Delivery IMMER versuchen — unabhängig vom paid-Status.
+  // Stripe-Events können in beliebiger Reihenfolge eintreffen; wenn ein anderes
+  // Event (z.B. charge.succeeded) zuerst durch war und den Lead auf paid gesetzt hat,
+  // würde der nachfolgende paid-Guard den Bump sonst verschlucken. Idempotenz via
+  // answers.order_bump_delivered_at schützt gegen Doppel-Versand.
+  await deliverOrderBumpIfPurchased({
+    id: session.id,
+    metadata: {
+      ...(session.metadata || {}),
+      email: existingRecord?.email || session.metadata?.email || "",
+    },
+  });
+
+  // Skip-Supabase-Update wenn bereits paid
   if (existingRecord.status === 'paid') {
-    console.log(`⚠️ ${referenceId} bereits paid - überspringe (checkout.session)`);
+    console.log(`⚠️ ${referenceId} bereits paid - überspringe Update (checkout.session)`);
     return;
   }
-  
+
   console.log(`✅ Record gefunden in ${table}:`, JSON.stringify(existingRecord, null, 2));
 
   let customerEmail = session.customer_email || session.customer_details?.email;
@@ -468,19 +481,6 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
       await enrollInUpsellCampaign(table, referenceId, updateData.email);
       await sendNotfallkartenIfBonus(table, referenceId);
 
-      // Order-Bump auch vom Checkout-Session-Event aus ausliefern.
-      // Grund: checkout.session.completed kommt oft VOR payment_intent.succeeded,
-      // markiert den Lead als paid, und payment_intent.succeeded wird danach
-      // per "bereits paid"-Guard geskippt → Bump-Delivery würde sonst nie triggern.
-      // deliverOrderBumpIfPurchased ist idempotent (answers.order_bump_delivered_at).
-      await deliverOrderBumpIfPurchased({
-        id: session.id,
-        metadata: {
-          ...session.metadata,
-          email: updateData.email || session.metadata?.email || "",
-        },
-      });
-
       // Make benachrichtigen (orders + wauwerk_leads)
       await notifyMake(referenceId, {
         source: "checkout.session",
@@ -551,9 +551,13 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
   const { table, data: existingRecord } = await findLeadOrOrder(referenceId);
   if (!table) return;
 
+  // Bump-Delivery IMMER versuchen — vor dem paid-Guard, damit Events in beliebiger
+  // Reihenfolge verarbeitet werden können. Idempotent via answers.order_bump_delivered_at.
+  await deliverOrderBumpIfPurchased(paymentIntent);
+
   // Skip wenn bereits paid
   if (existingRecord.status === 'paid') {
-    console.log(`⚠️ ${referenceId} bereits paid - überspringe (payment_intent.succeeded)`);
+    console.log(`⚠️ ${referenceId} bereits paid - überspringe Update (payment_intent.succeeded)`);
     return;
   }
 
@@ -612,7 +616,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
       console.log(`${table} ${referenceId} via PaymentIntent aktualisiert`);
       await enrollInUpsellCampaign(table, referenceId, updateData.email);
       await sendNotfallkartenIfBonus(table, referenceId);
-      await deliverOrderBumpIfPurchased(paymentIntent);
+      // (deliverOrderBumpIfPurchased wurde bereits oben vor dem paid-Guard aufgerufen)
       await notifyMake(referenceId, {
         source: "payment_intent",
         table: table,
@@ -767,11 +771,16 @@ async function handleUpsellPaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
 
 async function handleChargeSuccess(charge: Stripe.Charge) {
   let referenceId = charge.metadata?.order_id || charge.metadata?.lead_id;
-  
-  if (!referenceId && charge.payment_intent && stripe) {
+
+  // PaymentIntent immer holen — brauchen wir sowohl für Reference-ID als auch
+  // für Bump-Metadata (Bump-Infos liegen auf dem PaymentIntent, nicht auf der Charge).
+  let paymentIntentForBump: Stripe.PaymentIntent | null = null;
+  if (charge.payment_intent && stripe) {
     try {
-      const paymentIntent = await stripe.paymentIntents.retrieve(charge.payment_intent as string);
-      referenceId = paymentIntent.metadata?.order_id || paymentIntent.metadata?.lead_id;
+      paymentIntentForBump = await stripe.paymentIntents.retrieve(charge.payment_intent as string);
+      if (!referenceId) {
+        referenceId = paymentIntentForBump.metadata?.order_id || paymentIntentForBump.metadata?.lead_id;
+      }
     } catch (err) {
       console.log("Konnte PaymentIntent für Charge nicht abrufen:", err);
     }
@@ -785,9 +794,15 @@ async function handleChargeSuccess(charge: Stripe.Charge) {
   const { table, data: existingRecord } = await findLeadOrOrder(referenceId);
   if (!table) return;
 
-  // ⬇️ NEU: Skip wenn bereits paid
+  // Bump-Delivery IMMER versuchen — auch wenn bereits paid.
+  // Idempotenz via answers.order_bump_delivered_at.
+  if (paymentIntentForBump) {
+    await deliverOrderBumpIfPurchased(paymentIntentForBump);
+  }
+
+  // Skip wenn bereits paid (Supabase-Update + Notifications)
   if (existingRecord.status === 'paid') {
-    console.log(`⚠️ ${referenceId} bereits paid - überspringe (charge.succeeded)`);
+    console.log(`⚠️ ${referenceId} bereits paid - überspringe Update (charge.succeeded)`);
     return;
   }
 
