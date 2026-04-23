@@ -3956,6 +3956,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 }
 
                 localStorage.setItem('wentToStripe', 'true');
+                // selectedPlan in localStorage für zusatz.html (sonst fällt es auf 3month-Default zurück
+                // und überschreibt Supabase price mit 39,99 unabhängig vom tatsächlichen Kauf).
+                localStorage.setItem('selectedPlan', selectedPlan);
                 window.location.href = data.url;
             } catch (err) {
                 console.error('Checkout Error:', err);

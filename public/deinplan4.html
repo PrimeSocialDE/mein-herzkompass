@@ -3615,6 +3615,10 @@ if (popularBadge) {
                 });
             }
         } catch (e) {}
+        // localStorage immer mit aktueller selectedPlan-Variante synchron halten,
+        // damit zusatz.html nach dem Stripe-Redirect den richtigen Wert liest
+        // (entscheidend für korrekten Supabase price-Patch).
+        try { localStorage.setItem('selectedPlan', selectedPlan); } catch (e) {}
 
         const planDetails = {
             '1month': {
@@ -3723,7 +3727,9 @@ if (popularBadge) {
             pricingCards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             selectedPlan = card.dataset.plan;
+            // Beide Storages: sessionStorage für Stripe-Cancel-Persist, localStorage für zusatz.html-Tracking
             try { sessionStorage.setItem('selectedPlan', selectedPlan); } catch (e) {}
+            try { localStorage.setItem('selectedPlan', selectedPlan); } catch (e) {}
 
             // Übungsanzahl in Benefits-Liste aktualisieren
             updateExerciseCount(selectedPlan);
@@ -4733,6 +4739,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 }
 
                 localStorage.setItem('wentToStripe', 'true');
+                // selectedPlan in localStorage für zusatz.html (belt & suspenders zum sessionStorage)
+                localStorage.setItem('selectedPlan', selectedPlan);
                 window.location.href = data.url;
             } catch (err) {
                 console.error('Checkout Error:', err);
