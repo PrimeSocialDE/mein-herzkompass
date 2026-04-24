@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/db';
 
+export const runtime = 'nodejs';
+export const maxDuration = 30;
+
+// Re-Send durch Status-Flip: pending → (1,5 s warten) → paid.
+// Das simuliert eine frische paid-Transition und löst alle Downstream-Listener
+// (Make-Webhook, Supabase-Trigger etc.) erneut aus — analog zum initialen Kauf.
 export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json();
-
     if (!email) {
       return NextResponse.json({ error: 'E-Mail fehlt' }, { status: 400 });
     }
 
-    // Lead in Supabase suchen
     const { data: lead, error: leadError } = await supabase
       .from('wauwerk_leads')
       .select('*')
@@ -22,35 +26,31 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Kein Lead mit dieser E-Mail gefunden' }, { status: 404 });
     }
 
-    if (lead.status !== 'paid') {
-      return NextResponse.json({ error: `Lead gefunden, aber Status ist "${lead.status}" (nicht "paid")` }, { status: 400 });
+    // Schritt 1: Status auf pending setzen
+    const { error: pendingErr } = await supabase
+      .from('wauwerk_leads')
+      .update({ status: 'pending' })
+      .eq('id', lead.id);
+    if (pendingErr) {
+      return NextResponse.json({ error: `Status→pending fehlgeschlagen: ${pendingErr.message}` }, { status: 500 });
     }
 
-    // Make-Webhook triggern
-    const makeUrl = process.env.MAKE_WEBHOOK_URL;
-    if (!makeUrl) {
-      return NextResponse.json({ error: 'MAKE_WEBHOOK_URL nicht konfiguriert' }, { status: 500 });
+    // Schritt 2: 1,5 s warten, damit Downstream die Transition sauber mitbekommt
+    await new Promise((r) => setTimeout(r, 1500));
+
+    // Schritt 3: Zurück auf paid mit frischem paid_at
+    const { error: paidErr } = await supabase
+      .from('wauwerk_leads')
+      .update({ status: 'paid', paid_at: new Date().toISOString() })
+      .eq('id', lead.id);
+    if (paidErr) {
+      return NextResponse.json({ error: `Status→paid fehlgeschlagen: ${paidErr.message}` }, { status: 500 });
     }
 
-    await fetch(makeUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        orderId: lead.id,
-        source: 'admin_resend',
-        table: 'wauwerk_leads',
-        email: lead.email,
-        name: lead.customer_name || null,
-        dog_name: lead.dog_name || null,
-        selected_plan: lead.selected_plan || null,
-        stripe_payment_intent: lead.stripe_payment_intent || null,
-      }),
-    });
-
-    console.log(`Admin: Plan-Versand für ${email} (Lead ${lead.id}) erneut getriggert`);
+    console.log(`Admin: Status-Flip für ${email} (Lead ${lead.id}) durchgeführt`);
 
     return NextResponse.json({
-      message: `Make-Webhook getriggert für ${email} (Lead: ${lead.id}, Plan: ${lead.selected_plan || 'unbekannt'}, Hund: ${lead.dog_name || 'unbekannt'})`
+      message: `Status-Flip ausgeführt für ${email} (Lead: ${lead.id}, Plan: ${lead.selected_plan || 'unbekannt'}, Hund: ${lead.dog_name || 'unbekannt'}). Re-Trigger gesetzt.`
     });
 
   } catch (error: unknown) {
