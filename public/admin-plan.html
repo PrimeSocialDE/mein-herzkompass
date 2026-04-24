@@ -247,6 +247,21 @@
             <div id="resend-result" style="display: none; margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 13px;"></div>
         </div>
 
+        <!-- Plan druckerfreundlich machen (A4 + s/w) -->
+        <div style="background: #fff; border: 2px solid #C4A576; border-radius: 12px; padding: 20px; margin-bottom: 32px;">
+            <h2 style="font-size: 16px; color: #C4A576; margin-bottom: 4px;">Plan druckerfreundlich machen</h2>
+            <p style="font-size: 13px; color: #6B6B6B; margin-bottom: 14px;">Original-PDF hochladen → wird zu DIN A4 + schwarz-weiß konvertiert. Inhalt bleibt exakt gleich, nur die Seite wird größer und in Graustufen, damit alles sauber druckbar ist.</p>
+            <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px;">
+                    <label style="font-size: 12px;">PDF auswählen *</label>
+                    <input type="file" id="print-pdf-input" accept=".pdf" style="margin-top: 4px; display: block; width: 100%; padding: 8px; border: 1px solid #E8E4DF; border-radius: 6px; background: #FAF8F5;">
+                    <div id="print-file-name" style="font-size: 12px; color: #6B6B6B; margin-top: 4px;"></div>
+                </div>
+                <button class="btn" onclick="makePrintFriendly()" id="print-btn" disabled style="padding: 10px 20px; white-space: nowrap;">A4 + s/w erstellen</button>
+            </div>
+            <div id="print-progress" style="display: none; margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 13px; background: #FAF8F5; color: #555;"></div>
+        </div>
+
         <hr style="border: none; border-top: 1px solid #E8E4DF; margin-bottom: 32px;">
 
         <h1>Plan Korrektur Tool</h1>
@@ -837,6 +852,117 @@ WEITERE REGELN:
         pdf.save('Zusatz-Plan-' + dogName + '.pdf');
         document.body.removeChild(wrapper);
         document.head.removeChild(s);
+    }
+
+    // ==================== PLAN DRUCKERFREUNDLICH MACHEN ====================
+    let printPdfFile = null;
+
+    (function initPrintDropZone() {
+        const input = document.getElementById('print-pdf-input');
+        const name = document.getElementById('print-file-name');
+        const btn = document.getElementById('print-btn');
+        if (!input) return;
+        input.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && (file.type === 'application/pdf' || file.name.endsWith('.pdf'))) {
+                printPdfFile = file;
+                name.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)';
+                btn.disabled = false;
+            } else {
+                printPdfFile = null;
+                name.textContent = 'Bitte eine PDF-Datei auswählen.';
+                btn.disabled = true;
+            }
+        });
+    })();
+
+    async function ensurePrintLibs() {
+        const loadScript = (src) => new Promise((res, rej) => {
+            const sc = document.createElement('script');
+            sc.src = src; sc.onload = res; sc.onerror = rej;
+            document.head.appendChild(sc);
+        });
+        if (!window.pdfjsLib) {
+            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+        if (!window.jspdf) {
+            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+        }
+    }
+
+    async function makePrintFriendly() {
+        if (!printPdfFile) return;
+        const btn = document.getElementById('print-btn');
+        const prog = document.getElementById('print-progress');
+        btn.disabled = true;
+        prog.style.display = 'block';
+        prog.textContent = 'Lade Bibliotheken...';
+
+        try {
+            await ensurePrintLibs();
+
+            prog.textContent = 'Lese PDF...';
+            const buf = await printPdfFile.arrayBuffer();
+            const pdf = await window.pdfjsLib.getDocument({ data: buf }).promise;
+
+            const { jsPDF } = window.jspdf;
+            // DIN A4 in mm (210 × 297)
+            const newPdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+            for (let i = 1; i <= pdf.numPages; i++) {
+                prog.textContent = 'Verarbeite Seite ' + i + ' von ' + pdf.numPages + '...';
+                const page = await pdf.getPage(i);
+                // Render bei 2× für saubere Druckqualität
+                const viewport = page.getViewport({ scale: 2 });
+                const canvas = document.createElement('canvas');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                const ctx = canvas.getContext('2d');
+                await page.render({ canvasContext: ctx, viewport }).promise;
+
+                // Graustufen-Konvertierung (Luminanz-Formel)
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const d = imgData.data;
+                for (let j = 0; j < d.length; j += 4) {
+                    const gray = d[j] * 0.299 + d[j+1] * 0.587 + d[j+2] * 0.114;
+                    d[j] = gray; d[j+1] = gray; d[j+2] = gray;
+                }
+                ctx.putImageData(imgData, 0, 0);
+
+                // Seitenverhältnis der Originalseite beibehalten, in A4 zentriert einpassen
+                const A4_W = 210, A4_H = 297;
+                const srcRatio = viewport.width / viewport.height;
+                const a4Ratio = A4_W / A4_H;
+                let imgW, imgH, offX, offY;
+                if (srcRatio > a4Ratio) {
+                    imgW = A4_W;
+                    imgH = A4_W / srcRatio;
+                    offX = 0;
+                    offY = (A4_H - imgH) / 2;
+                } else {
+                    imgH = A4_H;
+                    imgW = A4_H * srcRatio;
+                    offX = (A4_W - imgW) / 2;
+                    offY = 0;
+                }
+
+                if (i > 1) newPdf.addPage('a4', 'portrait');
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+                newPdf.addImage(dataUrl, 'JPEG', offX, offY, imgW, imgH);
+            }
+
+            const baseName = printPdfFile.name.replace(/\.pdf$/i, '');
+            newPdf.save(baseName + '-Druck-A4.pdf');
+            prog.textContent = '✓ PDF erzeugt und heruntergeladen.';
+            prog.style.color = '#166534';
+        } catch (e) {
+            console.error(e);
+            prog.textContent = 'Fehler: ' + (e && e.message ? e.message : String(e));
+            prog.style.color = '#B91C1C';
+        } finally {
+            btn.disabled = false;
+        }
     }
 </script>
 </body>
