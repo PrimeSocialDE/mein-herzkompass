@@ -1209,6 +1209,19 @@
             };
             
             updatePaidStatus();
+
+            // Tagebuch-Bump-Auslieferung als Fallback antriggern (idempotent server-seitig).
+            // Greift falls der Stripe-Webhook nicht durchlief — checkt via Stripe-API
+            // ob der Bump tatsächlich gekauft wurde und liefert dann das PDF.
+            if (leadId) {
+                fetch('/api/tagebuch/check-and-deliver', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ leadId })
+                }).then(r => r.json()).then(d => {
+                    console.log('📓 Tagebuch-Check:', d);
+                }).catch(e => console.error('Tagebuch-Check Fehler:', e));
+            }
         } else {
             console.log('⏭️ Purchase bereits getrackt, skip');
         }
