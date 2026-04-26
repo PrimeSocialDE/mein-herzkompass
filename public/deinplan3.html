@@ -3081,13 +3081,16 @@ if (popularBadge) {
                 timeLeft = timerDuration;
                 localStorage.setItem('wauwerk_timerStartTime', Date.now().toString());
             }
-            // Personalisierter Timer-Label mit Hundename
-            let timerLabel = 'Dein Rabatt endet in:';
+            // Personalisierter Timer-Label mit Hundename + Wochentag-spezifischer Rabatt-Bezeichnung
+            // Sonntag → "Sonntagsrabatt", Samstag → "Wochenend-Rabatt", Mo-Fr → "Rabatt"
+            const wd = new Date().getDay();
+            const rabattLabel = wd === 0 ? 'Sonntagsrabatt' : (wd === 6 ? 'Wochenend-Rabatt' : 'Rabatt');
+            let timerLabel = `Dein ${rabattLabel} endet in:`;
             if (dogName && dogName !== 'deinen Hund') {
                 const lastChar = dogName.slice(-1).toLowerCase();
                 const needsApostrophe = ['s', 'ß', 'x', 'z'].includes(lastChar);
                 const possessive = needsApostrophe ? `${dogName}'` : `${dogName}s`;
-                timerLabel = `${possessive} Rabatt endet in:`;
+                timerLabel = `${possessive} ${rabattLabel} endet in:`;
             }
             document.getElementById('timerLabel').textContent = timerLabel;
         }
