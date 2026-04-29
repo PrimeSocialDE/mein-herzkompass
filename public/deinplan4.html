@@ -3491,9 +3491,48 @@ if (popularBadge) {
     popularBadge.textContent = '⭐ Für dauerhafte Veränderung';
 }
         
-        // Problem-Label in Stat-Boxen aktualisieren
-        document.getElementById('problemLabel1').textContent = problemText;
-        document.getElementById('problemLabel2').textContent = problemText;
+        // Problem-Label in Stat-Boxen — kurze Kategorie statt voller Problem-Phrase,
+        // damit "DogName – <Kategorie> · <Wert>" in beiden Boxen (rot/grün) lesbar bleibt.
+        // Beispiel: "Bella – Rückruf · Ignoriert" (rot) / "Bella – Rückruf · Zuverlässig" (grün)
+        const problemCategoryMap = {
+            'pulling': 'Leinenführung',
+            'barking': 'Bellverhalten',
+            'aggression': 'Aggressionsabbau',
+            'anxiety': 'Trennungsangst',
+            'jumping': 'Begrüßung',
+            'recall': 'Rückruf',
+            'energy': 'Energielevel',
+            'destructive': 'Impulskontrolle',
+            'soiling': 'Stubenreinheit',
+            'mouthing': 'Impulskontrolle',
+            'visitor-anxiety': 'Besuchstoleranz',
+            'thunder-anxiety': 'Geräuschtoleranz',
+            'noise-sensitivity': 'Geräuschtoleranz',
+            'general-anxiety': 'Selbstvertrauen',
+            'stranger-anxiety': 'Sozialverhalten',
+            'anxious-overreaction': 'Selbstkontrolle',
+            'separation': 'Alleinbleiben',
+            'chasing': 'Jagdkontrolle',
+            'chasing-movement': 'Jagdkontrolle',
+            'prey-drive': 'Jagdkontrolle',
+            'chasing-cars': 'Jagdkontrolle',
+            'eating-unwanted': 'Impulskontrolle',
+            'eating-trash': 'Impulskontrolle',
+            'eating-objects': 'Impulskontrolle',
+            'postman-reactive': 'Reaktivität',
+            'dog-reactive': 'Reaktivität',
+            'leash-reactive': 'Reaktivität',
+            'overreaction': 'Selbstkontrolle',
+            'vocalization': 'Lautäußerung',
+            'resource-guarding': 'Ressourcen',
+            'biting': 'Beißkontrolle',
+            'digging': 'Buddelkontrolle',
+            'marking': 'Markierverhalten',
+            'custom-other': 'Verhalten'
+        };
+        const problemCategoryLabel = problemCategoryMap[dogProblem] || 'Verhalten';
+        document.getElementById('problemLabel1').textContent = problemCategoryLabel;
+        document.getElementById('problemLabel2').textContent = problemCategoryLabel;
         
         // ==================== ERWEITERTE problemValueMap (34 Keys) ====================
         const problemValueMap = {
