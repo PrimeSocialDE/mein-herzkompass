@@ -1,4 +1,6 @@
-import createMollieClient, { MollieClient } from "@mollie/api-client";
+import createMollieClient, { MollieClient, Locale } from "@mollie/api-client";
+
+export { Locale };
 
 let cached: MollieClient | null = null;
 

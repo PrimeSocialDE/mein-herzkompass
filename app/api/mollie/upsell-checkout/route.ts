@@ -3,7 +3,7 @@
 // Returnt { url, paymentId } statt { clientSecret } weil Mollie Hosted Checkout (Redirect) nutzt.
 
 import { NextRequest, NextResponse } from "next/server";
-import { getMollie, formatAmountEUR } from "@/lib/mollie";
+import { getMollie, formatAmountEUR, Locale } from "@/lib/mollie";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
       // ob Mollie-Status paid (oder wir nutzen den /api/mollie/return wenn lead_id vorhanden)
       redirectUrl: safeReturnUrl,
       webhookUrl: `${webhookBase}/api/mollie/webhook`,
-      locale: "de_DE",
+      locale: Locale.de_DE,
       metadata: {
         type: isPremium ? "premium" : "upsell",
         module: module,

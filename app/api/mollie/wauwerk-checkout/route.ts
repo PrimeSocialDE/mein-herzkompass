@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
-import { getMollie, formatAmountEUR } from "@/lib/mollie";
+import { getMollie, formatAmountEUR, Locale } from "@/lib/mollie";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
       description: description.slice(0, 255),
       redirectUrl: returnUrl,
       webhookUrl: `${webhookBase}/api/mollie/webhook`,
-      locale: "de_DE",
+      locale: Locale.de_DE,
       metadata: {
         lead_id: leadId || "",
         plan: plan,
