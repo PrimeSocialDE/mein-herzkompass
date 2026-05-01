@@ -270,6 +270,12 @@ async function notifyMake(orderId: string, payload: Record<string, any>) {
 }
 
 export async function POST(req: NextRequest) {
+  if (process.env.STRIPE_DISABLED === "true") {
+    // Stripe-Konto gesperrt — kommen normalerweise eh keine Events mehr.
+    // 200 zurückgeben damit Stripe nicht endlos retried falls doch noch was kommt.
+    console.log("[stripe-webhook] STRIPE_DISABLED=true — Event ignoriert");
+    return NextResponse.json({ received: true, ignored: true });
+  }
   if (!stripe || !endpointSecret) {
     console.error("Stripe oder Webhook-Secret fehlt");
     return NextResponse.json({ error: "Stripe nicht konfiguriert" }, { status: 400 });

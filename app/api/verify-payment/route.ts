@@ -9,6 +9,12 @@ export const dynamic = "force-dynamic";
 const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 
 export async function POST(req: NextRequest) {
+  if (process.env.STRIPE_DISABLED === "true") {
+    return NextResponse.json(
+      { paid: false, error: "Stripe deaktiviert — bitte /api/mollie/verify-payment verwenden" },
+      { status: 503 }
+    );
+  }
   if (!stripe) {
     console.error("Stripe nicht konfiguriert");
     return NextResponse.json({ paid: false, error: "Stripe nicht verfügbar" }, { status: 500 });

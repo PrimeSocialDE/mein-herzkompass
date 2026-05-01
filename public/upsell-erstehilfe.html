@@ -595,22 +595,17 @@
         async function buyProduct() {
             const btn = document.querySelector('.cta-btn');
             btn.textContent = 'Lädt...'; btn.disabled = true;
-            document.getElementById('paymentOverlay').classList.add('active');
             try {
-                const response = await fetch('/api/upsell-product-checkout', {
+                const returnUrl = window.location.origin + '/upsell-erstehilfe.html?success=true&redirect_status=succeeded&email=' + encodeURIComponent(userEmail) + '&lead_id=' + encodeURIComponent(leadId) + '&size=' + encodeURIComponent(dogSize || '') + '&vet=' + encodeURIComponent(vetDistance || '') + '&env=' + encodeURIComponent(dogEnv || '') + '&dogName=' + encodeURIComponent(dogName || '');
+                const response = await fetch('/api/mollie/upsell-product-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName, dogSize, vetDistance, dogEnv })
+                    body: JSON.stringify({ type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName, returnUrl: returnUrl })
                 });
                 const result = await response.json();
-                if (result.error || !result.clientSecret) { alert('Fehler: ' + (result.error || 'Keine Zahlungs-Session')); btn.textContent = 'Jetzt sichern'; btn.disabled = false; closePaymentPopup(); return; }
-                clientSecret = result.clientSecret;
-                if (!stripe) stripe = Stripe(STRIPE_PUBLIC_KEY);
-                elements = stripe.elements({ clientSecret, appearance: { theme: 'stripe', variables: { colorPrimary: '#C4A576', colorBackground: '#ffffff', colorText: '#2C2C2E', colorDanger: '#e74c3c', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', borderRadius: '8px' } }, locale: 'de' });
-                paymentElement = elements.create('payment', { layout: { type: 'tabs', defaultCollapsed: false }, paymentMethodOrder: ['klarna', 'paypal', 'card'], wallets: { applePay: 'auto', googlePay: 'auto' } });
-                paymentElement.mount('#payment-element');
-                btn.textContent = 'Jetzt sichern'; btn.disabled = false;
-            } catch (err) { console.error('Checkout error:', err); alert('Fehler beim Laden.'); btn.textContent = 'Jetzt sichern'; btn.disabled = false; closePaymentPopup(); }
+                if (result.error || !result.url) { alert('Fehler: ' + (result.error || 'Keine Zahlungs-URL')); btn.textContent = 'Jetzt sichern'; btn.disabled = false; return; }
+                window.location.href = result.url;
+            } catch (err) { console.error('Checkout error:', err); alert('Fehler beim Laden.'); btn.textContent = 'Jetzt sichern'; btn.disabled = false; }
         }
 
         async function confirmPayment() {

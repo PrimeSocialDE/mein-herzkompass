@@ -3964,7 +3964,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             try {
                 const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
                 const cancelPath = window.location.pathname + (window.location.search || '');
-                const response = await fetch('/api/wauwerk-checkout-session', {
+                const response = await fetch('/api/mollie/wauwerk-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

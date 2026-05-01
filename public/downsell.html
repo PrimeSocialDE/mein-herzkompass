@@ -533,7 +533,8 @@
             }
 
             try {
-                const response = await fetch('/api/upsell-checkout', {
+                const returnUrl = window.location.origin + '/danke-final.html?downsell=true&lead_id=' + encodeURIComponent(leadId || '');
+                const response = await fetch('/api/mollie/upsell-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -541,50 +542,21 @@
                         leadId: leadId,
                         email: userEmail,
                         dogName: dogName,
-                        price: 999
+                        price: 999,
+                        returnUrl: returnUrl
                     })
                 });
 
                 const result = await response.json();
 
-                if (result.error || !result.clientSecret) {
+                if (result.error || !result.url) {
                     alert('Fehler beim Laden. Bitte versuche es erneut.');
                     btn.textContent = 'Notfall-Karten mitnehmen – €9,99';
                     btn.disabled = false;
                     return;
                 }
 
-                clientSecret = result.clientSecret;
-
-                if (!stripe) stripe = Stripe(STRIPE_PUBLIC_KEY);
-
-                elements = stripe.elements({
-                    clientSecret: clientSecret,
-                    appearance: {
-                        theme: 'stripe',
-                        variables: {
-                            colorPrimary: '#C4A576',
-                            colorBackground: '#ffffff',
-                            colorText: '#2C2C2E',
-                            colorDanger: '#e74c3c',
-                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                            borderRadius: '8px'
-                        }
-                    },
-                    locale: 'de'
-                });
-
-                paymentElement = elements.create('payment', {
-                    layout: { type: 'tabs', defaultCollapsed: false },
-                    paymentMethodOrder: ['klarna', 'paypal', 'card'],
-                    wallets: { applePay: 'auto', googlePay: 'auto' }
-                });
-
-                paymentElement.mount('#payment-element');
-                document.getElementById('paymentOverlay').classList.add('active');
-
-                btn.textContent = 'Notfall-Karten mitnehmen – €9,99';
-                btn.disabled = false;
+                window.location.href = result.url;
 
             } catch (err) {
                 console.error('Error:', err);

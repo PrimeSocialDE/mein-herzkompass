@@ -2441,9 +2441,9 @@
             // Plan im localStorage speichern
             localStorage.setItem('selectedPlan', selectedPlan);
             
-            // Payment Intent erstellen
+            // Mollie: Direkter Redirect (kein PaymentIntent + Inline-Form)
             try {
-                const response = await fetch('/api/wauwerk-checkout', {
+                const response = await fetch('/api/mollie/wauwerk-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -2452,71 +2452,32 @@
                         dogName: dogName,
                         leadId: leadId,
                         email: userEmail || localStorage.getItem('userEmail') || '',
-                        // UTM Parameter
+                        cancelPath: '/rueckhol.html',
                         utm_source: localStorage.getItem('utm_source') || '',
                         utm_medium: localStorage.getItem('utm_medium') || '',
                         utm_campaign: localStorage.getItem('utm_campaign') || '',
                         utm_content: localStorage.getItem('utm_content') || '',
-                        utm_term: localStorage.getItem('utm_term') || '',
-                        // Click IDs
                         fbclid: localStorage.getItem('fbclid') || '',
-                        gclid: localStorage.getItem('gclid') || '',
-                        ttclid: localStorage.getItem('ttclid') || '',
-                        // Facebook Cookies
-                        fbp: getCookie('_fbp') || localStorage.getItem('fbp') || '',
-                        fbc: getCookie('_fbc') || localStorage.getItem('fbc') || '',
+                        fbp: getCookie('_fbp') || '',
+                        fbc: getCookie('_fbc') || '',
                         fb_event_id: localStorage.getItem('fb_event_id') || '',
-                        // Tracking Infos
-                        referrer: localStorage.getItem('referrer') || '',
-                        landing_page: localStorage.getItem('landing_page') || '',
-                        first_visit: localStorage.getItem('first_visit') || '',
-                        // Auto-Detection Felder
-                        utm_source_auto: localStorage.getItem('utm_source_auto') || '',
-                        device_type: localStorage.getItem('device_type') || '',
-                        browser: localStorage.getItem('browser') || '',
-                        in_app_browser: localStorage.getItem('in_app_browser') || '',
-                        email_source: localStorage.getItem('email_source') || ''
+                        ttclid: localStorage.getItem('ttclid') || ''
                     })
                 });
-                
+
                 const data = await response.json();
-                
-                if (data.error) {
-                    showError(data.error);
+
+                if (data.error || !data.url) {
+                    showError(data.error || 'Keine Zahlungs-URL erhalten');
                     return;
                 }
-                
-                clientSecret = data.clientSecret;
-                
-                // Event ID in localStorage speichern
-                if (data.paymentIntentId) {
-                    localStorage.setItem('payment_intent_id', data.paymentIntentId);
+
+                if (data.paymentId) {
+                    localStorage.setItem('mollie_payment_id', data.paymentId);
                 }
-                
-                elements = stripe.elements({
-                    clientSecret: clientSecret,
-                    appearance: {
-                        theme: 'stripe',
-                        variables: {
-                            colorPrimary: '#C4A576',
-                            colorBackground: '#ffffff',
-                            colorText: '#1a1a1a',
-                            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                            borderRadius: '8px'
-                        }
-                    },
-                    locale: 'de'
-                });
-                
-                paymentElement = elements.create('payment', {
-                    layout: { type: 'tabs', defaultCollapsed: false },
-                    paymentMethodOrder: ['klarna', 'paypal', 'card'],
-                    wallets: { applePay: 'auto', googlePay: 'auto' }
-                });
-                
-                document.getElementById('payment-element').innerHTML = '';
-                paymentElement.mount('#payment-element');
-                
+
+                window.location.href = data.url;
+
             } catch (error) {
                 console.error('Checkout error:', error);
                 showError('Fehler beim Laden. Bitte versuche es erneut.');

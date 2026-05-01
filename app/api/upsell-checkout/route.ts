@@ -20,6 +20,9 @@ const moduleNames: Record<string, string> = {
 };
 
 export async function POST(request: Request) {
+    if (process.env.STRIPE_DISABLED === "true") {
+        return NextResponse.json({ error: "Stripe deaktiviert" }, { status: 503 });
+    }
     try {
         const body = await request.json();
         const module = body.module as string | undefined;

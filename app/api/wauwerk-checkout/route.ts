@@ -17,6 +17,9 @@ const PRICES = {
 };
 
 export async function POST(req: NextRequest) {
+  if (process.env.STRIPE_DISABLED === "true") {
+    return NextResponse.json({ error: "Stripe deaktiviert" }, { status: 503 });
+  }
   if (!stripe) {
     return NextResponse.json({ error: "Stripe nicht konfiguriert" }, { status: 500 });
   }

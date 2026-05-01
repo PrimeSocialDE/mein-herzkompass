@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zweithund-Guide | Pfoten-Plan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ufxcf43805");
+    </script>
+
+    <!-- Meta Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAF8F5;
+            min-height: 100vh;
+            color: #2C2C2E;
+        }
+        .container { max-width: 500px; margin: 0 auto; padding: 24px 16px 40px; }
+        .header { text-align: center; margin-bottom: 24px; padding: 16px 0; }
+        .header-logo { font-size: 20px; font-weight: 800; color: #C4A576; letter-spacing: -0.5px; }
+        .hero { text-align: center; margin-bottom: 24px; }
+        .hero-icon { font-size: 56px; margin-bottom: 16px; }
+        .hero h1 { font-size: 24px; font-weight: 800; color: #2C2C2E; margin-bottom: 8px; line-height: 1.3; }
+        .hero p { font-size: 15px; color: #888; }
+        .product-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 20px; }
+        .benefits { margin-bottom: 20px; }
+        .benefit { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #F0F0F0; font-size: 14px; color: #444; }
+        .benefit:last-child { border-bottom: none; }
+        .benefit-check { color: #22C55E; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+        .price-section { text-align: center; padding: 20px 0; border-top: 1px solid #F0F0F0; margin-bottom: 20px; }
+        .price-old { font-size: 16px; color: #999; text-decoration: line-through; margin-bottom: 4px; }
+        .price-new { font-size: 32px; font-weight: 800; color: #C4A576; }
+        .price-info { font-size: 13px; color: #888; margin-top: 4px; }
+        .cta-btn { width: 100%; background: linear-gradient(135deg, #C4A576, #8B7355); color: white; border: none; padding: 16px 24px; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .cta-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(196,165,118,0.4); }
+        .cta-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        .guarantee { text-align: center; margin-top: 12px; font-size: 12px; color: #22C55E; font-weight: 500; }
+        .payment-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
+        .payment-overlay.active { display: flex; }
+        .payment-popup { background: white; border-radius: 16px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; position: relative; }
+        .payment-header { padding: 14px 20px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
+        .payment-title { font-size: 16px; font-weight: 600; color: #1a1a1a; }
+        .payment-close { width: 28px; height: 28px; border: none; background: #f5f5f5; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #666; }
+        .payment-body { padding: 14px 20px; }
+        .payment-product { display: flex; align-items: center; gap: 12px; padding: 12px; background: #FAFAFA; border-radius: 10px; margin-bottom: 12px; }
+        .payment-product-icon { width: 44px; height: 44px; background: #FEF3E7; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .payment-product-info h3 { font-size: 14px; color: #1a1a1a; margin-bottom: 2px; }
+        .payment-product-info p { font-size: 12px; color: #666; }
+        .payment-product-price { margin-left: auto; font-size: 18px; font-weight: 700; color: #C4A576; }
+        .payment-benefits { background: #F8F8F8; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
+        .payment-benefit { font-size: 12px; color: #333; padding: 4px 0; display: flex; align-items: center; gap: 6px; }
+        #payment-element { margin-bottom: 12px; }
+        .payment-error { background: #FEF2F2; color: #DC2626; padding: 10px; border-radius: 8px; font-size: 12px; margin-bottom: 12px; display: none; }
+        .payment-error.visible { display: block; }
+        .payment-btn { width: 100%; background: #C4A576; color: white; border: none; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .payment-btn:hover { background: #B8956A; }
+        .payment-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .payment-guarantee { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; font-size: 11px; color: #666; }
+        .spinner { width: 18px; height: 18px; border: 2px solid white; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .thank-you { display: none; text-align: center; padding: 40px 20px; }
+        .thank-you.active { display: block; }
+        .thank-you-check { width: 64px; height: 64px; background: #22C55E; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .thank-you-check svg { width: 32px; height: 32px; color: white; }
+        .thank-you h1 { font-size: 22px; color: #2C2C2E; margin-bottom: 8px; }
+        .thank-you p { font-size: 15px; color: #666; line-height: 1.6; }
+        .main-content { display: block; }
+        .main-content.hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="thank-you" id="thankYou">
+            <div class="thank-you-check">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h1>Vielen Dank!</h1>
+            <p>Dein Zweithund-Guide wird jetzt erstellt und in wenigen Minuten an deine Email gesendet.</p>
+            <p style="margin-top:16px;font-size:13px;color:#999;">Schau auch im Spam-Ordner nach, falls du nichts findest.</p>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="container">
+            <div class="header">
+                <div class="header-logo">Pfoten-Plan</div>
+            </div>
+
+            <div class="hero">
+                <div class="hero-icon">🐕‍🦺</div>
+                <h1 id="heroTitle">Zweithund-Guide</h1>
+                <p>Alles was du wissen musst</p>
+            </div>
+
+            <div class="product-card">
+                <div class="benefits">
+                    <div class="benefit"><span class="benefit-check">✓</span> <span id="benefitBreed">Welche Rasse passt zu deinem Hund</span></div>
+                    <div class="benefit"><span class="benefit-check">✓</span> Eingewöhnung Schritt für Schritt</div>
+                    <div class="benefit"><span class="benefit-check">✓</span> Die häufigsten Fehler vermeiden</div>
+                    <div class="benefit"><span class="benefit-check">✓</span> 4-Wochen-Plan für die Zusammenführung</div>
+                </div>
+
+                <div class="price-section">
+                    <div class="price-old">€39,99</div>
+                    <div class="price-new">€19,99</div>
+                    <div class="price-info">Einmalzahlung</div>
+                </div>
+
+                <button class="cta-btn" onclick="buyProduct()">Jetzt sichern</button>
+                <div class="guarantee">30 Tage Geld-zurück · Einmalzahlung · Sofort per Email</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="payment-overlay" id="paymentOverlay">
+        <div class="payment-popup">
+            <div class="payment-header">
+                <span class="payment-title">Zweithund-Guide sichern</span>
+                <button class="payment-close" onclick="closePaymentPopup()">✕</button>
+            </div>
+            <div class="payment-body">
+                <div class="payment-product">
+                    <div class="payment-product-icon">🐕‍🦺</div>
+                    <div class="payment-product-info">
+                        <h3 id="paymentProductName">Zweithund-Guide</h3>
+                        <p>Schritt für Schritt zum zweiten Hund</p>
+                    </div>
+                    <div class="payment-product-price">€19,99</div>
+                </div>
+                <div class="payment-benefits" id="paymentBenefits">
+                    <div class="payment-benefit">✓ <span>Welche Rasse passt</span></div>
+                    <div class="payment-benefit">✓ <span>Eingewöhnung Schritt für Schritt</span></div>
+                    <div class="payment-benefit">✓ <span>4-Wochen-Plan</span></div>
+                </div>
+                <div id="payment-element"></div>
+                <div class="payment-error" id="paymentError"></div>
+                <button class="payment-btn" id="paymentBtn" onclick="confirmPayment()">🔒 Jetzt bezahlen</button>
+                <div class="payment-guarantee">🔒 Sichere Zahlung · 30 Tage Geld-zurück</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
+        const PRODUCT_TYPE = 'zweithund';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const userEmail = urlParams.get('email') || '';
+        const leadId = urlParams.get('lead_id') || '';
+        const dogName = localStorage.getItem('dogName') || urlParams.get('dogName') || 'deinen Hund';
+
+        let stripe = null, elements = null, paymentElement = null, clientSecret = null;
+
+        // Personalize
+        if (dogName && dogName !== 'deinen Hund') {
+            document.getElementById('benefitBreed').textContent = 'Welche Rasse passt zu ' + dogName;
+        }
+
+        // Check success
+        if (urlParams.get('success') === 'true' || urlParams.get('redirect_status') === 'succeeded') {
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('thankYou').classList.add('active');
+            const piId = urlParams.get('payment_intent') || '';
+            fetch('/api/upsell-product-purchase', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paymentIntentId: piId, type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName })
+            }).then(r => r.json()).then(d => console.log('Purchase handler:', d)).catch(err => console.error('Purchase error:', err));
+            if (typeof fbq !== 'undefined') fbq('track', 'Purchase', { value: 19.99, currency: 'EUR', content_name: 'Zweithund-Guide' });
+            if (typeof gtag !== 'undefined') gtag('event', 'conversion', { send_to: 'AW-17806525009/upsell_zweithund', value: 19.99, currency: 'EUR' });
+        }
+
+        async function buyProduct() {
+            const btn = document.querySelector('.cta-btn');
+            btn.textContent = 'Lädt...';
+            btn.disabled = true;
+            try {
+                const returnUrl = window.location.origin + '/upsell-zweithund.html?success=true&redirect_status=succeeded&email=' + encodeURIComponent(userEmail) + '&lead_id=' + encodeURIComponent(leadId);
+                const response = await fetch('/api/mollie/upsell-product-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName, returnUrl: returnUrl })
+                });
+                const result = await response.json();
+                if (result.error || !result.url) {
+                    alert('Fehler: ' + (result.error || 'Keine Zahlungs-URL erhalten'));
+                    btn.textContent = 'Jetzt sichern'; btn.disabled = false; return;
+                }
+                window.location.href = result.url;
+            } catch (err) {
+                console.error('Checkout error:', err);
+                alert('Fehler beim Laden. Bitte versuche es erneut.');
+                btn.textContent = 'Jetzt sichern'; btn.disabled = false;
+            }
+        }
+
+        async function confirmPayment() {
+            const payBtn = document.getElementById('paymentBtn');
+            payBtn.disabled = true;
+            payBtn.innerHTML = '<div class="spinner"></div> Wird verarbeitet...';
+            hidePaymentError();
+            if (!stripe || !elements) { showPaymentError('Stripe nicht initialisiert.'); payBtn.disabled = false; payBtn.innerHTML = '🔒 Jetzt bezahlen'; return; }
+            try {
+                const returnUrl = window.location.origin + '/upsell-zweithund.html?success=true&email=' + encodeURIComponent(userEmail) + '&lead_id=' + encodeURIComponent(leadId);
+                const { error } = await stripe.confirmPayment({ elements, confirmParams: { return_url: returnUrl } });
+                if (error) { showPaymentError(error.message || 'Zahlung fehlgeschlagen'); payBtn.disabled = false; payBtn.innerHTML = '🔒 Jetzt bezahlen'; }
+            } catch (err) { showPaymentError('Zahlung fehlgeschlagen.'); payBtn.disabled = false; payBtn.innerHTML = '🔒 Jetzt bezahlen'; }
+        }
+
+        function showPaymentError(msg) { const el = document.getElementById('paymentError'); el.textContent = msg; el.classList.add('visible'); }
+        function hidePaymentError() { document.getElementById('paymentError').classList.remove('visible'); }
+        function closePaymentPopup() { document.getElementById('paymentOverlay').classList.remove('active'); if (paymentElement) { paymentElement.unmount(); paymentElement = null; } }
+        document.getElementById('paymentOverlay').addEventListener('click', function(e) { if (e.target === this) closePaymentPopup(); });
+    </script>
+</body>
+</html>

@@ -13,6 +13,9 @@ const stripe = process.env.STRIPE_SECRET_KEY
 const TRAINER_HILFE_PRICE = 7999; // €79,99
 
 export async function POST(req: NextRequest) {
+  if (process.env.STRIPE_DISABLED === "true") {
+    return NextResponse.json({ error: "Stripe deaktiviert" }, { status: 503 });
+  }
   if (!stripe) {
     return NextResponse.json({ error: "Stripe nicht konfiguriert" }, { status: 500 });
   }
