@@ -102,7 +102,6 @@ export async function POST(req: NextRequest) {
       // ob Mollie-Status paid (oder wir nutzen den /api/mollie/return wenn lead_id vorhanden)
       redirectUrl: safeReturnUrl,
       webhookUrl: `${webhookBase}/api/mollie/webhook`,
-      profileId: process.env.MOLLIE_PROFILE_ID,
       metadata: {
         type: isPremium ? "premium" : "upsell",
         module: module,
