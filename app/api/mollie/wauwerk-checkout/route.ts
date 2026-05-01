@@ -138,6 +138,7 @@ export async function POST(req: NextRequest) {
       description: description.slice(0, 255),
       redirectUrl: returnUrl,
       webhookUrl: `${webhookBase}/api/mollie/webhook`,
+      locale: "de_DE",
       metadata: {
         lead_id: leadId || "",
         plan: plan,

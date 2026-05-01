@@ -87,6 +87,7 @@ export async function POST(req: NextRequest) {
       ),
       redirectUrl: safeReturnUrl,
       webhookUrl: `${webhookBase}/api/mollie/webhook`,
+      locale: "de_DE",
       metadata: {
         type: "upsell_product",
         product: type,
