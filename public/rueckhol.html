@@ -1929,10 +1929,15 @@
                             const lead = data[0];
                             const answers = lead.answers || {};
                             
-                            if (answers.dog_name) dogName = answers.dog_name;
-                            if (answers.dog_problem) dogProblem = answers.dog_problem;
-                            if (answers.dog_breed) dogBreed = answers.dog_breed;
-                            if (answers.dog_age) dogAge = answers.dog_age;
+                            // Top-Level-Spalten haben Vorrang vor answers-JSONB (wo answers oft leer ist)
+                            const resolvedDogName = lead.dog_name || answers.dog_name;
+                            const resolvedDogProblem = lead.dog_problem || answers.dog_problem;
+                            const resolvedDogBreed = lead.dog_breed || answers.dog_breed;
+                            const resolvedDogAge = lead.dog_age || answers.dog_age;
+                            if (resolvedDogName) dogName = resolvedDogName;
+                            if (resolvedDogProblem) dogProblem = resolvedDogProblem;
+                            if (resolvedDogBreed) dogBreed = resolvedDogBreed;
+                            if (resolvedDogAge) dogAge = resolvedDogAge;
                             if (answers.dog_commands && Array.isArray(answers.dog_commands)) dogCommands = answers.dog_commands;
                             if (lead.id) leadId = lead.id;
                             if (lead.email) userEmail = lead.email;
