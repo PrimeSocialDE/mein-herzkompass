@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
     const bundle = body.bundle as boolean | undefined;
     const price = body.price as number | undefined;
     const returnUrl = body.returnUrl as string | undefined;
+    const referredByCode = body.referredByCode as string | undefined;
 
     if (!module || !email) {
       return NextResponse.json(
@@ -112,6 +113,7 @@ export async function POST(req: NextRequest) {
         email: email,
         is_bundle: isBundle ? "true" : "false",
         is_premium: isPremium ? "true" : "false",
+        referred_by_code: referredByCode || "",
       },
     });
 

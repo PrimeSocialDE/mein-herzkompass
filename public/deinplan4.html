@@ -2800,6 +2800,15 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             });
         });
 
+        // ==================== REFERRAL-CODE AUS URL (?ref=PFOTE-XXXXXX) ====================
+        (function() {
+            const ref = new URLSearchParams(window.location.search).get('ref');
+            if (ref && /^PFOTE-[A-Z2-9]{6}$/.test(ref)) {
+                localStorage.setItem('referred_by_code', ref);
+                console.log('🎁 Referral-Code erfasst:', ref);
+            }
+        })();
+
         // ==================== LOAD DATA FROM SUPABASE IF COMING FROM EMAIL ====================
         (async function() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -4381,7 +4390,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         fbp: getCookie('_fbp') || '',
                         fbc: getCookie('_fbc') || '',
                         fb_event_id: localStorage.getItem('fb_event_id') || '',
-                        ttclid: localStorage.getItem('ttclid') || ''
+                        ttclid: localStorage.getItem('ttclid') || '',
+                        referredByCode: localStorage.getItem('referred_by_code') || ''
                     })
                 });
                 
@@ -4765,7 +4775,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         fbp: getCookie('_fbp') || '',
                         fbc: getCookie('_fbc') || '',
                         fb_event_id: localStorage.getItem('fb_event_id') || '',
-                        ttclid: localStorage.getItem('ttclid') || ''
+                        ttclid: localStorage.getItem('ttclid') || '',
+                        referredByCode: localStorage.getItem('referred_by_code') || ''
                     })
                 });
 

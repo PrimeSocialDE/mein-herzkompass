@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
       fbc,
       fb_event_id,
       ttclid,
+      referredByCode,
     } = body;
 
     const ORDER_BUMP_PRICE_CENTS = 999;
@@ -166,19 +167,19 @@ export async function POST(req: NextRequest) {
         ttclid: ttclid || "",
         datafast_visitor_id: datafastVisitorId,
         datafast_session_id: datafastSessionId,
+        referred_by_code: referredByCode || "",
       },
     });
 
     // Lead in Supabase updaten — additive Spalten, Stripe-Spalten unangetastet
     if (leadId) {
-      await supabase
-        .from("wauwerk_leads")
-        .update({
-          mollie_payment_id: payment.id,
-          payment_provider: "mollie",
-          status: "checkout_started",
-        })
-        .eq("id", leadId);
+      const updateData: any = {
+        mollie_payment_id: payment.id,
+        payment_provider: "mollie",
+        status: "checkout_started",
+      };
+      if (referredByCode) updateData.referred_by_code = referredByCode;
+      await supabase.from("wauwerk_leads").update(updateData).eq("id", leadId);
     }
 
     const checkoutUrl = payment.getCheckoutUrl();

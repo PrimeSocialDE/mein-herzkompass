@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
 import { getMollie } from "@/lib/mollie";
+import { generateRedeemCode } from "@/lib/referral";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -164,6 +165,20 @@ async function handlePaid(payment: any) {
 
   await enrollInUpsellCampaign(table, referenceId, updateData.email);
   await sendNotfallkartenIfBonus(table, referenceId);
+
+  // Referral-Reward triggern wenn dieser Lead per Empfehlungs-Link kam.
+  // Code kommt entweder aus Metadata (frisch beim Checkout mitgeschickt) oder aus
+  // der referred_by_code-Spalte (bei wiederholtem Webhook-Call).
+  const refCode =
+    meta.referred_by_code || existingRecord.referred_by_code || null;
+  if (refCode && table === "wauwerk_leads") {
+    await triggerReferralReward({
+      referredByCode: refCode,
+      newLeadId: referenceId,
+      newLeadEmail: updateData.email,
+    });
+  }
+
   await notifyMake(referenceId, {
     source: "mollie.payment",
     table,
@@ -569,6 +584,154 @@ async function enrollInUpsellCampaign(
     }
   } catch (e) {
     console.error("[mollie-webhook] Upsell enroll exception:", e);
+  }
+}
+
+// ── Referral-Reward: Empfehler bekommt Coupon nach Conversion ────────────────
+async function triggerReferralReward(opts: {
+  referredByCode: string;
+  newLeadId: string;
+  newLeadEmail: string | null | undefined;
+}) {
+  const { referredByCode, newLeadId, newLeadEmail } = opts;
+  try {
+    // Empfehler-Lead via Code finden
+    const { data: referrer } = await supabase
+      .from("wauwerk_leads")
+      .select("id, email, dog_name")
+      .eq("referral_code", referredByCode)
+      .single();
+
+    if (!referrer || !referrer.email) {
+      console.log(
+        `[mollie-webhook] Referral: Kein Empfehler für Code ${referredByCode} gefunden — skip`
+      );
+      return;
+    }
+
+    // Anti-Fraud: Empfehler darf sich nicht selbst empfehlen
+    if (
+      newLeadEmail &&
+      referrer.email.toLowerCase() === newLeadEmail.toLowerCase()
+    ) {
+      console.log(
+        `[mollie-webhook] Referral: Self-Referral blockiert (${referrer.email}) — skip`
+      );
+      return;
+    }
+
+    // Existiert bereits ein Reward für diesen referred_lead_id? (Idempotenz)
+    const { data: existing } = await supabase
+      .from("referral_rewards")
+      .select("id")
+      .eq("referred_lead_id", newLeadId)
+      .single();
+    if (existing) {
+      console.log(
+        `[mollie-webhook] Referral: Reward für Lead ${newLeadId} existiert schon — skip`
+      );
+      return;
+    }
+
+    // Neuen Coupon-Code erzeugen + speichern (mit Retry bei unwahrscheinlicher Kollision)
+    let redeemCode = generateRedeemCode();
+    let inserted = false;
+    for (let attempt = 0; attempt < 5 && !inserted; attempt++) {
+      const { error } = await supabase.from("referral_rewards").insert({
+        referrer_lead_id: referrer.id,
+        referrer_email: referrer.email,
+        referred_lead_id: newLeadId,
+        referred_email: newLeadEmail || "",
+        redeem_code: redeemCode,
+        status: "pending",
+      });
+      if (!error) {
+        inserted = true;
+        break;
+      }
+      // unique violation? neuen Code generieren
+      if (String(error.message).toLowerCase().includes("duplicate")) {
+        redeemCode = generateRedeemCode();
+        continue;
+      }
+      console.error("[mollie-webhook] Referral insert error:", error);
+      return;
+    }
+    if (!inserted) {
+      console.error(
+        "[mollie-webhook] Referral insert nach 5 Versuchen fehlgeschlagen"
+      );
+      return;
+    }
+
+    console.log(
+      `[mollie-webhook] 🎁 Referral-Reward erstellt: ${redeemCode} für ${referrer.email}`
+    );
+
+    // Mail an Empfehler senden
+    await sendReferralRewardEmail({
+      to: referrer.email,
+      referrerDogName: referrer.dog_name || "deinen Hund",
+      redeemCode,
+    });
+  } catch (e) {
+    console.error("[mollie-webhook] Referral-Reward Exception:", e);
+  }
+}
+
+async function sendReferralRewardEmail(opts: {
+  to: string;
+  referrerDogName: string;
+  redeemCode: string;
+}) {
+  const BREVO = process.env.BREVO_API_KEY;
+  if (!BREVO) {
+    console.warn(
+      "[mollie-webhook] BREVO_API_KEY fehlt — Referral-Mail nicht gesendet"
+    );
+    return;
+  }
+  const redeemUrl = `https://www.pfoten-plan.de/modul-shop.html?redeem=${encodeURIComponent(opts.redeemCode)}`;
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<div style="max-width:560px;margin:0 auto;background:white;">
+  <div style="padding:24px 30px;border-bottom:1px solid #f0f0f0;text-align:center;">
+    <div style="font-size:18px;font-weight:800;color:#C4A576;">Pfoten-Plan</div>
+  </div>
+  <div style="padding:36px 30px 18px;">
+    <h1 style="font-size:26px;font-weight:800;color:#1a1a1a;margin:0 0 16px;">Danke fürs Empfehlen 🎁</h1>
+    <p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 14px;">Jemand, dem du Pfoten-Plan empfohlen hast, hat seinen Plan gerade gekauft. Als Dankeschön bekommst du <strong>1 Modul deiner Wahl gratis</strong> (Wert €19,99).</p>
+    <p style="font-size:15px;color:#555;line-height:1.7;margin:0 0 22px;">Lös deinen Code im Modul-Shop ein und such dir aus, was du brauchst.</p>
+  </div>
+  <div style="padding:0 30px 24px;text-align:center;">
+    <div style="background:#FFF9F0;border:2px dashed #C4A576;border-radius:12px;padding:22px;margin-bottom:18px;">
+      <p style="font-size:11px;color:#8B7355;margin:0 0 6px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;">Dein Gratis-Code</p>
+      <p style="font-size:24px;font-family:monospace;color:#1a1a1a;margin:0;font-weight:700;letter-spacing:2px;">${opts.redeemCode}</p>
+    </div>
+    <a href="${redeemUrl}" style="display:inline-block;background:#C4A576;color:white;text-decoration:none;padding:16px 32px;border-radius:10px;font-size:15px;font-weight:700;">Modul gratis aussuchen →</a>
+  </div>
+  <div style="padding:24px 30px;border-top:1px solid #f0f0f0;text-align:center;background:#fafafa;">
+    <p style="font-size:12px;color:#888;margin:0;">Pfoten-Plan · Dein Trainings-Begleiter</p>
+  </div>
+</div></body></html>`;
+  try {
+    await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "api-key": BREVO,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sender: { name: "Pfoten-Plan", email: "support@pfoten-plan.de" },
+        to: [{ email: opts.to }],
+        subject: `🎁 Dein Gratis-Modul wartet (${opts.redeemCode})`,
+        htmlContent: html,
+      }),
+    });
+    console.log(
+      `[mollie-webhook] Referral-Reward-Mail gesendet an ${opts.to}`
+    );
+  } catch (e) {
+    console.error("[mollie-webhook] Brevo Referral-Mail-Fehler:", e);
   }
 }
 

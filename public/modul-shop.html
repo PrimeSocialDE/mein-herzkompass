@@ -879,6 +879,14 @@
             </div>
         </div>
 
+        <!-- Gratis-Code einlösen -->
+        <div style="background:#FFF9F0;border:1px dashed #C4A576;border-radius:12px;padding:14px 18px;margin:0 0 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div style="font-size:14px;color:#1a1a1a;">
+                🎁 <strong>Hast du einen Gratis-Code?</strong> Ein Modul deiner Wahl auf uns.
+            </div>
+            <button onclick="openRedeemModal()" style="background:#C4A576;color:white;border:none;padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px;">Code einlösen</button>
+        </div>
+
         <!-- Category Tabs -->
         <div class="category-tabs">
             <button class="category-tab active" data-category="all">Alle Module</button>
@@ -1139,6 +1147,18 @@
                 const val = urlParams.get(param);
                 if (val) localStorage.setItem(param, val);
             });
+
+            // Referral-Code aus URL erfassen (?ref=PFOTE-XXXXXX)
+            const refParam = urlParams.get('ref');
+            if (refParam && /^PFOTE-[A-Z2-9]{6}$/.test(refParam)) {
+                localStorage.setItem('referred_by_code', refParam);
+                console.log('🎁 Referral-Code erfasst:', refParam);
+            }
+            // Redeem-Code direkt einlösen (?redeem=GRATIS-XXXX-XXXX) — öffnet Modal
+            const redeemParam = urlParams.get('redeem');
+            if (redeemParam) {
+                setTimeout(() => openRedeemModal(redeemParam), 500);
+            }
 
             // Aus localStorage laden als Fallback
             dogName = localStorage.getItem('dogName') || 'deinen Hund';
@@ -1454,7 +1474,8 @@
                         email: userEmail,
                         dogName: dogName,
                         price: module.price * 100,
-                        returnUrl: returnUrl
+                        returnUrl: returnUrl,
+                        referredByCode: localStorage.getItem('referred_by_code') || ''
                     })
                 });
 
@@ -1547,7 +1568,8 @@
                         dogName: dogName,
                         bundle: true,
                         price: pricing.price * 100,
-                        returnUrl: returnUrl
+                        returnUrl: returnUrl,
+                        referredByCode: localStorage.getItem('referred_by_code') || ''
                     })
                 });
 
@@ -1656,6 +1678,146 @@
         }
         if (typeof ttq !== 'undefined') {
             ttq.track('ViewContent', { content_name: 'Modul Shop' });
+        }
+    </script>
+    <!-- ─── Redeem Modal ─────────────────────────────────────── -->
+    <div id="redeemOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:white;border-radius:16px;max-width:440px;width:100%;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;">
+                <h2 style="font-size:20px;font-weight:800;color:#1a1a1a;margin:0;">🎁 Gratis-Modul einlösen</h2>
+                <button onclick="closeRedeemModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#888;line-height:1;">×</button>
+            </div>
+            <p style="font-size:14px;color:#555;line-height:1.6;margin:0 0 18px;">Du hast jemanden empfohlen und Pfoten-Plan hat dir per Mail einen Gratis-Code geschickt? Trag ihn hier ein.</p>
+            <div id="redeemStep1">
+                <input id="redeemCodeInput" type="text" placeholder="GRATIS-XXXX-XXXX" autocomplete="off" style="width:100%;padding:14px 16px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:16px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;box-sizing:border-box;" />
+                <div id="redeemFeedback" style="margin:10px 0 0;font-size:13px;min-height:18px;"></div>
+                <button id="redeemValidateBtn" onclick="validateRedeemCode()" style="width:100%;background:#C4A576;color:white;border:none;padding:14px;border-radius:10px;font-weight:700;cursor:pointer;font-size:15px;margin-top:14px;">Code prüfen</button>
+            </div>
+            <div id="redeemStep2" style="display:none;">
+                <p style="font-size:14px;color:#1a1a1a;margin:0 0 14px;">✓ Code gültig! Wähle dein Gratis-Modul:</p>
+                <select id="redeemModuleSelect" style="width:100%;padding:14px 16px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:15px;background:white;box-sizing:border-box;">
+                    <option value="">— Modul wählen —</option>
+                    <option value="anxiety">Trennungsangst Prävention</option>
+                    <option value="pulling">Leinenführigkeit Basics</option>
+                    <option value="barking">Anti-Bell Training</option>
+                    <option value="aggression">Aggressions-Kontrolle</option>
+                    <option value="recall">Rückruf-Training</option>
+                    <option value="jumping">Anti-Anspring Training</option>
+                    <option value="energy">Energie-Management</option>
+                    <option value="destructive">Anti-Zerstörungs Training</option>
+                    <option value="mouthing">Anti-Aufnehm Training</option>
+                </select>
+                <div id="redeemEmailRow" style="display:none;margin-top:12px;">
+                    <input id="redeemEmailInput" type="email" placeholder="Deine E-Mail" autocomplete="email" style="width:100%;padding:14px 16px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:15px;box-sizing:border-box;" />
+                </div>
+                <button id="redeemFinalBtn" onclick="finalizeRedeem()" style="width:100%;background:#C4A576;color:white;border:none;padding:14px;border-radius:10px;font-weight:700;cursor:pointer;font-size:15px;margin-top:14px;">Modul gratis freischalten</button>
+            </div>
+            <div id="redeemStep3" style="display:none;text-align:center;padding:20px 0;">
+                <div style="font-size:48px;margin-bottom:12px;">🎉</div>
+                <p style="font-size:16px;color:#1a1a1a;font-weight:700;margin:0 0 8px;">Modul freigeschaltet!</p>
+                <p style="font-size:14px;color:#555;margin:0;">Du bekommst es in den nächsten Minuten per E-Mail.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let _validatedRedeemCode = null;
+
+        function openRedeemModal(prefill) {
+            document.getElementById('redeemOverlay').style.display = 'flex';
+            document.getElementById('redeemStep1').style.display = 'block';
+            document.getElementById('redeemStep2').style.display = 'none';
+            document.getElementById('redeemStep3').style.display = 'none';
+            document.getElementById('redeemFeedback').textContent = '';
+            if (prefill) {
+                document.getElementById('redeemCodeInput').value = prefill.toUpperCase();
+                validateRedeemCode();
+            }
+        }
+        function closeRedeemModal() {
+            document.getElementById('redeemOverlay').style.display = 'none';
+        }
+        document.getElementById('redeemOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeRedeemModal();
+        });
+
+        async function validateRedeemCode() {
+            const code = (document.getElementById('redeemCodeInput').value || '').trim().toUpperCase();
+            const fb = document.getElementById('redeemFeedback');
+            const btn = document.getElementById('redeemValidateBtn');
+            if (!/^GRATIS-[A-Z2-9]{4}-[A-Z2-9]{4}$/.test(code)) {
+                fb.style.color = '#dc2626';
+                fb.textContent = 'Format: GRATIS-XXXX-XXXX';
+                return;
+            }
+            btn.disabled = true; btn.textContent = 'Prüfe...';
+            try {
+                const res = await fetch('/api/referral/validate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+                const data = await res.json();
+                if (data.valid) {
+                    _validatedRedeemCode = code;
+                    document.getElementById('redeemStep1').style.display = 'none';
+                    document.getElementById('redeemStep2').style.display = 'block';
+                    if (!userEmail) {
+                        document.getElementById('redeemEmailRow').style.display = 'block';
+                    }
+                } else {
+                    fb.style.color = '#dc2626';
+                    fb.textContent = data.reason === 'already_redeemed'
+                        ? 'Dieser Code wurde bereits eingelöst.'
+                        : data.reason === 'expired' ? 'Code ist abgelaufen.'
+                        : 'Code ungültig oder nicht gefunden.';
+                    btn.disabled = false; btn.textContent = 'Code prüfen';
+                }
+            } catch (e) {
+                fb.style.color = '#dc2626';
+                fb.textContent = 'Server-Fehler — bitte später nochmal.';
+                btn.disabled = false; btn.textContent = 'Code prüfen';
+            }
+        }
+
+        async function finalizeRedeem() {
+            const module = document.getElementById('redeemModuleSelect').value;
+            const emailInput = document.getElementById('redeemEmailInput');
+            const email = userEmail || (emailInput && emailInput.value.trim());
+            const btn = document.getElementById('redeemFinalBtn');
+            if (!module) {
+                alert('Bitte ein Modul auswählen.');
+                return;
+            }
+            if (!email) {
+                alert('Bitte E-Mail eintragen.');
+                return;
+            }
+            btn.disabled = true; btn.textContent = 'Schalte frei...';
+            try {
+                const res = await fetch('/api/referral/redeem', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: _validatedRedeemCode,
+                        module: module,
+                        email: email,
+                        dogName: dogName,
+                        leadId: leadId
+                    })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    document.getElementById('redeemStep2').style.display = 'none';
+                    document.getElementById('redeemStep3').style.display = 'block';
+                } else {
+                    alert('Fehler: ' + (data.error || 'Unbekannt'));
+                    btn.disabled = false; btn.textContent = 'Modul gratis freischalten';
+                }
+            } catch (e) {
+                alert('Server-Fehler — bitte später nochmal.');
+                btn.disabled = false; btn.textContent = 'Modul gratis freischalten';
+            }
         }
     </script>
 </body>
