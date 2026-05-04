@@ -2170,7 +2170,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">1-Monats-Plan</div>
-                            <div class="pricing-total">€0,99 pro Tag</div>
+                            <div class="pricing-total">Für 1 Monat Training</div>
                         </div>
                     </div>
                     <div class="pricing-right">
@@ -2190,7 +2190,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">3-Monats-Plan</div>
-                            <div class="pricing-total">€0,44 pro Tag</div>
+                            <div class="pricing-total">Für 3 Monate Training</div>
                         </div>
                     </div>
                     <div class="pricing-right">
@@ -2211,7 +2211,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">6-Monats-Plan</div>
-                            <div class="pricing-total">€0,33 pro Tag</div>
+                            <div class="pricing-total">Für 6 Monate Training</div>
                         </div>
                     </div>
                     <div class="pricing-right">
@@ -3195,19 +3195,19 @@ if (popularBadge) {
     // 1-Monat: €49,99 einmalig (≈€1,67/Tag)
     cards[0].querySelector('.price-amount').textContent = '49';
     cards[0].querySelector('.price-cents').textContent = ',99';
-    cards[0].querySelector('.pricing-total').textContent = '€1,67 pro Tag';
+    cards[0].querySelector('.pricing-total').textContent = 'Für 1 Monat Training';
     cards[0].dataset.price = '49.99';
 
-    // 3-Monat: €79,99 einmalig (≈€0,89/Tag)
+    // 3-Monat: €79,99 einmalig
     cards[1].querySelector('.price-amount').textContent = '79';
     cards[1].querySelector('.price-cents').textContent = ',99';
-    cards[1].querySelector('.pricing-total').textContent = '€0,89 pro Tag';
+    cards[1].querySelector('.pricing-total').textContent = 'Für 3 Monate Training';
     cards[1].dataset.price = '79.99';
 
-    // 6-Monat: €119,99 einmalig (≈€0,67/Tag)
+    // 6-Monat: €119,99 einmalig
     cards[2].querySelector('.price-amount').textContent = '119';
     cards[2].querySelector('.price-cents').textContent = ',99';
-    cards[2].querySelector('.pricing-total').textContent = '€0,67 pro Tag';
+    cards[2].querySelector('.pricing-total').textContent = 'Für 6 Monate Training';
     cards[2].dataset.price = '119.99';
 }
         
@@ -3673,7 +3673,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             const dailyData = dailyPrices[selectedPlan] || dailyPrices['3month'];
             const dailyPrice = timerExpired ? dailyData.normal : dailyData.discount;
             const checkoutDailyPrice = document.getElementById('checkoutDailyPrice');
-            if (checkoutDailyPrice) checkoutDailyPrice.textContent = '≈ ' + dailyPrice + ' € pro Tag';
+            if (checkoutDailyPrice) checkoutDailyPrice.textContent = 'Einmalzahlung – kein Abo';
             
             // Step 2 Werte auch setzen
             const planDuration2 = document.getElementById('checkoutPlanDuration2');
@@ -4055,7 +4055,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         <div class="checkout-plan-price-box">
                             <div class="checkout-plan-price" id="checkoutPlanPrice">€59,99</div>
                             <div class="checkout-plan-price-sub">einmalig</div>
-                            <div class="checkout-plan-daily" id="checkoutDailyPrice">≈ 0,33 € pro Tag</div>
+                            <div class="checkout-plan-daily" id="checkoutDailyPrice">Einmalzahlung – kein Abo</div>
                         </div>
                     </div>
 
