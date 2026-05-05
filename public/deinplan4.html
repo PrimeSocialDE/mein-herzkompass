@@ -2174,14 +2174,15 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     </header>
 
     <!-- Trainer-Brief: Echo der Quiz-Antworten (Ü40-Pattern Founder-Brief) -->
-    <div style="padding: 16px 16px 0;">
-        <div style="background: #FFF9F0; border-radius: 14px; border: 1px solid #EADDC5; padding: 16px 18px;">
+    <!-- Wrapper-bg matcht den Hero-Gradient-Top (#F5EDE3) für nahtlosen Übergang -->
+    <div style="background: #F5EDE3; padding: 22px 16px 26px;">
+        <div style="background: #FFFFFF; border-radius: 14px; border: 1px solid #EADDC5; padding: 20px 22px; box-shadow: 0 2px 12px rgba(139,115,85,0.06); max-width: 600px; margin: 0 auto;">
             <div style="display: flex; gap: 14px; align-items: flex-start;">
-                <img src="TrainerPfoten-thumb.png" alt="Pfoten-Plan Trainer" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid #C4A576;">
+                <img src="TrainerPfoten-thumb.png" alt="Pfoten-Plan Trainer" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid #C4A576;">
                 <div style="flex: 1; min-width: 0;">
-                    <p id="trainerLetterEyebrow" style="font-size: 10px; color: #8B7355; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700;">Unsere Einschätzung</p>
-                    <p id="trainerLetterBody" style="font-size: 14px; color: #1a1a1a; margin: 0 0 8px; line-height: 1.55;">
-                        Mit unserem Plan kannst du das gut in den Griff bekommen. Die Übungen sind Schritt für Schritt aufgebaut — bei Fragen helfen unsere Trainer dir gerne weiter.
+                    <p id="trainerLetterEyebrow" style="font-size: 11px; color: #8B7355; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700;">Unsere Einschätzung</p>
+                    <p id="trainerLetterBody" style="font-size: 15px; color: #1a1a1a; margin: 0 0 12px; line-height: 1.6;">
+                        Mit unserem Plan lässt sich das gut lösen.
                     </p>
                     <p style="font-size: 12px; color: #8B7355; margin: 0; font-style: italic;">— Pfoten-Plan Trainer-Team</p>
                 </div>
@@ -2934,12 +2935,15 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
                 eyebrowEl.textContent = 'Unsere Einschätzung für ' + dogName;
             }
 
-            // Body: kurz, deutsch, mobile-tauglich (2 Sätze + Trainer-Hinweis)
+            // Body: emotional, ehrlich, mobile-tauglich. Du-bist-nicht-allein-Hook,
+            // dann konkrete Lösung, dann Trainer-Support als Sicherheit.
             let body;
             if (problemReadable) {
-                body = `<strong>${dogName}</strong> und das Thema „${problemReadable}" lässt sich mit unserem Plan gut lösen. Die Übungen sind Schritt für Schritt aufgebaut — bei Fragen helfen unsere Trainer dir gerne weiter.`;
+                body = `Wir wissen, wie zermürbend „${problemReadable}" sein kann — und du bist damit nicht allein. ` +
+                       `Mit unserem Plan lässt sich das gut lösen: Die Übungen sind klar und perfekt aufeinander aufgebaut, damit es bei <strong>${dogName}</strong> Schritt für Schritt klappt — und falls du zwischendurch Fragen hast, sind unsere Trainer für dich da.`;
             } else {
-                body = `Mit unserem Plan kannst du <strong>${dogName}</strong>s Thema gut in den Griff bekommen. Die Übungen sind Schritt für Schritt aufgebaut — bei Fragen helfen unsere Trainer dir gerne weiter.`;
+                body = `Wir wissen, wie viel du gerade durchmachst — und du bist damit nicht allein. ` +
+                       `Mit unserem Plan lässt sich <strong>${dogName}</strong>s Thema gut in den Griff bekommen: Die Übungen sind klar und perfekt aufeinander aufgebaut, damit es Schritt für Schritt klappt — und falls du Fragen hast, sind unsere Trainer für dich da.`;
             }
             letterEl.innerHTML = body;
         })();
