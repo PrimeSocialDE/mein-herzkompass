@@ -2179,9 +2179,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             <div style="display: flex; gap: 14px; align-items: flex-start;">
                 <img src="TrainerPfoten-thumb.png" alt="Pfoten-Plan Trainer" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid #C4A576;">
                 <div style="flex: 1; min-width: 0;">
-                    <p style="font-size: 10px; color: #8B7355; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700;">Persönliche Empfehlung deines Trainers</p>
+                    <p id="trainerLetterEyebrow" style="font-size: 10px; color: #8B7355; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700;">Unsere Einschätzung</p>
                     <p id="trainerLetterBody" style="font-size: 14px; color: #1a1a1a; margin: 0 0 8px; line-height: 1.55;">
-                        Hallo! Wir haben uns <strong>deines Hundes</strong> Antworten angeschaut — wir wissen genau, was helfen wird.
+                        Mit unserem Plan kannst du das gut in den Griff bekommen. Die Übungen sind Schritt für Schritt aufgebaut — bei Fragen helfen unsere Trainer dir gerne weiter.
                     </p>
                     <p style="font-size: 12px; color: #8B7355; margin: 0; font-style: italic;">— Pfoten-Plan Trainer-Team</p>
                 </div>
@@ -2901,47 +2901,47 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         if (mockupTitleEl) mockupTitleEl.textContent = 'Trainingsplan für ' + dogName;
         document.getElementById('dogNamePlan').textContent = dogName;
 
-        // Trainer-Brief mit Echo der Quiz-Antworten befüllen
+        // Trainer-Brief: knappe Einschätzung mit Quiz-Daten (mobile-optimiert)
         (function buildTrainerLetter() {
             const letterEl = document.getElementById('trainerLetterBody');
+            const eyebrowEl = document.getElementById('trainerLetterEyebrow');
             if (!letterEl) return;
-            const dogBreed = (localStorage.getItem('dogBreed') || '').trim();
-            const dogAge = (localStorage.getItem('dogAge') || '').trim();
             const problemReadable = ({
                 'pulling': 'Leinenziehen',
-                'barking': 'übermäßigem Bellen',
-                'aggression': 'Aggressionsverhalten',
+                'barking': 'Bellen',
+                'aggression': 'Aggression',
                 'anxiety': 'Trennungsangst',
-                'jumping': 'Anspringen von Menschen',
-                'recall': 'fehlendem Rückruf',
-                'energy': 'übermäßiger Energie',
-                'destructive': 'zerstörerischem Verhalten',
+                'jumping': 'Anspringen',
+                'recall': 'Rückruf-Probleme',
+                'energy': 'übermäßige Energie',
+                'destructive': 'Zerstörungsverhalten',
                 'soiling': 'Stubenreinheit',
-                'mouthing': 'Aufnehmen von Dingen',
+                'mouthing': 'Aufnehmen von Gegenständen',
                 'visitor-anxiety': 'Angst bei Besuch',
                 'thunder-anxiety': 'Gewitterangst',
                 'noise-sensitivity': 'Geräuschempfindlichkeit',
-                'general-anxiety': 'allgemeiner Ängstlichkeit',
+                'general-anxiety': 'Ängstlichkeit',
                 'stranger-anxiety': 'Angst vor Fremden',
                 'separation': 'Trennungsangst',
-                'chasing': 'starkem Jagdverhalten',
+                'chasing': 'Jagdverhalten',
                 'chasing-movement': 'Jagen von Bewegungen',
-                'prey-drive': 'starkem Jagdtrieb',
-                'chasing-cars': 'Jagen von Autos und Fahrrädern'
+                'prey-drive': 'Jagdtrieb',
+                'chasing-cars': 'Jagen von Autos'
             })[dogProblem] || '';
 
-            // Robuster Satzbau: nutze nur Variablen die tatsächlich da sind
-            const breedPart = dogBreed ? `einem ${dogBreed}` : 'deinem Hund';
-            const agePart = dogAge ? ` (${dogAge})` : '';
-            const themePart = problemReadable
-                ? ` und dem Thema „${problemReadable}"`
-                : '';
-            const intro = `Hallo! Wir haben uns gerade <strong>${dogName}</strong>s Antworten angeschaut.`;
-            const middle = themePart
-                ? ` Bei ${breedPart}${agePart}${themePart} haben wir viel Erfahrung — über 5.000 Hundebesitzer haben wir damit schon erfolgreich begleitet.`
-                : ` Wir haben über 5.000 Hundebesitzern in genau dieser Situation geholfen.`;
-            const outro = ` Genau deshalb haben wir den Plan unten passgenau für ${dogName} zusammengestellt.`;
-            letterEl.innerHTML = intro + middle + outro;
+            // Eyebrow personalisieren wenn Hundename da
+            if (eyebrowEl && dogName && dogName !== 'deinen Hund') {
+                eyebrowEl.textContent = 'Unsere Einschätzung für ' + dogName;
+            }
+
+            // Body: kurz, deutsch, mobile-tauglich (2 Sätze + Trainer-Hinweis)
+            let body;
+            if (problemReadable) {
+                body = `<strong>${dogName}</strong> und das Thema „${problemReadable}" lässt sich mit unserem Plan gut lösen. Die Übungen sind Schritt für Schritt aufgebaut — bei Fragen helfen unsere Trainer dir gerne weiter.`;
+            } else {
+                body = `Mit unserem Plan kannst du <strong>${dogName}</strong>s Thema gut in den Griff bekommen. Die Übungen sind Schritt für Schritt aufgebaut — bei Fragen helfen unsere Trainer dir gerne weiter.`;
+            }
+            letterEl.innerHTML = body;
         })();
 
         // Personalized Plan-Preview mit konkreter Übung befüllen
