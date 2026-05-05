@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
 
     const payment = await mollie.payments.create({
       amount: { currency: "EUR", value: formatAmountEUR(amountCents) },
-      description: `Pfoten-Plan ${productName} fuer ${dogName || "Hund"}`.slice(
+      description: `Pfoten-Plan ${productName} fuer ${dogName || "Hund"} · kommt sofort per E-Mail`.slice(
         0,
         255
       ),

@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
           : returnUrl
         : `${origin}/zusatz.html?lead_id=${leadId || ""}`;
 
-    const description = `Pfoten-Plan ${moduleName} für ${dogName || "Hund"}`;
+    const description = `Pfoten-Plan ${moduleName} für ${dogName || "Hund"} · kommt sofort per E-Mail`;
 
     const payment = await mollie.payments.create({
       amount: { currency: "EUR", value: formatAmountEUR(amountCents) },

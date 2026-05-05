@@ -114,7 +114,8 @@ export async function POST(req: NextRequest) {
 
     const description =
       `Pfoten-Plan ${planName} für ${dogName || "deinen Hund"}` +
-      (bumpApplied ? ` + ${bumpDetails.name}` : "");
+      (bumpApplied ? ` + ${bumpDetails.name}` : "") +
+      ` · kommt sofort per E-Mail`;
 
     const safeCancelPath =
       typeof cancelPath === "string" &&
