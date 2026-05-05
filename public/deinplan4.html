@@ -2379,7 +2379,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">INTENSIV-PLAN</div>
-                            <div class="pricing-total"><strong style="color:var(--text-dark);">Training für 1 Monat</strong> · einmalig</div>
+                            <div class="pricing-total">Umgerechnet nur <strong style="color:var(--text-dark);">99 Cent am Tag</strong></div>
                             <span class="pricing-savings">Spare €20</span>
                         </div>
                     </div>
@@ -2405,7 +2405,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">EMPFOHLEN</div>
-                            <div class="pricing-total"><strong style="color:var(--text-dark);">Training für 3 Monate</strong> · einmalig</div>
+                            <div class="pricing-total">Umgerechnet nur <strong style="color:var(--text-dark);">44 Cent am Tag</strong></div>
                             <span class="pricing-savings">Spare €40</span>
                         </div>
                     </div>
@@ -2430,7 +2430,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">ENTSPANNT-PLAN</div>
-                            <div class="pricing-total"><strong style="color:var(--text-dark);">Training für 6 Monate</strong> · einmalig</div>
+                            <div class="pricing-total">Umgerechnet nur <strong style="color:var(--text-dark);">33 Cent am Tag</strong></div>
                             <span class="pricing-savings">Spare €60</span>
                         </div>
                     </div>
@@ -3704,9 +3704,9 @@ if (popularBadge) {
             const trainingLabel = (text) => ' · <strong style="color:var(--text-dark);">' + text + '</strong>';
 
             const planMeta = {
-                '1month': { discount: 29.99, normal: 49.99, dailyDisc: '€0,99', dailyNorm: '€1,67', label: 'Training für 1 Monat' },
-                '3month': { discount: 39.99, normal: 79.99, dailyDisc: '€0,44', dailyNorm: '€0,89', label: 'Training für 3 Monate' },
-                '6month': { discount: 59.99, normal: 119.99, dailyDisc: '€0,33', dailyNorm: '€0,67', label: 'Training für 6 Monate' }
+                '1month': { discount: 29.99, normal: 49.99, dailyDisc: '99 Cent',  dailyNorm: '€1,67',   label: 'Training für 1 Monat' },
+                '3month': { discount: 39.99, normal: 79.99, dailyDisc: '44 Cent',  dailyNorm: '89 Cent', label: 'Training für 3 Monate' },
+                '6month': { discount: 59.99, normal: 119.99, dailyDisc: '33 Cent', dailyNorm: '67 Cent', label: 'Training für 6 Monate' }
             };
 
             cards.forEach((card) => {
@@ -3746,10 +3746,12 @@ if (popularBadge) {
                 if (amountEl) amountEl.textContent = eur;
                 if (centsEl) centsEl.textContent = ',' + cent;
 
-                // Plan-Dauer als Subline (kein Tagespreis — verursacht Abo-Verwechslung)
+                // Cent-Vergleich als Anker — "Umgerechnet" macht klar dass es eine
+                // Vergleichsrechnung ist (kein Abo). Rechte Spalte zeigt eh "einmalig".
                 const totalEl = card.querySelector('.pricing-total');
                 if (totalEl) {
-                    totalEl.innerHTML = '<strong style="color:var(--text-dark);">' + meta.label + '</strong> · einmalig';
+                    const daily = timerExpired ? meta.dailyNorm : meta.dailyDisc;
+                    totalEl.innerHTML = 'Umgerechnet nur <strong style="color:var(--text-dark);">' + daily + ' am Tag</strong>';
                 }
 
                 card.dataset.price = current.toFixed(2);
@@ -4235,16 +4237,16 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             const checkoutDogNamePlan = document.getElementById('checkoutDogNamePlan');
             if (checkoutDogNamePlan) checkoutDogNamePlan.textContent = dogName;
             
-            // Tagespreis berechnen
+            // Tagespreis berechnen — Cent-Format wenn < €1, sonst Euro-Format
             const dailyPrices = {
-                '1month': { discount: '0,99', normal: '1,67' },
-                '3month': { discount: '0,44', normal: '0,89' },
-                '6month': { discount: '0,33', normal: '0,67' }
+                '1month': { discount: '99 Cent', normal: '€1,67' },
+                '3month': { discount: '44 Cent', normal: '89 Cent' },
+                '6month': { discount: '33 Cent', normal: '67 Cent' }
             };
             const dailyData = dailyPrices[selectedPlan] || dailyPrices['3month'];
             const dailyPrice = timerExpired ? dailyData.normal : dailyData.discount;
             const checkoutDailyPrice = document.getElementById('checkoutDailyPrice');
-            if (checkoutDailyPrice) checkoutDailyPrice.textContent = 'Einmalzahlung – kein Abo';
+            if (checkoutDailyPrice) checkoutDailyPrice.textContent = 'Umgerechnet nur ' + dailyPrice + ' am Tag';
             
             // Step 2 Werte auch setzen
             const planDuration2 = document.getElementById('checkoutPlanDuration2');
@@ -4837,7 +4839,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         <div class="checkout-plan-price-box">
                             <div class="checkout-plan-price" id="checkoutPlanPrice">€59,99</div>
                             <div class="checkout-plan-price-sub">einmalig</div>
-                            <div class="checkout-plan-daily" id="checkoutDailyPrice">Einmalzahlung – kein Abo</div>
+                            <div class="checkout-plan-daily" id="checkoutDailyPrice">Umgerechnet nur 33 Cent am Tag</div>
                         </div>
                     </div>
 
