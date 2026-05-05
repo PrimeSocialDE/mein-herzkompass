@@ -2173,6 +2173,22 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
     </header>
 
+    <!-- Trainer-Brief: Echo der Quiz-Antworten (Ü40-Pattern Founder-Brief) -->
+    <div style="padding: 16px 16px 0;">
+        <div style="background: #FFF9F0; border-radius: 14px; border: 1px solid #EADDC5; padding: 16px 18px;">
+            <div style="display: flex; gap: 14px; align-items: flex-start;">
+                <img src="TrainerPfoten-thumb.png" alt="Pfoten-Plan Trainer" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid #C4A576;">
+                <div style="flex: 1; min-width: 0;">
+                    <p style="font-size: 10px; color: #8B7355; margin: 0 0 6px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700;">Persönliche Empfehlung deines Trainers</p>
+                    <p id="trainerLetterBody" style="font-size: 14px; color: #1a1a1a; margin: 0 0 8px; line-height: 1.55;">
+                        Hallo! Wir haben uns <strong>deines Hundes</strong> Antworten angeschaut — wir wissen genau, was helfen wird.
+                    </p>
+                    <p style="font-size: 12px; color: #8B7355; margin: 0; font-style: italic;">— Pfoten-Plan Trainer-Team</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <section class="hero-section">
         <div class="comparison-container">
             <div class="comparison-side">
@@ -2884,6 +2900,49 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         const mockupTitleEl = document.getElementById('mockupTitle');
         if (mockupTitleEl) mockupTitleEl.textContent = 'Trainingsplan für ' + dogName;
         document.getElementById('dogNamePlan').textContent = dogName;
+
+        // Trainer-Brief mit Echo der Quiz-Antworten befüllen
+        (function buildTrainerLetter() {
+            const letterEl = document.getElementById('trainerLetterBody');
+            if (!letterEl) return;
+            const dogBreed = (localStorage.getItem('dogBreed') || '').trim();
+            const dogAge = (localStorage.getItem('dogAge') || '').trim();
+            const problemReadable = ({
+                'pulling': 'Leinenziehen',
+                'barking': 'übermäßigem Bellen',
+                'aggression': 'Aggressionsverhalten',
+                'anxiety': 'Trennungsangst',
+                'jumping': 'Anspringen von Menschen',
+                'recall': 'fehlendem Rückruf',
+                'energy': 'übermäßiger Energie',
+                'destructive': 'zerstörerischem Verhalten',
+                'soiling': 'Stubenreinheit',
+                'mouthing': 'Aufnehmen von Dingen',
+                'visitor-anxiety': 'Angst bei Besuch',
+                'thunder-anxiety': 'Gewitterangst',
+                'noise-sensitivity': 'Geräuschempfindlichkeit',
+                'general-anxiety': 'allgemeiner Ängstlichkeit',
+                'stranger-anxiety': 'Angst vor Fremden',
+                'separation': 'Trennungsangst',
+                'chasing': 'starkem Jagdverhalten',
+                'chasing-movement': 'Jagen von Bewegungen',
+                'prey-drive': 'starkem Jagdtrieb',
+                'chasing-cars': 'Jagen von Autos und Fahrrädern'
+            })[dogProblem] || '';
+
+            // Robuster Satzbau: nutze nur Variablen die tatsächlich da sind
+            const breedPart = dogBreed ? `einem ${dogBreed}` : 'deinem Hund';
+            const agePart = dogAge ? ` (${dogAge})` : '';
+            const themePart = problemReadable
+                ? ` und dem Thema „${problemReadable}"`
+                : '';
+            const intro = `Hallo! Wir haben uns gerade <strong>${dogName}</strong>s Antworten angeschaut.`;
+            const middle = themePart
+                ? ` Bei ${breedPart}${agePart}${themePart} haben wir viel Erfahrung — über 5.000 Hundebesitzer haben wir damit schon erfolgreich begleitet.`
+                : ` Wir haben über 5.000 Hundebesitzern in genau dieser Situation geholfen.`;
+            const outro = ` Genau deshalb haben wir den Plan unten passgenau für ${dogName} zusammengestellt.`;
+            letterEl.innerHTML = intro + middle + outro;
+        })();
 
         // Personalized Plan-Preview mit konkreter Übung befüllen
         (function() {
