@@ -2164,15 +2164,15 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     /* Express Checkout: 3 gleichgroße Logo-Buttons in einer Reihe */
     .hybrid-express-grid {
         display: grid; grid-template-columns: 1fr 1fr 1fr;
-        gap: 8px; margin-bottom: 4px;
+        gap: 10px; margin-bottom: 4px;
     }
     .hybrid-express-btn {
-        height: 56px; background: #fff; border: 1px solid #E5E7EB;
-        border-radius: 10px; padding: 0 12px; cursor: pointer;
+        height: 76px; background: #fff; border: 1px solid #E5E7EB;
+        border-radius: 12px; padding: 4px; cursor: pointer;
         display: flex; align-items: center; justify-content: center;
         transition: all 0.15s ease;
         box-shadow: 0 1px 2px rgba(17,24,39,0.03);
-        font-family: inherit;
+        font-family: inherit; overflow: hidden;
     }
     .hybrid-express-btn:hover {
         border-color: #D1D5DB; transform: translateY(-1px);
@@ -2180,26 +2180,32 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     }
     .hybrid-express-btn:active { transform: translateY(0); }
     .hybrid-express-btn img {
-        max-height: 30px; max-width: 100%;
+        max-height: 100%; max-width: 100%;
         width: auto; height: auto; object-fit: contain;
     }
-    /* PayPal Brand: gelb */
+    /* PayPal: full-bleed Logo (PayPal-LogoGelb.png ist Brand-Asset mit Gelb) */
     .hybrid-express-btn--paypal {
-        background: #FFC439; border-color: #FFC439;
+        background: #FFC439; border-color: #FFC439; padding: 0;
+    }
+    .hybrid-express-btn--paypal img {
+        max-height: 100%; max-width: 100%; height: 100%; width: 100%;
+        object-fit: cover;
     }
     .hybrid-express-btn--paypal:hover {
         background: #FFB81C; border-color: #FFB81C;
         box-shadow: 0 4px 12px rgba(255,196,57,0.35);
     }
-    /* Klarna Brand: pink */
+    /* Klarna: weißer Button — Klarna-Logo bringt eigene rosa Akzentfarbe */
     .hybrid-express-btn--klarna {
-        background: #FFA8CD; border-color: #FFA8CD;
+        background: #fff; border-color: #E5E7EB;
     }
     .hybrid-express-btn--klarna:hover {
-        background: #FF8FBE; border-color: #FF8FBE;
-        box-shadow: 0 4px 12px rgba(255,168,205,0.4);
+        background: #FAFAFA; border-color: #FFA8CD;
+        box-shadow: 0 4px 12px rgba(255,168,205,0.25);
     }
-    .hybrid-express-btn--klarna img { max-height: 22px; }
+    .hybrid-express-btn--klarna img { max-height: 36px; }
+    /* SEPA: Logo etwas kleiner skalieren */
+    .hybrid-express-btn img[alt="SEPA"] { max-height: 48px; }
 
     .hybrid-footer {
         padding: 14px 24px 18px; border-top: 1px solid #F3F4F6;
@@ -4656,7 +4662,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 <p class="hybrid-section-label">Express-Bezahlung</p>
                 <div class="hybrid-express-grid">
                     <button class="hybrid-express-btn hybrid-express-btn--paypal" onclick="payWithMethod('paypal')" aria-label="Mit PayPal bezahlen">
-                        <img src="paypal-logo.png" alt="PayPal">
+                        <img src="PayPal-LogoGelb.png" alt="PayPal">
                     </button>
                     <button class="hybrid-express-btn hybrid-express-btn--klarna" onclick="openKlarnaAddress()" aria-label="Mit Klarna bezahlen">
                         <img src="klarna-logo.png" alt="Klarna">
