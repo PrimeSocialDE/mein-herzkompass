@@ -2161,33 +2161,45 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     }
     .hybrid-email-edit:hover { background: rgba(22,163,74,0.1); }
 
-    /* Express Checkout: PayPal-Button prominenter, kleine Method-Icons darunter */
-    .hybrid-method-btn.paypal-btn {
-        background: #FFC439; border-color: #FFC439; color: #0F1F46;
-        font-weight: 600;
+    /* Express Checkout: 3 gleichgroße Logo-Buttons in einer Reihe */
+    .hybrid-express-grid {
+        display: grid; grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px; margin-bottom: 4px;
     }
-    .hybrid-method-btn.paypal-btn:hover {
-        background: #FFB81C; border-color: #FFB81C;
-        box-shadow: 0 2px 8px rgba(255,196,57,0.3);
-    }
-    .hybrid-method-btn.paypal-btn img { height: 20px; }
-    .hybrid-method-btn.paypal-btn .arrow { color: #0F1F46; opacity: 0.6; }
-
-    .hybrid-method-row { display: flex; gap: 8px; margin-bottom: 4px; }
-    .hybrid-method-btn-small {
-        flex: 1; background: #fff; border: 1px solid #E5E7EB;
-        padding: 12px; border-radius: 10px; cursor: pointer;
+    .hybrid-express-btn {
+        height: 56px; background: #fff; border: 1px solid #E5E7EB;
+        border-radius: 10px; padding: 0 12px; cursor: pointer;
         display: flex; align-items: center; justify-content: center;
         transition: all 0.15s ease;
         box-shadow: 0 1px 2px rgba(17,24,39,0.03);
-        font-family: inherit; font-size: 13px; color: #111827; font-weight: 500;
+        font-family: inherit;
     }
-    .hybrid-method-btn-small:hover {
-        border-color: #D1D5DB; background: #F9FAFB;
-        box-shadow: 0 2px 6px rgba(17,24,39,0.06);
+    .hybrid-express-btn:hover {
+        border-color: #D1D5DB; transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(17,24,39,0.08);
     }
-    .hybrid-method-btn-small:active { transform: translateY(1px); }
-    .hybrid-method-btn-small img { height: 18px; width: auto; max-width: 80px; object-fit: contain; }
+    .hybrid-express-btn:active { transform: translateY(0); }
+    .hybrid-express-btn img {
+        max-height: 30px; max-width: 100%;
+        width: auto; height: auto; object-fit: contain;
+    }
+    /* PayPal Brand: gelb */
+    .hybrid-express-btn--paypal {
+        background: #FFC439; border-color: #FFC439;
+    }
+    .hybrid-express-btn--paypal:hover {
+        background: #FFB81C; border-color: #FFB81C;
+        box-shadow: 0 4px 12px rgba(255,196,57,0.35);
+    }
+    /* Klarna Brand: pink */
+    .hybrid-express-btn--klarna {
+        background: #FFA8CD; border-color: #FFA8CD;
+    }
+    .hybrid-express-btn--klarna:hover {
+        background: #FF8FBE; border-color: #FF8FBE;
+        box-shadow: 0 4px 12px rgba(255,168,205,0.4);
+    }
+    .hybrid-express-btn--klarna img { max-height: 22px; }
 
     .hybrid-footer {
         padding: 14px 24px 18px; border-top: 1px solid #F3F4F6;
@@ -4640,21 +4652,17 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     </div>
                 </div>
 
-                <!-- Express Checkout: PayPal/Klarna/SEPA-Buttons prominent oben -->
-                <p class="hybrid-section-label" id="expressLabel">Express-Bezahlung</p>
-                <button class="hybrid-method-btn paypal-btn" onclick="payWithMethod('paypal')">
-                    <span class="label">
-                        <img src="paypal-logo.png" alt="PayPal" onerror="this.style.display='none'">
-                        <span>Mit PayPal bezahlen</span>
-                    </span>
-                    <span class="arrow">›</span>
-                </button>
-                <div class="hybrid-method-row">
-                    <button class="hybrid-method-btn-small" onclick="openKlarnaAddress()">
-                        <img src="klarna-logo.png" alt="Klarna" onerror="this.innerHTML='Klarna';this.parentNode.replaceChild(document.createTextNode('Klarna'),this);">
+                <!-- Express-Bezahlung: 3 gleichgroße Logo-Buttons (Shopify-Style) -->
+                <p class="hybrid-section-label">Express-Bezahlung</p>
+                <div class="hybrid-express-grid">
+                    <button class="hybrid-express-btn hybrid-express-btn--paypal" onclick="payWithMethod('paypal')" aria-label="Mit PayPal bezahlen">
+                        <img src="paypal-logo.png" alt="PayPal">
                     </button>
-                    <button class="hybrid-method-btn-small" onclick="payWithMethod('banktransfer')">
-                        <img src="sepa-logo.png" alt="SEPA" onerror="this.innerHTML='SEPA';this.parentNode.replaceChild(document.createTextNode('SEPA'),this);">
+                    <button class="hybrid-express-btn hybrid-express-btn--klarna" onclick="openKlarnaAddress()" aria-label="Mit Klarna bezahlen">
+                        <img src="klarna-logo.png" alt="Klarna">
+                    </button>
+                    <button class="hybrid-express-btn" onclick="payWithMethod('banktransfer')" aria-label="Per SEPA-Banküberweisung">
+                        <img src="sepa-logo.png" alt="SEPA">
                     </button>
                 </div>
 
