@@ -2025,9 +2025,22 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     }
     @keyframes hybridIn { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
+    /* Brand-Bar oben */
+    .hybrid-brand {
+        display: flex; align-items: center; gap: 8px;
+        padding: 14px 24px 10px; background: #fff;
+        position: sticky; top: 0; z-index: 2;
+    }
+    .hybrid-brand-logo {
+        width: 22px; height: 22px; object-fit: contain; flex-shrink: 0;
+    }
+    .hybrid-brand-text {
+        font-size: 14px; font-weight: 700; color: #111827;
+        letter-spacing: -0.2px; flex: 1;
+    }
+
     .hybrid-header {
-        position: sticky; top: 0; z-index: 1;
-        background: #fff; padding: 22px 24px 16px;
+        background: #fff; padding: 4px 24px 16px;
         border-bottom: 1px solid #F3F4F6;
         display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
     }
@@ -4609,12 +4622,17 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <div class="hybrid-overlay" id="hybridOverlay">
         <div class="hybrid-modal">
+            <!-- Brand-Bar -->
+            <div class="hybrid-brand">
+                <img src="logo.png" alt="Pfoten-Plan" class="hybrid-brand-logo" onerror="this.style.display='none'">
+                <span class="hybrid-brand-text">Pfoten-Plan</span>
+                <button class="hybrid-close" onclick="closeHybridModal()" aria-label="Schließen">×</button>
+            </div>
             <div class="hybrid-header">
                 <div>
                     <h2>Bezahlen · <span id="hybridPriceLabel">€39,99</span></h2>
                     <div class="sub" id="hybridPlanName">3-Monats-Plan</div>
                 </div>
-                <button class="hybrid-close" onclick="closeHybridModal()" aria-label="Schließen">×</button>
             </div>
 
             <div class="hybrid-trust">
