@@ -1993,6 +1993,137 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     })(window, document, "clarity", "script", "ufxcf43805");
 </script>
 <script src="https://js.stripe.com/v3/"></script>
+<script src="https://js.mollie.com/v1/mollie.js"></script>
+<style>
+    /* ─── Hybrid Checkout Modal (Mollie Components) ─────────────────────── */
+    .hybrid-overlay {
+        display: none; position: fixed; inset: 0; z-index: 10000;
+        background: rgba(20,15,10,0.55); backdrop-filter: blur(4px);
+        align-items: flex-end; justify-content: center; padding: 0;
+    }
+    .hybrid-overlay.active { display: flex; }
+    @media (min-width: 640px) {
+        .hybrid-overlay { align-items: center; padding: 20px; }
+    }
+    .hybrid-modal {
+        background: #fff; width: 100%; max-width: 520px;
+        border-radius: 18px 18px 0 0; max-height: 92vh;
+        overflow-y: auto; -webkit-overflow-scrolling: touch;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+        animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    @media (min-width: 640px) {
+        .hybrid-modal { border-radius: 18px; max-height: 90vh; }
+    }
+    @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .hybrid-header {
+        position: sticky; top: 0; z-index: 1;
+        background: #fff; padding: 18px 22px 14px;
+        border-bottom: 1px solid #F0EBE3;
+        display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .hybrid-header h2 { font-size: 17px; font-weight: 800; color: #1a1a1a; margin: 0; line-height: 1.3; }
+    .hybrid-header .sub { font-size: 12px; color: #8B7355; margin-top: 2px; }
+    .hybrid-close {
+        background: #F5EDE3; border: none; width: 32px; height: 32px; border-radius: 50%;
+        font-size: 18px; color: #8B7355; cursor: pointer; flex-shrink: 0;
+    }
+    .hybrid-trust {
+        background: linear-gradient(180deg, #FFF9F0, #FAF4E8);
+        padding: 12px 22px; display: flex; align-items: center; gap: 10px;
+        font-size: 12px; color: #5A4A3A; border-bottom: 1px solid #F0EBE3;
+    }
+    .hybrid-trust strong { color: #1a1a1a; font-weight: 700; }
+    .hybrid-trust svg { flex-shrink: 0; }
+
+    .hybrid-body { padding: 18px 22px 22px; }
+
+    .hybrid-section-label {
+        font-size: 11px; font-weight: 700; color: #8B7355;
+        text-transform: uppercase; letter-spacing: 1.4px;
+        margin: 0 0 10px;
+    }
+
+    /* Card-Form */
+    .mollie-row { display: flex; gap: 10px; }
+    .mollie-row > * { flex: 1; }
+    .mollie-field {
+        background: #fff; border: 1.5px solid #E8DFD0; border-radius: 10px;
+        padding: 13px 14px; transition: border-color 0.15s, box-shadow 0.15s;
+        margin-bottom: 10px;
+    }
+    .mollie-field:focus-within {
+        border-color: #C4A576;
+        box-shadow: 0 0 0 3px rgba(196,165,118,0.15);
+    }
+    .mollie-field-label {
+        font-size: 11px; color: #8B7355; font-weight: 600;
+        margin-bottom: 4px; display: block; letter-spacing: 0.3px;
+    }
+
+    .hybrid-card-submit {
+        width: 100%; background: #1a1a1a; color: #fff; border: none;
+        padding: 16px 20px; border-radius: 12px; font-size: 16px; font-weight: 700;
+        cursor: pointer; margin-top: 4px; transition: background 0.15s, transform 0.1s;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .hybrid-card-submit:hover:not(:disabled) { background: #000; }
+    .hybrid-card-submit:active { transform: scale(0.98); }
+    .hybrid-card-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .hybrid-divider {
+        display: flex; align-items: center; gap: 12px;
+        margin: 22px 0 14px; color: #9CA3AF; font-size: 12px; font-weight: 600;
+    }
+    .hybrid-divider::before, .hybrid-divider::after {
+        content: ''; flex: 1; height: 1px; background: #E8DFD0;
+    }
+
+    .hybrid-method-btn {
+        width: 100%; background: #fff; border: 1.5px solid #E8DFD0;
+        padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight: 600;
+        color: #1a1a1a; cursor: pointer; margin-bottom: 8px;
+        display: flex; align-items: center; justify-content: space-between;
+        transition: border-color 0.15s, background 0.15s;
+    }
+    .hybrid-method-btn:hover { border-color: #C4A576; background: #FFF9F0; }
+    .hybrid-method-btn:active { transform: scale(0.99); }
+    .hybrid-method-btn .label { display: flex; align-items: center; gap: 10px; }
+    .hybrid-method-btn img { height: 22px; width: auto; }
+    .hybrid-method-btn .arrow { color: #8B7355; font-size: 18px; }
+
+    .hybrid-error {
+        display: none; background: #FEF2F2; color: #B91C1C;
+        padding: 10px 14px; border-radius: 8px; font-size: 13px;
+        border: 1px solid #FECACA; margin-bottom: 12px;
+    }
+
+    .hybrid-footer {
+        padding: 14px 22px 18px; border-top: 1px solid #F0EBE3;
+        background: #FAF8F5; text-align: center;
+    }
+    .hybrid-footer-icons {
+        display: flex; gap: 8px; align-items: center; justify-content: center;
+        opacity: 0.65; margin-bottom: 8px;
+    }
+    .hybrid-footer-icons img { height: 20px; width: auto; }
+    .hybrid-footer-text { font-size: 11px; color: #8B7355; line-height: 1.5; }
+
+    /* Klarna Address Modal */
+    .klarna-input {
+        width: 100%; background: #fff; border: 1.5px solid #E8DFD0;
+        border-radius: 10px; padding: 13px 14px; font-size: 15px;
+        font-family: inherit; box-sizing: border-box;
+        margin-bottom: 10px; color: #1a1a1a;
+    }
+    .klarna-input:focus {
+        outline: none; border-color: #C4A576;
+        box-shadow: 0 0 0 3px rgba(196,165,118,0.15);
+    }
+    .klarna-row { display: flex; gap: 10px; }
+    .klarna-row > * { flex: 1; }
+</style>
 <script
   defer
   data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
@@ -3936,15 +4067,48 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             document.getElementById('checkoutError').classList.remove('visible');
         }
 
-        // Stripe Checkout Session (mit automatischer Steuer per IP)
+        // ════════════════════════════════════════════════════════════════════
+        // HYBRID-CHECKOUT (Mollie Components für Karten + Buttons für Rest)
+        // Karten-Eingabe direkt auf pfoten-plan.de — User sieht nie die
+        // Mollie-Page mit "Debkowski & Moritz GbR". PayPal/SEPA als
+        // Buttons → direkter Redirect. Klarna mit Address-Modal davor
+        // (Klarna braucht zwingend billingAddress).
+        // ════════════════════════════════════════════════════════════════════
+
+        const MOLLIE_PROFILE_ID_PUBLIC = 'pfl_JiqZcNVUKu';
+        let mollieClient = null;
+        let cardComponents = null;
+        let hybridContext = null; // hält Plan-Info für aktuellen Checkout-Versuch
+
+        function buildCheckoutPayload(extra) {
+            const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
+            const cancelPath = window.location.pathname + (window.location.search || '');
+            return Object.assign({
+                plan: selectedPlan,
+                timerExpired: timerExpired,
+                dogName: dogName,
+                leadId: currentLeadId,
+                email: localStorage.getItem('userEmail') || '',
+                exitDiscount: exitDiscount,
+                cancelPath: cancelPath,
+                utm_source: localStorage.getItem('utm_source') || '',
+                utm_medium: localStorage.getItem('utm_medium') || '',
+                utm_campaign: localStorage.getItem('utm_campaign') || '',
+                utm_content: localStorage.getItem('utm_content') || '',
+                fbclid: localStorage.getItem('fbclid') || '',
+                fbp: getCookie('_fbp') || '',
+                fbc: getCookie('_fbc') || '',
+                fb_event_id: localStorage.getItem('fb_event_id') || '',
+                ttclid: localStorage.getItem('ttclid') || '',
+                referredByCode: localStorage.getItem('referred_by_code') || ''
+            }, extra || {});
+        }
+
         async function getMyPlan() {
             const ctaBtn = document.querySelector('.cta-button');
-            if (ctaBtn) {
-                ctaBtn.disabled = true;
-                ctaBtn.innerHTML = 'Weiter zur Kasse...';
-            }
+            if (ctaBtn) { ctaBtn.disabled = true; ctaBtn.innerHTML = 'Lade Bezahlung...'; }
 
-            // Meta Pixel: InitiateCheckout event (für Retargeting & Optimierung)
+            // Meta Pixel: InitiateCheckout event
             try {
                 const priceMap = {
                     '1month': { d: 29.99, n: 49.99 },
@@ -3956,70 +4120,208 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 localStorage.setItem('fb_event_id_ic', eventId);
                 if (typeof fbq !== 'undefined') {
                     fbq('track', 'InitiateCheckout', {
-                        value: val,
-                        currency: 'EUR',
-                        content_name: selectedPlan,
-                        content_category: 'Trainingsplan',
-                        num_items: 1
+                        value: val, currency: 'EUR',
+                        content_name: selectedPlan, content_category: 'Trainingsplan', num_items: 1
                     }, { eventID: eventId });
                 }
-            } catch(e) { console.error('IC track error:', e); }
+            } catch(e) {}
 
             // Lead in Supabase speichern
             try {
                 const id = await saveToSupabase();
                 if (id) currentLeadId = id;
-            } catch(e) { console.error(e); }
+            } catch(e) {}
 
+            // Plan-Info merken für späteren Submit (Preis, Name, etc.)
+            const priceMap = {
+                '1month': { d: 29.99, n: 49.99, name: '1-Monats-Plan' },
+                '3month': { d: 39.99, n: 79.99, name: '3-Monats-Plan' },
+                '6month': { d: 59.99, n: 119.99, name: '6-Monats-Plan' }
+            };
+            const planInfo = priceMap[selectedPlan] || priceMap['3month'];
+            const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
+            let priceVal = timerExpired ? planInfo.n : planInfo.d;
+            if (exitDiscount) priceVal = Math.round(priceVal * 85) / 100;
+
+            hybridContext = {
+                plan: selectedPlan,
+                planName: planInfo.name,
+                price: priceVal,
+                priceLabel: priceVal.toFixed(2).replace('.', ',') + ' €'
+            };
+
+            // Hybrid-Modal öffnen
+            openHybridModal();
+
+            // CTA wieder aktiv
+            if (ctaBtn) {
+                ctaBtn.disabled = false;
+                ctaBtn.innerHTML = 'Trainingsplan freischalten<span class="cta-subtext">Sicher bezahlen & sofort starten</span>';
+            }
+        }
+
+        function openHybridModal() {
+            document.getElementById('hybridPriceLabel').textContent = hybridContext.priceLabel;
+            document.getElementById('hybridPlanName').textContent = hybridContext.planName + ' für ' + (dogName || 'deinen Hund');
+            document.getElementById('hybridCardSubmitBtn').textContent = 'Sicher bezahlen · ' + hybridContext.priceLabel;
+            document.getElementById('hybridOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            // Mollie Components beim ersten Öffnen mounten
+            mountMollieCardComponents();
+        }
+        function closeHybridModal() {
+            document.getElementById('hybridOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            hideHybridError();
+        }
+
+        function showHybridError(msg) {
+            const el = document.getElementById('hybridError');
+            el.textContent = msg || 'Etwas ist schiefgelaufen. Bitte versuche es erneut.';
+            el.style.display = 'block';
+        }
+        function hideHybridError() {
+            const el = document.getElementById('hybridError');
+            if (el) el.style.display = 'none';
+        }
+
+        function mountMollieCardComponents() {
+            if (cardComponents) return; // schon gemountet
+            if (typeof Mollie !== 'function') {
+                console.error('Mollie SDK nicht geladen');
+                return;
+            }
             try {
-                const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
-                const cancelPath = window.location.pathname + (window.location.search || '');
-                const response = await fetch('/api/mollie/wauwerk-checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        plan: selectedPlan,
-                        timerExpired: timerExpired,
-                        dogName: dogName,
-                        leadId: currentLeadId,
-                        email: localStorage.getItem('userEmail') || '',
-                        exitDiscount: exitDiscount,
-                        cancelPath: cancelPath,
-                        utm_source: localStorage.getItem('utm_source') || '',
-                        utm_medium: localStorage.getItem('utm_medium') || '',
-                        utm_campaign: localStorage.getItem('utm_campaign') || '',
-                        utm_content: localStorage.getItem('utm_content') || '',
-                        fbclid: localStorage.getItem('fbclid') || '',
-                        fbp: getCookie('_fbp') || '',
-                        fbc: getCookie('_fbc') || '',
-                        fb_event_id: localStorage.getItem('fb_event_id') || '',
-                        ttclid: localStorage.getItem('ttclid') || '',
-                        referredByCode: localStorage.getItem('referred_by_code') || ''
-                    })
-                });
+                mollieClient = Mollie(MOLLIE_PROFILE_ID_PUBLIC, { locale: 'de_DE', testmode: false });
+                const styles = {
+                    base: {
+                        color: '#1a1a1a',
+                        fontSize: '15px',
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '::placeholder': { color: '#9CA3AF' }
+                    },
+                    invalid: { color: '#DC2626' }
+                };
+                const cardNumber = mollieClient.createComponent('cardNumber', { styles });
+                const cardHolder = mollieClient.createComponent('cardHolder', { styles });
+                const expiryDate = mollieClient.createComponent('expiryDate', { styles });
+                const verificationCode = mollieClient.createComponent('verificationCode', { styles });
+                cardNumber.mount('#mollie-card-number');
+                cardHolder.mount('#mollie-card-holder');
+                expiryDate.mount('#mollie-card-expiry');
+                verificationCode.mount('#mollie-card-cvc');
+                cardComponents = { cardNumber, cardHolder, expiryDate, verificationCode };
+            } catch (e) {
+                console.error('Mollie mount error:', e);
+                showHybridError('Karten-Eingabe konnte nicht geladen werden. Bitte wähle eine andere Zahlungsmethode.');
+            }
+        }
 
-                const data = await response.json();
-                if (data.error) {
-                    alert('Fehler: ' + data.error);
-                    if (ctaBtn) {
-                        ctaBtn.disabled = false;
-                        ctaBtn.innerHTML = 'Trainingsplan freischalten<span class="cta-subtext">Sicher bezahlen & sofort starten</span>';
-                    }
+        // ── Card-Submit ──────────────────────────────────────────────────
+        async function submitHybridCard() {
+            const btn = document.getElementById('hybridCardSubmitBtn');
+            if (!mollieClient) { showHybridError('Karten-Eingabe nicht bereit'); return; }
+            btn.disabled = true; btn.textContent = 'Verarbeite...';
+            hideHybridError();
+            try {
+                const { token, error } = await mollieClient.createToken();
+                if (error) {
+                    showHybridError(error.message || 'Karten-Daten ungültig');
+                    btn.disabled = false; btn.textContent = 'Sicher bezahlen · ' + hybridContext.priceLabel;
                     return;
                 }
-
+                const res = await fetch('/api/mollie/wauwerk-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(buildCheckoutPayload({ method: 'creditcard', cardToken: token }))
+                });
+                const data = await res.json();
+                if (data.error || !data.url) {
+                    showHybridError(data.error || 'Zahlung fehlgeschlagen');
+                    btn.disabled = false; btn.textContent = 'Sicher bezahlen · ' + hybridContext.priceLabel;
+                    return;
+                }
                 localStorage.setItem('wentToStripe', 'true');
-                // selectedPlan in localStorage für zusatz.html (sonst fällt es auf 3month-Default zurück
-                // und überschreibt Supabase price mit 39,99 unabhängig vom tatsächlichen Kauf).
+                localStorage.setItem('selectedPlan', selectedPlan);
+                window.location.href = data.url; // 3DS-Page oder direkt unsere Return-URL
+            } catch (err) {
+                console.error(err);
+                showHybridError('Verbindungsfehler. Bitte versuche es erneut.');
+                btn.disabled = false; btn.textContent = 'Sicher bezahlen · ' + hybridContext.priceLabel;
+            }
+        }
+
+        // ── Method-Buttons (PayPal / SEPA) ──────────────────────────────
+        async function payWithMethod(method) {
+            hideHybridError();
+            try {
+                const res = await fetch('/api/mollie/wauwerk-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(buildCheckoutPayload({ method }))
+                });
+                const data = await res.json();
+                if (data.error || !data.url) {
+                    showHybridError(data.error || 'Zahlung konnte nicht gestartet werden');
+                    return;
+                }
+                localStorage.setItem('wentToStripe', 'true');
                 localStorage.setItem('selectedPlan', selectedPlan);
                 window.location.href = data.url;
             } catch (err) {
-                console.error('Checkout Error:', err);
-                alert('Verbindungsfehler. Bitte versuche es erneut.');
-                if (ctaBtn) {
-                    ctaBtn.disabled = false;
-                    ctaBtn.innerHTML = 'Trainingsplan freischalten<span class="cta-subtext">Sicher bezahlen & sofort starten</span>';
+                console.error(err);
+                showHybridError('Verbindungsfehler. Bitte versuche es erneut.');
+            }
+        }
+
+        // ── Klarna-Flow mit Address-Modal ───────────────────────────────
+        function openKlarnaAddress() {
+            document.getElementById('hybridOverlay').classList.remove('active');
+            document.getElementById('klarnaAddressOverlay').classList.add('active');
+        }
+        function closeKlarnaAddress() {
+            document.getElementById('klarnaAddressOverlay').classList.remove('active');
+            document.getElementById('hybridOverlay').classList.add('active');
+        }
+        async function submitKlarna() {
+            const btn = document.getElementById('klarnaSubmitBtn');
+            const givenName = document.getElementById('klarnaFirstName').value.trim();
+            const familyName = document.getElementById('klarnaLastName').value.trim();
+            const streetAndNumber = document.getElementById('klarnaStreet').value.trim();
+            const postalCode = document.getElementById('klarnaPlz').value.trim();
+            const city = document.getElementById('klarnaCity').value.trim();
+            const errEl = document.getElementById('klarnaError');
+            errEl.style.display = 'none';
+            if (!givenName || !familyName || !streetAndNumber || !postalCode || !city) {
+                errEl.textContent = 'Bitte alle Felder ausfüllen.';
+                errEl.style.display = 'block';
+                return;
+            }
+            btn.disabled = true; btn.textContent = 'Weiter zu Klarna...';
+            try {
+                const res = await fetch('/api/mollie/wauwerk-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(buildCheckoutPayload({
+                        method: 'klarna',
+                        billingAddress: { givenName, familyName, streetAndNumber, postalCode, city, country: 'DE' }
+                    }))
+                });
+                const data = await res.json();
+                if (data.error || !data.url) {
+                    errEl.textContent = data.error || 'Klarna konnte nicht gestartet werden';
+                    errEl.style.display = 'block';
+                    btn.disabled = false; btn.textContent = 'Weiter zu Klarna';
+                    return;
                 }
+                localStorage.setItem('wentToStripe', 'true');
+                localStorage.setItem('selectedPlan', selectedPlan);
+                window.location.href = data.url;
+            } catch (err) {
+                console.error(err);
+                errEl.textContent = 'Verbindungsfehler. Bitte versuche es erneut.';
+                errEl.style.display = 'block';
+                btn.disabled = false; btn.textContent = 'Weiter zu Klarna';
             }
         }
     </script>
@@ -4173,6 +4475,120 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             <button class="exit-popup-skip" onclick="closeExitPopup()">
                 Nein danke, ich überlege noch
             </button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- HYBRID CHECKOUT MODAL (Card embedded + Method-Buttons)         -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="hybrid-overlay" id="hybridOverlay">
+        <div class="hybrid-modal">
+            <div class="hybrid-header">
+                <div>
+                    <h2>Sicher bezahlen <span id="hybridPriceLabel" style="color:#C4A576;">€39,99</span></h2>
+                    <div class="sub" id="hybridPlanName">3-Monats-Plan</div>
+                </div>
+                <button class="hybrid-close" onclick="closeHybridModal()" aria-label="Schließen">×</button>
+            </div>
+
+            <div class="hybrid-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                <div>
+                    <strong>SSL-verschlüsselt</strong> · 30 Tage Geld-zurück · Abwicklung über Mollie
+                </div>
+            </div>
+
+            <div class="hybrid-body">
+                <div class="hybrid-error" id="hybridError"></div>
+
+                <p class="hybrid-section-label">Mit Karte bezahlen</p>
+                <div class="mollie-field">
+                    <label class="mollie-field-label">Kartennummer</label>
+                    <div id="mollie-card-number"></div>
+                </div>
+                <div class="mollie-field">
+                    <label class="mollie-field-label">Karteninhaber</label>
+                    <div id="mollie-card-holder"></div>
+                </div>
+                <div class="mollie-row">
+                    <div class="mollie-field">
+                        <label class="mollie-field-label">Gültig bis</label>
+                        <div id="mollie-card-expiry"></div>
+                    </div>
+                    <div class="mollie-field">
+                        <label class="mollie-field-label">CVC</label>
+                        <div id="mollie-card-cvc"></div>
+                    </div>
+                </div>
+                <button class="hybrid-card-submit" id="hybridCardSubmitBtn" onclick="submitHybridCard()">
+                    🔒 Sicher bezahlen · €39,99
+                </button>
+
+                <div class="hybrid-divider">oder</div>
+
+                <button class="hybrid-method-btn" onclick="payWithMethod('paypal')">
+                    <span class="label">
+                        <img src="paypal-logo.png" alt="PayPal" onerror="this.style.display='none'"> Mit PayPal bezahlen
+                    </span>
+                    <span class="arrow">›</span>
+                </button>
+                <button class="hybrid-method-btn" onclick="openKlarnaAddress()">
+                    <span class="label">
+                        <img src="klarna-logo.png" alt="Klarna" onerror="this.style.display='none'"> Auf Rechnung mit Klarna
+                    </span>
+                    <span class="arrow">›</span>
+                </button>
+                <button class="hybrid-method-btn" onclick="payWithMethod('banktransfer')">
+                    <span class="label">
+                        <img src="sepa-logo.png" alt="SEPA" onerror="this.style.display='none'"> Per Banküberweisung
+                    </span>
+                    <span class="arrow">›</span>
+                </button>
+            </div>
+
+            <div class="hybrid-footer">
+                <div class="hybrid-footer-icons">
+                    <img src="visa-logo.png" alt="Visa" onerror="this.style.display='none'">
+                    <img src="mastercard-logo.png" alt="Mastercard" onerror="this.style.display='none'">
+                    <img src="paypal-logo.png" alt="PayPal" onerror="this.style.display='none'">
+                    <img src="klarna-logo.png" alt="Klarna" onerror="this.style.display='none'">
+                    <img src="sepa-logo.png" alt="SEPA" onerror="this.style.display='none'">
+                </div>
+                <p class="hybrid-footer-text">Pfoten-Plan · Trainings-Plan kommt sofort per E-Mail<br>30 Tage Geld-zurück-Garantie</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- KLARNA ADDRESS MODAL (Adresse für Rechnungskauf-Bonitätsprüfung) -->
+    <div class="hybrid-overlay" id="klarnaAddressOverlay">
+        <div class="hybrid-modal" style="max-width: 480px;">
+            <div class="hybrid-header">
+                <div>
+                    <h2>Rechnung mit Klarna</h2>
+                    <div class="sub">Klarna braucht deine Rechnungsadresse</div>
+                </div>
+                <button class="hybrid-close" onclick="closeKlarnaAddress()" aria-label="Zurück">←</button>
+            </div>
+            <div class="hybrid-body">
+                <div class="hybrid-error" id="klarnaError"></div>
+                <div class="klarna-row">
+                    <input type="text" class="klarna-input" id="klarnaFirstName" placeholder="Vorname" autocomplete="given-name">
+                    <input type="text" class="klarna-input" id="klarnaLastName" placeholder="Nachname" autocomplete="family-name">
+                </div>
+                <input type="text" class="klarna-input" id="klarnaStreet" placeholder="Straße + Hausnummer" autocomplete="street-address">
+                <div class="klarna-row">
+                    <input type="text" class="klarna-input" id="klarnaPlz" placeholder="PLZ" autocomplete="postal-code" inputmode="numeric" style="flex: 0 0 40%;">
+                    <input type="text" class="klarna-input" id="klarnaCity" placeholder="Stadt" autocomplete="address-level2">
+                </div>
+                <button class="hybrid-card-submit" id="klarnaSubmitBtn" onclick="submitKlarna()" style="background: #FFA8CD; color: #1a1a1a;">
+                    Weiter zu Klarna
+                </button>
+                <p style="font-size: 11px; color: #8B7355; text-align: center; margin: 12px 0 0;">
+                    Bei Klarna wählst du dann „Rechnung", „Ratenkauf" oder „Sofort". Bonitätsprüfung erfolgt durch Klarna.
+                </p>
+            </div>
         </div>
     </div>
 

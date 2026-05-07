@@ -44,6 +44,13 @@ export async function POST(req: NextRequest) {
       fb_event_id,
       ttclid,
       referredByCode,
+      // ── Hybrid-Checkout-Parameter (deinplan3) ──────────────────────────
+      // method: 'creditcard' (mit cardToken) | 'paypal' | 'klarna' | 'banktransfer' | undefined
+      method,
+      // cardToken: kommt aus Mollie Components nach mollie.createToken()
+      cardToken,
+      // billingAddress: Pflicht bei Klarna { givenName, familyName, streetAndNumber, postalCode, city, country }
+      billingAddress,
     } = body;
 
     const ORDER_BUMP_PRICE_CENTS = 999;
@@ -135,7 +142,9 @@ export async function POST(req: NextRequest) {
       `?lead_id=${encodeURIComponent(leadId || "")}` +
       `&cancel=${encodeURIComponent(cancelUrl)}`;
 
-    const payment = await mollie.payments.create({
+    // Payment-Parameter zusammenbauen — method-, cardToken- und billingAddress-
+    // Felder nur setzen wenn vom Frontend mitgegeben (rückwärtskompatibel).
+    const paymentParams: any = {
       amount: { currency: "EUR", value: formatAmountEUR(totalCents) },
       description: description.slice(0, 255),
       redirectUrl: returnUrl,
@@ -170,7 +179,29 @@ export async function POST(req: NextRequest) {
         datafast_session_id: datafastSessionId,
         referred_by_code: referredByCode || "",
       },
-    });
+    };
+
+    // Hybrid: spezifische Methode + ggf. cardToken
+    if (method) {
+      paymentParams.method = method;
+      if (method === "creditcard" && cardToken) {
+        paymentParams.cardToken = cardToken;
+      }
+    }
+    // Klarna braucht zwingend eine billingAddress
+    if (billingAddress && typeof billingAddress === "object") {
+      paymentParams.billingAddress = {
+        givenName: String(billingAddress.givenName || "").slice(0, 100),
+        familyName: String(billingAddress.familyName || "").slice(0, 100),
+        streetAndNumber: String(billingAddress.streetAndNumber || "").slice(0, 200),
+        postalCode: String(billingAddress.postalCode || "").slice(0, 16),
+        city: String(billingAddress.city || "").slice(0, 100),
+        country: String(billingAddress.country || "DE").slice(0, 2),
+        email: email || billingAddress.email || "",
+      };
+    }
+
+    const payment = await mollie.payments.create(paymentParams);
 
     // Lead in Supabase updaten — additive Spalten, Stripe-Spalten unangetastet
     if (leadId) {
@@ -183,19 +214,29 @@ export async function POST(req: NextRequest) {
       await supabase.from("wauwerk_leads").update(updateData).eq("id", leadId);
     }
 
-    const checkoutUrl = payment.getCheckoutUrl();
-    if (!checkoutUrl) {
-      console.error("Mollie hat keine Checkout-URL geliefert", payment);
+    // Card-Payment-Sonderfall: Wenn paid sofort (kein 3DS), kommt KEIN
+    // Checkout-Link — wir leiten Frontend direkt zur Success-URL.
+    const status = payment.status;
+    let url = payment.getCheckoutUrl();
+
+    if (!url && (status === "paid" || status === "authorized")) {
+      // Direkt zur unserer Return-Route → die prüft Status und leitet zu zusatz.html
+      url = returnUrl;
+    }
+
+    if (!url) {
+      console.error("Mollie hat keine URL geliefert", payment);
       return NextResponse.json(
-        { error: "Mollie Checkout-URL fehlt" },
+        { error: "Mollie URL fehlt" },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
-      url: checkoutUrl,
+      url,
       sessionId: payment.id,
       paymentId: payment.id,
+      status,
     });
   } catch (error: any) {
     console.error("Mollie Checkout Error:", error);
