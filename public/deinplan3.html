@@ -2206,6 +2206,11 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         max-height: 100%; max-width: 100%; height: 100%; width: 100%;
         object-fit: cover; border-radius: 11px;
     }
+    /* Google Pay: weißer Button, Logo zentriert */
+    .hybrid-express-btn--googlepay {
+        background: #fff; border-color: #E5E7EB;
+    }
+    .hybrid-express-btn--googlepay img { max-height: 32px; }
     /* SEPA-Logo: Untertitel-Detail braucht etwas mehr Höhe */
     .hybrid-express-btn img[alt="SEPA"] { max-height: 44px; }
 
@@ -4303,20 +4308,27 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 emailConfirm.style.display = 'none';
             }
 
-            // Apple Pay nur anzeigen wenn das Gerät es unterstützt (iOS Safari).
-            // Wenn versteckt, Grid auf 2 Spalten anpassen damit PayPal+SEPA
-            // gleichmäßig die Breite ausfüllen.
+            // Wallet-Detection: Apple Pay auf iOS Safari, sonst Google Pay auf
+            // Android/Chrome. Wenn keiner verfügbar → Grid auf 2 Spalten.
             const applePayBtn = document.getElementById('applePayBtn');
+            const googlePayBtn = document.getElementById('googlePayBtn');
             const expressGrid = document.querySelector('.hybrid-express-grid');
-            if (applePayBtn) {
-                let canApplePay = false;
-                try {
-                    canApplePay = !!(window.ApplePaySession && window.ApplePaySession.canMakePayments && window.ApplePaySession.canMakePayments());
-                } catch (e) { canApplePay = false; }
-                applePayBtn.style.display = canApplePay ? '' : 'none';
-                if (expressGrid) {
-                    expressGrid.style.gridTemplateColumns = canApplePay ? '1fr 1fr 1fr' : '1fr 1fr';
-                }
+
+            let canApplePay = false;
+            try {
+                canApplePay = !!(window.ApplePaySession && window.ApplePaySession.canMakePayments && window.ApplePaySession.canMakePayments());
+            } catch (e) {}
+
+            // Google Pay: PaymentRequest API + nicht iOS (sonst nehmen wir Apple Pay)
+            const ua = navigator.userAgent || '';
+            const isIOS = /iPhone|iPad|iPod/i.test(ua);
+            const canGooglePay = !canApplePay && !isIOS && typeof window.PaymentRequest === 'function';
+
+            if (applePayBtn) applePayBtn.style.display = canApplePay ? '' : 'none';
+            if (googlePayBtn) googlePayBtn.style.display = canGooglePay ? '' : 'none';
+            if (expressGrid) {
+                const hasWallet = canApplePay || canGooglePay;
+                expressGrid.style.gridTemplateColumns = hasWallet ? '1fr 1fr 1fr' : '1fr 1fr';
             }
 
             document.getElementById('hybridOverlay').classList.add('active');
@@ -4700,8 +4712,11 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     <button class="hybrid-express-btn hybrid-express-btn--paypal" onclick="payWithMethod('paypal')" aria-label="Mit PayPal bezahlen">
                         <img src="PayPal3.png" alt="PayPal">
                     </button>
-                    <button class="hybrid-express-btn hybrid-express-btn--applepay" id="applePayBtn" onclick="payWithMethod('applepay')" aria-label="Mit Apple Pay bezahlen">
+                    <button class="hybrid-express-btn hybrid-express-btn--applepay" id="applePayBtn" onclick="payWithMethod('applepay')" aria-label="Mit Apple Pay bezahlen" style="display:none;">
                         <img src="Apple-Pay-Logo.jpg" alt="ApplePay">
+                    </button>
+                    <button class="hybrid-express-btn hybrid-express-btn--googlepay" id="googlePayBtn" onclick="payWithMethod('googlepay')" aria-label="Mit Google Pay bezahlen" style="display:none;">
+                        <img src="googlepay.png" alt="GooglePay">
                     </button>
                     <button class="hybrid-express-btn" onclick="payWithMethod('banktransfer')" aria-label="Per SEPA-Banküberweisung">
                         <img src="sepa-logo.png" alt="SEPA">
