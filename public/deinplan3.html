@@ -2179,25 +2179,28 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         box-shadow: 0 4px 10px rgba(17,24,39,0.08);
     }
     .hybrid-express-btn:active { transform: translateY(0); }
-    /* Alle Logos einheitlich: max 32px hoch, mittig, contain */
+    /* Alle Logos einheitlich: max 44px hoch, mittig, contain */
     .hybrid-express-btn img {
-        max-height: 32px; max-width: 100%;
+        max-height: 44px; max-width: 100%;
         width: auto; height: auto; object-fit: contain;
         display: block;
     }
-    /* PayPal Brand: gelb (Logo darauf) */
-    .hybrid-express-btn--paypal {
-        background: #FFC439; border-color: #FFC439;
-    }
+    /* PayPal: weißer Button — PayPal-Logo bringt eigenes Gelb mit (kein Doppel-Gelb) */
     .hybrid-express-btn--paypal:hover {
-        background: #FFB81C; border-color: #FFB81C;
-        box-shadow: 0 4px 12px rgba(255,196,57,0.35);
+        background: #FAFAFA; border-color: #FFC439;
+        box-shadow: 0 4px 12px rgba(255,196,57,0.3);
     }
-    /* Klarna: weiß, Hover-Border in Klarna-Pink */
+    /* Klarna: pink Brand-Background — Logo füllt nahtlos */
+    .hybrid-express-btn--klarna {
+        background: #FFA8CD; border-color: #FFA8CD;
+    }
     .hybrid-express-btn--klarna:hover {
-        background: #FAFAFA; border-color: #FFA8CD;
-        box-shadow: 0 4px 12px rgba(255,168,205,0.25);
+        background: #FF8FBE; border-color: #FF8FBE;
+        box-shadow: 0 4px 12px rgba(255,168,205,0.4);
     }
+    .hybrid-express-btn--klarna img { max-height: 32px; }
+    /* SEPA: Logo prominenter (Schriftbild kompakt + Untertitel-Detail) */
+    .hybrid-express-btn img[alt="SEPA"] { max-height: 52px; }
 
     .hybrid-footer {
         padding: 14px 24px 18px; border-top: 1px solid #F3F4F6;
