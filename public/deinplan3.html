@@ -2168,20 +2168,16 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     }
     .hybrid-express-btn {
         height: 64px; background: #fff; border: 1px solid #E5E7EB;
-        border-radius: 12px; padding: 12px; cursor: pointer;
+        border-radius: 12px; padding: 10px; cursor: pointer;
         display: flex; align-items: center; justify-content: center;
-        transition: all 0.15s ease;
         box-shadow: 0 1px 2px rgba(17,24,39,0.03);
         font-family: inherit; overflow: hidden; box-sizing: border-box;
     }
-    .hybrid-express-btn:hover {
-        border-color: #D1D5DB; transform: translateY(-1px);
-        box-shadow: 0 4px 10px rgba(17,24,39,0.08);
-    }
-    .hybrid-express-btn:active { transform: translateY(0); }
-    /* Logos einheitlich groß (kompakter Stripe-Style) */
+    /* Active-State (Click) — kein Hover-Lift auf Desktop */
+    .hybrid-express-btn:active { transform: translateY(1px); }
+    /* Logos einheitlich groß */
     .hybrid-express-btn img {
-        max-height: 26px; max-width: 100%;
+        max-height: 38px; max-width: 100%;
         width: auto; height: auto; object-fit: contain;
         display: block;
     }
@@ -2189,19 +2185,12 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     .hybrid-express-btn--paypal {
         background: #FFD140; border-color: #FFD140;
     }
-    .hybrid-express-btn--paypal:hover {
-        background: #FFC827; border-color: #FFC827;
-        box-shadow: 0 4px 12px rgba(255,209,64,0.4);
-    }
+    /* Klarna Brand-Background (offizielles Klarna-Pink #FFB3C7) */
     .hybrid-express-btn--klarna {
-        background: #FFA8CD; border-color: #FFA8CD;
-    }
-    .hybrid-express-btn--klarna:hover {
-        background: #FF8FBE; border-color: #FF8FBE;
-        box-shadow: 0 4px 12px rgba(255,168,205,0.4);
+        background: #FFB3C7; border-color: #FFB3C7;
     }
     /* SEPA-Logo: Untertitel-Detail braucht etwas mehr Höhe */
-    .hybrid-express-btn img[alt="SEPA"] { max-height: 32px; }
+    .hybrid-express-btn img[alt="SEPA"] { max-height: 44px; }
 
     .hybrid-footer {
         padding: 14px 24px 18px; border-top: 1px solid #F3F4F6;
