@@ -1995,131 +1995,169 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 <script src="https://js.stripe.com/v3/"></script>
 <script src="https://js.mollie.com/v1/mollie.js"></script>
 <style>
-    /* ─── Hybrid Checkout Modal (Mollie Components) ─────────────────────── */
+    /* ─── Hybrid Checkout Modal (Stripe/Shopify-Style, Trust-First) ─────── */
     .hybrid-overlay {
         display: none; position: fixed; inset: 0; z-index: 10000;
-        background: rgba(20,15,10,0.55); backdrop-filter: blur(4px);
+        background: rgba(17,24,39,0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         align-items: flex-end; justify-content: center; padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
     }
     .hybrid-overlay.active { display: flex; }
     @media (min-width: 640px) {
-        .hybrid-overlay { align-items: center; padding: 20px; }
+        .hybrid-overlay { align-items: center; padding: 24px; }
     }
     .hybrid-modal {
-        background: #fff; width: 100%; max-width: 520px;
-        border-radius: 18px 18px 0 0; max-height: 92vh;
+        background: #fff; width: 100%; max-width: 460px;
+        border-radius: 16px 16px 0 0; max-height: 94vh;
         overflow-y: auto; -webkit-overflow-scrolling: touch;
-        box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
-        animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1);
+        box-shadow: 0 -8px 40px rgba(17,24,39,0.10);
+        animation: hybridIn 0.32s cubic-bezier(0.16,1,0.3,1);
     }
     @media (min-width: 640px) {
-        .hybrid-modal { border-radius: 18px; max-height: 90vh; }
+        .hybrid-modal {
+            border-radius: 16px; max-height: 90vh;
+            box-shadow:
+                0 24px 64px -16px rgba(17,24,39,0.20),
+                0 8px 24px -8px rgba(17,24,39,0.08),
+                0 0 0 1px rgba(17,24,39,0.04);
+        }
     }
-    @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes hybridIn { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
     .hybrid-header {
         position: sticky; top: 0; z-index: 1;
-        background: #fff; padding: 18px 22px 14px;
-        border-bottom: 1px solid #F0EBE3;
-        display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        background: #fff; padding: 22px 24px 16px;
+        border-bottom: 1px solid #F3F4F6;
+        display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
     }
-    .hybrid-header h2 { font-size: 17px; font-weight: 800; color: #1a1a1a; margin: 0; line-height: 1.3; }
-    .hybrid-header .sub { font-size: 12px; color: #8B7355; margin-top: 2px; }
+    .hybrid-header h2 {
+        font-size: 18px; font-weight: 700; color: #111827; margin: 0;
+        line-height: 1.3; letter-spacing: -0.2px;
+    }
+    .hybrid-header h2 span { color: #111827; font-weight: 700; }
+    .hybrid-header .sub {
+        font-size: 13px; color: #6B7280; margin-top: 4px; line-height: 1.4;
+    }
     .hybrid-close {
-        background: #F5EDE3; border: none; width: 32px; height: 32px; border-radius: 50%;
-        font-size: 18px; color: #8B7355; cursor: pointer; flex-shrink: 0;
+        background: #F3F4F6; border: none; width: 32px; height: 32px; border-radius: 8px;
+        font-size: 18px; color: #6B7280; cursor: pointer; flex-shrink: 0;
+        transition: background 0.15s; line-height: 1;
+        display: flex; align-items: center; justify-content: center;
     }
+    .hybrid-close:hover { background: #E5E7EB; color: #111827; }
+
     .hybrid-trust {
-        background: linear-gradient(180deg, #FFF9F0, #FAF4E8);
-        padding: 12px 22px; display: flex; align-items: center; gap: 10px;
-        font-size: 12px; color: #5A4A3A; border-bottom: 1px solid #F0EBE3;
+        background: #F9FAFB; padding: 10px 24px;
+        display: flex; align-items: center; gap: 8px;
+        font-size: 12px; color: #4B5563; border-bottom: 1px solid #F3F4F6;
+        line-height: 1.5;
     }
-    .hybrid-trust strong { color: #1a1a1a; font-weight: 700; }
+    .hybrid-trust strong { color: #111827; font-weight: 600; }
     .hybrid-trust svg { flex-shrink: 0; }
 
-    .hybrid-body { padding: 18px 22px 22px; }
+    .hybrid-body { padding: 22px 24px 24px; }
 
     .hybrid-section-label {
-        font-size: 11px; font-weight: 700; color: #8B7355;
-        text-transform: uppercase; letter-spacing: 1.4px;
-        margin: 0 0 10px;
+        font-size: 11px; font-weight: 600; color: #6B7280;
+        text-transform: uppercase; letter-spacing: 0.6px;
+        margin: 0 0 14px;
     }
 
-    /* Card-Form */
+    /* Card-Form: Stripe-Style Inputs */
     .mollie-row { display: flex; gap: 10px; }
     .mollie-row > * { flex: 1; }
     .mollie-field {
-        background: #fff; border: 1.5px solid #E8DFD0; border-radius: 10px;
-        padding: 13px 14px; transition: border-color 0.15s, box-shadow 0.15s;
+        background: #fff; border: 1px solid #E5E7EB; border-radius: 8px;
+        padding: 11px 13px 12px;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
         margin-bottom: 10px;
+        box-shadow: 0 1px 2px rgba(17,24,39,0.04);
     }
     .mollie-field:focus-within {
-        border-color: #C4A576;
-        box-shadow: 0 0 0 3px rgba(196,165,118,0.15);
+        border-color: #111827;
+        box-shadow: 0 0 0 3px rgba(17,24,39,0.08), 0 1px 2px rgba(17,24,39,0.04);
     }
     .mollie-field-label {
-        font-size: 11px; color: #8B7355; font-weight: 600;
-        margin-bottom: 4px; display: block; letter-spacing: 0.3px;
+        font-size: 11px; color: #6B7280; font-weight: 500;
+        margin-bottom: 3px; display: block; letter-spacing: 0.1px;
     }
 
     .hybrid-card-submit {
-        width: 100%; background: #1a1a1a; color: #fff; border: none;
-        padding: 16px 20px; border-radius: 12px; font-size: 16px; font-weight: 700;
-        cursor: pointer; margin-top: 4px; transition: background 0.15s, transform 0.1s;
+        width: 100%; background: #111827; color: #fff; border: none;
+        padding: 14px 20px; border-radius: 10px; font-size: 15px; font-weight: 600;
+        letter-spacing: -0.1px;
+        cursor: pointer; margin-top: 6px;
+        transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
         display: flex; align-items: center; justify-content: center; gap: 8px;
+        box-shadow: 0 1px 2px rgba(17,24,39,0.05);
+        font-family: inherit;
     }
-    .hybrid-card-submit:hover:not(:disabled) { background: #000; }
-    .hybrid-card-submit:active { transform: scale(0.98); }
-    .hybrid-card-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .hybrid-card-submit:hover:not(:disabled) {
+        background: #000;
+        box-shadow: 0 4px 12px rgba(17,24,39,0.15), 0 1px 2px rgba(17,24,39,0.05);
+    }
+    .hybrid-card-submit:active { transform: translateY(1px); }
+    .hybrid-card-submit:disabled { opacity: 0.55; cursor: not-allowed; }
 
     .hybrid-divider {
         display: flex; align-items: center; gap: 12px;
-        margin: 22px 0 14px; color: #9CA3AF; font-size: 12px; font-weight: 600;
+        margin: 24px 0 14px; color: #9CA3AF; font-size: 11px; font-weight: 500;
+        text-transform: uppercase; letter-spacing: 0.6px;
     }
     .hybrid-divider::before, .hybrid-divider::after {
-        content: ''; flex: 1; height: 1px; background: #E8DFD0;
+        content: ''; flex: 1; height: 1px; background: #E5E7EB;
     }
 
     .hybrid-method-btn {
-        width: 100%; background: #fff; border: 1.5px solid #E8DFD0;
-        padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight: 600;
-        color: #1a1a1a; cursor: pointer; margin-bottom: 8px;
+        width: 100%; background: #fff; border: 1px solid #E5E7EB;
+        padding: 13px 16px; border-radius: 10px; font-size: 14px; font-weight: 500;
+        color: #111827; cursor: pointer; margin-bottom: 8px;
         display: flex; align-items: center; justify-content: space-between;
-        transition: border-color 0.15s, background 0.15s;
+        transition: all 0.15s ease;
+        box-shadow: 0 1px 2px rgba(17,24,39,0.03);
+        font-family: inherit;
     }
-    .hybrid-method-btn:hover { border-color: #C4A576; background: #FFF9F0; }
-    .hybrid-method-btn:active { transform: scale(0.99); }
-    .hybrid-method-btn .label { display: flex; align-items: center; gap: 10px; }
-    .hybrid-method-btn img { height: 22px; width: auto; }
-    .hybrid-method-btn .arrow { color: #8B7355; font-size: 18px; }
+    .hybrid-method-btn:hover {
+        border-color: #D1D5DB; background: #F9FAFB;
+        box-shadow: 0 2px 6px rgba(17,24,39,0.06);
+    }
+    .hybrid-method-btn:active { transform: translateY(1px); }
+    .hybrid-method-btn .label { display: flex; align-items: center; gap: 12px; }
+    .hybrid-method-btn img { height: 18px; width: auto; }
+    .hybrid-method-btn .arrow { color: #9CA3AF; font-size: 18px; line-height: 1; }
 
     .hybrid-error {
         display: none; background: #FEF2F2; color: #B91C1C;
         padding: 10px 14px; border-radius: 8px; font-size: 13px;
-        border: 1px solid #FECACA; margin-bottom: 12px;
+        border: 1px solid #FECACA; margin-bottom: 14px; line-height: 1.4;
     }
 
     .hybrid-footer {
-        padding: 14px 22px 18px; border-top: 1px solid #F0EBE3;
-        background: #FAF8F5; text-align: center;
+        padding: 14px 24px 18px; border-top: 1px solid #F3F4F6;
+        background: #F9FAFB; text-align: center;
     }
     .hybrid-footer-icons {
-        display: flex; gap: 8px; align-items: center; justify-content: center;
-        opacity: 0.65; margin-bottom: 8px;
+        display: flex; gap: 10px; align-items: center; justify-content: center;
+        opacity: 0.7; margin-bottom: 8px;
     }
-    .hybrid-footer-icons img { height: 20px; width: auto; }
-    .hybrid-footer-text { font-size: 11px; color: #8B7355; line-height: 1.5; }
+    .hybrid-footer-icons img { height: 18px; width: auto; }
+    .hybrid-footer-text { font-size: 11px; color: #6B7280; line-height: 1.5; }
+    .hybrid-footer-text strong { color: #374151; font-weight: 500; }
 
     /* Klarna Address Modal */
     .klarna-input {
-        width: 100%; background: #fff; border: 1.5px solid #E8DFD0;
-        border-radius: 10px; padding: 13px 14px; font-size: 15px;
+        width: 100%; background: #fff; border: 1px solid #E5E7EB;
+        border-radius: 8px; padding: 12px 14px; font-size: 15px;
         font-family: inherit; box-sizing: border-box;
-        margin-bottom: 10px; color: #1a1a1a;
+        margin-bottom: 10px; color: #111827;
+        box-shadow: 0 1px 2px rgba(17,24,39,0.04);
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
+    .klarna-input::placeholder { color: #9CA3AF; }
     .klarna-input:focus {
-        outline: none; border-color: #C4A576;
-        box-shadow: 0 0 0 3px rgba(196,165,118,0.15);
+        outline: none; border-color: #111827;
+        box-shadow: 0 0 0 3px rgba(17,24,39,0.08), 0 1px 2px rgba(17,24,39,0.04);
     }
     .klarna-row { display: flex; gap: 10px; }
     .klarna-row > * { flex: 1; }
@@ -4195,9 +4233,11 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 mollieClient = Mollie(MOLLIE_PROFILE_ID_PUBLIC, { locale: 'de_DE', testmode: false });
                 const styles = {
                     base: {
-                        color: '#1a1a1a',
+                        color: '#111827',
                         fontSize: '15px',
-                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        fontWeight: '400',
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif',
+                        letterSpacing: '0.1px',
                         '::placeholder': { color: '#9CA3AF' }
                     },
                     invalid: { color: '#DC2626' }
@@ -4485,7 +4525,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         <div class="hybrid-modal">
             <div class="hybrid-header">
                 <div>
-                    <h2>Sicher bezahlen <span id="hybridPriceLabel" style="color:#C4A576;">€39,99</span></h2>
+                    <h2>Bezahlen · <span id="hybridPriceLabel">€39,99</span></h2>
                     <div class="sub" id="hybridPlanName">3-Monats-Plan</div>
                 </div>
                 <button class="hybrid-close" onclick="closeHybridModal()" aria-label="Schließen">×</button>
@@ -4582,10 +4622,10 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     <input type="text" class="klarna-input" id="klarnaPlz" placeholder="PLZ" autocomplete="postal-code" inputmode="numeric" style="flex: 0 0 40%;">
                     <input type="text" class="klarna-input" id="klarnaCity" placeholder="Stadt" autocomplete="address-level2">
                 </div>
-                <button class="hybrid-card-submit" id="klarnaSubmitBtn" onclick="submitKlarna()" style="background: #FFA8CD; color: #1a1a1a;">
+                <button class="hybrid-card-submit" id="klarnaSubmitBtn" onclick="submitKlarna()">
                     Weiter zu Klarna
                 </button>
-                <p style="font-size: 11px; color: #8B7355; text-align: center; margin: 12px 0 0;">
+                <p style="font-size: 11px; color: #6B7280; text-align: center; margin: 12px 0 0; line-height: 1.5;">
                     Bei Klarna wählst du dann „Rechnung", „Ratenkauf" oder „Sofort". Bonitätsprüfung erfolgt durch Klarna.
                 </p>
             </div>
