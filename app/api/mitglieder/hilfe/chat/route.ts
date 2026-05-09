@@ -13,10 +13,11 @@ export const dynamic = "force-dynamic";
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || "";
 
-// Free-Tier Rate-Limit: 3 Fragen pro 24h (rolling window per User)
-const FREE_DAILY_LIMIT = 3;
-// Paid-User: kein Limit (oder höher — hier: kein Limit)
-const PAID_DAILY_LIMIT = Infinity;
+// Free-Tier: 3 Fragen TOTAL (Lifetime, kein Reset). Wer mehr will,
+// kauft einen Plan — Chat ist dann unlimitiert dabei. Kein eigenes
+// Chat-Abo, weil das psychologisch zu schwach ist.
+const FREE_TOTAL_LIMIT = 3;
+const PAID_LIMIT = Infinity;
 
 const PROBLEM_LABELS: Record<string, string> = {
   pulling: "Leinenziehen",
@@ -67,33 +68,26 @@ export async function POST(req: NextRequest) {
     email: user.email || "",
   });
 
-  // ── Rate-Limit-Check (Free: 3/24h, Paid: unlimited) ─────────────
+  // ── Rate-Limit-Check (Free: 3 Fragen LIFETIME, Paid: unlimited) ──
+  // Lifetime statt 24h, sonst warten User einfach 24h ab und chatten
+  // weiter. Wer mehr will, kauft einen Plan — Chat ist dann inklusive.
   const limit =
-    member.purchase_status === "paid" ? PAID_DAILY_LIMIT : FREE_DAILY_LIMIT;
+    member.purchase_status === "paid" ? PAID_LIMIT : FREE_TOTAL_LIMIT;
   const admin = createMemberAdminClient();
   const { data: usageRow } = await admin
     .from("member_users")
-    .select("chat_usage_count, chat_usage_reset_at")
+    .select("chat_usage_count")
     .eq("id", user.id)
     .maybeSingle();
 
-  const now = new Date();
-  const resetAt = usageRow?.chat_usage_reset_at
-    ? new Date(usageRow.chat_usage_reset_at as string)
-    : null;
-  const expired = !resetAt || now.getTime() - resetAt.getTime() > 24 * 60 * 60 * 1000;
-  const currentCount = expired ? 0 : (usageRow?.chat_usage_count as number | null) || 0;
+  const currentCount = (usageRow?.chat_usage_count as number | null) || 0;
 
   if (limit !== Infinity && currentCount >= limit) {
-    const nextReset = expired
-      ? new Date(now.getTime() + 24 * 60 * 60 * 1000)
-      : new Date(resetAt!.getTime() + 24 * 60 * 60 * 1000);
     return NextResponse.json(
       {
         error: "limit_reached",
         limit,
         used: currentCount,
-        resets_at: nextReset.toISOString(),
         is_paid: member.purchase_status === "paid",
       },
       { status: 429 }
@@ -127,13 +121,17 @@ export async function POST(req: NextRequest) {
     `Status: ${member.purchase_status === "paid" ? "voller Plan" : "kostenlose Übungen"}.`
   );
 
-  const systemPrompt = `Du bist die Pfoten-Plan Trainer-Assistenz, eine freundliche Hundetrainerin im Chat. Antworte auf Deutsch, geduldig, konkret und alltagsnah.
+  const systemPrompt = `Du antwortest im Namen des Pfoten-Plan Trainer-Teams, einer Gruppe echter Hundetrainer. Schreibe in der "wir"-Form, freundlich, geduldig, konkret und alltagsnah auf Deutsch.
 
 NUTZER-KONTEXT:
 ${contextLines.join("\n")}
 
-REGELN:
+ROLLE & TON:
+- Sprich von dir/euch in der "wir"-Form ("Wir empfehlen…", "Bei uns im Plan…", "Aus unserer Erfahrung…").
 - Sprich den User mit "du" an.
+- Klinge wie ein erfahrenes Team echter Trainer, nicht wie ein Chatbot. Vermeide Formulierungen wie "als KI" oder "ich bin ein Assistent".
+
+INHALT:
 - Beziehe dich wenn möglich konkret auf ${dog}${problemLabel ? ` und das Thema "${problemLabel}"` : ""}.
 - Gib Schritt-für-Schritt-Tipps, kurz und umsetzbar (max 3-5 Schritte).
 - Wenn unklar ist was gemeint ist: stelle EINE Rückfrage statt zu raten.
@@ -178,14 +176,9 @@ FORMAT (WICHTIG):
 
     // Counter hochzählen (nur Free-User, Paid hat Infinity)
     if (limit !== Infinity) {
-      const newCount = currentCount + 1;
-      const newResetAt = expired ? now.toISOString() : (resetAt?.toISOString() || now.toISOString());
       await admin
         .from("member_users")
-        .update({
-          chat_usage_count: newCount,
-          chat_usage_reset_at: newResetAt,
-        })
+        .update({ chat_usage_count: currentCount + 1 })
         .eq("id", user.id);
     }
 

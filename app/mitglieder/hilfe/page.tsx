@@ -8,7 +8,6 @@ interface Message {
 }
 
 interface LimitInfo {
-  resets_at: string;
   limit: number;
   is_paid: boolean;
 }
@@ -20,6 +19,8 @@ const SUGGESTED_QUESTIONS = [
   'Mein Hund hört nicht auf seinen Namen draußen.',
 ];
 
+const TRAINER_AVATAR = "/TrainerPfoten-thumb.png";
+
 // Fallback-Cleanup auf Client-Seite (falls API-Cleanup mal ausfällt).
 function stripMarkdown(text: string): string {
   return text
@@ -29,16 +30,6 @@ function stripMarkdown(text: string): string {
     .replace(/\s–\s/g, ", ")
     .replace(/—/g, "-")
     .replace(/–/g, "-");
-}
-
-function formatResetTime(iso: string): string {
-  const reset = new Date(iso);
-  const now = new Date();
-  const diffMs = reset.getTime() - now.getTime();
-  const diffH = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60)));
-  if (diffH <= 1) return "in weniger als einer Stunde";
-  if (diffH < 24) return `in ${diffH} Stunden`;
-  return "morgen";
 }
 
 export default function HilfePage() {
@@ -80,7 +71,6 @@ export default function HilfePage() {
         setMessages(messages);
         setInput(trimmed);
         setLimitInfo({
-          resets_at: data.resets_at,
           limit: data.limit,
           is_paid: !!data.is_paid,
         });
@@ -104,18 +94,28 @@ export default function HilfePage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-160px)] md:h-[calc(100vh-100px)]">
-      {/* Header */}
-      <div className="mb-4">
-        <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
-          Hilfe & Trainer-Chat
-        </p>
-        <h1 className="text-[22px] md:text-[26px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
-          Frag uns alles
-        </h1>
-        <p className="text-[13px] text-[#6B7280] mt-1">
-          Stell deine Frage zum Training. Wir antworten direkt — bei
-          medizinischen Themen verweisen wir an deinen Tierarzt.
-        </p>
+      {/* Trainer-Team-Header — macht klar dass echte Profis dahinter stehen */}
+      <div className="bg-white border border-[#EADDC5] rounded-2xl p-4 mb-3 flex items-center gap-3">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={TRAINER_AVATAR}
+          alt="Pfoten-Plan Trainer-Team"
+          className="w-12 h-12 rounded-full object-cover border-2 border-[#C4A576] flex-shrink-0"
+        />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight">
+              Pfoten-Plan Trainer-Team
+            </p>
+            <span className="inline-flex items-center gap-1 text-[10px] text-[#15803D] font-semibold">
+              <span className="w-1.5 h-1.5 bg-[#22C55E] rounded-full"></span>
+              Online
+            </span>
+          </div>
+          <p className="text-[11px] text-[#6B7280] leading-snug">
+            Echte Hundetrainer · KI-unterstützt für schnelle Antworten
+          </p>
+        </div>
       </div>
 
       {/* Chat-Area */}
@@ -125,14 +125,24 @@ export default function HilfePage() {
       >
         {messages.length === 0 && (
           <div className="space-y-3">
-            <div className="bg-[#FFF9F0] border border-[#EADDC5] rounded-xl p-4">
-              <p className="text-[13px] text-[#5A4A3A] leading-relaxed">
-                👋 Hallo! Ich bin deine Trainings-Assistenz. Frag mich alles
-                zum Training mit deinem Hund — ich helfe dir mit konkreten
-                Schritten weiter.
-              </p>
+            {/* Welcome-Bubble vom Trainer-Team mit Avatar */}
+            <div className="flex gap-2 items-end">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={TRAINER_AVATAR}
+                alt=""
+                className="w-7 h-7 rounded-full object-cover flex-shrink-0"
+              />
+              <div className="bg-[#FFF9F0] border border-[#EADDC5] rounded-2xl rounded-bl-sm px-4 py-3 max-w-[85%]">
+                <p className="text-[13px] text-[#5A4A3A] leading-relaxed">
+                  Hallo! Wir vom Pfoten-Plan Trainer-Team sind für dich da.
+                  Stell uns eine Frage zum Training mit deinem Hund, wir
+                  antworten direkt mit konkreten Schritten.
+                </p>
+              </div>
             </div>
-            <div>
+
+            <div className="pt-1">
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-2">
                 Beispiel-Fragen
               </p>
@@ -156,8 +166,14 @@ export default function HilfePage() {
         ))}
 
         {loading && (
-          <div className="flex gap-2">
-            <div className="bg-[#F3F4F6] rounded-2xl rounded-tl-sm px-4 py-2.5 text-[13px] text-[#9CA3AF] inline-flex items-center gap-1">
+          <div className="flex gap-2 items-end">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={TRAINER_AVATAR}
+              alt=""
+              className="w-7 h-7 rounded-full object-cover flex-shrink-0"
+            />
+            <div className="bg-[#F3F4F6] rounded-2xl rounded-bl-sm px-4 py-2.5 text-[13px] text-[#9CA3AF] inline-flex items-center gap-1">
               <span className="inline-block w-1.5 h-1.5 bg-[#9CA3AF] rounded-full animate-pulse"></span>
               <span className="inline-block w-1.5 h-1.5 bg-[#9CA3AF] rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></span>
               <span className="inline-block w-1.5 h-1.5 bg-[#9CA3AF] rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></span>
@@ -184,7 +200,7 @@ export default function HilfePage() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Frag mich was..."
+          placeholder="Frag uns was..."
           disabled={loading}
           className="flex-1 px-4 py-3 rounded-xl border border-[#E5E7EB] bg-white text-[14px] focus:outline-none focus:border-[#C4A576] focus:ring-3 focus:ring-[#C4A576]/15 transition disabled:opacity-60"
         />
@@ -201,7 +217,8 @@ export default function HilfePage() {
       {/* Usage-Hinweis (nur Free-User, nur wenn schon mind. eine Frage gestellt) */}
       {usage && usage.remaining > 0 && (
         <p className="text-[11px] text-[#9CA3AF] text-center mt-2">
-          Noch {usage.remaining} von {usage.limit} kostenlosen Fragen heute.
+          Noch {usage.remaining} von {usage.limit} kostenlosen Fragen.
+          Danach: Plan freischalten für unbegrenzten Chat.
         </p>
       )}
 
@@ -229,30 +246,42 @@ function LimitModal({
         className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Trainer-Team-Foto im Modal — verstärkt das "echte Profis" Gefühl */}
         <div className="text-center mb-4">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#FFF9F0] mb-3">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C4A576" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </div>
-          <h2 className="text-[18px] font-extrabold text-[#1a1a1a] mb-1">
-            Tagespause für deinen Trainer
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={TRAINER_AVATAR}
+            alt="Pfoten-Plan Trainer-Team"
+            className="w-20 h-20 rounded-full object-cover border-3 border-[#C4A576] mx-auto mb-3 shadow-md"
+          />
+          <h2 className="text-[18px] font-extrabold text-[#1a1a1a] mb-1 leading-tight">
+            Schalte den Chat mit unseren Trainern frei
           </h2>
           <p className="text-[13px] text-[#6B7280] leading-relaxed">
-            Du hast deine {info.limit} kostenlosen Fragen heute schon
-            gestellt. {formatResetTime(info.resets_at).charAt(0).toUpperCase() + formatResetTime(info.resets_at).slice(1)} kannst du wieder fragen.
+            Du hast deine {info.limit} kostenlosen Test-Fragen genutzt.
+            Mit einem Pfoten-Plan chattest du <strong>unbegrenzt</strong>{" "}
+            mit unserem Trainer-Team.
           </p>
         </div>
 
         <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-xl p-4 mb-4">
-          <p className="text-[11px] font-bold text-[#8B7355] uppercase tracking-wider mb-1">
-            Du brauchst mehr?
+          <p className="text-[11px] font-bold text-[#8B7355] uppercase tracking-wider mb-2">
+            Im Plan enthalten
           </p>
-          <p className="text-[13px] text-[#1a1a1a] leading-relaxed mb-1">
-            Mit dem vollen Plan stellst du <strong>so viele Fragen wie du
-            willst</strong> und bekommst alle Module.
-          </p>
-          <p className="text-[12px] text-[#6B7280]">
-            Schon ab wenigen Euro pro Monat.
-          </p>
+          <ul className="space-y-1.5 text-[13px] text-[#1a1a1a]">
+            <li className="flex gap-2 items-start">
+              <span className="text-[#C4A576] flex-shrink-0">✓</span>
+              <span>Unbegrenzter Chat mit dem Trainer-Team</span>
+            </li>
+            <li className="flex gap-2 items-start">
+              <span className="text-[#C4A576] flex-shrink-0">✓</span>
+              <span>Alle Trainings-Module Schritt für Schritt</span>
+            </li>
+            <li className="flex gap-2 items-start">
+              <span className="text-[#C4A576] flex-shrink-0">✓</span>
+              <span>Einmal kaufen, dauerhaft nutzen</span>
+            </li>
+          </ul>
         </div>
 
         <div className="flex flex-col gap-2">
@@ -260,7 +289,7 @@ function LimitModal({
             href="/mitglieder/upgrade"
             className="block text-center bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-3 px-5 rounded-xl text-[14px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
           >
-            Plan ansehen
+            Plan freischalten
           </a>
           <button
             onClick={onClose}
@@ -276,15 +305,24 @@ function LimitModal({
 
 function ChatBubble({ message }: { message: Message }) {
   const isUser = message.role === "user";
+  if (isUser) {
+    return (
+      <div className="flex justify-end">
+        <div className="max-w-[85%] rounded-2xl rounded-tr-sm px-4 py-2.5 text-[14px] leading-relaxed whitespace-pre-wrap bg-[#C4A576] text-white">
+          {message.content}
+        </div>
+      </div>
+    );
+  }
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
-      <div
-        className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-[14px] leading-relaxed whitespace-pre-wrap ${
-          isUser
-            ? "bg-[#C4A576] text-white rounded-tr-sm"
-            : "bg-[#F3F4F6] text-[#1a1a1a] rounded-tl-sm"
-        }`}
-      >
+    <div className="flex gap-2 items-end justify-start">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={TRAINER_AVATAR}
+        alt=""
+        className="w-7 h-7 rounded-full object-cover flex-shrink-0"
+      />
+      <div className="max-w-[85%] rounded-2xl rounded-bl-sm px-4 py-2.5 text-[14px] leading-relaxed whitespace-pre-wrap bg-[#F3F4F6] text-[#1a1a1a]">
         {message.content}
       </div>
     </div>
