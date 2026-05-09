@@ -1,3 +1,4 @@
+import "./mitglieder.css";
 import type { Metadata } from "next";
 import SiteShell from "@/components/mitglieder/SiteShell";
 import { getCurrentMember } from "@/lib/member-auth-server";
