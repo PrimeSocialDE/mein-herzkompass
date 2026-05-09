@@ -188,7 +188,7 @@ export default async function MitgliederDashboard() {
         </h3>
         <p className="text-[13px] text-[#6B7280] leading-relaxed mb-4">
           Schritt-für-Schritt-Übungen, klar erklärt, sofort umsetzbar. Bei
-          Fragen sind unsere Trainer 24/7 für dich da.
+          Fragen unterstützt dich unser KI-Trainer rund um die Uhr.
         </p>
         <Link
           href="/mitglieder/upgrade"
@@ -216,7 +216,7 @@ export default async function MitgliederDashboard() {
         );
       })()}
 
-      {/* Trust-Section am Ende: Trainer-Team-Foto + Support-Hinweis */}
+      {/* Trust-Section am Ende: Trainer-Team-Foto + KI-Trainer-Hinweis */}
       <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 mb-4">
         <div className="flex items-center gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -227,13 +227,13 @@ export default async function MitgliederDashboard() {
           />
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
-              Dein Trainer-Team
+              Hilfe vom KI-Trainer
             </p>
             <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight mb-1">
-              Wir helfen dir jederzeit weiter
+              24/7 Antworten auf deine Fragen
             </p>
             <p className="text-[12px] text-[#6B7280] leading-relaxed">
-              Echte Hundetrainer · persönlich, 24/7
+              Unsere KI, trainiert mit dem Wissen unseres Hundetrainer-Teams
             </p>
           </div>
         </div>

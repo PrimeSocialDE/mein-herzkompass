@@ -94,26 +94,27 @@ export default function HilfePage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-160px)] md:h-[calc(100vh-100px)]">
-      {/* Trainer-Team-Header — macht klar dass echte Profis dahinter stehen */}
+      {/* Header: KI-Trainer von Pfoten-Plan — transparent gerahmt damit
+          rechtlich sauber (keine Verwechslung mit echtem Live-Chat). */}
       <div className="bg-white border border-[#EADDC5] rounded-2xl p-4 mb-3 flex items-center gap-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={TRAINER_AVATAR}
-          alt="Pfoten-Plan Trainer-Team"
+          alt="Pfoten-Plan KI-Trainer"
           className="w-12 h-12 rounded-full object-cover border-2 border-[#C4A576] flex-shrink-0"
         />
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
+          <div className="flex items-center gap-2 mb-0.5 flex-wrap">
             <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight">
-              Pfoten-Plan Trainer-Team
+              Pfoten-Plan KI-Trainer
             </p>
             <span className="inline-flex items-center gap-1 text-[10px] text-[#15803D] font-semibold">
               <span className="w-1.5 h-1.5 bg-[#22C55E] rounded-full"></span>
-              Online
+              24/7 verfügbar
             </span>
           </div>
           <p className="text-[11px] text-[#6B7280] leading-snug">
-            Echte Hundetrainer · KI-unterstützt für schnelle Antworten
+            Unsere KI, trainiert mit dem Wissen unseres Hundetrainer-Teams
           </p>
         </div>
       </div>
@@ -135,9 +136,9 @@ export default function HilfePage() {
               />
               <div className="bg-[#FFF9F0] border border-[#EADDC5] rounded-2xl rounded-bl-sm px-4 py-3 max-w-[85%]">
                 <p className="text-[13px] text-[#5A4A3A] leading-relaxed">
-                  Hallo! Wir vom Pfoten-Plan Trainer-Team sind für dich da.
-                  Stell uns eine Frage zum Training mit deinem Hund, wir
-                  antworten direkt mit konkreten Schritten.
+                  Hallo! Ich bin der Pfoten-Plan KI-Trainer, trainiert mit
+                  dem Wissen unseres echten Hundetrainer-Teams. Stell mir
+                  eine Frage, ich gebe dir konkrete Schritte für deinen Hund.
                 </p>
               </div>
             </div>
@@ -255,12 +256,12 @@ function LimitModal({
             className="w-20 h-20 rounded-full object-cover border-3 border-[#C4A576] mx-auto mb-3 shadow-md"
           />
           <h2 className="text-[18px] font-extrabold text-[#1a1a1a] mb-1 leading-tight">
-            Schalte den Chat mit unseren Trainern frei
+            Schalte den KI-Trainer frei
           </h2>
           <p className="text-[13px] text-[#6B7280] leading-relaxed">
             Du hast deine {info.limit} kostenlosen Test-Fragen genutzt.
-            Mit einem Pfoten-Plan chattest du <strong>unbegrenzt</strong>{" "}
-            mit unserem Trainer-Team.
+            Mit einem Pfoten-Plan nutzt du unseren KI-Trainer{" "}
+            <strong>unbegrenzt</strong>, plus den vollen Trainings-Plan.
           </p>
         </div>
 
@@ -271,7 +272,7 @@ function LimitModal({
           <ul className="space-y-1.5 text-[13px] text-[#1a1a1a]">
             <li className="flex gap-2 items-start">
               <span className="text-[#C4A576] flex-shrink-0">✓</span>
-              <span>Unbegrenzter Chat mit dem Trainer-Team</span>
+              <span>Unbegrenzte Fragen an den KI-Trainer</span>
             </li>
             <li className="flex gap-2 items-start">
               <span className="text-[#C4A576] flex-shrink-0">✓</span>
