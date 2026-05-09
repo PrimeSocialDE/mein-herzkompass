@@ -14,6 +14,7 @@ import {
 } from "@/lib/member-db";
 import FirstExerciseCard from "@/components/mitglieder/FirstExerciseCard";
 import ModuleGrid from "@/components/mitglieder/ModuleGrid";
+import DogProfileCard from "@/components/mitglieder/DogProfileCard";
 import { PROBLEM_IMAGE } from "@/lib/member-images";
 
 export const dynamic = "force-dynamic";
@@ -89,6 +90,12 @@ export default async function MitgliederDashboard() {
           subtitle={`Schön dass du da bist. Hier ist dein Plan für ${dog}.`}
         />
 
+        <DogProfileCard
+          dogName={member.dog_name}
+          dogBreed={member.dog_breed}
+          quizResult={member.quiz_result}
+        />
+
         <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 mb-6">
           <div className="flex items-baseline justify-between mb-2">
             <p className="text-[13px] font-semibold text-[#1a1a1a]">Dein Fortschritt</p>
@@ -132,6 +139,13 @@ export default async function MitgliederDashboard() {
     <>
       <Header greeting={greeting} subtitle={welcomeSubtitle} />
 
+      {/* Hund-Profil prominent — was wir aus Quiz schon wissen */}
+      <DogProfileCard
+        dogName={member.dog_name}
+        dogBreed={member.dog_breed}
+        quizResult={member.quiz_result}
+      />
+
       {/* HERO: Erste Übung als Inhalt — KEIN Pricing! */}
       {firstFreeFull && (
         <div className="mb-8">
@@ -142,39 +156,12 @@ export default async function MitgliederDashboard() {
         </div>
       )}
 
-      {/* Quiz-Echo mit Bild — emotionaler Trigger durch Wiedererkennung */}
-      {problemLabel && (
-        <div className="bg-white border border-[#EADDC5] rounded-2xl overflow-hidden mb-8 flex flex-col sm:flex-row">
-          {PROBLEM_IMAGE[problemKey] && (
-            <div className="relative sm:w-40 h-32 sm:h-auto sm:flex-shrink-0 bg-[#FAF4E8]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={PROBLEM_IMAGE[problemKey]}
-                alt={problemLabel}
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            </div>
-          )}
-          <div className="p-5 flex-1">
-            <p className="text-[11px] font-bold text-[#8B7355] uppercase tracking-wider mb-2">
-              Aus deinem Quiz
-            </p>
-            <p className="text-[14px] text-[#1a1a1a] leading-relaxed">
-              Du hast uns erzählt, dass {dog} mit{" "}
-              <strong>„{problemLabel}"</strong> kämpft. Wir kennen das gut —
-              du bist nicht allein damit. Genau für dieses Thema haben wir
-              Schritt-für-Schritt-Übungen zusammengestellt.
-            </p>
-          </div>
-        </div>
-      )}
-
       {/* Sozialer Beweis — wirkt am Anfang der Customer Journey besonders */}
       <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl px-5 py-3.5 mb-8 flex items-center gap-3">
         <div className="text-2xl leading-none flex-shrink-0">🐾</div>
         <p className="text-[13px] text-[#15803D] leading-relaxed">
           <strong className="text-[#166534]">Über 5.000 Hundebesitzer</strong>{" "}
-          trainieren bereits mit Pfoten-Plan. Schön, dass du dazugehörst.
+          trainieren bereits mit Pfoten-Plan. Schön, dass {dog === "deinem Hund" ? "du" : `du und ${dog}`} dazugehört{dog === "deinem Hund" ? "" : "et"}.
         </p>
       </div>
 
