@@ -32,17 +32,17 @@ const NAV: NavItem[] = [
     ),
   },
   {
+    href: "/mitglieder/erfolge",
+    label: "Erfolge",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+    ),
+  },
+  {
     href: "/mitglieder/hilfe",
     label: "Hilfe",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    ),
-  },
-  {
-    href: "/mitglieder/profil",
-    label: "Profil",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     ),
   },
 ];
@@ -105,14 +105,23 @@ export default function SiteShell({
               Eingeloggt als
             </div>
             <div className="text-[12px] text-[#4B5563] truncate">{email}</div>
-            <form action="/api/mitglieder/logout" method="POST" className="mt-2">
-              <button
-                type="submit"
+            <div className="mt-2 flex items-center gap-3">
+              <Link
+                href="/mitglieder/profil"
                 className="text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a] underline underline-offset-2"
               >
-                Abmelden
-              </button>
-            </form>
+                Profil
+              </Link>
+              <span className="text-[10px] text-[#D1D5DB]">·</span>
+              <form action="/api/mitglieder/logout" method="POST">
+                <button
+                  type="submit"
+                  className="text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a] underline underline-offset-2"
+                >
+                  Abmelden
+                </button>
+              </form>
+            </div>
           </div>
         )}
       </aside>
@@ -129,15 +138,24 @@ export default function SiteShell({
           <span className="text-[15px] font-bold tracking-tight">Pfoten-Plan</span>
         </div>
         {email && (
-          <form action="/api/mitglieder/logout" method="POST">
-            <button
-              type="submit"
-              className="text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a]"
-              aria-label="Abmelden"
+          <div className="flex items-center gap-3">
+            <Link
+              href="/mitglieder/profil"
+              aria-label="Profil & Einstellungen"
+              className="text-[#6B7280] hover:text-[#1a1a1a] p-1"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            </button>
-          </form>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+            </Link>
+            <form action="/api/mitglieder/logout" method="POST">
+              <button
+                type="submit"
+                className="text-[#6B7280] hover:text-[#1a1a1a] p-1"
+                aria-label="Abmelden"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              </button>
+            </form>
+          </div>
         )}
       </header>
 
