@@ -90,12 +90,12 @@ export default async function ErfolgePage() {
         </div>
       )}
 
-      {/* Aktive Challenges */}
+      {/* Aktive Aufgaben */}
       {challenges.length === 0 ? (
         <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 text-center">
           <p className="text-[20px] mb-1">📅</p>
           <p className="text-[13px] text-[#6B7280]">
-            Diese Woche keine neue. Montag startet die nächste.
+            Diese Woche keine neue Aufgabe. Montag geht&rsquo;s weiter.
           </p>
         </div>
       ) : (
@@ -117,44 +117,51 @@ export default async function ErfolgePage() {
         </div>
       )}
 
-      {/* FOMO: Premium-Challenges blurred mit Lock-Overlay */}
+      {/* Bonus-Aufgaben: kompakt als Mini-Tile-Grid + CTA darunter */}
       {!isPaid && lockedPreview.length > 0 && (
-        <div className="mb-8">
+        <div className="mt-10 mb-10">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-[18px]">🔒</span>
             <h2 className="text-[16px] font-bold text-[#1a1a1a]">
-              Bonus-Challenges
+              Bonus-Aufgaben
             </h2>
           </div>
 
-          <div className="relative">
-            <div className="space-y-3 select-none pointer-events-none">
+          <div className="bg-white border border-[#EADDC5] rounded-2xl p-4">
+            {/* Mini-Tiles, blurred — zeigt was kommt ohne Platz zu fressen */}
+            <div className="grid grid-cols-3 gap-2 mb-4 select-none pointer-events-none">
               {lockedPreview.map((t) => (
-                <LockedChallengePreview
+                <div
                   key={t.slug}
-                  emoji={t.badge_emoji}
-                  title={t.title}
-                  description={t.description}
-                  badgeLabel={t.badge_label}
-                  target={t.target_sessions}
-                />
+                  className="bg-[#FAFAFA] border border-[#EADDC5] rounded-xl p-3 flex flex-col items-center text-center opacity-70"
+                >
+                  <div className="text-[24px] leading-none mb-1.5 blur-[1.5px]">
+                    {t.badge_emoji}
+                  </div>
+                  <p className="text-[10px] font-bold text-[#1a1a1a] leading-tight blur-[1.5px] line-clamp-2">
+                    {t.title}
+                  </p>
+                </div>
               ))}
             </div>
 
-            {/* Overlay-CTA mittig auf den geblurrten Cards */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-white/95 backdrop-blur-sm border border-[#EADDC5] rounded-2xl px-5 py-4 shadow-[0_8px_32px_rgba(139,115,85,0.18)] max-w-[280px] text-center">
-                <div className="text-[24px] mb-1">🎁</div>
-                <p className="text-[13px] font-bold text-[#1a1a1a] mb-2 leading-tight">
-                  +3 Challenges &amp; mehr Badges
+            {/* CTA darunter, klar und knapp */}
+            <div className="flex items-center gap-3 pt-3 border-t border-[#F0EBE3]">
+              <span className="text-[24px] flex-shrink-0">🎁</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-bold text-[#1a1a1a] leading-tight">
+                  +3 Aufgaben pro Woche
                 </p>
-                <Link
-                  href="/mitglieder/upgrade"
-                  className="inline-block bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-2 px-4 rounded-lg text-[12px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
-                >
-                  Plan freischalten
-                </Link>
+                <p className="text-[11px] text-[#6B7280] leading-snug">
+                  Im vollen Plan freigeschaltet
+                </p>
               </div>
+              <Link
+                href="/mitglieder/upgrade"
+                className="bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-2 px-4 rounded-lg text-[12px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)] flex-shrink-0"
+              >
+                Freischalten
+              </Link>
             </div>
           </div>
         </div>
@@ -177,7 +184,7 @@ export default async function ErfolgePage() {
           <div className="bg-[#FAFAFA] border border-dashed border-[#EADDC5] rounded-2xl p-6 text-center">
             <p className="text-[28px] mb-1">🏆</p>
             <p className="text-[13px] text-[#6B7280]">
-              Erste Challenge schaffen → erstes Badge.
+              Erste Aufgabe schaffen → erstes Badge.
             </p>
           </div>
         ) : (
@@ -261,7 +268,7 @@ function ExplainerSlider() {
   const cards = [
     {
       emoji: "🎯",
-      title: "1 Challenge / Woche",
+      title: "1 Aufgabe pro Woche",
       body: "Passend zu deinem Hund.",
       tint: "from-[#FFF9F0] to-[#FFFDF6]",
     },
@@ -304,50 +311,3 @@ function ExplainerSlider() {
   );
 }
 
-function LockedChallengePreview({
-  emoji,
-  title,
-  description,
-  badgeLabel,
-  target,
-}: {
-  emoji: string;
-  title: string;
-  description: string;
-  badgeLabel: string;
-  target: number;
-}) {
-  return (
-    <div className="relative bg-white border border-[#EADDC5] rounded-2xl p-5 opacity-60 blur-[1.5px]">
-      <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wider bg-[#FFF9F0] text-[#8B7355] px-2 py-0.5 rounded-md">
-        Bonus
-      </span>
-      <div className="flex items-start gap-3 mb-3 pr-12">
-        <div className="flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center text-[22px] bg-[#FAFAFA]">
-          {emoji}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-0.5">
-            Challenge dieser Woche
-          </p>
-          <h3 className="text-[16px] font-extrabold text-[#1a1a1a] leading-tight">
-            {title}
-          </h3>
-        </div>
-      </div>
-      <p className="text-[13px] text-[#6B7280] leading-relaxed mb-4">
-        {description}
-      </p>
-      <div className="flex items-center gap-2">
-        <div className="flex-1 flex items-center gap-1.5">
-          {Array.from({ length: target }).map((_, i) => (
-            <div key={i} className="flex-1 h-2 rounded-full bg-[#F0EBE3]" />
-          ))}
-        </div>
-        <span className="text-[12px] font-bold text-[#9CA3AF] min-w-[3ch] text-right">
-          0/{target}
-        </span>
-      </div>
-    </div>
-  );
-}

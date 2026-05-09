@@ -193,7 +193,7 @@ export default async function MitgliederDashboard() {
           </li>
           <li className="flex gap-2 items-start">
             <span className="text-[#C4A576] flex-shrink-0">🏆</span>
-            <span>Wöchentliche Challenges &amp; Badges</span>
+            <span>Wöchentliche Herausforderungen &amp; Badges</span>
           </li>
         </ul>
         <Link

@@ -105,7 +105,7 @@ export default function ChallengeCard({
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-0.5">
-            Challenge dieser Woche
+            Aufgabe dieser Woche
           </p>
           <h3 className="text-[16px] font-extrabold text-[#1a1a1a] leading-tight">
             {title}
