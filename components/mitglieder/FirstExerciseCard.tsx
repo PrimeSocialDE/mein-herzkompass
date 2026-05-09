@@ -41,12 +41,12 @@ export default function FirstExerciseCard({
   return (
     <div className="bg-white rounded-2xl border border-[#EADDC5] shadow-[0_2px_12px_rgba(139,115,85,0.06)] overflow-hidden">
       {/* Bild-Header (visuell warm, emotional) */}
-      <div className="relative h-44 md:h-52 overflow-hidden bg-[#FAF4E8]">
+      <div className="relative h-48 md:h-60 overflow-hidden bg-[#FAF4E8]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imageUrl}
           alt={module.title}
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-top"
         />
         {/* Subtiler Gradient damit Eyebrow lesbar ist */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
