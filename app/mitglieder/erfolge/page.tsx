@@ -65,7 +65,7 @@ export default async function ErfolgePage() {
   return (
     <>
       {/* Header — Hundename prominent */}
-      <div className="mb-6">
+      <div className="mb-5">
         <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
           Erfolge & Challenges
         </p>
@@ -73,10 +73,12 @@ export default async function ErfolgePage() {
           {dogName ? `${dogPossessive} Trainings-Woche` : "Eure Trainings-Woche"}
         </h1>
         <p className="text-[13px] text-[#6B7280] mt-1.5 leading-relaxed">
-          Konkrete Mini-Challenges für dich und {dog} — schaffst du sie,
-          gibts ein Badge für die Sammlung.
+          Kleine Mini-Challenges, die ihr nebenbei macht — Spaß, kein Drill.
         </p>
       </div>
+
+      {/* Erklaer-Slider: 3 Karten, swipebar Mobile / Grid Desktop */}
+      <ExplainerSlider dog={dog} />
 
       {/* Wochen-Status */}
       {totalThisWeek > 0 && (
@@ -276,6 +278,53 @@ function GhostBadgeTile({
         {label}
       </p>
       <p className="text-[9px] text-[#D1D5DB]">{isPremium ? "🔒 Plan" : "?"}</p>
+    </div>
+  );
+}
+
+function ExplainerSlider({ dog }: { dog: string }) {
+  const cards = [
+    {
+      emoji: "🎯",
+      title: "Was sind Challenges?",
+      body: `Jede Woche eine kleine Aufgabe, die zu ${dog} passt. Klar erklärt, sofort startbar.`,
+      tint: "from-[#FFF9F0] to-[#FFFDF6]",
+    },
+    {
+      emoji: "🎉",
+      title: "Spaß statt Drill",
+      body: "Kurze Sessions von 5 Minuten reichen. Ihr trainiert wenn es euch passt — kein Druck.",
+      tint: "from-[#F0FDF4] to-[#FAFFF8]",
+    },
+    {
+      emoji: "🏆",
+      title: "Badges sammeln",
+      body: `Geschafft? Es gibt einen Badge für die Sammlung. Eure gemeinsamen Erfolge auf einen Blick.`,
+      tint: "from-[#FAF5FF] to-[#FDFBFF]",
+    },
+  ];
+
+  return (
+    <div className="-mx-4 md:mx-0 mb-6">
+      <div
+        className="flex md:grid md:grid-cols-3 gap-3 overflow-x-auto md:overflow-visible px-4 md:px-0 snap-x snap-mandatory pb-2 md:pb-0 scrollbar-hide"
+        style={{ scrollbarWidth: "none" }}
+      >
+        {cards.map((c, i) => (
+          <div
+            key={i}
+            className={`flex-shrink-0 w-[78%] sm:w-[55%] md:w-auto snap-center bg-gradient-to-br ${c.tint} border border-[#EADDC5] rounded-2xl p-4`}
+          >
+            <div className="text-[26px] leading-none mb-2">{c.emoji}</div>
+            <p className="text-[13px] font-extrabold text-[#1a1a1a] leading-tight mb-1">
+              {c.title}
+            </p>
+            <p className="text-[12px] text-[#6B7280] leading-relaxed">
+              {c.body}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
