@@ -7,18 +7,47 @@ interface Message {
   content: string;
 }
 
+interface LimitInfo {
+  resets_at: string;
+  limit: number;
+  is_paid: boolean;
+}
+
 const SUGGESTED_QUESTIONS = [
   'Wie übe ich „Sitz" mit meinem Hund am besten?',
-  'Mein Hund zieht an der Leine — was hilft sofort?',
+  'Mein Hund zieht an der Leine, was hilft sofort?',
   'Wie lange sollte eine Trainings-Session dauern?',
   'Mein Hund hört nicht auf seinen Namen draußen.',
 ];
+
+// Fallback-Cleanup auf Client-Seite (falls API-Cleanup mal ausfällt).
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/(^|\s)\*([^*\n]+)\*(?=\s|$|[.,!?;:])/g, "$1$2")
+    .replace(/\s—\s/g, ", ")
+    .replace(/\s–\s/g, ", ")
+    .replace(/—/g, "-")
+    .replace(/–/g, "-");
+}
+
+function formatResetTime(iso: string): string {
+  const reset = new Date(iso);
+  const now = new Date();
+  const diffMs = reset.getTime() - now.getTime();
+  const diffH = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60)));
+  if (diffH <= 1) return "in weniger als einer Stunde";
+  if (diffH < 24) return `in ${diffH} Stunden`;
+  return "morgen";
+}
 
 export default function HilfePage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [limitInfo, setLimitInfo] = useState<LimitInfo | null>(null);
+  const [usage, setUsage] = useState<{ used: number; limit: number; remaining: number } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,13 +74,26 @@ export default function HilfePage() {
         body: JSON.stringify({ messages: newMessages }),
       });
       const data = await res.json();
-      if (!res.ok || !data.reply) {
+      if (res.status === 429 && data.error === "limit_reached") {
+        // Letzte (User-)Message wieder rausnehmen, damit kein "verlorener"
+        // Question-Bubble stehenbleibt.
+        setMessages(messages);
+        setInput(trimmed);
+        setLimitInfo({
+          resets_at: data.resets_at,
+          limit: data.limit,
+          is_paid: !!data.is_paid,
+        });
+      } else if (!res.ok || !data.reply) {
         setError(data.error || "Konnte keine Antwort holen.");
       } else {
         setMessages([
           ...newMessages,
-          { role: "assistant", content: data.reply },
+          { role: "assistant", content: stripMarkdown(data.reply) },
         ]);
+        if (data.usage && !data.usage.unlimited) {
+          setUsage(data.usage);
+        }
       }
     } catch (e: any) {
       setError("Verbindungsfehler. Versuch's gleich nochmal.");
@@ -155,6 +197,79 @@ export default function HilfePage() {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </form>
+
+      {/* Usage-Hinweis (nur Free-User, nur wenn schon mind. eine Frage gestellt) */}
+      {usage && usage.remaining > 0 && (
+        <p className="text-[11px] text-[#9CA3AF] text-center mt-2">
+          Noch {usage.remaining} von {usage.limit} kostenlosen Fragen heute.
+        </p>
+      )}
+
+      {/* Limit-Modal */}
+      {limitInfo && (
+        <LimitModal info={limitInfo} onClose={() => setLimitInfo(null)} />
+      )}
+    </div>
+  );
+}
+
+function LimitModal({
+  info,
+  onClose,
+}: {
+  info: LimitInfo;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="text-center mb-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#FFF9F0] mb-3">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C4A576" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h2 className="text-[18px] font-extrabold text-[#1a1a1a] mb-1">
+            Tagespause für deinen Trainer
+          </h2>
+          <p className="text-[13px] text-[#6B7280] leading-relaxed">
+            Du hast deine {info.limit} kostenlosen Fragen heute schon
+            gestellt. {formatResetTime(info.resets_at).charAt(0).toUpperCase() + formatResetTime(info.resets_at).slice(1)} kannst du wieder fragen.
+          </p>
+        </div>
+
+        <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-xl p-4 mb-4">
+          <p className="text-[11px] font-bold text-[#8B7355] uppercase tracking-wider mb-1">
+            Du brauchst mehr?
+          </p>
+          <p className="text-[13px] text-[#1a1a1a] leading-relaxed mb-1">
+            Mit dem vollen Plan stellst du <strong>so viele Fragen wie du
+            willst</strong> und bekommst alle Module.
+          </p>
+          <p className="text-[12px] text-[#6B7280]">
+            Schon ab wenigen Euro pro Monat.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <a
+            href="/mitglieder/upgrade"
+            className="block text-center bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-3 px-5 rounded-xl text-[14px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
+          >
+            Plan ansehen
+          </a>
+          <button
+            onClick={onClose}
+            className="text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a] py-1"
+          >
+            Später
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

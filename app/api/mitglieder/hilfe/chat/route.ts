@@ -5,13 +5,18 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { getCurrentMember } from "@/lib/member-auth-server";
+import { getCurrentMember, createMemberAdminClient } from "@/lib/member-auth-server";
 import { getOrCreateMemberProfile } from "@/lib/member-db";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || "";
+
+// Free-Tier Rate-Limit: 3 Fragen pro 24h (rolling window per User)
+const FREE_DAILY_LIMIT = 3;
+// Paid-User: kein Limit (oder höher — hier: kein Limit)
+const PAID_DAILY_LIMIT = Infinity;
 
 const PROBLEM_LABELS: Record<string, string> = {
   pulling: "Leinenziehen",
@@ -62,6 +67,39 @@ export async function POST(req: NextRequest) {
     email: user.email || "",
   });
 
+  // ── Rate-Limit-Check (Free: 3/24h, Paid: unlimited) ─────────────
+  const limit =
+    member.purchase_status === "paid" ? PAID_DAILY_LIMIT : FREE_DAILY_LIMIT;
+  const admin = createMemberAdminClient();
+  const { data: usageRow } = await admin
+    .from("member_users")
+    .select("chat_usage_count, chat_usage_reset_at")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const now = new Date();
+  const resetAt = usageRow?.chat_usage_reset_at
+    ? new Date(usageRow.chat_usage_reset_at as string)
+    : null;
+  const expired = !resetAt || now.getTime() - resetAt.getTime() > 24 * 60 * 60 * 1000;
+  const currentCount = expired ? 0 : (usageRow?.chat_usage_count as number | null) || 0;
+
+  if (limit !== Infinity && currentCount >= limit) {
+    const nextReset = expired
+      ? new Date(now.getTime() + 24 * 60 * 60 * 1000)
+      : new Date(resetAt!.getTime() + 24 * 60 * 60 * 1000);
+    return NextResponse.json(
+      {
+        error: "limit_reached",
+        limit,
+        used: currentCount,
+        resets_at: nextReset.toISOString(),
+        is_paid: member.purchase_status === "paid",
+      },
+      { status: 429 }
+    );
+  }
+
   // ── User-Kontext zusammenbauen (für System-Prompt) ──────────────
   const dog = member.dog_name || "der Hund";
   const breed = member.dog_breed ? `, ${member.dog_breed}` : "";
@@ -101,7 +139,13 @@ REGELN:
 - Wenn unklar ist was gemeint ist: stelle EINE Rückfrage statt zu raten.
 - Bleibe IMMER beim Thema Hundetraining/Pfoten-Plan. Bei Off-Topic ("welches Wetter ist heute" etc.): freundlich zurückführen.
 - Bei medizinischen Symptomen (Schmerzen, akute Krankheit): empfehle Tierarzt-Besuch.
-- Halte Antworten unter 200 Wörter, nutze gerne kurze Listen oder Aufzählungen.`;
+- Halte Antworten unter 200 Wörter, nutze gerne kurze Listen oder Aufzählungen.
+
+FORMAT (WICHTIG):
+- Verwende KEIN Markdown. Keine Sternchen (** oder *), keine #-Headlines, keine Backticks.
+- Schreibe normalen Fließtext. Für Aufzählungen nutze einfache Nummern (1. 2. 3.) oder Bindestriche (-).
+- Verwende KEINE langen Gedankenstriche (— oder –). Nutze stattdessen Kommas, Punkte oder normale Bindestriche (-).
+- Schreibe wichtige Wörter ohne Hervorhebung, der Text wirkt natürlicher.`;
 
   const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
 
@@ -122,7 +166,35 @@ REGELN:
       .join("\n")
       .trim();
 
-    return NextResponse.json({ reply: text });
+    // Defensiv: Markdown-Sterne und lange Gedankenstriche raus, falls
+    // Claude sich trotz System-Prompt nicht dran hält.
+    const cleaned = text
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/(^|\s)\*([^*\n]+)\*(?=\s|$|[.,!?;:])/g, "$1$2")
+      .replace(/\s—\s/g, ", ")
+      .replace(/\s–\s/g, ", ")
+      .replace(/—/g, "-")
+      .replace(/–/g, "-");
+
+    // Counter hochzählen (nur Free-User, Paid hat Infinity)
+    if (limit !== Infinity) {
+      const newCount = currentCount + 1;
+      const newResetAt = expired ? now.toISOString() : (resetAt?.toISOString() || now.toISOString());
+      await admin
+        .from("member_users")
+        .update({
+          chat_usage_count: newCount,
+          chat_usage_reset_at: newResetAt,
+        })
+        .eq("id", user.id);
+    }
+
+    return NextResponse.json({
+      reply: cleaned,
+      usage: limit === Infinity
+        ? { unlimited: true }
+        : { used: currentCount + 1, limit, remaining: Math.max(0, limit - (currentCount + 1)) },
+    });
   } catch (e: any) {
     console.error("[hilfe-chat] Anthropic error:", e);
     return NextResponse.json(
