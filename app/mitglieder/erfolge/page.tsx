@@ -64,6 +64,16 @@ export default async function ErfolgePage() {
 
   return (
     <>
+      {/* Hero-Banner */}
+      <div className="mb-5 -mx-4 md:-mx-8 md:mt-[-10px]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/Herchallanges.png"
+          alt="Eure Trainings-Woche"
+          className="w-full aspect-[16/9] object-cover md:rounded-2xl"
+        />
+      </div>
+
       {/* Header — Hundename prominent, Subtitle minimal */}
       <div className="mb-5">
         <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
