@@ -119,9 +119,18 @@ async function handlePaid(payment: any) {
   // Auch wenn Lead bereits paid ist — falls Bump-Delivery beim ersten Mal scheiterte.
   await deliverOrderBumpIfPurchased(payment, existingRecord);
 
-  if (existingRecord.status === "paid") {
+  // Idempotenz NICHT über status (verhindert Re-Käufe), sondern über die
+  // KONKRETE Payment-ID. Wir tracken alle prozessierten Payment-IDs in
+  // answers.processed_payment_ids — wenn dieser Webhook für GENAU diese
+  // payment.id schon mal lief, skip. Bei NEUEM Payment (auch wenn Lead
+  // schon paid war) → kommt durch und feuert Make.com.
+  const prevAnswers = (existingRecord.answers || {}) as Record<string, any>;
+  const processedIds: string[] = Array.isArray(prevAnswers.processed_payment_ids)
+    ? prevAnswers.processed_payment_ids
+    : [];
+  if (processedIds.includes(payment.id)) {
     console.log(
-      `[mollie-webhook] ${referenceId} bereits paid — überspringe DB-Update`
+      `[mollie-webhook] payment ${payment.id} bereits prozessiert — skip`
     );
     return;
   }
@@ -135,6 +144,10 @@ async function handlePaid(payment: any) {
     paid_at: new Date().toISOString(),
     mollie_payment_id: payment.id,
     payment_provider: "mollie",
+    answers: {
+      ...prevAnswers,
+      processed_payment_ids: [...processedIds, payment.id],
+    },
   };
 
   if (customerEmail) updateData.email = customerEmail;
@@ -160,7 +173,7 @@ async function handlePaid(payment: any) {
   }
 
   console.log(
-    `[mollie-webhook] ${table} ${referenceId} → paid (${payment.method})`
+    `[mollie-webhook] ${table} ${referenceId} → paid (${payment.method}) [payment: ${payment.id}]`
   );
 
   await enrollInUpsellCampaign(table, referenceId, updateData.email);
