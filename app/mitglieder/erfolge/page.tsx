@@ -74,7 +74,7 @@ export default async function ErfolgePage() {
         />
       </div>
 
-      {/* Header — Hundename prominent, Subtitle minimal */}
+      {/* Header — Hundename prominent, kurze Einordnung darunter */}
       <div className="mb-5">
         <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
           Diese Woche
@@ -82,6 +82,10 @@ export default async function ErfolgePage() {
         <h1 className="text-[24px] md:text-[30px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
           {dogName ? `${dogPossessive} Trainings-Woche` : "Eure Trainings-Woche"}
         </h1>
+        <p className="text-[14px] text-[#4B5563] mt-2 leading-relaxed">
+          Kleine Trainings-Aufgaben für {dog}, die in den Alltag passen.
+          Schafft ihr sie, sammelt ihr Badges für die Wand.
+        </p>
       </div>
 
       {/* Erklaer-Slider: 3 Karten, swipebar Mobile / Grid Desktop */}
