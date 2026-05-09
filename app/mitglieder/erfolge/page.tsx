@@ -64,52 +64,38 @@ export default async function ErfolgePage() {
 
   return (
     <>
-      {/* Header — Hundename prominent */}
+      {/* Header — Hundename prominent, Subtitle minimal */}
       <div className="mb-5">
         <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
-          Erfolge & Challenges
+          Diese Woche
         </p>
         <h1 className="text-[24px] md:text-[30px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
           {dogName ? `${dogPossessive} Trainings-Woche` : "Eure Trainings-Woche"}
         </h1>
-        <p className="text-[13px] text-[#6B7280] mt-1.5 leading-relaxed">
-          Kleine Mini-Challenges, die ihr nebenbei macht — Spaß, kein Drill.
-        </p>
       </div>
 
       {/* Erklaer-Slider: 3 Karten, swipebar Mobile / Grid Desktop */}
-      <ExplainerSlider dog={dog} />
+      <ExplainerSlider />
 
-      {/* Wochen-Status */}
+      {/* Wochen-Status — kompakt */}
       {totalThisWeek > 0 && (
-        <div className="bg-white border border-[#EADDC5] rounded-2xl px-5 py-4 mb-5 flex items-center gap-4">
-          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#FFF9F0] flex items-center justify-center text-[20px]">
-            🗓️
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-0.5">
-              Diese Woche
-            </p>
-            <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight">
-              {completedThisWeek === totalThisWeek
-                ? `Alle ${totalThisWeek} Challenges geschafft! `
-                : `${completedThisWeek} von ${totalThisWeek} Challenges geschafft`}
-            </p>
-            {completedThisWeek === totalThisWeek && (
-              <p className="text-[12px] text-[#6B7280] mt-0.5">
-                Nächste Woche kommen neue. Stark!
-              </p>
-            )}
-          </div>
+        <div className="bg-white border border-[#EADDC5] rounded-2xl px-4 py-3 mb-5 flex items-center gap-3">
+          <span className="text-[20px] flex-shrink-0">
+            {completedThisWeek === totalThisWeek ? "✅" : "📍"}
+          </span>
+          <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight">
+            {completedThisWeek} / {totalThisWeek} geschafft
+            {completedThisWeek === totalThisWeek && " · Neue ab Montag"}
+          </p>
         </div>
       )}
 
       {/* Aktive Challenges */}
       {challenges.length === 0 ? (
-        <div className="bg-white border border-[#EADDC5] rounded-2xl p-6 text-center">
-          <p className="text-[14px] text-[#6B7280]">
-            Diese Woche keine neue Challenge — du hast schon alle aus dem
-            aktuellen Pool durch. Schau Montag wieder rein.
+        <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 text-center">
+          <p className="text-[20px] mb-1">📅</p>
+          <p className="text-[13px] text-[#6B7280]">
+            Diese Woche keine neue. Montag startet die nächste.
           </p>
         </div>
       ) : (
@@ -137,13 +123,9 @@ export default async function ErfolgePage() {
           <div className="flex items-center gap-2 mb-3">
             <span className="text-[18px]">🔒</span>
             <h2 className="text-[16px] font-bold text-[#1a1a1a]">
-              Bonus-Challenges für {dog}
+              Bonus-Challenges
             </h2>
           </div>
-          <p className="text-[13px] text-[#6B7280] mb-3 leading-relaxed">
-            Im vollen Plan bekommst du jede Woche bis zu 3 zusätzliche
-            Bonus-Challenges. Hier ein Auszug was {dog} freischalten könnte:
-          </p>
 
           <div className="relative">
             <div className="space-y-3 select-none pointer-events-none">
@@ -161,13 +143,10 @@ export default async function ErfolgePage() {
 
             {/* Overlay-CTA mittig auf den geblurrten Cards */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-white/95 backdrop-blur-sm border border-[#EADDC5] rounded-2xl px-5 py-4 shadow-[0_8px_32px_rgba(139,115,85,0.18)] max-w-[300px] text-center">
+              <div className="bg-white/95 backdrop-blur-sm border border-[#EADDC5] rounded-2xl px-5 py-4 shadow-[0_8px_32px_rgba(139,115,85,0.18)] max-w-[280px] text-center">
                 <div className="text-[24px] mb-1">🎁</div>
-                <p className="text-[13px] font-bold text-[#1a1a1a] mb-1 leading-tight">
-                  3 weitere Challenges warten auf {dog}
-                </p>
-                <p className="text-[11px] text-[#6B7280] mb-3 leading-snug">
-                  Plus {ghostBadgeTemplates.length}+ Badges zum Sammeln
+                <p className="text-[13px] font-bold text-[#1a1a1a] mb-2 leading-tight">
+                  +3 Challenges &amp; mehr Badges
                 </p>
                 <Link
                   href="/mitglieder/upgrade"
@@ -183,20 +162,22 @@ export default async function ErfolgePage() {
 
       {/* Badge-Wand */}
       <div className="mb-6">
-        <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-1">
-          {dogName ? `${dogPossessive} Badges` : "Eure Badges"}
-        </h2>
-        <p className="text-[13px] text-[#6B7280] mb-4">
-          {badges.length > 0
-            ? `${badges.length} Erfolge bisher mit ${dog} gesammelt.`
-            : `Sammlung aller Erfolge die du mit ${dog} freispielst.`}
-        </p>
+        <div className="flex items-baseline justify-between mb-3">
+          <h2 className="text-[18px] font-bold text-[#1a1a1a]">
+            {dogName ? `${dogPossessive} Badges` : "Eure Badges"}
+          </h2>
+          {badges.length > 0 && (
+            <span className="text-[12px] text-[#9CA3AF]">
+              {badges.length} gesammelt
+            </span>
+          )}
+        </div>
 
         {badges.length === 0 && ghostBadgeTemplates.length === 0 ? (
-          <div className="bg-[#FAFAFA] border border-dashed border-[#EADDC5] rounded-2xl p-8 text-center">
-            <p className="text-[28px] mb-2">🏆</p>
+          <div className="bg-[#FAFAFA] border border-dashed border-[#EADDC5] rounded-2xl p-6 text-center">
+            <p className="text-[28px] mb-1">🏆</p>
             <p className="text-[13px] text-[#6B7280]">
-              Noch keine Badges — schaff deine erste Challenge!
+              Erste Challenge schaffen → erstes Badge.
             </p>
           </div>
         ) : (
@@ -219,12 +200,6 @@ export default async function ErfolgePage() {
               />
             ))}
           </div>
-        )}
-
-        {!isPaid && badges.length === 0 && (
-          <p className="text-[11px] text-[#9CA3AF] mt-3 text-center">
-            Schaff deine erste Challenge oben um den ersten Badge zu holen.
-          </p>
         )}
       </div>
     </>
@@ -282,24 +257,24 @@ function GhostBadgeTile({
   );
 }
 
-function ExplainerSlider({ dog }: { dog: string }) {
+function ExplainerSlider() {
   const cards = [
     {
       emoji: "🎯",
-      title: "Was sind Challenges?",
-      body: `Jede Woche eine kleine Aufgabe, die zu ${dog} passt. Klar erklärt, sofort startbar.`,
+      title: "1 Challenge / Woche",
+      body: "Passend zu deinem Hund.",
       tint: "from-[#FFF9F0] to-[#FFFDF6]",
     },
     {
-      emoji: "🎉",
-      title: "Spaß statt Drill",
-      body: "Kurze Sessions von 5 Minuten reichen. Ihr trainiert wenn es euch passt — kein Druck.",
+      emoji: "⏱️",
+      title: "5 Min reichen",
+      body: "Im Alltag, kein Druck.",
       tint: "from-[#F0FDF4] to-[#FAFFF8]",
     },
     {
       emoji: "🏆",
-      title: "Badges sammeln",
-      body: `Geschafft? Es gibt einen Badge für die Sammlung. Eure gemeinsamen Erfolge auf einen Blick.`,
+      title: "Badge holen",
+      body: "Geschafft = Badge für die Sammlung.",
       tint: "from-[#FAF5FF] to-[#FDFBFF]",
     },
   ];

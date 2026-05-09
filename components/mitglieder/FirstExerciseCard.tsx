@@ -76,8 +76,7 @@ export default function FirstExerciseCard({
       <div className="px-6 py-5 space-y-4">
         {visibleSections.length === 0 ? (
           <p className="text-[14px] text-[#6B7280] leading-relaxed">
-            Klick unten — dort findest du die Schritt-für-Schritt-Anleitung
-            für {dog}.
+            Schritt-für-Schritt-Anleitung für {dog} unten.
           </p>
         ) : (
           visibleSections.map((s, i) => (

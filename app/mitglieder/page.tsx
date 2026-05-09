@@ -131,8 +131,8 @@ export default async function MitgliederDashboard() {
   // FREE / KEIN PLAN — Welcome-First, Erste Übung, dann dezent Upgrade
   // ───────────────────────────────────────────────────────────────────
   const welcomeSubtitle = problemLabel
-    ? `Schön dass du da bist. Wir zeigen dir gleich, wie du ${dog} bei „${problemLabel}" Schritt für Schritt helfen kannst.`
-    : `Schön dass du da bist. Wir zeigen dir gleich, wie du ${dog} mit kleinen Übungen weiterbringst.`;
+    ? `Wir helfen ${dog} Schritt für Schritt bei „${problemLabel}".`
+    : `Kleine Übungen, die ${dog} weiterbringen.`;
 
   return (
     <>
@@ -155,12 +155,12 @@ export default async function MitgliederDashboard() {
         </div>
       )}
 
-      {/* Sozialer Beweis — wirkt am Anfang der Customer Journey besonders */}
-      <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl px-5 py-3.5 mb-8 flex items-center gap-3">
-        <div className="text-2xl leading-none flex-shrink-0">🐾</div>
-        <p className="text-[13px] text-[#15803D] leading-relaxed">
-          <strong className="text-[#166534]">Über 5.000 Hundebesitzer</strong>{" "}
-          trainieren bereits mit Pfoten-Plan. Schön, dass {dog === "deinem Hund" ? "du" : `du und ${dog}`} dazugehört{dog === "deinem Hund" ? "" : "et"}.
+      {/* Sozialer Beweis — kompakt */}
+      <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl px-4 py-3 mb-8 flex items-center gap-3">
+        <span className="text-[20px] flex-shrink-0">🐾</span>
+        <p className="text-[13px] text-[#15803D] leading-snug">
+          <strong className="text-[#166534]">5.000+ Hundebesitzer</strong>{" "}
+          trainieren mit Pfoten-Plan.
         </p>
       </div>
 
@@ -177,24 +177,30 @@ export default async function MitgliederDashboard() {
         </div>
       )}
 
-      {/* Soft-Bridge zum vollen Plan — nicht aggressiv */}
-      <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-2xl p-6 mb-8">
-        <p className="text-[11px] font-bold text-[#8B7355] uppercase tracking-wider mb-2">
-          Wenn du tiefer einsteigen willst
-        </p>
-        <h3 className="text-[18px] font-extrabold text-[#1a1a1a] mb-2 leading-tight">
-          Mit dem vollen Plan bekommst du {modules.length} aufeinander
-          aufgebaute Module für {dog}
+      {/* Soft-Bridge zum vollen Plan — kompakt */}
+      <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-2xl p-5 mb-8">
+        <h3 className="text-[18px] font-extrabold text-[#1a1a1a] mb-3 leading-tight">
+          {modules.length} Module für {dog} — der volle Plan
         </h3>
-        <p className="text-[13px] text-[#6B7280] leading-relaxed mb-4">
-          Schritt-für-Schritt-Übungen, klar erklärt, sofort umsetzbar. Bei
-          Fragen unterstützt dich unser KI-Trainer rund um die Uhr.
-        </p>
+        <ul className="space-y-1.5 mb-4 text-[13px] text-[#1a1a1a]">
+          <li className="flex gap-2 items-start">
+            <span className="text-[#C4A576] flex-shrink-0">📚</span>
+            <span>Schritt-für-Schritt-Übungen</span>
+          </li>
+          <li className="flex gap-2 items-start">
+            <span className="text-[#C4A576] flex-shrink-0">🤖</span>
+            <span>KI-Trainer rund um die Uhr</span>
+          </li>
+          <li className="flex gap-2 items-start">
+            <span className="text-[#C4A576] flex-shrink-0">🏆</span>
+            <span>Wöchentliche Challenges &amp; Badges</span>
+          </li>
+        </ul>
         <Link
           href="/mitglieder/upgrade"
-          className="inline-block bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-3 px-6 rounded-xl text-[14px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
+          className="inline-block bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-2.5 px-5 rounded-xl text-[13px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
         >
-          Mehr erfahren
+          Plan ansehen
         </Link>
       </div>
 
@@ -208,8 +214,7 @@ export default async function MitgliederDashboard() {
               So ist dein Plan aufgebaut
             </h2>
             <p className="text-[13px] text-[#6B7280] mb-4">
-              Schritt für Schritt, Woche für Woche — kein Zufall, sondern
-              ein klarer Pfad für {dog}.
+              Woche für Woche, klar strukturiert für {dog}.
             </p>
             <WeekOverview weeks={lockedWeeks} isPaid={false} />
           </div>
@@ -217,23 +222,20 @@ export default async function MitgliederDashboard() {
       })()}
 
       {/* Trust-Section am Ende: Trainer-Team-Foto + KI-Trainer-Hinweis */}
-      <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 mb-4">
+      <div className="bg-white border border-[#EADDC5] rounded-2xl p-4 mb-4">
         <div className="flex items-center gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/TrainerPfoten-thumb.png"
             alt="Pfoten-Plan Trainer-Team"
-            className="w-16 h-16 rounded-full object-cover border-2 border-[#C4A576] flex-shrink-0"
+            className="w-14 h-14 rounded-full object-cover border-2 border-[#C4A576] flex-shrink-0"
           />
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
-              Hilfe vom KI-Trainer
+            <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight mb-0.5">
+              KI-Trainer · 24/7 verfügbar
             </p>
-            <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight mb-1">
-              24/7 Antworten auf deine Fragen
-            </p>
-            <p className="text-[12px] text-[#6B7280] leading-relaxed">
-              Unsere KI, trainiert mit dem Wissen unseres Hundetrainer-Teams
+            <p className="text-[12px] text-[#6B7280] leading-snug">
+              Trainiert mit dem Wissen unseres Hundetrainer-Teams
             </p>
           </div>
         </div>

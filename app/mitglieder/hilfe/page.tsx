@@ -136,9 +136,8 @@ export default function HilfePage() {
               />
               <div className="bg-[#FFF9F0] border border-[#EADDC5] rounded-2xl rounded-bl-sm px-4 py-3 max-w-[85%]">
                 <p className="text-[13px] text-[#5A4A3A] leading-relaxed">
-                  Hallo! Ich bin der Pfoten-Plan KI-Trainer, trainiert mit
-                  dem Wissen unseres echten Hundetrainer-Teams. Stell mir
-                  eine Frage, ich gebe dir konkrete Schritte für deinen Hund.
+                  Hallo! Stell mir deine Frage zum Training, ich gebe dir
+                  konkrete Schritte.
                 </p>
               </div>
             </div>
