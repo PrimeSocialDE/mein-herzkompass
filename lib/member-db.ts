@@ -171,3 +171,14 @@ export async function listActiveUpsells(productType = "pfoten-plan") {
     .order("price_cents", { ascending: true });
   return data || [];
 }
+
+// ── Einzelnes Modul holen (per Slug) ───────────────────────────────────────
+export async function getModuleBySlug(slug: string) {
+  const admin = createMemberAdminClient();
+  const { data } = await admin
+    .from("member_modules")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
+  return data;
+}
