@@ -2,7 +2,7 @@
 // Nutzt Service-Role-Client (createMemberAdminClient) für privilegierte
 // Server-Ops wie das Anlegen / Auto-Linking von Member-Profilen.
 
-import { createMemberAdminClient } from "./member-auth";
+import { createMemberAdminClient } from "./member-auth-server";
 
 export interface MemberProfile {
   id: string;

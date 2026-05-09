@@ -1,4 +1,4 @@
-import { getCurrentMember } from "@/lib/member-auth";
+import { getCurrentMember } from "@/lib/member-auth-server";
 import { getOrCreateMemberProfile, listActiveUpsells } from "@/lib/member-db";
 import PlanOptionsCard from "@/components/mitglieder/PlanOptionsCard";
 

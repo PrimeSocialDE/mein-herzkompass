@@ -5,7 +5,7 @@
 //   • "paid"          → Module-Grid (Drip) + Upsell-Empfehlungen
 
 import Link from "next/link";
-import { getCurrentMember } from "@/lib/member-auth";
+import { getCurrentMember } from "@/lib/member-auth-server";
 import {
   getOrCreateMemberProfile,
   listModulesForMember,

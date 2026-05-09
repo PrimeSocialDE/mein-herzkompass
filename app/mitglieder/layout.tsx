@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import SiteShell from "@/components/mitglieder/SiteShell";
-import { getCurrentMember } from "@/lib/member-auth";
+import { getCurrentMember } from "@/lib/member-auth-server";
 
 export const metadata: Metadata = {
   title: "Mein Pfoten-Plan",

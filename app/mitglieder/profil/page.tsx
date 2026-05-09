@@ -1,4 +1,4 @@
-import { getCurrentMember } from "@/lib/member-auth";
+import { getCurrentMember } from "@/lib/member-auth-server";
 import { getOrCreateMemberProfile } from "@/lib/member-db";
 
 export const dynamic = "force-dynamic";
