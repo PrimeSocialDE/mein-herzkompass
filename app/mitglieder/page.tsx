@@ -15,6 +15,9 @@ import {
 import FirstExerciseCard from "@/components/mitglieder/FirstExerciseCard";
 import ModuleGrid from "@/components/mitglieder/ModuleGrid";
 import DogProfileCard from "@/components/mitglieder/DogProfileCard";
+import ProgressCircle from "@/components/mitglieder/ProgressCircle";
+import WeekOverview from "@/components/mitglieder/WeekOverview";
+import { groupModulesByWeek } from "@/lib/member-weeks";
 import { PROBLEM_IMAGE } from "@/lib/member-images";
 
 export const dynamic = "force-dynamic";
@@ -83,6 +86,7 @@ export default async function MitgliederDashboard() {
   // ───────────────────────────────────────────────────────────────────
   if (isPaid) {
     const unlockedCount = modules.filter((m) => m.unlocked).length;
+    const weeks = groupModulesByWeek(modules);
     return (
       <>
         <Header
@@ -96,31 +100,26 @@ export default async function MitgliederDashboard() {
           quizResult={member.quiz_result}
         />
 
+        {/* Fortschritts-Kreis */}
         <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 mb-6">
-          <div className="flex items-baseline justify-between mb-2">
-            <p className="text-[13px] font-semibold text-[#1a1a1a]">Dein Fortschritt</p>
-            <p className="text-[12px] text-[#8B7355] font-medium">
-              {unlockedCount} / {modules.length} freigeschaltet
-            </p>
-          </div>
-          <div className="h-2 bg-[#F3F4F6] rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[#C4A576] transition-all"
-              style={{
-                width:
-                  modules.length === 0
-                    ? "0%"
-                    : `${(unlockedCount / modules.length) * 100}%`,
-              }}
-            />
-          </div>
+          <ProgressCircle
+            current={unlockedCount}
+            total={modules.length}
+            label="Dein Fortschritt"
+            sublabel={
+              unlockedCount === modules.length && modules.length > 0
+                ? "Alle Module freigeschaltet — gratuliere!"
+                : `${modules.length - unlockedCount} Module folgen noch`
+            }
+          />
         </div>
 
+        {/* Wochen-Plan */}
         <div className="mb-8">
           <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-3">
-            Deine Trainings-Module
+            Dein Trainings-Plan, Woche für Woche
           </h2>
-          <ModuleGrid modules={modules} isPaid={true} />
+          <WeekOverview weeks={weeks} isPaid={true} />
         </div>
 
         {upsells.length > 0 && <UpsellSection upsells={upsells} />}
@@ -199,19 +198,23 @@ export default async function MitgliederDashboard() {
         </Link>
       </div>
 
-      {/* Locked Modules als Vorschau — User sieht was er verpasst */}
-      <div className="mb-8">
-        <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-1">
-          Was im vollen Plan auf dich wartet
-        </h2>
-        <p className="text-[13px] text-[#6B7280] mb-4">
-          Eine kleine Vorschau auf weitere Module:
-        </p>
-        <ModuleGrid
-          modules={modules.filter((m) => !m.is_free)}
-          isPaid={false}
-        />
-      </div>
+      {/* Wochen-Plan-Vorschau — User sieht WIE der Plan aufgebaut ist */}
+      {(() => {
+        const lockedWeeks = groupModulesByWeek(modules.filter((m) => !m.is_free));
+        if (lockedWeeks.length === 0) return null;
+        return (
+          <div className="mb-8">
+            <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-1">
+              So ist dein Plan aufgebaut
+            </h2>
+            <p className="text-[13px] text-[#6B7280] mb-4">
+              Schritt für Schritt, Woche für Woche — kein Zufall, sondern
+              ein klarer Pfad für {dog}.
+            </p>
+            <WeekOverview weeks={lockedWeeks} isPaid={false} />
+          </div>
+        );
+      })()}
 
       {/* Trust-Section am Ende: Trainer-Team-Foto + Support-Hinweis */}
       <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 mb-4">
