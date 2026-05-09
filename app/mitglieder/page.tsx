@@ -14,6 +14,7 @@ import {
 } from "@/lib/member-db";
 import FirstExerciseCard from "@/components/mitglieder/FirstExerciseCard";
 import ModuleGrid from "@/components/mitglieder/ModuleGrid";
+import { PROBLEM_IMAGE } from "@/lib/member-images";
 
 export const dynamic = "force-dynamic";
 
@@ -141,19 +142,41 @@ export default async function MitgliederDashboard() {
         </div>
       )}
 
-      {/* Quiz-Echo wenn vorhanden — dezent, kein Hard-Sell */}
+      {/* Quiz-Echo mit Bild — emotionaler Trigger durch Wiedererkennung */}
       {problemLabel && (
-        <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 mb-8">
-          <p className="text-[11px] font-bold text-[#8B7355] uppercase tracking-wider mb-2">
-            Aus deinem Quiz
-          </p>
-          <p className="text-[14px] text-[#1a1a1a] leading-relaxed mb-3">
-            Du hast uns erzählt: {dog} hat Themen mit{" "}
-            <strong>{problemLabel}</strong>. Genau dafür haben wir Übungen
-            zusammengestellt — die meisten siehst du als Vorschau weiter unten.
-          </p>
+        <div className="bg-white border border-[#EADDC5] rounded-2xl overflow-hidden mb-8 flex flex-col sm:flex-row">
+          {PROBLEM_IMAGE[problemKey] && (
+            <div className="relative sm:w-40 h-32 sm:h-auto sm:flex-shrink-0 bg-[#FAF4E8]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={PROBLEM_IMAGE[problemKey]}
+                alt={problemLabel}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+          )}
+          <div className="p-5 flex-1">
+            <p className="text-[11px] font-bold text-[#8B7355] uppercase tracking-wider mb-2">
+              Aus deinem Quiz
+            </p>
+            <p className="text-[14px] text-[#1a1a1a] leading-relaxed">
+              Du hast uns erzählt, dass {dog} mit{" "}
+              <strong>„{problemLabel}"</strong> kämpft. Wir kennen das gut —
+              du bist nicht allein damit. Genau für dieses Thema haben wir
+              Schritt-für-Schritt-Übungen zusammengestellt.
+            </p>
+          </div>
         </div>
       )}
+
+      {/* Sozialer Beweis — wirkt am Anfang der Customer Journey besonders */}
+      <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl px-5 py-3.5 mb-8 flex items-center gap-3">
+        <div className="text-2xl leading-none flex-shrink-0">🐾</div>
+        <p className="text-[13px] text-[#15803D] leading-relaxed">
+          <strong className="text-[#166534]">Über 5.000 Hundebesitzer</strong>{" "}
+          trainieren bereits mit Pfoten-Plan. Schön, dass du dazugehörst.
+        </p>
+      </div>
 
       {/* Weitere Free-Übungen falls mehr als eine */}
       {modules.filter((m) => m.is_free).length > 1 && (
@@ -190,7 +213,7 @@ export default async function MitgliederDashboard() {
       </div>
 
       {/* Locked Modules als Vorschau — User sieht was er verpasst */}
-      <div>
+      <div className="mb-8">
         <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-1">
           Was im vollen Plan auf dich wartet
         </h2>
@@ -201,6 +224,29 @@ export default async function MitgliederDashboard() {
           modules={modules.filter((m) => !m.is_free)}
           isPaid={false}
         />
+      </div>
+
+      {/* Trust-Section am Ende: Trainer-Team-Foto + Support-Hinweis */}
+      <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 mb-4">
+        <div className="flex items-center gap-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/TrainerPfoten-thumb.png"
+            alt="Pfoten-Plan Trainer-Team"
+            className="w-16 h-16 rounded-full object-cover border-2 border-[#C4A576] flex-shrink-0"
+          />
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
+              Dein Trainer-Team
+            </p>
+            <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight mb-1">
+              Wir helfen dir jederzeit weiter
+            </p>
+            <p className="text-[12px] text-[#6B7280] leading-relaxed">
+              Echte Hundetrainer · persönlich, 24/7
+            </p>
+          </div>
+        </div>
       </div>
     </>
   );
