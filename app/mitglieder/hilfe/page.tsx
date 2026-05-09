@@ -8,10 +8,10 @@ interface Message {
 }
 
 const SUGGESTED_QUESTIONS = [
-  "Wie übe ich „Sitz" mit meinem Hund am besten?",
-  "Mein Hund zieht an der Leine — was hilft sofort?",
-  "Wie lange sollte eine Trainings-Session dauern?",
-  "Mein Hund hört nicht auf seinen Namen draußen.",
+  'Wie übe ich „Sitz" mit meinem Hund am besten?',
+  'Mein Hund zieht an der Leine — was hilft sofort?',
+  'Wie lange sollte eine Trainings-Session dauern?',
+  'Mein Hund hört nicht auf seinen Namen draußen.',
 ];
 
 export default function HilfePage() {
