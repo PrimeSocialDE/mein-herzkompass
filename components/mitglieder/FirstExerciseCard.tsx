@@ -42,7 +42,7 @@ export default function FirstExerciseCard({
     <div className="bg-white rounded-2xl border border-[#EADDC5] shadow-[0_2px_12px_rgba(139,115,85,0.06)] overflow-hidden">
       {/* Bild-Header (visuell warm, emotional). Aspect-Ratio damit das
           Bild vollständig sichtbar ist, kein Abschneiden. */}
-      <div className="relative aspect-[5/4] sm:aspect-[16/10] overflow-hidden bg-[#FAF4E8]">
+      <div className="relative aspect-[5/4] md:aspect-[4/3] overflow-hidden bg-[#FAF4E8]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imageUrl}
