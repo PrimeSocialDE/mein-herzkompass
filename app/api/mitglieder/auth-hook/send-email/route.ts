@@ -109,10 +109,12 @@ function extractFirstName(email: string): string {
   return candidate.charAt(0).toUpperCase() + candidate.slice(1).toLowerCase();
 }
 
-function buildHtml(p: SupabaseEmailHookPayload, link: string): string {
+function buildHtml(p: SupabaseEmailHookPayload, link: string, code: string): string {
   const firstName = extractFirstName(p.user.email);
   const heading = buildHeading(p, firstName);
   const subtitle = buildSubtitle(p);
+  // Code fuer bessere Lesbarkeit gruppieren: 482591 → 482 591
+  const codePretty = code.length === 6 ? `${code.slice(0, 3)} ${code.slice(3)}` : code;
 
   return `<!DOCTYPE html>
 <html lang="de"><head>
@@ -137,7 +139,7 @@ function buildHtml(p: SupabaseEmailHookPayload, link: string): string {
     <p style="font-size:15px;color:#4B5563;margin:0 0 24px;line-height:1.55;">${subtitle}</p>
 
     <!-- Big CTA Button -->
-    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 20px;width:100%;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 16px;width:100%;">
       <tr><td align="center">
         <a href="${link}" target="_blank" style="display:inline-block;background:#C4A576;color:#ffffff;text-decoration:none;padding:16px 36px;border-radius:12px;font-size:15px;font-weight:700;box-shadow:0 2px 4px rgba(139,115,85,0.25);">
           Jetzt einloggen →
@@ -145,9 +147,14 @@ function buildHtml(p: SupabaseEmailHookPayload, link: string): string {
       </td></tr>
     </table>
 
-    <!-- Plain Link Fallback -->
-    <p style="font-size:11px;color:#9CA3AF;text-align:center;margin:0 0 4px;">Button funktioniert nicht? Kopier diesen Link in deinen Browser:</p>
-    <p style="font-size:11px;color:#8B7355;text-align:center;margin:0;word-break:break-all;line-height:1.4;">${link}</p>
+    <!-- 6-stelliger Code als Alternative -->
+    <div style="text-align:center;margin:18px 0 6px;">
+      <p style="font-size:12px;color:#9CA3AF;margin:0 0 8px;">— oder Code eingeben —</p>
+      <div style="display:inline-block;background:#FFF9F0;border:2px dashed #C4A576;border-radius:10px;padding:14px 24px;font-family:'SF Mono','Monaco','Courier New',monospace;font-size:28px;font-weight:800;color:#1a1a1a;letter-spacing:6px;">
+        ${codePretty}
+      </div>
+      <p style="font-size:11px;color:#9CA3AF;margin:8px 0 0;line-height:1.4;">Auf <a href="https://www.pfoten-plan.de/mitglieder/login" style="color:#8B7355;text-decoration:underline;">pfoten-plan.de/mitglieder/login</a> eintragen</p>
+    </div>
 
   </div>
 
@@ -188,9 +195,10 @@ function buildHtml(p: SupabaseEmailHookPayload, link: string): string {
 </body></html>`;
 }
 
-function buildPlainText(p: SupabaseEmailHookPayload, link: string): string {
+function buildPlainText(p: SupabaseEmailHookPayload, link: string, code: string): string {
   const firstName = extractFirstName(p.user.email);
   const greeting = firstName ? `Hi ${firstName},` : "Hi,";
+  const codePretty = code.length === 6 ? `${code.slice(0, 3)} ${code.slice(3)}` : code;
   return `${greeting}
 
 mit einem Klick bist du in deinem Pfoten-Plan Mitgliederbereich — kein Passwort, kein Tippen.
@@ -198,12 +206,16 @@ mit einem Klick bist du in deinem Pfoten-Plan Mitgliederbereich — kein Passwor
 Login-Link:
 ${link}
 
+ODER nutze diesen 6-stelligen Code auf pfoten-plan.de/mitglieder/login:
+
+  ${codePretty}
+
 So einfach geht's:
-1. Klick auf den Link oben
+1. Klick auf den Link oben (oder gib den Code ein)
 2. Du landest direkt in deinem Mitgliederbereich
 3. Fertig
 
-Der Link gilt 1 Stunde und ist nur für dich. Falls du das nicht warst — einfach ignorieren.
+Link + Code gelten 1 Stunde und sind nur für dich. Falls du das nicht warst — einfach ignorieren.
 
 Fragen? support@pfoten-plan.de
 
@@ -284,8 +296,11 @@ export async function POST(req: NextRequest) {
   }
 
   const subject = buildSubject(payload);
-  const html = buildHtml(payload, link);
-  const text = buildPlainText(payload, link);
+  // payload.email_data.token ist der 6-stellige OTP-Code,
+  // token_hash ist der laengere Hash fuer den Magic-Link.
+  const code = payload.email_data.token || "";
+  const html = buildHtml(payload, link, code);
+  const text = buildPlainText(payload, link, code);
 
   try {
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {

@@ -1,16 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createMemberBrowserClient } from "@/lib/member-auth";
 
+type Stage = "idle" | "loading" | "sent" | "verifying" | "error";
+
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
+  const [code, setCode] = useState("");
+  const [stage, setStage] = useState<Stage>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function sendLink(e: React.FormEvent) {
     e.preventDefault();
-    setStatus("loading");
+    setStage("loading");
     setErrorMsg("");
 
     const supabase = createMemberBrowserClient();
@@ -20,16 +25,53 @@ export default function LoginPage() {
         : undefined;
 
     const { error } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
+      email: email.trim().toLowerCase(),
       options: { emailRedirectTo: redirectTo, shouldCreateUser: true },
     });
 
     if (error) {
-      setStatus("error");
+      setStage("error");
       setErrorMsg(error.message || "Konnte Login-Mail nicht verschicken.");
       return;
     }
-    setStatus("sent");
+    setStage("sent");
+  }
+
+  async function verifyCode(e: React.FormEvent) {
+    e.preventDefault();
+    const cleaned = code.replace(/\s/g, "");
+    if (cleaned.length !== 6) {
+      setErrorMsg("Code muss 6 Stellen haben.");
+      return;
+    }
+    setStage("verifying");
+    setErrorMsg("");
+
+    const supabase = createMemberBrowserClient();
+    const { data, error } = await supabase.auth.verifyOtp({
+      email: email.trim().toLowerCase(),
+      token: cleaned,
+      type: "email",
+    });
+
+    if (error || !data?.session) {
+      setStage("sent");
+      setErrorMsg(
+        error?.message?.includes("expired")
+          ? "Code abgelaufen. Schick dir einen neuen Link."
+          : "Code stimmt nicht. Pruefe nochmal in der Mail."
+      );
+      return;
+    }
+    // Session ist gesetzt → ab ins Dashboard
+    router.push("/mitglieder");
+    router.refresh();
+  }
+
+  function reset() {
+    setStage("idle");
+    setCode("");
+    setErrorMsg("");
   }
 
   return (
@@ -39,23 +81,76 @@ export default function LoginPage() {
           Anmelden
         </h1>
         <p className="text-[14px] text-[#6B7280] leading-relaxed mb-6">
-          Trag deine E-Mail ein. Wir schicken dir einen Link — ein Klick und du
-          bist drin. Kein Passwort nötig.
+          Trag deine E-Mail ein. Wir schicken dir einen Login-Link plus einen
+          6-stelligen Code — egal womit du lieber arbeitest.
         </p>
 
-        {status === "sent" ? (
-          <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl p-5 text-center">
-            <div className="text-3xl mb-2">📩</div>
-            <p className="text-[15px] font-bold text-[#166534] mb-1">
-              Mail unterwegs
-            </p>
-            <p className="text-[13px] text-[#15803D] leading-relaxed">
-              Schau in deinen Posteingang ({email}) und klick den Link.
-              Manchmal landet er im Spam.
-            </p>
-          </div>
+        {stage === "sent" || stage === "verifying" ? (
+          <>
+            {/* Bestaetigung */}
+            <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl p-4 mb-5 text-center">
+              <div className="text-[28px] mb-1">📩</div>
+              <p className="text-[14px] font-bold text-[#166534] mb-1">
+                Mail unterwegs an {email}
+              </p>
+              <p className="text-[12px] text-[#15803D] leading-relaxed">
+                Klick einfach auf den Button in der Mail. Manchmal landet sie
+                im Spam.
+              </p>
+            </div>
+
+            {/* Alternative: Code eingeben */}
+            <form onSubmit={verifyCode} className="space-y-3">
+              <div>
+                <label className="block text-[12px] font-medium text-[#6B7280] mb-1.5">
+                  Lieber den 6-stelligen Code aus der Mail eingeben?
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9 ]*"
+                  maxLength={7}
+                  autoComplete="one-time-code"
+                  placeholder="123 456"
+                  value={code}
+                  onChange={(e) =>
+                    setCode(
+                      e.target.value
+                        .replace(/[^0-9]/g, "")
+                        .slice(0, 6)
+                        .replace(/(\d{3})(\d{0,3})/, "$1 $2")
+                        .trim()
+                    )
+                  }
+                  className="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] bg-white text-[20px] font-bold tracking-widest text-center font-mono focus:outline-none focus:border-[#C4A576] focus:ring-3 focus:ring-[#C4A576]/15 transition"
+                />
+              </div>
+
+              {errorMsg && (
+                <div className="bg-[#FEF2F2] border border-[#FECACA] text-[#B91C1C] text-[12px] rounded-lg px-3 py-2">
+                  {errorMsg}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={stage === "verifying" || code.replace(/\s/g, "").length !== 6}
+                className="w-full bg-[#C4A576] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 px-5 rounded-xl text-[14px] shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
+              >
+                {stage === "verifying" ? "Prüfe Code…" : "Code prüfen → Einloggen"}
+              </button>
+
+              <button
+                type="button"
+                onClick={reset}
+                className="w-full text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a] py-1"
+              >
+                Andere E-Mail verwenden
+              </button>
+            </form>
+          </>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={sendLink} className="space-y-4">
             <div>
               <label className="block text-[12px] font-medium text-[#6B7280] mb-1.5">
                 E-Mail
@@ -80,16 +175,25 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={status === "loading"}
+              disabled={stage === "loading"}
               className="w-full bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-3.5 px-5 rounded-xl text-[15px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)] disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {status === "loading" ? "Sende Link..." : "Login-Link senden"}
+              {stage === "loading" ? "Sende Link…" : "Login-Link senden"}
             </button>
 
-            <p className="text-[11px] text-[#9CA3AF] text-center pt-2">
+            <p className="text-[11px] text-[#9CA3AF] text-center pt-2 leading-relaxed">
               Noch kein Konto? Wird automatisch erstellt — du musst nichts
               extra ausfüllen.
             </p>
+
+            {/* Trust-Hinweis: lange Sessions */}
+            <div className="bg-[#FFF9F0] border border-[#EADDC5] rounded-xl px-4 py-3 mt-3 flex items-start gap-2">
+              <span className="text-[16px] flex-shrink-0">🔒</span>
+              <p className="text-[11px] text-[#5A4A3A] leading-relaxed">
+                Auf diesem Gerät bleibst du <strong>30 Tage eingeloggt</strong> —
+                kein ständiges Mail-Pingpong.
+              </p>
+            </div>
           </form>
         )}
       </div>
