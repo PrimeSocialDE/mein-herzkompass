@@ -32,7 +32,7 @@ const PLANS: PlanOption[] = [
     popular: false,
     badge: "Intensiv",
     tagline: "Erste Erfolge in 4 Wochen",
-    image: "/plan-1m-placeholder.svg",
+    image: "/1Monat.png",
     bullets: [
       { icon: "⚡", text: "Täglich kurz trainieren" },
       { icon: "🎯", text: "Basis-Übungen für 1 Thema" },
@@ -48,7 +48,7 @@ const PLANS: PlanOption[] = [
     popular: true,
     badge: "Beliebt",
     tagline: "Im Wohlfühl-Tempo, klare Ergebnisse",
-    image: "/plan-3m-placeholder.svg",
+    image: "/3Monat.png",
     bullets: [
       { icon: "📚", text: "Mehr Übungen für mehr Tiefe" },
       { icon: "🌿", text: "3× pro Woche reicht" },
@@ -64,7 +64,7 @@ const PLANS: PlanOption[] = [
     popular: false,
     badge: "Komplett",
     tagline: "Ganz in Ruhe, richtig beherrschen",
-    image: "/plan-6m-placeholder.svg",
+    image: "/6Monat.png",
     bullets: [
       { icon: "🐾", text: "Alle Übungen — wirklich vertiefen" },
       { icon: "🌳", text: "Alle 10 Themen-Module inklusive" },
@@ -146,8 +146,8 @@ export default function PlanOptionsCard({
                   : "border-[#EADDC5]"
               }`}
             >
-              {/* Image-Header */}
-              <div className="relative aspect-[16/9] bg-[#FAF4E8] overflow-hidden">
+              {/* Image-Header (4:3 — echte Bilder sind 1600x1200) */}
+              <div className="relative aspect-[4/3] bg-[#FAF4E8] overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={p.image}
