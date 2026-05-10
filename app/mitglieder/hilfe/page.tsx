@@ -94,29 +94,20 @@ export default function HilfePage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-160px)] md:h-[calc(100vh-100px)]">
-      {/* Header: KI-Trainer von Pfoten-Plan — transparent gerahmt damit
-          rechtlich sauber (keine Verwechslung mit echtem Live-Chat). */}
-      <div className="bg-white border border-[#EADDC5] rounded-2xl p-4 mb-3 flex items-center gap-3">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={TRAINER_AVATAR}
-          alt="Pfoten-Plan KI-Trainer"
-          className="w-12 h-12 rounded-full object-cover border-2 border-[#C4A576] flex-shrink-0"
-        />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-            <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight">
-              Pfoten-Plan KI-Trainer
-            </p>
-            <span className="inline-flex items-center gap-1 text-[10px] text-[#15803D] font-semibold">
-              <span className="w-1.5 h-1.5 bg-[#22C55E] rounded-full"></span>
-              24/7 verfügbar
-            </span>
-          </div>
-          <p className="text-[11px] text-[#6B7280] leading-snug">
-            Unsere KI, trainiert mit dem Wissen unseres Hundetrainer-Teams
+      {/* Header: KI-Trainer von Pfoten-Plan — clean ohne Foto */}
+      <div className="bg-white border border-[#EADDC5] rounded-2xl px-4 py-3 mb-3">
+        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+          <p className="text-[15px] font-bold text-[#1a1a1a] leading-tight">
+            Pfoten-Plan KI-Trainer
           </p>
+          <span className="inline-flex items-center gap-1 text-[10px] text-[#15803D] font-semibold">
+            <span className="w-1.5 h-1.5 bg-[#22C55E] rounded-full"></span>
+            24/7 verfügbar
+          </span>
         </div>
+        <p className="text-[11px] text-[#6B7280] leading-snug">
+          Unsere KI, trainiert mit dem Wissen unseres Hundetrainer-Teams
+        </p>
       </div>
 
       {/* Chat-Area */}
@@ -213,6 +204,19 @@ export default function HilfePage() {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </form>
+
+      {/* Team-Hinweis ganz unten — kleines Foto statt prominenter Header */}
+      <div className="flex items-center gap-2 mt-2 mb-1 text-[#9CA3AF]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={TRAINER_AVATAR}
+          alt="Pfoten-Plan Trainer-Team"
+          className="w-7 h-7 rounded-full object-cover flex-shrink-0 opacity-80"
+        />
+        <p className="text-[10px] leading-snug">
+          KI trainiert vom echten Pfoten-Plan Trainer-Team
+        </p>
+      </div>
 
       {/* Usage-Hinweis (nur Free-User, nur wenn schon mind. eine Frage gestellt) */}
       {usage && usage.remaining > 0 && (
