@@ -276,30 +276,74 @@ export default function CheckoutModal({
         {/* Stages */}
         {stage === "select" && (
           <div className="space-y-2">
+            {/* Karte */}
             <button
               onClick={() => setStage("card")}
-              className="w-full bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-3 px-5 rounded-xl text-[14px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)] flex items-center justify-center gap-2"
+              className="w-full bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-3 px-4 rounded-xl text-[14px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)] flex items-center justify-center gap-3"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-              Mit Karte bezahlen
+              <span>Mit Karte bezahlen</span>
+              <span className="flex items-center gap-1.5 opacity-95">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/visa-logo.png" alt="Visa" className="h-4 w-auto bg-white rounded px-1 py-0.5" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/mastercard-logo.png" alt="Mastercard" className="h-4 w-auto bg-white rounded px-1 py-0.5" />
+              </span>
             </button>
+
+            {/* PayPal */}
             <button
               onClick={() => payWithRedirect("paypal")}
               disabled={loading}
-              className="w-full bg-[#FFC439] hover:bg-[#F0B82E] disabled:opacity-60 text-[#003087] font-bold py-3 px-5 rounded-xl text-[14px] transition"
+              className="w-full bg-[#FFC439] hover:bg-[#F0B82E] disabled:opacity-60 py-3 px-4 rounded-xl transition flex items-center justify-center"
+              aria-label="Mit PayPal bezahlen"
             >
-              PayPal
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/paypal-logo.png" alt="PayPal" className="h-5 w-auto" />
             </button>
+
+            {/* Apple Pay */}
+            <button
+              onClick={() => payWithRedirect("applepay")}
+              disabled={loading}
+              className="w-full bg-black hover:bg-[#1a1a1a] disabled:opacity-60 py-3 px-4 rounded-xl transition flex items-center justify-center"
+              aria-label="Mit Apple Pay bezahlen"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/applepay.png" alt="Apple Pay" className="h-5 w-auto invert" />
+            </button>
+
+            {/* SEPA */}
             <button
               onClick={() => payWithRedirect("directdebit")}
               disabled={loading}
-              className="w-full bg-[#FAFAFA] hover:bg-[#F0EBE3] border border-[#EADDC5] text-[#1a1a1a] font-semibold py-3 px-5 rounded-xl text-[14px] transition"
+              className="w-full bg-[#FAFAFA] hover:bg-[#F0EBE3] border border-[#EADDC5] text-[#1a1a1a] font-semibold py-3 px-4 rounded-xl text-[14px] transition flex items-center justify-center gap-2"
             >
-              SEPA-Lastschrift
+              <span>SEPA-Lastschrift</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/sepa-logo.png" alt="SEPA" className="h-4 w-auto" />
             </button>
-            <p className="text-[10px] text-[#9CA3AF] text-center pt-2">
-              🔒 Sichere Zahlung über Mollie · {email}
-            </p>
+
+            {/* Trust-Badge */}
+            <div className="pt-3 mt-1 border-t border-[#F0EBE3]">
+              <p className="text-[10px] text-[#9CA3AF] text-center mb-2">
+                🔒 SSL-verschlüsselt · Zahlung verarbeitet von Mollie
+              </p>
+              <div className="flex items-center justify-center gap-2 opacity-70">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/visa-logo.png" alt="Visa" className="h-3.5 w-auto" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/mastercard-logo.png" alt="Mastercard" className="h-3.5 w-auto" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/paypal-logo.png" alt="PayPal" className="h-3 w-auto" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/applepay.png" alt="Apple Pay" className="h-3 w-auto" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/sepa-logo.png" alt="SEPA" className="h-3 w-auto" />
+              </div>
+              <p className="text-[10px] text-[#9CA3AF] text-center mt-2">
+                Quittung an: {email}
+              </p>
+            </div>
           </div>
         )}
 
