@@ -137,18 +137,7 @@ export default async function MitgliederDashboard() {
 
   return (
     <>
-      {/* HERO-Banner: edge-to-edge, 16:9 — traegt den Marken-Claim */}
-      <div className="mb-4 -mx-4 md:-mx-8 md:mt-[-10px]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/HeroPlan.jpg"
-          alt={dogPossessive ? `${dogPossessive} Plan` : "Dein Plan"}
-          className="w-full aspect-[16/9] object-cover md:rounded-2xl"
-        />
-      </div>
-
-      {/* Slim personal Greeting + Sozialer Beweis in einer Zeile —
-          keine Doppelung mit Hero-Bild oder ExerciseCard-Eyebrow */}
+      {/* Slim personal Greeting + Sozialer Beweis in einer Zeile */}
       <div className="mb-5 flex items-center gap-3 flex-wrap">
         <p className="text-[14px] font-semibold text-[#1a1a1a]">
           {greeting}
@@ -166,13 +155,15 @@ export default async function MitgliederDashboard() {
         </span>
       </div>
 
-      {/* HERO: Erste Übung als Inhalt — DAS ist der Wow-Moment */}
+      {/* HERO: Erste Übung als Inhalt — DAS ist der Wow-Moment.
+          HeroPlan.jpg statt Default-Bild damit Marken-Claim mit drin ist. */}
       {firstFreeFull && (
         <div className="mb-8">
           <FirstExerciseCard
             module={firstFreeFull as any}
             dogName={member.dog_name}
             dogBreed={member.dog_breed}
+            imageOverride="/HeroPlan.jpg"
           />
         </div>
       )}

@@ -25,17 +25,20 @@ export default function FirstExerciseCard({
   module,
   dogName,
   dogBreed,
+  imageOverride,
 }: {
   module: ModulePreview;
   dogName?: string | null;
   dogBreed?: string | null;
+  imageOverride?: string | null;
 }) {
   const dog = dogName?.trim() || "deinem Hund";
   const dogPossessive = dogName?.trim() ? `${dogName}s` : "Eure";
   const sections: ContentSection[] = Array.isArray(module.content?.sections)
     ? module.content.sections
     : [];
-  const imageUrl = imageForModule(module.slug, module.content?.image_url);
+  const imageUrl =
+    imageOverride || imageForModule(module.slug, module.content?.image_url);
 
   // Erste 2 Sections inline zeigen, Rest hinter "Komplett ansehen"
   const visibleSections = sections.slice(0, 2);
