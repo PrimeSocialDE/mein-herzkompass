@@ -14,17 +14,17 @@ const PRODUCT_PRICES: Record<string, number> = {
   abo: 999,
   reise: 1999,
   erstehilfe: 1499,
-  // Themen-Module (siehe lib/member-themen.ts)
-  "thema-leinen": 999,
-  "thema-bellen": 999,
+  // Themen-Module (siehe lib/member-themen.ts) — alle einheitlich 14,99
+  "thema-leinen": 1499,
+  "thema-bellen": 1499,
   "thema-aggression": 1499,
-  "thema-trennungsangst": 999,
-  "thema-anspringen": 999,
-  "thema-rueckruf": 999,
-  "thema-energie": 999,
-  "thema-zerstoerung": 999,
-  "thema-stubenrein": 999,
-  "thema-aufnehmen": 999,
+  "thema-trennungsangst": 1499,
+  "thema-anspringen": 1499,
+  "thema-rueckruf": 1499,
+  "thema-energie": 1499,
+  "thema-zerstoerung": 1499,
+  "thema-stubenrein": 1499,
+  "thema-aufnehmen": 1499,
 };
 
 const PRODUCT_NAMES: Record<string, string> = {

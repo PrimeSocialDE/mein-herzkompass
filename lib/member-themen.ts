@@ -15,7 +15,7 @@ export interface ThemenModule {
   badge_text: string | null;
 }
 
-const DEFAULT_PRICE = 999; // 9,99 Euro pro Themen-Modul
+const DEFAULT_PRICE = 1499; // 14,99 Euro pro Themen-Modul
 
 export const THEMEN_MODULES: ThemenModule[] = [
   {
@@ -63,7 +63,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
     ],
     emoji: "🛡️",
     image_url: "/Agression.png",
-    price_cents: 1499,
+    price_cents: DEFAULT_PRICE,
     problem_match: "aggression",
     badge_text: "Ausführlich",
   },

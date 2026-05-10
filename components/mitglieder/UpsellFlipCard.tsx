@@ -2,11 +2,11 @@
 
 // Flip-Karte fuer Modul-Shop. Front: Preview + Preis. Klick auf
 // 'Mehr Infos' dreht die Karte zu Inhaltsliste + Kauf-Button.
-// Kauf oeffnet das CheckoutModal — In-Place via Mollie Components,
-// kein Redirect zu Mollie-Hosted-Page.
+// Kauf laeuft direkt ueber Mollie-Hosted-Checkout (Redirect) —
+// dort kann der User Methode (Karte/PayPal/Apple Pay/SEPA/Klarna)
+// auswaehlen, das ist die polierte Variante.
 
 import { useState } from "react";
-import CheckoutModal from "./CheckoutModal";
 
 interface Upsell {
   id: string;
@@ -36,10 +36,36 @@ export default function UpsellFlipCard({
   dogName,
 }: Props) {
   const [flipped, setFlipped] = useState(false);
-  const [showCheckout, setShowCheckout] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  function handleBuy() {
-    setShowCheckout(true);
+  async function handleBuy() {
+    if (loading) return;
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/mollie/upsell-product-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: upsell.slug,
+          email,
+          leadId: leadId || "",
+          dogName: dogName || undefined,
+          returnUrl: window.location.pathname,
+        }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setError(data.error || "Konnte Checkout nicht starten");
+        setLoading(false);
+      }
+    } catch (e) {
+      setError("Verbindungsfehler. Versuch's gleich nochmal.");
+      setLoading(false);
+    }
   }
 
   const priceFormatted = `€${(upsell.price_cents / 100)
@@ -138,27 +164,18 @@ export default function UpsellFlipCard({
 
           <button
             onClick={handleBuy}
-            className="w-full bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-2 px-3 rounded-lg text-[12px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
+            disabled={loading}
+            className="w-full bg-[#C4A576] disabled:opacity-60 text-white font-semibold py-2 px-3 rounded-lg text-[12px] shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
           >
-            Für {priceFormatted} kaufen
+            {loading ? "Lade…" : `Für ${priceFormatted} kaufen`}
           </button>
+          {error && (
+            <p className="text-[10px] text-[#B91C1C] text-center mt-1">
+              {error}
+            </p>
+          )}
         </div>
       </div>
-
-      {showCheckout && (
-        <CheckoutModal
-          upsell={{
-            slug: upsell.slug,
-            title: upsell.title,
-            price_cents: upsell.price_cents,
-            emoji,
-          }}
-          email={email}
-          leadId={leadId}
-          dogName={dogName}
-          onClose={() => setShowCheckout(false)}
-        />
-      )}
     </div>
   );
 }
