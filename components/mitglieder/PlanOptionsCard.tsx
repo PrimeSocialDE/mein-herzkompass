@@ -19,6 +19,7 @@ interface PlanOption {
   badge: string | null;
   tagline: string;
   image: string;
+  bullets: { icon: string; text: string }[];
 }
 
 const PLANS: PlanOption[] = [
@@ -29,9 +30,14 @@ const PLANS: PlanOption[] = [
     price: "29,99",
     daily: "99 Cent",
     popular: false,
-    badge: "Quick-Start",
+    badge: "Intensiv",
     tagline: "Erste Erfolge in 4 Wochen",
     image: "/plan-1m-placeholder.svg",
+    bullets: [
+      { icon: "⚡", text: "Täglich kurz trainieren" },
+      { icon: "🎯", text: "Voller Fokus auf 1 Thema" },
+      { icon: "💪", text: "Schnelles Ergebnis" },
+    ],
   },
   {
     key: "3month",
@@ -41,8 +47,13 @@ const PLANS: PlanOption[] = [
     daily: "44 Cent",
     popular: true,
     badge: "Beliebt",
-    tagline: "Vollständiges Training in 12 Wochen",
+    tagline: "Im Wohlfühl-Tempo, klare Ergebnisse",
     image: "/plan-3m-placeholder.svg",
+    bullets: [
+      { icon: "🌿", text: "3× pro Woche reicht" },
+      { icon: "📚", text: "Mehrere Themen abgedeckt" },
+      { icon: "⚖️", text: "Gut machbarer Aufwand" },
+    ],
   },
   {
     key: "6month",
@@ -52,8 +63,13 @@ const PLANS: PlanOption[] = [
     daily: "33 Cent",
     popular: false,
     badge: "Komplett",
-    tagline: "6 Monate Tiefgang, alle Themen drin",
+    tagline: "Ganz in Ruhe, alle Themen dabei",
     image: "/plan-6m-placeholder.svg",
+    bullets: [
+      { icon: "🛋️", text: "Im eigenen Tempo, kein Druck" },
+      { icon: "🌳", text: "Alle 10 Themen-Module inklusive" },
+      { icon: "🐕", text: "Auch für sensible Hunde" },
+    ],
   },
 ];
 
@@ -156,6 +172,19 @@ export default function PlanOptionsCard({
                 <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight mb-2">
                   {p.tagline}
                 </p>
+
+                {/* 3 Differenzierungs-Bullets pro Plan */}
+                <ul className="space-y-1 mb-3">
+                  {p.bullets.map((b, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-1.5 text-[12px] text-[#4B5563] leading-snug"
+                    >
+                      <span className="flex-shrink-0">{b.icon}</span>
+                      <span>{b.text}</span>
+                    </li>
+                  ))}
+                </ul>
 
                 <div className="flex items-baseline gap-1">
                   <span className="text-[26px] font-extrabold text-[#1a1a1a]">
