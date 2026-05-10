@@ -66,6 +66,13 @@ const UPSELL_EMOJI: Record<string, string> = {
   tagebuch: "📖",
 };
 
+// Slug-basiertes Image-Override fuer DB-Upsells (member_upsells.image_url
+// kann leer sein — hier sind die hardcoded Fallbacks pro Slug).
+const UPSELL_IMAGE: Record<string, string> = {
+  zweithund: "/zweithund.png",
+  reise: "/reise.png",
+};
+
 function featuresFor(slug: string, description: string | null): string[] {
   if (UPSELL_FEATURES[slug]) return UPSELL_FEATURES[slug];
   if (description) {
@@ -204,7 +211,7 @@ export default async function ModulShopPage() {
                   description: u.description,
                   badge_text: u.badge_text,
                   price_cents: u.price_cents,
-                  image_url: u.image_url,
+                  image_url: UPSELL_IMAGE[u.slug] || u.image_url || null,
                 }}
                 features={featuresFor(u.slug, u.description)}
                 emoji={UPSELL_EMOJI[u.slug] || "🎁"}
