@@ -11,6 +11,9 @@ export interface ContentSection {
   items?: string[];
 }
 
+// Konvention im Pfoten-Plan: jede Uebung hat IMMER 5 Schritte.
+// Fallback haelt sich dran damit User keinen Unterschied zur echten
+// Anleitung sieht.
 export function buildExerciseFallback(dog: string): ContentSection[] {
   return [
     {
@@ -25,8 +28,18 @@ export function buildExerciseFallback(dog: string): ContentSection[] {
     },
     {
       type: "step",
-      title: "Wiederhole und steigere langsam",
-      content: "Mach das gleiche 3 Mal hintereinander. Erst wenn alle 3 klappen, machst du es einen Tick schwerer (länger, mit mehr Ablenkung).",
+      title: "Wiederhole bis es sicher klappt",
+      content: `Mach das gleiche 3 Mal hintereinander. Solange es noch hakt, bleib auf dieser Stufe. ${dog} braucht die Sicherheit der Wiederholung bevor es weitergeht.`,
+    },
+    {
+      type: "step",
+      title: "Steigere die Schwierigkeit",
+      content: "Erst wenn alle 3 sauber klappen, machst du es einen Tick schwerer: etwas länger, etwas mehr Ablenkung, etwas weiter weg.",
+    },
+    {
+      type: "step",
+      title: "Übe im echten Alltag",
+      content: `Wenn die Übung kontrolliert sitzt, baut ihr sie schrittweise in normale Spaziergänge oder Alltagssituationen ein. Damit ${dog} es nicht nur als 'Trainings-Spiel' kennt.`,
     },
     {
       type: "do",
