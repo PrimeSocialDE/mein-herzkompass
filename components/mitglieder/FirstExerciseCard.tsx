@@ -24,11 +24,14 @@ interface ModulePreview {
 export default function FirstExerciseCard({
   module,
   dogName,
+  dogBreed,
 }: {
   module: ModulePreview;
   dogName?: string | null;
+  dogBreed?: string | null;
 }) {
-  const dog = dogName || "deinem Hund";
+  const dog = dogName?.trim() || "deinem Hund";
+  const dogPossessive = dogName?.trim() ? `${dogName}s` : "Eure";
   const sections: ContentSection[] = Array.isArray(module.content?.sections)
     ? module.content.sections
     : [];
@@ -53,20 +56,27 @@ export default function FirstExerciseCard({
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
         <div className="absolute top-3 left-4 inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full">
           <span className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355]">
-            Deine erste Übung
+            {dogName ? `${dogPossessive} erste Übung` : "Deine erste Übung"}
           </span>
           <span className="text-[10px] text-[#9CA3AF]">·</span>
           <span className="text-[10px] text-[#6B7280] font-medium">5 Min</span>
         </div>
       </div>
 
-      {/* Titel + Beschreibung */}
+      {/* Titel + Personalisierung + Beschreibung */}
       <div className="px-6 pt-5 pb-2">
-        <h2 className="text-[22px] md:text-[26px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
+        <h2 className="text-[26px] md:text-[32px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
           {module.title}
         </h2>
+        <p className="text-[12px] text-[#8B7355] font-semibold mt-1.5 flex items-center gap-1.5">
+          <span className="text-[#C4A576]">→</span>
+          <span>
+            Auf {dog}
+            {dogBreed ? ` (${dogBreed})` : ""} zugeschnitten
+          </span>
+        </p>
         {module.description && (
-          <p className="text-[14px] text-[#6B7280] leading-relaxed mt-2">
+          <p className="text-[14px] text-[#6B7280] leading-relaxed mt-2.5">
             {module.description}
           </p>
         )}

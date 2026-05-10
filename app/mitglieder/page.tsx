@@ -128,41 +128,64 @@ export default async function MitgliederDashboard() {
   }
 
   // ───────────────────────────────────────────────────────────────────
-  // FREE / KEIN PLAN — Welcome-First, Erste Übung, dann dezent Upgrade
+  // FREE / KEIN PLAN — Wow-First: erste Uebung sofort sichtbar,
+  // Profil erst danach als Kontext, dann dezent Upgrade
   // ───────────────────────────────────────────────────────────────────
-  const welcomeSubtitle = problemLabel
-    ? `Wir helfen ${dog} Schritt für Schritt bei „${problemLabel}".`
-    : `Kleine Übungen, die ${dog} weiterbringen.`;
+  const dogPossessive = member.dog_name?.trim()
+    ? `${member.dog_name.trim()}s`
+    : null;
 
   return (
     <>
-      <Header greeting={greeting} subtitle={welcomeSubtitle} />
+      {/* HERO-Header: gross, persoenlich, outcome-fokussiert */}
+      <div className="mb-5 md:mb-6">
+        <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
+          {greeting}
+        </p>
+        <h1 className="text-[28px] md:text-[36px] font-extrabold tracking-tight text-[#1a1a1a] leading-[1.1]">
+          {dogPossessive ? (
+            <>
+              Hier ist die erste Übung aus{" "}
+              <span className="text-[#C4A576]">{dogPossessive}</span> Plan
+            </>
+          ) : (
+            "Hier ist eure erste Übung"
+          )}
+        </h1>
+        {problemLabel && (
+          <p className="text-[14px] md:text-[15px] text-[#4B5563] mt-2 leading-relaxed">
+            Direkt für euer Thema „<strong className="text-[#1a1a1a]">{problemLabel}</strong>" — sofort umsetzbar.
+          </p>
+        )}
+      </div>
 
-      {/* Hund-Profil prominent — was wir aus Quiz schon wissen */}
-      <DogProfileCard
-        dogName={member.dog_name}
-        dogBreed={member.dog_breed}
-        quizResult={member.quiz_result}
-      />
+      {/* Sozialer Beweis — als kleine Pille DIREKT unter dem Header damit
+          der Trust SOFORT da ist (in den ersten 10 Sek sichtbar) */}
+      <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-full px-4 py-2 mb-5 inline-flex items-center gap-2">
+        <span className="text-[14px]">🐾</span>
+        <p className="text-[12px] text-[#15803D] leading-tight">
+          <strong className="text-[#166534]">5.000+ Hundebesitzer</strong>{" "}
+          trainieren bereits mit Pfoten-Plan
+        </p>
+      </div>
 
-      {/* HERO: Erste Übung als Inhalt — KEIN Pricing! */}
+      {/* HERO: Erste Übung als Inhalt — DAS ist der Wow-Moment */}
       {firstFreeFull && (
         <div className="mb-8">
           <FirstExerciseCard
             module={firstFreeFull as any}
             dogName={member.dog_name}
+            dogBreed={member.dog_breed}
           />
         </div>
       )}
 
-      {/* Sozialer Beweis — kompakt */}
-      <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl px-4 py-3 mb-8 flex items-center gap-3">
-        <span className="text-[20px] flex-shrink-0">🐾</span>
-        <p className="text-[13px] text-[#15803D] leading-snug">
-          <strong className="text-[#166534]">5.000+ Hundebesitzer</strong>{" "}
-          trainieren mit Pfoten-Plan.
-        </p>
-      </div>
+      {/* Hund-Profil — jetzt nach der Wow-Card als Kontext */}
+      <DogProfileCard
+        dogName={member.dog_name}
+        dogBreed={member.dog_breed}
+        quizResult={member.quiz_result}
+      />
 
       {/* Weitere Free-Übungen falls mehr als eine */}
       {modules.filter((m) => m.is_free).length > 1 && (
