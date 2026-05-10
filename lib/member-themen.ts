@@ -174,6 +174,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
       "Sofort als PDF im Postfach",
     ],
     emoji: "🚫",
+    image_url: "/Nichtsvomboden.png",
     price_cents: DEFAULT_PRICE,
     problem_match: "mouthing",
     badge_text: null,
