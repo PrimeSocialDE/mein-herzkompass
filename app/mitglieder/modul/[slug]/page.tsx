@@ -15,6 +15,7 @@ import {
   buildExerciseFallback,
   type ContentSection,
 } from "@/lib/member-exercise-fallback";
+import { imageForModule } from "@/lib/member-images";
 
 export const dynamic = "force-dynamic";
 
@@ -72,6 +73,20 @@ export default async function ModulDetailPage({
       >
         <span>←</span> Zurück zur Übersicht
       </Link>
+
+      {/* Bild-Header (aus imageForModule per Slug — z.B. Augen-SVG fuer
+          Blickkontakt). Schmaler 16:7-Banner damit's Atem hat ohne zu
+          dominieren. */}
+      {isUnlocked && (
+        <div className="mb-4 -mx-4 md:-mx-0 rounded-none md:rounded-2xl overflow-hidden border-y md:border border-[#EADDC5]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageForModule(slug, module.content?.image_url)}
+            alt={module.title}
+            className="w-full aspect-[16/7] object-cover bg-[#FAF4E8]"
+          />
+        </div>
+      )}
 
       {/* Header */}
       <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-2xl px-6 py-6 mb-6">
