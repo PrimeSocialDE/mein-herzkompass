@@ -19,6 +19,7 @@ import DogProfileCard from "@/components/mitglieder/DogProfileCard";
 import ProgressCircle from "@/components/mitglieder/ProgressCircle";
 import WeekOverview from "@/components/mitglieder/WeekOverview";
 import UpgradePopup from "@/components/mitglieder/UpgradePopup";
+import OnboardingTutorial from "@/components/mitglieder/OnboardingTutorial";
 import { groupModulesByWeek } from "@/lib/member-weeks";
 import { PROBLEM_IMAGE } from "@/lib/member-images";
 import { getPlanIntro, getBreedNote } from "@/lib/member-plan-intro";
@@ -129,6 +130,9 @@ export default async function MitgliederDashboard() {
         </div>
 
         {upsells.length > 0 && <UpsellSection upsells={upsells} />}
+
+        {/* Onboarding-Tutorial fuer Erstbesucher (auch Paid) */}
+        <OnboardingTutorial dogName={member.dog_name} />
       </>
     );
   }
@@ -319,6 +323,9 @@ export default async function MitgliederDashboard() {
         leadId={member.source_lead_id}
         dogName={member.dog_name}
       />
+
+      {/* Onboarding-Tutorial fuer Erstbesucher (5-Slide-Slider) */}
+      <OnboardingTutorial dogName={member.dog_name} />
     </>
   );
 }
