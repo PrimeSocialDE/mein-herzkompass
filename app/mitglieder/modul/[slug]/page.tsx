@@ -9,6 +9,8 @@ import {
   getModuleBySlug,
   listModulesForMember,
 } from "@/lib/member-db";
+import { getLatestPlanContent } from "@/lib/member-plan-content";
+import PlanContentRenderer from "@/components/mitglieder/PlanContentRenderer";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +50,13 @@ export default async function ModulDetailPage({
   const sections: ContentSection[] = Array.isArray(module.content?.sections)
     ? module.content.sections
     : [];
+
+  // Personalisierter Plan-Inhalt aus member_plan_content (Make.com push)
+  const planContent = await getLatestPlanContent(
+    user.id,
+    user.email || "",
+    slug
+  );
 
   return (
     <div>
@@ -90,15 +99,44 @@ export default async function ModulDetailPage({
       {/* Content */}
       {!isUnlocked ? (
         <LockedOverlay />
-      ) : sections.length === 0 ? (
-        <div className="bg-white border border-[#EADDC5] rounded-2xl p-6 text-center text-[#6B7280] text-[13px]">
-          Inhalt für dieses Modul wird noch ergänzt.
-        </div>
-      ) : (
+      ) : planContent ? (
+        // Personalisierter Inhalt aus Make.com via member_plan_content
+        <>
+          {planContent.dog_name && (
+            <p className="text-[12px] text-[#9CA3AF] mb-4">
+              Personalisiert für {planContent.dog_name}
+              {planContent.dog_breed ? ` (${planContent.dog_breed})` : ""} ·
+              erstellt am{" "}
+              {new Date(planContent.created_at).toLocaleDateString("de-DE")}
+            </p>
+          )}
+          <PlanContentRenderer content={planContent.content} />
+          {planContent.pdf_url && (
+            <a
+              href={planContent.pdf_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-[#FAFAFA] border border-[#EADDC5] hover:bg-[#F0EBE3] text-[#1a1a1a] font-semibold py-2.5 px-5 rounded-xl text-[13px] transition mt-4"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              PDF herunterladen
+            </a>
+          )}
+        </>
+      ) : sections.length > 0 ? (
+        // Statischer Modul-Inhalt aus member_modules.content (legacy)
         <div className="bg-white border border-[#EADDC5] rounded-2xl px-6 py-6 space-y-5">
           {sections.map((s, i) => (
             <SectionRenderer key={i} section={s} index={i} />
           ))}
+        </div>
+      ) : (
+        <div className="bg-white border border-[#EADDC5] rounded-2xl p-6 text-center text-[#6B7280] text-[13px]">
+          <p className="text-[20px] mb-2">📬</p>
+          <p>
+            Dein personalisierter Inhalt wird per E-Mail ausgeliefert. Sobald
+            er fertig ist, erscheint er auch hier auf der Seite.
+          </p>
         </div>
       )}
     </div>
