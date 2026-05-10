@@ -8,7 +8,7 @@
 // 4. Eintragen → Backend speichert + holt KI-Feedback → wird angezeigt
 
 import { useState } from "react";
-import type { MoodQuestion } from "@/lib/member-mood";
+import type { MoodQuestion } from "@/lib/member-mood-questions";
 
 type Mood = "gut" | "mittel" | "schwierig";
 

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import {
   WEEKLY_QUESTIONS_BY_PROBLEM,
   type MoodQuestion,
-} from "@/lib/member-mood";
+} from "@/lib/member-mood-questions";
 
 type Mood = "gut" | "mittel" | "schwierig";
 
