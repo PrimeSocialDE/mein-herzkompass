@@ -7,7 +7,7 @@ import { getCurrentMember } from "@/lib/member-auth-server";
 import { getOrCreateMemberProfile } from "@/lib/member-db";
 import {
   getOrAssignWeekChallenges,
-  getEarnedAbzeichen,
+  getEarnedBadges,
   CHALLENGE_TEMPLATES,
 } from "@/lib/member-challenges";
 import ChallengeCard from "@/components/mitglieder/ChallengeCard";
@@ -42,7 +42,7 @@ export default async function ErfolgePage() {
   const dogPossessive = dogName ? `${dogName}s` : "Eure";
 
   const challenges = await getOrAssignWeekChallenges(member);
-  const badges = await getEarnedAbzeichen(user.id, 24);
+  const badges = await getEarnedBadges(user.id, 24);
 
   const completedThisWeek = challenges.filter((c) => c.completed_at).length;
   const totalThisWeek = challenges.length;
