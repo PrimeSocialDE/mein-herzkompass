@@ -14,6 +14,11 @@ export interface MoodLog {
   note: string | null;
   module_slug: string | null;
   created_at: string;
+  // Optional: Wochen-Check-in-Felder (siehe week-migration)
+  plan_week?: number | null;
+  plan_problem_key?: string | null;
+  answers?: Record<string, string> | null;
+  ai_feedback?: string | null;
 }
 
 export interface DaySummary {
@@ -382,4 +387,313 @@ export function getQuestionsForProblem(
 ): MoodQuestion[] {
   if (!key) return [];
   return QUESTIONS_BY_PROBLEM[key] || [];
+}
+
+// ── Wochen-Check-in (statt taegl. nach jeder Uebung) ──────────────────
+// Pro Woche EIN Eintrag mit broader Fragen + KI-Zusammenfassung der
+// Woche. Kein Replace fuer den taeglichen Check-in im Modul-Kontext —
+// das Wochen-Format ist ein zweiter Layer fuer den groben Verlauf.
+
+// Wochen-Fragen sind bewusst fortschritts-orientiert (weil ueber 7
+// Tage gemittelt) statt situations-konkret. 2 Fragen pro Problem-Key.
+export const WEEKLY_QUESTIONS_BY_PROBLEM: Record<string, MoodQuestion[]> = {
+  pulling: [
+    {
+      key: "fortschritt",
+      text: "Wie ist der Fortschritt beim lockeren Leinen-Laufen?",
+      options: [
+        { value: "deutlich_besser", label: "Deutlich besser" },
+        { value: "etwas_besser", label: "Etwas besser" },
+        { value: "gleich", label: "Wie vorher" },
+        { value: "schlechter", label: "Eher schlechter" },
+      ],
+    },
+    {
+      key: "uebungs_tage",
+      text: "An wie vielen Tagen habt ihr geübt?",
+      options: [
+        { value: "fast_taeglich", label: "Fast täglich" },
+        { value: "mehrmals", label: "3-4 Tage" },
+        { value: "selten", label: "1-2 Tage" },
+        { value: "gar_nicht", label: "Gar nicht" },
+      ],
+    },
+  ],
+  barking: [
+    {
+      key: "fortschritt",
+      text: "Wie hat sich das Bellen entwickelt?",
+      options: [
+        { value: "deutlich_besser", label: "Deutlich weniger" },
+        { value: "etwas_besser", label: "Etwas weniger" },
+        { value: "gleich", label: "Wie vorher" },
+        { value: "schlechter", label: "Eher mehr" },
+      ],
+    },
+    {
+      key: "ausloeser_woche",
+      text: "Welcher Auslöser war diese Woche am häufigsten?",
+      options: [
+        { value: "tuerklingel", label: "Türklingel/Besuch" },
+        { value: "andere_hunde", label: "Andere Hunde" },
+        { value: "geraeusche", label: "Geräusche" },
+        { value: "langeweile", label: "Langeweile" },
+        { value: "kaum_was", label: "Kaum noch was" },
+      ],
+    },
+  ],
+  aggression: [
+    {
+      key: "fortschritt",
+      text: "Wie hat sich das Verhalten entwickelt?",
+      options: [
+        { value: "deutlich_besser", label: "Deutlich entspannter" },
+        { value: "etwas_besser", label: "Etwas entspannter" },
+        { value: "gleich", label: "Wie vorher" },
+        { value: "schlechter", label: "Angespannter" },
+      ],
+    },
+    {
+      key: "vorfaelle",
+      text: "Wie viele kritische Situationen gab es?",
+      options: [
+        { value: "keine", label: "Keine" },
+        { value: "1_2", label: "1-2" },
+        { value: "mehrere", label: "Mehrere" },
+        { value: "taeglich", label: "Fast täglich" },
+      ],
+    },
+  ],
+  anxiety: [
+    {
+      key: "fortschritt",
+      text: "Wie war das Allein-bleiben diese Woche?",
+      options: [
+        { value: "deutlich_besser", label: "Deutlich entspannter" },
+        { value: "etwas_besser", label: "Etwas entspannter" },
+        { value: "gleich", label: "Wie vorher" },
+        { value: "schlechter", label: "Schwieriger" },
+      ],
+    },
+    {
+      key: "max_dauer",
+      text: "Wie lange war er max. allein - ohne Stress?",
+      options: [
+        { value: "minuten", label: "Wenige Minuten" },
+        { value: "viertel", label: "15-30 Min" },
+        { value: "stunde", label: "Bis 1 Std" },
+        { value: "mehr", label: "Mehrere Stunden" },
+      ],
+    },
+  ],
+  jumping: [
+    {
+      key: "fortschritt",
+      text: "Wie hat sich das Anspringen entwickelt?",
+      options: [
+        { value: "deutlich_besser", label: "Deutlich seltener" },
+        { value: "etwas_besser", label: "Etwas seltener" },
+        { value: "gleich", label: "Wie vorher" },
+        { value: "schlechter", label: "Häufiger" },
+      ],
+    },
+    {
+      key: "konsequenz",
+      text: "Hat die Familie konsequent reagiert?",
+      options: [
+        { value: "alle", label: "Ja, alle gleich" },
+        { value: "meistens", label: "Meistens" },
+        { value: "uneinig", label: "Uneinheitlich" },
+      ],
+    },
+  ],
+  recall: [
+    {
+      key: "fortschritt",
+      text: "Wie zuverlässig kommt er auf Rückruf?",
+      options: [
+        { value: "deutlich_besser", label: "Sehr zuverlässig" },
+        { value: "etwas_besser", label: "Etwas besser" },
+        { value: "gleich", label: "Wie vorher" },
+        { value: "schlechter", label: "Eher schlechter" },
+      ],
+    },
+    {
+      key: "freilauf",
+      text: "Wo habt ihr geübt?",
+      options: [
+        { value: "garten", label: "Nur Garten/zuhause" },
+        { value: "leine", label: "An langer Leine" },
+        { value: "freilauf", label: "Schon im Freilauf" },
+      ],
+    },
+  ],
+  energy: [
+    {
+      key: "fortschritt",
+      text: "Wie ist sein Ruhe-Verhalten diese Woche?",
+      options: [
+        { value: "deutlich_besser", label: "Deutlich ruhiger" },
+        { value: "etwas_besser", label: "Etwas ruhiger" },
+        { value: "gleich", label: "Wie vorher" },
+        { value: "schlechter", label: "Aufgedrehter" },
+      ],
+    },
+    {
+      key: "kopfarbeit",
+      text: "Wie oft Suchspiele/Kopfarbeit?",
+      options: [
+        { value: "taeglich", label: "Täglich" },
+        { value: "mehrmals", label: "3-4× Woche" },
+        { value: "selten", label: "1-2× Woche" },
+        { value: "gar_nicht", label: "Gar nicht" },
+      ],
+    },
+  ],
+  destructive: [
+    {
+      key: "fortschritt",
+      text: "Wie war das Zerstören diese Woche?",
+      options: [
+        { value: "deutlich_besser", label: "Nichts mehr" },
+        { value: "etwas_besser", label: "Weniger" },
+        { value: "gleich", label: "Wie vorher" },
+        { value: "schlechter", label: "Häufiger" },
+      ],
+    },
+    {
+      key: "tausch_klappt",
+      text: "Klappt das Tausch-Spiel inzwischen?",
+      options: [
+        { value: "zuverlaessig", label: "Ja, zuverlässig" },
+        { value: "manchmal", label: "Manchmal" },
+        { value: "noch_nicht", label: "Noch nicht" },
+        { value: "nicht_geuebt", label: "Nicht geübt" },
+      ],
+    },
+  ],
+  soiling: [
+    {
+      key: "fortschritt",
+      text: "Wie war's diese Woche mit dem Pinkeln?",
+      options: [
+        { value: "deutlich_besser", label: "Alles draußen" },
+        { value: "etwas_besser", label: "Wenige Pannen" },
+        { value: "gleich", label: "Wie vorher" },
+        { value: "schlechter", label: "Mehr Pannen" },
+      ],
+    },
+    {
+      key: "routine",
+      text: "Wie konsequent waren die Pipi-Pause-Zeiten?",
+      options: [
+        { value: "fest", label: "Feste Zeiten" },
+        { value: "meist", label: "Meistens" },
+        { value: "unregelmaessig", label: "Unregelmäßig" },
+      ],
+    },
+  ],
+  mouthing: [
+    {
+      key: "fortschritt",
+      text: "Wie oft hat er was vom Boden aufgenommen?",
+      options: [
+        { value: "deutlich_besser", label: "Kaum noch" },
+        { value: "etwas_besser", label: "Seltener" },
+        { value: "gleich", label: "Wie vorher" },
+        { value: "schlechter", label: "Häufiger" },
+      ],
+    },
+    {
+      key: "aus_klappt",
+      text: "Wie zuverlässig ist das 'Aus'?",
+      options: [
+        { value: "zuverlaessig", label: "Zuverlässig" },
+        { value: "meist", label: "Meistens" },
+        { value: "selten", label: "Selten" },
+        { value: "nicht_geuebt", label: "Nicht geübt" },
+      ],
+    },
+  ],
+};
+
+// Generische Wochen-Fragen, falls kein Problem-Key bekannt ist
+const WEEKLY_QUESTIONS_GENERIC: MoodQuestion[] = [
+  {
+    key: "fortschritt",
+    text: "Wie ist der Fortschritt diese Woche?",
+    options: [
+      { value: "deutlich_besser", label: "Deutlich besser" },
+      { value: "etwas_besser", label: "Etwas besser" },
+      { value: "gleich", label: "Wie vorher" },
+      { value: "schlechter", label: "Eher schlechter" },
+    ],
+  },
+  {
+    key: "uebungs_tage",
+    text: "An wie vielen Tagen habt ihr geübt?",
+    options: [
+      { value: "fast_taeglich", label: "Fast täglich" },
+      { value: "mehrmals", label: "3-4 Tage" },
+      { value: "selten", label: "1-2 Tage" },
+      { value: "gar_nicht", label: "Gar nicht" },
+    ],
+  },
+];
+
+export function getWeeklyQuestions(
+  problemKey: string | null
+): MoodQuestion[] {
+  if (!problemKey) return WEEKLY_QUESTIONS_GENERIC;
+  return WEEKLY_QUESTIONS_BY_PROBLEM[problemKey] || WEEKLY_QUESTIONS_GENERIC;
+}
+
+// Aktuelle Plan-Woche berechnen — basiert auf Tagen seit Profil-Anlage
+// (Pfoten-Plan startet beim Anmelden). Wird auf totalWeeks gekappt.
+export function getCurrentPlanWeek(
+  memberCreatedAt: string,
+  totalWeeks: number
+): number {
+  if (!memberCreatedAt) return 1;
+  const start = new Date(memberCreatedAt);
+  const now = new Date();
+  const days = Math.floor(
+    (now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  const week = Math.floor(days / 7) + 1;
+  if (week < 1) return 1;
+  if (week > totalWeeks) return totalWeeks;
+  return week;
+}
+
+// Alle Wochen-Eintraege fuer einen User holen (egal welche Plan-Woche).
+// Sortiert: neueste zuerst. Pro Woche kann es mehrere geben — UI zeigt
+// dann den juengsten Eintrag pro Woche.
+export async function getWeeklyCheckIns(
+  userId: string
+): Promise<MoodLog[]> {
+  const admin = createMemberAdminClient();
+  const { data, error } = await admin
+    .from("member_mood_logs")
+    .select("*")
+    .eq("user_id", userId)
+    .not("plan_week", "is", null)
+    .order("created_at", { ascending: false });
+  if (error) {
+    // Spalte plan_week noch nicht migriert → leere Liste, kein Crash
+    if (error.message?.includes("plan_week")) return [];
+    console.warn("[getWeeklyCheckIns]", error.message);
+    return [];
+  }
+  return (data || []) as MoodLog[];
+}
+
+// Den juengsten Eintrag pro Woche als Map (week → MoodLog)
+export function indexByWeek(logs: MoodLog[]): Map<number, MoodLog> {
+  const map = new Map<number, MoodLog>();
+  for (const l of logs) {
+    if (l.plan_week == null) continue;
+    if (!map.has(l.plan_week)) map.set(l.plan_week, l);
+  }
+  return map;
 }

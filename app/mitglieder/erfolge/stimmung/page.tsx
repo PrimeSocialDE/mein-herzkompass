@@ -1,6 +1,7 @@
-// /mitglieder/erfolge/stimmung — Stimmungs-Tagebuch.
-// Quick-Check pro Trainings-Einheit, Verlauf ueber Tage + Wochen.
-// Differenziert sich vom PDF-Tagebuch-Upsell: digital, mit Trends.
+// /mitglieder/erfolge/stimmung — Wochen-Begleitung mit KI-Zusammenfassung.
+// Pro Plan-Woche EIN kurzer Check-in (statt nach jeder Uebung). KI fasst
+// die Woche zusammen und vergleicht zur Vorwoche. Daily-Mood-Grid bleibt
+// als Mini-Verlauf am Ende erhalten.
 
 import Link from "next/link";
 import { getCurrentMember } from "@/lib/member-auth-server";
@@ -8,12 +9,14 @@ import { getOrCreateMemberProfile } from "@/lib/member-db";
 import {
   listMoodLogs,
   lastDaysSummary,
-  weeklySummary,
-  detectStrugglePattern,
-  getQuestionsForProblem,
+  getWeeklyCheckIns,
+  getWeeklyQuestions,
+  getCurrentPlanWeek,
+  indexByWeek,
   type Mood,
 } from "@/lib/member-mood";
-import MoodCheckIn from "@/components/mitglieder/MoodCheckIn";
+import { getPlanIntro } from "@/lib/member-plan-intro";
+import WeeklyCheckIn from "@/components/mitglieder/WeeklyCheckIn";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +34,7 @@ const MOOD_COLOR: Record<Mood, string> = {
 
 const MOOD_LABEL: Record<Mood, string> = {
   gut: "gut",
-  mittel: "mittel",
+  mittel: "durchwachsen",
   schwierig: "schwierig",
 };
 
@@ -59,15 +62,22 @@ export default async function StimmungPage() {
   const dog = member.dog_name?.trim() || "deinem Hund";
   const problemKey =
     member.quiz_result?.dog_problem || member.quiz_result?.problem || null;
-  const questions = getQuestionsForProblem(problemKey);
-  const logs = await listMoodLogs(user.id, 60);
-  const days7 = lastDaysSummary(logs, 7);
-  const weeks4 = weeklySummary(logs, 4);
-  const struggling = detectStrugglePattern(logs);
+  const planIntro = getPlanIntro(problemKey, dog);
+  const totalWeeks = planIntro?.weeks.length || 4;
+  const currentWeek = getCurrentPlanWeek(member.created_at, totalWeeks);
+  const currentWeekDef =
+    planIntro?.weeks.find((w) => w.num === currentWeek) || null;
+  const weeklyQuestions = getWeeklyQuestions(problemKey);
 
-  // Recent entries mit Notizen (max 5)
-  const recentWithNotes = logs.filter((l) => l.note).slice(0, 5);
-  const totalLogs = logs.length;
+  // Alle Daten holen
+  const [allLogs, weeklyLogs] = await Promise.all([
+    listMoodLogs(user.id, 60),
+    getWeeklyCheckIns(user.id),
+  ]);
+  const days7 = lastDaysSummary(allLogs, 7);
+  const weekMap = indexByWeek(weeklyLogs);
+  const currentWeekDone = weekMap.has(currentWeek);
+  const totalDailyLogs = allLogs.filter((l) => l.plan_week == null).length;
 
   return (
     <>
@@ -82,177 +92,135 @@ export default async function StimmungPage() {
       {/* Header */}
       <div className="mb-5">
         <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
-          Stimmungs-Check
+          Wochen-Begleitung
         </p>
         <h1 className="text-[24px] md:text-[30px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
-          Trainings-Verlauf mit {dog}
+          Tagebuch mit {dog}
         </h1>
         <p className="text-[13px] text-[#4B5563] mt-1.5 leading-relaxed">
-          Nach jeder Übung kurz tracken wie&rsquo;s lief — daraus baut sich
-          euer Verlauf über Wochen.
+          Einmal pro Woche eintragen wie&rsquo;s gelaufen ist. Die KI fasst
+          deine Woche zusammen und schaut sich an, wo ihr im Plan steht.
         </p>
       </div>
 
-      {/* Check-in Widget */}
-      <div className="mb-6">
-        <MoodCheckIn questions={questions} problemKey={problemKey} />
-      </div>
-
-      {/* Struggle-Hinweis */}
-      {struggling && (
-        <div className="bg-[#FEF2F2] border border-[#FECACA] rounded-xl p-4 mb-6 flex items-start gap-3">
-          <span className="text-[20px] flex-shrink-0">💪</span>
-          <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-bold text-[#B91C1C] mb-0.5">
-              Hängt&rsquo;s gerade?
-            </p>
-            <p className="text-[12px] text-[#7F1D1D] leading-relaxed mb-2">
-              3× hintereinander &quot;schwierig&quot; — das ist normal. Hol
-              dir Tipps vom KI-Trainer für deine konkrete Situation.
-            </p>
-            <Link
-              href="/mitglieder/hilfe"
-              className="inline-block bg-[#DC2626] text-white font-semibold py-2 px-4 rounded-lg text-[12px]"
-            >
-              KI-Trainer fragen →
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* Letzte 7 Tage — Streak-Style */}
+      {/* Wochen-Check-in Widget */}
       <section className="mb-6">
-        <div className="flex items-baseline justify-between mb-3">
-          <h2 className="text-[16px] font-bold text-[#1a1a1a]">
-            Letzte 7 Tage
-          </h2>
-          <span className="text-[11px] text-[#9CA3AF]">
-            {totalLogs} Eintrag{totalLogs === 1 ? "" : "e"} insgesamt
-          </span>
-        </div>
-        <div className="bg-white border border-[#EADDC5] rounded-2xl p-4">
-          <div className="grid grid-cols-7 gap-2">
-            {[...days7].reverse().map((d) => {
-              const dt = new Date(d.date);
-              const dayName = DAY_SHORT[dt.getDay()];
-              const dayNum = dt.getDate();
-              const color = d.predominant
-                ? MOOD_COLOR[d.predominant]
-                : "#E5E7EB";
-              return (
-                <div
-                  key={d.date}
-                  className="flex flex-col items-center text-center"
-                >
-                  <p className="text-[10px] text-[#9CA3AF] mb-1">{dayName}</p>
-                  <div
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-[16px] mb-1"
-                    style={{
-                      backgroundColor: d.predominant
-                        ? `${color}22`
-                        : "#FAFAFA",
-                      border: `2px solid ${color}`,
-                    }}
-                  >
-                    {d.predominant ? MOOD_EMOJI[d.predominant] : ""}
-                  </div>
-                  <p className="text-[10px] text-[#6B7280]">{dayNum}.</p>
-                  {d.count > 0 && (
-                    <p className="text-[9px] text-[#9CA3AF]">
-                      {d.count}×
-                    </p>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        {currentWeekDef ? (
+          <WeeklyCheckIn
+            weekNum={currentWeek}
+            weekTitle={currentWeekDef.title}
+            weekBody={currentWeekDef.body}
+            questions={weeklyQuestions}
+            problemKey={problemKey}
+            alreadyDone={currentWeekDone}
+          />
+        ) : (
+          <WeeklyCheckIn
+            weekNum={currentWeek}
+            weekTitle={`Woche ${currentWeek}`}
+            weekBody="Trag kurz ein wie deine Woche mit dem Training gelaufen ist."
+            questions={weeklyQuestions}
+            problemKey={problemKey}
+            alreadyDone={currentWeekDone}
+          />
+        )}
       </section>
 
-      {/* Wochen-Verlauf */}
-      <section className="mb-6">
-        <h2 className="text-[16px] font-bold text-[#1a1a1a] mb-3">
-          Wochen-Verlauf
-        </h2>
-        <div className="space-y-2">
-          {weeks4.map((w) => (
-            <div
-              key={w.weekStart}
-              className="bg-white border border-[#EADDC5] rounded-xl p-4"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-[13px] font-bold text-[#1a1a1a]">
-                  {w.weekLabel}
-                </p>
-                <p className="text-[11px] text-[#9CA3AF]">
-                  {w.count === 0
-                    ? "Noch keine Einträge"
-                    : `${w.count} Eintrag${w.count === 1 ? "" : "e"}`}
-                </p>
-              </div>
-              {w.count === 0 ? (
-                <div className="h-2 bg-[#F0EBE3] rounded-full" />
-              ) : (
-                <>
-                  {/* Bar-Chart fuer Stimmungs-Verteilung */}
-                  <div className="flex h-2 rounded-full overflow-hidden bg-[#F0EBE3]">
-                    {(["gut", "mittel", "schwierig"] as Mood[]).map((m) => {
-                      const pct = w.count > 0 ? (w.moods[m] / w.count) * 100 : 0;
-                      if (pct === 0) return null;
-                      return (
-                        <div
-                          key={m}
-                          style={{
-                            width: `${pct}%`,
-                            backgroundColor: MOOD_COLOR[m],
-                          }}
-                        />
-                      );
-                    })}
-                  </div>
-                  {/* Predominant-Hinweis */}
-                  {w.predominant && (
-                    <p className="text-[11px] text-[#6B7280] mt-2 leading-snug">
-                      Meistens {MOOD_LABEL[w.predominant]} {MOOD_EMOJI[w.predominant]}
-                      {w.moods[w.predominant] > 0 &&
-                        ` (${w.moods[w.predominant]}/${w.count})`}
-                    </p>
-                  )}
-                </>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Letzte Notizen */}
-      {recentWithNotes.length > 0 && (
+      {/* Plan-Wochen-Verlauf mit KI-Zusammenfassungen */}
+      {planIntro && (
         <section className="mb-6">
           <h2 className="text-[16px] font-bold text-[#1a1a1a] mb-3">
-            Deine letzten Notizen
+            Dein Plan-Verlauf
           </h2>
           <div className="space-y-2">
-            {recentWithNotes.map((l) => {
-              const dt = new Date(l.created_at);
-              const dateStr = dt.toLocaleDateString("de-DE", {
-                day: "2-digit",
-                month: "2-digit",
-              });
+            {planIntro.weeks.map((w) => {
+              const entry = weekMap.get(w.num);
+              const isCurrent = w.num === currentWeek;
+              const isFuture = w.num > currentWeek;
               return (
                 <div
-                  key={l.id}
-                  className="bg-white border border-[#EADDC5] rounded-xl p-3 flex items-start gap-3"
+                  key={w.num}
+                  className={`bg-white border rounded-xl p-4 ${
+                    isCurrent
+                      ? "border-[#C4A576] shadow-[0_2px_8px_rgba(196,165,118,0.12)]"
+                      : "border-[#EADDC5]"
+                  } ${isFuture ? "opacity-60" : ""}`}
                 >
-                  <span className="text-[20px] flex-shrink-0">
-                    {MOOD_EMOJI[l.mood]}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[10px] text-[#9CA3AF] mb-0.5">
-                      {dateStr} · {MOOD_LABEL[l.mood]}
-                    </p>
-                    <p className="text-[13px] text-[#1a1a1a] leading-relaxed">
-                      {l.note}
-                    </p>
+                  <div className="flex items-start gap-3">
+                    {/* Status-Punkt */}
+                    <div
+                      className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold ${
+                        entry
+                          ? "bg-[#16A34A] text-white"
+                          : isCurrent
+                            ? "bg-[#C4A576] text-white"
+                            : "bg-[#F0EBE3] text-[#9CA3AF]"
+                      }`}
+                    >
+                      {entry ? "✓" : w.num}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355]">
+                          Woche {w.num}
+                        </p>
+                        {isCurrent && (
+                          <span className="text-[9px] font-bold uppercase tracking-wider bg-[#FFF9F0] text-[#8B7355] px-1.5 py-0.5 rounded border border-[#EADDC5]">
+                            Aktuell
+                          </span>
+                        )}
+                        {entry && (
+                          <span className="text-[14px]">
+                            {MOOD_EMOJI[entry.mood]}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[13px] font-bold text-[#1a1a1a] leading-tight mb-1">
+                        {w.title}
+                      </p>
+                      {!entry && !isFuture && (
+                        <p className="text-[12px] text-[#6B7280] leading-relaxed">
+                          {w.body}
+                        </p>
+                      )}
+                      {isFuture && (
+                        <p className="text-[11px] text-[#9CA3AF] italic">
+                          Kommt noch — eintragen sobald die Woche dran ist.
+                        </p>
+                      )}
+
+                      {/* Eintrag der Woche */}
+                      {entry && (
+                        <div className="mt-2 space-y-2">
+                          {entry.note && (
+                            <p className="text-[12px] text-[#1a1a1a] italic leading-relaxed">
+                              &ldquo;{entry.note}&rdquo;
+                            </p>
+                          )}
+                          {entry.ai_feedback && (
+                            <div className="bg-gradient-to-br from-[#FFFDF8] to-[#FFF9F0] border border-[#EADDC5] rounded-lg p-3">
+                              <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
+                                KI-Zusammenfassung
+                              </p>
+                              <p className="text-[12px] text-[#1a1a1a] leading-relaxed whitespace-pre-wrap">
+                                {entry.ai_feedback}
+                              </p>
+                            </div>
+                          )}
+                          {!entry.ai_feedback && (
+                            <p className="text-[11px] text-[#9CA3AF]">
+                              Eintrag vom{" "}
+                              {new Date(entry.created_at).toLocaleDateString(
+                                "de-DE",
+                                { day: "2-digit", month: "2-digit" }
+                              )}{" "}
+                              · Stimmung: {MOOD_LABEL[entry.mood]}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -261,12 +229,65 @@ export default async function StimmungPage() {
         </section>
       )}
 
-      {/* Empty-State Hinweis fuer neue User */}
-      {totalLogs === 0 && (
+      {/* Mini-Verlauf: letzte 7 Tage (nur wenn auch tagebuch-Eintraege da sind) */}
+      {totalDailyLogs > 0 && (
+        <section className="mb-6">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 className="text-[16px] font-bold text-[#1a1a1a]">
+              Letzte 7 Tage
+            </h2>
+            <span className="text-[11px] text-[#9CA3AF]">
+              aus den Modulen
+            </span>
+          </div>
+          <div className="bg-white border border-[#EADDC5] rounded-2xl p-4">
+            <div className="grid grid-cols-7 gap-2">
+              {[...days7].reverse().map((d) => {
+                const dt = new Date(d.date);
+                const dayName = DAY_SHORT[dt.getDay()];
+                const dayNum = dt.getDate();
+                const color = d.predominant
+                  ? MOOD_COLOR[d.predominant]
+                  : "#E5E7EB";
+                return (
+                  <div
+                    key={d.date}
+                    className="flex flex-col items-center text-center"
+                  >
+                    <p className="text-[10px] text-[#9CA3AF] mb-1">
+                      {dayName}
+                    </p>
+                    <div
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-[16px] mb-1"
+                      style={{
+                        backgroundColor: d.predominant
+                          ? `${color}22`
+                          : "#FAFAFA",
+                        border: `2px solid ${color}`,
+                      }}
+                    >
+                      {d.predominant ? MOOD_EMOJI[d.predominant] : ""}
+                    </div>
+                    <p className="text-[10px] text-[#6B7280]">{dayNum}.</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <p className="text-[11px] text-[#9CA3AF] mt-2 leading-relaxed">
+            Diese Tages-Punkte entstehen automatisch wenn du in den Modulen
+            nach einer Übung kurz eintraegst.
+          </p>
+        </section>
+      )}
+
+      {/* Empty-State Hinweis */}
+      {weeklyLogs.length === 0 && totalDailyLogs === 0 && (
         <div className="bg-[#FFF9F0] border border-[#EADDC5] rounded-xl p-4">
           <p className="text-[13px] text-[#5A4A3A] leading-relaxed">
-            <strong>Noch keine Einträge.</strong> Trag deine erste
-            Übung oben ein — und Tag für Tag baut sich der Verlauf auf.
+            <strong>Noch keine Einträge.</strong> Trag oben deinen ersten
+            Wochen-Check ein — die KI gibt dir dann eine kurze
+            Zusammenfassung deiner Woche zurück.
           </p>
         </div>
       )}
