@@ -14,6 +14,17 @@ const PRODUCT_PRICES: Record<string, number> = {
   abo: 999,
   reise: 1999,
   erstehilfe: 1499,
+  // Themen-Module (siehe lib/member-themen.ts)
+  "thema-leinen": 999,
+  "thema-bellen": 999,
+  "thema-aggression": 1499,
+  "thema-trennungsangst": 999,
+  "thema-anspringen": 999,
+  "thema-rueckruf": 999,
+  "thema-energie": 999,
+  "thema-zerstoerung": 999,
+  "thema-stubenrein": 999,
+  "thema-aufnehmen": 999,
 };
 
 const PRODUCT_NAMES: Record<string, string> = {
@@ -22,6 +33,16 @@ const PRODUCT_NAMES: Record<string, string> = {
   abo: "Jahreszeiten-Abo",
   reise: "Reise-Guide mit Hund",
   erstehilfe: "Erste-Hilfe Guide fuer Hunde",
+  "thema-leinen": "Themen-Modul Leinenfuehrigkeit",
+  "thema-bellen": "Themen-Modul Bellen abgewoehnen",
+  "thema-aggression": "Themen-Modul Aggression entschaerfen",
+  "thema-trennungsangst": "Themen-Modul Trennungsangst",
+  "thema-anspringen": "Themen-Modul Anspringen abgewoehnen",
+  "thema-rueckruf": "Themen-Modul Rueckruf trainieren",
+  "thema-energie": "Themen-Modul Energie",
+  "thema-zerstoerung": "Themen-Modul Zerstoerungsverhalten",
+  "thema-stubenrein": "Themen-Modul Stubenreinheit",
+  "thema-aufnehmen": "Themen-Modul Nichts vom Boden",
 };
 
 export async function POST(req: NextRequest) {

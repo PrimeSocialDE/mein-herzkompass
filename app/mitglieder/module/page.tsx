@@ -10,6 +10,7 @@ import {
   listActiveUpsells,
   listModulesForMember,
 } from "@/lib/member-db";
+import { THEMEN_MODULES, sortByUserRelevance } from "@/lib/member-themen";
 import UpsellFlipCard from "@/components/mitglieder/UpsellFlipCard";
 import ModuleGrid from "@/components/mitglieder/ModuleGrid";
 
@@ -104,6 +105,11 @@ export default async function ModulShopPage() {
   const isPaid = member.purchase_status === "paid";
   const unlockedCount = modules.filter((m) => m.unlocked).length;
 
+  // Themen-Module sortiert nach User-Relevanz (eigenes Quiz-Problem zuerst)
+  const userProblemKey =
+    member.quiz_result?.dog_problem || member.quiz_result?.problem || null;
+  const themenModules = sortByUserRelevance(THEMEN_MODULES, userProblemKey);
+
   return (
     <>
       {/* Header */}
@@ -134,27 +140,59 @@ export default async function ModulShopPage() {
         </section>
       )}
 
-      {/* ── Section 2: Zusatz-Module ───────────────────────────────── */}
-      <section className="mb-8">
-        <div className="flex items-baseline justify-between mb-3">
+      {/* ── Section 2: Themen-Module ───────────────────────────────── */}
+      <section className="mb-10">
+        <div className="flex items-baseline justify-between mb-1">
           <h2 className="text-[16px] font-bold text-[#1a1a1a]">
-            Zusatz-Module
+            Themen-Module
           </h2>
-          {upsells.length > 0 && (
-            <span className="text-[11px] text-[#9CA3AF]">
-              Tipp auf Karte für Details
-            </span>
-          )}
+          <span className="text-[11px] text-[#9CA3AF]">
+            {themenModules.length} verfügbar
+          </span>
         </div>
+        <p className="text-[12px] text-[#6B7280] mb-3 leading-snug">
+          Spezial-Module zu einzelnen Verhaltensthemen. Direkt kaufen, sofort
+          starten.
+        </p>
 
-        {upsells.length === 0 ? (
-          <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 text-center">
-            <p className="text-[20px] mb-1">📦</p>
-            <p className="text-[13px] text-[#6B7280]">
-              Aktuell keine Zusatz-Module verfügbar.
-            </p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {themenModules.map((t) => (
+            <UpsellFlipCard
+              key={t.slug}
+              upsell={{
+                id: t.slug,
+                slug: t.slug,
+                title: t.title,
+                description: t.short,
+                badge_text:
+                  t.problem_match === userProblemKey
+                    ? "Für dich"
+                    : t.badge_text,
+                price_cents: t.price_cents,
+                image_url: null,
+              }}
+              features={t.features}
+              emoji={t.emoji}
+              email={member.email}
+              leadId={member.source_lead_id}
+              dogName={member.dog_name}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* ── Section 3: Weitere Zusatz-Module (PDFs, Abos) ──────────── */}
+      {upsells.length > 0 && (
+        <section className="mb-8">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 className="text-[16px] font-bold text-[#1a1a1a]">
+              Weitere Module
+            </h2>
+            <span className="text-[11px] text-[#9CA3AF]">
+              Spezial-Guides
+            </span>
           </div>
-        ) : (
+
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {upsells.map((u: any) => (
               <UpsellFlipCard
@@ -176,14 +214,13 @@ export default async function ModulShopPage() {
               />
             ))}
           </div>
-        )}
+        </section>
+      )}
 
-        {upsells.length > 0 && (
-          <p className="text-[11px] text-[#9CA3AF] mt-3 text-center">
-            🔒 Sichere Zahlung über Mollie · Sofort als PDF im Postfach
-          </p>
-        )}
-      </section>
+      {/* Trust-Hinweis */}
+      <p className="text-[11px] text-[#9CA3AF] text-center mb-4">
+        🔒 Sichere Zahlung über Mollie · Sofort als PDF im Postfach
+      </p>
     </>
   );
 }
