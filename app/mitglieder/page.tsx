@@ -141,7 +141,7 @@ export default async function MitgliederDashboard() {
           Tightere Aspect-Ratio (16/7) schneidet oben und unten weisses
           Padding der Bild-Datei weg. bg-Farbe matched die Card-Akzent-
           Farbe damit kein harter Weiss-Sprung entsteht. */}
-      <div className="-mx-4 md:-mx-8 md:mt-[-10px] mb-4 bg-[#FFF9F0]">
+      <div className="-mx-4 md:-mx-8 md:mt-[-10px] mb-4 bg-[#FAF8F5]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/Hero2Plan.jpg"
