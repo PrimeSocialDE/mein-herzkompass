@@ -29,6 +29,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
       "Sofort als PDF im Postfach",
     ],
     emoji: "🦮",
+    image_url: "/Leinenfuhr.png",
     price_cents: DEFAULT_PRICE,
     problem_match: "pulling",
     badge_text: "Beliebt",
