@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 
 const SHOWN_KEY = "pp_upgrade_popup_shown";
 const COOLDOWN_KEY = "pp_upgrade_popup_cooldown";
-const SHOW_DELAY_MS = 75_000;
+const SHOW_DELAY_MS = 180_000; // 3 Min — User soll erst Inhalt entdecken
 const COOLDOWN_DAYS = 7;
 
 interface Props {
