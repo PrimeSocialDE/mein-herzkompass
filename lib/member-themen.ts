@@ -9,6 +9,7 @@ export interface ThemenModule {
   short: string;          // 1-Liner fuer Kartenvorderseite
   features: string[];     // Backside-Inhalte
   emoji: string;
+  image_url?: string | null; // optional: ueberschreibt Emoji-Header
   price_cents: number;
   problem_match: string | null; // matched gegen quiz_result.dog_problem
   badge_text: string | null;
@@ -43,6 +44,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
       "Sofort als PDF im Postfach",
     ],
     emoji: "🤫",
+    image_url: "/BellenAbg.png",
     price_cents: DEFAULT_PRICE,
     problem_match: "barking",
     badge_text: null,

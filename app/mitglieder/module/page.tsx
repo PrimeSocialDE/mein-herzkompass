@@ -169,7 +169,7 @@ export default async function ModulShopPage() {
                     ? "Für dich"
                     : t.badge_text,
                 price_cents: t.price_cents,
-                image_url: null,
+                image_url: t.image_url || null,
               }}
               features={t.features}
               emoji={t.emoji}
