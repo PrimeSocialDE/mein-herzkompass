@@ -49,7 +49,7 @@ export default function UpsellFlipCard({
   return (
     <div className="relative w-full" style={{ perspective: "1000px" }}>
       <div
-        className="relative w-full aspect-[2/3] transition-transform duration-700 ease-out"
+        className="relative w-full aspect-[5/8] transition-transform duration-700 ease-out"
         style={{
           transformStyle: "preserve-3d",
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
@@ -81,9 +81,17 @@ export default function UpsellFlipCard({
           </div>
 
           <div className="flex-1 p-2.5 flex flex-col">
-            <h3 className="text-[12px] font-extrabold text-[#1a1a1a] leading-tight mb-1.5 line-clamp-2">
+            <h3 className="text-[12px] font-extrabold text-[#1a1a1a] leading-tight mb-1 line-clamp-2">
               {upsell.title}
             </h3>
+
+            <p className="text-[10px] text-[#6B7280] leading-snug">
+              8 Übungen für {dogName?.trim() || "deinen Hund"}
+            </p>
+            <p className="text-[9px] text-[#9CA3AF] leading-snug mt-0.5 flex items-center gap-1">
+              <span className="text-[#16A34A]">✓</span>
+              <span>Einmalig · kein Abo</span>
+            </p>
 
             <button
               onClick={() => setFlipped(true)}
