@@ -2,9 +2,11 @@
 
 // Flip-Karte fuer Modul-Shop. Front: Preview + Preis. Klick auf
 // 'Mehr Infos' dreht die Karte zu Inhaltsliste + Kauf-Button.
-// Kauf laeuft direkt ueber Mollie-Checkout (upsell-product).
+// Kauf oeffnet das CheckoutModal — In-Place via Mollie Components,
+// kein Redirect zu Mollie-Hosted-Page.
 
 import { useState } from "react";
+import CheckoutModal from "./CheckoutModal";
 
 interface Upsell {
   id: string;
@@ -34,35 +36,10 @@ export default function UpsellFlipCard({
   dogName,
 }: Props) {
   const [flipped, setFlipped] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [showCheckout, setShowCheckout] = useState(false);
 
-  async function handleBuy() {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch("/api/mollie/upsell-product-checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: upsell.slug,
-          email,
-          leadId: leadId || "",
-          dogName: dogName || undefined,
-          returnUrl: window.location.pathname,
-        }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        setError(data.error || "Konnte Checkout nicht starten");
-        setLoading(false);
-      }
-    } catch (e) {
-      setError("Verbindungsfehler. Versuch's gleich nochmal.");
-      setLoading(false);
-    }
+  function handleBuy() {
+    setShowCheckout(true);
   }
 
   const priceFormatted = `€${(upsell.price_cents / 100)
@@ -156,16 +133,27 @@ export default function UpsellFlipCard({
 
           <button
             onClick={handleBuy}
-            disabled={loading}
-            className="w-full bg-[#C4A576] hover:bg-[#B5946A] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-2 px-3 rounded-lg text-[12px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
+            className="w-full bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-2 px-3 rounded-lg text-[12px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
           >
-            {loading ? "Lade…" : `Für ${priceFormatted} kaufen`}
+            Für {priceFormatted} kaufen
           </button>
-          {error && (
-            <p className="text-[10px] text-[#B91C1C] text-center mt-1">{error}</p>
-          )}
         </div>
       </div>
+
+      {showCheckout && (
+        <CheckoutModal
+          upsell={{
+            slug: upsell.slug,
+            title: upsell.title,
+            price_cents: upsell.price_cents,
+            emoji,
+          }}
+          email={email}
+          leadId={leadId}
+          dogName={dogName}
+          onClose={() => setShowCheckout(false)}
+        />
+      )}
     </div>
   );
 }

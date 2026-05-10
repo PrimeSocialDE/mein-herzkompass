@@ -61,6 +61,9 @@ export async function POST(req: NextRequest) {
     const leadId = body.leadId as string | undefined;
     const dogName = body.dogName as string | undefined;
     const returnUrl = body.returnUrl as string | undefined;
+    // Optional: direkter Karten-Flow ohne Mollie-Hosted-Page
+    const method = body.method as string | undefined; // 'creditcard' | undefined
+    const cardToken = body.cardToken as string | undefined;
 
     if (!type || !email) {
       return NextResponse.json(
@@ -100,7 +103,9 @@ export async function POST(req: NextRequest) {
           : returnUrl
         : `${origin}/zusatz.html?lead_id=${leadId || ""}`;
 
-    const payment = await mollie.payments.create({
+    // Direkt-Karten-Flow: method + cardToken setzt Payment ohne
+    // Hosted-Checkout, processed direkt (ggf. mit 3DS-Redirect).
+    const paymentBody: any = {
       amount: { currency: "EUR", value: formatAmountEUR(amountCents) },
       description: `Pfoten-Plan ${productName} fuer ${dogName || "Hund"} · kommt sofort per E-Mail`.slice(
         0,
@@ -116,19 +121,23 @@ export async function POST(req: NextRequest) {
         lead_id: leadId || "",
         dog_name: dogName || "",
       },
-    });
-
-    const url = payment.getCheckoutUrl();
-    if (!url) {
-      return NextResponse.json(
-        { error: "Mollie Checkout-URL fehlt" },
-        { status: 500 }
-      );
+    };
+    if (method === "creditcard" && cardToken) {
+      paymentBody.method = "creditcard";
+      paymentBody.cardToken = cardToken;
+    } else if (method) {
+      paymentBody.method = method;
     }
 
+    const payment = await mollie.payments.create(paymentBody);
+
+    const url = payment.getCheckoutUrl();
+
+    // Bei direkter Karte: status kann schon 'paid' sein oder 3DS-Redirect.
     return NextResponse.json({
-      url,
+      url, // bei creditcard direkt: ggf null (paid) oder 3DS-URL
       paymentId: payment.id,
+      status: payment.status,
       clientSecret: null,
     });
   } catch (err: any) {
