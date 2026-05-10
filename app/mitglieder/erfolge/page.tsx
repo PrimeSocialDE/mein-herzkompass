@@ -64,13 +64,13 @@ export default async function ErfolgePage() {
 
   return (
     <>
-      {/* Hero-Banner */}
+      {/* Hero-Banner — flacher (16/7), oben staerker beschnitten */}
       <div className="mb-5 -mx-4 md:-mx-8 md:mt-[-10px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/Herchallanges.png"
           alt="Eure Trainings-Woche"
-          className="w-full aspect-[16/9] object-cover md:rounded-2xl"
+          className="w-full aspect-[16/7] object-cover object-bottom md:rounded-2xl"
         />
       </div>
 
