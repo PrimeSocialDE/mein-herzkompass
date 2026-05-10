@@ -78,11 +78,23 @@ export default function LoginPage() {
 
     if (error || !data?.session) {
       setStage("sent");
-      setErrorMsg(
-        error?.message?.includes("expired")
-          ? "Code abgelaufen. Schick dir einen neuen Link."
-          : "Code stimmt nicht. Pruefe nochmal in der Mail."
-      );
+      const msg = (error?.message || "").toLowerCase();
+      if (msg.includes("expired") || msg.includes("invalid")) {
+        setErrorMsg(
+          "Der Code ist abgelaufen oder bereits genutzt. Trag deine E-Mail nochmal ein damit wir dir einen neuen schicken."
+        );
+      } else if (msg.includes("not found") || msg.includes("user not")) {
+        setErrorMsg(
+          "Wir kennen diese E-Mail noch nicht. Trag sie oben nochmal ein und drück auf 'Login-Link senden'."
+        );
+      } else if (error?.message) {
+        // Fallback: echte Supabase-Fehlermeldung sichtbar machen statt verstecken
+        setErrorMsg(`Anmeldung fehlgeschlagen: ${error.message}`);
+      } else {
+        setErrorMsg(
+          "Code stimmt nicht. Pruefe nochmal in der Mail oder fordere einen neuen an."
+        );
+      }
       return;
     }
     // Session ist gesetzt → ab ins Dashboard
