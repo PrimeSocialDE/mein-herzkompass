@@ -1,17 +1,39 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createMemberBrowserClient } from "@/lib/member-auth";
 
 type Stage = "idle" | "loading" | "sent" | "verifying" | "error";
 
+const ERROR_MESSAGES: Record<string, string> = {
+  link_abgelaufen:
+    "Der Link ist abgelaufen. Trag deine E-Mail nochmal ein, dann schicken wir dir einen neuen.",
+  verify_failed:
+    "Der Link konnte nicht verifiziert werden. Bitte fordere einen neuen an.",
+  exchange_failed:
+    "Anmeldung fehlgeschlagen. Bitte fordere einen neuen Link an.",
+  fehlende_parameter:
+    "Der Link war unvollständig. Bitte fordere einen neuen an.",
+};
+
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [stage, setStage] = useState<Stage>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Fehler-Param aus URL (Callback redirected hierher bei Problemen)
+  useEffect(() => {
+    const err = searchParams.get("error");
+    if (err) {
+      setErrorMsg(
+        ERROR_MESSAGES[err] || `Anmeldung fehlgeschlagen: ${decodeURIComponent(err)}`
+      );
+    }
+  }, [searchParams]);
 
   async function sendLink(e: React.FormEvent) {
     e.preventDefault();

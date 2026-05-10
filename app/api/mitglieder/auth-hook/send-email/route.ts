@@ -17,8 +17,6 @@ export const dynamic = "force-dynamic";
 
 const HOOK_SECRET = process.env.SUPABASE_AUTH_HOOK_SECRET || "";
 const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
-const SUPABASE_URL =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "";
 
 interface SupabaseEmailHookPayload {
   user: {
@@ -43,21 +41,36 @@ interface SupabaseEmailHookPayload {
   };
 }
 
-// WICHTIG: Verify-Endpoint liegt auf der SUPABASE-Project-URL, NICHT
-// auf unserer Site-URL. site_url im Payload ist die App-URL (pfoten-plan.de),
-// die brauchen wir nur fuer redirect_to. Verify selbst muss auf
-// {SUPABASE_URL}/auth/v1/verify zeigen, sonst gibt's 404.
+// Magic-Link zeigt direkt auf unseren callback-Endpoint mit token_hash.
+// Vorteil ggue. Supabase's verify-Endpoint: KEIN PKCE-Verifier noetig →
+// Link funktioniert auch wenn User die Mail auf einem ANDEREN Geraet
+// oeffnet als wo er die Anmeldung gestartet hat. Server-seitige
+// verifyOtp tauscht token_hash gegen eine echte Session.
 function buildLoginUrl(p: SupabaseEmailHookPayload): string {
-  if (!SUPABASE_URL) {
-    throw new Error("SUPABASE_URL env var fehlt — Magic-Link kann nicht gebaut werden");
-  }
-  const base = SUPABASE_URL.replace(/\/+$/, "");
+  const siteUrl = (p.email_data.site_url || "https://www.pfoten-plan.de")
+    .replace(/\/+$/, "");
+  // Wenn redirect_to schon was Sinnvolles enthaelt (z.B. /mitglieder),
+  // nutzen wir das als 'next'. Sonst Default auf /mitglieder.
+  let next = "/mitglieder";
+  try {
+    const r = new URL(p.email_data.redirect_to);
+    // Wenn redirect_to direkt /mitglieder/callback ist, dann ist
+    // 'next' der Default. Wenn aber redirect_to eine echte Ziel-Seite
+    // ist (anders als callback), nutze die.
+    if (r.pathname && !r.pathname.includes("callback")) {
+      next = r.pathname + r.search;
+    }
+  } catch {}
+
+  const type =
+    p.email_data.email_action_type === "signup" ? "signup" : "magiclink";
+
   const params = new URLSearchParams({
-    token: p.email_data.token_hash,
-    type: p.email_data.email_action_type === "signup" ? "signup" : "magiclink",
-    redirect_to: p.email_data.redirect_to,
+    token_hash: p.email_data.token_hash,
+    type,
+    next,
   });
-  return `${base}/auth/v1/verify?${params.toString()}`;
+  return `${siteUrl}/mitglieder/callback?${params.toString()}`;
 }
 
 function buildSubject(p: SupabaseEmailHookPayload): string {
@@ -236,16 +249,6 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-  if (!SUPABASE_URL) {
-    console.error(
-      "[auth-hook] FEHLT: NEXT_PUBLIC_SUPABASE_URL — Magic-Link-URL nicht baubar"
-    );
-    return NextResponse.json(
-      { error: "supabase_url_not_configured" },
-      { status: 500 }
-    );
-  }
-
   // ── Signatur-Verifikation ──────────────────────────────────────
   const rawBody = await req.text();
   const headers = {

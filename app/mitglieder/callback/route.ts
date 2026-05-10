@@ -1,10 +1,20 @@
-// Magic-Link-Callback. Supabase schickt User hierhin nach Klick auf den Link.
-// 1. Code aus URL → in Session tauschen
-// 2. Profil sicherstellen (Auto-Match gegen wauwerk_leads)
-// 3. Redirect zu Dashboard (oder zu redirect-Param falls gesetzt)
+// Auth-Callback. Unterstützt zwei Flows damit Magic-Link auf jedem
+// Geraet zuverlaessig funktioniert:
+//
+// 1. token_hash + type (UNSER Magic-Link-Flow via auth-hook)
+//    → server-seitig via verifyOtp, KEIN PKCE-Verifier noetig,
+//      funktioniert auch wenn User Mail auf anderem Geraet oeffnet
+//
+// 2. code (PKCE Fallback fuer Default-Supabase-Mail oder OAuth)
+//    → exchangeCodeForSession, braucht code_verifier in Cookies
+//      (nur same-device)
+//
+// Nach erfolgreicher Verifikation: Profil sicherstellen, dann
+// Redirect zu 'next' (Default /mitglieder).
 
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import type { EmailOtpType } from "@supabase/supabase-js";
 import { getOrCreateMemberProfile } from "@/lib/member-db";
 
 export const runtime = "nodejs";
@@ -16,14 +26,13 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
+  const tokenHash = searchParams.get("token_hash");
+  const typeParam = searchParams.get("type") as EmailOtpType | null;
   const code = searchParams.get("code");
   const next = searchParams.get("next") || "/mitglieder";
 
-  if (!code) {
-    return NextResponse.redirect(`${origin}/mitglieder/login?error=no_code`);
-  }
-
-  let response = NextResponse.redirect(`${origin}${next}`);
+  // Pre-built response — Cookies werden vom Supabase-Client gesetzt
+  const response = NextResponse.redirect(`${origin}${next}`);
 
   const supabase = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     cookies: {
@@ -38,23 +47,63 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  const { error: exErr, data } = await supabase.auth.exchangeCodeForSession(code);
-  if (exErr || !data?.user) {
-    return NextResponse.redirect(
-      `${origin}/mitglieder/login?error=${encodeURIComponent(exErr?.message || "exchange_failed")}`
-    );
-  }
-
-  // Profil sicherstellen (mit Auto-Match aus wauwerk_leads)
-  try {
-    await getOrCreateMemberProfile({
-      userId: data.user.id,
-      email: data.user.email || "",
+  // ── Pfad 1: token_hash (Magic Link aus unserer auth-hook Mail) ──
+  if (tokenHash && typeParam) {
+    const { data, error } = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: typeParam,
     });
-  } catch (e) {
-    console.error("[mitglieder/callback] getOrCreateMemberProfile error:", e);
-    // Profil-Anlage fehlgeschlagen → trotzdem redirect, Dashboard zeigt Fallback
+    if (error || !data?.user) {
+      console.error(
+        "[mitglieder/callback] verifyOtp fehlgeschlagen:",
+        error?.message
+      );
+      return NextResponse.redirect(
+        `${origin}/mitglieder/login?error=${encodeURIComponent(
+          error?.message?.includes("expired")
+            ? "link_abgelaufen"
+            : "verify_failed"
+        )}`
+      );
+    }
+    try {
+      await getOrCreateMemberProfile({
+        userId: data.user.id,
+        email: data.user.email || "",
+      });
+    } catch (e) {
+      console.error("[mitglieder/callback] profil setup fail:", e);
+    }
+    return response;
   }
 
-  return response;
+  // ── Pfad 2: code (PKCE Fallback fuer Default-Supabase-Mail / OAuth) ──
+  if (code) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error || !data?.user) {
+      console.error(
+        "[mitglieder/callback] exchangeCodeForSession fehlgeschlagen:",
+        error?.message
+      );
+      return NextResponse.redirect(
+        `${origin}/mitglieder/login?error=${encodeURIComponent(
+          error?.message || "exchange_failed"
+        )}`
+      );
+    }
+    try {
+      await getOrCreateMemberProfile({
+        userId: data.user.id,
+        email: data.user.email || "",
+      });
+    } catch (e) {
+      console.error("[mitglieder/callback] profil setup fail:", e);
+    }
+    return response;
+  }
+
+  // Weder token_hash noch code → fehlerhafter Aufruf
+  return NextResponse.redirect(
+    `${origin}/mitglieder/login?error=fehlende_parameter`
+  );
 }
