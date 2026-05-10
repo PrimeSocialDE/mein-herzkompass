@@ -70,9 +70,9 @@ export default function UpsellFlipCard({
     .replace(".", ",")}`;
 
   return (
-    <div className="relative w-full" style={{ perspective: "1200px" }}>
+    <div className="relative w-full" style={{ perspective: "1000px" }}>
       <div
-        className="relative w-full aspect-[4/5] sm:aspect-[5/6] transition-transform duration-700 ease-out"
+        className="relative w-full aspect-[3/4] transition-transform duration-700 ease-out"
         style={{
           transformStyle: "preserve-3d",
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
@@ -80,11 +80,11 @@ export default function UpsellFlipCard({
       >
         {/* ── FRONT ──────────────────────────────────────────────── */}
         <div
-          className="absolute inset-0 bg-white border border-[#EADDC5] rounded-2xl overflow-hidden flex flex-col shadow-[0_2px_12px_rgba(139,115,85,0.06)]"
+          className="absolute inset-0 bg-white border border-[#EADDC5] rounded-xl overflow-hidden flex flex-col shadow-[0_2px_8px_rgba(139,115,85,0.06)]"
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
         >
           {/* Bild oder Gradient mit Emoji */}
-          <div className="relative aspect-[16/10] bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] flex items-center justify-center overflow-hidden flex-shrink-0">
+          <div className="relative aspect-[4/3] bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] flex items-center justify-center overflow-hidden flex-shrink-0">
             {upsell.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -93,35 +93,27 @@ export default function UpsellFlipCard({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <span className="text-[64px] leading-none">{emoji}</span>
+              <span className="text-[42px] leading-none">{emoji}</span>
             )}
             {upsell.badge_text && (
-              <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider bg-white/90 backdrop-blur-sm text-[#8B7355] px-2 py-0.5 rounded-md">
+              <span className="absolute top-1.5 left-1.5 text-[8px] font-bold uppercase tracking-wider bg-white/90 backdrop-blur-sm text-[#8B7355] px-1.5 py-0.5 rounded">
                 {upsell.badge_text}
               </span>
             )}
           </div>
 
-          <div className="flex-1 p-4 sm:p-5 flex flex-col">
-            <h3 className="text-[16px] sm:text-[17px] font-extrabold text-[#1a1a1a] mb-1.5 leading-tight">
+          <div className="flex-1 p-3 flex flex-col">
+            <h3 className="text-[13px] font-extrabold text-[#1a1a1a] leading-tight mb-1 line-clamp-2">
               {upsell.title}
             </h3>
-            {upsell.description && (
-              <p className="text-[12px] sm:text-[13px] text-[#6B7280] leading-snug mb-3 line-clamp-3">
-                {upsell.description}
-              </p>
-            )}
 
             <div className="mt-auto">
-              <div className="flex items-baseline justify-between mb-3">
-                <span className="text-[20px] font-extrabold text-[#1a1a1a]">
-                  {priceFormatted}
-                </span>
-                <span className="text-[10px] text-[#9CA3AF]">einmalig</span>
+              <div className="text-[16px] font-extrabold text-[#1a1a1a] mb-2 leading-none">
+                {priceFormatted}
               </div>
               <button
                 onClick={() => setFlipped(true)}
-                className="w-full bg-[#FAFAFA] hover:bg-[#F0EBE3] text-[#1a1a1a] font-semibold py-2.5 px-4 rounded-xl text-[13px] transition border border-[#EADDC5]"
+                className="w-full bg-[#FAFAFA] hover:bg-[#F0EBE3] text-[#1a1a1a] font-semibold py-1.5 px-2 rounded-lg text-[11px] transition border border-[#EADDC5]"
               >
                 Mehr Infos →
               </button>
@@ -131,35 +123,30 @@ export default function UpsellFlipCard({
 
         {/* ── BACK ───────────────────────────────────────────────── */}
         <div
-          className="absolute inset-0 bg-gradient-to-br from-[#FFFDF8] to-white border-2 border-[#C4A576] rounded-2xl overflow-hidden p-4 sm:p-5 flex flex-col shadow-[0_4px_20px_rgba(196,165,118,0.15)]"
+          className="absolute inset-0 bg-gradient-to-br from-[#FFFDF8] to-white border-2 border-[#C4A576] rounded-xl overflow-hidden p-3 flex flex-col shadow-[0_4px_16px_rgba(196,165,118,0.15)]"
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             transform: "rotateY(180deg)",
           }}
         >
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355]">
-              Was du bekommst
-            </p>
-            <button
-              onClick={() => setFlipped(false)}
-              className="text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a] -mr-1 px-1"
-              aria-label="Zurück"
-            >
-              ← Zurück
-            </button>
-          </div>
+          <button
+            onClick={() => setFlipped(false)}
+            className="self-start text-[10px] text-[#9CA3AF] hover:text-[#1a1a1a] mb-1.5"
+            aria-label="Zurück"
+          >
+            ← Zurück
+          </button>
 
-          <h3 className="text-[16px] font-extrabold text-[#1a1a1a] mb-3 leading-tight">
+          <h3 className="text-[13px] font-extrabold text-[#1a1a1a] mb-2 leading-tight">
             {upsell.title}
           </h3>
 
-          <ul className="space-y-2 mb-4 flex-1 overflow-y-auto">
+          <ul className="space-y-1 mb-2 flex-1 overflow-y-auto">
             {features.map((f, i) => (
               <li
                 key={i}
-                className="flex gap-2 items-start text-[13px] text-[#1a1a1a] leading-snug"
+                className="flex gap-1.5 items-start text-[11px] text-[#1a1a1a] leading-snug"
               >
                 <span className="text-[#C4A576] flex-shrink-0 font-bold">✓</span>
                 <span>{f}</span>
@@ -167,21 +154,16 @@ export default function UpsellFlipCard({
             ))}
           </ul>
 
-          <div className="space-y-2">
-            <button
-              onClick={handleBuy}
-              disabled={loading}
-              className="w-full bg-[#C4A576] hover:bg-[#B5946A] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 px-5 rounded-xl text-[14px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
-            >
-              {loading ? "Lade Checkout…" : `Für ${priceFormatted} kaufen`}
-            </button>
-            {error && (
-              <p className="text-[11px] text-[#B91C1C] text-center">{error}</p>
-            )}
-            <p className="text-[10px] text-[#9CA3AF] text-center">
-              Sichere Zahlung über Mollie · Sofort verfügbar
-            </p>
-          </div>
+          <button
+            onClick={handleBuy}
+            disabled={loading}
+            className="w-full bg-[#C4A576] hover:bg-[#B5946A] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-2 px-3 rounded-lg text-[12px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
+          >
+            {loading ? "Lade…" : `Für ${priceFormatted} kaufen`}
+          </button>
+          {error && (
+            <p className="text-[10px] text-[#B91C1C] text-center mt-1">{error}</p>
+          )}
         </div>
       </div>
     </div>
