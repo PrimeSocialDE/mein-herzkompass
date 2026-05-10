@@ -137,8 +137,8 @@ export default async function MitgliederDashboard() {
 
   return (
     <>
-      {/* HERO-Banner: edge-to-edge, 16:9 */}
-      <div className="mb-5 -mx-4 md:-mx-8 md:mt-[-10px]">
+      {/* HERO-Banner: edge-to-edge, 16:9 — traegt den Marken-Claim */}
+      <div className="mb-4 -mx-4 md:-mx-8 md:mt-[-10px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/HeroPlan.jpg"
@@ -147,36 +147,23 @@ export default async function MitgliederDashboard() {
         />
       </div>
 
-      {/* HERO-Header: gross, persoenlich, outcome-fokussiert */}
-      <div className="mb-5 md:mb-6">
-        <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
+      {/* Slim personal Greeting + Sozialer Beweis in einer Zeile —
+          keine Doppelung mit Hero-Bild oder ExerciseCard-Eyebrow */}
+      <div className="mb-5 flex items-center gap-3 flex-wrap">
+        <p className="text-[14px] font-semibold text-[#1a1a1a]">
           {greeting}
-        </p>
-        <h1 className="text-[28px] md:text-[36px] font-extrabold tracking-tight text-[#1a1a1a] leading-[1.1]">
-          {dogPossessive ? (
-            <>
-              Hier ist die erste Übung aus{" "}
-              <span className="text-[#C4A576]">{dogPossessive}</span> Plan
-            </>
-          ) : (
-            "Hier ist eure erste Übung"
+          {problemLabel && (
+            <span className="text-[#6B7280] font-normal">
+              {" "}
+              — heute geht&rsquo;s gegen{" "}
+              <strong className="text-[#1a1a1a]">{problemLabel}</strong>
+            </span>
           )}
-        </h1>
-        {problemLabel && (
-          <p className="text-[14px] md:text-[15px] text-[#4B5563] mt-2 leading-relaxed">
-            Direkt für euer Thema „<strong className="text-[#1a1a1a]">{problemLabel}</strong>" — sofort umsetzbar.
-          </p>
-        )}
-      </div>
-
-      {/* Sozialer Beweis — als kleine Pille DIREKT unter dem Header damit
-          der Trust SOFORT da ist (in den ersten 10 Sek sichtbar) */}
-      <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-full px-4 py-2 mb-5 inline-flex items-center gap-2">
-        <span className="text-[14px]">🐾</span>
-        <p className="text-[12px] text-[#15803D] leading-tight">
-          <strong className="text-[#166534]">5.000+ Hundebesitzer</strong>{" "}
-          trainieren bereits mit Pfoten-Plan
         </p>
+        <span className="inline-flex items-center gap-1 bg-[#F0FDF4] border border-[#BBF7D0] rounded-full px-2.5 py-0.5 text-[11px] text-[#15803D]">
+          <span className="text-[12px]">🐾</span>
+          <strong className="text-[#166534]">5.000+</strong> trainieren mit
+        </span>
       </div>
 
       {/* HERO: Erste Übung als Inhalt — DAS ist der Wow-Moment */}
