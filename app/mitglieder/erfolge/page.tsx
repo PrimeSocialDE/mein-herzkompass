@@ -54,7 +54,7 @@ export default async function ErfolgeHubPage() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/Herchallanges.jpg"
-          alt={`${dogPossessive} Trainings-Hub`}
+          alt={`${dogPossessive} Trainings-Bereich`}
           className="w-full aspect-[16/7] object-cover object-bottom md:rounded-2xl"
         />
       </div>
@@ -65,7 +65,7 @@ export default async function ErfolgeHubPage() {
           Erfolge
         </p>
         <h1 className="text-[24px] md:text-[30px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
-          {dogName ? `${dogPossessive} Trainings-Hub` : "Euer Trainings-Hub"}
+          {dogName ? `${dogPossessive} Trainings-Bereich` : "Euer Trainings-Bereich"}
         </h1>
         <p className="text-[14px] text-[#4B5563] mt-2 leading-relaxed">
           Zwei Wege, dranzubleiben. Was möchtest du heute machen?
@@ -83,7 +83,7 @@ export default async function ErfolgeHubPage() {
             <div className="text-[40px] leading-none">🏆</div>
             {badges.length > 0 && (
               <span className="text-[10px] font-bold uppercase tracking-wider bg-[#FFF9F0] text-[#8B7355] px-2 py-0.5 rounded-md">
-                {badges.length} Badges
+                {badges.length} Abzeichen
               </span>
             )}
           </div>
@@ -91,7 +91,7 @@ export default async function ErfolgeHubPage() {
             Wochen-Aufgaben
           </h2>
           <p className="text-[13px] text-[#6B7280] leading-relaxed mb-4 flex-1">
-            Spielerische Mini-Herausforderungen für {dog}. Geschafft = Badge
+            Spielerische Mini-Herausforderungen für {dog}. Geschafft = Abzeichen
             für die Sammlung.
           </p>
           <span className="text-[12px] font-semibold text-[#C4A576] inline-flex items-center gap-1">
@@ -113,12 +113,12 @@ export default async function ErfolgeHubPage() {
             )}
             {!isPaid && (
               <span className="text-[10px] font-bold uppercase tracking-wider bg-[#FAFAFA] text-[#6B7280] px-2 py-0.5 rounded-md">
-                Free-Tipps
+                Gratis-Tipps
               </span>
             )}
           </div>
           <h2 className="text-[18px] font-extrabold text-[#1a1a1a] mb-1.5 leading-tight">
-            Plan-Coaching
+            Plan-Begleitung
           </h2>
           <p className="text-[13px] text-[#6B7280] leading-relaxed mb-4 flex-1">
             Wo stehst du im Plan? Tagestipp und nächstes Modul für {dog} —

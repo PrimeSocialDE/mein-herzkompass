@@ -99,13 +99,13 @@ export default async function UpgradePage() {
           </h2>
           <p className="text-[13px] text-[#6B7280] mb-4 leading-relaxed">
             Spezial-Themen wie Aggression, Trennungsangst oder Reise gibt&rsquo;s
-            als Einzel-Module im Modul-Shop.
+            als Einzel-Module in der Modul-Übersicht.
           </p>
           <Link
             href="/mitglieder/module"
             className="inline-flex items-center gap-2 bg-[#C4A576] text-white font-semibold py-3 px-5 rounded-xl text-[14px] shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
           >
-            Modul-Shop ansehen <span aria-hidden>→</span>
+            Modul-Übersicht ansehen <span aria-hidden>→</span>
           </Link>
         </div>
       )}

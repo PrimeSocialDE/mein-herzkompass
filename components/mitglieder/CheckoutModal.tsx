@@ -447,7 +447,7 @@ export default function CheckoutModal({
               onClick={onClose}
               className="bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-2.5 px-6 rounded-xl text-[13px] transition"
             >
-              Weiter im Modul-Shop
+              Weiter in den Modulen
             </button>
           </div>
         )}

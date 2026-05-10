@@ -7,7 +7,7 @@ import { getCurrentMember } from "@/lib/member-auth-server";
 import { getOrCreateMemberProfile } from "@/lib/member-db";
 import {
   getOrAssignWeekChallenges,
-  getEarnedBadges,
+  getEarnedAbzeichen,
   CHALLENGE_TEMPLATES,
 } from "@/lib/member-challenges";
 import ChallengeCard from "@/components/mitglieder/ChallengeCard";
@@ -42,7 +42,7 @@ export default async function ErfolgePage() {
   const dogPossessive = dogName ? `${dogName}s` : "Eure";
 
   const challenges = await getOrAssignWeekChallenges(member);
-  const badges = await getEarnedBadges(user.id, 24);
+  const badges = await getEarnedAbzeichen(user.id, 24);
 
   const completedThisWeek = challenges.filter((c) => c.completed_at).length;
   const totalThisWeek = challenges.length;
@@ -57,7 +57,7 @@ export default async function ErfolgePage() {
         (t) => t.is_premium && !earnedSlugs.has(t.slug)
       ).slice(0, 3);
 
-  // Ghost-Badges (alles was sie noch nicht haben, fuer Sammlung-Optik)
+  // Ghost-Abzeichen (alles was sie noch nicht haben, fuer Sammlung-Optik)
   const ghostBadgeTemplates = CHALLENGE_TEMPLATES.filter(
     (t) => !earnedSlugs.has(t.slug)
   ).slice(0, GHOST_BADGE_COUNT);
@@ -92,7 +92,7 @@ export default async function ErfolgePage() {
         </h1>
         <p className="text-[14px] text-[#4B5563] mt-2 leading-relaxed">
           Kleine Trainings-Aufgaben für {dog}, die in den Alltag passen.
-          Schafft ihr sie, sammelt ihr Badges für die Wand.
+          Schafft ihr sie, sammelt ihr Abzeichen für die Wand.
         </p>
       </div>
 
@@ -193,7 +193,7 @@ export default async function ErfolgePage() {
       <div className="mb-6">
         <div className="flex items-baseline justify-between mb-3">
           <h2 className="text-[18px] font-bold text-[#1a1a1a]">
-            {dogName ? `${dogPossessive} Badges` : "Eure Badges"}
+            {dogName ? `${dogPossessive} Abzeichen` : "Eure Abzeichen"}
           </h2>
           {badges.length > 0 && (
             <span className="text-[12px] text-[#9CA3AF]">
@@ -206,7 +206,7 @@ export default async function ErfolgePage() {
           <div className="bg-[#FAFAFA] border border-dashed border-[#EADDC5] rounded-2xl p-6 text-center">
             <p className="text-[28px] mb-1">🏆</p>
             <p className="text-[13px] text-[#6B7280]">
-              Erste Aufgabe schaffen → erstes Badge.
+              Erste Aufgabe schaffen → erstes Abzeichen.
             </p>
           </div>
         ) : (
@@ -219,7 +219,7 @@ export default async function ErfolgePage() {
                 date={b.completed_at}
               />
             ))}
-            {/* Ghost-Slots fuer ungerlaufene Badges — FOMO */}
+            {/* Ghost-Slots fuer ungerlaufene Abzeichen — FOMO */}
             {ghostBadgeTemplates.map((t) => (
               <GhostBadgeTile
                 key={t.slug}
@@ -302,8 +302,8 @@ function ExplainerSlider() {
     },
     {
       emoji: "🏆",
-      title: "Badge holen",
-      body: "Geschafft = Badge für die Sammlung.",
+      title: "Abzeichen holen",
+      body: "Geschafft = Abzeichen für die Sammlung.",
       tint: "from-[#FAF5FF] to-[#FDFBFF]",
     },
   ];

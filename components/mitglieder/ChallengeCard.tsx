@@ -140,7 +140,7 @@ export default function ChallengeCard({
           <span className="text-[28px]">{badgeEmoji}</span>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-bold uppercase tracking-wider text-[#8B7355]">
-              Badge verdient
+              Abzeichen verdient
             </p>
             <p className="text-[14px] font-extrabold text-[#1a1a1a]">
               {badgeLabel}

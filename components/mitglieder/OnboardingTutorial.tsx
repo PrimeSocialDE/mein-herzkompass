@@ -39,7 +39,7 @@ const SLIDES: Slide[] = [
   {
     emoji: "🏆",
     title: () => "Hier sammelst du Erfolge",
-    body: "Wochen-Aufgaben, dein Trainings-Coaching mit Tagestipp und ein Stimmungs-Tagebuch — alles an einem Platz.",
+    body: "Wochen-Aufgaben, deine Plan-Begleitung mit Tagestipp und ein Stimmungs-Tagebuch — alles an einem Platz.",
     arrowX: 30,
   },
   {

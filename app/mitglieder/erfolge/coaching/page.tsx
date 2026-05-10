@@ -1,4 +1,4 @@
-// /mitglieder/erfolge/coaching — Plan-Coaching.
+// /mitglieder/erfolge/coaching — Plan-Begleitung.
 // Zeigt: wo bist du im Plan, naechstes Modul, Tagestipp passend zum
 // Quiz-Problem. Fuer Free-User: Free-Modul + Tipp + Soft-Bridge.
 
@@ -81,7 +81,7 @@ export default async function CoachingPage() {
       {/* Header */}
       <div className="mb-6">
         <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
-          Plan-Coaching
+          Plan-Begleitung
         </p>
         <h1 className="text-[24px] md:text-[30px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
           Dein Plan für {dog}
@@ -187,7 +187,7 @@ export default async function CoachingPage() {
             Mit dem vollen Plan
           </p>
           <h3 className="text-[16px] font-extrabold text-[#1a1a1a] mb-2 leading-tight">
-            Wochengenaues Coaching für {dog}
+            Wochengenaue Begleitung für {dog}
           </h3>
           <ul className="space-y-1.5 text-[13px] text-[#1a1a1a] mb-4">
             <li className="flex gap-2 items-start">
@@ -238,7 +238,7 @@ export default async function CoachingPage() {
               Wochen-Aufgabe
             </p>
             <p className="text-[11px] text-[#6B7280]">
-              Badge holen
+              Abzeichen holen
             </p>
           </div>
         </Link>

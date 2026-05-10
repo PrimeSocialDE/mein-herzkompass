@@ -263,7 +263,7 @@ export default async function MitgliederDashboard() {
           </li>
           <li className="flex gap-2 items-start">
             <span className="text-[#C4A576] flex-shrink-0">🏆</span>
-            <span>Wöchentliche Herausforderungen &amp; Badges</span>
+            <span>Wöchentliche Herausforderungen &amp; Abzeichen</span>
           </li>
         </ul>
         <Link
@@ -378,7 +378,7 @@ function UpsellSection({ upsells }: { upsells: any[] }) {
   return (
     <div>
       <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-1">
-        Zusätzliche Module aus dem Modul-Shop
+        Zusätzliche Module aus der Modul-Übersicht
       </h2>
       <p className="text-[13px] text-[#6B7280] mb-4">
         Wenn dein Hund noch andere Themen hat — hier kannst du gezielt erweitern.
