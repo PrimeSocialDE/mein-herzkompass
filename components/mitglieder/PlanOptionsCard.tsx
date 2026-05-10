@@ -156,7 +156,7 @@ export default function PlanOptionsCard({
                 />
                 {p.badge && (
                   <div
-                    className={`absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                    className={`absolute top-2 right-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
                       p.popular
                         ? "bg-[#C4A576] text-white"
                         : "bg-white/90 text-[#8B7355]"
