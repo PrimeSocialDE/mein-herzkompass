@@ -10,6 +10,7 @@ import {
   listModulesForMember,
 } from "@/lib/member-db";
 import { getEarnedBadges } from "@/lib/member-challenges";
+import { listMoodLogs } from "@/lib/member-mood";
 
 export const dynamic = "force-dynamic";
 
@@ -38,11 +39,13 @@ export default async function ErfolgeHubPage() {
   const isPaid = member.purchase_status === "paid";
 
   // Quick-Stats fuer die Cards
-  const [badges, modules] = await Promise.all([
+  const [badges, modules, moodLogs] = await Promise.all([
     getEarnedBadges(user.id, 100),
     listModulesForMember(member),
+    listMoodLogs(user.id, 7),
   ]);
   const unlockedModules = modules.filter((m) => m.unlocked).length;
+  const moodCount7d = moodLogs.length;
 
   return (
     <>
@@ -123,6 +126,35 @@ export default async function ErfolgeHubPage() {
           </p>
           <span className="text-[12px] font-semibold text-[#C4A576] inline-flex items-center gap-1">
             Tipp ansehen <span aria-hidden>→</span>
+          </span>
+        </Link>
+
+        {/* Card C: Stimmungs-Tagebuch (NEU) */}
+        <Link
+          href="/mitglieder/erfolge/stimmung"
+          className="group bg-white border border-[#EADDC5] rounded-2xl p-5 flex flex-col sm:col-span-2"
+        >
+          <div className="flex items-start justify-between mb-3">
+            <div className="text-[40px] leading-none">📊</div>
+            {moodCount7d > 0 ? (
+              <span className="text-[10px] font-bold uppercase tracking-wider bg-[#F0FDF4] text-[#15803D] px-2 py-0.5 rounded-md">
+                {moodCount7d} Eintr. / 7 Tage
+              </span>
+            ) : (
+              <span className="text-[10px] font-bold uppercase tracking-wider bg-[#FAFAFA] text-[#6B7280] px-2 py-0.5 rounded-md">
+                Neu
+              </span>
+            )}
+          </div>
+          <h2 className="text-[18px] font-extrabold text-[#1a1a1a] mb-1.5 leading-tight">
+            Stimmungs-Tagebuch
+          </h2>
+          <p className="text-[13px] text-[#6B7280] leading-relaxed mb-4 flex-1">
+            Nach jeder Übung kurz tracken: 😊 😐 😞 + optional Notiz. Daraus
+            baut sich euer Verlauf — ihr seht wann es besser wird.
+          </p>
+          <span className="text-[12px] font-semibold text-[#C4A576] inline-flex items-center gap-1">
+            Eintragen <span aria-hidden>→</span>
           </span>
         </Link>
       </div>
