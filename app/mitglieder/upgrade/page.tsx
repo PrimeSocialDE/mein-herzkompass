@@ -65,7 +65,13 @@ export default async function UpgradePage() {
       </div>
 
       {/* Plan-Auswahl (nur fuer Free-User) */}
-      {!isPaid && <PlanOptionsCard dogName={member.dog_name} />}
+      {!isPaid && (
+        <PlanOptionsCard
+          dogName={member.dog_name}
+          email={member.email}
+          leadId={member.source_lead_id}
+        />
+      )}
 
       {/* Was passiert nach dem Kauf — Reassurance */}
       {!isPaid && (

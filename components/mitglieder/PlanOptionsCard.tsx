@@ -2,10 +2,17 @@
 // Premium-Feel: Outcome-Versprechen, Feature-Grid und 3 Plan-Karten
 // mit klarer Differenzierung — damit User den vollen Wert sehen
 // bevor sie auf den Preis schauen.
+//
+// Klick auf Plan-Karte → fetch /api/mollie/wauwerk-checkout, dann
+// direkter Redirect zur Mollie-Hosted-Page (kein Umweg ueber
+// /deinplan4.html).
 
 "use client";
 
+import { useState } from "react";
+
 interface PlanOption {
+  key: "1month" | "3month" | "6month";  // muss zum wauwerk-checkout passen
   months: number;
   weeks: number;
   price: string;          // 'XX,99'
@@ -18,6 +25,7 @@ interface PlanOption {
 
 const PLANS: PlanOption[] = [
   {
+    key: "1month",
     months: 1,
     weeks: 4,
     price: "29,99",
@@ -32,6 +40,7 @@ const PLANS: PlanOption[] = [
     ],
   },
   {
+    key: "3month",
     months: 3,
     weeks: 12,
     price: "39,99",
@@ -46,6 +55,7 @@ const PLANS: PlanOption[] = [
     ],
   },
   {
+    key: "6month",
     months: 6,
     weeks: 24,
     price: "59,99",
@@ -96,11 +106,48 @@ const FEATURES: { emoji: string; title: string; body: string }[] = [
 
 export default function PlanOptionsCard({
   dogName,
+  email,
+  leadId,
 }: {
   dogName?: string | null;
+  email: string;
+  leadId?: string | null;
 }) {
   const dog = dogName?.trim() || "deinen Hund";
   const dogPossessive = dogName?.trim() ? `${dogName}s` : "Eure";
+
+  const [loadingKey, setLoadingKey] = useState<string | null>(null);
+  const [error, setError] = useState("");
+
+  async function startCheckout(planKey: PlanOption["key"]) {
+    if (loadingKey) return;
+    setLoadingKey(planKey);
+    setError("");
+    try {
+      const res = await fetch("/api/mollie/wauwerk-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          plan: planKey,
+          email,
+          leadId: leadId || undefined,
+          dogName: dogName || undefined,
+          utm_source: "member-area",
+          utm_campaign: "upgrade",
+        }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setError(data.error || "Konnte Checkout nicht starten");
+        setLoadingKey(null);
+      }
+    } catch (e) {
+      setError("Verbindungsfehler. Versuch's gleich nochmal.");
+      setLoadingKey(null);
+    }
+  }
 
   return (
     <section className="space-y-8">
@@ -152,75 +199,85 @@ export default function PlanOptionsCard({
           Wähle deine Laufzeit
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {PLANS.map((p) => (
-            <a
-              key={p.months}
-              href={`/deinplan4.html?utm_source=member-area&utm_campaign=upgrade&plan=${p.months}month`}
-              className={`relative bg-white rounded-2xl border p-5 block flex flex-col ${
-                p.popular
-                  ? "border-[#C4A576] shadow-[0_4px_16px_rgba(196,165,118,0.15)]"
-                  : "border-[#EADDC5]"
-              }`}
-            >
-              {p.badge && (
-                <div
-                  className={`absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
-                    p.popular
-                      ? "bg-[#C4A576] text-white"
-                      : "bg-[#F0EBE3] text-[#8B7355]"
-                  }`}
-                >
-                  {p.badge}
-                </div>
-              )}
-
-              <div className="text-[12px] text-[#8B7355] font-semibold uppercase tracking-wide mb-1 mt-1">
-                {p.months}-Monats-Plan · {p.weeks} Wochen
-              </div>
-
-              <p className="text-[13px] font-bold text-[#1a1a1a] leading-tight mb-3 min-h-[34px]">
-                {p.tagline}
-              </p>
-
-              <div className="flex items-baseline gap-1 mb-1">
-                <span className="text-[28px] font-extrabold text-[#1a1a1a]">
-                  €{p.price.split(",")[0]}
-                </span>
-                <span className="text-[12px] text-[#9CA3AF]">
-                  ,{p.price.split(",")[1]}
-                </span>
-              </div>
-              <div className="text-[11px] text-[#6B7280] mb-4">
-                Umgerechnet nur <strong>{p.daily} am Tag</strong> · einmalig,
-                kein Abo
-              </div>
-
-              <ul className="space-y-1.5 mb-4 flex-1">
-                {p.bullets.map((b, i) => (
-                  <li
-                    key={i}
-                    className="flex gap-1.5 items-start text-[12px] text-[#1a1a1a] leading-snug"
-                  >
-                    <span className="text-[#C4A576] flex-shrink-0 font-bold">
-                      ✓
-                    </span>
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div
-                className={`text-center font-semibold py-2.5 px-4 rounded-xl text-[13px] ${
+          {PLANS.map((p) => {
+            const isLoading = loadingKey === p.key;
+            const anyLoading = !!loadingKey;
+            return (
+              <button
+                key={p.key}
+                onClick={() => startCheckout(p.key)}
+                disabled={anyLoading}
+                className={`relative text-left bg-white rounded-2xl border p-5 flex flex-col disabled:opacity-60 ${
                   p.popular
-                    ? "bg-[#C4A576] text-white shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
-                    : "bg-[#FAFAFA] text-[#1a1a1a] border border-[#EADDC5]"
+                    ? "border-[#C4A576] shadow-[0_4px_16px_rgba(196,165,118,0.15)]"
+                    : "border-[#EADDC5]"
                 }`}
               >
-                Plan wählen →
-              </div>
-            </a>
-          ))}
+                {p.badge && (
+                  <div
+                    className={`absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
+                      p.popular
+                        ? "bg-[#C4A576] text-white"
+                        : "bg-[#F0EBE3] text-[#8B7355]"
+                    }`}
+                  >
+                    {p.badge}
+                  </div>
+                )}
+
+                <div className="text-[12px] text-[#8B7355] font-semibold uppercase tracking-wide mb-1 mt-1">
+                  {p.months}-Monats-Plan · {p.weeks} Wochen
+                </div>
+
+                <p className="text-[13px] font-bold text-[#1a1a1a] leading-tight mb-3 min-h-[34px]">
+                  {p.tagline}
+                </p>
+
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-[28px] font-extrabold text-[#1a1a1a]">
+                    €{p.price.split(",")[0]}
+                  </span>
+                  <span className="text-[12px] text-[#9CA3AF]">
+                    ,{p.price.split(",")[1]}
+                  </span>
+                </div>
+                <div className="text-[11px] text-[#6B7280] mb-4">
+                  Umgerechnet nur <strong>{p.daily} am Tag</strong> ·
+                  einmalig, kein Abo
+                </div>
+
+                <ul className="space-y-1.5 mb-4 flex-1">
+                  {p.bullets.map((b, i) => (
+                    <li
+                      key={i}
+                      className="flex gap-1.5 items-start text-[12px] text-[#1a1a1a] leading-snug"
+                    >
+                      <span className="text-[#C4A576] flex-shrink-0 font-bold">
+                        ✓
+                      </span>
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div
+                  className={`text-center font-semibold py-2.5 px-4 rounded-xl text-[13px] ${
+                    p.popular
+                      ? "bg-[#C4A576] text-white shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
+                      : "bg-[#FAFAFA] text-[#1a1a1a] border border-[#EADDC5]"
+                  }`}
+                >
+                  {isLoading ? "Lade Checkout…" : "Plan wählen →"}
+                </div>
+              </button>
+            );
+          })}
         </div>
+        {error && (
+          <p className="text-[12px] text-[#B91C1C] text-center mt-3">
+            {error}
+          </p>
+        )}
       </div>
 
       {/* Trust-Section */}
