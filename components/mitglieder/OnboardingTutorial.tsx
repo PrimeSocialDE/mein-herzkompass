@@ -106,35 +106,37 @@ export default function OnboardingTutorial({
 
   return (
     <>
-      {/* Backdrop mit Blur */}
+      {/* Backdrop mit Blur — laesst die untere Leiste (Mobile) bzw die
+          Seitenleiste (Desktop) frei damit User die Icon-Labels noch
+          lesen kann. */}
       <div
-        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-md"
+        className="fixed top-0 left-0 right-0 bottom-20 md:bottom-0 md:left-64 z-40 bg-black/40 backdrop-blur-md"
         onClick={close}
       />
 
-      {/* Pfeil zum Icon (nur Mobile, nur wenn arrowX gesetzt) */}
+      {/* Pfeil zum Icon (nur Mobile, nur wenn arrowX gesetzt).
+          Dick + weiss + drop-shadow damit auf jedem Hintergrund sichtbar. */}
       {slide.arrowX !== null && (
-        <>
-          {/* Mobile: Pfeil zeigt nach unten zur unteren Leiste */}
-          <div
-            className="fixed z-50 pointer-events-none md:hidden animate-bounce"
-            style={{
-              left: `calc(${slide.arrowX}% - 24px)`,
-              bottom: "calc(env(safe-area-inset-bottom) + 80px)",
-            }}
-          >
-            <svg width="48" height="64" viewBox="0 0 48 64" fill="none">
-              <path
-                d="M24 4 L24 50 M10 36 L24 50 L38 36"
-                stroke="#C4A576"
-                strokeWidth="5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle cx="24" cy="4" r="6" fill="#C4A576" />
-            </svg>
-          </div>
-        </>
+        <div
+          className="fixed z-50 pointer-events-none md:hidden animate-bounce"
+          style={{
+            left: `calc(${slide.arrowX}% - 28px)`,
+            bottom: "calc(env(safe-area-inset-bottom) + 90px)",
+            filter:
+              "drop-shadow(0 2px 8px rgba(0,0,0,0.45)) drop-shadow(0 0 2px rgba(0,0,0,0.6))",
+          }}
+        >
+          <svg width="56" height="72" viewBox="0 0 56 72" fill="none">
+            <path
+              d="M28 4 L28 56 M10 38 L28 56 L46 38"
+              stroke="#FFFFFF"
+              strokeWidth="9"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="28" cy="4" r="7" fill="#FFFFFF" />
+          </svg>
+        </div>
       )}
 
       {/* Modal-Fenster — klein, zentriert oben/mittig damit Pfeil zum
