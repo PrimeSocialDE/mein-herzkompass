@@ -135,31 +135,23 @@ export default async function ModulShopPage() {
       {/* ── Section 1: Plan-Module ─────────────────────────────────── */}
       {modules.length > 0 && (
         <section className="mb-10">
-          <div className="flex items-baseline justify-between mb-3">
-            <h2 className="text-[16px] font-bold text-[#1a1a1a]">
-              Dein Trainings-Plan
-            </h2>
-            <span className="text-[11px] text-[#9CA3AF]">
-              {unlockedCount} / {modules.length} frei
-            </span>
-          </div>
+          <h2 className="text-[20px] md:text-[22px] font-extrabold text-[#1a1a1a] leading-tight">
+            Dein Trainings-Plan
+          </h2>
+          <p className="text-[12px] text-[#9CA3AF] mt-1 mb-3">
+            {unlockedCount} von {modules.length} freigeschaltet
+          </p>
           <ModuleGrid modules={modules} isPaid={isPaid} />
         </section>
       )}
 
       {/* ── Section 2: Themen-Module ───────────────────────────────── */}
       <section className="mb-10">
-        <div className="flex items-baseline justify-between mb-1">
-          <h2 className="text-[16px] font-bold text-[#1a1a1a]">
-            Themen-Module
-          </h2>
-          <span className="text-[11px] text-[#9CA3AF]">
-            {themenModules.length} verfügbar
-          </span>
-        </div>
-        <p className="text-[12px] text-[#6B7280] mb-3 leading-snug">
-          Spezial-Module zu einzelnen Verhaltensthemen. Direkt kaufen, sofort
-          starten.
+        <h2 className="text-[22px] md:text-[26px] font-extrabold text-[#1a1a1a] leading-tight">
+          Themen-Module
+        </h2>
+        <p className="text-[12px] text-[#9CA3AF] mt-1 mb-3">
+          {themenModules.length} verfügbar · Tipp auf eine Karte für Details
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -191,14 +183,12 @@ export default async function ModulShopPage() {
       {/* ── Section 3: Weitere Zusatz-Module (PDFs, Abos) ──────────── */}
       {upsells.length > 0 && (
         <section className="mb-8">
-          <div className="flex items-baseline justify-between mb-3">
-            <h2 className="text-[16px] font-bold text-[#1a1a1a]">
-              Weitere Module
-            </h2>
-            <span className="text-[11px] text-[#9CA3AF]">
-              Spezial-Guides
-            </span>
-          </div>
+          <h2 className="text-[20px] md:text-[22px] font-extrabold text-[#1a1a1a] leading-tight">
+            Weitere Module
+          </h2>
+          <p className="text-[12px] text-[#9CA3AF] mt-1 mb-3">
+            Spezial-Guides als PDF
+          </p>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {upsells.map((u: any) => (
