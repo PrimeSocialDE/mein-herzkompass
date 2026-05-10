@@ -18,6 +18,7 @@ import ModuleGrid from "@/components/mitglieder/ModuleGrid";
 import DogProfileCard from "@/components/mitglieder/DogProfileCard";
 import ProgressCircle from "@/components/mitglieder/ProgressCircle";
 import WeekOverview from "@/components/mitglieder/WeekOverview";
+import UpgradePopup from "@/components/mitglieder/UpgradePopup";
 import { groupModulesByWeek } from "@/lib/member-weeks";
 import { PROBLEM_IMAGE } from "@/lib/member-images";
 
@@ -273,6 +274,14 @@ export default async function MitgliederDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Timed Upgrade-Popup — erscheint nach 75s, max 1x/Session,
+          7-Tage-Cooldown bei 'Spaeter' */}
+      <UpgradePopup
+        email={member.email}
+        leadId={member.source_lead_id}
+        dogName={member.dog_name}
+      />
     </>
   );
 }
