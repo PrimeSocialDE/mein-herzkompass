@@ -70,13 +70,16 @@ export default async function MitgliederDashboard() {
   const firstFree = modules.find((m) => m.is_free);
   const firstFreeFull = firstFree ? await getModuleBySlug(firstFree.slug) : null;
 
-  // Greeting personalisiert
-  const firstName =
-    member.name?.split(" ")[0] ||
-    (member.email?.split("@")[0] || "")
-      .split(/[+._-]/)[0]
-      .replace(/^./, (c) => c.toUpperCase());
-  const greeting = firstName ? `Hallo ${firstName}` : "Hallo";
+  // Greeting personalisiert — wir haben oft KEINEN User-Vornamen
+  // (member.name leer + Email wuerde 'kontakt' o.ae. liefern). Daher:
+  // wenn Hundename bekannt → 'Schoen dass {Hundename} da ist'
+  // sonst:                 → 'Schoen dass ihr da seid'
+  // Email-Fallback komplett raus, weil 'Hallo Max' aus 'max@...' ist
+  // irrefuehrend (Max ist meist der Hund, nicht der User).
+  const dogNameTrimmed = member.dog_name?.trim() || null;
+  const greeting = dogNameTrimmed
+    ? `Schön dass ${dogNameTrimmed} da ist`
+    : "Schön dass ihr da seid";
 
   // Problem-Label aus Quiz für Kontext
   const problemKey =
@@ -93,7 +96,7 @@ export default async function MitgliederDashboard() {
       <>
         <Header
           greeting={greeting}
-          subtitle={`Schön dass du da bist. Hier ist dein Plan für ${dog}.`}
+          subtitle={`Hier ist euer Plan für die nächsten Wochen.`}
         />
 
         <DogProfileCard
