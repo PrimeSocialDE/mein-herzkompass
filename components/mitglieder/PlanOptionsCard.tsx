@@ -35,8 +35,8 @@ const PLANS: PlanOption[] = [
     image: "/plan-1m-placeholder.svg",
     bullets: [
       { icon: "⚡", text: "Täglich kurz trainieren" },
-      { icon: "🎯", text: "Voller Fokus auf 1 Thema" },
-      { icon: "💪", text: "Schnelles Ergebnis" },
+      { icon: "🎯", text: "Basis-Übungen für 1 Thema" },
+      { icon: "💪", text: "Schnell sichtbare Erfolge" },
     ],
   },
   {
@@ -50,9 +50,9 @@ const PLANS: PlanOption[] = [
     tagline: "Im Wohlfühl-Tempo, klare Ergebnisse",
     image: "/plan-3m-placeholder.svg",
     bullets: [
+      { icon: "📚", text: "Mehr Übungen für mehr Tiefe" },
       { icon: "🌿", text: "3× pro Woche reicht" },
-      { icon: "📚", text: "Mehrere Themen abgedeckt" },
-      { icon: "⚖️", text: "Gut machbarer Aufwand" },
+      { icon: "⚖️", text: "Mehrere Themen abgedeckt" },
     ],
   },
   {
@@ -63,12 +63,12 @@ const PLANS: PlanOption[] = [
     daily: "33 Cent",
     popular: false,
     badge: "Komplett",
-    tagline: "Ganz in Ruhe, alle Themen dabei",
+    tagline: "Ganz in Ruhe, richtig beherrschen",
     image: "/plan-6m-placeholder.svg",
     bullets: [
-      { icon: "🛋️", text: "Im eigenen Tempo, kein Druck" },
+      { icon: "🐾", text: "Alle Übungen — wirklich vertiefen" },
       { icon: "🌳", text: "Alle 10 Themen-Module inklusive" },
-      { icon: "🐕", text: "Auch für sensible Hunde" },
+      { icon: "🛋️", text: "Im eigenen Tempo, kein Druck" },
     ],
   },
 ];
