@@ -1,26 +1,24 @@
 // View für User die noch GAR KEINEN Plan gekauft haben.
-// Premium-Feel: Outcome-Versprechen, Feature-Grid und 3 Plan-Karten
-// mit klarer Differenzierung — damit User den vollen Wert sehen
-// bevor sie auf den Preis schauen.
+// Lean-Variante: Outcome-fokussiert ('selbst loesen, ohne Hundeschule'),
+// Image-Header pro Karte, Payment-Logo-Strip statt Feature-Grid.
 //
 // Klick auf Plan-Karte → fetch /api/mollie/wauwerk-checkout, dann
-// direkter Redirect zur Mollie-Hosted-Page (kein Umweg ueber
-// /deinplan4.html).
+// direkter Redirect zur Mollie-Hosted-Page.
 
 "use client";
 
 import { useState } from "react";
 
 interface PlanOption {
-  key: "1month" | "3month" | "6month";  // muss zum wauwerk-checkout passen
+  key: "1month" | "3month" | "6month";
   months: number;
   weeks: number;
-  price: string;          // 'XX,99'
-  daily: string;          // 'XX Cent'
+  price: string;
+  daily: string;
   popular: boolean;
-  badge: string | null;   // Top-Pille
-  tagline: string;        // 1-Satz-Versprechen
-  bullets: string[];      // 2-3 Bullets pro Plan
+  badge: string | null;
+  tagline: string;
+  image: string;
 }
 
 const PLANS: PlanOption[] = [
@@ -32,12 +30,8 @@ const PLANS: PlanOption[] = [
     daily: "99 Cent",
     popular: false,
     badge: "Quick-Start",
-    tagline: "In 4 Wochen das Problem im Griff",
-    bullets: [
-      "4 Wochen Trainings-Plan",
-      "Fokus auf dein Hauptthema",
-      "Alle Erfolge & Tipps inklusive",
-    ],
+    tagline: "Erste Erfolge in 4 Wochen",
+    image: "/plan-1m-placeholder.svg",
   },
   {
     key: "3month",
@@ -47,12 +41,8 @@ const PLANS: PlanOption[] = [
     daily: "44 Cent",
     popular: true,
     badge: "Beliebt",
-    tagline: "12 Wochen für eine echte Verhaltens-Umstellung",
-    bullets: [
-      "12 Wochen Schritt-für-Schritt-Plan",
-      "Alle Verhaltens-Themen abgedeckt",
-      "Bestes Preis-Leistungs-Verhältnis",
-    ],
+    tagline: "Vollständiges Training in 12 Wochen",
+    image: "/plan-3m-placeholder.svg",
   },
   {
     key: "6month",
@@ -61,46 +51,9 @@ const PLANS: PlanOption[] = [
     price: "59,99",
     daily: "33 Cent",
     popular: false,
-    badge: "Komplett-Paket",
-    tagline: "Tiefgang über 24 Wochen, mit allen Themen-Modulen",
-    bullets: [
-      "24 Wochen voller Trainings-Plan",
-      "Alle 10 Themen-Module inklusive",
-      "Genug Zeit für nachhaltige Erfolge",
-    ],
-  },
-];
-
-const FEATURES: { emoji: string; title: string; body: string }[] = [
-  {
-    emoji: "🎯",
-    title: "Auf dein Problem zugeschnitten",
-    body: "Übungen wählen wir nach deinem Quiz-Ergebnis aus.",
-  },
-  {
-    emoji: "🏆",
-    title: "Wochen-Aufgaben & Erfolge",
-    body: "Spielerisch dranbleiben, Badges sammeln.",
-  },
-  {
-    emoji: "🗺️",
-    title: "Plan-Coaching mit Tagestipp",
-    body: "Du siehst täglich, was als Nächstes dran ist.",
-  },
-  {
-    emoji: "🤖",
-    title: "KI-Trainer 24/7",
-    body: "Fragen direkt im Chat, sofort Antwort.",
-  },
-  {
-    emoji: "📧",
-    title: "E-Mail-Support vom Team",
-    body: "Bei kniffligen Themen antwortet ein echter Trainer.",
-  },
-  {
-    emoji: "📄",
-    title: "PDF zum Ausdrucken",
-    body: "Plan auch offline am Kühlschrank kleben.",
+    badge: "Komplett",
+    tagline: "6 Monate Tiefgang, alle Themen drin",
+    image: "/plan-6m-placeholder.svg",
   },
 ];
 
@@ -113,8 +66,7 @@ export default function PlanOptionsCard({
   email: string;
   leadId?: string | null;
 }) {
-  const dog = dogName?.trim() || "deinen Hund";
-  const dogPossessive = dogName?.trim() ? `${dogName}s` : "Eure";
+  const dog = dogName?.trim() || "deinem Hund";
 
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -150,159 +102,113 @@ export default function PlanOptionsCard({
   }
 
   return (
-    <section className="space-y-8">
-      {/* Outcome-Versprechen */}
+    <section className="space-y-6">
+      {/* Outcome-Hero — kurz, klar, ohne Marketing-Geschwurbel */}
       <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-2xl p-5 md:p-6">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1.5">
-          Das Versprechen
-        </p>
-        <h2 className="text-[20px] md:text-[24px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight mb-2">
-          {dogPossessive} Verhaltens-Thema in einem klaren Zeitrahmen lösen
+        <h2 className="text-[20px] md:text-[24px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight mb-1.5">
+          Probleme mit {dog} selbst lösen
         </h2>
         <p className="text-[14px] text-[#4B5563] leading-relaxed">
-          Die Übungen sind so aufgebaut, dass {dog} das Hauptthema innerhalb
-          deiner Plan-Laufzeit Schritt für Schritt abtrainiert — nichts
-          Schwammiges, sondern klar planbare Wochenziele.
+          Schritt für Schritt, im eigenen Tempo, von zuhause aus — ohne
+          teure Hundeschule, ohne Stress.
         </p>
       </div>
 
-      {/* Feature-Grid */}
-      <div>
-        <h2 className="text-[18px] md:text-[20px] font-bold text-[#1a1a1a] mb-3">
-          Alles was im Plan drin ist
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {FEATURES.map((f) => (
-            <div
-              key={f.title}
-              className="bg-white border border-[#EADDC5] rounded-xl p-4 flex gap-3"
+      {/* Plan-Cards mit Bild-Header */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        {PLANS.map((p) => {
+          const isLoading = loadingKey === p.key;
+          const anyLoading = !!loadingKey;
+          return (
+            <button
+              key={p.key}
+              onClick={() => startCheckout(p.key)}
+              disabled={anyLoading}
+              className={`relative text-left bg-white rounded-2xl border overflow-hidden flex flex-col disabled:opacity-60 ${
+                p.popular
+                  ? "border-[#C4A576] shadow-[0_4px_16px_rgba(196,165,118,0.18)]"
+                  : "border-[#EADDC5]"
+              }`}
             >
-              <span className="text-[24px] flex-shrink-0 leading-none">
-                {f.emoji}
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-bold text-[#1a1a1a] leading-tight mb-0.5">
-                  {f.title}
-                </p>
-                <p className="text-[12px] text-[#6B7280] leading-snug">
-                  {f.body}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Plan-Cards */}
-      <div>
-        <h2 className="text-[18px] md:text-[20px] font-bold text-[#1a1a1a] mb-3">
-          Wähle deine Laufzeit
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {PLANS.map((p) => {
-            const isLoading = loadingKey === p.key;
-            const anyLoading = !!loadingKey;
-            return (
-              <button
-                key={p.key}
-                onClick={() => startCheckout(p.key)}
-                disabled={anyLoading}
-                className={`relative text-left bg-white rounded-2xl border p-5 flex flex-col disabled:opacity-60 ${
-                  p.popular
-                    ? "border-[#C4A576] shadow-[0_4px_16px_rgba(196,165,118,0.15)]"
-                    : "border-[#EADDC5]"
-                }`}
-              >
+              {/* Image-Header */}
+              <div className="relative aspect-[16/9] bg-[#FAF4E8] overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={p.image}
+                  alt={p.badge || `${p.months}-Monats-Plan`}
+                  className="w-full h-full object-cover"
+                />
                 {p.badge && (
                   <div
-                    className={`absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full ${
+                    className={`absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
                       p.popular
                         ? "bg-[#C4A576] text-white"
-                        : "bg-[#F0EBE3] text-[#8B7355]"
+                        : "bg-white/90 text-[#8B7355]"
                     }`}
                   >
                     {p.badge}
                   </div>
                 )}
+              </div>
 
-                <div className="text-[12px] text-[#8B7355] font-semibold uppercase tracking-wide mb-1 mt-1">
-                  {p.months}-Monats-Plan · {p.weeks} Wochen
-                </div>
-
-                <p className="text-[13px] font-bold text-[#1a1a1a] leading-tight mb-3 min-h-[34px]">
+              {/* Content */}
+              <div className="p-4 flex flex-col flex-1">
+                <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight mb-2">
                   {p.tagline}
                 </p>
 
-                <div className="flex items-baseline gap-1 mb-1">
-                  <span className="text-[28px] font-extrabold text-[#1a1a1a]">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-[26px] font-extrabold text-[#1a1a1a]">
                     €{p.price.split(",")[0]}
                   </span>
                   <span className="text-[12px] text-[#9CA3AF]">
                     ,{p.price.split(",")[1]}
                   </span>
                 </div>
-                <div className="text-[11px] text-[#6B7280] mb-4">
-                  Umgerechnet nur <strong>{p.daily} am Tag</strong> ·
-                  einmalig, kein Abo
+                <div className="text-[11px] text-[#6B7280] mb-3">
+                  Nur <strong>{p.daily} am Tag</strong> · einmalig
                 </div>
 
-                <ul className="space-y-1.5 mb-4 flex-1">
-                  {p.bullets.map((b, i) => (
-                    <li
-                      key={i}
-                      className="flex gap-1.5 items-start text-[12px] text-[#1a1a1a] leading-snug"
-                    >
-                      <span className="text-[#C4A576] flex-shrink-0 font-bold">
-                        ✓
-                      </span>
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
-
                 <div
-                  className={`text-center font-semibold py-2.5 px-4 rounded-xl text-[13px] ${
+                  className={`mt-auto text-center font-semibold py-2.5 px-4 rounded-xl text-[13px] ${
                     p.popular
                       ? "bg-[#C4A576] text-white shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
                       : "bg-[#FAFAFA] text-[#1a1a1a] border border-[#EADDC5]"
                   }`}
                 >
-                  {isLoading ? "Lade Checkout…" : "Plan wählen →"}
+                  {isLoading ? "Lade…" : "Plan wählen →"}
                 </div>
-              </button>
-            );
-          })}
-        </div>
-        {error && (
-          <p className="text-[12px] text-[#B91C1C] text-center mt-3">
-            {error}
-          </p>
-        )}
+              </div>
+            </button>
+          );
+        })}
       </div>
+      {error && (
+        <p className="text-[12px] text-[#B91C1C] text-center">{error}</p>
+      )}
 
-      {/* Trust-Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl p-4 flex items-start gap-3">
-          <div className="text-[22px] leading-none flex-shrink-0">🔒</div>
-          <div>
-            <p className="text-[13px] font-semibold text-[#166534] mb-0.5">
-              30 Tage Geld-zurück
-            </p>
-            <p className="text-[12px] text-[#15803D] leading-relaxed">
-              Bringt's nichts? Eine Mail genügt — keine Begründung nötig.
-            </p>
-          </div>
-        </div>
-        <div className="bg-[#FFF9F0] border border-[#EADDC5] rounded-xl p-4 flex items-start gap-3">
-          <div className="text-[22px] leading-none flex-shrink-0">💳</div>
-          <div>
-            <p className="text-[13px] font-semibold text-[#1a1a1a] mb-0.5">
-              Sichere Zahlung
-            </p>
-            <p className="text-[12px] text-[#6B7280] leading-relaxed">
-              Karte, PayPal, Apple Pay, SEPA, Klarna — alles via Mollie.
-            </p>
-          </div>
+      {/* Trust + Payment-Logos kompakt */}
+      <div className="bg-white border border-[#EADDC5] rounded-2xl p-4">
+        <p className="text-[12px] text-[#15803D] font-semibold text-center mb-3">
+          🔒 30 Tage Geld-zurück · Sichere Zahlung über Mollie
+        </p>
+        <div className="flex items-center justify-center gap-3 flex-wrap opacity-90">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/visa-logo.png" alt="Visa" className="h-6 w-auto" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/mastercard-logo.png"
+            alt="Mastercard"
+            className="h-6 w-auto"
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/PayPal3.png" alt="PayPal" className="h-5 w-auto" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/applepay.png" alt="Apple Pay" className="h-5 w-auto" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/sepa-logo.png" alt="SEPA" className="h-5 w-auto" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/klarna-logo.png" alt="Klarna" className="h-5 w-auto" />
         </div>
       </div>
     </section>

@@ -43,7 +43,7 @@ export default async function UpgradePage() {
   const problemLabel = problemKey ? PROBLEM_LABELS[problemKey] || null : null;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <div>
         <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
@@ -53,15 +53,9 @@ export default async function UpgradePage() {
           {isPaid
             ? "Module erweitern"
             : problemLabel
-              ? `Plan freischalten — ${problemLabel} bei ${dog} lösen`
+              ? `${problemLabel} bei ${dog} lösen`
               : `Plan freischalten für ${dog}`}
         </h1>
-        {!isPaid && (
-          <p className="text-[14px] text-[#4B5563] mt-2 leading-relaxed">
-            Klar geplant, Schritt für Schritt aufeinander aufgebaut. Damit du
-            weißt was du tust und nicht im Nebel stocherst.
-          </p>
-        )}
       </div>
 
       {/* Plan-Auswahl (nur fuer Free-User) */}
@@ -73,65 +67,39 @@ export default async function UpgradePage() {
         />
       )}
 
-      {/* Was passiert nach dem Kauf — Reassurance */}
+      {/* So einfach gehts — 4 Icons in einer Reihe (Mobile: 2x2) */}
       {!isPaid && (
-        <div>
-          <h2 className="text-[18px] md:text-[20px] font-bold text-[#1a1a1a] mb-3">
-            Was passiert direkt nach dem Kauf
-          </h2>
-          <div className="space-y-3">
+        <div className="bg-white border border-[#EADDC5] rounded-2xl p-4">
+          <p className="text-[12px] font-bold uppercase tracking-widest text-[#8B7355] mb-3 text-center">
+            So einfach geht&rsquo;s
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              {
-                emoji: "⚡",
-                title: "Sofort: erstes Modul freigeschaltet",
-                body: `Du landest direkt in deinem Mitgliederbereich und kannst loslegen — keine Wartezeit.`,
-              },
-              {
-                emoji: "📧",
-                title: "PDF im Postfach",
-                body: `Dein personalisierter Plan kommt parallel als PDF — perfekt zum Ausdrucken und an den Kühlschrank kleben.`,
-              },
-              {
-                emoji: "📅",
-                title: "Wöchentlicher Aufbau",
-                body: `Jede Woche werden neue Module + Aufgaben freigeschaltet. Kein Overload — alles in dem Tempo das wirklich wirkt.`,
-              },
-              {
-                emoji: "🤖",
-                title: "Bei Fragen: KI-Trainer + Team-Support",
-                body: `Im Chat bekommst du sofort Antworten. Bei kniffligen Themen schreibst du dem Trainer-Team eine Mail.`,
-              },
-            ].map((s, i) => (
-              <div
-                key={i}
-                className="bg-white border border-[#EADDC5] rounded-2xl p-4 flex items-start gap-3"
-              >
-                <div className="flex-shrink-0 w-9 h-9 rounded-full bg-[#FFF9F0] flex items-center justify-center text-[18px]">
-                  {s.emoji}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight mb-0.5">
-                    {s.title}
-                  </p>
-                  <p className="text-[12px] text-[#6B7280] leading-relaxed">
-                    {s.body}
-                  </p>
-                </div>
+              { icon: "🏠", label: "Von zuhause aus" },
+              { icon: "⏱️", label: "5 Min am Tag" },
+              { icon: "💬", label: "Hilfe per Chat" },
+              { icon: "📄", label: "PDF zum Mitnehmen" },
+            ].map((step) => (
+              <div key={step.label} className="text-center">
+                <div className="text-[28px] leading-none mb-1">{step.icon}</div>
+                <p className="text-[12px] font-semibold text-[#1a1a1a] leading-tight">
+                  {step.label}
+                </p>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Zusatz-Module: Verweis auf den Modul-Shop */}
-      {upsells.length > 0 && (
+      {/* Zusatz-Module: Verweis auf den Modul-Shop (nur fuer Paid) */}
+      {isPaid && upsells.length > 0 && (
         <div>
           <h2 className="text-[18px] md:text-[20px] font-bold text-[#1a1a1a] mb-1">
-            Schon Plan, willst mehr?
+            Mehr für {dog}?
           </h2>
           <p className="text-[13px] text-[#6B7280] mb-4 leading-relaxed">
-            Spezial-Themen wie Aggression, Trennungsangst oder Reise gibt's als
-            Einzel-Module im Modul-Shop.
+            Spezial-Themen wie Aggression, Trennungsangst oder Reise gibt&rsquo;s
+            als Einzel-Module im Modul-Shop.
           </p>
           <Link
             href="/mitglieder/module"
