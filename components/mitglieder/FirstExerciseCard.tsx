@@ -26,11 +26,13 @@ export default function FirstExerciseCard({
   dogName,
   dogBreed,
   imageOverride,
+  hideImage,
 }: {
   module: ModulePreview;
   dogName?: string | null;
   dogBreed?: string | null;
   imageOverride?: string | null;
+  hideImage?: boolean;
 }) {
   const dog = dogName?.trim() || "deinem Hund";
   const dogPossessive = dogName?.trim() ? `${dogName}s` : "Eure";
@@ -46,28 +48,40 @@ export default function FirstExerciseCard({
 
   return (
     <div className="bg-white rounded-2xl border border-[#EADDC5] shadow-[0_2px_12px_rgba(139,115,85,0.06)] overflow-hidden">
-      {/* Bild-Header (visuell warm, emotional). Aspect-Ratio damit das
-          Bild vollständig sichtbar ist, kein Abschneiden. */}
-      <div className="relative aspect-[5/4] md:aspect-[4/3] overflow-hidden bg-[#FAF4E8]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={imageUrl}
-          alt={module.title}
-          className="absolute inset-0 w-full h-full object-cover object-center"
-        />
-        {/* Subtiler Gradient damit Eyebrow lesbar ist */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
-        <div className="absolute top-3 left-4 inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full">
+      {/* Bild-Header (optional via hideImage abschaltbar) */}
+      {!hideImage && (
+        <div className="relative aspect-[5/4] md:aspect-[4/3] overflow-hidden bg-[#FAF4E8]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageUrl}
+            alt={module.title}
+            className="absolute inset-0 w-full h-full object-cover object-center"
+          />
+          {/* Subtiler Gradient damit Eyebrow lesbar ist */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
+          <div className="absolute top-3 left-4 inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355]">
+              {dogName ? `${dogPossessive} erste Übung` : "Deine erste Übung"}
+            </span>
+            <span className="text-[10px] text-[#9CA3AF]">·</span>
+            <span className="text-[10px] text-[#6B7280] font-medium">5 Min</span>
+          </div>
+        </div>
+      )}
+
+      {/* Eyebrow auch bei hideImage — sonst fehlt die Section-Marker */}
+      {hideImage && (
+        <div className="px-6 pt-5 pb-1 inline-flex items-center gap-1.5">
           <span className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355]">
             {dogName ? `${dogPossessive} erste Übung` : "Deine erste Übung"}
           </span>
           <span className="text-[10px] text-[#9CA3AF]">·</span>
           <span className="text-[10px] text-[#6B7280] font-medium">5 Min</span>
         </div>
-      </div>
+      )}
 
       {/* Titel + Personalisierung + Beschreibung */}
-      <div className="px-6 pt-5 pb-2">
+      <div className={`px-6 pb-2 ${hideImage ? "pt-1" : "pt-5"}`}>
         <h2 className="text-[26px] md:text-[32px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
           {module.title}
         </h2>

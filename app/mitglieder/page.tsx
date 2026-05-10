@@ -137,6 +137,16 @@ export default async function MitgliederDashboard() {
 
   return (
     <>
+      {/* Hero-Bild als standalone Banner — KEIN Card-Frame, edge-to-edge */}
+      <div className="-mx-4 md:-mx-8 md:mt-[-10px] mb-4">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/Hero2Plan.jpg"
+          alt="Mit Freude zum besseren Hund"
+          className="w-full aspect-[16/9] object-cover"
+        />
+      </div>
+
       {/* Slim personal Greeting + Sozialer Beweis in einer Zeile */}
       <div className="mb-5 flex items-center gap-3 flex-wrap">
         <p className="text-[14px] font-semibold text-[#1a1a1a]">
@@ -155,15 +165,14 @@ export default async function MitgliederDashboard() {
         </span>
       </div>
 
-      {/* HERO: Erste Übung als Inhalt — DAS ist der Wow-Moment.
-          HeroPlan.jpg statt Default-Bild damit Marken-Claim mit drin ist. */}
+      {/* Erste Übung als Card OHNE Image-Header (Hero-Bild ist schon oben) */}
       {firstFreeFull && (
         <div className="mb-8">
           <FirstExerciseCard
             module={firstFreeFull as any}
             dogName={member.dog_name}
             dogBreed={member.dog_breed}
-            imageOverride="/HeroPlan.jpg"
+            hideImage
           />
         </div>
       )}
