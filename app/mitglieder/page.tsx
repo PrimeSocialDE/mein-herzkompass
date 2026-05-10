@@ -21,6 +21,7 @@ import WeekOverview from "@/components/mitglieder/WeekOverview";
 import UpgradePopup from "@/components/mitglieder/UpgradePopup";
 import { groupModulesByWeek } from "@/lib/member-weeks";
 import { PROBLEM_IMAGE } from "@/lib/member-images";
+import { getPlanIntro, getBreedNote } from "@/lib/member-plan-intro";
 
 export const dynamic = "force-dynamic";
 
@@ -241,19 +242,52 @@ export default async function MitgliederDashboard() {
         </Link>
       </div>
 
-      {/* Wochen-Plan-Vorschau — User sieht WIE der Plan aufgebaut ist */}
+      {/* Personalisierter Plan-Aufbau — pro Quiz-Problem mit konkreten
+          Wochen-Inhalten, statt generisch 'Woche fuer Woche'. */}
       {(() => {
-        const lockedWeeks = groupModulesByWeek(modules.filter((m) => !m.is_free));
-        if (lockedWeeks.length === 0) return null;
+        const planIntro = getPlanIntro(problemKey, dog);
+        const breedNote = getBreedNote(member.dog_breed, problemKey);
+        if (!planIntro) return null;
         return (
           <div className="mb-8">
-            <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-1">
-              So ist dein Plan aufgebaut
+            <h2 className="text-[20px] md:text-[22px] font-extrabold text-[#1a1a1a] leading-tight mb-2">
+              {planIntro.headline}
             </h2>
-            <p className="text-[13px] text-[#6B7280] mb-4">
-              Woche für Woche, klar strukturiert für {dog}.
+            <p className="text-[13px] text-[#4B5563] leading-relaxed mb-4">
+              {planIntro.intro}
             </p>
-            <WeekOverview weeks={lockedWeeks} isPaid={false} />
+
+            {breedNote && (
+              <div className="bg-[#FFF9F0] border-l-4 border-[#C4A576] rounded-r-lg px-4 py-2.5 mb-4">
+                <p className="text-[12px] text-[#5A4A3A] leading-relaxed">
+                  <strong className="text-[#8B7355]">Zur Rasse:</strong>{" "}
+                  {breedNote}
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-3">
+              {planIntro.weeks.map((w) => (
+                <div
+                  key={w.num}
+                  className="bg-white border border-[#EADDC5] rounded-xl p-4 flex gap-3"
+                >
+                  <div className="flex-shrink-0 w-9 h-9 rounded-full bg-[#FFF9F0] border border-[#EADDC5] flex items-center justify-center">
+                    <span className="text-[12px] font-extrabold text-[#8B7355]">
+                      W{w.num}
+                    </span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight mb-0.5">
+                      {w.title}
+                    </p>
+                    <p className="text-[12px] text-[#6B7280] leading-snug">
+                      {w.body}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         );
       })()}
