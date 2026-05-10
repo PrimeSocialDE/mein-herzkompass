@@ -1,63 +1,58 @@
 "use client";
 
-// 5-Slide-Onboarding-Tutorial fuer den allerersten Login.
-// Zielgruppe 40-50+ — viele kennen Plattformen nicht, wir zeigen
-// klar wo was zu finden ist.
-//
-// Trigger: localStorage-Flag 'pp_onboarding_v1_done' nicht gesetzt.
-// Mobile: full-screen-Overlay. Desktop: zentriertes Modal max-w-lg.
-// Buttons: 'Zurueck' / 'Weiter' / 'Verstanden, los gehts!' (letzter Slide)
-// Plus 'Spaeter ueberspringen' rechts oben.
+// 5-Schritt-Einfuehrung beim ersten Anmelden — KEIN Vollbild, sondern
+// kleines Fenster mit blurred Hintergrund. Pfeile zeigen direkt auf
+// die jeweiligen Icons in der unteren Leiste (Mobile) bzw. erwaehnen
+// die Seitenleiste (Desktop). Wording strikt deutsch, ohne Anglizismen.
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 
-const STORAGE_KEY = "pp_onboarding_v1_done";
+const STORAGE_KEY = "pp_einfuehrung_v2_done";
 
 interface Slide {
   emoji: string;
   title: (dog: string) => string;
   body: string;
-  ctaHref?: string;       // optionaler 'gleich ausprobieren'-Link
-  ctaLabel?: string;
+  // Position des zugehoerigen Icons in der unteren Leiste (in Prozent
+  // der Viewport-Breite, Mitte des Icons). null = kein Pfeil (Begruessung).
+  arrowX: number | null;
 }
 
+// BottomNav-Reihenfolge (siehe SiteShell): Übersicht | Erfolge | Module | Upgrade | Hilfe
+// → 5 Items, gleichmaessig verteilt → Mitten bei 10/30/50/70/90 %
 const SLIDES: Slide[] = [
   {
-    emoji: "🐾",
+    emoji: "👋",
     title: (dog) =>
       dog === "deinem Hund"
-        ? "Willkommen bei Pfoten-Plan!"
-        : `Willkommen, ${dog}!`,
-    body: "Wir zeigen dir in 5 kurzen Karten, was du wo findest. Du kannst jederzeit überspringen.",
+        ? "Schön dass du da bist!"
+        : `Schön dass ${dog} da ist!`,
+    body: "In 5 kurzen Schritten zeigen wir dir, was du wo findest. Du kannst jederzeit überspringen.",
+    arrowX: null,
   },
   {
     emoji: "🏠",
-    title: () => "Übersicht — dein täglicher Startpunkt",
-    body: "Hier landest du beim Login. Du siehst deine erste Übung, deinen Plan-Aufbau und alles Wichtige auf einen Blick.",
-    ctaHref: "/mitglieder",
-    ctaLabel: "Zur Übersicht",
+    title: () => "Hier ist deine Übersicht",
+    body: "Auf dieser Seite landest du nach der Anmeldung. Du siehst die heutige Übung und wie der Plan aufgebaut ist.",
+    arrowX: 10,
   },
   {
     emoji: "🏆",
-    title: () => "Erfolge — dranbleiben mit System",
-    body: "Wochen-Aufgaben, Plan-Coaching mit Tagestipp und ein Stimmungs-Check für euren Trainings-Verlauf. Macht Spaß und hilft.",
-    ctaHref: "/mitglieder/erfolge",
-    ctaLabel: "Erfolge ansehen",
+    title: () => "Hier sammelst du Erfolge",
+    body: "Wochen-Aufgaben, dein Trainings-Coaching mit Tagestipp und ein Stimmungs-Tagebuch — alles an einem Platz.",
+    arrowX: 30,
   },
   {
     emoji: "📚",
-    title: () => "Module — Spezial-Themen einzeln",
-    body: "Aggression, Leinenführigkeit, Trennungsangst — als Einzel-Module zum gezielten Dazukaufen, wenn ein Thema besonders dringend ist.",
-    ctaHref: "/mitglieder/module",
-    ctaLabel: "Modul-Shop",
+    title: () => "Hier sind die einzelnen Module",
+    body: "Spezial-Themen wie Aggression, Leinenführung oder Trennungsangst kannst du hier einzeln dazu holen.",
+    arrowX: 50,
   },
   {
     emoji: "💬",
-    title: () => "Hilfe — der KI-Trainer ist immer da",
-    body: "Stell uns Fragen, 24/7 verfügbar. Antworten in Sekunden — trainiert mit dem Wissen unseres echten Hundetrainer-Teams.",
-    ctaHref: "/mitglieder/hilfe",
-    ctaLabel: "KI-Trainer öffnen",
+    title: () => "Hier bekommst du Hilfe",
+    body: "Stell uns Fragen — der KI-Trainer antwortet rund um die Uhr, mit dem Wissen unseres Hundetrainer-Teams.",
+    arrowX: 90,
   },
 ];
 
@@ -73,8 +68,6 @@ export default function OnboardingTutorial({
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (localStorage.getItem(STORAGE_KEY)) return;
-    // Klein verzoegert damit's nach dem Layout-Setup erscheint, nicht
-    // sofort ueber dem half-rendered DOM
     const t = setTimeout(() => setShow(true), 600);
     return () => clearTimeout(t);
   }, []);
@@ -94,7 +87,6 @@ export default function OnboardingTutorial({
     if (index > 0) setIndex(index - 1);
   }
 
-  // ESC-Key schliesst
   useEffect(() => {
     if (!show) return;
     function onKey(e: KeyboardEvent) {
@@ -113,73 +105,106 @@ export default function OnboardingTutorial({
   const isLast = index === SLIDES.length - 1;
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#FAF8F5] sm:bg-black/55 flex items-center justify-center sm:px-4 sm:py-6">
-      <div className="bg-white w-full h-full sm:h-auto sm:max-w-lg sm:rounded-2xl sm:shadow-2xl flex flex-col overflow-hidden">
-        {/* Top-Bar: Skip + Progress */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#F0EBE3]">
-          <div className="text-[11px] font-bold uppercase tracking-widest text-[#8B7355]">
-            {index + 1} / {SLIDES.length}
+    <>
+      {/* Backdrop mit Blur */}
+      <div
+        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-md"
+        onClick={close}
+      />
+
+      {/* Pfeil zum Icon (nur Mobile, nur wenn arrowX gesetzt) */}
+      {slide.arrowX !== null && (
+        <>
+          {/* Mobile: Pfeil zeigt nach unten zur unteren Leiste */}
+          <div
+            className="fixed z-50 pointer-events-none md:hidden animate-bounce"
+            style={{
+              left: `calc(${slide.arrowX}% - 24px)`,
+              bottom: "calc(env(safe-area-inset-bottom) + 80px)",
+            }}
+          >
+            <svg width="48" height="64" viewBox="0 0 48 64" fill="none">
+              <path
+                d="M24 4 L24 50 M10 36 L24 50 L38 36"
+                stroke="#C4A576"
+                strokeWidth="5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="24" cy="4" r="6" fill="#C4A576" />
+            </svg>
           </div>
-          <button
-            onClick={close}
-            className="text-[12px] text-[#9CA3AF] underline underline-offset-2"
-          >
-            Überspringen
-          </button>
-        </div>
+        </>
+      )}
 
-        {/* Slide-Content */}
-        <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-8 sm:py-12">
-          <div className="text-[72px] mb-4 leading-none">{slide.emoji}</div>
-          <h2 className="text-[22px] sm:text-[26px] font-extrabold text-[#1a1a1a] leading-tight mb-3">
-            {slide.title(dog)}
-          </h2>
-          <p className="text-[15px] text-[#4B5563] leading-relaxed max-w-md">
-            {slide.body}
-          </p>
-
-          {slide.ctaHref && slide.ctaLabel && (
-            <Link
-              href={slide.ctaHref}
-              onClick={close}
-              className="mt-6 inline-block bg-[#FAFAFA] border border-[#EADDC5] text-[#1a1a1a] font-semibold py-2.5 px-5 rounded-xl text-[13px]"
-            >
-              {slide.ctaLabel} →
-            </Link>
-          )}
-        </div>
-
-        {/* Dots-Indicator */}
-        <div className="flex items-center justify-center gap-1.5 py-3">
-          {SLIDES.map((_, i) => (
+      {/* Modal-Fenster — klein, zentriert oben/mittig damit Pfeil zum
+          Icon unten passt */}
+      <div className="fixed inset-x-0 top-[8%] sm:top-[15%] z-50 flex justify-center px-4 pointer-events-none">
+        <div className="bg-white rounded-2xl max-w-sm sm:max-w-md w-full shadow-2xl pointer-events-auto overflow-hidden">
+          {/* Top-Bar */}
+          <div className="flex items-center justify-between px-5 py-3 border-b border-[#F0EBE3]">
+            <div className="text-[11px] font-bold uppercase tracking-widest text-[#8B7355]">
+              {index + 1} von {SLIDES.length}
+            </div>
             <button
-              key={i}
-              onClick={() => setIndex(i)}
-              className={`rounded-full transition-all ${
-                i === index ? "bg-[#C4A576] w-6 h-2" : "bg-[#E5DDC8] w-2 h-2"
-              }`}
-              aria-label={`Slide ${i + 1}`}
-            />
-          ))}
-        </div>
+              onClick={close}
+              className="text-[12px] text-[#9CA3AF] underline underline-offset-2"
+            >
+              Überspringen
+            </button>
+          </div>
 
-        {/* Buttons */}
-        <div className="flex gap-2 px-5 pb-5 pt-2 sm:pt-3">
-          <button
-            onClick={back}
-            disabled={index === 0}
-            className="flex-1 bg-[#FAFAFA] border border-[#EADDC5] disabled:opacity-40 disabled:cursor-not-allowed text-[#1a1a1a] font-semibold py-3 px-5 rounded-xl text-[14px]"
-          >
-            ← Zurück
-          </button>
-          <button
-            onClick={next}
-            className="flex-[2] bg-[#C4A576] text-white font-semibold py-3 px-5 rounded-xl text-[14px] shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
-          >
-            {isLast ? "Verstanden, los geht's!" : "Weiter →"}
-          </button>
+          {/* Inhalt */}
+          <div className="px-6 py-6 text-center">
+            <div className="text-[56px] mb-3 leading-none">{slide.emoji}</div>
+            <h2 className="text-[20px] sm:text-[22px] font-extrabold text-[#1a1a1a] leading-tight mb-2">
+              {slide.title(dog)}
+            </h2>
+            <p className="text-[14px] text-[#4B5563] leading-relaxed">
+              {slide.body}
+            </p>
+            {/* Hinweis Desktop: Seitenleiste links */}
+            {slide.arrowX !== null && (
+              <p className="text-[11px] text-[#9CA3AF] italic mt-3 hidden md:block">
+                Du findest das Symbol links in der Seitenleiste.
+              </p>
+            )}
+          </div>
+
+          {/* Punkt-Anzeige */}
+          <div className="flex items-center justify-center gap-1.5 pb-3">
+            {SLIDES.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setIndex(i)}
+                className={`rounded-full transition-all ${
+                  i === index
+                    ? "bg-[#C4A576] w-6 h-2"
+                    : "bg-[#E5DDC8] w-2 h-2"
+                }`}
+                aria-label={`Schritt ${i + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-2 px-5 pb-5">
+            <button
+              onClick={back}
+              disabled={index === 0}
+              className="flex-1 bg-[#FAFAFA] border border-[#EADDC5] disabled:opacity-40 disabled:cursor-not-allowed text-[#1a1a1a] font-semibold py-2.5 px-4 rounded-xl text-[13px]"
+            >
+              Zurück
+            </button>
+            <button
+              onClick={next}
+              className="flex-[2] bg-[#C4A576] text-white font-semibold py-2.5 px-4 rounded-xl text-[13px] shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
+            >
+              {isLast ? "Verstanden, los geht's!" : "Weiter"}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
