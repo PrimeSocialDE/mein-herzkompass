@@ -243,11 +243,11 @@ export default function CheckoutModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6"
       onClick={stage === "success" || stage === "select" ? onClose : undefined}
     >
       <div
-        className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl my-auto"
+        className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -266,7 +266,7 @@ export default function CheckoutModal({
           </div>
           <button
             onClick={onClose}
-            className="text-[#9CA3AF] hover:text-[#1a1a1a] -mr-1 -mt-1 p-1"
+            className="text-[#9CA3AF] -mr-1 -mt-1 p-1"
             aria-label="Schließen"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -279,48 +279,48 @@ export default function CheckoutModal({
             {/* Karte */}
             <button
               onClick={() => setStage("card")}
-              className="w-full bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-3 px-4 rounded-xl text-[14px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)] flex items-center justify-center gap-3"
+              className="w-full bg-[#C4A576] text-white font-semibold py-3 px-4 rounded-xl text-[14px] shadow-[0_1px_2px_rgba(139,115,85,0.2)] flex items-center justify-center gap-3"
             >
               <span>Mit Karte bezahlen</span>
-              <span className="flex items-center gap-1.5 opacity-95">
+              <span className="flex items-center gap-1.5">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/visa-logo.png" alt="Visa" className="h-4 w-auto bg-white rounded px-1 py-0.5" />
+                <img src="/visa-logo.png" alt="Visa" className="h-6 w-auto bg-white rounded px-1 py-0.5" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/mastercard-logo.png" alt="Mastercard" className="h-4 w-auto bg-white rounded px-1 py-0.5" />
+                <img src="/mastercard-logo.png" alt="Mastercard" className="h-6 w-auto bg-white rounded px-1 py-0.5" />
               </span>
             </button>
 
-            {/* PayPal */}
+            {/* PayPal — Logo ohne Hintergrund */}
             <button
               onClick={() => payWithRedirect("paypal")}
               disabled={loading}
-              className="w-full bg-[#FFC439] hover:bg-[#F0B82E] disabled:opacity-60 py-3 px-4 rounded-xl transition flex items-center justify-center"
+              className="w-full bg-[#FFC439] disabled:opacity-60 py-3 px-4 rounded-xl flex items-center justify-center"
               aria-label="Mit PayPal bezahlen"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/paypal-logo.png" alt="PayPal" className="h-5 w-auto" />
+              <img src="/PayPal3.png" alt="PayPal" className="h-7 w-auto" />
             </button>
 
             {/* Apple Pay */}
             <button
               onClick={() => payWithRedirect("applepay")}
               disabled={loading}
-              className="w-full bg-black hover:bg-[#1a1a1a] disabled:opacity-60 py-3 px-4 rounded-xl transition flex items-center justify-center"
+              className="w-full bg-black disabled:opacity-60 py-3 px-4 rounded-xl flex items-center justify-center"
               aria-label="Mit Apple Pay bezahlen"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/applepay.png" alt="Apple Pay" className="h-5 w-auto invert" />
+              <img src="/applepay.png" alt="Apple Pay" className="h-7 w-auto invert" />
             </button>
 
             {/* SEPA */}
             <button
               onClick={() => payWithRedirect("directdebit")}
               disabled={loading}
-              className="w-full bg-[#FAFAFA] hover:bg-[#F0EBE3] border border-[#EADDC5] text-[#1a1a1a] font-semibold py-3 px-4 rounded-xl text-[14px] transition flex items-center justify-center gap-2"
+              className="w-full bg-[#FAFAFA] border border-[#EADDC5] text-[#1a1a1a] font-semibold py-3 px-4 rounded-xl text-[14px] flex items-center justify-center gap-2"
             >
               <span>SEPA-Lastschrift</span>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/sepa-logo.png" alt="SEPA" className="h-4 w-auto" />
+              <img src="/sepa-logo.png" alt="SEPA" className="h-6 w-auto" />
             </button>
 
             {/* Trust-Badge */}
@@ -328,17 +328,17 @@ export default function CheckoutModal({
               <p className="text-[10px] text-[#9CA3AF] text-center mb-2">
                 🔒 SSL-verschlüsselt · Zahlung verarbeitet von Mollie
               </p>
-              <div className="flex items-center justify-center gap-2 opacity-70">
+              <div className="flex items-center justify-center gap-2.5 opacity-80">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/visa-logo.png" alt="Visa" className="h-3.5 w-auto" />
+                <img src="/visa-logo.png" alt="Visa" className="h-5 w-auto" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/mastercard-logo.png" alt="Mastercard" className="h-3.5 w-auto" />
+                <img src="/mastercard-logo.png" alt="Mastercard" className="h-5 w-auto" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/paypal-logo.png" alt="PayPal" className="h-3 w-auto" />
+                <img src="/PayPal3.png" alt="PayPal" className="h-4 w-auto" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/applepay.png" alt="Apple Pay" className="h-3 w-auto" />
+                <img src="/applepay.png" alt="Apple Pay" className="h-4 w-auto" />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/sepa-logo.png" alt="SEPA" className="h-3 w-auto" />
+                <img src="/sepa-logo.png" alt="SEPA" className="h-4 w-auto" />
               </div>
               <p className="text-[10px] text-[#9CA3AF] text-center mt-2">
                 Quittung an: {email}
