@@ -11,16 +11,12 @@ import {
 } from "@/lib/member-db";
 import { getLatestPlanContent } from "@/lib/member-plan-content";
 import PlanContentRenderer from "@/components/mitglieder/PlanContentRenderer";
+import {
+  buildExerciseFallback,
+  type ContentSection,
+} from "@/lib/member-exercise-fallback";
 
 export const dynamic = "force-dynamic";
-
-interface ContentSection {
-  type: "text" | "step" | "tip" | "do" | "dont" | "frequency";
-  title?: string;
-  content?: string;
-  // Fuer 'do' / 'dont' Listen koennen items dazu kommen statt content
-  items?: string[];
-}
 
 export default async function ModulDetailPage({
   params,
@@ -49,9 +45,16 @@ export default async function ModulDetailPage({
   const meta = allModules.find((m) => m.slug === slug);
   const isUnlocked = !!meta?.unlocked;
 
-  const sections: ContentSection[] = Array.isArray(module.content?.sections)
+  const moduleSections: ContentSection[] = Array.isArray(
+    module.content?.sections
+  )
     ? module.content.sections
     : [];
+  // Wenn DB-Sections sparse sind (<3): Generic-Fallback einsetzen
+  // damit User immer eine vollstaendige Anleitung sieht
+  const dog = member.dog_name?.trim() || "deinem Hund";
+  const sections =
+    moduleSections.length >= 3 ? moduleSections : buildExerciseFallback(dog);
 
   // Personalisierter Plan-Inhalt aus member_plan_content (Make.com push)
   const planContent = await getLatestPlanContent(
