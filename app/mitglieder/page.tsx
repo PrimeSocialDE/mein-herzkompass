@@ -144,7 +144,7 @@ export default async function MitgliederDashboard() {
       <div className="-mx-4 md:-mx-8 md:mt-[-10px] mb-4 bg-[#FAF8F5]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/Hero2Plan.jpg"
+          src="/Hero2Plan.png"
           alt="Mit Freude zum besseren Hund"
           className="w-full aspect-[16/7] object-cover object-center"
         />
