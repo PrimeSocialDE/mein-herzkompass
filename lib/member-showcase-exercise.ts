@@ -1,10 +1,10 @@
 // Showcase-Uebung fuer den Dashboard-Hero (FirstExerciseCard).
 // Hardcoded statt aus DB damit die ALLER-erste Begegnung des Users
-// mit dem Plan ein Wow-Moment ist: 'Der Leckerli-Test' — Impulskontrolle.
+// mit dem Plan ein Wow-Moment ist.
 //
-// Warum: kann SOFORT auf dem Sofa gemacht werden, sichtbarer Erfolg
-// in unter 5 Minuten, beeindruckend (Hund laesst Leckerli in offener
-// Faust liegen). Viel staerker als 'Pfote geben' o.ae.
+// Aktuell: 'Der Blickkontakt' — Klassiker mit konkreten Metern und
+// Steigerung. Funktioniert sofort, sichtbarer Erfolg in <5 Min,
+// Basis fuer Rueckruf/Leinen/etc.
 //
 // Slug zeigt auf real existierendes Modul damit 'Im Detail ansehen'
 // nicht 404 wirft. Inhalt ist unabhaengig vom DB-Modul.
@@ -12,7 +12,7 @@
 import type { ContentSection } from "./member-exercise-fallback";
 
 export interface ShowcaseExercise {
-  slug: string;          // muss in member_modules existieren (fuer Detail-Link)
+  slug: string;
   title: string;
   description: string;
   sections: ContentSection[];
@@ -24,62 +24,62 @@ export function buildShowcaseExercise(
 ): ShowcaseExercise {
   return {
     slug: fallbackSlug,
-    title: "Der Leckerli-Test: Impulskontrolle",
+    title: "Der Blickkontakt: Aufmerksamkeit aufbauen",
     description:
-      "Die wichtigste Basis-Übung überhaupt. Du sitzt auf dem Sofa, brauchst nur eine Handvoll Leckerli — und siehst in 5 Minuten den ersten Aha-Moment.",
+      "Die wichtigste Basis-Übung. Mit ein paar Metern Abstand und einem klaren Signal lernst du, dass dein Hund dich anschaut, egal was um euch herum passiert. 5 Minuten reichen für den ersten Aha-Moment.",
     sections: [
       {
         type: "step",
-        title: "Setz dich gemütlich hin",
-        content: `Schnapp dir ${dog} und 5-6 kleine Leckerli. Ihr beide auf dem Sofa oder Boden, gegenüber. Keine Hektik, kein Druck.`,
+        title: "Such einen ruhigen Platz",
+        content: `Wohnzimmer, Flur oder ruhiger Garten. ${dog} sollte entspannt sein, nicht hibbelig oder hungrig. 5 bis 10 kleine Leckerli bereit halten.`,
       },
       {
         type: "step",
-        title: "Mach die Faust",
-        content: `Halte 1 Leckerli in der geschlossenen Faust unten vor ${dog}. Er riecht es sofort, will rangehen, leckt, knabbert vielleicht. Du machst NICHTS. Sagst KEIN Wort. Hand bleibt zu.`,
+        title: `Setz ${dog} 2-3 Meter von dir entfernt hin`,
+        content: `Wenn er Sitz oder Platz schon kann: nutze das. Sonst halt ihn kurz an der Leine. Du stehst ihm gegenüber, ihr seht euch an.`,
       },
       {
         type: "step",
-        title: "Warte den entscheidenden Moment ab",
-        content: `Irgendwann — vielleicht nach 3 Sekunden, vielleicht nach 30 — gibt ${dog} auf, schaut weg oder zu dir hoch. GENAU JETZT sagst du klar „JA!" und gibst ihm ein ANDERES Leckerli aus der Tasche (nicht das aus der Faust!).`,
+        title: "Ruf seinen Namen einmal klar",
+        content: `Sobald ${dog} zu dir guckt: begeistert „Ja!" sagen und sofort belohnen — entweder zu ihm gehen oder ihn zu dir locken. Wenn er nicht reagiert: 5 Sekunden warten, dann nochmal. Nicht hektisch.`,
       },
       {
         type: "step",
-        title: "Wiederhole 5 mal",
-        content: `Mach es nochmal. Du wirst sehen: schon beim 3. Versuch gibt ${dog} viel schneller auf. Beim 5. checkt er die Faust nur noch kurz und schaut dich direkt an. Das ist der Wow-Moment.`,
+        title: "Distanz schrittweise vergrößern",
+        content: `Beim nächsten Versuch: 4-5 Meter. Wieder Name, wieder belohnen. Beim 3. Mal: 7-8 Meter. Steigere nur wenn die kürzere Distanz sicher klappt.`,
       },
       {
         type: "step",
-        title: "Der Boden-Test",
-        content: `Wenn die Faust sicher klappt: leg ein Leckerli OFFEN auf den Boden, halt deine Hand drüber. Wenn ${dog} sich zurückhält und dich anguckt statt zu schnappen → erste Stufe Impulskontrolle geschafft.`,
+        title: "Mit kleiner Ablenkung üben",
+        content: `Im Garten mit jemandem im Hintergrund, oder im Park abseits vom Weg. Ziel: ${dog} guckt zuverlässig zu dir, egal was um euch herum passiert.`,
       },
       {
         type: "do",
         title: "Mach das",
         items: [
-          "Belohne IMMER mit einem ANDEREN Leckerli (nicht das in der Faust)",
-          "Sei still — kein Wort, kein Schimpfen während er ranggeht",
-          "Hör auf wenn er es schafft — Erfolg verbinden, nicht überreizen",
+          "Kurze Sessions: max 5-10 Min am Stück",
+          "Belohne IMMER innerhalb von 3 Sekunden",
+          "Steigere langsam — Distanz UND Ablenkung getrennt",
         ],
       },
       {
         type: "dont",
         title: "Bitte nicht",
         items: [
-          'Kein „Nein" oder „Aus" sagen — der Hund soll selbst rausfinden was funktioniert',
-          "Faust nicht wegziehen wenn er dran kommt — einfach geschlossen lassen",
-          "Nicht zu früh aufgeben — der Moment kommt, garantiert",
+          "Den Namen nicht mehrfach hintereinander rufen — sonst wird er zu Hintergrund-Lärm",
+          "Nicht schimpfen wenn er nicht guckt — einfach warten oder Distanz reduzieren",
+          "Nicht schon in der Stadt üben — erst die Basis daheim sicher machen",
         ],
       },
       {
         type: "frequency",
         title: "Wie oft",
-        content: "Heute 1-2 mal je 3-5 Minuten. Morgen genauso. Nach 2-3 Tagen versteht dein Hund die Regel im Kopf.",
+        content: "Täglich 1-2 mal je 5 Minuten. Erste sichtbare Verbesserung meist nach 3-4 Tagen.",
       },
       {
         type: "tip",
         title: "Pfoten-Plan Tipp",
-        content: `Sobald ${dog} die Regel verstanden hat (meist nach 2-3 Tagen), kannst du sie auf alles anwenden: was vom Tisch fällt, fremde Sachen unterwegs, Futter im Napf vor dem Freigeben. Das ist die Basis von gefühlt 80% aller Hundetrainings-Themen.`,
+        content: `Sobald ${dog} bei 5 Metern zuverlässig zu dir guckt, ist das die Basis für vieles weitere — Rückruf, Leinen-Training, Begegnungen mit anderen Hunden. Nicht überspringen, lieber sicher beherrschen.`,
       },
     ],
   };

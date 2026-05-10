@@ -160,22 +160,50 @@ export default async function MitgliederDashboard() {
         />
       </div>
 
-      {/* Slim personal Greeting + Sozialer Beweis in einer Zeile */}
-      <div className="mb-5 flex items-center gap-3 flex-wrap">
-        <p className="text-[14px] font-semibold text-[#1a1a1a]">
-          {greeting}
-          {problemLabel && (
-            <span className="text-[#6B7280] font-normal">
-              {" "}
-              — heute geht&rsquo;s gegen{" "}
-              <strong className="text-[#1a1a1a]">{problemLabel}</strong>
-            </span>
-          )}
+      {/* Welcome-Block: Hund-Kontext + Wochen-Position */}
+      <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 mb-5">
+        <div className="flex items-start gap-3 mb-3">
+          <div className="text-[28px] flex-shrink-0 leading-none">👋</div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[16px] font-extrabold text-[#1a1a1a] leading-tight mb-1">
+              {greeting}!
+            </p>
+            {/* Hund-Stats: Rasse, Alter, Hauptthema in einer Zeile */}
+            {(member.dog_breed ||
+              member.quiz_result?.dog_age ||
+              problemLabel) && (
+              <p className="text-[12px] text-[#6B7280] leading-snug">
+                {[
+                  member.dog_breed,
+                  member.quiz_result?.dog_age,
+                  problemLabel ? `Hauptthema: ${problemLabel}` : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            )}
+          </div>
+          {/* Sozialer-Beweis-Pille rechts */}
+          <span className="hidden sm:inline-flex items-center gap-1 bg-[#F0FDF4] border border-[#BBF7D0] rounded-full px-2.5 py-0.5 text-[11px] text-[#15803D] flex-shrink-0">
+            <span className="text-[12px]">🐾</span>
+            <strong className="text-[#166534]">5.000+</strong>
+          </span>
+        </div>
+
+        {/* Erklaerung: was kommt unten */}
+        <p className="text-[13px] text-[#4B5563] leading-relaxed mb-3">
+          Unten findest du die <strong className="text-[#1a1a1a]">erste Übung aus deinem Plan</strong>.
+          Es ist ein Wochen-Programm: jede Übung baut auf der vorherigen
+          auf, du machst sie in deinem eigenen Tempo.
         </p>
-        <span className="inline-flex items-center gap-1 bg-[#F0FDF4] border border-[#BBF7D0] rounded-full px-2.5 py-0.5 text-[11px] text-[#15803D]">
-          <span className="text-[12px]">🐾</span>
-          <strong className="text-[#166534]">5.000+</strong> trainieren mit
-        </span>
+
+        {/* Wochen-Position-Badge */}
+        <div className="inline-flex items-center gap-2 bg-[#FFF9F0] border border-[#EADDC5] rounded-full px-3 py-1.5">
+          <span className="text-[14px]">📍</span>
+          <span className="text-[12px] font-bold text-[#8B7355] uppercase tracking-wider">
+            Woche 1 · Übung 1 von 4
+          </span>
+        </div>
       </div>
 
       {/* Erste Übung — Showcase 'Leckerli-Test' (Wow-Moment in 5 Min).
