@@ -13,6 +13,7 @@ import {
   type MemberProfile,
 } from "@/lib/member-db";
 import FirstExerciseCard from "@/components/mitglieder/FirstExerciseCard";
+import { buildShowcaseExercise } from "@/lib/member-showcase-exercise";
 import ModuleGrid from "@/components/mitglieder/ModuleGrid";
 import DogProfileCard from "@/components/mitglieder/DogProfileCard";
 import ProgressCircle from "@/components/mitglieder/ProgressCircle";
@@ -168,17 +169,26 @@ export default async function MitgliederDashboard() {
         </span>
       </div>
 
-      {/* Erste Übung als Card OHNE Image-Header (Hero-Bild ist schon oben) */}
-      {firstFreeFull && (
-        <div className="mb-8">
-          <FirstExerciseCard
-            module={firstFreeFull as any}
-            dogName={member.dog_name}
-            dogBreed={member.dog_breed}
-            hideImage
-          />
-        </div>
-      )}
+      {/* Erste Übung — Showcase 'Leckerli-Test' (Wow-Moment in 5 Min).
+          Hardcoded statt DB-Modul damit der ALLER-erste Eindruck stark
+          ist. Slug zeigt auf real existierendes Modul fuer den Detail-Link. */}
+      <div className="mb-8">
+        <FirstExerciseCard
+          module={
+            {
+              slug: firstFree?.slug || "uebung-1",
+              title: buildShowcaseExercise(member.dog_name?.trim() || "deinem Hund").title,
+              description: buildShowcaseExercise(member.dog_name?.trim() || "deinem Hund").description,
+              content: {
+                sections: buildShowcaseExercise(member.dog_name?.trim() || "deinem Hund").sections,
+              },
+            } as any
+          }
+          dogName={member.dog_name}
+          dogBreed={member.dog_breed}
+          hideImage
+        />
+      </div>
 
       {/* Hund-Profil — jetzt nach der Wow-Card als Kontext */}
       <DogProfileCard
