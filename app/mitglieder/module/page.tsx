@@ -12,7 +12,6 @@ import {
 } from "@/lib/member-db";
 import { THEMEN_MODULES, sortByUserRelevance } from "@/lib/member-themen";
 import UpsellFlipCard from "@/components/mitglieder/UpsellFlipCard";
-import ModuleGrid from "@/components/mitglieder/ModuleGrid";
 
 export const dynamic = "force-dynamic";
 
@@ -132,16 +131,71 @@ export default async function ModulShopPage() {
         </p>
       </div>
 
-      {/* ── Section 1: Plan-Module ─────────────────────────────────── */}
+      {/* ── Section 1: Plan-Status (kompakte Uebersicht) ───────────── */}
       {modules.length > 0 && (
         <section className="mb-10">
           <h2 className="text-[20px] md:text-[22px] font-extrabold text-[#1a1a1a] leading-tight">
             Dein Trainings-Plan
           </h2>
           <p className="text-[12px] text-[#9CA3AF] mt-1 mb-3">
-            {unlockedCount} von {modules.length} freigeschaltet
+            {isPaid
+              ? `${unlockedCount} von ${modules.length} Modulen freigeschaltet`
+              : "Noch nicht freigeschaltet"}
           </p>
-          <ModuleGrid modules={modules} isPaid={isPaid} />
+
+          {isPaid ? (
+            <div className="bg-white border border-[#EADDC5] rounded-2xl p-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="text-[32px] leading-none flex-shrink-0">📚</div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[15px] font-bold text-[#1a1a1a] leading-tight">
+                    {unlockedCount} / {modules.length} Module frei
+                  </p>
+                  <p className="text-[12px] text-[#6B7280] leading-snug">
+                    Schritt für Schritt freigeschaltet
+                  </p>
+                </div>
+              </div>
+              <div className="w-full h-2 bg-[#F0EBE3] rounded-full overflow-hidden mb-4">
+                <div
+                  className="h-full bg-[#C4A576] rounded-full"
+                  style={{
+                    width: `${Math.min(
+                      100,
+                      (unlockedCount / modules.length) * 100
+                    )}%`,
+                  }}
+                />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href="/mitglieder/erfolge/coaching"
+                  className="bg-[#C4A576] text-white font-semibold py-2.5 px-5 rounded-xl text-[13px] shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
+                >
+                  Plan-Coaching →
+                </Link>
+                <Link
+                  href="/mitglieder"
+                  className="bg-[#FAFAFA] border border-[#EADDC5] text-[#1a1a1a] font-semibold py-2.5 px-5 rounded-xl text-[13px]"
+                >
+                  Alle Module
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-2xl p-5">
+              <p className="text-[14px] text-[#4B5563] leading-relaxed mb-3">
+                Schalte deinen vollständigen Trainings-Plan frei und löse das
+                Problem mit {dog} Schritt für Schritt.
+              </p>
+              <Link
+                href="/mitglieder/upgrade"
+                className="inline-block bg-[#C4A576] text-white font-semibold py-2.5 px-5 rounded-xl text-[13px] shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
+              >
+                Plan freischalten →
+              </Link>
+            </div>
+          )}
         </section>
       )}
 
