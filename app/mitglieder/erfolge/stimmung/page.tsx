@@ -10,6 +10,7 @@ import {
   lastDaysSummary,
   weeklySummary,
   detectStrugglePattern,
+  getQuestionsForProblem,
   type Mood,
 } from "@/lib/member-mood";
 import MoodCheckIn from "@/components/mitglieder/MoodCheckIn";
@@ -56,6 +57,9 @@ export default async function StimmungPage() {
   });
 
   const dog = member.dog_name?.trim() || "deinem Hund";
+  const problemKey =
+    member.quiz_result?.dog_problem || member.quiz_result?.problem || null;
+  const questions = getQuestionsForProblem(problemKey);
   const logs = await listMoodLogs(user.id, 60);
   const days7 = lastDaysSummary(logs, 7);
   const weeks4 = weeklySummary(logs, 4);
@@ -91,7 +95,7 @@ export default async function StimmungPage() {
 
       {/* Check-in Widget */}
       <div className="mb-6">
-        <MoodCheckIn />
+        <MoodCheckIn questions={questions} problemKey={problemKey} />
       </div>
 
       {/* Struggle-Hinweis */}

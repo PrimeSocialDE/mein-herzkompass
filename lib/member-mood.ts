@@ -150,3 +150,236 @@ export function detectStrugglePattern(logs: MoodLog[]): boolean {
   const recent = logs.slice(0, 3);
   return recent.length >= 3 && recent.every((l) => l.mood === "schwierig");
 }
+
+// ── Folgefragen pro Problem-Key ────────────────────────────────────
+// Werden nach der Mood-Auswahl angezeigt damit User eine konkrete
+// Aussage zur letzten Uebung treffen kann. Antworten werden als JSON
+// in member_mood_logs.answers gespeichert und gehen in den KI-Feedback-
+// Prompt ein.
+
+export interface MoodQuestion {
+  key: string;
+  text: string;
+  options: { value: string; label: string }[];
+}
+
+export const QUESTIONS_BY_PROBLEM: Record<string, MoodQuestion[]> = {
+  pulling: [
+    {
+      key: "leine_dauer",
+      text: "Wie viel Zeit lief er locker an der Leine?",
+      options: [
+        { value: "kaum", label: "Kaum" },
+        { value: "kurz", label: "Etwa 1/3" },
+        { value: "haelfte", label: "Etwa Hälfte" },
+        { value: "meist", label: "Großteil" },
+      ],
+    },
+    {
+      key: "richtungswechsel",
+      text: "Hat er auf Richtungswechsel reagiert?",
+      options: [
+        { value: "sofort", label: "Ja, sofort" },
+        { value: "mehrmals", label: "Nach 2-3 Versuchen" },
+        { value: "nein", label: "Nein" },
+      ],
+    },
+  ],
+  barking: [
+    {
+      key: "ausloeser",
+      text: "Was hat das Bellen ausgelöst?",
+      options: [
+        { value: "tuerklingel", label: "Türklingel/Besuch" },
+        { value: "andere_hunde", label: "Andere Hunde" },
+        { value: "passanten", label: "Passanten" },
+        { value: "geraeusche", label: "Außengeräusche" },
+        { value: "langeweile", label: "Langeweile" },
+      ],
+    },
+    {
+      key: "ruhe_gefunden",
+      text: "Wie schnell wurde er wieder ruhig?",
+      options: [
+        { value: "sofort", label: "Sofort" },
+        { value: "mit_kommando", label: "Mit Kommando" },
+        { value: "lange", label: "Hat lange gedauert" },
+      ],
+    },
+  ],
+  aggression: [
+    {
+      key: "ausloeser",
+      text: "Was hat ihn aggressiv reagieren lassen?",
+      options: [
+        { value: "andere_hunde", label: "Andere Hunde" },
+        { value: "menschen", label: "Menschen" },
+        { value: "ressource", label: "Futter/Spielzeug" },
+        { value: "leine", label: "An der Leine" },
+      ],
+    },
+    {
+      key: "distanz",
+      text: "Wie war die Distanz zum Auslöser?",
+      options: [
+        { value: "nah", label: "Sehr nah (<3m)" },
+        { value: "mittel", label: "Mittel (3-10m)" },
+        { value: "weit", label: "Weit (>10m)" },
+      ],
+    },
+  ],
+  anxiety: [
+    {
+      key: "alleinzeit",
+      text: "Wie lange war er allein?",
+      options: [
+        { value: "kurz", label: "Bis 5 Min" },
+        { value: "mittel", label: "5-30 Min" },
+        { value: "lang", label: "Über 30 Min" },
+      ],
+    },
+    {
+      key: "verhalten",
+      text: "Wie hat er reagiert?",
+      options: [
+        { value: "ruhig", label: "Ruhig geblieben" },
+        { value: "winselt", label: "Hat gewinselt" },
+        { value: "bellt", label: "Hat gebellt" },
+        { value: "zerstoert", label: "Was zerstört" },
+      ],
+    },
+  ],
+  jumping: [
+    {
+      key: "haeufigkeit",
+      text: "Wie oft hat er gesprungen?",
+      options: [
+        { value: "gar_nicht", label: "Gar nicht" },
+        { value: "1_2", label: "1-2 mal" },
+        { value: "oft", label: "Mehrfach" },
+      ],
+    },
+    {
+      key: "wer",
+      text: "Bei wem ist er gesprungen?",
+      options: [
+        { value: "familie", label: "Familie" },
+        { value: "besuch", label: "Besuch" },
+        { value: "fremde", label: "Fremde" },
+      ],
+    },
+  ],
+  recall: [
+    {
+      key: "kam_zurueck",
+      text: "Ist er auf den Rückruf gekommen?",
+      options: [
+        { value: "sofort", label: "Sofort" },
+        { value: "spaet", label: "Verspätet" },
+        { value: "gar_nicht", label: "Gar nicht" },
+      ],
+    },
+    {
+      key: "ablenkung",
+      text: "Welche Ablenkung war da?",
+      options: [
+        { value: "keine", label: "Keine" },
+        { value: "hunde", label: "Andere Hunde" },
+        { value: "wild", label: "Wild/Vögel" },
+        { value: "stark", label: "Stark abgelenkt" },
+      ],
+    },
+  ],
+  energy: [
+    {
+      key: "auspowern",
+      text: "Wie lange habt ihr trainiert/gespielt?",
+      options: [
+        { value: "kurz", label: "Bis 15 Min" },
+        { value: "mittel", label: "15-45 Min" },
+        { value: "lang", label: "Über 45 Min" },
+      ],
+    },
+    {
+      key: "ruhe_danach",
+      text: "Hat er danach Ruhe gefunden?",
+      options: [
+        { value: "ja", label: "Ja, ist eingeschlafen" },
+        { value: "etwas", label: "Etwas ruhiger" },
+        { value: "nein", label: "Weiter aufgedreht" },
+      ],
+    },
+  ],
+  destructive: [
+    {
+      key: "was",
+      text: "Was hat er angefasst/zerstört?",
+      options: [
+        { value: "schuhe", label: "Schuhe" },
+        { value: "moebel", label: "Möbel" },
+        { value: "kabel", label: "Kabel" },
+        { value: "papier", label: "Papier/Müll" },
+        { value: "nichts", label: "Nichts heute" },
+      ],
+    },
+    {
+      key: "tausch",
+      text: "Hat das Tausch-Spiel geklappt?",
+      options: [
+        { value: "ja", label: "Ja, gerne hergegeben" },
+        { value: "zoegerlich", label: "Zögerlich" },
+        { value: "nein", label: "Nein, nicht hergegeben" },
+        { value: "nicht_versucht", label: "Nicht probiert" },
+      ],
+    },
+  ],
+  soiling: [
+    {
+      key: "wo",
+      text: "Wo wurde gepinkelt?",
+      options: [
+        { value: "draussen", label: "Nur draußen" },
+        { value: "panne", label: "1 Panne drinnen" },
+        { value: "mehrfach", label: "Mehrfach drinnen" },
+      ],
+    },
+    {
+      key: "pausen",
+      text: "Wie viele Pipi-Pausen draußen?",
+      options: [
+        { value: "wenig", label: "1-2 mal" },
+        { value: "normal", label: "3-5 mal" },
+        { value: "viel", label: "6+ mal" },
+      ],
+    },
+  ],
+  mouthing: [
+    {
+      key: "aufgenommen",
+      text: "Hat er was aufgenommen?",
+      options: [
+        { value: "nichts", label: "Nichts" },
+        { value: "essbares", label: "Essen vom Boden" },
+        { value: "muell", label: "Müll" },
+        { value: "stoeckchen", label: "Stöckchen/Steine" },
+      ],
+    },
+    {
+      key: "aus_kommando",
+      text: "Hat das 'Aus' funktioniert?",
+      options: [
+        { value: "sofort", label: "Sofort hergegeben" },
+        { value: "mit_tausch", label: "Mit Tausch" },
+        { value: "nein", label: "Nein" },
+        { value: "nicht_versucht", label: "Nicht probiert" },
+      ],
+    },
+  ],
+};
+
+export function getQuestionsForProblem(
+  key: string | null
+): MoodQuestion[] {
+  if (!key) return [];
+  return QUESTIONS_BY_PROBLEM[key] || [];
+}

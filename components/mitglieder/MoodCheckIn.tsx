@@ -1,10 +1,14 @@
 "use client";
 
 // Inline-Check-in fuer den Stimmungs-Tagebuch.
-// 3 Mood-Buttons + optionales Notizfeld + Speichern.
-// Optimistic UX: nach Save → 'Eingetragen!' Bestaetigung.
+// Flow:
+// 1. Mood waehlen (😊/😐/😞)
+// 2. Folgefragen erscheinen (passend zum Quiz-Problem)
+// 3. Optionale Notiz dazu
+// 4. Eintragen → Backend speichert + holt KI-Feedback → wird angezeigt
 
 import { useState } from "react";
+import type { MoodQuestion } from "@/lib/member-mood";
 
 type Mood = "gut" | "mittel" | "schwierig";
 
@@ -14,12 +18,18 @@ const MOODS: { key: Mood; emoji: string; label: string; color: string }[] = [
   { key: "schwierig", emoji: "😞", label: "Schwierig", color: "#DC2626" },
 ];
 
-export default function MoodCheckIn() {
+interface Props {
+  questions: MoodQuestion[];
+  problemKey: string | null;
+}
+
+export default function MoodCheckIn({ questions, problemKey }: Props) {
   const [selected, setSelected] = useState<Mood | null>(null);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [note, setNote] = useState("");
   const [showNote, setShowNote] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   async function save() {
@@ -33,42 +43,79 @@ export default function MoodCheckIn() {
         body: JSON.stringify({
           mood: selected,
           note: note.trim() || undefined,
+          answers: Object.keys(answers).length ? answers : undefined,
+          problem_key: problemKey || undefined,
         }),
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Speichern fehlgeschlagen");
+        setError(
+          data.error?.includes("schema cache")
+            ? "Datenbank-Setup unvollständig (SQL-Migration ausführen)."
+            : data.error || "Speichern fehlgeschlagen"
+        );
         setSaving(false);
         return;
       }
-      setSavedAt(new Date());
-      setTimeout(() => {
-        setSelected(null);
-        setNote("");
-        setShowNote(false);
-        setSavedAt(null);
+
+      // KI-Feedback wenn vorhanden
+      if (data.feedback) {
+        setFeedback(data.feedback);
         setSaving(false);
-        // Page-Reload damit Verlauf den neuen Eintrag sofort zeigt
-        window.location.reload();
-      }, 1500);
+        // KEIN Reload — User soll Feedback in Ruhe lesen
+      } else {
+        // Kein Feedback → direkt reload damit Verlauf updated
+        setTimeout(() => window.location.reload(), 800);
+      }
     } catch (e) {
       setError("Verbindungsfehler. Versuch's gleich nochmal.");
       setSaving(false);
     }
   }
 
-  if (savedAt) {
+  function reset() {
+    setSelected(null);
+    setAnswers({});
+    setNote("");
+    setShowNote(false);
+    setFeedback(null);
+    setError("");
+  }
+
+  // ── Stage: Feedback empfangen ────────────────────────────────────
+  if (feedback) {
     return (
-      <div className="bg-white border border-[#C4A576] rounded-2xl p-5 text-center">
-        <div className="text-[40px] mb-2">✅</div>
-        <p className="text-[15px] font-bold text-[#1a1a1a]">Eingetragen!</p>
-        <p className="text-[12px] text-[#6B7280] mt-1">
-          Lädt deinen Verlauf gleich neu...
-        </p>
+      <div className="bg-gradient-to-br from-[#FFFDF8] to-[#FFF9F0] border-2 border-[#C4A576] rounded-2xl p-5 shadow-[0_4px_20px_rgba(196,165,118,0.15)]">
+        <div className="flex items-start gap-3 mb-3">
+          <div className="text-[28px] flex-shrink-0">🐾</div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
+              Tipp vom KI-Trainer
+            </p>
+            <p className="text-[14px] text-[#1a1a1a] leading-relaxed whitespace-pre-wrap">
+              {feedback}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2 pt-2 border-t border-[#EADDC5]">
+          <button
+            onClick={() => window.location.reload()}
+            className="flex-1 bg-[#C4A576] text-white font-semibold py-2.5 px-4 rounded-xl text-[13px] shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
+          >
+            Verlauf ansehen
+          </button>
+          <button
+            onClick={reset}
+            className="bg-white border border-[#EADDC5] text-[#1a1a1a] font-semibold py-2.5 px-4 rounded-xl text-[13px]"
+          >
+            Noch eintragen
+          </button>
+        </div>
       </div>
     );
   }
 
+  // ── Stage: Default Check-in ──────────────────────────────────────
   return (
     <div className="bg-white border border-[#EADDC5] rounded-2xl p-5">
       <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
@@ -79,7 +126,7 @@ export default function MoodCheckIn() {
       </p>
 
       {/* 3 Mood-Buttons */}
-      <div className="grid grid-cols-3 gap-2 mb-3">
+      <div className="grid grid-cols-3 gap-2 mb-4">
         {MOODS.map((m) => {
           const isSel = selected === m.key;
           return (
@@ -102,7 +149,40 @@ export default function MoodCheckIn() {
         })}
       </div>
 
-      {/* Notiz (optional, einklappbar) */}
+      {/* Folgefragen — erst nach Mood-Auswahl, nur wenn Fragen vorhanden */}
+      {selected && questions.length > 0 && (
+        <div className="space-y-3 mb-4 pt-2 border-t border-[#F0EBE3]">
+          {questions.map((q) => (
+            <div key={q.key}>
+              <p className="text-[12px] font-semibold text-[#1a1a1a] mb-1.5">
+                {q.text}
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {q.options.map((opt) => {
+                  const isPicked = answers[q.key] === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() =>
+                        setAnswers((s) => ({ ...s, [q.key]: opt.value }))
+                      }
+                      className={`text-[12px] font-semibold px-3 py-1.5 rounded-full border ${
+                        isPicked
+                          ? "bg-[#C4A576] text-white border-[#C4A576]"
+                          : "bg-white text-[#4B5563] border-[#EADDC5]"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Notiz optional */}
       {selected && (
         <>
           {!showNote ? (
@@ -110,13 +190,13 @@ export default function MoodCheckIn() {
               onClick={() => setShowNote(true)}
               className="text-[12px] text-[#8B7355] underline underline-offset-2 mb-3"
             >
-              + Kurze Notiz dazu (optional)
+              + Eigene Notiz dazu (optional)
             </button>
           ) : (
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="z.B. 'Beim 3. Versuch klappte es mit dem Sitz'"
+              placeholder="z.B. 'Beim 3. Versuch hat's geklappt'"
               maxLength={500}
               rows={2}
               className="w-full px-3 py-2 border border-[#EADDC5] rounded-lg text-[13px] mb-3 focus:outline-none focus:border-[#C4A576]"
@@ -128,7 +208,11 @@ export default function MoodCheckIn() {
             disabled={saving}
             className="w-full bg-[#C4A576] disabled:opacity-60 text-white font-semibold py-2.5 px-5 rounded-xl text-[13px] shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
           >
-            {saving ? "Speichere…" : "Eintragen"}
+            {saving
+              ? "Speichere…"
+              : questions.length > 0 && Object.keys(answers).length > 0
+                ? "Eintragen + Tipp holen"
+                : "Eintragen"}
           </button>
           {error && (
             <p className="text-[11px] text-[#B91C1C] text-center mt-2">
