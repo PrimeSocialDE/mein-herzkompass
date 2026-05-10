@@ -66,7 +66,7 @@ export function buildShowcaseExercise(
         type: "dont",
         title: "Bitte nicht",
         items: [
-          "Kein „Nein" oder „Aus" sagen — der Hund soll selbst rausfinden was funktioniert",
+          'Kein „Nein" oder „Aus" sagen — der Hund soll selbst rausfinden was funktioniert',
           "Faust nicht wegziehen wenn er dran kommt — einfach geschlossen lassen",
           "Nicht zu früh aufgeben — der Moment kommt, garantiert",
         ],
