@@ -147,7 +147,7 @@ export default async function ModulShopPage() {
             <div className="bg-white border border-[#EADDC5] rounded-2xl overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/Planfrei.png"
+                src="/Planfrei.jpg"
                 alt="Dein Trainings-Plan"
                 className="w-full aspect-[4/3] object-cover"
               />
@@ -196,7 +196,7 @@ export default async function ModulShopPage() {
             <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-2xl overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/Planfrei.png"
+                src="/Planfrei.jpg"
                 alt="Dein Trainings-Plan"
                 className="w-full aspect-[4/3] object-cover"
               />

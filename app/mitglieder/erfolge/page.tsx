@@ -53,7 +53,7 @@ export default async function ErfolgeHubPage() {
       <div className="mb-5 -mx-4 md:-mx-8 md:mt-[-10px]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/Herchallanges.png"
+          src="/Herchallanges.jpg"
           alt={`${dogPossessive} Trainings-Hub`}
           className="w-full aspect-[16/7] object-cover object-bottom md:rounded-2xl"
         />

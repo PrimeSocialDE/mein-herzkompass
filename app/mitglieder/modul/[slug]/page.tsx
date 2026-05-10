@@ -15,9 +15,11 @@ import PlanContentRenderer from "@/components/mitglieder/PlanContentRenderer";
 export const dynamic = "force-dynamic";
 
 interface ContentSection {
-  type: "text" | "step" | "tip";
+  type: "text" | "step" | "tip" | "do" | "dont" | "frequency";
   title?: string;
   content?: string;
+  // Fuer 'do' / 'dont' Listen koennen items dazu kommen statt content
+  items?: string[];
 }
 
 export default async function ModulDetailPage({
@@ -139,6 +141,44 @@ export default async function ModulDetailPage({
           </p>
         </div>
       )}
+
+      {/* Closing-Teaser fuer Free-User: naechste Uebung baut darauf auf,
+          Plan freischalten fuer den naechsten Schritt */}
+      {isUnlocked && member.purchase_status !== "paid" && (
+        <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-2xl p-5 mt-6">
+          <div className="flex items-start gap-3 mb-3">
+            <div className="text-[28px] flex-shrink-0">🎯</div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-0.5">
+                Wenn das hier klappt
+              </p>
+              <h3 className="text-[18px] font-extrabold text-[#1a1a1a] leading-tight">
+                Die nächsten Übungen bauen direkt darauf auf
+              </h3>
+            </div>
+          </div>
+          <p className="text-[13px] text-[#4B5563] leading-relaxed mb-4">
+            Diese Übung ist die <strong>Basis</strong>. Im vollen Plan kommen
+            täglich neue Schritte dazu, die {member.dog_name?.trim() || "deinen Hund"} systematisch
+            ans Ziel führen. Eine Übung allein löst das Problem nicht — eine
+            klare Reihenfolge schon.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/mitglieder/upgrade"
+              className="bg-[#C4A576] text-white font-semibold py-2.5 px-5 rounded-xl text-[13px] shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
+            >
+              Plan freischalten →
+            </Link>
+            <Link
+              href="/mitglieder/hilfe"
+              className="bg-white border border-[#EADDC5] text-[#1a1a1a] font-semibold py-2.5 px-5 rounded-xl text-[13px]"
+            >
+              Erst Frage stellen
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -173,15 +213,68 @@ function SectionRenderer({
   }
   if (section.type === "tip") {
     return (
-      <div className="bg-[#FFF9F0] border-l-3 border-[#C4A576] rounded-r-lg px-4 py-3">
+      <div className="bg-[#FFF9F0] border-l-4 border-[#C4A576] rounded-r-lg px-4 py-3">
         <p className="text-[12px] font-bold text-[#8B7355] uppercase tracking-wide mb-1">
-          {section.title || "Tipp"}
+          💡 {section.title || "Tipp"}
         </p>
         {section.content && (
           <p className="text-[13px] text-[#5A4A3A] leading-relaxed">
             {section.content}
           </p>
         )}
+      </div>
+    );
+  }
+  if (section.type === "do") {
+    const items = section.items || (section.content ? [section.content] : []);
+    return (
+      <div className="bg-[#F0FDF4] border-l-4 border-[#16A34A] rounded-r-lg px-4 py-3">
+        <p className="text-[12px] font-bold text-[#15803D] uppercase tracking-wide mb-2">
+          ✓ {section.title || "Mach das"}
+        </p>
+        <ul className="space-y-1.5">
+          {items.map((it, i) => (
+            <li key={i} className="flex gap-2 text-[13px] text-[#166534] leading-relaxed">
+              <span className="flex-shrink-0 font-bold">✓</span>
+              <span>{it}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+  if (section.type === "dont") {
+    const items = section.items || (section.content ? [section.content] : []);
+    return (
+      <div className="bg-[#FEF2F2] border-l-4 border-[#DC2626] rounded-r-lg px-4 py-3">
+        <p className="text-[12px] font-bold text-[#B91C1C] uppercase tracking-wide mb-2">
+          ✗ {section.title || "Bitte nicht"}
+        </p>
+        <ul className="space-y-1.5">
+          {items.map((it, i) => (
+            <li key={i} className="flex gap-2 text-[13px] text-[#7F1D1D] leading-relaxed">
+              <span className="flex-shrink-0 font-bold">✗</span>
+              <span>{it}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+  if (section.type === "frequency") {
+    return (
+      <div className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-lg px-4 py-3 flex items-start gap-3">
+        <span className="text-[24px] leading-none">⏱️</span>
+        <div className="flex-1 min-w-0">
+          <p className="text-[12px] font-bold text-[#1E40AF] uppercase tracking-wide mb-0.5">
+            {section.title || "Wie oft"}
+          </p>
+          {section.content && (
+            <p className="text-[14px] font-semibold text-[#1E3A8A] leading-relaxed">
+              {section.content}
+            </p>
+          )}
+        </div>
       </div>
     );
   }

@@ -32,7 +32,7 @@ const PLANS: PlanOption[] = [
     popular: false,
     badge: "Intensiv",
     tagline: "Erste Erfolge in 4 Wochen",
-    image: "/1Monat.png",
+    image: "/1Monat.jpg",
     bullets: [
       { icon: "⚡", text: "Täglich kurz trainieren" },
       { icon: "🎯", text: "Basis-Übungen für 1 Thema" },
@@ -48,7 +48,7 @@ const PLANS: PlanOption[] = [
     popular: true,
     badge: "Beliebt",
     tagline: "Im Wohlfühl-Tempo, klare Ergebnisse",
-    image: "/3Monat.png",
+    image: "/3Monat.jpg",
     bullets: [
       { icon: "📚", text: "Mehr Übungen für mehr Tiefe" },
       { icon: "🌿", text: "3× pro Woche reicht" },
@@ -64,7 +64,7 @@ const PLANS: PlanOption[] = [
     popular: false,
     badge: "Komplett",
     tagline: "Ganz in Ruhe, richtig beherrschen",
-    image: "/6Monat.png",
+    image: "/6Monat.jpg",
     bullets: [
       { icon: "🐾", text: "Alle Übungen — wirklich vertiefen" },
       { icon: "🌳", text: "Alle 10 Themen-Module inklusive" },
