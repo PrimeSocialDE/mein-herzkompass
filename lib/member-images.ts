@@ -36,7 +36,7 @@ export function imageForModule(slug: string, contentImageUrl?: string): string {
   // 'Willkommen' → Pfoten-Plan-Trainer-Team-Foto (statt Stock-Welpen).
   // Wirkt als 'Wir sind dein Team' Begrüßung, viel persönlicher.
   if (/willkommen|start|intro/i.test(slug)) return "/TrainerPfoten-hero.jpg";
-  if (/blickkontakt|aufmerksam/i.test(slug)) return "/Hund3.jpg";
+  if (/blickkontakt|aufmerksam/i.test(slug)) return "/blickkontakt-eyes.svg";
   if (/leine|pull/i.test(slug)) return "/bsp3.jpg";
   if (/rueckruf|recall/i.test(slug)) return "/RueckrufHund.png";
   if (/bell|bark/i.test(slug)) return "/bsp5.jpg";
