@@ -49,7 +49,7 @@ export default function UpsellFlipCard({
   return (
     <div className="relative w-full" style={{ perspective: "1000px" }}>
       <div
-        className="relative w-full aspect-[3/4] transition-transform duration-700 ease-out"
+        className="relative w-full aspect-[2/3] transition-transform duration-700 ease-out"
         style={{
           transformStyle: "preserve-3d",
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
@@ -60,8 +60,9 @@ export default function UpsellFlipCard({
           className="absolute inset-0 bg-white border border-[#EADDC5] rounded-xl overflow-hidden flex flex-col shadow-[0_2px_8px_rgba(139,115,85,0.06)]"
           style={{ backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden" }}
         >
-          {/* Bild oder Gradient mit Emoji */}
-          <div className="relative aspect-[4/3] bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] flex items-center justify-center overflow-hidden flex-shrink-0">
+          {/* Bild oder Gradient mit Emoji — 1:1 damit quadratische Bilder
+              (1080x1080) komplett sichtbar sind, kein Crop. */}
+          <div className="relative aspect-square bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] flex items-center justify-center overflow-hidden flex-shrink-0">
             {upsell.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -79,22 +80,18 @@ export default function UpsellFlipCard({
             )}
           </div>
 
-          <div className="flex-1 p-3 flex flex-col">
-            <h3 className="text-[13px] font-extrabold text-[#1a1a1a] leading-tight mb-1 line-clamp-2">
+          <div className="flex-1 p-2.5 flex flex-col">
+            <h3 className="text-[12px] font-extrabold text-[#1a1a1a] leading-tight mb-1.5 line-clamp-2">
               {upsell.title}
             </h3>
 
-            <div className="mt-auto">
-              <div className="text-[16px] font-extrabold text-[#1a1a1a] mb-2 leading-none">
-                {priceFormatted}
-              </div>
-              <button
-                onClick={() => setFlipped(true)}
-                className="w-full bg-[#FAFAFA] hover:bg-[#F0EBE3] text-[#1a1a1a] font-semibold py-1.5 px-2 rounded-lg text-[11px] transition border border-[#EADDC5]"
-              >
-                Mehr Infos →
-              </button>
-            </div>
+            <button
+              onClick={() => setFlipped(true)}
+              className="mt-auto w-full bg-[#FAFAFA] hover:bg-[#F0EBE3] text-[#1a1a1a] font-semibold py-1.5 px-2 rounded-lg text-[11px] transition border border-[#EADDC5] flex items-center justify-between gap-1"
+            >
+              <span className="font-extrabold">{priceFormatted}</span>
+              <span className="text-[#8B7355]">Mehr →</span>
+            </button>
           </div>
         </div>
 
