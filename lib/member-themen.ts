@@ -6,7 +6,8 @@
 export interface ThemenModule {
   slug: string;
   title: string;
-  short: string;          // 1-Liner fuer Kartenvorderseite
+  short: string;          // 1-Liner fuer Kartenvorderseite (alte Beschreibung)
+  goal: string;           // Outcome-Versprechen, was der Hund am Ende kann
   features: string[];     // Backside-Inhalte
   emoji: string;
   image_url?: string | null; // optional: ueberschreibt Emoji-Header
@@ -21,6 +22,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
   {
     slug: "thema-leinen",
     title: "Leinenführigkeit",
+    goal: "Läuft entspannt an der Leine",
     short: "Locker an der Leine in 14 Tagen.",
     features: [
       "Schritt-für-Schritt Aufbau in 14 Tagen",
@@ -37,6 +39,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
   {
     slug: "thema-bellen",
     title: "Bellen abgewöhnen",
+    goal: "Bellt weniger und kürzer",
     short: "Ruhe-Signal etablieren, ohne Stress.",
     features: [
       "Ursachen verstehen (Angst, Langeweile, Wache)",
@@ -53,6 +56,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
   {
     slug: "thema-aggression",
     title: "Aggression entschärfen",
+    goal: "Bleibt ruhig bei anderen Hunden",
     short: "Sicher umgehen, deeskalieren, vorbeugen.",
     features: [
       "Warum Hunde aggressiv reagieren",
@@ -70,6 +74,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
   {
     slug: "thema-trennungsangst",
     title: "Trennungsangst",
+    goal: "Bleibt entspannt allein zuhause",
     short: "Allein zuhause ohne Stress.",
     features: [
       "Gewöhnen in kleinen Schritten",
@@ -86,6 +91,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
   {
     slug: "thema-anspringen",
     title: "Anspringen abgewöhnen",
+    goal: "Begrüßt mit allen Pfoten am Boden",
     short: "Begrüßung mit vier Pfoten am Boden.",
     features: [
       "Warum Hunde springen (Aufmerksamkeit)",
@@ -102,6 +108,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
   {
     slug: "thema-rueckruf",
     title: "Rückruf trainieren",
+    goal: "Kommt zuverlässig wenn du rufst",
     short: "Dein Hund kommt zuverlässig.",
     features: [
       "Den Namen positiv aufladen",
@@ -118,6 +125,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
   {
     slug: "thema-energie",
     title: "Übermäßige Energie",
+    goal: "Findet Ruhe nach dem Auspowern",
     short: "Auspowern + Ruhe finden.",
     features: [
       "Mentale vs körperliche Auslastung",
@@ -134,6 +142,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
   {
     slug: "thema-zerstoerung",
     title: "Zerstörungsverhalten",
+    goal: "Lässt Möbel, Schuhe & Kabel in Ruhe",
     short: "Möbel, Schuhe & Kabel sicher.",
     features: [
       "Warum Hunde zerstören",
@@ -150,6 +159,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
   {
     slug: "thema-stubenrein",
     title: "Stubenreinheit",
+    goal: "Macht es draußen, nicht drinnen",
     short: "Routine etablieren in 21 Tagen.",
     features: [
       "Feste Pipi-Pause-Zeiten",
@@ -166,6 +176,7 @@ export const THEMEN_MODULES: ThemenModule[] = [
   {
     slug: "thema-aufnehmen",
     title: "Nichts vom Boden",
+    goal: "Lässt Sachen am Boden liegen",
     short: "Schluss mit Aufnehmen unterwegs.",
     features: [
       "Tausch-Spiel als Basis",

@@ -154,6 +154,35 @@ export default async function ModulShopPage() {
           {themenModules.length} verfügbar · Tipp auf eine Karte für Details
         </p>
 
+        {/* Erklaer-Block: was sind die, wie laeufts ab */}
+        <div className="bg-[#FFFDF8] border border-[#EADDC5] rounded-xl p-4 mb-4">
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="text-[18px]">💡</span>
+            <p className="text-[13px] font-bold text-[#1a1a1a]">
+              Wie funktionieren Themen-Module?
+            </p>
+          </div>
+          <p className="text-[12px] text-[#4B5563] leading-relaxed mb-3">
+            Spezial-Trainings zu einzelnen Themen. Einmal kaufen, dauerhaft
+            verfügbar — als PDF im Postfach und hier im Mitgliederbereich.
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { icon: "🛒", text: "Modul wählen & kaufen" },
+              { icon: "📧", text: "Sofort PDF im Postfach" },
+              { icon: "♾️", text: "Lebenslang abrufbar" },
+            ].map((s) => (
+              <div
+                key={s.text}
+                className="flex items-start gap-1 text-[11px] text-[#1a1a1a] leading-snug"
+              >
+                <span className="text-[14px] flex-shrink-0">{s.icon}</span>
+                <span>{s.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {themenModules.map((t) => (
             <UpsellFlipCard
@@ -172,6 +201,7 @@ export default async function ModulShopPage() {
               }}
               features={t.features}
               emoji={t.emoji}
+              goal={t.goal}
               email={member.email}
               leadId={member.source_lead_id}
               dogName={member.dog_name}

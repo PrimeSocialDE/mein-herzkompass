@@ -25,6 +25,7 @@ interface Props {
   email: string;
   leadId: string | null;
   dogName: string | null;
+  goal?: string | null;     // Outcome-Versprechen (z.B. 'Laeuft entspannt an der Leine')
 }
 
 export default function UpsellFlipCard({
@@ -34,6 +35,7 @@ export default function UpsellFlipCard({
   email,
   leadId,
   dogName,
+  goal,
 }: Props) {
   const [flipped, setFlipped] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -111,9 +113,16 @@ export default function UpsellFlipCard({
               {upsell.title}
             </h3>
 
-            <p className="text-[10px] text-[#6B7280] leading-snug">
-              8 Übungen für {dogName?.trim() || "deinen Hund"}
-            </p>
+            {goal ? (
+              <p className="text-[11px] font-semibold text-[#8B7355] leading-snug mb-1 flex items-start gap-1">
+                <span className="text-[#C4A576] flex-shrink-0">→</span>
+                <span>{goal}</span>
+              </p>
+            ) : (
+              <p className="text-[10px] text-[#6B7280] leading-snug">
+                8 Übungen für {dogName?.trim() || "deinen Hund"}
+              </p>
+            )}
             <p className="text-[9px] text-[#9CA3AF] leading-snug mt-0.5 flex items-center gap-1">
               <span className="text-[#16A34A]">✓</span>
               <span>Einmalig · kein Abo</span>
