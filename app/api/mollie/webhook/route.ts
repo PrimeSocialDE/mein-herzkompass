@@ -176,6 +176,22 @@ async function handlePaid(payment: any) {
     `[mollie-webhook] ${table} ${referenceId} → paid (${payment.method}) [payment: ${payment.id}]`
   );
 
+  // Direct-Sync: falls User schon ein member_users-Profil hat (= sich
+  // vorher gratis registriert hat), Status sofort auf "paid" setzen.
+  // Sonst muesste er sich erst neu einloggen damit Lazy-Sync greift.
+  if (table === "wauwerk_leads" && updateData.email) {
+    try {
+      const { syncMemberPaidStatusFromLead } = await import("@/lib/member-db");
+      await syncMemberPaidStatusFromLead({
+        email: updateData.email,
+        paidAt: updateData.paid_at,
+        leadId: referenceId,
+      });
+    } catch (e: any) {
+      console.error("[mollie-webhook] member-sync failed:", e?.message);
+    }
+  }
+
   await enrollInUpsellCampaign(table, referenceId, updateData.email);
   await sendNotfallkartenIfBonus(table, referenceId);
 

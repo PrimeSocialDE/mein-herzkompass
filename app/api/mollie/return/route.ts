@@ -83,6 +83,23 @@ export async function GET(req: NextRequest) {
           .update(updateData)
           .eq("id", leadId);
 
+        // Direct-Sync member_users falls schon Profil vorhanden
+        const leadEmail = lead.email || payment?.metadata?.email || null;
+        if (leadEmail) {
+          try {
+            const { syncMemberPaidStatusFromLead } = await import(
+              "@/lib/member-db"
+            );
+            await syncMemberPaidStatusFromLead({
+              email: leadEmail,
+              paidAt: updateData.paid_at,
+              leadId,
+            });
+          } catch (e: any) {
+            console.error("[mollie-return] member-sync failed:", e?.message);
+          }
+        }
+
         // Make.com triggern (Plan-Versand)
         const makeUrl = process.env.MAKE_WEBHOOK_URL;
         if (makeUrl) {

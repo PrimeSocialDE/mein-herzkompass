@@ -65,11 +65,31 @@ export async function POST(req: NextRequest) {
           due_at: new Date(Date.now() + 10 * 60 * 60 * 1000).toISOString(),
         })
         .eq("id", orderId);
+      let leadEmail: string | null = null;
       if (orderErr) {
-        await supabase
+        const { data: leadAfter } = await supabase
           .from("wauwerk_leads")
           .update(updateData)
-          .eq("id", orderId);
+          .eq("id", orderId)
+          .select("email")
+          .single();
+        leadEmail = leadAfter?.email || null;
+      }
+      // Direct-Sync: falls schon ein Member-Profil existiert, sofort
+      // auf "paid" upgraden (ohne neuen Login zu warten)
+      if (leadEmail) {
+        try {
+          const { syncMemberPaidStatusFromLead } = await import(
+            "@/lib/member-db"
+          );
+          await syncMemberPaidStatusFromLead({
+            email: leadEmail,
+            paidAt: updateData.paid_at,
+            leadId: orderId,
+          });
+        } catch (e: any) {
+          console.error("[verify-payment] member-sync failed:", e?.message);
+        }
       }
       return NextResponse.json({ paid: true, status: payment.status });
     }

@@ -34,7 +34,18 @@ export async function getOrCreateMemberProfile(opts: {
     .eq("id", opts.userId)
     .maybeSingle();
 
-  if (existing) return existing as MemberProfile;
+  if (existing) {
+    const profile = existing as MemberProfile;
+    // Lazy-Sync: User hat sich evtl. erst gratis registriert und DANACH
+    // den Plan gekauft. Dann wurde nur wauwerk_leads geupdated, nicht
+    // unser member_users-Profil. Jedes Mal beim Login pruefen ob wir
+    // upgraden muessen.
+    if (profile.purchase_status === "free") {
+      const upgraded = await maybeUpgradeFromLead(profile, admin);
+      if (upgraded) return upgraded;
+    }
+    return profile;
+  }
 
   // 2) Quiz-Lead per Email matchen (read-only, nichts ändern dort)
   const { data: lead } = await admin
@@ -101,6 +112,85 @@ export async function getOrCreateMemberProfile(opts: {
     throw error;
   }
   return created as MemberProfile;
+}
+
+// ── Lazy-Sync Helper: Free-Member → Paid wenn Lead inzwischen bezahlt ───
+// Wird beim Login getriggert, falls der User nach der Registrierung
+// erst gekauft hat. Idempotent — wenn nichts zu tun ist, returnt null.
+async function maybeUpgradeFromLead(
+  profile: MemberProfile,
+  admin: ReturnType<typeof createMemberAdminClient>
+): Promise<MemberProfile | null> {
+  // Lead per Email holen (gleiche Logik wie bei Erst-Anlage)
+  const { data: lead } = await admin
+    .from("wauwerk_leads")
+    .select("id, status, paid_at")
+    .ilike("email", profile.email)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const leadIsPaid = lead?.status === "paid" && !!lead?.paid_at;
+  if (!leadIsPaid) return null;
+
+  const { data: updated, error } = await admin
+    .from("member_users")
+    .update({
+      purchase_status: "paid",
+      purchased_at: lead.paid_at,
+      source_lead_id: profile.source_lead_id || lead.id,
+    })
+    .eq("id", profile.id)
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("[member-db] lazy upgrade failed:", error.message);
+    return null;
+  }
+  console.log(
+    "[member-db] lazy-upgraded member to paid:",
+    profile.email,
+    lead.paid_at
+  );
+  return updated as MemberProfile;
+}
+
+// ── Direct-Sync vom Bezahl-Endpoint ────────────────────────────────────
+// Aufrufen aus mollie/webhook, mollie/return, mollie/verify-payment
+// nachdem der Lead auf "paid" gesetzt wurde. Falls der User schon ein
+// member_users-Profil hat (= sich vorher gratis registriert), wird das
+// Profil sofort auf "paid" geupdated — ohne auf naechsten Login zu warten.
+export async function syncMemberPaidStatusFromLead(opts: {
+  email: string;
+  paidAt: string;
+  leadId?: string;
+}): Promise<{ updated: boolean; reason?: string }> {
+  if (!opts.email) return { updated: false, reason: "no_email" };
+  const admin = createMemberAdminClient();
+  const { data: existing } = await admin
+    .from("member_users")
+    .select("id, purchase_status, source_lead_id")
+    .ilike("email", opts.email)
+    .maybeSingle();
+  if (!existing) return { updated: false, reason: "no_member_yet" };
+  if (existing.purchase_status === "paid") {
+    return { updated: false, reason: "already_paid" };
+  }
+  const { error } = await admin
+    .from("member_users")
+    .update({
+      purchase_status: "paid",
+      purchased_at: opts.paidAt,
+      source_lead_id: existing.source_lead_id || opts.leadId || null,
+    })
+    .eq("id", existing.id);
+  if (error) {
+    console.error("[syncMemberPaid] update failed:", error.message);
+    return { updated: false, reason: "db_error" };
+  }
+  console.log("[syncMemberPaid] upgraded:", opts.email, "→ paid");
+  return { updated: true };
 }
 
 // ── Module + Drip-Status für einen User ────────────────────────────────────
