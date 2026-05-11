@@ -2,11 +2,19 @@
 // Quiz-Daten + Hund-Kontext → strukturierter TrainingPlanContent JSON
 // via Claude API. Spaeter als Make.com-Ersatz nutzbar.
 //
-// KOSTEN-SCHAETZUNG pro Plan (Stand 2026, claude-sonnet-4-5: $3/M in + $15/M out):
-//   1 Monat (4 Wochen):  ~2.5k in + ~3k out  ≈ $0.05  (=5 Cent)
-//   3 Monate (12 Wochen): ~2.5k in + ~8k out ≈ $0.13  (=13 Cent)
-//   6 Monate (24 Wochen): ~2.5k in + ~16k out ≈ $0.25 (=25 Cent)
-//   Vergleich Make.com + Docupilot: deutlich teurer (Abo + Pay-per-Plan)
+// Modell-Wahl: Haiku 4.5 ist schneller (passt in Vercel-Timeout) und billiger.
+// Sonnet 4.5 ist qualitativ besser aber dauert 60-120s — was Cloudflare/
+// Vercel-Proxy haeufig vor Function-Ende killt. Daher Haiku als Default,
+// Sonnet ueber env PLAN_GEN_MODEL=claude-sonnet-4-5 erzwingbar.
+//
+// KOSTEN-SCHAETZUNG pro Plan (Stand 2026):
+//   Haiku 4.5 ($1/M in + $5/M out):
+//     1 Monat:  ~$0.02   3 Monate: ~$0.05   6 Monate: ~$0.09
+//   Sonnet 4.5 ($3/M in + $15/M out):
+//     1 Monat:  ~$0.05   3 Monate: ~$0.13   6 Monate: ~$0.25
+// Vergleich Make.com + Docupilot: beide deutlich teurer (Abo + Pay-per-Plan)
+const PLAN_GEN_MODEL =
+  process.env.PLAN_GEN_MODEL || "claude-haiku-4-5-20251001";
 
 import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
@@ -264,9 +272,7 @@ export async function generateTrainingPlan(
 
   try {
     const response = await anthropic.messages.create({
-      // Sonnet 4.5 ist der Sweet-Spot fuer dieses Volumen: gut genug fuer
-      // strukturierte Inhalte, deutlich guenstiger als Opus
-      model: "claude-sonnet-4-5",
+      model: PLAN_GEN_MODEL,
       max_tokens: maxTokens,
       system: systemPrompt,
       messages: [
@@ -298,11 +304,15 @@ export async function generateTrainingPlan(
       };
     }
 
-    // Kostenrechnung
+    // Kostenrechnung (Preise abhaengig vom Modell)
     const inputTokens = response.usage?.input_tokens || 0;
     const outputTokens = response.usage?.output_tokens || 0;
+    const isHaiku = PLAN_GEN_MODEL.includes("haiku");
+    const inputPricePerM = isHaiku ? 1 : 3;
+    const outputPricePerM = isHaiku ? 5 : 15;
     const costUsd =
-      (inputTokens / 1_000_000) * 3 + (outputTokens / 1_000_000) * 15;
+      (inputTokens / 1_000_000) * inputPricePerM +
+      (outputTokens / 1_000_000) * outputPricePerM;
 
     return {
       ok: true,
