@@ -5,6 +5,8 @@
 // Aufruf:
 //   node scripts/generate-test-plan.mjs kontakt@primesocial.de
 //   node scripts/generate-test-plan.mjs kontakt@primesocial.de --force
+//   node scripts/generate-test-plan.mjs kontakt@primesocial.de --months 6
+//   (--months 1|3|6, sonst aus selected_plan im Lead)
 //
 // Voraussetzung: WORKER_TOKEN in .env.local + ANTHROPIC_API_KEY +
 // Server laeuft (lokal: npm run dev, oder gegen Vercel-Deploy).
@@ -23,6 +25,14 @@ try {
 
 const email = (process.argv[2] || "").trim().toLowerCase();
 const force = process.argv.includes("--force");
+// --months 1 | 3 | 6  (optional, ueberschreibt selected_plan)
+const monthsIdx = process.argv.indexOf("--months");
+const monthsArg =
+  monthsIdx >= 0 && process.argv[monthsIdx + 1]
+    ? Number(process.argv[monthsIdx + 1])
+    : null;
+const planLengthMonths =
+  monthsArg && [1, 3, 6].includes(monthsArg) ? monthsArg : null;
 const baseUrl = (
   process.env.PLAN_GEN_BASE_URL ||
   process.env.NEXT_PUBLIC_SITE_URL ||
@@ -43,17 +53,22 @@ if (!token) {
 
 console.log(`\n→ Generiere Plan fuer ${email}`);
 console.log(`  Endpoint: ${baseUrl}/api/mitglieder/plan/generate`);
-console.log(`  Force: ${force}\n`);
-console.log("  Claude arbeitet... das kann 30-90 Sekunden dauern.\n");
+console.log(`  Force: ${force}`);
+console.log(
+  `  Plan-Länge: ${planLengthMonths ? `${planLengthMonths} Monate (Override)` : "aus selected_plan im Lead"}\n`
+);
+console.log("  Claude arbeitet... das kann 30-180 Sekunden dauern.\n");
 
 const started = Date.now();
+const reqBody = { email, force };
+if (planLengthMonths) reqBody.plan_length_months = planLengthMonths;
 const res = await fetch(`${baseUrl}/api/mitglieder/plan/generate`, {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
   },
-  body: JSON.stringify({ email, force }),
+  body: JSON.stringify(reqBody),
 });
 
 const ms = Date.now() - started;
@@ -68,6 +83,7 @@ try {
 if (res.ok && data.ok) {
   console.log(`  ✓ Plan generiert in ${(ms / 1000).toFixed(1)}s`);
   console.log(`  Plan-Content-ID: ${data.plan_content_id}`);
+  console.log(`  Plan-Länge: ${data.plan_length_months} Monate`);
   console.log(`  Wochen: ${data.weeks_count}`);
   if (data.usage) {
     console.log(

@@ -2,11 +2,10 @@
 // Quiz-Daten + Hund-Kontext → strukturierter TrainingPlanContent JSON
 // via Claude API. Spaeter als Make.com-Ersatz nutzbar.
 //
-// KOSTEN-SCHAETZUNG (Stand 2026):
-//   Input:  ~2k tokens System-Prompt + ~500 tokens Quiz-Daten = ~2.5k
-//   Output: ~8k tokens fuer kompletten 12-Wochen-Plan in DE
-//   claude-sonnet-4-5: $3/M input + $15/M output
-//   → pro Plan: ~$0.135 (=13 Cent)
+// KOSTEN-SCHAETZUNG pro Plan (Stand 2026, claude-sonnet-4-5: $3/M in + $15/M out):
+//   1 Monat (4 Wochen):  ~2.5k in + ~3k out  ≈ $0.05  (=5 Cent)
+//   3 Monate (12 Wochen): ~2.5k in + ~8k out ≈ $0.13  (=13 Cent)
+//   6 Monate (24 Wochen): ~2.5k in + ~16k out ≈ $0.25 (=25 Cent)
 //   Vergleich Make.com + Docupilot: deutlich teurer (Abo + Pay-per-Plan)
 
 import "server-only";
@@ -28,6 +27,51 @@ export interface PlanGeneratorInput {
   bekannte_signale?: string[];    // z.B. ["Sitz", "Platz", "Stop"]
   trainingszeit_minuten?: number; // Default 15
   zusatz_kontext?: string;        // freier Text aus weiteren Quiz-Antworten
+  plan_length_months?: 1 | 3 | 6; // Default 3 — entspricht selected_plan
+}
+
+// Mapping selected_plan → Monate
+export function planLengthFromSelectedPlan(
+  selectedPlan: string | null | undefined
+): 1 | 3 | 6 {
+  const s = (selectedPlan || "").toLowerCase().trim();
+  if (s === "1month" || s === "1monat" || s.startsWith("1")) return 1;
+  if (s === "6month" || s === "6monat" || s.startsWith("6")) return 6;
+  return 3; // Default fallback (auch fuer "3month")
+}
+
+interface PhaseSpec {
+  range: string;       // "Woche 1-2"
+  thema: string;       // "Grundlagen + Alltagsstruktur"
+}
+
+// Phasen-Aufbau je nach Plan-Laenge — der Prompt nutzt das damit der
+// rote Faden ueber die Wochen stimmt
+function buildPhases(weeksTotal: number): PhaseSpec[] {
+  if (weeksTotal <= 4) {
+    return [
+      { range: "Woche 1", thema: "Grundlagen + Alltagsstruktur aufbauen" },
+      { range: "Woche 2", thema: "Impulskontrolle + erste Kernuebungen" },
+      { range: "Woche 3", thema: "Hauptthema systematisch angehen" },
+      { range: "Woche 4", thema: "Stabilisierung + Alltagstauglichkeit" },
+    ];
+  }
+  if (weeksTotal <= 12) {
+    return [
+      { range: "Woche 1-4", thema: "Grundlagen + Alltagsstruktur + erste Kernuebungen" },
+      { range: "Woche 5-8", thema: "Hauptthema in Tiefe + erste Begegnungen / schwierigere Situationen" },
+      { range: "Woche 9-12", thema: "Generalisierung + Stabilisierung + langfristige Routinen" },
+    ];
+  }
+  // 24 Wochen / 6 Monate
+  return [
+    { range: "Woche 1-4", thema: "Fundament: Vertrauen, Ruhe-Rituale, Grundlagen-Signale" },
+    { range: "Woche 5-8", thema: "Hauptthema einfuehren in reizarmer Umgebung" },
+    { range: "Woche 9-12", thema: "Erste echte Alltagssituationen + leichte Reize" },
+    { range: "Woche 13-16", thema: "Schwierigere Situationen, Begegnungen, mehr Ablenkung" },
+    { range: "Woche 17-20", thema: "Generalisierung in neue Orte + Reizkombinationen" },
+    { range: "Woche 21-24", thema: "Stabilisierung + Langzeit-Routinen + Rueckfallplan" },
+  ];
 }
 
 const PROBLEM_LABELS_DE: Record<string, string> = {
@@ -51,7 +95,18 @@ function getProblemLabel(input: PlanGeneratorInput): string {
   );
 }
 
-const SYSTEM_PROMPT = `Du bist erfahrene Hundetrainerin im Pfoten-Plan-Team und erstellst personalisierte 12-Wochen-Trainingspläne für Hundehalter zwischen 35 und 55 Jahren. Dein Schreibstil ist ruhig, klar und ohne Jargon — keine Anglizismen, keine Buzzwords, keine Doktor-Sprache.
+function buildSystemPrompt(weeksTotal: number, monthsTotal: number, phases: PhaseSpec[]): string {
+  const phaseLines = phases
+    .map((p) => `   - ${p.range}: ${p.thema}`)
+    .join("\n");
+
+  // Monatsuebersichten: 1 pro Monat = monthsTotal Stueck
+  const monatsUebersichtenSpec =
+    monthsTotal > 0
+      ? `  "monats_uebersichten": [\n${Array.from({ length: monthsTotal }, (_, i) => `    { "monat": ${i + 1}, "text": "3-4 Absätze für Monat ${i + 1}." }`).join(",\n")}\n  ],`
+      : "";
+
+  return `Du bist erfahrene Hundetrainerin im Pfoten-Plan-Team und erstellst personalisierte ${monthsTotal}-Monats-Trainingspläne (${weeksTotal} Wochen) für Hundehalter zwischen 35 und 55 Jahren. Dein Schreibstil ist ruhig, klar und ohne Jargon — keine Anglizismen, keine Buzzwords, keine Doktor-Sprache.
 
 Du gibst deinen Plan AUSSCHLIESSLICH als valides JSON zurück — kein Markdown, kein Vorspann, kein Nachspann. Das JSON entspricht EXAKT folgendem Schema:
 
@@ -81,13 +136,9 @@ Du gibst deinen Plan AUSSCHLIESSLICH als valides JSON zurück — kein Markdown,
         }
       ]
     }
-    // Wiederhole für num: 2, 3, ... 12
+    // Wiederhole für num: 2, 3, ... ${weeksTotal} — INSGESAMT GENAU ${weeksTotal} WOCHEN
   ],
-  "monats_uebersichten": [
-    { "monat": 1, "text": "3-4 Absätze. Was im ersten Monat (Wochen 1-4) erreicht wurde, typische Schwierigkeiten, Ausblick auf Monat 2." },
-    { "monat": 2, "text": "3-4 Absätze für Monat 2." },
-    { "monat": 3, "text": "3-4 Absätze für Monat 3." }
-  ],
+${monatsUebersichtenSpec}
   "abschluss": "3-4 Absätze. Zusammenfassung, was erreicht wurde, wie es weitergeht. Ermutigend, ohne falsche Versprechen.",
   "zusatz_spiele": [
     {
@@ -103,7 +154,9 @@ Du gibst deinen Plan AUSSCHLIESSLICH als valides JSON zurück — kein Markdown,
 
 WICHTIGE INHALTLICHE LEITPLANKEN:
 
-1. **Roter Faden über 12 Wochen**: Plan baut aufeinander auf. Woche 1-4 = Grundlagen + Alltagsstruktur. Woche 5-8 = Hauptthema in Tiefe + erste Begegnungen. Woche 9-12 = Generalisierung + Stabilisierung. Jede Woche hat einen klaren Schwerpunkt.
+1. **Roter Faden über ${weeksTotal} Wochen**: Plan baut aufeinander auf. Phasen-Struktur:
+${phaseLines}
+   Jede Woche hat einen klaren Schwerpunkt der sich aus der Phase ableitet. Bei längeren Plänen (6 Monate) wird jede Phase tiefer ausgearbeitet — keine Wiederholungen ohne Steigerung.
 
 2. **Hundename durchgehend**: Verwende den Namen des Hundes in JEDER Woche mehrfach in Wochenzielen, Tagesplan und Übungen — wirkt persönlicher.
 
@@ -123,9 +176,14 @@ WICHTIGE INHALTLICHE LEITPLANKEN:
 
 10. **Sprache 40-50+**: Komplette Sätze, höflich-direkter Ton, Du-Anrede. Keine Hashtags, keine Emojis im Plan-Text (außer wenn der Schema-Wert es vorgibt).
 
-Validiere am Ende: JSON ist valide, ALLE Felder vorhanden, 12 Wochen, 3 monats_uebersichten, mindestens 3 zusatz_spiele.`;
+Validiere am Ende: JSON ist valide, ALLE Felder vorhanden, GENAU ${weeksTotal} Wochen (num: 1 bis ${weeksTotal}), ${monthsTotal} monats_uebersichten, mindestens 3 zusatz_spiele.`;
+}
 
-function buildUserPrompt(input: PlanGeneratorInput): string {
+function buildUserPrompt(
+  input: PlanGeneratorInput,
+  weeksTotal: number,
+  monthsTotal: number
+): string {
   const problemLabel = getProblemLabel(input);
   const trainingszeit = input.trainingszeit_minuten || 15;
   const signaleLine =
@@ -133,7 +191,7 @@ function buildUserPrompt(input: PlanGeneratorInput): string {
       ? `Bekannte Signale: ${input.bekannte_signale.join(", ")}`
       : "Bekannte Signale: keine bzw. nicht abgefragt";
 
-  return `Erstelle einen 12-Wochen-Trainingsplan für folgenden Hund:
+  return `Erstelle einen ${monthsTotal}-Monats-Trainingsplan (${weeksTotal} Wochen) für folgenden Hund:
 
 Hundename: ${input.dog_name}
 Rasse: ${input.dog_breed || "nicht angegeben (gehe von einem mittelgroßen Mischling aus)"}
@@ -197,14 +255,23 @@ export async function generateTrainingPlan(
 
   const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
 
+  const monthsTotal = input.plan_length_months || 3;
+  const weeksTotal = monthsTotal * 4;
+  const phases = buildPhases(weeksTotal);
+  const systemPrompt = buildSystemPrompt(weeksTotal, monthsTotal, phases);
+  // 24 Wochen brauchen mehr Output-Budget als 4 oder 12
+  const maxTokens = weeksTotal <= 4 ? 6000 : weeksTotal <= 12 ? 16000 : 32000;
+
   try {
     const response = await anthropic.messages.create({
       // Sonnet 4.5 ist der Sweet-Spot fuer dieses Volumen: gut genug fuer
       // strukturierte Inhalte, deutlich guenstiger als Opus
       model: "claude-sonnet-4-5",
-      max_tokens: 16000, // 12 Wochen + alles drumherum = ca 8-10k tokens
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: buildUserPrompt(input) }],
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages: [
+        { role: "user", content: buildUserPrompt(input, weeksTotal, monthsTotal) },
+      ],
     });
 
     const text = response.content

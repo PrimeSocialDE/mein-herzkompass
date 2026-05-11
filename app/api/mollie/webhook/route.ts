@@ -192,6 +192,20 @@ async function handlePaid(payment: any) {
     }
   }
 
+  // Auto-Trigger Plan-Generierung — fire-and-forget, blockiert den
+  // Webhook nicht (Make.com macht parallel weiter via notifyMake).
+  // Kann via env DISABLE_INTERNAL_PLAN_GEN=1 abgeschaltet werden falls
+  // wir den Make-Pfad alleine lassen wollen.
+  if (
+    table === "wauwerk_leads" &&
+    updateData.email &&
+    process.env.DISABLE_INTERNAL_PLAN_GEN !== "1"
+  ) {
+    triggerInternalPlanGeneration(referenceId, updateData.email).catch(
+      (e) => console.error("[mollie-webhook] plan-gen trigger failed:", e?.message)
+    );
+  }
+
   await enrollInUpsellCampaign(table, referenceId, updateData.email);
   await sendNotfallkartenIfBonus(table, referenceId);
 
@@ -775,6 +789,63 @@ async function notifyMake(orderId: string, payload: Record<string, any>) {
     });
   } catch (e) {
     console.error("[mollie-webhook] Make-Webhook Fehler:", e);
+  }
+}
+
+// Internen AI-Plan-Generator triggern nach erfolgreicher Zahlung.
+// Ruft /api/mitglieder/plan/generate via fetch auf — laeuft asynchron,
+// Webhook wartet nicht. Fehler werden geloggt aber nicht propagiert.
+async function triggerInternalPlanGeneration(
+  leadId: string,
+  email: string
+): Promise<void> {
+  const token = process.env.WORKER_TOKEN;
+  if (!token) {
+    console.warn(
+      "[mollie-webhook] WORKER_TOKEN fehlt — skip internal plan-gen"
+    );
+    return;
+  }
+  const baseUrl = (
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.VERCEL_URL ||
+    "https://www.pfoten-plan.de"
+  )
+    .replace(/^https?:\/\//, "https://")
+    .replace(/\/+$/, "");
+
+  try {
+    const res = await fetch(`${baseUrl}/api/mitglieder/plan/generate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ lead_id: leadId, email }),
+    });
+    if (!res.ok) {
+      const txt = await res.text().catch(() => "");
+      console.error(
+        `[mollie-webhook] plan-gen non-ok ${res.status}:`,
+        txt.slice(0, 200)
+      );
+      return;
+    }
+    const data = await res.json().catch(() => ({}));
+    if (data?.ok) {
+      console.log(
+        `[mollie-webhook] plan-gen OK: ${data.plan_length_months}M, ` +
+          `${data.weeks_count} Wochen, ~$${data.usage?.estimated_cost_usd}`
+      );
+    } else if (data?.error === "skipped_existing") {
+      console.log(
+        `[mollie-webhook] plan-gen skipped (existing): ${data.existing_plan_id}`
+      );
+    } else {
+      console.error("[mollie-webhook] plan-gen error:", data?.error);
+    }
+  } catch (e: any) {
+    console.error("[mollie-webhook] plan-gen fetch failed:", e?.message);
   }
 }
 

@@ -25,7 +25,10 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createMemberAdminClient } from "@/lib/member-auth-server";
-import { generateTrainingPlan } from "@/lib/plan-generator";
+import {
+  generateTrainingPlan,
+  planLengthFromSelectedPlan,
+} from "@/lib/plan-generator";
 import { getLatestPlanContent } from "@/lib/member-plan-content";
 
 export const runtime = "nodejs";
@@ -65,6 +68,13 @@ export async function POST(req: NextRequest) {
   const email = String(body?.email || "").trim().toLowerCase();
   const leadId = String(body?.lead_id || "").trim();
   const force = !!body?.force;
+  // Optional: Plan-Länge ueberschreiben (1/3/6). Wenn nicht gesetzt → aus
+  // lead.selected_plan ableiten.
+  const overrideMonths =
+    body?.plan_length_months &&
+    [1, 3, 6].includes(Number(body.plan_length_months))
+      ? (Number(body.plan_length_months) as 1 | 3 | 6)
+      : null;
 
   if (!email && !leadId) {
     return NextResponse.json(
@@ -80,7 +90,7 @@ export async function POST(req: NextRequest) {
   let leadQuery = admin
     .from("wauwerk_leads")
     .select(
-      "id, email, customer_name, dog_name, answers, status, created_at"
+      "id, email, customer_name, dog_name, answers, status, selected_plan, created_at"
     );
   if (leadId) leadQuery = leadQuery.eq("id", leadId);
   else leadQuery = leadQuery.ilike("email", email).order("created_at", { ascending: false }).limit(1);
@@ -162,6 +172,10 @@ export async function POST(req: NextRequest) {
   if (answers.kinder_im_haushalt) zusatzKontextLines.push(`Kinder im Haushalt: ja`);
   if (answers.weitere_hunde) zusatzKontextLines.push(`Weitere Hunde: ja`);
 
+  // Plan-Länge: explizit ueberschrieben ODER aus selected_plan ableiten
+  const planLengthMonths =
+    overrideMonths || planLengthFromSelectedPlan(lead.selected_plan);
+
   // ── 5) Plan generieren ─────────────────────────────────────────────
   const result = await generateTrainingPlan({
     dog_name: dogName,
@@ -174,6 +188,7 @@ export async function POST(req: NextRequest) {
     trainingszeit_minuten: trainingszeit,
     zusatz_kontext:
       zusatzKontextLines.length > 0 ? zusatzKontextLines.join("\n") : undefined,
+    plan_length_months: planLengthMonths,
   });
 
   if (!result.ok || !result.plan) {
@@ -196,13 +211,15 @@ export async function POST(req: NextRequest) {
     .maybeSingle();
   const finalUserId = (memberAfter as any)?.id || null;
 
+  const planTitle = `${planLengthMonths}-Monats-Trainingsplan für ${dogName}`;
+
   const { data: inserted, error: insErr } = await admin
     .from("member_plan_content")
     .insert({
       user_id: finalUserId,
       email: targetEmail,
       plan_slug: "trainingsplan",
-      plan_title: `12-Wochen-Trainingsplan für ${dogName}`,
+      plan_title: planTitle,
       content: result.plan,
       pdf_url: null,
       dog_name: dogName,
@@ -234,5 +251,6 @@ export async function POST(req: NextRequest) {
     duration_ms: Date.now() - startedAt,
     user_id_matched: !!finalUserId,
     weeks_count: result.plan.weeks.length,
+    plan_length_months: planLengthMonths,
   });
 }
