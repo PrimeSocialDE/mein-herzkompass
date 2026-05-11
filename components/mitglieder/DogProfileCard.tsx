@@ -2,8 +2,10 @@
 // (member_users.quiz_result + dog_name/dog_breed Top-Level) um dem User
 // zu zeigen "wir kennen deinen Hund". Pure Personalisierung — wirkt
 // emotional viel stärker als "Hallo {Name}".
-
-import { PROBLEM_IMAGE } from "@/lib/member-images";
+//
+// Wenn planWeek + totalWeeks gesetzt sind, wird die aktuelle Plan-Woche
+// prominent angezeigt (statt nur Hundename) — der User sieht sofort
+// wo er gerade im Plan steht.
 
 const PROBLEM_LABELS: Record<string, string> = {
   pulling: "Leinenziehen",
@@ -32,6 +34,8 @@ interface DogProfileCardProps {
   dogName: string | null;
   dogBreed: string | null;
   quizResult: any; // JSONB
+  planWeek?: number | null;     // Aktuelle Plan-Woche (1-N), optional
+  totalWeeks?: number | null;   // Gesamtzahl der Wochen im Plan
 }
 
 function formatAge(age: any): string | null {
@@ -61,11 +65,12 @@ export default function DogProfileCard({
   dogName,
   dogBreed,
   quizResult,
+  planWeek,
+  totalWeeks,
 }: DogProfileCardProps) {
   const q = quizResult || {};
   const problemKey = q.dog_problem || q.problem;
   const problemLabel = problemKey ? PROBLEM_LABELS[problemKey] || null : null;
-  const heroImage = problemKey ? PROBLEM_IMAGE[problemKey] : null;
   const age = formatAge(q.dog_age);
   const size = formatSize(q.dog_size);
   const commands: string[] = Array.isArray(q.dog_commands) ? q.dog_commands : [];
@@ -82,31 +87,55 @@ export default function DogProfileCard({
   // Wenn gar keine Daten — Card überspringen
   if (!dogName && !dogBreed && !age && !problemLabel) return null;
 
+  // Wochen-Anzeige nur wenn beide Werte sinnvoll
+  const showWeek =
+    typeof planWeek === "number" &&
+    typeof totalWeeks === "number" &&
+    planWeek > 0 &&
+    totalWeeks > 0;
+
   return (
     <div className="bg-white rounded-2xl border border-[#EADDC5] shadow-[0_2px_12px_rgba(139,115,85,0.06)] overflow-hidden mb-6">
-      {/* Top-Bereich: Avatar + Name + Stats */}
+      {/* Top-Bereich: Hund-Emoji + Wochen-Info / Hundename + Stats */}
       <div className="px-5 md:px-6 py-5 flex items-start gap-4">
-        {/* Hund-Avatar (Problem-Bild oder Default) */}
-        <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden bg-[#FAF4E8] flex-shrink-0 ring-2 ring-[#C4A576]/20">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={heroImage || "/Hund1.jpg"}
-            alt={dogName || "Dein Hund"}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+        {/* Hund-Emoji statt Foto */}
+        <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-[#FFF9F0] flex-shrink-0 ring-2 ring-[#C4A576]/20 flex items-center justify-center text-[40px] md:text-[48px] leading-none">
+          🐕
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
-            Dein Hund
-          </p>
-          <h2 className="text-[20px] md:text-[24px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight mb-1">
-            {dogName || "Dein Hund"}
-          </h2>
-          {stats.length > 0 && (
-            <p className="text-[13px] text-[#6B7280] leading-snug">
-              {stats.map((s) => s.value).join(" · ")}
-            </p>
+          {showWeek ? (
+            <>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
+                Aktuelle Woche
+              </p>
+              <h2 className="text-[20px] md:text-[24px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight mb-1">
+                Woche {planWeek} <span className="text-[#9CA3AF] font-bold">/ {totalWeeks}</span>
+              </h2>
+              <p className="text-[13px] text-[#6B7280] leading-snug">
+                {dogName || "Dein Hund"}
+                {stats.length > 0 && (
+                  <>
+                    {" · "}
+                    {stats.map((s) => s.value).join(" · ")}
+                  </>
+                )}
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
+                Dein Hund
+              </p>
+              <h2 className="text-[20px] md:text-[24px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight mb-1">
+                {dogName || "Dein Hund"}
+              </h2>
+              {stats.length > 0 && (
+                <p className="text-[13px] text-[#6B7280] leading-snug">
+                  {stats.map((s) => s.value).join(" · ")}
+                </p>
+              )}
+            </>
           )}
         </div>
       </div>

@@ -23,6 +23,7 @@ import OnboardingTutorial from "@/components/mitglieder/OnboardingTutorial";
 import { groupModulesByWeek } from "@/lib/member-weeks";
 import { PROBLEM_IMAGE } from "@/lib/member-images";
 import { getPlanIntro, getBreedNote } from "@/lib/member-plan-intro";
+import { getCurrentPlanWeek } from "@/lib/member-mood";
 
 export const dynamic = "force-dynamic";
 
@@ -88,6 +89,11 @@ export default async function MitgliederDashboard() {
     member.quiz_result?.dog_problem || member.quiz_result?.problem;
   const problemLabel = problemKey ? PROBLEM_LABELS[problemKey] || null : null;
 
+  // Aktuelle Plan-Woche fuer die Hundekarte
+  const planIntroForCard = getPlanIntro(problemKey, member.dog_name || "deinem Hund");
+  const cardTotalWeeks = planIntroForCard?.weeks.length || 4;
+  const cardCurrentWeek = getCurrentPlanWeek(member.created_at, cardTotalWeeks);
+
   // ───────────────────────────────────────────────────────────────────
   // PAID — Module + Fortschritt + Upsells
   // ───────────────────────────────────────────────────────────────────
@@ -105,6 +111,8 @@ export default async function MitgliederDashboard() {
           dogName={member.dog_name}
           dogBreed={member.dog_breed}
           quizResult={member.quiz_result}
+          planWeek={cardCurrentWeek}
+          totalWeeks={cardTotalWeeks}
         />
 
         {/* Fortschritts-Kreis */}
@@ -232,6 +240,8 @@ export default async function MitgliederDashboard() {
         dogName={member.dog_name}
         dogBreed={member.dog_breed}
         quizResult={member.quiz_result}
+        planWeek={cardCurrentWeek}
+        totalWeeks={cardTotalWeeks}
       />
 
       {/* Weitere Free-Übungen falls mehr als eine */}
