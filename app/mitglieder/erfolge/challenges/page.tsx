@@ -41,8 +41,11 @@ export default async function ErfolgePage() {
   const dog = dogName || "deinem Hund";
   const dogPossessive = dogName ? `${dogName}s` : "Eure";
 
-  const challenges = await getOrAssignWeekChallenges(member);
-  const badges = await getEarnedBadges(user.id, 24);
+  // Parallel: Challenges + Badges gleichzeitig holen statt nacheinander
+  const [challenges, badges] = await Promise.all([
+    getOrAssignWeekChallenges(member),
+    getEarnedBadges(user.id, 24),
+  ]);
 
   const completedThisWeek = challenges.filter((c) => c.completed_at).length;
   const totalThisWeek = challenges.length;
@@ -76,7 +79,7 @@ export default async function ErfolgePage() {
       <div className="mb-5 -mx-4 md:-mx-8">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/Aufgaben.png"
+          src="/Aufgaben.jpg"
           alt="Eure Trainings-Woche"
           className="w-full aspect-[16/7] object-cover object-bottom md:rounded-2xl"
         />

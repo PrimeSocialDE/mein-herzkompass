@@ -615,24 +615,24 @@ export async function getOrAssignWeekChallenges(
     return existing as UserChallenge[];
   }
 
-  // 2) Letzte 8 Wochen anschauen damit nicht dieselbe Challenge wieder kommt
+  // 2) Letzte 8 Wochen + Lifetime-Count parallel holen
   const eightWeeksAgo = new Date();
   eightWeeksAgo.setDate(eightWeeksAgo.getDate() - 8 * 7);
-  const { data: recent } = await admin
-    .from("member_user_challenges")
-    .select("challenge_slug")
-    .eq("user_id", member.id)
-    .gte("week_start_date", eightWeeksAgo.toISOString().slice(0, 10));
+  const [recentRes, countRes] = await Promise.all([
+    admin
+      .from("member_user_challenges")
+      .select("challenge_slug")
+      .eq("user_id", member.id)
+      .gte("week_start_date", eightWeeksAgo.toISOString().slice(0, 10)),
+    admin
+      .from("member_user_challenges")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", member.id),
+  ]);
   const recentSlugs = new Set<string>(
-    (recent || []).map((r: any) => r.challenge_slug)
+    (recentRes.data || []).map((r: any) => r.challenge_slug)
   );
-
-  // 2b) Hatte der User JEMALS Challenges? (für Welcome-Mail-Logik)
-  const { count: lifetimeCount } = await admin
-    .from("member_user_challenges")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", member.id);
-  const isFirstEver = (lifetimeCount || 0) === 0;
+  const isFirstEver = (countRes.count || 0) === 0;
 
   // 3) Templates picken
   const templates = pickTemplatesForUser(member, recentSlugs);
