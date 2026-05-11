@@ -213,14 +213,21 @@ ${input.zusatz_kontext ? `\nZusätzlicher Kontext aus dem Quiz:\n${input.zusatz_
 Gib NUR das JSON zurück, kein Markdown, keinen Vorspann.`;
 }
 
-// Robustes JSON-Parsing — Claude kann manchmal trotz Anweisung ein
-// Code-Fence wie ```json ... ``` umlegen
+// Robustes JSON-Parsing — Claude kann trotz Anweisung Code-Fences setzen,
+// Text vor/nach dem JSON anhaengen, oder bei langen Outputs unvollstaendig
+// schliessen. Wir extrahieren das erste {...} Block.
 function extractJson(text: string): any {
-  const trimmed = text.trim();
-  // Code-Fence entfernen
-  const fenceMatch = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/);
-  const candidate = fenceMatch ? fenceMatch[1] : trimmed;
-  return JSON.parse(candidate);
+  let s = text.trim();
+  // 1) Code-Fences entfernen (```json ... ``` oder ``` ... ```)
+  s = s.replace(/^```(?:json|JSON)?\s*\n?/, "").replace(/\n?```\s*$/, "");
+  // 2) Falls Claude noch Text davor/dahinter geschrieben hat, das erste
+  //    auessere {...} extrahieren
+  const firstBrace = s.indexOf("{");
+  const lastBrace = s.lastIndexOf("}");
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    s = s.slice(firstBrace, lastBrace + 1);
+  }
+  return JSON.parse(s);
 }
 
 function validatePlan(plan: any): plan is TrainingPlanContent {
