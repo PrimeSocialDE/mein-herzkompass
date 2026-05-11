@@ -2,19 +2,19 @@
 // Quiz-Daten + Hund-Kontext → strukturierter TrainingPlanContent JSON
 // via Claude API. Spaeter als Make.com-Ersatz nutzbar.
 //
-// Modell-Wahl: Haiku 4.5 ist schneller (passt in Vercel-Timeout) und billiger.
-// Sonnet 4.5 ist qualitativ besser aber dauert 60-120s — was Cloudflare/
-// Vercel-Proxy haeufig vor Function-Ende killt. Daher Haiku als Default,
-// Sonnet ueber env PLAN_GEN_MODEL=claude-sonnet-4-5 erzwingbar.
+// Modell-Wahl: Sonnet 4.5 als Default — bessere JSON-Konsistenz fuer
+// grosse strukturierte Outputs (12+ Wochen). Haiku 4.5 produziert oft
+// malformed JSON bei 30k+ Zeichen. NDJSON-Streaming-Response im Endpoint
+// haelt die Connection alive auch bei 60-120s Generation.
+// Override per env PLAN_GEN_MODEL=claude-haiku-4-5-20251001 fuer Speed-Tests.
 //
 // KOSTEN-SCHAETZUNG pro Plan (Stand 2026):
-//   Haiku 4.5 ($1/M in + $5/M out):
-//     1 Monat:  ~$0.02   3 Monate: ~$0.05   6 Monate: ~$0.09
 //   Sonnet 4.5 ($3/M in + $15/M out):
 //     1 Monat:  ~$0.05   3 Monate: ~$0.13   6 Monate: ~$0.25
+//   Haiku 4.5 ($1/M in + $5/M out, NICHT empfohlen wegen JSON-Quality):
+//     1 Monat:  ~$0.02   3 Monate: ~$0.05   6 Monate: ~$0.09
 // Vergleich Make.com + Docupilot: beide deutlich teurer (Abo + Pay-per-Plan)
-const PLAN_GEN_MODEL =
-  process.env.PLAN_GEN_MODEL || "claude-haiku-4-5-20251001";
+const PLAN_GEN_MODEL = process.env.PLAN_GEN_MODEL || "claude-sonnet-4-5";
 
 import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
