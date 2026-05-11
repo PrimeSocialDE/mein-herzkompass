@@ -243,6 +243,31 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // ── 7) "Plan ist fertig"-Mail (fire-and-forget) ───────────────────
+  // Opt-out: ?no_mail=1 im Body oder env DISABLE_PLAN_READY_EMAIL=1
+  const skipMail =
+    !!body?.no_mail || process.env.DISABLE_PLAN_READY_EMAIL === "1";
+  if (!skipMail) {
+    import("@/lib/member-mail")
+      .then((m) =>
+        m.sendPlanReadyEmail({
+          to: targetEmail,
+          dogName,
+          planLengthMonths,
+          plan: result.plan!,
+          customerName: lead.customer_name || null,
+        })
+      )
+      .then((r) => {
+        if (!r.ok) {
+          console.warn("[plan/generate] mail not sent:", r.reason);
+        }
+      })
+      .catch((e) =>
+        console.error("[plan/generate] mail error:", e?.message)
+      );
+  }
+
   return NextResponse.json({
     ok: true,
     plan_content_id: (inserted as any).id,

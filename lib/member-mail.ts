@@ -5,6 +5,7 @@
 // Sender + Branding identisch zu auth-hook (support@pfoten-plan.de).
 
 import "server-only";
+import { createClient } from "@supabase/supabase-js";
 import type { UserChallenge } from "./member-challenges";
 import type { MemberProfile } from "./member-db";
 
@@ -12,6 +13,70 @@ const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
   "https://www.pfoten-plan.de";
+
+// ── Auto-Login-Link generieren ────────────────────────────────────────
+// Server-seitig per Supabase Admin Magic-Link: User landet beim Klick
+// direkt eingeloggt auf der gewuenschten Seite. Falls Generation scheitert
+// (User existiert nicht / kein Service-Role), kommt der normale Login-Link
+// als Fallback zurueck.
+async function buildAutoLoginUrl(
+  email: string,
+  nextPath: string
+): Promise<string> {
+  const fallbackUrl = `${SITE_URL}/mitglieder/login?email=${encodeURIComponent(email)}`;
+
+  const supaUrl =
+    process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+  const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
+  if (!supaUrl || !serviceRole || !email) return fallbackUrl;
+
+  const admin = createClient(supaUrl, serviceRole, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+
+  try {
+    // Versuche magiclink — funktioniert wenn User schon existiert
+    let { data, error } = await admin.auth.admin.generateLink({
+      type: "magiclink",
+      email,
+      options: {
+        redirectTo: `${SITE_URL}/mitglieder/callback?next=${encodeURIComponent(nextPath)}`,
+      },
+    });
+
+    // Wenn User noch nicht existiert: erstellen, dann magiclink generieren
+    if (error || !data?.properties?.hashed_token) {
+      try {
+        await admin.auth.admin.createUser({
+          email,
+          email_confirm: true,
+        });
+      } catch {
+        // User existiert evtl. doch schon (race condition) — ignore
+      }
+      ({ data, error } = await admin.auth.admin.generateLink({
+        type: "magiclink",
+        email,
+        options: {
+          redirectTo: `${SITE_URL}/mitglieder/callback?next=${encodeURIComponent(nextPath)}`,
+        },
+      }));
+    }
+
+    const hashedToken = data?.properties?.hashed_token;
+    if (!hashedToken) return fallbackUrl;
+
+    const params = new URLSearchParams({
+      token_hash: hashedToken,
+      type: "magiclink",
+      next: nextPath,
+    });
+    return `${SITE_URL}/mitglieder/callback?${params.toString()}`;
+  } catch (e: any) {
+    console.warn("[member-mail] auto-login link failed:", e?.message);
+    return fallbackUrl;
+  }
+}
 
 interface SendArgs {
   to: string;
@@ -170,6 +235,79 @@ export async function sendWelcomeChallengesMail(
     html,
     tags: ["mitglieder", "challenges-welcome"],
   });
+}
+
+// ── "Dein Plan ist fertig": einmalig nach erfolgreicher Generation ────
+import type { TrainingPlanContent } from "./member-plan-content";
+
+interface PlanReadyArgs {
+  to: string;
+  dogName: string;
+  planLengthMonths: 1 | 3 | 6;
+  plan: TrainingPlanContent;
+  customerName?: string | null;
+}
+
+export async function sendPlanReadyEmail(args: PlanReadyArgs) {
+  const { to, dogName, planLengthMonths, plan, customerName } = args;
+  if (!to) return { ok: false, reason: "no_email" };
+
+  // Auto-Login-Link: User landet direkt eingeloggt auf der Coaching-Seite
+  const ctaUrl = await buildAutoLoginUrl(to, "/mitglieder/erfolge/coaching");
+  const weeksTotal = plan.weeks.length;
+  const week1 = plan.weeks[0];
+  const greeting = customerName?.trim()
+    ? `Hi ${customerName.trim().split(" ")[0]},`
+    : "Hi,";
+
+  // Kompakte Plan-Vorschau: Woche 1 Titel + 3 Wochenziele teaser
+  let week1Preview = "";
+  if (week1) {
+    const zieleList = (week1.wochenziele || [])
+      .slice(0, 3)
+      .map((z) => `<li style="margin:4px 0;font-size:13px;color:#4B5563;line-height:1.5;">${escapeHtml(z)}</li>`)
+      .join("");
+    week1Preview = `
+      <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;padding:16px 18px;margin:12px 0 20px;">
+        <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8B7355;">Woche 1 · ${escapeHtml(week1.title)}</p>
+        <ul style="margin:8px 0 0;padding-left:18px;">${zieleList}</ul>
+        <p style="margin:10px 0 0;font-size:12px;color:#8B7355;font-style:italic;">+ ${weeksTotal - 1} weitere Wochen, ${plan.weeks.reduce((sum, w) => sum + (w.uebungen?.length || 0), 0)} konkrete Übungen, Monats-Übersichten und Bonus-Spiele.</p>
+      </div>`;
+  }
+
+  const monthsLabel =
+    planLengthMonths === 1
+      ? "1-Monats-Plan"
+      : planLengthMonths === 3
+        ? "3-Monats-Plan"
+        : "6-Monats-Plan";
+
+  const html = wrapTemplate({
+    preheader: `Dein ${monthsLabel} für ${dogName} ist fertig.`,
+    headline: `Dein ${monthsLabel} für ${dogName} ist fertig`,
+    intro: `${greeting} dein persönlicher Trainings-Plan ist soeben für dich erstellt worden — komplett zugeschnitten auf ${dogName} und euer Haupt-Thema. ${weeksTotal} Wochen, mit konkreten Übungen für jeden Tag, Wochenzielen, Fortschritts-Markern und einem klaren roten Faden.`,
+    bodyHtml: `${week1Preview}<p style="margin:0 0 8px;font-size:13px;color:#4B5563;line-height:1.55;">Im Mitglieder-Bereich kannst du den ganzen Plan durchklicken, Woche für Woche.</p>`,
+    ctaText: "Plan ansehen",
+    ctaUrl,
+    footerHint: `Der Button enthält einen Einmal-Login — du landest direkt eingeloggt im Mitglieder-Bereich. Der Link gilt 1 Stunde und ist nur für dich.`,
+  });
+
+  return sendBrevoMail({
+    to,
+    subject: `🐾 Dein ${monthsLabel} für ${dogName} ist da`,
+    html,
+    tags: ["mitglieder", "plan-ready"],
+  });
+}
+
+// Tiny HTML escape (kein dom-purify, reicht fuer dog names / quiz answers)
+function escapeHtml(s: string): string {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 // ── Wochen-Erinnerung: jeden Montag ────────────────────────────────────
