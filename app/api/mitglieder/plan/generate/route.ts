@@ -219,22 +219,27 @@ export async function POST(req: NextRequest) {
           weeks: planLengthMonths * 4,
         });
 
-        // ── 5) Generieren ──────────────────────────────────────────
-        const result = await generateTrainingPlan({
-          dog_name: dogName,
-          dog_breed: answers.dog_breed || null,
-          dog_age: answers.dog_age || null,
-          dog_size: answers.dog_size || null,
-          dog_problem: dogProblem,
-          dog_problem_label: PROBLEM_LABELS[dogProblem],
-          bekannte_signale: bekannteSignale,
-          trainingszeit_minuten: trainingszeit,
-          zusatz_kontext:
-            zusatzKontextLines.length > 0
-              ? zusatzKontextLines.join("\n")
-              : undefined,
-          plan_length_months: planLengthMonths,
-        });
+        // ── 5) Generieren mit Progress-Streaming ──────────────────
+        // Anthropic-Tokens fliessen kontinuierlich -> als progress-Events
+        // weiterreichen damit Vercel/CF-Proxies die Connection nicht killen
+        const result = await generateTrainingPlan(
+          {
+            dog_name: dogName,
+            dog_breed: answers.dog_breed || null,
+            dog_age: answers.dog_age || null,
+            dog_size: answers.dog_size || null,
+            dog_problem: dogProblem,
+            dog_problem_label: PROBLEM_LABELS[dogProblem],
+            bekannte_signale: bekannteSignale,
+            trainingszeit_minuten: trainingszeit,
+            zusatz_kontext:
+              zusatzKontextLines.length > 0
+                ? zusatzKontextLines.join("\n")
+                : undefined,
+            plan_length_months: planLengthMonths,
+          },
+          (info) => emit(ctx, { event: "progress", chars: info.chars })
+        );
 
         if (!result.ok || !result.plan) {
           emit(ctx, {

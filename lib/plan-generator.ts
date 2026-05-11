@@ -284,7 +284,8 @@ export interface GeneratedPlanResult {
 }
 
 export async function generateTrainingPlan(
-  input: PlanGeneratorInput
+  input: PlanGeneratorInput,
+  onProgress?: (info: { chars: number; tokens?: number }) => void
 ): Promise<GeneratedPlanResult> {
   if (!ANTHROPIC_API_KEY) {
     return { ok: false, error: "ANTHROPIC_API_KEY fehlt" };
@@ -303,7 +304,10 @@ export async function generateTrainingPlan(
   const maxTokens = weeksTotal <= 4 ? 6000 : weeksTotal <= 12 ? 16000 : 32000;
 
   try {
-    const response = await anthropic.messages.create({
+    // Streaming: Tokens fliessen kontinuierlich rein, onProgress kann
+    // sie weiter zum HTTP-Client streamen damit Proxies die Connection
+    // nicht killen. Sonnet 4.5 generiert 12 Wochen in ~60-90s.
+    const stream = anthropic.messages.stream({
       model: PLAN_GEN_MODEL,
       max_tokens: maxTokens,
       system: systemPrompt,
@@ -312,10 +316,33 @@ export async function generateTrainingPlan(
       ],
     });
 
-    const text = response.content
-      .filter((c: any) => c.type === "text")
-      .map((c: any) => c.text)
-      .join("");
+    let text = "";
+    let lastReportChars = 0;
+    if (onProgress) {
+      stream.on("text", (chunk: string) => {
+        text += chunk;
+        // Throttle progress reports auf alle 500 chars damit nicht jeder
+        // Token einen HTTP-Event triggert
+        if (text.length - lastReportChars >= 500) {
+          lastReportChars = text.length;
+          try {
+            onProgress({ chars: text.length });
+          } catch {}
+        }
+      });
+    } else {
+      stream.on("text", (chunk: string) => {
+        text += chunk;
+      });
+    }
+
+    const response = await stream.finalMessage();
+    // Falls onProgress vorhanden: finaler progress mit Endwert
+    if (onProgress) {
+      try {
+        onProgress({ chars: text.length });
+      } catch {}
+    }
 
     let parsed: any;
     try {

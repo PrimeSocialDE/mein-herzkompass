@@ -105,6 +105,9 @@ while (true) {
           const secs = ((Date.now() - started) / 1000).toFixed(0);
           process.stdout.write(`  …${secs}s (Claude arbeitet)\n`);
         }
+      } else if (evt.event === "progress") {
+        const secs = ((Date.now() - started) / 1000).toFixed(0);
+        process.stdout.write(`  …${secs}s · ${evt.chars} chars\n`);
       } else if (evt.event === "start") {
         console.log(`  ▸ ${evt.stage}`);
       } else if (evt.event === "stage") {
