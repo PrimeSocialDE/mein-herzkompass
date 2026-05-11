@@ -10,6 +10,8 @@ import {
 } from "@/lib/member-db";
 import { groupModulesByWeek } from "@/lib/member-weeks";
 import { getDailyTip } from "@/lib/member-coaching";
+import { getPlanIntro } from "@/lib/member-plan-intro";
+import { getCurrentPlanWeek } from "@/lib/member-mood";
 
 export const dynamic = "force-dynamic";
 
@@ -60,13 +62,23 @@ export default async function CoachingPage() {
 
   // Aktuelle Woche = letzte mit unlocked-Modulen.
   // Naechstes Modul = erstes unlocked (in Reihenfolge), das noch nicht abgeschlossen wurde.
-  // Da wir noch keinen Completion-State pro Modul tracken, nehmen wir das erste unlocked.
   const currentWeek = [...weeks].reverse().find((w) => w.isUnlocked) || null;
   const nextWeek = weeks.find((w) => !w.isUnlocked) || null;
   const currentModule =
     currentWeek?.modules.find((m) => m.unlocked) || null;
   const totalWeeks = weeks.length;
   const currentWeekNumber = currentWeek?.weekNumber || 0;
+
+  // Vollstaendiger Plan-Aufbau aus member-plan-intro — gleicher Content wie
+  // in der Welcome-Mail/PDF nach dem Kauf. Zeigt alle Wochen mit Titel +
+  // Beschreibung, damit der User auch ohne Mail jederzeit nachschauen kann
+  // was im Plan drin ist.
+  const planIntro = getPlanIntro(problemKey, dog);
+  const planTotalWeeks = planIntro?.weeks.length || 0;
+  const planCurrentWeek =
+    planTotalWeeks > 0
+      ? getCurrentPlanWeek(member.created_at, planTotalWeeks)
+      : 0;
 
   return (
     <>
@@ -104,7 +116,6 @@ export default async function CoachingPage() {
               Woche {currentWeekNumber} / {totalWeeks}
             </span>
           </div>
-          {/* Einfache Progress-Bar */}
           <div className="w-full h-2 bg-[#F0EBE3] rounded-full overflow-hidden mb-2">
             <div
               className="h-full bg-[#C4A576] rounded-full transition-all"
@@ -122,6 +133,80 @@ export default async function CoachingPage() {
             </p>
           )}
         </div>
+      )}
+
+      {/* Vollstaendiger Plan-Aufbau (gleicher Content wie in der Welcome-Mail) */}
+      {planIntro && (
+        <section className="mb-6">
+          <div className="bg-gradient-to-br from-[#FFFDF8] to-[#FFF9F0] border border-[#EADDC5] rounded-2xl p-5 mb-3">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1.5">
+              Dein kompletter Plan
+            </p>
+            <h2 className="text-[18px] md:text-[20px] font-extrabold text-[#1a1a1a] leading-tight mb-2">
+              {planIntro.headline}
+            </h2>
+            <p className="text-[13px] md:text-[14px] text-[#4B5563] leading-relaxed">
+              {planIntro.intro}
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            {planIntro.weeks.map((w) => {
+              const isCurrent = w.num === planCurrentWeek;
+              const isPast = w.num < planCurrentWeek;
+              const isFuture = w.num > planCurrentWeek;
+              return (
+                <div
+                  key={w.num}
+                  className={`bg-white border rounded-xl p-4 transition-colors ${
+                    isCurrent
+                      ? "border-[#C4A576] shadow-[0_2px_8px_rgba(196,165,118,0.12)]"
+                      : "border-[#EADDC5]"
+                  } ${isFuture ? "opacity-70" : ""}`}
+                >
+                  <div className="flex items-start gap-3">
+                    {/* Status-Punkt */}
+                    <div
+                      className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold ${
+                        isPast
+                          ? "bg-[#16A34A] text-white"
+                          : isCurrent
+                            ? "bg-[#C4A576] text-white"
+                            : "bg-[#F0EBE3] text-[#9CA3AF]"
+                      }`}
+                    >
+                      {isPast ? "✓" : w.num}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355]">
+                          Woche {w.num}
+                        </p>
+                        {isCurrent && (
+                          <span className="text-[9px] font-bold uppercase tracking-wider bg-[#FFF9F0] text-[#8B7355] px-1.5 py-0.5 rounded border border-[#EADDC5]">
+                            Aktuell
+                          </span>
+                        )}
+                        {isFuture && (
+                          <span className="text-[9px] font-bold uppercase tracking-wider bg-[#FAFAFA] text-[#9CA3AF] px-1.5 py-0.5 rounded">
+                            Kommt noch
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight mb-1">
+                        {w.title}
+                      </p>
+                      <p className="text-[12px] text-[#6B7280] leading-relaxed">
+                        {w.body}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
       )}
 
       {/* Tipp des Tages */}

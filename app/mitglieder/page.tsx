@@ -16,7 +16,6 @@ import FirstExerciseCard from "@/components/mitglieder/FirstExerciseCard";
 import { buildShowcaseExercise } from "@/lib/member-showcase-exercise";
 import ModuleGrid from "@/components/mitglieder/ModuleGrid";
 import DogProfileCard from "@/components/mitglieder/DogProfileCard";
-import ProgressCircle from "@/components/mitglieder/ProgressCircle";
 import WeekOverview from "@/components/mitglieder/WeekOverview";
 import UpgradePopup from "@/components/mitglieder/UpgradePopup";
 import OnboardingTutorial from "@/components/mitglieder/OnboardingTutorial";
@@ -98,7 +97,6 @@ export default async function MitgliederDashboard() {
   // PAID — Module + Fortschritt + Upsells
   // ───────────────────────────────────────────────────────────────────
   if (isPaid) {
-    const unlockedCount = modules.filter((m) => m.unlocked).length;
     const weeks = groupModulesByWeek(modules);
     return (
       <>
@@ -114,20 +112,6 @@ export default async function MitgliederDashboard() {
           planWeek={cardCurrentWeek}
           totalWeeks={cardTotalWeeks}
         />
-
-        {/* Fortschritts-Kreis */}
-        <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 mb-6">
-          <ProgressCircle
-            current={unlockedCount}
-            total={modules.length}
-            label="Dein Fortschritt"
-            sublabel={
-              unlockedCount === modules.length && modules.length > 0
-                ? "Alle Module freigeschaltet — gratuliere!"
-                : `${modules.length - unlockedCount} Module folgen noch`
-            }
-          />
-        </div>
 
         {/* Wochen-Plan */}
         <div className="mb-8">
