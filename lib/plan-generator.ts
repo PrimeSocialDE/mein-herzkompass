@@ -215,19 +215,44 @@ Gib NUR das JSON zurück, kein Markdown, keinen Vorspann.`;
 
 // Robustes JSON-Parsing — Claude kann trotz Anweisung Code-Fences setzen,
 // Text vor/nach dem JSON anhaengen, oder bei langen Outputs unvollstaendig
-// schliessen. Wir extrahieren das erste {...} Block.
+// schliessen. Wir scannen Brace-Depth + Quote-State um exakt das erste
+// auessere {...} Objekt zu finden — auch wenn Text danach folgt.
 function extractJson(text: string): any {
-  let s = text.trim();
-  // 1) Code-Fences entfernen (```json ... ``` oder ``` ... ```)
-  s = s.replace(/^```(?:json|JSON)?\s*\n?/, "").replace(/\n?```\s*$/, "");
-  // 2) Falls Claude noch Text davor/dahinter geschrieben hat, das erste
-  //    auessere {...} extrahieren
-  const firstBrace = s.indexOf("{");
-  const lastBrace = s.lastIndexOf("}");
-  if (firstBrace >= 0 && lastBrace > firstBrace) {
-    s = s.slice(firstBrace, lastBrace + 1);
+  const s = text;
+  // Erstes auftauchendes { suchen
+  const start = s.indexOf("{");
+  if (start < 0) throw new Error("Kein '{' im Output gefunden");
+
+  let depth = 0;
+  let inStr = false;
+  let escape = false;
+  let end = -1;
+  for (let i = start; i < s.length; i++) {
+    const c = s[i];
+    if (inStr) {
+      if (escape) {
+        escape = false;
+      } else if (c === "\\") {
+        escape = true;
+      } else if (c === '"') {
+        inStr = false;
+      }
+      continue;
+    }
+    if (c === '"') {
+      inStr = true;
+    } else if (c === "{") {
+      depth++;
+    } else if (c === "}") {
+      depth--;
+      if (depth === 0) {
+        end = i;
+        break;
+      }
+    }
   }
-  return JSON.parse(s);
+  if (end < 0) throw new Error("JSON unvollstaendig (kein passendes '}')");
+  return JSON.parse(s.slice(start, end + 1));
 }
 
 function validatePlan(plan: any): plan is TrainingPlanContent {
