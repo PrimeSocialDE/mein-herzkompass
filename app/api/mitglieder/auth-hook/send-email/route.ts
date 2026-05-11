@@ -46,9 +46,16 @@ interface SupabaseEmailHookPayload {
 // Link funktioniert auch wenn User die Mail auf einem ANDEREN Geraet
 // oeffnet als wo er die Anmeldung gestartet hat. Server-seitige
 // verifyOtp tauscht token_hash gegen eine echte Session.
+//
+// WICHTIG: NIEMALS payload.email_data.site_url verwenden — Supabase
+// fuellt das oft mit der Project-URL (xxx.supabase.co). Wenn der Link
+// dorthin zeigt landet der User auf Supabase's REST-Endpoint und
+// bekommt "No API key found". Hart auf unsere Domain pinnen.
+const PFOTEN_SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ||
+  "https://www.pfoten-plan.de";
+
 function buildLoginUrl(p: SupabaseEmailHookPayload): string {
-  const siteUrl = (p.email_data.site_url || "https://www.pfoten-plan.de")
-    .replace(/\/+$/, "");
   // Wenn redirect_to schon was Sinnvolles enthaelt (z.B. /mitglieder),
   // nutzen wir das als 'next'. Sonst Default auf /mitglieder.
   let next = "/mitglieder";
@@ -70,7 +77,7 @@ function buildLoginUrl(p: SupabaseEmailHookPayload): string {
     type,
     next,
   });
-  return `${siteUrl}/mitglieder/callback?${params.toString()}`;
+  return `${PFOTEN_SITE_URL}/mitglieder/callback?${params.toString()}`;
 }
 
 function buildSubject(p: SupabaseEmailHookPayload): string {
