@@ -244,7 +244,16 @@ export async function POST(req: NextRequest) {
   }
 
   // ── 7) "Plan ist fertig"-Mail (fire-and-forget) ───────────────────
-  // Opt-out: ?no_mail=1 im Body oder env DISABLE_PLAN_READY_EMAIL=1
+  // SAFEGUARD gegen Brevo-Flood:
+  //   - Mail wird nur EINMAL pro Plan-Generierung versendet (= EINMAL pro
+  //     neuem member_plan_content-Row Insert). Da der Endpoint oben bei
+  //     existierendem Plan ohne force fruehzeitig returnt, kann hier
+  //     keine Doppel-Versendung passieren.
+  //   - Mollie-Webhook ist idempotent (processed_payment_ids check),
+  //     selbst wenn Mollie retried wird kein zweiter Generate-Call abgesetzt.
+  //   - Kein Auto-Retry bei Brevo-Fehler — wenn die Mail scheitert, scheitert
+  //     sie. Kein Loop.
+  //   - Opt-outs: ?no_mail=1 im Body ODER env DISABLE_PLAN_READY_EMAIL=1
   const skipMail =
     !!body?.no_mail || process.env.DISABLE_PLAN_READY_EMAIL === "1";
   if (!skipMail) {
