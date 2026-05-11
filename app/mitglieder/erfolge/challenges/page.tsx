@@ -76,7 +76,7 @@ export default async function ErfolgePage() {
       <div className="mb-5 -mx-4 md:-mx-8">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/Herchallanges.jpg"
+          src="/Aufgaben.png"
           alt="Eure Trainings-Woche"
           className="w-full aspect-[16/7] object-cover object-bottom md:rounded-2xl"
         />
