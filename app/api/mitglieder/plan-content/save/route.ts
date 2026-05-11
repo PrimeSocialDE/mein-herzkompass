@@ -21,6 +21,42 @@
 //     "source": "make.com",              optional
 //     "source_payment_id": "tr_xxx"      optional — Mollie payment id
 //   }
+//
+// ── Schema fuer plan_slug = "trainingsplan" (der 12-Wochen-Plan) ─────
+// Wird auf /mitglieder/erfolge/coaching gerendert. Erwartete Struktur:
+//
+//   content: {
+//     intro?: {
+//       headline?: string,        // "3-Monatsplan fuer Bruno"
+//       einleitung?: string,      // Mehrzeilig, \n erlaubt
+//       ziele?: string,
+//       aufbau?: string
+//     },
+//     weeks: [                    // REQUIRED, mind. 1 Eintrag
+//       {
+//         num: 1,                 // 1..12
+//         title: "Start Alltagstruktur",
+//         wochenziele: [str, ...],
+//         tagesplan: "...",        // Mehrzeilig
+//         no_gos: [str, ...],
+//         fortschritt: [str, ...], // "etwas seltener anspringen", ...
+//         uebungen: [
+//           { name: "Ritual Haustuer ruhig", schritte: [str, ...] },
+//           ...
+//         ]
+//       },
+//       ...
+//     ],
+//     monats_uebersichten?: [
+//       { monat: 1, text: "..." }, { monat: 2, ... }, { monat: 3, ... }
+//     ],
+//     abschluss?: string,
+//     zusatz_spiele?: [
+//       { nummer: 1, name: "...", ziel: "...", schritte: [str], warum: "..." }
+//     ]
+//   }
+//
+// TypeScript-Interfaces dafuer: siehe lib/member-plan-content.ts
 
 import { NextRequest, NextResponse } from "next/server";
 import { createMemberAdminClient } from "@/lib/member-auth-server";

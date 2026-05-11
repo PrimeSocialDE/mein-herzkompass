@@ -12,6 +12,11 @@ import { groupModulesByWeek } from "@/lib/member-weeks";
 import { getDailyTip } from "@/lib/member-coaching";
 import { getPlanIntro } from "@/lib/member-plan-intro";
 import { getCurrentPlanWeek } from "@/lib/member-mood";
+import {
+  getLatestPlanContent,
+  isTrainingPlanContent,
+} from "@/lib/member-plan-content";
+import TrainingPlanWeekly from "@/components/mitglieder/TrainingPlanWeekly";
 
 export const dynamic = "force-dynamic";
 
@@ -69,12 +74,23 @@ export default async function CoachingPage() {
   const totalWeeks = weeks.length;
   const currentWeekNumber = currentWeek?.weekNumber || 0;
 
-  // Vollstaendiger Plan-Aufbau aus member-plan-intro — gleicher Content wie
-  // in der Welcome-Mail/PDF nach dem Kauf. Zeigt alle Wochen mit Titel +
-  // Beschreibung, damit der User auch ohne Mail jederzeit nachschauen kann
-  // was im Plan drin ist.
-  const planIntro = getPlanIntro(problemKey, dog);
-  const planTotalWeeks = planIntro?.weeks.length || 0;
+  // Plan-Content: erst aus DB versuchen (member_plan_content mit slug
+  // 'trainingsplan' — wird von Make.com nach PDF-Generierung befuellt).
+  // Fallback: generischer 4-Wochen-Plan aus lib/member-plan-intro.ts.
+  const trainingPlan = await getLatestPlanContent(
+    user.id,
+    member.email,
+    "trainingsplan"
+  );
+  const hasRichPlan = trainingPlan && isTrainingPlanContent(trainingPlan.content);
+  const richPlan = hasRichPlan
+    ? (trainingPlan.content as import("@/lib/member-plan-content").TrainingPlanContent)
+    : null;
+
+  const planIntro = hasRichPlan ? null : getPlanIntro(problemKey, dog);
+  const planTotalWeeks = hasRichPlan
+    ? richPlan!.weeks.length
+    : planIntro?.weeks.length || 0;
   const planCurrentWeek =
     planTotalWeeks > 0
       ? getCurrentPlanWeek(member.created_at, planTotalWeeks)
@@ -135,18 +151,57 @@ export default async function CoachingPage() {
         </div>
       )}
 
-      {/* Vollstaendiger Plan-Aufbau (gleicher Content wie in der Welcome-Mail) */}
-      {planIntro && (
+      {/* PDF-Download (wenn vorhanden) — direkt unter Plan-Status */}
+      {trainingPlan?.pdf_url && (
+        <a
+          href={trainingPlan.pdf_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-white border-2 border-dashed border-[#C4A576] rounded-2xl p-4 mb-5 flex items-center gap-3 hover:bg-[#FFF9F0] transition-colors"
+        >
+          <span className="text-[28px] flex-shrink-0">📄</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight mb-0.5">
+              Dein Trainings-Plan als PDF
+            </p>
+            <p className="text-[12px] text-[#6B7280]">
+              Identisch zu dem was du per Mail bekommen hast — zum Ausdrucken
+            </p>
+          </div>
+          <span className="text-[12px] font-bold text-[#C4A576] flex-shrink-0">
+            Öffnen →
+          </span>
+        </a>
+      )}
+
+      {/* Vollstaendiger Plan: aus DB (Make.com) oder Fallback aus plan-intro */}
+      {hasRichPlan && richPlan ? (
+        <section className="mb-6">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-[#8B7355]">
+              Dein kompletter Plan
+            </p>
+            <p className="text-[10px] text-[#9CA3AF]">
+              Identisch zur PDF
+            </p>
+          </div>
+          <TrainingPlanWeekly plan={richPlan} currentWeek={planCurrentWeek} />
+        </section>
+      ) : planIntro ? (
         <section className="mb-6">
           <div className="bg-gradient-to-br from-[#FFFDF8] to-[#FFF9F0] border border-[#EADDC5] rounded-2xl p-5 mb-3">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1.5">
-              Dein kompletter Plan
+              Dein Plan-Überblick
             </p>
             <h2 className="text-[18px] md:text-[20px] font-extrabold text-[#1a1a1a] leading-tight mb-2">
               {planIntro.headline}
             </h2>
             <p className="text-[13px] md:text-[14px] text-[#4B5563] leading-relaxed">
               {planIntro.intro}
+            </p>
+            <p className="text-[11px] text-[#8B7355] mt-3 italic">
+              Den ausführlichen 12-Wochen-Plan mit allen Übungen findest du in
+              der Mail die du beim Kauf bekommen hast.
             </p>
           </div>
 
@@ -165,7 +220,6 @@ export default async function CoachingPage() {
                   } ${isFuture ? "opacity-70" : ""}`}
                 >
                   <div className="flex items-start gap-3">
-                    {/* Status-Punkt */}
                     <div
                       className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold ${
                         isPast
@@ -207,7 +261,7 @@ export default async function CoachingPage() {
             })}
           </div>
         </section>
-      )}
+      ) : null}
 
       {/* Tipp des Tages */}
       <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-2xl p-5 mb-5">
