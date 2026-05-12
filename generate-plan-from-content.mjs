@@ -26,6 +26,11 @@ import { dirname, join as pathJoin } from "path";
 import QRCode from "qrcode";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+// Assets fuer PDF-Generierung liegen separat (NICHT in public/), damit
+// Next.js den public/-Folder NICHT als Dependency in das Function-Bundle
+// traced (sonst 250MB+ durch ungenutzte Videos etc.).
+const PDF_ASSETS = (file) => pathJoin(__dirname, "pdf-assets", file);
+// PUBLIC nur fuer CLI-Output verwenden (Test-PDF schreiben).
 const PUBLIC = (file) => pathJoin(__dirname, "public", file);
 
 // A4 Querformat (Landscape) — Originalvorlage ist quer; bessere Lesbarkeit
@@ -378,7 +383,7 @@ const AD_PAGES = {
     price: "Nur 24,99 €",
     cta: "Jetzt scannen",
     qrUrl: "https://www.pfoten-plan.de/ernaehrungsplan",
-    imagePath: "public/Hund1.png",
+    imagePath: "pdf-assets/Hund1.png",
   },
   erstehilfe: {
     badge: "FÜR DEN NOTFALL GERÜSTET",
@@ -395,7 +400,7 @@ const AD_PAGES = {
     price: "Nur 14,99 €",
     cta: "Jetzt scannen",
     qrUrl: "https://www.pfoten-plan.de/erste-hilfe-set",
-    imagePath: "public/Hund2.png",
+    imagePath: "pdf-assets/Hund2.png",
   },
 };
 
@@ -557,7 +562,7 @@ export async function buildPdfFromContent(params = {}) {
   const fontItalic = await doc.embedFont(StandardFonts.HelveticaOblique);
 
   // Echtes Pfoten-Logo aus public/ einbetten
-  const logoBytes = readFileSync(PUBLIC("logo.png"));
+  const logoBytes = readFileSync(PDF_ASSETS("logo.png"));
   const logoImage = await doc.embedPng(logoBytes);
 
   // QR-Codes fuer Werbeseiten zur Laufzeit erzeugen
@@ -573,8 +578,8 @@ export async function buildPdfFromContent(params = {}) {
   const dogErsteHilfeImg = await doc.embedPng(
     readFileSync(pathJoin(__dirname, AD_PAGES.erstehilfe.imagePath))
   );
-  const dogCoverImg = await doc.embedPng(readFileSync(PUBLIC("TrainerPfoten-thumb.png")));
-  const dogAccentImg = await doc.embedPng(readFileSync(PUBLIC("Hund4.png")));
+  const dogCoverImg = await doc.embedPng(readFileSync(PDF_ASSETS("TrainerPfoten-thumb.png")));
+  const dogAccentImg = await doc.embedPng(readFileSync(PDF_ASSETS("Hund4.png")));
 
   const MARGIN = 70;
   const CONTENT_X = MARGIN;
