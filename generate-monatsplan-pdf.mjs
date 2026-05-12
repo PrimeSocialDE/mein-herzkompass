@@ -1097,11 +1097,6 @@ async function main() {
   // ===== Wochen 1–4 =====
   for (let wIdx = 0; wIdx < PLAN.weeks.length; wIdx++) {
     const week = PLAN.weeks[wIdx];
-
-    // Werbe-Seite 1 (Mitte) — nach Woche 2, also vor Woche 3
-    if (wIdx === 2) {
-      drawAdPage(newPage(), "ernaehrung", adFonts, qrErnaehrungImg, dogErnaehrungImg, adLayout);
-    }
     // Seite — Fokus und Ziel
     {
       const p = newPage();
@@ -1218,9 +1213,6 @@ async function main() {
       }
     }
   }
-
-  // Werbe-Seite 2 (Ende) — nach allen Wochen, vor Outro
-  drawAdPage(newPage(), "erstehilfe", adFonts, qrErsteHilfeImg, dogErsteHilfeImg, adLayout);
 
   // ===== Outro: Schwierige Situationen =====
   {
