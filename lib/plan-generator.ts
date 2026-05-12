@@ -300,8 +300,11 @@ export async function generateTrainingPlan(
   const weeksTotal = monthsTotal * 4;
   const phases = buildPhases(weeksTotal);
   const systemPrompt = buildSystemPrompt(weeksTotal, monthsTotal, phases);
-  // 24 Wochen brauchen mehr Output-Budget als 4 oder 12
-  const maxTokens = weeksTotal <= 4 ? 6000 : weeksTotal <= 12 ? 16000 : 32000;
+  // Output-Budget grosszuegig — Sonnet 4.5 schreibt ausfuehrlich, lieber
+  // viel Headroom als mid-JSON abgeschnitten werden.
+  // Gemessen: 1 Monat ~17k chars (~6k tokens), 3 Monate ~50k chars (~17k tokens),
+  // 6 Monate ~100k chars (~33k tokens). Plus 30% Puffer.
+  const maxTokens = weeksTotal <= 4 ? 16000 : weeksTotal <= 12 ? 32000 : 48000;
 
   try {
     // Streaming: Tokens fliessen kontinuierlich rein, onProgress kann
