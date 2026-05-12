@@ -83,9 +83,10 @@ interface SendArgs {
   subject: string;
   html: string;
   tags?: string[];
+  attachments?: Array<{ name: string; contentBase64: string }>;
 }
 
-async function sendBrevoMail({ to, subject, html, tags }: SendArgs) {
+async function sendBrevoMail({ to, subject, html, tags, attachments }: SendArgs) {
   if (!BREVO_API_KEY) {
     console.warn("[member-mail] BREVO_API_KEY fehlt — skipping send to", to);
     return { ok: false, reason: "no_api_key" };
@@ -94,23 +95,30 @@ async function sendBrevoMail({ to, subject, html, tags }: SendArgs) {
     return { ok: false, reason: "no_recipient" };
   }
   try {
+    const payload: Record<string, unknown> = {
+      sender: { name: "Pfoten-Plan", email: "support@pfoten-plan.de" },
+      replyTo: {
+        email: "support@pfoten-plan.de",
+        name: "Pfoten-Plan Support",
+      },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+      tags: tags || ["mitglieder"],
+    };
+    if (attachments && attachments.length > 0) {
+      payload.attachment = attachments.map((a) => ({
+        name: a.name,
+        content: a.contentBase64,
+      }));
+    }
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
         "api-key": BREVO_API_KEY,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        sender: { name: "Pfoten-Plan", email: "support@pfoten-plan.de" },
-        replyTo: {
-          email: "support@pfoten-plan.de",
-          name: "Pfoten-Plan Support",
-        },
-        to: [{ email: to }],
-        subject,
-        htmlContent: html,
-        tags: tags || ["mitglieder"],
-      }),
+      body: JSON.stringify(payload),
     });
     if (!res.ok) {
       const text = await res.text();
@@ -243,13 +251,16 @@ import type { TrainingPlanContent } from "./member-plan-content";
 interface PlanReadyArgs {
   to: string;
   dogName: string;
+  dogBreed?: string | null;
+  dogAge?: string | null;
+  mainProblem?: string | null;
   planLengthMonths: 1 | 3 | 6;
   plan: TrainingPlanContent;
   customerName?: string | null;
 }
 
 export async function sendPlanReadyEmail(args: PlanReadyArgs) {
-  const { to, dogName, planLengthMonths, plan, customerName } = args;
+  const { to, dogName, dogBreed, dogAge, mainProblem, planLengthMonths, plan, customerName } = args;
   if (!to) return { ok: false, reason: "no_email" };
 
   // Auto-Login-Link: User landet direkt eingeloggt auf der Coaching-Seite
@@ -292,11 +303,48 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
     footerHint: `Der Button enthält einen Einmal-Login — du landest direkt eingeloggt im Mitglieder-Bereich. Der Link gilt 1 Stunde und ist nur für dich.`,
   });
 
+  // PDF-Anhang aus dem AI-personalisierten Plan-JSON generieren.
+  // Fallback: Wenn aus irgendeinem Grund das nicht klappt — Mail trotzdem
+  // rausgehen lassen, dann ohne PDF. User sieht den Plan jedenfalls im
+  // Mitglieder-Bereich (Magic-Link im Mail-CTA).
+  let attachments: Array<{ name: string; contentBase64: string }> | undefined;
+  try {
+    const { buildPlanPdfFromContent, planPdfFilename } = await import("./pdf-builder");
+    const pdfBytes = await buildPlanPdfFromContent({
+      plan,
+      dogName,
+      dogBreed: dogBreed || undefined,
+      dogAge: dogAge || undefined,
+      mainProblem: mainProblem || "Verhaltens-Themen im Alltag",
+      planLengthMonths,
+      verbose: false,
+    });
+    const buf =
+      pdfBytes instanceof Buffer
+        ? pdfBytes
+        : Buffer.from(pdfBytes.buffer, pdfBytes.byteOffset, pdfBytes.byteLength);
+    attachments = [
+      {
+        name: planPdfFilename(dogName, planLengthMonths),
+        contentBase64: buf.toString("base64"),
+      },
+    ];
+    console.log(
+      `[member-mail] PDF angehängt: ${attachments[0].name} (${(buf.length / 1024).toFixed(0)} KB)`
+    );
+  } catch (e: any) {
+    console.error(
+      "[member-mail] PDF-Build fehlgeschlagen — Mail wird ohne Anhang gesendet:",
+      e?.message || e
+    );
+  }
+
   return sendBrevoMail({
     to,
     subject: `🐾 Dein ${monthsLabel} für ${dogName} ist da`,
     html,
     tags: ["mitglieder", "plan-ready"],
+    attachments,
   });
 }
 

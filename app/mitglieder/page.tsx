@@ -23,6 +23,11 @@ import { groupModulesByWeek } from "@/lib/member-weeks";
 import { PROBLEM_IMAGE } from "@/lib/member-images";
 import { getPlanIntro, getBreedNote } from "@/lib/member-plan-intro";
 import { getCurrentPlanWeek } from "@/lib/member-mood";
+import {
+  getLatestPlanContent,
+  isTrainingPlanContent,
+  type TrainingPlanContent,
+} from "@/lib/member-plan-content";
 
 export const dynamic = "force-dynamic";
 
@@ -63,10 +68,25 @@ export default async function MitgliederDashboard() {
     );
   }
 
-  const modules = await listModulesForMember(member);
-  const upsells = await listActiveUpsells();
+  const [modules, upsells, trainingPlan] = await Promise.all([
+    listModulesForMember(member),
+    listActiveUpsells(),
+    getLatestPlanContent(user.id, member.email, "trainingsplan"),
+  ]);
   const dog = member.dog_name || "deinem Hund";
   const isPaid = member.purchase_status === "paid";
+
+  // KI-Plan aus member_plan_content — Quelle der Wahrheit fuer Uebungen
+  const hasRichPlan =
+    !!trainingPlan && isTrainingPlanContent(trainingPlan.content);
+  const richPlan: TrainingPlanContent | null = hasRichPlan
+    ? (trainingPlan!.content as TrainingPlanContent)
+    : null;
+  const richTotalWeeks = richPlan?.weeks.length || 0;
+  const richCurrentWeek =
+    richTotalWeeks > 0
+      ? getCurrentPlanWeek(member.created_at, richTotalWeeks)
+      : 0;
 
   // Erste Free-Übung mit Content holen (für Hero-Card)
   const firstFree = modules.find((m) => m.is_free);
@@ -113,12 +133,104 @@ export default async function MitgliederDashboard() {
           totalWeeks={cardTotalWeeks}
         />
 
-        {/* Wochen-Plan */}
+        {/* Wochen-Plan — bevorzugt personalisiert aus member_plan_content */}
         <div className="mb-8">
           <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-3">
             Dein Trainings-Plan, Woche für Woche
           </h2>
-          <WeekOverview weeks={weeks} isPaid={true} />
+          {hasRichPlan && richPlan ? (
+            <div className="space-y-3">
+              {richPlan.weeks.map((w) => {
+                const isCurrent = w.num === richCurrentWeek;
+                const isPast = w.num < richCurrentWeek;
+                const isFuture = w.num > richCurrentWeek;
+                const allFrei = isPast || isCurrent;
+                return (
+                  <div
+                    key={w.num}
+                    className={`bg-white rounded-2xl border overflow-hidden ${
+                      isCurrent
+                        ? "border-[#C4A576] shadow-[0_2px_8px_rgba(196,165,118,0.15)]"
+                        : "border-[#EADDC5]"
+                    } ${isFuture ? "opacity-75" : ""}`}
+                  >
+                    {/* Wochen-Header */}
+                    <div className="px-5 py-4 flex items-center gap-3">
+                      <div
+                        className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-extrabold text-[14px] ${
+                          isPast
+                            ? "bg-[#16A34A] text-white"
+                            : isCurrent
+                              ? "bg-[#FFF9F0] text-[#8B7355] border-2 border-[#C4A576]"
+                              : "bg-[#F3F4F6] text-[#9CA3AF]"
+                        }`}
+                      >
+                        {isPast ? (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
+                        ) : (
+                          w.num
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355]">
+                          Woche {w.num}
+                          {isCurrent && (
+                            <span className="ml-2 normal-case font-bold text-[#C4A576]">· Aktuell</span>
+                          )}
+                        </p>
+                        <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight">
+                          {w.title}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Übungs-Liste */}
+                    {Array.isArray(w.uebungen) && w.uebungen.length > 0 && (
+                      <div className="border-t border-[#F0EBE3] divide-y divide-[#F0EBE3]">
+                        {w.uebungen.map((u, idx) => (
+                          <div key={idx} className="px-5 py-3 flex items-center gap-3">
+                            <div
+                              className={`flex-shrink-0 w-2 h-2 rounded-full ${
+                                allFrei ? "bg-[#16A34A]" : "bg-[#D1D5DB]"
+                              }`}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <p
+                                className={`text-[13px] font-medium leading-tight ${
+                                  allFrei ? "text-[#1a1a1a]" : "text-[#6B7280]"
+                                }`}
+                              >
+                                Übung {idx + 1}: {u.name}
+                              </p>
+                              {Array.isArray(u.schritte) && u.schritte.length > 0 && (
+                                <p className="text-[11px] text-[#9CA3AF] line-clamp-1 mt-0.5">
+                                  {u.schritte.length} Schritt-für-Schritt-Anweisungen
+                                </p>
+                              )}
+                            </div>
+                            {allFrei ? (
+                              <Link
+                                href={`/mitglieder/erfolge/coaching#week-${w.num}`}
+                                className="flex-shrink-0 text-[11px] font-semibold text-[#1a1a1a] hover:text-[#8B7355]"
+                              >
+                                Öffnen →
+                              </Link>
+                            ) : (
+                              <span className="flex-shrink-0">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <WeekOverview weeks={weeks} isPaid={true} />
+          )}
         </div>
 
         {upsells.length > 0 && <UpsellSection upsells={upsells} />}

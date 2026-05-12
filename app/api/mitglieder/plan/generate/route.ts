@@ -297,6 +297,9 @@ export async function POST(req: NextRequest) {
             const mailRes = await sendPlanReadyEmail({
               to: targetEmail,
               dogName,
+              dogBreed: answers.dog_breed || null,
+              dogAge: answers.dog_age || null,
+              mainProblem: PROBLEM_LABELS[dogProblem] || dogProblem || null,
               planLengthMonths,
               plan: result.plan,
               customerName: lead.customer_name || null,
@@ -315,6 +318,31 @@ export async function POST(req: NextRequest) {
               error: e?.message,
             });
           }
+        }
+
+        // ── 8) Initial-Challenges seeden (proaktiv, ab Tag 1) ─────────
+        // Erzeugt Auth-User + Member-Profil + erste Wochen-Challenges.
+        // Triggert intern auch die Welcome-Challenges-Mail. Idempotent.
+        emit(ctx, { event: "stage", stage: "seeding_challenges" });
+        try {
+          const { seedInitialChallengesForEmail } = await import(
+            "@/lib/member-challenges"
+          );
+          const seedRes = await seedInitialChallengesForEmail(targetEmail);
+          emit(ctx, {
+            event: "stage",
+            stage: "challenges_seeded",
+            ok: seedRes.ok,
+            count: seedRes.challenges_count,
+            reason: seedRes.reason,
+          });
+        } catch (e: any) {
+          console.error("[plan/generate] seed-challenges error:", e?.message);
+          emit(ctx, {
+            event: "stage",
+            stage: "challenges_seed_failed",
+            error: e?.message,
+          });
         }
 
         // ── 8) Final ───────────────────────────────────────────────

@@ -1,16 +1,14 @@
-// Generiert einen personalisierten 1-Monats-Trainingsplan als A4-PDF
-// (PfotenPlan-Style — orientiert am bestehenden Yuna-Beispiel-Plan).
+// Generiert einen personalisierten 6-Monats-Trainingsplan als A4-PDF
+// (PfotenPlan-Style — gleiches Layout wie 1-Monatsplan, aber 24 Wochen
+// gegliedert in 12 Phasen à 2 Wochen, 4 Seiten pro Phase = 48 Seiten +
+// Intro/Outro ergibt ca. 54 Seiten gesamt).
 //
 // Verwendung (lokal zum Preview):
-//   DOG_NAME="Yuna" DOG_BREED="Mischling" DOG_AGE="2 Jahre" \
+//   DOG_NAME="Enio" DOG_BREED="Mischling" DOG_AGE="2 Jahre" \
 //   MAIN_PROBLEM="Ängstlichkeit gegenüber Menschen" \
-//   node generate-monatsplan-pdf.mjs
+//   node generate-6monatsplan-pdf.mjs
 //
-// Output: public/monatsplan-1monat-TEST.pdf
-//
-// Inhalte sind aktuell statisch (Yuna-Beispiel) — die Content-Pipeline
-// (KI / Templates aus Quiz-Antworten) kommt in einem späteren Schritt.
-// Make/Supabase werden NICHT angefasst.
+// Output: public/monatsplan-6monat-TEST.pdf
 
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { writeFileSync, readFileSync } from "fs";
@@ -18,7 +16,6 @@ import { fileURLToPath } from "url";
 import { dirname, join as pathJoin } from "path";
 import QRCode from "qrcode";
 
-// __dirname-Aequivalent fuer ESM — zeigt auf Repo-Root (wo dieses File liegt)
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PUBLIC = (file) => pathJoin(__dirname, "public", file);
 
@@ -40,10 +37,8 @@ const WHITE       = rgb(1, 1, 1);
 const BG_CREAM    = rgb(250 / 255, 245 / 255, 235 / 255); // weicher Sand-Hintergrund
 const BG_BAR      = rgb(240 / 255, 230 / 255, 210 / 255); // Wochen-Label-Bar
 
-// ========= Personalisierungs-Defaults (CLI-Fallback) =========
-// Diese Konstanten dienen nur als Default beim direkten CLI-Aufruf.
-// Bei Library-Nutzung kommen die Werte als params in buildPdf().
-const DEFAULT_DOG_NAME     = "Yuna";
+// ========= Personalisierung =========
+const DEFAULT_DOG_NAME     = "Enio";
 const DEFAULT_DOG_BREED    = "Mischling";
 const DEFAULT_DOG_AGE      = "2 Jahre";
 const DEFAULT_MAIN_PROBLEM = "Ängstlichkeit gegenüber Menschen";
@@ -190,10 +185,12 @@ function drawSectionTitle(page, title, x, y, fontBold, size = 30, maxWidth = 700
   return y - (s + 16); // neue Y-Position
 }
 
-// Wochen-Label-Box (oben links auf Wochen-Seiten, mit weichem Tan-Hintergrund)
-function drawWeekLabel(page, weekNr, x, y, fontBold) {
-  const label = `Woche ${weekNr}`;
+// Phase-Label-Box (oben links auf Phasen-Seiten, mit weichem Tan-Hintergrund).
+// Zeigt "Phase X" gross + "Woche A-B" daneben als Sub-Label (gold).
+function drawWeekLabel(page, phaseNr, x, y, fontBold, fontReg) {
+  const label = `Phase ${phaseNr}`;
   const size = 22;
+  const weekFromTo = `Woche ${phaseNr * 2 - 1}–${phaseNr * 2}`;
   const txtW = fontBold.widthOfTextAtSize(label, size);
   const padX = 14;
   const padY = 7;
@@ -207,6 +204,17 @@ function drawWeekLabel(page, weekNr, x, y, fontBold) {
     font: fontBold,
     color: DARK_BROWN,
   });
+  // Sub-Label rechts neben der Box (Goldbraun)
+  if (fontReg) {
+    const subSize = 13;
+    page.drawText(weekFromTo, {
+      x: x + boxW + 12,
+      y: y + padY + 6,
+      size: subSize,
+      font: fontReg,
+      color: GOLD_DARK,
+    });
+  }
   return y;
 }
 
@@ -359,19 +367,19 @@ const PILL_AC_GOLD  = GOLD_DARK;
 function buildPlan(DOG_NAME, MAIN_PROBLEM) {
   return {
   intro: {
-    welcomeTitle: "Willkommen bei eurem Trainingsmonat",
+    welcomeTitle: "Willkommen bei euren sechs Trainingsmonaten",
     welcomeText: [
-      `Dieser Trainingsplan wurde speziell für ${DOG_NAME} und ihre Bedürfnisse entwickelt. Er begleitet dich über vier Wochen Schritt für Schritt dabei, ${DOG_NAME} mehr Sicherheit im Alltag zu geben und eine vertrauensvolle Zusammenarbeit aufzubauen. Jede Übung ist so gestaltet, dass du sie ohne Vorkenntnisse im Hundetraining umsetzen kannst. Du brauchst lediglich weiche Leckerlis, eine Leine, eine Decke und vor allem Geduld.`,
-      `${DOG_NAME}s ${MAIN_PROBLEM} und ihre Unsicherheit in der Umwelt sind der Ausgangspunkt dieses Plans. Das Ziel ist nicht, ${DOG_NAME} zu einem kontaktfreudigen Hund zu machen, sondern ihr Werkzeuge an die Hand zu geben, mit denen sie beängstigende Situationen gelassen bewältigen kann. Du als Bezugsperson wirst dabei zu ihrem sicheren Anker, an dem sie sich orientiert.`,
-      `Der Plan baut aufeinander auf, weshalb die Reihenfolge der Wochen wichtig ist. Jede Woche hat klare Ziele und einen Wochencheck, der dir zeigt, ob ${DOG_NAME} bereit für die nächste Stufe ist. Wenn ein Schritt noch nicht sitzt, ist es völlig in Ordnung, eine Woche zu wiederholen. Fortschritt entsteht durch Wiederholung und positive Erfahrungen, nicht durch Tempo.`,
-      `Lies den gesamten Plan einmal durch, bevor du mit dem Training beginnst. So verstehst du, wohin die Reise geht, und kannst die einzelnen Übungen besser einordnen. Markiere dir die Stellen, die dir besonders wichtig erscheinen, und bereite dein Trainingsmaterial vor, bevor du in Woche eins startest.`,
+      `Dieser Trainingsplan wurde speziell für ${DOG_NAME} und ihre Bedürfnisse entwickelt. Er begleitet dich über sechs Monate, gegliedert in 24 Wochen und 12 aufeinander aufbauende Phasen à zwei Wochen. Schritt für Schritt baut ihr Sicherheit, Vertrauen und neue Routinen auf — vom geschützten Fundament zuhause bis zur souveränen Bewältigung schwieriger Alltagssituationen draußen.`,
+      `${DOG_NAME}s ${MAIN_PROBLEM} und ihre Unsicherheit in der Umwelt sind der Ausgangspunkt dieses Plans. Das Ziel ist nicht, ${DOG_NAME} in wenigen Wochen zu einem komplett anderen Hund zu machen, sondern ihr über ein halbes Jahr Werkzeuge an die Hand zu geben, mit denen sie beängstigende Situationen langfristig gelassen bewältigen kann. Du als Bezugsperson wirst dabei zu ihrem verlässlichen Anker, an dem sie sich auch in vielen Monaten noch orientiert.`,
+      `Der Plan baut systematisch aufeinander auf, weshalb die Reihenfolge der Phasen wichtig ist. Jede Phase hat klare Ziele und einen Phasencheck, der dir zeigt, ob ${DOG_NAME} bereit für die nächste Stufe ist. Wenn ein Schritt noch nicht sitzt, ist es völlig in Ordnung, eine Phase zu verlängern oder zu wiederholen. Bei einem halben Jahr Trainingszeit habt ihr genug Puffer — Tempo ist nicht das Ziel, Stabilität ist es.`,
+      `Lies den gesamten Plan einmal durch, bevor du mit dem Training beginnst. So verstehst du, wohin die Reise über die sechs Monate geht, und kannst die einzelnen Übungen besser einordnen. Markiere dir die Stellen, die dir besonders wichtig erscheinen, und bereite dein Trainingsmaterial vor, bevor du in Phase 1 startest.`,
     ],
     workTitle: "So arbeitest du mit diesem Plan richtig",
     workText: [
-      `Der Plan ist in vier Wochen gegliedert, die jeweils ein übergeordnetes Entwicklungsziel verfolgen. Woche eins legt das Fundament mit Grundübungen in reizarmer Umgebung. Woche zwei verlagert das Training nach draußen und führt erste Begegnungsübungen ein. Die Wochen drei und vier steigern die Anforderungen schrittweise und führen alle Bausteine im Alltag zusammen.`,
-      `Jede Woche enthält zwei Kernübungen mit detaillierten Schritt-für-Schritt-Anleitungen. Zusätzlich gibt es Begleitübungen, die das Training ergänzen, und Alltagstipps, die dir helfen, das Gelernte in den normalen Tagesablauf einzubauen. Die Kernübungen sind das Herzstück des Trainings und sollten täglich geübt werden.`,
-      `Am Ende jeder Woche findest du einen Wochencheck mit konkreten Kriterien. Diese Kriterien zeigen dir, ob ${DOG_NAME} die Inhalte der Woche verinnerlicht hat. Gehe erst zur nächsten Woche über, wenn die Mehrheit der Checkpunkte erfüllt ist. Ehrlichkeit bei der Einschätzung ist wichtiger als schnelles Vorankommen.`,
-      `Die Zeitangaben bei den Übungen sind Richtwerte. Kurze, konzentrierte Einheiten sind effektiver als lange, ermüdende Trainingsblöcke. Beende jede Übung immer dann, wenn ${DOG_NAME} noch motiviert und aufmerksam ist, auch wenn die angegebene Zeit noch nicht um ist.`,
+      `Der Plan ist in 12 Phasen à 2 Wochen gegliedert, die jeweils ein übergeordnetes Entwicklungsziel verfolgen. Die Phasen 1 und 2 legen das Fundament drinnen und im Garten. Phasen 3 und 4 verlagern das Training nach draußen in reizarme Bereiche. Phasen 5 bis 7 führen kontrollierte Begegnungsübungen ein. Phasen 8 bis 10 generalisieren das Gelernte auf unterschiedlichste Alltagssituationen. Phasen 11 und 12 stabilisieren und vertiefen, sodass das Verhalten auch nach den sechs Monaten Bestand hat.`,
+      `Jede Phase enthält zwei Kernübungen mit detaillierten Schritt-für-Schritt-Anleitungen. Zusätzlich gibt es Begleitübungen, die das Training ergänzen, und Alltagstipps, die dir helfen, das Gelernte in den normalen Tagesablauf einzubauen. Die Kernübungen sind das Herzstück des Trainings und sollten in den jeweils zwei Phasenwochen mehrmals täglich kurz geübt werden.`,
+      `Am Ende jeder Phase findest du einen Phasencheck mit konkreten Kriterien. Diese Kriterien zeigen dir, ob ${DOG_NAME} die Inhalte der Phase verinnerlicht hat. Gehe erst zur nächsten Phase über, wenn die Mehrheit der Checkpunkte erfüllt ist. Ehrlichkeit bei der Einschätzung ist wichtiger als schnelles Vorankommen — bei sechs Monaten Plan ist eine Verlängerung um eine Woche völlig unproblematisch.`,
+      `Die Zeitangaben bei den Übungen sind Richtwerte. Kurze, konzentrierte Einheiten sind effektiver als lange, ermüdende Trainingsblöcke. Beende jede Übung immer dann, wenn ${DOG_NAME} noch motiviert und aufmerksam ist, auch wenn die angegebene Zeit noch nicht um ist. Über sechs Monate summieren sich kurze, gute Einheiten zu einer enormen Trainingstiefe.`,
     ],
     rulesTitle: "Die drei Grundregeln im Training",
     rulesText: [
@@ -396,12 +404,12 @@ function buildPlan(DOG_NAME, MAIN_PROBLEM) {
       `Das Bellen erfüllt eine ähnliche Funktion wie das Ziehen. Wenn Flucht nicht möglich ist, setzt ${DOG_NAME} Bellen als Mittel ein, um den bedrohlichen Reiz auf Abstand zu halten. Da dieses Verhalten in der Vergangenheit oft funktioniert hat, weil Menschen tatsächlich zurückgewichen sind, hat es sich als Strategie verfestigt. ${DOG_NAME} fehlen alternative Verhaltensweisen, die ihr in solchen Momenten Sicherheit geben.`,
       `Alle drei Probleme, die Angst, das Ziehen und das Bellen, hängen also zusammen und entspringen derselben Quelle. Deshalb behandelt dieser Plan nicht die Symptome einzeln, sondern setzt am Kern an. Durch den Aufbau von Vertrauen, Orientierung und alternativen Strategien werden alle drei Bereiche gleichzeitig verbessert.`,
     ],
-    goalTitle: "Euer Trainingsziel in 4 Wochen",
+    goalTitle: "Euer Trainingsziel in 6 Monaten",
     goalText: [
-      `Das übergeordnete Ziel dieses Plans ist der Aufbau von emotionaler Sicherheit für ${DOG_NAME}. Sie soll lernen, dass ihre Bezugsperson eine verlässliche sichere Basis ist, an der sie sich in unsicheren Momenten orientieren kann. Dieser Vertrauensaufbau ist das Fundament für alle weiteren Trainingsschritte. Ohne diese Basis würden einzelne Übungen nicht nachhaltig wirken.`,
-      `Ein zentrales Trainingsziel ist die systematische Desensibilisierung gegenüber erwachsenen Menschen. Das bedeutet, dass ${DOG_NAME} schrittweise und in ihrem eigenen Tempo lernt, fremde Personen mit positiven Erfahrungen zu verknüpfen. Durch kontrollierte Begegnungen auf sicherer Distanz wird die emotionale Reaktion von Angst langsam in Richtung Gelassenheit verschoben. Dieser Prozess braucht Zeit und darf nicht überstürzt werden.`,
-      `Im Bereich der Leinenführigkeit ist das Ziel, dass ${DOG_NAME} lernt, an lockerer Leine zu gehen und sich an ihrer Bezugsperson zu orientieren. Statt durch Flucht nach vorne soll ${DOG_NAME} durch Blickkontakt und ruhiges Gehen auf Stress reagieren. Die lockere Leine ist dabei nicht nur ein praktisches Ziel, sondern auch ein Zeichen dafür, dass ${DOG_NAME} sich sicher genug fühlt, um nicht mehr fliehen zu müssen.`,
-      `Schließlich soll ${DOG_NAME} alternative Bewältigungsstrategien zum Bellen aufbauen. Dazu gehören der erlernte Blickkontakt auf das Signal SCHAU, das Ausweichen über einen BOGEN und der freiwillige Rückzug zur Bezugsperson. Am Ende des Plans soll ${DOG_NAME} ein Repertoire an Verhaltensweisen haben, die sie statt des Bellens einsetzen kann, wenn sie sich unsicher fühlt.`,
+      `Das übergeordnete Ziel dieses 6-Monatsplans ist der Aufbau einer tief verankerten emotionalen Sicherheit für ${DOG_NAME}. Über die langen 24 Wochen lernt sie nicht nur einzelne Übungen, sondern dass ihre Bezugsperson dauerhaft die verlässlichste Konstante in jeder Situation ist. Dieses Vertrauen wird das Fundament für alle weiteren Trainingsschritte und bleibt auch nach Ende des Plans bestehen.`,
+      `Ein zentrales Trainingsziel ist die systematische Desensibilisierung gegenüber erwachsenen Menschen — und zwar in einer Tiefe, die nur ein langfristiger Plan erlauben kann. ${DOG_NAME} lernt schrittweise und in ihrem eigenen Tempo, fremde Personen mit positiven Erfahrungen zu verknüpfen. Durch hunderte kontrollierte Begegnungen über die sechs Monate verschiebt sich die emotionale Grundreaktion von Angst zu Gelassenheit. Dieser Prozess braucht genau die Zeit, die ein halber Jahresplan bietet.`,
+      `Im Bereich der Leinenführigkeit ist das Ziel, dass ${DOG_NAME} an lockerer Leine durch unterschiedlichste Umgebungen geht und sich verlässlich an ihrer Bezugsperson orientiert — auch dann, wenn unvorhergesehene Reize auftauchen. Die lockere Leine wird über sechs Monate so selbstverständlich, dass sie nicht mehr trainiert werden muss, sondern Alltag ist.`,
+      `Schließlich soll ${DOG_NAME} ein breites Repertoire alternativer Bewältigungsstrategien zum Bellen und Flüchten aufgebaut haben. Dazu gehören der erlernte Blickkontakt auf das Signal SCHAU, das aktive Ausweichen über einen BOGEN, der freiwillige Rückzug zur Bezugsperson, das Abliegen auf einer Decke draußen sowie das kontrollierte Auflösen von Stress über Nasenarbeit. Am Ende der sechs Monate hat ${DOG_NAME} viele Werkzeuge, die sie je nach Situation einsetzen kann.`,
     ],
   },
   weeks: [
@@ -633,9 +641,438 @@ function buildPlan(DOG_NAME, MAIN_PROBLEM) {
       stab: {
         title: "Stabilisierung im Alltag",
         text: [
-          `Nach den vier Wochen hat ${DOG_NAME} ein Grundrepertoire an Strategien aufgebaut, das nun dauerhaft gepflegt werden muss. Das SCHAU-Signal, die lockere Leinenführung und das BOGEN-Gehen sollten fester Bestandteil jedes Spaziergangs bleiben. Belohne diese Verhaltensweisen auch nach Ende des Plans regelmäßig, damit sie nicht verblassen.`,
-          `Menschenbegegnungen sollten weiterhin kontrolliert und positiv gestaltet werden. Vermeide Situationen, in denen fremde Personen ungefragt auf ${DOG_NAME} zugehen oder sie bedrängen. Erkläre Mitmenschen bei Bedarf freundlich, dass ${DOG_NAME} Abstand braucht und nicht gestreichelt werden möchte.`,
-          `Führe ein kurzes Trainingstagebuch weiter, in dem du nach jedem Spaziergang notierst, wie Begegnungen verlaufen sind. So erkennst du Fortschritte über Wochen und Monate hinweg und bemerkst frühzeitig, wenn sich Rückschritte anbahnen. Dieses Tagebuch ist dein wichtigstes Werkzeug für die langfristige Arbeit mit ${DOG_NAME}.`,
+          `Nach den ersten acht Wochen hat ${DOG_NAME} ein Grundrepertoire an Strategien aufgebaut. Das SCHAU-Signal, die lockere Leinenführung und das BOGEN-Gehen sind ab jetzt fester Bestandteil jedes Spaziergangs. In den folgenden 16 Wochen werden diese Strategien in immer komplexeren Situationen erprobt und vertieft.`,
+          `Belohne die gelernten Verhaltensweisen weiterhin regelmäßig — gerade jetzt, da der erste Lerneffort vorbei ist, ist Konsistenz entscheidend, damit ${DOG_NAME}s neue Reaktionsmuster sich dauerhaft festigen.`,
+        ],
+      },
+    },
+    {
+      nr: 5,
+      goals: [
+        `${DOG_NAME} bewältigt einen Spaziergang mit 5–7 Menschenbegegnungen souverän, ohne dass ihr Stresslevel über den Tag hinweg ansteigt.`,
+        `${DOG_NAME} kann Menschengruppen aus mittlerer Distanz (10–15 Meter) ruhig beobachten, ohne anzuschlagen oder zu ziehen.`,
+        `Das Deckenliegen wird draußen auf unterschiedliche Orte generalisiert: Garten, Park, Wiese, vor einer Bäckerei.`,
+        `${DOG_NAME} lernt, längere Pausen während Spaziergängen aktiv zur Stressregulation zu nutzen.`,
+        `Der eigene Spazierrhythmus wird angepasst: bewusstes Verlangsamen statt schnellem Vorwärtsdrang.`,
+      ],
+      day: [
+        `Morgens ein Standardspaziergang mit dem bekannten Übungsrepertoire aus den ersten vier Phasen. Suche dabei aktiv Orte mit moderatem Menschenaufkommen, an denen ${DOG_NAME} ihr neues Verhalten erproben kann.`,
+        `Mittags eine 10-minütige Bank-Übung: Setzt euch an einen Ort mit Durchgangsverkehr und übt das ruhige Beobachten. Belohne jedes selbstständige Wegschauen großzügig.`,
+        `Abends eine entspannte Decken-Einheit draußen — auf einer Wiese, im Garten oder an einem ruhigen Ort. Ziel: ${DOG_NAME} soll lernen, draußen für 10 Minuten am Stück ruhig liegen zu bleiben.`,
+      ],
+      ex1: {
+        title: "Übung 1 Schritt für Schritt",
+        sub: "Mehrfach-Begegnungen",
+        intro: `${DOG_NAME} lernt, mehrere Menschenbegegnungen in kurzer Abfolge zu bewältigen, ohne dass sich Stress aufstaut. Du brauchst eine Route mit voraussichtlich 5–7 Begegnungen innerhalb von 20 Minuten. Fortschritt zeigt sich daran, dass ${DOG_NAME} die fünfte Begegnung genauso souverän meistert wie die erste.`,
+        steps: [
+          `Plane die Route so, dass zwischen den Begegnungen jeweils 2–3 Minuten ruhige Strecke liegen für Regeneration.`,
+          `Vor der ersten Begegnung: kurze SCHAU-Sequenz, um ${DOG_NAME}s Fokus auf dich einzustellen.`,
+          `Nach jeder Begegnung: aktiv eine Schnüffelsuche mit SUCH einleiten, um Stresshormone abzubauen.`,
+          `Beobachte ${DOG_NAME}s Körpersprache zwischen den Begegnungen — wenn sich Anspannung hält, vergrößere die Pause.`,
+          `Wenn ${DOG_NAME} bei der dritten Begegnung müder wirkt, kehre lieber um statt die Route zu Ende zu gehen.`,
+          `Belohne besonders gut bewältigte Begegnungen mit einem Jackpot aus 4–5 Leckerlis nacheinander.`,
+          `Notiere nach jedem Spaziergang in deinem Trainingstagebuch, wie viele Begegnungen heute gut liefen.`,
+        ],
+      },
+      mistakes: [
+        `Die Route so eng planen, dass mehrere Begegnungen direkt hintereinander kommen — ${DOG_NAME} hat keine Zeit zur Regeneration.`,
+        `Die Schnüffelpausen weglassen, weil "es ja gut lief" — gerade dann hilft die aktive Stressabfuhr.`,
+        `Die Belohnungen reduzieren, weil "${DOG_NAME} weiß ja was sie tun soll" — die Verknüpfung muss weiterhin gepflegt werden.`,
+        `Begegnungen zwingen statt sie geschehen zu lassen — wenn möglich, lass die Route die Begegnungen vorgeben.`,
+        `Die eigene Anspannung übersehen — wenn du selbst angespannt durch die Begegnungen läufst, spürt ${DOG_NAME} das.`,
+      ],
+      ex2: {
+        title: "Übung 2 Schritt für Schritt",
+        sub: "Decke an wechselnden Orten",
+        intro: `${DOG_NAME} überträgt das Deckenliegen auf unterschiedliche Außenorte. Du brauchst eine kleine, kompakte Decke, die in den Rucksack passt, und Geduld. Fortschritt zeigt sich daran, dass ${DOG_NAME} an einem neuen Ort innerhalb von 90 Sekunden die Decke betritt und sich ablegt.`,
+        steps: [
+          `Wähle für die ersten Einheiten Orte mit niedrigem Reizniveau: stille Wiese, eigener Garten, ruhige Parkecke.`,
+          `Lege die Decke aus und führe ${DOG_NAME} mit einem Leckerli dorthin — wie beim Indoor-Decken-Training.`,
+          `Belohne das Ablegen schneller als drinnen — die Außenreize machen die Übung schwieriger.`,
+          `Verlängere die Liegezeit schrittweise: erst 1 Minute, dann 3, später 10.`,
+          `Wechsle nach erfolgreichen Einheiten zu Orten mit leicht erhöhtem Reizniveau: Park-Hauptweg, Vorgarten einer Bäckerei.`,
+          `Wenn ${DOG_NAME} aufsteht: ruhig zurückführen, ohne Worte, ohne Hektik.`,
+          `Beende immer mit Erfolg — auch wenn das bedeutet, dass die Übung an einem Tag nur 2 Minuten dauert.`,
+        ],
+      },
+      check: [
+        `${DOG_NAME} bewältigt 5 Begegnungen hintereinander auf einem Standardspaziergang ohne sichtbare Stresseskalation.`,
+        `Schnüffelpausen werden von ${DOG_NAME} aktiv genutzt — sie senkt den Kopf und sucht eigenständig.`,
+        `Das Deckenliegen funktioniert an mindestens 3 unterschiedlichen Außenorten für jeweils 5 Minuten.`,
+        `${DOG_NAME} legt sich an neuen Außenorten innerhalb von 2 Minuten auf die Decke.`,
+        `Die eigene Atmung und Anspannung beim Spaziergang ist dir bewusst und du arbeitest aktiv mit ihr.`,
+      ],
+    },
+    {
+      nr: 6,
+      goals: [
+        `${DOG_NAME} bewältigt einen Spaziergang in einer leicht reiznreichen Umgebung (kleinere Stadtstraßen, Vorortzentrum).`,
+        `${DOG_NAME} lernt, auf Geräuschreize wie vorbeifahrende Autos, Fahrräder und Skateboards ruhig zu reagieren.`,
+        `Neue Orte werden systematisch erkundet — alle 2–3 Tage ein neuer, vorher unbekannter Spazierweg.`,
+        `${DOG_NAME} entwickelt einen "Anker-Reflex": auf das Wort RUHIG kommt sie automatisch in deine Nähe.`,
+        `Die Reizgewöhnung baut auf Phase 5 auf — keine neuen Schwierigkeitssprünge, sondern Vertiefung.`,
+      ],
+      day: [
+        `Morgens: 20-minütiger Spaziergang an einem vertrauten Ort. ${DOG_NAME} startet mit bekanntem Terrain in den Tag.`,
+        `Mittags: 15 Minuten an einem leicht reizreicheren Ort. Plane bewusst Stopps und Beobachtungspausen ein.`,
+        `Abends: Erkundung eines neuen Weges in eurer Umgebung — Vorortstraßen, Industriegebietsränder, ruhige Wohnviertel.`,
+      ],
+      ex1: {
+        title: "Übung 1 Schritt für Schritt",
+        sub: "Reizgewöhnung Stadt",
+        intro: `${DOG_NAME} lernt, Geräusch- und Bewegungsreize aus mittlerer Distanz gelassen zu nehmen. Ihr seid an einer kleineren Stadtstraße oder im Vorortzentrum. Fortschritt zeigt sich daran, dass ${DOG_NAME} bei einem vorbeifahrenden Fahrrad weder zusammenzuckt noch zieht.`,
+        steps: [
+          `Wähle einen Ort, an dem die Reize vorhersehbar sind: Bürgersteig einer ruhigen Wohnstraße, Sitzbank in einem Vorortzentrum.`,
+          `Setze dich zunächst mit ${DOG_NAME} hin — ihr beobachtet die Umgebung gemeinsam, ohne Druck.`,
+          `Bei jedem auffälligen Reiz (Auto, Fahrrad, Roller): sage ruhig SCHAU und belohne den Blickkontakt zu dir.`,
+          `Achte besonders auf Bewegungsreize — Hunde reagieren stärker auf Bewegung als auf Geräusche.`,
+          `Halte die Einheit kurz: 8–12 Minuten reichen vollkommen aus.`,
+          `Schließe mit einem entspannten Heimweg über ${DOG_NAME}s bevorzugte Route ab.`,
+        ],
+      },
+      mistakes: [
+        `Direkt an stark befahrenen Straßen üben — der Reiz ist zu massiv für diese Phase.`,
+        `${DOG_NAME} dazu bringen wollen, Reize anzuschauen — gerade das Wegschauen ist Erfolg.`,
+        `Die Einheiten zu lang machen — Stadtreize sind anstrengender als ländliche Spaziergänge.`,
+        `Eigene Anspannung bei vorbeifahrenden Autos übersehen — dein Erschrecken überträgt sich.`,
+      ],
+      ex2: {
+        title: "Übung 2 Schritt für Schritt",
+        sub: "Anker-Signal RUHIG",
+        intro: `${DOG_NAME} lernt ein neues Sicherheitssignal: RUHIG. Es bedeutet "komm zu mir und entspann dich". Du brauchst Leckerlis und eine ruhige Übungsumgebung zum Aufbau. Fortschritt zeigt sich daran, dass ${DOG_NAME} auf RUHIG in deine Nähe kommt und sich neben dir hinsetzt.`,
+        steps: [
+          `Übe zunächst drinnen: ${DOG_NAME} ist in einem anderen Raum oder einige Meter weg.`,
+          `Sage ruhig und tief RUHIG und klopfe leicht auf den Boden neben deinen Füßen.`,
+          `Sobald ${DOG_NAME} kommt, belohne sofort und großzügig — Jackpot-Modus.`,
+          `Sage zusätzlich PLATZ, sobald sie neben dir steht, und belohne das Hinsetzen.`,
+          `Übe das Signal zunächst nur in ruhigen, vertrauten Umgebungen.`,
+          `Steigere erst nach 4–5 Tagen erfolgreichen Indoor-Trainings auf Outdoor-Settings.`,
+          `Nutze RUHIG später bewusst nur, wenn ${DOG_NAME} entspannen soll — nicht als Notbremse.`,
+        ],
+      },
+      check: [
+        `${DOG_NAME} reagiert auf vorbeifahrende Fahrräder mit Blickkontakt zu dir statt mit Bellen oder Ziehen.`,
+        `Mindestens 3 neue Spazierorte sind erfolgreich erkundet worden.`,
+        `RUHIG funktioniert drinnen zuverlässig: ${DOG_NAME} kommt innerhalb von 3 Sekunden in deine Nähe.`,
+        `${DOG_NAME} zeigt im Stadtbereich keine deutlich erhöhten Stresssignale im Vergleich zum Land.`,
+      ],
+    },
+    {
+      nr: 7,
+      goals: [
+        `${DOG_NAME} bewältigt Begegnungen mit unterschiedlichen Menschentypen souverän — Männer, Frauen, Kinder.`,
+        `Spezielle Reize wie Mütze, Schirm, Brille, Bart werden eingeübt — viele Hunde reagieren auf solche Details.`,
+        `Das RUHIG-Signal aus Phase 6 wird im Außenbereich gefestigt und in Begegnungssituationen integriert.`,
+        `${DOG_NAME} entwickelt erste Ansätze von Vertrauen gegenüber wiederkehrenden, freundlichen Personen.`,
+        `Der Bogenradius bei Begegnungen wird langsam auf 5–7 Meter reduziert.`,
+      ],
+      day: [
+        `Morgens: Spaziergang mit gezieltem Augenmerk auf Begegnungen mit unterschiedlichen Menschentypen — variiere bewusst die Tageszeit, um andere Personen zu treffen.`,
+        `Mittags: 10 Minuten Beobachtungstraining an einem Ort mit Kinderspielplatz in 30 Meter Entfernung.`,
+        `Abends: Spaziergang mit Einbau des RUHIG-Signals — übe es vor und nach Begegnungen bewusst.`,
+      ],
+      ex1: {
+        title: "Übung 1 Schritt für Schritt",
+        sub: "Personen-Vielfalt",
+        intro: `${DOG_NAME} lernt, dass die Strategien aus den ersten Phasen für alle Menschen gelten — egal wie sie aussehen. Du brauchst Spazierorte mit unterschiedlichem Publikum (Berufspendler morgens, Spaziergänger nachmittags, Jogger abends). Fortschritt zeigt sich daran, dass ${DOG_NAME} bei einer ungewohnten Person (z.B. Mann mit Schirm) genauso reagiert wie bei einer vertrauten Person.`,
+        steps: [
+          `Beobachte in der ersten Woche bewusst, auf welche Personentypen ${DOG_NAME} besonders reagiert.`,
+          `Suche gezielt Orte auf, an denen diese spezifischen Personentypen zu erwarten sind.`,
+          `Setze die bekannten Strategien (SCHAU, BOGEN) ein, achte aber auf die feinen Unterschiede in ${DOG_NAME}s Reaktion.`,
+          `Bei besonders schwierigen Begegnungen: lieber einen größeren Bogen wählen und Erfolge sammeln.`,
+          `Belohne ${DOG_NAME} extra großzügig bei Begegnungen mit "neuen" Typen — die Generalisierung muss verstärkt werden.`,
+          `Variiere die Übungstage, sodass ${DOG_NAME} unterschiedlichste Personentypen über die zwei Wochen trifft.`,
+        ],
+      },
+      mistakes: [
+        `Annehmen, dass alle Menschen für ${DOG_NAME} gleich sind — sie nimmt feine Unterschiede wahr.`,
+        `Schwierige Begegnungen vermeiden — gerade diese müssen geübt werden, aber kontrolliert.`,
+        `Bei Kindern zu nah ran gehen — Kinderverhalten ist unvorhersehbar, Distanz ist hier besonders wichtig.`,
+      ],
+      ex2: {
+        title: "Übung 2 Schritt für Schritt",
+        sub: "RUHIG im Außenbereich",
+        intro: `${DOG_NAME} festigt das RUHIG-Signal in realistischen Außensituationen. Du brauchst Leckerlis und einen ruhigen Außenort zum Aufbau. Fortschritt zeigt sich daran, dass ${DOG_NAME} auch nach einer Begegnung auf RUHIG schnell zu dir kommt und sich entspannt.`,
+        steps: [
+          `Übe RUHIG zunächst in einer entspannten Außensituation ohne Trigger — Garten, ruhige Wiese.`,
+          `${DOG_NAME} ist 5–10 Meter entfernt am Schnüffeln oder Erkunden.`,
+          `Sage RUHIG in tiefem, ruhigem Ton — und belohne sofort, wenn sie kommt.`,
+          `Steigere die Distanz und den Reizpegel über die zwei Wochen langsam.`,
+          `Setze RUHIG nach einer erfolgreichen Begegnung ein — die Belohnung verstärkt die Verbindung "Begegnung gemeistert, dann Ruhe-Phase".`,
+          `Vermeide es, RUHIG einzusetzen, wenn ${DOG_NAME} bereits stark gestresst ist — dann lieber abbrechen.`,
+        ],
+      },
+      check: [
+        `${DOG_NAME} bewältigt Begegnungen mit mindestens 4 unterschiedlichen Personentypen souverän.`,
+        `Auf RUHIG kommt ${DOG_NAME} draußen aus 5 Meter Distanz innerhalb von 4 Sekunden zu dir.`,
+        `Der Bogenradius bei Begegnungen ist auf 5–7 Meter reduzierbar, ohne dass ${DOG_NAME} Stresssignale zeigt.`,
+        `Kinderspielplätze in 30 Meter Entfernung sind in der Beobachtung neutralisiert.`,
+      ],
+    },
+    {
+      nr: 8,
+      goals: [
+        `${DOG_NAME} bewältigt direktes Vorbeigehen an Menschen in 3–5 Meter Distanz, ohne den BOGEN einsetzen zu müssen.`,
+        `${DOG_NAME} entwickelt Vertrauen, dass die Bezugsperson die Situation steuert — die Eigeninitiative tritt zurück.`,
+        `Die Schwellenwertarbeit beginnt: Wo genau liegt heute ${DOG_NAME}s Komfortgrenze, und wo kommt der Stress?`,
+        `Längere Einheiten werden eingeführt: einzelne Begegnungen können bewusst etwas länger gehalten werden.`,
+        `Erstes "neutrales Stehenbleiben" während einer Begegnung wird geübt.`,
+      ],
+      day: [
+        `Morgens: bewusster Spaziergang an einem leicht reizreichen Ort, mit Fokus auf Schwellenwertarbeit.`,
+        `Mittags: 10 Minuten Bank-Übung an einem mittelfrequentierten Ort, mit kontrollierten Vorbeigehern.`,
+        `Abends: ruhiger Spaziergang zur Regeneration — keine neuen Reize, nur das Bekannte.`,
+      ],
+      ex1: {
+        title: "Übung 1 Schritt für Schritt",
+        sub: "Direktes Vorbeigehen",
+        intro: `${DOG_NAME} lernt, an einem Menschen in 3–5 Meter Distanz vorbeizugehen, ohne dass ein Bogen nötig ist. Du brauchst Spazierwege, an denen Vorbeigehen unvermeidlich ist — schmalere Wege, Brücken, Engstellen. Fortschritt zeigt sich daran, dass ${DOG_NAME} dabei locker an der Leine bleibt und dich nicht aus den Augen verliert.`,
+        steps: [
+          `Wähle zunächst Wege mit niedriger Frequenz — pro Stunde nur 1–2 Vorbeigeher.`,
+          `Beobachte ${DOG_NAME}s Körpersprache schon aus 15 Meter Distanz und bereite sie mit SCHAU vor.`,
+          `Halte das Tempo konstant — nicht schneller, nicht langsamer werden.`,
+          `Belohne während des Vorbeigehens kontinuierlich mit kleinen Leckerlis (Pippeling-Modus).`,
+          `Wenn ${DOG_NAME} stress-frei vorbeigeht: Jackpot 5 Sekunden nach Passage.`,
+          `Vermeide direkten Blickkontakt mit dem entgegenkommenden Menschen — das beruhigt ${DOG_NAME} zusätzlich.`,
+          `Wenn ${DOG_NAME} doch Anspannung zeigt: zurück zum BOGEN, ohne Frust.`,
+        ],
+      },
+      mistakes: [
+        `Auf Erfolg drängen — wenn ${DOG_NAME} heute keinen direkten Vorbeigang schafft, ist morgen ein neuer Tag.`,
+        `Den Leckerli-Strom unterbrechen, weil "es ja gerade gut läuft" — Kontinuität ist der Schlüssel.`,
+        `Auf engen Wegen üben, an denen wenn-überhaupt kein Ausweichen mehr möglich ist.`,
+      ],
+      ex2: {
+        title: "Übung 2 Schritt für Schritt",
+        sub: "Schwellenwert-Diagnose",
+        intro: `Du lernst, ${DOG_NAME}s Schwellenwert präzise abzulesen. Du brauchst dein Trainingstagebuch und einen aufmerksamen Blick. Fortschritt zeigt sich daran, dass du innerhalb von 2 Sekunden erkennst, wann ${DOG_NAME} ihren Schwellenwert überschreitet.`,
+        steps: [
+          `Beobachte: Wo blickt ${DOG_NAME} hin? Wie ist ihre Ohrenhaltung? Stirn glatt oder leicht gerunzelt?`,
+          `Achte auf das Atemmuster — schnelles Hecheln bei kühlen Temperaturen ist ein deutliches Stresssignal.`,
+          `Beobachte die Rute — gestreckt, hochgehalten, eingeklemmt? Jede Position hat Bedeutung.`,
+          `Notiere am Abend in dein Trainingstagebuch: Wo war heute der Schwellenwert? Bei welchem Reiz?`,
+          `Erkenne wiederkehrende Muster: Sind bestimmte Tageszeiten schwieriger? Bestimmte Orte?`,
+          `Plane den nächsten Tag so, dass ${DOG_NAME} 90% ihrer Zeit unter dem Schwellenwert verbringt.`,
+        ],
+      },
+      check: [
+        `${DOG_NAME} kann an einem Menschen in 3–5 Meter Distanz vorbeigehen, ohne den BOGEN zu brauchen.`,
+        `Du erkennst ${DOG_NAME}s Schwellenwert zuverlässig anhand von 3 spezifischen Körpersignalen.`,
+        `Das Trainingstagebuch wird täglich geführt und zeigt sichtbare Muster.`,
+        `${DOG_NAME} bleibt während eines direkten Vorbeigangs an lockerer Leine.`,
+      ],
+    },
+    {
+      nr: 9,
+      goals: [
+        `${DOG_NAME} bewältigt Begegnungen mit anderen Hunden auf 20–30 Meter Distanz ruhig und kontrolliert.`,
+        `Hundeparks oder Hundewiesen werden bewusst nur als Beobachtungsorte genutzt — nicht als Spielplätze.`,
+        `Andere Hunde werden in das bestehende Reaktionsrepertoire integriert (SCHAU, BOGEN, RUHIG).`,
+        `${DOG_NAME} entwickelt ein klares Verständnis: andere Hunde sind keine Spielpartner, sondern Umweltreize.`,
+        `Begegnungen mit Hund und Mensch gleichzeitig werden geübt.`,
+      ],
+      day: [
+        `Morgens: Standardspaziergang an einem Ort, an dem regelmäßig andere Hunde unterwegs sind.`,
+        `Mittags: 15-minütige Bank-Übung in 25 Meter Entfernung zu einer Hundewiese.`,
+        `Abends: Spaziergang in einer Umgebung mit gemischten Reizen — Menschen UND andere Hunde.`,
+      ],
+      ex1: {
+        title: "Übung 1 Schritt für Schritt",
+        sub: "Hund in Distanz beobachten",
+        intro: `${DOG_NAME} lernt, andere Hunde aus sicherer Distanz neutral wahrzunehmen. Du brauchst einen Ort mit Hundewiese oder ähnlichem, von dem aus du in 25–30 Meter Distanz beobachten kannst. Fortschritt zeigt sich daran, dass ${DOG_NAME} bei einem rennenden Hund nicht in Aufregung gerät.`,
+        steps: [
+          `Wähle einen Ort mit fester Sitzgelegenheit (Bank, Mauer) in 25–30 Meter Entfernung zur Hundewiese.`,
+          `Setze dich entspannt hin — keine Hektik, kein Drängen.`,
+          `Bei jedem Hund, der ${DOG_NAME}s Aufmerksamkeit erregt: SCHAU und Belohnung.`,
+          `Achte besonders auf rennende oder bellende Hunde — diese Reize sind am schwierigsten.`,
+          `Wenn ${DOG_NAME} gut bleibt: 10 Minuten Beobachtungseinheit, dann ruhige Heimfahrt.`,
+          `Vermeide unbedingt direkte Hundebegegnungen in dieser Phase — Distanz ist der Schlüssel.`,
+        ],
+      },
+      mistakes: [
+        `Auf einen Hundepark gehen — das ist zu intensiv, andere Hunde kommen zu nah.`,
+        `Andere Hundebesitzer in Smalltalk verwickeln — die Aufmerksamkeit muss bei ${DOG_NAME} bleiben.`,
+        `Den Hunden zuwinken oder mit ihnen kommunizieren — das verwirrt ${DOG_NAME}.`,
+        `${DOG_NAME} zwingen wollen, Interesse an anderen Hunden zu zeigen.`,
+      ],
+      ex2: {
+        title: "Übung 2 Schritt für Schritt",
+        sub: "Gemischte Reize",
+        intro: `${DOG_NAME} lernt, mit gemischten Reizen (Mensch + Hund gleichzeitig) umzugehen. Du brauchst eine Spazierroute, an der beide Reizarten auftreten. Fortschritt zeigt sich daran, dass ${DOG_NAME} ihre bekannten Strategien situationsabhängig einsetzt.`,
+        steps: [
+          `Wähle Routen, an denen Hund-und-Mensch-Begegnungen vorhersehbar sind (Spaziergänger mit Hund).`,
+          `Beachte: jetzt sind zwei Reize zu managen — der Mensch und der Hund.`,
+          `Halte den Abstand mindestens auf der Distanz, die du für reine Hundebegegnungen brauchst (20+ Meter).`,
+          `Setze BOGEN oder SCHAU je nach Situation ein.`,
+          `Belohne besonders großzügig bei erfolgreichen Mixed-Begegnungen.`,
+        ],
+      },
+      check: [
+        `${DOG_NAME} bewältigt eine Hund-Beobachtungssitzung von 10 Minuten in 25 Meter Distanz souverän.`,
+        `Bei gemischten Begegnungen (Mensch + Hund) zeigt ${DOG_NAME} klare, strategiebasierte Reaktionen.`,
+        `Rennende oder bellende Hunde in der Distanz lösen keine Eskalation aus.`,
+        `Die Distanz zu Hunden bleibt konsequent über 20 Meter.`,
+      ],
+    },
+    {
+      nr: 10,
+      goals: [
+        `${DOG_NAME} bewältigt einen kurzen Aufenthalt im Café-Außenbereich (15–20 Minuten) ruhig.`,
+        `Stadtspaziergänge in moderaten Fußgängerzonen werden in das Repertoire aufgenommen.`,
+        `${DOG_NAME} lernt, ihren neuen "Ruhepunkt unter dem Tisch" einzunehmen.`,
+        `Die ersten Routinen für gemeinsame Alltagserlebnisse entstehen — kleine wöchentliche Highlights.`,
+        `Selbstständigkeit von ${DOG_NAME} wird gefördert: weniger Ansagen, mehr Vertrauen.`,
+      ],
+      day: [
+        `Morgens: vertrauter Spaziergang als ruhiger Tagesstart.`,
+        `Mittags oder nachmittags: 15-minütiger Café-Aufenthalt mit Decke unter dem Tisch (2–3 mal pro Woche).`,
+        `Abends: ruhige Heim-Routine mit Decke im Wohnzimmer.`,
+      ],
+      ex1: {
+        title: "Übung 1 Schritt für Schritt",
+        sub: "Café-Außenbereich",
+        intro: `${DOG_NAME} lernt, in einer Café-Situation ruhig zu warten. Du brauchst ein Café mit Außenbereich, deine Reisedecke und Geduld. Fortschritt zeigt sich daran, dass ${DOG_NAME} 15 Minuten ruhig unter dem Tisch liegen bleibt.`,
+        steps: [
+          `Wähle ein Café mit ruhigem Außenbereich, nicht zentral in einer Fußgängerzone.`,
+          `Lege die Decke vor oder unter den Tisch — gut geschützt, nicht im Durchgang.`,
+          `Bestelle erst, wenn ${DOG_NAME} sich abgelegt hat — die Übung hat Priorität.`,
+          `Belohne ${DOG_NAME} in der ersten Minute mehrfach für ruhiges Liegen.`,
+          `Reduziere die Belohnungsfrequenz langsam — alle 30 Sekunden, dann jede Minute.`,
+          `Wenn ${DOG_NAME} aufsteht oder unruhig wird: bleibe selbst ruhig sitzen und führe sie zurück.`,
+          `Beende den Aufenthalt nach 15 Minuten — auch wenn es gerade super lief.`,
+        ],
+      },
+      mistakes: [
+        `Direkt in eine zentrale Fußgängerzone gehen — zu viele Reize für den ersten Versuch.`,
+        `Den eigenen Stress übersehen — wenn du selbst hektisch bist (Kaffeebestellung etc.), wirkt sich das aus.`,
+        `Andere Gäste oder Kellner mit ${DOG_NAME} interagieren lassen — Ruhe ist das Ziel, nicht Sozialisierung.`,
+      ],
+      ex2: {
+        title: "Übung 2 Schritt für Schritt",
+        sub: "Selbstständigkeits-Spaziergang",
+        intro: `${DOG_NAME} entwickelt mehr Selbstständigkeit. Du brauchst eine bekannte Spazierroute und die Bereitschaft, weniger zu reden. Fortschritt zeigt sich daran, dass ${DOG_NAME} eigenständig Strategien wählt, ohne dass du sie ansagen musst.`,
+        steps: [
+          `Wähle eine vertraute Route mit moderaten Reizen.`,
+          `Reduziere deine verbalen Signale bewusst — sage nichts, solange ${DOG_NAME} gut reagiert.`,
+          `Beobachte, ob ${DOG_NAME} eigenständig SCHAU oder BOGEN wählt, ohne dass du das Signal gibst.`,
+          `Belohne eigenständige, gute Entscheidungen mit großzügigem Jackpot.`,
+          `Wenn ${DOG_NAME} unsicher wird: einmal helfen, dann wieder zurückhalten.`,
+          `Diese Übung zeigt dir, wo ${DOG_NAME} schon selbstständig ist und wo sie noch Stütze braucht.`,
+        ],
+      },
+      check: [
+        `${DOG_NAME} bewältigt einen 15-minütigen Café-Aufenthalt ohne starkes Unruheverhalten.`,
+        `Eigenständige Strategiewahl bei mindestens 2 Begegnungen pro Spaziergang.`,
+        `Die Selbstständigkeit fühlt sich für dich angenehm an — du musst nicht ständig "managen".`,
+        `Stadtspaziergänge in moderaten Fußgängerzonen sind in 80% der Fälle ruhig.`,
+      ],
+    },
+    {
+      nr: 11,
+      goals: [
+        `${DOG_NAME} bewältigt ruhigen Besuch zuhause (Familie, Freunde) souverän — sie bleibt entspannt auf ihrer Decke.`,
+        `Gäste werden systematisch von ${DOG_NAME} ignoriert — keine Aufdringlichkeit, keine Vermeidung, einfach Neutralität.`,
+        `Die Bezugsperson steuert klar, wer wann mit ${DOG_NAME} interagiert (oder eben nicht).`,
+        `Übungen zur Türklingel-Routine werden eingeführt.`,
+        `${DOG_NAME} entwickelt eine "soziale Pufferzone" im eigenen Zuhause.`,
+      ],
+      day: [
+        `Morgens: ruhiger Spaziergang — Bewegungsanteil ist wichtig vor "sozialen" Tagen.`,
+        `Mittags oder nachmittags: Besuchsempfang üben (1–2 mal pro Woche, mit kooperativen Personen).`,
+        `Abends: gemeinsame ruhige Wohnzimmerphase, viel Belohnung für Entspannung.`,
+      ],
+      ex1: {
+        title: "Übung 1 Schritt für Schritt",
+        sub: "Besuchsempfang",
+        intro: `${DOG_NAME} lernt, dass Besuch zuhause keine besondere Bedrohung ist. Du brauchst kooperative Personen, die bereit sind, ${DOG_NAME} zu ignorieren. Fortschritt zeigt sich daran, dass ${DOG_NAME} während eines 30-minütigen Besuchs auf ihrer Decke bleibt.`,
+        steps: [
+          `Informiere die Gäste vorab klar: "${DOG_NAME} darf bei Eintritt nicht angesprochen oder angeschaut werden."`,
+          `Lege ${DOG_NAME}s Decke an einen ruhigen Platz im Wohnzimmer — nicht im Durchgang, nicht im Mittelpunkt.`,
+          `Sage ${DOG_NAME} kurz vor dem Klingeln PLATZ und belohne das Liegen.`,
+          `Bei Eintritt: Gäste gehen direkt vorbei zu ihren Sitzplätzen — keine Aufmerksamkeit für ${DOG_NAME}.`,
+          `Du belohnst ${DOG_NAME} kontinuierlich für ruhiges Liegen während des Besuchs.`,
+          `Nach 15 Minuten kann ein Gast langsam und ohne Blickkontakt ein Leckerli auf den Boden in ${DOG_NAME}s Nähe legen.`,
+          `Beende den Besuch (zumindest die Übung) nach 30 Minuten — dann darf ${DOG_NAME} aufstehen und sich entspannen.`,
+        ],
+      },
+      mistakes: [
+        `Gäste, die "kompetent mit Hunden" sind und meinen, sie wüssten es besser — gerade die sind oft das Problem.`,
+        `${DOG_NAME} zu Beginn streicheln oder beschwichtigen lassen — Distanz ist hier essentiell.`,
+        `Die Übung zu lange machen — 30 Minuten reichen vollkommen.`,
+        `Eigenen Stress beim Besuch übersehen — ${DOG_NAME} spürt deine Anspannung sofort.`,
+      ],
+      ex2: {
+        title: "Übung 2 Schritt für Schritt",
+        sub: "Türklingel-Routine",
+        intro: `${DOG_NAME} lernt eine feste Routine für das Klingeln. Du brauchst einen kooperativen Helfer, der mehrmals klingelt und wieder weggeht. Fortschritt zeigt sich daran, dass ${DOG_NAME} auf ein Klingeln mit gehen zur Decke reagiert statt mit Bellen.`,
+        steps: [
+          `Etabliere die Routine: Klingel, dann Decke, dann Belohnung.`,
+          `Beginne mit "Trocken-Übungen": du tippst auf das Klingel-Geräusch ohne dass jemand klingelt.`,
+          `Sobald die erste Verknüpfung steht, kann ein Helfer einmal kurz klingeln und sofort gehen.`,
+          `${DOG_NAME} geht zur Decke (du leitest sie hin, wenn nötig), wird belohnt — und nichts weiter passiert.`,
+          `Wiederhole das über mehrere Tage hinweg, sodass das Klingeln seine Schreckwirkung verliert.`,
+          `Erst nach 4–5 Tagen kann der Helfer nach dem Klingeln auch eintreten — mit Ignoranz gegenüber ${DOG_NAME}.`,
+        ],
+      },
+      check: [
+        `${DOG_NAME} bleibt während eines 30-minütigen Gästebesuchs auf ihrer Decke.`,
+        `Auf das Klingeln folgt ein Decke-Reflex statt Bellen.`,
+        `Gäste werden von ${DOG_NAME} weder gemieden noch aufgesucht — neutral.`,
+        `Die eigene Anspannung beim Empfang ist nicht mehr spürbar gesteigert.`,
+      ],
+    },
+    {
+      nr: 12,
+      goals: [
+        `${DOG_NAME}s gelernte Strategien sind dauerhaft im Alltag verankert — kein bewusstes "Training" mehr nötig.`,
+        `Die Bezugsperson kann das eigene Belohnungsverhalten reduzieren ohne dass ${DOG_NAME}s Sicherheit nachlässt.`,
+        `Ein persönliches "Wartungs-Ritual" wird entwickelt: feste wöchentliche Übungs-Highlights.`,
+        `Rückschritte werden früh erkannt und souverän verarbeitet.`,
+        `Ein neues Trainings-Ziel für die Zeit nach den 6 Monaten wird gemeinsam definiert.`,
+      ],
+      day: [
+        `Morgens: Spaziergang mit allen Strategien im Repertoire, aber ohne expliziten Trainings-Fokus.`,
+        `Mittags: 1–2 mal pro Woche bewusstes "Wartungs-Training" an einem mittelschwierigen Ort.`,
+        `Abends: ruhige Routine, Reflexion des Tages, Eintrag im Tagebuch.`,
+      ],
+      ex1: {
+        title: "Übung 1 Schritt für Schritt",
+        sub: "Alltagsintegration",
+        intro: `${DOG_NAME}s Strategien werden vom expliziten Training zur Alltagsroutine. Du brauchst nur dein bewusstes Auge und die Bereitschaft, weniger zu trainieren. Fortschritt zeigt sich daran, dass Spaziergänge sich nicht mehr wie Training anfühlen.`,
+        steps: [
+          `Reduziere die Häufigkeit der Belohnungen bewusst — von "alle 10 Schritte" auf "alle 50 Schritte".`,
+          `Belohne weiterhin Spitzenleistungen mit Jackpot — die Verstärkung der besten Momente bleibt.`,
+          `Beobachte, ob ${DOG_NAME} ohne explizite Belohnung weiterhin die Strategien zeigt.`,
+          `Wenn ja: weiter reduzieren, immer in kleinen Schritten.`,
+          `Wenn nein: kurz zurück zur höheren Belohnungsfrequenz, dann erneut versuchen.`,
+          `Über die zwei Wochen entwickelt sich ein "Alltagsmodus" — entspannter, weniger trainings-fokussiert.`,
+        ],
+      },
+      mistakes: [
+        `Zu schnell von Trainings- in Alltagsmodus wechseln — die Übergangszeit muss langsam sein.`,
+        `Belohnungen komplett weglassen — auch im Alltag braucht das System Verstärkung.`,
+        `Annehmen, dass jetzt "alles erledigt" ist — Wartung ist Daueraufgabe.`,
+      ],
+      ex2: {
+        title: "Übung 2 Schritt für Schritt",
+        sub: "Eigenes Wartungs-Ritual",
+        intro: `Du entwickelst dein eigenes wöchentliches Wartungs-Ritual für ${DOG_NAME}. Du brauchst Klarheit über eure Stärken und Schwächen und etwas Planungs-Zeit. Fortschritt zeigt sich daran, dass das Ritual zur festen Gewohnheit wird.`,
+        steps: [
+          `Reflektiere: An welchen Orten ist ${DOG_NAME} immer noch unsicher? Welche Übungen müssen lebendig bleiben?`,
+          `Definiere 2–3 wöchentliche "Wartungs-Spots": Café-Besuch, schwieriger Spazierweg, soziale Situation.`,
+          `Plane einen festen Wochentag und eine feste Zeit für jeden dieser Spots.`,
+          `Notiere im Tagebuch nach jedem Wartungs-Besuch: Was lief gut, was war schwer?`,
+          `Passe das Ritual alle 4–6 Wochen an deine aktuelle Lebensrealität an.`,
+          `Erkenne: Ihr seid ein Team, das sich gemeinsam entwickelt — das Ritual ist nur ein Werkzeug.`,
+        ],
+      },
+      stab: {
+        title: "Wie es nach den 6 Monaten weitergeht",
+        text: [
+          `Mit dem Ende der 12. Phase habt ihr 24 Wochen intensives Training durchgezogen. ${DOG_NAME} hat sich sichtbar verändert — ihr Reaktionsrepertoire ist breit, ihre Sicherheit ist gewachsen, und du als Bezugsperson hast das Vertrauen gewonnen, schwierige Situationen souverän zu managen.`,
+          `Was jetzt kommt, ist die Wartungs- und Vertiefungsphase. Die im letzten Schritt entwickelten Rituale bilden das Gerüst eures gemeinsamen Alltags. Trainings-Sessions im engeren Sinne werden seltener — aber jede gemeinsame Situation ist eine Gelegenheit zur Festigung.`,
+          `Setze dir alle 3–4 Monate ein neues kleines Ziel. Das kann ein neuer Ort, eine neue Person oder eine neue Routine sein. Bleibt in Bewegung, aber ohne Druck. ${DOG_NAME}s Entwicklung ist nicht abgeschlossen — sie geht weiter, in entspannterer Form.`,
+          `Wenn du das Gefühl hast, dass etwas stagniert oder Rückschritte auftauchen, die du nicht erklären kannst: ziehe eine professionelle Hundetrainerin vor Ort hinzu. Ein frischer Blick hilft oft, blinde Flecken zu erkennen.`,
         ],
       },
     },
@@ -658,9 +1095,9 @@ function buildPlan(DOG_NAME, MAIN_PROBLEM) {
     ],
     nextTitle: "Dein nächster Trainingsschritt",
     nextText: [
-      `Du hast in den letzten vier Wochen die Grundlagen gelegt, um ${DOG_NAME} systematisch mehr Sicherheit und Vertrauen im Alltag zu geben. ${DOG_NAME} hat gelernt, dass ihre Bezugsperson ein verlässlicher Anker ist, dass Menschen nicht grundsätzlich bedrohlich sind und dass es Alternativen zum Bellen und Flüchten gibt. Das ist eine erhebliche Leistung, die du dir und ${DOG_NAME} anerkennen darfst.`,
-      `Dieser Plan ist der Anfang einer langfristigen Veränderung, nicht das Ende. ${DOG_NAME}s Ängstlichkeit wird sich weiter verbessern, wenn du die Übungen und Prinzipien konsequent in den Alltag einbaust. Steigere die Schwierigkeit weiterhin in kleinen Schritten und gib ${DOG_NAME} die Zeit, die sie braucht, um jede neue Stufe sicher zu bewältigen.`,
-      `Wenn du das Gefühl hast, dass ${DOG_NAME}s Fortschritte stagnieren oder dass bestimmte Situationen trotz Training nicht besser werden, ziehe eine professionelle Hundetrainerin vor Ort hinzu. Gemeinsam könnt ihr den Plan anpassen und gezielt an den Stellen arbeiten, die im Alltag die größten Herausforderungen darstellen. Du bist auf einem guten Weg und ${DOG_NAME} hat in dir die beste Voraussetzung für ein entspannteres Leben.`,
+      `Du hast in den letzten sechs Monaten die Grundlagen gelegt UND vertieft, um ${DOG_NAME} systematisch mehr Sicherheit und Vertrauen im Alltag zu geben. ${DOG_NAME} hat gelernt, dass ihre Bezugsperson ein verlässlicher Anker ist, dass Menschen nicht grundsätzlich bedrohlich sind und dass es Alternativen zum Bellen und Flüchten gibt. Über 24 Wochen sind diese Erkenntnisse zu einer tief verankerten Reaktionsweise geworden — das ist eine erhebliche Leistung, die du dir und ${DOG_NAME} anerkennen darfst.`,
+      `Dieser Plan war ein langer Atem — und das ist seine größte Stärke. ${DOG_NAME}s Ängstlichkeit wird sich weiter verbessern, wenn du die Übungen und Prinzipien konsequent in den Alltag einbaust. Steigere die Schwierigkeit weiterhin in kleinen Schritten und gib ${DOG_NAME} die Zeit, die sie braucht, um jede neue Stufe sicher zu bewältigen.`,
+      `Wenn du das Gefühl hast, dass ${DOG_NAME}s Fortschritte stagnieren oder dass bestimmte Situationen trotz der sechs Monate intensiven Trainings nicht besser werden, ziehe eine professionelle Hundetrainerin vor Ort hinzu. Gemeinsam könnt ihr den nächsten Schritt anpassen und gezielt an den Stellen arbeiten, die im Alltag noch Herausforderungen darstellen. Du bist auf einem starken Weg und ${DOG_NAME} hat in dir die beste Voraussetzung für ein entspanntes Leben.`,
     ],
     nextFooter: "Bei Fragen kannst du dich jederzeit per Mail bei unserem Team melden.\nViel Spaß mit deinem PfotenPlan!",
   },
@@ -903,7 +1340,7 @@ export async function buildPdf(params = {}) {
   const MAIN_PROBLEM = (params.mainProblem ?? process.env.MAIN_PROBLEM ?? DEFAULT_MAIN_PROBLEM).trim();
   const PLAN = buildPlan(DOG_NAME, MAIN_PROBLEM);
   if (params.verbose !== false) {
-    console.log(`Generiere 1-Monatsplan für ${DOG_NAME} (${DOG_BREED}, ${DOG_AGE}, Problem: ${MAIN_PROBLEM})…`);
+    console.log(`Generiere 6-Monatsplan für ${DOG_NAME} (${DOG_BREED}, ${DOG_AGE}, Problem: ${MAIN_PROBLEM})…`);
   }
 
   const doc = await PDFDocument.create();
@@ -958,7 +1395,7 @@ export async function buildPdf(params = {}) {
     // Titel "1-Monatsplan für" — groß, linksbündig, etwa Mitte-vertikal
     let y = A4_H - BANNER_H - 90;
     const titleSize = 46;
-    p.drawText("1-Monatsplan für", {
+    p.drawText("6-Monatsplan für", {
       x: MARGIN,
       y,
       size: titleSize,
@@ -969,7 +1406,7 @@ export async function buildPdf(params = {}) {
     p.drawRectangle({
       x: MARGIN,
       y: y - 12,
-      width: fontBold.widthOfTextAtSize("1-Monatsplan für", titleSize) * 0.55,
+      width: fontBold.widthOfTextAtSize("6-Monatsplan für", titleSize) * 0.55,
       height: 3,
       color: GOLD,
     });
@@ -981,6 +1418,15 @@ export async function buildPdf(params = {}) {
       size: 36,
       font: fontReg,
       color: DARK_BROWN,
+    });
+    // Unter Hundename: kurzer Subtitle „24 Wochen · 12 Phasen · 6 Monate"
+    y -= 36;
+    p.drawText("24 Wochen · 12 Phasen · 6 Monate", {
+      x: MARGIN,
+      y,
+      size: 15,
+      font: fontReg,
+      color: TEXT_MEDIUM,
     });
 
     // Pfoten-Deko links unten — leicht versetzt
@@ -1112,79 +1558,61 @@ export async function buildPdf(params = {}) {
   const adFonts = { fontReg, fontBold };
 
   // ===== Wochen 1–4 =====
+  // ===== 12 Phasen — 4 Seiten pro Phase (12 × 4 = 48 Phasen-Seiten) =====
+  // Seite 1: Phase-Ziele + Tagesplan kompakt kombiniert
+  // Seite 2: Übung 1 Schritt für Schritt
+  // Seite 3: Übung 2 Schritt für Schritt
+  // Seite 4: Phasen-Check (+ ggf. Stabilisierungs-Text bei Phase 4 / 12)
   for (let wIdx = 0; wIdx < PLAN.weeks.length; wIdx++) {
     const week = PLAN.weeks[wIdx];
-    // Seite — Fokus und Ziel
+
+    // === Seite 1 — Ziele + Tagesplan kombiniert ===
     {
       const p = newPage();
       const labelY = A4_H - BANNER_H - 50;
-      drawWeekLabel(p, week.nr, MARGIN, labelY - 8, fontBold);
-      let y = labelY - 50;
-      p.drawText("Fokus und Ziel", { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
-      y -= 28;
-      p.drawText("Wochenziele:", { x: MARGIN, y, size: 11.5, font: fontReg, color: TEXT_DARK });
-      y -= 18;
+      drawWeekLabel(p, week.nr, MARGIN, labelY - 8, fontBold, fontReg);
+      let y = labelY - 60;
+
+      // Ziele-Block
+      p.drawText("Phasenziele", { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
+      y -= 22;
       for (const g of week.goals) {
-        y = drawArrowBullet(p, g, MARGIN, y, CONTENT_W, fontReg, fontBold, 11, TEXT_DARK, 15);
+        y = drawArrowBullet(p, g, MARGIN, y, CONTENT_W, fontReg, fontBold, 10.5, TEXT_DARK, 14);
       }
-      // Pfoten-Deko unten links
-      drawPaw(p, MARGIN + 20, 90, 1.6, GOLD_SOFT);
-      drawPaw(p, MARGIN + 65, 60, 1.2, GOLD_SOFT);
-    }
 
-    // Seite — Tagesstruktur
-    {
-      const p = newPage();
-      drawWeekLabel(p, week.nr, MARGIN, A4_H - BANNER_H - 55, fontBold);
-      let y = A4_H - BANNER_H - 105;
-      p.drawText("Tagesstruktur", { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
-      y -= 24;
+      y -= 8;
+      // Tagesplan-Block
+      p.drawText("Tagesplan", { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
+      y -= 22;
       for (const para of week.day) {
-        y = drawParagraph(p, para, MARGIN, y, CONTENT_W, fontReg, 11.5, TEXT_DARK, 16);
-        y -= 10;
+        y = drawParagraph(p, para, MARGIN, y, CONTENT_W, fontReg, 10.5, TEXT_DARK, 14);
+        y -= 6;
       }
     }
 
-    // Seite — Übung 1 Schritt für Schritt
+    // === Seite 2 — Übung 1 ===
     {
       const p = newPage();
-      drawWeekLabel(p, week.nr, MARGIN, A4_H - BANNER_H - 55, fontBold);
-      // Pill direkt unter Wochen-Label (Wochen-Label-Box endet bei y - 36 Höhe, also start - 36)
+      drawWeekLabel(p, week.nr, MARGIN, A4_H - BANNER_H - 55, fontBold, fontReg);
       let y = A4_H - BANNER_H - 95;
       y = drawSectionPill(p, "ÜBUNG 1", MARGIN, y, fontBold, PILL_AC_GREEN, PILL_BG_GREEN, 8);
-      // Title sitzt direkt unter Pill — Title-Baseline + size = top
-      y -= 18; // Platz für Titel-Höhe
+      y -= 18;
       p.drawText(week.ex1.title, { x: MARGIN, y, size: 18, font: fontBold, color: DARK_BROWN });
       y -= 22;
       p.drawText(week.ex1.sub, { x: MARGIN, y, size: 13, font: fontReg, color: TEXT_MEDIUM });
       y -= 22;
-      y = drawParagraph(p, week.ex1.intro, MARGIN, y, CONTENT_W, fontReg, 12.5, TEXT_DARK, 17);
-      y -= 12;
+      y = drawParagraph(p, week.ex1.intro, MARGIN, y, CONTENT_W, fontReg, 11.5, TEXT_DARK, 16);
+      y -= 10;
       for (let i = 0; i < week.ex1.steps.length; i++) {
-        y = drawNumberedStep(p, i + 1, week.ex1.steps[i], MARGIN, y, CONTENT_W, fontReg, fontBold, 12.5, TEXT_DARK, 17);
-        y -= 4;
+        y = drawNumberedStep(p, i + 1, week.ex1.steps[i], MARGIN, y, CONTENT_W, fontReg, fontBold, 11.5, TEXT_DARK, 16);
+        y -= 3;
       }
     }
 
-    // Seite — Typische Fehler ODER (bei Woche 4) Stabilisierung
-    if (week.mistakes && week.mistakes.length) {
-      const p = newPage();
-      drawWeekLabel(p, week.nr, MARGIN, A4_H - BANNER_H - 55, fontBold);
-      let y = A4_H - BANNER_H - 95;
-      y = drawSectionPill(p, "TYPISCHE FEHLER", MARGIN, y, fontBold, PILL_AC_RED, PILL_BG_RED, 8);
-      y -= 18;
-      p.drawText("Typische Fehler bei Übung 1", { x: MARGIN, y, size: 18, font: fontBold, color: DARK_BROWN });
-      y -= 28;
-      for (const m of week.mistakes) {
-        y = drawWarnBullet(p, m, MARGIN, y, CONTENT_W, fontReg, 12.5, TEXT_DARK, 17);
-        y -= 4;
-      }
-    }
-
-    // Seite — Übung 2 Schritt für Schritt
+    // === Seite 3 — Übung 2 ===
     {
       const p = newPage();
-      drawWeekLabel(p, week.nr, MARGIN, A4_H - BANNER_H - 55, fontBold);
+      drawWeekLabel(p, week.nr, MARGIN, A4_H - BANNER_H - 55, fontBold, fontReg);
       let y = A4_H - BANNER_H - 95;
       y = drawSectionPill(p, "ÜBUNG 2", MARGIN, y, fontBold, PILL_AC_GREEN, PILL_BG_GREEN, 8);
       y -= 18;
@@ -1192,41 +1620,50 @@ export async function buildPdf(params = {}) {
       y -= 22;
       p.drawText(week.ex2.sub, { x: MARGIN, y, size: 13, font: fontReg, color: TEXT_MEDIUM });
       y -= 22;
-      y = drawParagraph(p, week.ex2.intro, MARGIN, y, CONTENT_W, fontReg, 12.5, TEXT_DARK, 17);
-      y -= 12;
+      y = drawParagraph(p, week.ex2.intro, MARGIN, y, CONTENT_W, fontReg, 11.5, TEXT_DARK, 16);
+      y -= 10;
       for (let i = 0; i < week.ex2.steps.length; i++) {
-        y = drawNumberedStep(p, i + 1, week.ex2.steps[i], MARGIN, y, CONTENT_W, fontReg, fontBold, 12.5, TEXT_DARK, 17);
-        y -= 4;
+        y = drawNumberedStep(p, i + 1, week.ex2.steps[i], MARGIN, y, CONTENT_W, fontReg, fontBold, 11.5, TEXT_DARK, 16);
+        y -= 3;
       }
     }
 
-    // Seite — Wochen-Check ODER (Woche 4) Stabilisierung
-    if (week.check && week.check.length) {
+    // === Seite 4 — Phasen-Check oder Stabilisierungs-Seite ===
+    {
       const p = newPage();
-      drawWeekLabel(p, week.nr, MARGIN, A4_H - BANNER_H - 55, fontBold);
+      drawWeekLabel(p, week.nr, MARGIN, A4_H - BANNER_H - 55, fontBold, fontReg);
       let y = A4_H - BANNER_H - 95;
-      y = drawSectionPill(p, "WOCHEN-CHECK", MARGIN, y, fontBold, PILL_AC_GOLD, PILL_BG_GOLD, 8);
-      y -= 18;
-      p.drawText("Wochen-Check", { x: MARGIN, y, size: 18, font: fontBold, color: DARK_BROWN });
-      y -= 24;
-      const introCheck = `Prüfe am Ende der Woche ehrlich, wie weit ${DOG_NAME} bei den Inhalten ist. Gehe erst zur nächsten Woche über, wenn die Mehrheit der folgenden Punkte zutrifft.`;
-      y = drawParagraph(p, introCheck, MARGIN, y, CONTENT_W, fontReg, 12, TEXT_MEDIUM, 16);
-      y -= 14;
-      for (const c of week.check) {
-        y = drawCheckBullet(p, c, MARGIN, y, CONTENT_W, fontReg, 12.5, TEXT_DARK, 17);
-        y -= 4;
-      }
-    }
 
-    if (week.stab) {
-      const p = newPage();
-      drawWeekLabel(p, week.nr, MARGIN, A4_H - BANNER_H - 55, fontBold);
-      let y = A4_H - BANNER_H - 105;
-      p.drawText(week.stab.title, { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
-      y -= 24;
-      for (const para of week.stab.text) {
-        y = drawParagraph(p, para, MARGIN, y, CONTENT_W, fontReg, 11.5, TEXT_DARK, 16);
-        y -= 10;
+      if (week.check && week.check.length) {
+        // Standard-Check-Seite
+        y = drawSectionPill(p, "PHASEN-CHECK", MARGIN, y, fontBold, PILL_AC_GOLD, PILL_BG_GOLD, 8);
+        y -= 18;
+        p.drawText("Phasen-Check", { x: MARGIN, y, size: 18, font: fontBold, color: DARK_BROWN });
+        y -= 22;
+        const introCheck = `Prüfe am Ende der Phase ehrlich, wie weit ${DOG_NAME} bei den Inhalten ist. Gehe erst zur nächsten Phase über, wenn die Mehrheit der folgenden Punkte zutrifft.`;
+        y = drawParagraph(p, introCheck, MARGIN, y, CONTENT_W, fontReg, 11, TEXT_MEDIUM, 15);
+        y -= 12;
+        for (const c of week.check) {
+          y = drawCheckBullet(p, c, MARGIN, y, CONTENT_W, fontReg, 11.5, TEXT_DARK, 16);
+          y -= 3;
+        }
+        // Falls zusätzlich stab vorhanden: kurzer Stab-Hinweis darunter
+        if (week.stab && y > 200) {
+          y -= 12;
+          p.drawText(week.stab.title, { x: MARGIN, y, size: 12, font: fontBold, color: GOLD_DARK });
+          y -= 16;
+          y = drawParagraph(p, week.stab.text[0], MARGIN, y, CONTENT_W, fontReg, 10.5, TEXT_MEDIUM, 14);
+        }
+      } else if (week.stab) {
+        // Stabilisierungs-Phase ohne Check (Phase 4 + 12)
+        y = drawSectionPill(p, "ÜBERGANG", MARGIN, y, fontBold, PILL_AC_GOLD, PILL_BG_GOLD, 8);
+        y -= 18;
+        p.drawText(week.stab.title, { x: MARGIN, y, size: 18, font: fontBold, color: DARK_BROWN });
+        y -= 24;
+        for (const para of week.stab.text) {
+          y = drawParagraph(p, para, MARGIN, y, CONTENT_W, fontReg, 11, TEXT_DARK, 15);
+          y -= 8;
+        }
       }
     }
   }
@@ -1348,7 +1785,7 @@ const __isMain = import.meta.url === `file://${process.argv[1]}`;
 if (__isMain) {
   buildPdf()
     .then((bytes) => {
-      const outPath = PUBLIC("monatsplan-1monat-TEST.pdf");
+      const outPath = PUBLIC("monatsplan-6monat-TEST.pdf");
       writeFileSync(outPath, bytes);
       console.log(`✓ PDF geschrieben: ${outPath}`);
     })

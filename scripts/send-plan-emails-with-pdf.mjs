@@ -1,15 +1,13 @@
 // Schickt 3 Sample-"Plan ist fertig"-Mails (1/3/6 Monate) mit dem
-// generierten PDF im Anhang + Mitgliederbereich-Showcase.
+// jeweils passenden PDF im Anhang + Mitgliederbereich-Showcase.
 //
-// Voraussetzung: public/monatsplan-1monat-TEST.pdf wurde via
-//   `node generate-monatsplan-pdf.mjs` erstellt.
+// Voraussetzung: alle drei PDFs sind generiert:
+//   node generate-monatsplan-pdf.mjs   → public/monatsplan-1monat-TEST.pdf
+//   node generate-3monatsplan-pdf.mjs  → public/monatsplan-3monat-TEST.pdf
+//   node generate-6monatsplan-pdf.mjs  → public/monatsplan-6monat-TEST.pdf
 //
 // Aufruf:
 //   node scripts/send-plan-emails-with-pdf.mjs max@primesocial.de
-//
-// Hinweis: 3- und 6-Monats-PDFs nutzen aktuell denselben 4-Wochen-
-// Layout (Generator muss noch erweitert werden). Mail-Subject + Text
-// zeigen aber die korrekte Plan-Laenge.
 
 import { readFileSync } from "node:fs";
 import { createClient } from "@supabase/supabase-js";
@@ -47,10 +45,23 @@ const sb = createClient(SUPABASE_URL, SERVICE_ROLE, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
-// PDF einlesen
-const pdfBytes = readFileSync("public/monatsplan-1monat-TEST.pdf");
-const pdfBase64 = pdfBytes.toString("base64");
-console.log(`✓ PDF geladen: ${(pdfBytes.length / 1024).toFixed(0)} KB`);
+// Alle drei PDFs vorab einlesen (1 / 3 / 6 Monate)
+const PDF_BY_MONTHS = {
+  1: "public/monatsplan-1monat-TEST.pdf",
+  3: "public/monatsplan-3monat-TEST.pdf",
+  6: "public/monatsplan-6monat-TEST.pdf",
+};
+const PDF_CACHE = {};
+for (const [m, path] of Object.entries(PDF_BY_MONTHS)) {
+  try {
+    const bytes = readFileSync(path);
+    PDF_CACHE[m] = bytes.toString("base64");
+    console.log(`✓ ${m}-Monats PDF: ${(bytes.length / 1024).toFixed(0)} KB (${path})`);
+  } catch (e) {
+    console.error(`✗ ${m}-Monats PDF nicht gefunden: ${path}`);
+    process.exit(1);
+  }
+}
 
 // ── Auto-Login Magic-Link generieren ──────────────────────────────────
 async function buildAutoLoginUrl(email, nextPath) {
@@ -287,7 +298,7 @@ for (const months of [1, 3, 6]) {
       attachment: [
         {
           name: filename,
-          content: pdfBase64,
+          content: PDF_CACHE[months],
         },
       ],
       tags: ["sample", `plan-ready-${months}m`, "with-pdf"],
@@ -304,8 +315,4 @@ for (const months of [1, 3, 6]) {
   await new Promise((r) => setTimeout(r, 1000));
 }
 
-console.log(`\nFertig. 3 Mails mit PDF an ${email}.\n`);
-console.log(
-  `Hinweis: 3- und 6-Monats-PDFs verwenden aktuell das 4-Wochen-Layout.\n` +
-    `Der PDF-Generator muss noch erweitert werden um echte 12/24-Wochen-PDFs.\n`
-);
+console.log(`\nFertig. 3 Mails mit jeweils passendem PDF an ${email}.\n`);

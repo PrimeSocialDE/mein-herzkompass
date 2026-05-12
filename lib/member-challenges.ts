@@ -555,41 +555,46 @@ function pickTemplatesForUser(
 
   const result: ChallengeTemplate[] = [];
 
-  // 1) Problem-spezifische Challenge (wenn nicht erst kürzlich gemacht)
-  const problemChallenges = CHALLENGE_TEMPLATES.filter(
-    (t) =>
-      t.problem_match === problemKey &&
-      (isPaid || !t.is_premium) &&
-      !recentSlugs.has(t.slug)
+  // 1) Problem-spezifische Challenge — bevorzugt non-recent, sonst recycelt
+  const problemPool = CHALLENGE_TEMPLATES.filter(
+    (t) => t.problem_match === problemKey && (isPaid || !t.is_premium)
   );
-  if (problemChallenges.length > 0) {
-    result.push(problemChallenges[0]);
+  const problemFresh = problemPool.filter((t) => !recentSlugs.has(t.slug));
+  if (problemFresh.length > 0) {
+    result.push(problemFresh[0]);
+  } else if (problemPool.length > 0) {
+    // Alle problem-Templates schon recent — recycle das aelteste (= erstes in CHALLENGE_TEMPLATES)
+    result.push(problemPool[0]);
   }
 
-  // 2) Wenn Free und schon eine: fertig
-  if (!isPaid) {
-    if (result.length === 0) {
-      // Fallback fuer Free: generic, nicht premium
-      const generic = CHALLENGE_TEMPLATES.find(
-        (t) =>
-          t.problem_match === null &&
-          !t.is_premium &&
-          !recentSlugs.has(t.slug)
-      );
-      if (generic) result.push(generic);
-    }
-    return result;
+  // Bei Paid: zweite problem-spezifische Challenge (wenn vorhanden)
+  if (isPaid && problemFresh.length > 1) {
+    result.push(problemFresh[1]);
   }
 
-  // 3) Paid: 1-2 weitere (generic + premium)
-  const bonus = CHALLENGE_TEMPLATES.filter(
+  // 2) Generic Challenge — als Mindestgarantie (bevorzugt non-recent)
+  const genericPool = CHALLENGE_TEMPLATES.filter(
     (t) =>
       t.problem_match === null &&
-      !recentSlugs.has(t.slug) &&
+      (isPaid || !t.is_premium) &&
       !result.some((r) => r.slug === t.slug)
   );
-  for (const b of bonus.slice(0, 2)) {
-    result.push(b);
+  const genericFresh = genericPool.filter((t) => !recentSlugs.has(t.slug));
+
+  if (result.length === 0) {
+    // Mindestgarantie: mindestens 1 Challenge, lieber recycelt als nichts
+    if (genericFresh.length > 0) result.push(genericFresh[0]);
+    else if (genericPool.length > 0) result.push(genericPool[0]);
+  }
+
+  // Bei Paid: bis zu 2 Bonus-Generic-Challenges obendrauf
+  if (isPaid) {
+    const remainingFresh = genericFresh.filter(
+      (t) => !result.some((r) => r.slug === t.slug)
+    );
+    for (const b of remainingFresh.slice(0, 2)) {
+      result.push(b);
+    }
   }
 
   return result;
@@ -693,6 +698,87 @@ export async function getOrAssignWeekChallenges(
   }
 
   return insertedChallenges;
+}
+
+// ── Initial-Seed direkt nach Mollie-Payment ────────────────────────
+// Wird vom plan/generate Endpunkt nach erfolgreicher Plan-Erstellung
+// gerufen — damit der User SOFORT seine ersten Aufgaben bekommt und
+// nicht erst beim ersten Page-Besuch.
+//
+// Schritte:
+// 1) Auth-User sicherstellen (createUser falls noch nicht da)
+// 2) Member-Profil sicherstellen (getOrCreateMemberProfile)
+// 3) getOrAssignWeekChallenges aufrufen — das triggert auto auch die
+//    Welcome-Challenges-Mail durch die existierende isFirstEver-Logik.
+//
+// Idempotent: bei mehrfachem Aufruf werden keine Doppel-Challenges
+// erzeugt (week_start_date + Lifetime-Check schuetzen).
+export async function seedInitialChallengesForEmail(
+  email: string
+): Promise<{ ok: boolean; reason?: string; challenges_count?: number }> {
+  if (!email) return { ok: false, reason: "no_email" };
+
+  const { createClient } = await import("@supabase/supabase-js");
+  const supaUrl =
+    process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+  const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
+  if (!supaUrl || !serviceRole) {
+    return { ok: false, reason: "no_supabase_credentials" };
+  }
+  const sb = createClient(supaUrl, serviceRole, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+
+  // 1) Auth-User suchen oder anlegen
+  let userId: string | null = null;
+  try {
+    // listUsers paginiert, getUserByEmail gibt es nicht in der Admin-API,
+    // also via filter searchen.
+    const { data: listData } = await sb.auth.admin.listUsers({
+      page: 1,
+      perPage: 200,
+    });
+    const found = (listData?.users || []).find(
+      (u: any) => u.email?.toLowerCase() === email.toLowerCase()
+    );
+    if (found) {
+      userId = found.id;
+    } else {
+      const { data: created, error: cErr } = await sb.auth.admin.createUser({
+        email,
+        email_confirm: true,
+      });
+      if (cErr) {
+        console.warn("[challenges-seed] createUser failed:", cErr.message);
+        return { ok: false, reason: "create_user_failed" };
+      }
+      userId = created?.user?.id || null;
+    }
+  } catch (e: any) {
+    console.warn("[challenges-seed] auth-user step failed:", e?.message);
+    return { ok: false, reason: "auth_step_exception" };
+  }
+
+  if (!userId) return { ok: false, reason: "no_user_id" };
+
+  // 2) Member-Profil sicherstellen (lazy-syncs vom Lead inkl. quiz_result)
+  let member;
+  try {
+    const { getOrCreateMemberProfile } = await import("./member-db");
+    member = await getOrCreateMemberProfile({ userId, email });
+  } catch (e: any) {
+    console.warn("[challenges-seed] member-profile step failed:", e?.message);
+    return { ok: false, reason: "member_profile_exception" };
+  }
+
+  // 3) Initial-Challenges erzeugen (welcome-mail wird intern auto getriggert)
+  try {
+    const challenges = await getOrAssignWeekChallenges(member);
+    return { ok: true, challenges_count: challenges.length };
+  } catch (e: any) {
+    console.warn("[challenges-seed] assign-week failed:", e?.message);
+    return { ok: false, reason: "assign_week_exception" };
+  }
 }
 
 // ── Earned Badges (alle abgeschlossenen Challenges, neueste zuerst) ─
