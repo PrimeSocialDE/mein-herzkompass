@@ -1,26 +1,19 @@
-// Router-Modul fuer PDF-Generierung.
+// Router-Modul fuer PDF-Generierung im Produktiv-Pfad.
 //
-// Es gibt zwei Generator-Modi:
-//
-// 1) buildPlanPdfFromContent({plan, dogName, ...}) — RENDERT den
-//    KI-personalisierten Plan-JSON (TrainingPlanContent). Echte
-//    Personalisierung: Übungen sind individuell pro Hund/Problem.
-//    Wird in der Produktiv-Mail-Pipeline verwendet.
-//
-// 2) buildPlanPdf({dogName, planLengthMonths, ...}) — rendert den
-//    HARDCODED Yuna/Bruno-Content (1M/3M/6M). Nur Name + Problem-Label
-//    werden personalisiert. Wird für Sample-Mails / CLI-Tests benutzt.
-
-// Statische Imports der .mjs-Generators. TypeScript akzeptiert das
-// dank moduleResolution: "bundler" und Next.js' ESM-Handling.
-import { buildPdf as buildPdf1Month } from "../generate-monatsplan-pdf.mjs";
-import { buildPdf as buildPdf3Month } from "../generate-3monatsplan-pdf.mjs";
-import { buildPdf as buildPdf6Month } from "../generate-6monatsplan-pdf.mjs";
-import { buildPdfFromContent as buildFromContentRaw } from "../generate-plan-from-content.mjs";
+// Production verwendet ausschliesslich buildPlanPdfFromContent (rendert
+// den AI-personalisierten Plan-JSON). Die hardcoded Generators
+// generate-{1,3,6}monatsplan-pdf.mjs leben nur fuer CLI-Sample-Builds
+// und werden NICHT in die Serverless-Bundles gepackt.
 
 import type { TrainingPlanContent } from "./member-plan-content";
 
-interface PlanPdfParams {
+// Nur der content-driven Generator wird static importiert — die hardcoded
+// Generators werden bewusst rausgehalten, sonst werden Serverless-Functions
+// >50MB und der Vercel-Deploy schlaegt fehl.
+import { buildPdfFromContent as buildFromContentRaw } from "../generate-plan-from-content.mjs";
+
+interface PlanPdfFromContentParams {
+  plan: TrainingPlanContent;
   dogName: string;
   dogBreed?: string;
   dogAge?: string;
@@ -29,11 +22,8 @@ interface PlanPdfParams {
   verbose?: boolean;
 }
 
-interface PlanPdfFromContentParams extends PlanPdfParams {
-  plan: TrainingPlanContent;
-}
-
 // ECHTE PERSONALISIERUNG: rendert den AI-erzeugten Plan-JSON.
+// Wird vom Produktiv-Pfad (sendPlanReadyEmail) verwendet.
 export async function buildPlanPdfFromContent(
   params: PlanPdfFromContentParams
 ): Promise<Uint8Array> {
@@ -46,28 +36,6 @@ export async function buildPlanPdfFromContent(
     planLengthMonths: params.planLengthMonths,
     verbose: params.verbose !== false,
   });
-}
-
-// HARDCODED-FALLBACK: nur fuer Sample-Mails / CLI / wenn kein Plan-JSON da.
-export async function buildPlanPdf(
-  params: PlanPdfParams
-): Promise<Uint8Array> {
-  const { planLengthMonths } = params;
-  const genParams = {
-    dogName: params.dogName,
-    dogBreed: params.dogBreed || "Mischling",
-    dogAge: params.dogAge || "—",
-    mainProblem: params.mainProblem,
-    verbose: params.verbose !== false,
-  };
-
-  if (planLengthMonths === 1) return await buildPdf1Month(genParams);
-  if (planLengthMonths === 3) return await buildPdf3Month(genParams);
-  if (planLengthMonths === 6) return await buildPdf6Month(genParams);
-
-  throw new Error(
-    `Ungültige planLengthMonths: ${planLengthMonths} (nur 1, 3, 6 erlaubt)`
-  );
 }
 
 // Filename-Helper fuer den Mail-Anhang.
