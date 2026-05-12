@@ -22,10 +22,10 @@ const A4_W = 841.89;
 const A4_H = 595.28;
 
 // Brand-Farben (PfotenPlan-PDF Look)
-const BANNER_TAN  = rgb(196 / 255, 165 / 255, 118 / 255); // #C4A576 — Header-Banner
+const BANNER_TAN  = rgb(255 / 255, 227 / 255, 180 / 255); // #FFE3B4 — Header-Banner (beige-braun, Brand)
 const GOLD        = rgb(196 / 255, 165 / 255, 118 / 255); // #C4A576 — Akzente
 const GOLD_DARK   = rgb(139 / 255, 115 / 255, 85 / 255);  // #8B7355 — dunkleres Gold
-const GOLD_SOFT   = rgb(216 / 255, 188 / 255, 145 / 255); // helleres Gold für Pfoten-Deko
+const GOLD_SOFT   = rgb(255 / 255, 227 / 255, 180 / 255); // #FFE3B4 — helleres Beige für Pfoten-Deko
 const DARK_BROWN  = rgb(36 / 255, 23 / 255, 20 / 255);    // #241714
 const TEXT_DARK   = rgb(26 / 255, 26 / 255, 26 / 255);
 const TEXT_MEDIUM = rgb(80 / 255, 80 / 255, 80 / 255);
@@ -727,6 +727,7 @@ const AD_PAGES = {
     price: "Nur 24,99 €",
     cta: "Jetzt scannen",
     qrUrl: "https://www.pfoten-plan.de/ernaehrungsplan",
+    imagePath: "public/Hund1.png",
   },
   erstehilfe: {
     badge: "FÜR DEN NOTFALL GERÜSTET",
@@ -743,6 +744,7 @@ const AD_PAGES = {
     price: "Nur 14,99 €",
     cta: "Jetzt scannen",
     qrUrl: "https://www.pfoten-plan.de/erste-hilfe-set",
+    imagePath: "public/Hund2.png",
   },
 };
 
@@ -756,12 +758,12 @@ async function buildQrPng(url, sizePx = 480) {
   });
 }
 
-function drawAdPage(p, type, fonts, qrImage, layout) {
+function drawAdPage(p, type, fonts, qrImage, dogImage, layout) {
   const { fontReg, fontBold } = fonts;
   const { A4_W, A4_H, BANNER_H, MARGIN, CONTENT_W, DARK_BROWN, GOLD, GOLD_DARK, TEXT_DARK, TEXT_MEDIUM, BG_BAR, WHITE } = layout;
   const ad = AD_PAGES[type];
 
-  // Badge oben (gold-Pille)
+  // Badge oben (dark-Pille mit hellem Text — dunkel weil das Beige eh hell ist)
   const badgeY = A4_H - BANNER_H - 70;
   const badgeText = ad.badge;
   const badgeSize = 11;
@@ -773,7 +775,7 @@ function drawAdPage(p, type, fonts, qrImage, layout) {
     y: badgeY - badgePadY,
     width: badgeW,
     height: badgeSize + badgePadY * 2,
-    color: GOLD,
+    color: DARK_BROWN,
   });
   p.drawText(badgeText, {
     x: MARGIN + badgePadX,
@@ -798,9 +800,10 @@ function drawAdPage(p, type, fonts, qrImage, layout) {
     y -= headlineSize + 6;
   }
 
-  // Body — links, mehrzeilig
+  // Body — links, mehrzeilig (auf 55% Breite damit Hund-Foto rechts Platz hat)
   y -= 18;
   const bodySize = 13;
+  const bodyMaxW = (A4_W - 2 * MARGIN) * 0.55;
   for (const line of ad.body) {
     p.drawText(line, {
       x: MARGIN,
@@ -808,8 +811,30 @@ function drawAdPage(p, type, fonts, qrImage, layout) {
       size: bodySize,
       font: fontReg,
       color: TEXT_DARK,
+      maxWidth: bodyMaxW,
     });
     y -= bodySize + 6;
+  }
+
+  // Hund-Foto unten links — quadratisch mit gold-Rahmen
+  if (dogImage) {
+    const photoSize = 200;
+    const photoX = MARGIN;
+    const photoY = MARGIN + 15;
+    // Schatten / Hintergrund
+    p.drawRectangle({
+      x: photoX - 4,
+      y: photoY - 4,
+      width: photoSize + 8,
+      height: photoSize + 8,
+      color: GOLD,
+    });
+    p.drawImage(dogImage, {
+      x: photoX,
+      y: photoY,
+      width: photoSize,
+      height: photoSize,
+    });
   }
 
   // QR-Code rechts unten, mit Preis-Tag links daneben
@@ -878,6 +903,16 @@ async function main() {
   const qrErsteHilfePng = await buildQrPng(AD_PAGES.erstehilfe.qrUrl);
   const qrErnaehrungImg = await doc.embedPng(qrErnaehrungPng);
   const qrErsteHilfeImg = await doc.embedPng(qrErsteHilfePng);
+
+  // Hund-Fotos fuer Werbeseiten + Cover
+  const dogErnaehrungImg = await doc.embedPng(
+    readFileSync(AD_PAGES.ernaehrung.imagePath)
+  );
+  const dogErsteHilfeImg = await doc.embedPng(
+    readFileSync(AD_PAGES.erstehilfe.imagePath)
+  );
+  const dogCoverImg = await doc.embedPng(readFileSync("public/Hund3.png"));
+  const dogAccentImg = await doc.embedPng(readFileSync("public/Hund4.png"));
 
   const MARGIN = 70;
   const CONTENT_X = MARGIN;
@@ -956,29 +991,34 @@ async function main() {
       });
     }
 
-    // Rechte Seite: Foto-Box mit Logo (Platzhalter für späteres Hundefoto)
-    const boxW = 280;
-    const boxH = 280;
+    // Rechte Seite: Foto mit Goldrahmen
+    const boxW = 300;
+    const boxH = 300;
     const boxX = rightX + (rightW - boxW) / 2;
     const boxY = (A4_H - BANNER_H - boxH) / 2 + 30;
-    drawRoundedRect(p, boxX, boxY, boxW, boxH, 14, WHITE);
-    p.drawRectangle({ x: boxX, y: boxY, width: boxW, height: 3, color: GOLD });
-    // Logo groß mittig
-    const coverLogoSize = 130;
-    p.drawImage(logoImage, {
-      x: boxX + (boxW - coverLogoSize) / 2,
-      y: boxY + 110,
-      width: coverLogoSize,
-      height: coverLogoSize,
+    // Gold-Rahmen
+    p.drawRectangle({
+      x: boxX - 6, y: boxY - 6,
+      width: boxW + 12, height: boxH + 12,
+      color: GOLD,
     });
-    // Caption im Foto-Bereich
-    const captionLines = [`für ${DOG_NAME}`, `${DOG_BREED} · ${DOG_AGE}`];
-    let cy = boxY + 75;
-    for (const l of captionLines) {
-      const w = fontReg.widthOfTextAtSize(l, 13);
-      p.drawText(l, { x: boxX + (boxW - w) / 2, y: cy, size: 13, font: fontReg, color: TEXT_MEDIUM });
-      cy -= 20;
-    }
+    // Hund-Foto
+    p.drawImage(dogCoverImg, {
+      x: boxX, y: boxY,
+      width: boxW, height: boxH,
+    });
+    // Caption-Streifen unter Bild
+    const captionY = boxY - 32;
+    const captionLine = `${DOG_BREED} · ${DOG_AGE}`;
+    const captionSize = 13;
+    const capW = fontReg.widthOfTextAtSize(captionLine, captionSize);
+    p.drawText(captionLine, {
+      x: boxX + (boxW - capW) / 2,
+      y: captionY,
+      size: captionSize,
+      font: fontReg,
+      color: TEXT_MEDIUM,
+    });
   }
 
   // ===== SEITE 2 — Willkommen =====
@@ -1060,7 +1100,7 @@ async function main() {
 
     // Werbe-Seite 1 (Mitte) — nach Woche 2, also vor Woche 3
     if (wIdx === 2) {
-      drawAdPage(newPage(), "ernaehrung", adFonts, qrErnaehrungImg, adLayout);
+      drawAdPage(newPage(), "ernaehrung", adFonts, qrErnaehrungImg, dogErnaehrungImg, adLayout);
     }
     // Seite — Fokus und Ziel
     {
@@ -1180,7 +1220,7 @@ async function main() {
   }
 
   // Werbe-Seite 2 (Ende) — nach allen Wochen, vor Outro
-  drawAdPage(newPage(), "erstehilfe", adFonts, qrErsteHilfeImg, adLayout);
+  drawAdPage(newPage(), "erstehilfe", adFonts, qrErsteHilfeImg, dogErsteHilfeImg, adLayout);
 
   // ===== Outro: Schwierige Situationen =====
   {
