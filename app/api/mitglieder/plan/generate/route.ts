@@ -326,7 +326,7 @@ export async function POST(req: NextRequest) {
         emit(ctx, { event: "stage", stage: "seeding_challenges" });
         try {
           const { seedInitialChallengesForEmail } = await import(
-            "@/lib/member-challenges"
+            "@/lib/seed-initial-challenges"
           );
           const seedRes = await seedInitialChallengesForEmail(targetEmail);
           emit(ctx, {
