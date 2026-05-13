@@ -14,7 +14,9 @@
 //   Haiku 4.5 ($1/M in + $5/M out, NICHT empfohlen wegen JSON-Quality):
 //     1 Monat:  ~$0.02   3 Monate: ~$0.05   6 Monate: ~$0.09
 // Vergleich Make.com + Docupilot: beide deutlich teurer (Abo + Pay-per-Plan)
-const PLAN_GEN_MODEL = process.env.PLAN_GEN_MODEL || "claude-sonnet-4-5";
+// Sonnet 4.6 — neuer + schneller als 4.5 (war vorher der Default).
+// Override per env PLAN_GEN_MODEL falls noetig.
+const PLAN_GEN_MODEL = process.env.PLAN_GEN_MODEL || "claude-sonnet-4-6";
 
 import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
