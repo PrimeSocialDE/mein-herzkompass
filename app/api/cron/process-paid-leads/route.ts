@@ -30,13 +30,22 @@ export async function GET(req: NextRequest) {
 
   const admin = createMemberAdminClient();
 
+  // Optional: ?email=... filter — nur diesen einen Lead processieren.
+  // Nuetzlich fuer manuelles Triggern eines spezifischen Leads.
+  const emailFilter = req.nextUrl.searchParams.get("email")?.toLowerCase();
+
   // 1) Paid-Leads holen, neueste zuerst (max 50 pro Run = nie ein Backlog)
-  const { data: paidLeads, error: leadErr } = await admin
+  let query = admin
     .from("wauwerk_leads")
     .select("id, email, dog_name, paid_at, status, selected_plan, answers")
     .eq("status", "paid")
-    .order("paid_at", { ascending: false })
-    .limit(50);
+    .order("paid_at", { ascending: false });
+  if (emailFilter) {
+    query = query.ilike("email", emailFilter);
+  } else {
+    query = query.limit(50);
+  }
+  const { data: paidLeads, error: leadErr } = await query;
 
   if (leadErr) {
     console.error("[cron/process-paid-leads] lead-fetch error:", leadErr);
@@ -81,16 +90,18 @@ export async function GET(req: NextRequest) {
     return Response.json({ ok: false, error: "no_worker_token" }, { status: 500 });
   }
 
-  const baseUrl = (
+  // Production-URL bevorzugen; VERCEL_URL kommt ohne Protokoll, daher prepend
+  const rawBase =
     process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.VERCEL_URL ||
-    "https://www.pfoten-plan.de"
-  )
-    .replace(/^https?:\/\//, "https://")
-    .replace(/\/+$/, "");
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+    "https://www.pfoten-plan.de";
+  const baseUrl = rawBase.replace(/^http:\/\//, "https://").replace(/\/+$/, "");
 
   const results: any[] = [];
-  const TO_PROCESS = todo.slice(0, 5);
+  // Auto-run (Cron alle 5 Min): max 1 pro Run — verhindert Claude-Cost-Flood
+  // und Function-Timeout (1 Plan-Gen kann 3-5 Min dauern).
+  // Manual mit ?email=... fuer gezielte Triggers.
+  const TO_PROCESS = todo.slice(0, emailFilter ? todo.length : 1);
 
   for (const lead of TO_PROCESS) {
     try {
