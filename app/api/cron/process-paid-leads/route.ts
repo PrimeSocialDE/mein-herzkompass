@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
   // 1) Paid-Leads holen, neueste zuerst (max 50 pro Run = nie ein Backlog)
   const { data: paidLeads, error: leadErr } = await admin
     .from("wauwerk_leads")
-    .select("id, email, dog_name, dog_breed, paid_at, status, selected_plan, answers")
+    .select("id, email, dog_name, paid_at, status, selected_plan, answers")
     .eq("status", "paid")
     .order("paid_at", { ascending: false })
     .limit(50);
