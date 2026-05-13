@@ -1,6 +1,20 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  // Schwere npm-Packages NICHT ins Function-Bundle packen, sondern
+  // separat installieren lassen. Vercel laedt sie zur Runtime via
+  // require() statt sie zu bundlen. Spart pro Function ~5-10 MB.
+  serverExternalPackages: [
+    "pdf-lib",
+    "@pdf-lib/standard-fonts",
+    "@pdf-lib/upng",
+    "qrcode",
+    "pngjs",
+    "@anthropic-ai/sdk",
+    "@supabase/supabase-js",
+    "@supabase/ssr",
+  ],
+
   // Verhindert dass Next.js den public/-Folder als Function-Dependency
   // traced. Die PDF-Generators lesen Bytes via readFileSync — der Bundler
   // wuerde sonst zur Sicherheit ALLES aus public/ in jedes Function-Bundle
