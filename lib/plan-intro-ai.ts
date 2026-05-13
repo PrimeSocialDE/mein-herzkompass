@@ -13,7 +13,9 @@ interface IntroArgs {
   zusatzKontext?: string;       // freie Quiz-Antworten
 }
 
-const HAIKU_MODEL = process.env.PLAN_INTRO_MODEL || "claude-haiku-4-5-20251001";
+// Sonnet 4.6 für bessere deutsche Grammatik + Stil-Konsistenz.
+// Bei nur 500-800 Token output dauert das ca. 5-8s — vertretbar.
+const INTRO_MODEL = process.env.PLAN_INTRO_MODEL || "claude-sonnet-4-6";
 
 export async function generatePersonalizedIntro(
   args: IntroArgs
@@ -34,26 +36,34 @@ export async function generatePersonalizedIntro(
   const breedDesc = dogBreed || "Mischling";
   const weeksTotal = planLengthMonths * 4;
 
-  const systemPrompt = `Du bist erfahrene Hundetrainerin im Pfoten-Plan-Team. Du schreibst kurze, ruhige, fachliche Einleitungen für Trainingspläne. Stil: ruhig, klar, ohne Jargon, keine Anglizismen, keine Buzzwords. 3-4 Absätze.`;
+  const systemPrompt = `Du bist erfahrene Hundetrainerin im Pfoten-Plan-Team. Du schreibst kurze, ruhige, fachlich saubere Einleitungen für personalisierte Trainingspläne.
 
-  const userPrompt = `Schreibe die persönliche Einleitung (3-4 Absätze) für den ${planLengthMonths}-Monatsplan eines Hundes:
+STIL-REGELN (sehr wichtig):
+- DUZE den Halter durchgehend ("du", "dein", "dich") — NIE siezen.
+- KEINE Anrede wie "Liebe Hundehalterin/Hundehalter" am Anfang — direkt in den Inhalt einsteigen.
+- Deutsche Grammatik MUSS sauber sein: "großes Glück" (NICHT "große Glück"), Genus + Kasus korrekt.
+- Keine Anglizismen, keine Buzzwords, kein Jargon.
+- 3-4 kurze Absätze (je 2-4 Sätze).
+- Ruhig, warm, professionell — nicht aufgeregt oder pathetisch.`;
+
+  const userPrompt = `Schreibe eine persönliche Einleitung (3-4 Absätze) für den ${planLengthMonths}-Monatsplan dieses Hundes:
 
 - Name: ${dogName}
 - Rasse: ${breedDesc}
 - Alter: ${ageDesc}
-- Hauptproblem: ${problemLabel}
+- Hauptthema: ${problemLabel}
 - Plan-Länge: ${weeksTotal} Wochen
 ${args.zusatzKontext ? `\nZusätzlicher Kontext: ${args.zusatzKontext}` : ""}
 
-Schreibe so, als würdest du persönlich mit dem Halter sprechen. Geh auf Rasse-spezifische Merkmale ein (wenn relevant). Erkläre kurz warum dieser Plan genau so aufgebaut ist. Gib Hoffnung und Klarheit. NICHT zu lang — 3-4 Absätze reichen.
+Steige direkt mit dem Hund ein (z.B. "${dogName} bringt...") — KEINE Anrede vorher. Gehe kurz auf rassen-typische Eigenschaften ein wenn relevant. Erkläre wofür der Plan steht. Schreibe ruhig und in Du-Form ("dein", "du wirst sehen"...).
 
-Antworte NUR mit dem Einleitungs-Text, keine Vorrede, keine Anführungszeichen.`;
+Antworte NUR mit dem Einleitungs-Text, keine Vorrede, keine Anführungszeichen, keine Überschrift.`;
 
   try {
     const Anthropic = (await import("@anthropic-ai/sdk")).default;
     const client = new Anthropic({ apiKey });
     const response = await client.messages.create({
-      model: HAIKU_MODEL,
+      model: INTRO_MODEL,
       max_tokens: 800,
       system: systemPrompt,
       messages: [{ role: "user", content: userPrompt }],
