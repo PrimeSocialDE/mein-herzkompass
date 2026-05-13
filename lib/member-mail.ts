@@ -266,25 +266,11 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
   // Auto-Login-Link: User landet direkt eingeloggt auf der Coaching-Seite
   const ctaUrl = await buildAutoLoginUrl(to, "/mitglieder/erfolge/coaching");
   const weeksTotal = plan.weeks.length;
-  const week1 = plan.weeks[0];
   const greeting = customerName?.trim()
     ? `Hi ${customerName.trim().split(" ")[0]},`
     : "Hi,";
 
-  // Kompakte Plan-Vorschau: Woche 1 Titel + 3 Wochenziele teaser
-  let week1Preview = "";
-  if (week1) {
-    const zieleList = (week1.wochenziele || [])
-      .slice(0, 3)
-      .map((z) => `<li style="margin:4px 0;font-size:13px;color:#4B5563;line-height:1.5;">${escapeHtml(z)}</li>`)
-      .join("");
-    week1Preview = `
-      <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;padding:16px 18px;margin:12px 0 20px;">
-        <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8B7355;">Woche 1 · ${escapeHtml(week1.title)}</p>
-        <ul style="margin:8px 0 0;padding-left:18px;">${zieleList}</ul>
-        <p style="margin:10px 0 0;font-size:12px;color:#8B7355;font-style:italic;">+ ${weeksTotal - 1} weitere Wochen, ${plan.weeks.reduce((sum, w) => sum + (w.uebungen?.length || 0), 0)} konkrete Übungen, Monats-Übersichten und Bonus-Spiele.</p>
-      </div>`;
-  }
+  // (Plan-Vorschau wurde entfernt — User soll direkt in den Mitglieder-Bereich)
 
   const monthsLabel =
     planLengthMonths === 1
@@ -293,12 +279,94 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
         ? "3-Monats-Plan"
         : "6-Monats-Plan";
 
+  // PDF-Hinweis-Box
+  const pdfHinweis = `
+    <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:14px;padding:18px 20px;margin:0 0 20px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+          <td style="vertical-align:middle;width:54px;">
+            <div style="display:inline-block;width:48px;height:48px;background:#C4A576;border-radius:12px;text-align:center;line-height:48px;font-size:22px;color:#FFFFFF;">📄</div>
+          </td>
+          <td style="vertical-align:middle;padding-left:14px;">
+            <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;line-height:1.3;">Dein Trainings-Plan als PDF</p>
+            <p style="margin:0;font-size:12px;color:#6B7280;line-height:1.4;">Im Anhang dieser Mail · druckbar · für unterwegs</p>
+          </td>
+        </tr>
+      </table>
+    </div>`;
+
+  // Mitgliederbereich-Showcase mit 5 Features
+  const mitgliederShowcase = `
+    <div style="border-top:1px solid #F0EBE3;margin:24px 0 16px;"></div>
+    <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">Du bekommst noch mehr</p>
+    <h2 style="margin:0 0 10px;font-size:20px;line-height:1.3;font-weight:800;color:#1a1a1a;">Dein Mitglieder-Bereich</h2>
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#4B5563;">
+      Den Plan kannst du jederzeit auch online durchgehen. Wir tracken automatisch deinen Fortschritt, ${escapeHtml(dogName)}s Stimmung und schicken dir jede Woche neue Aufgaben — damit du nicht alleine durch den Plan musst.
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">📅</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Plan-Begleitung — Woche für Woche</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Welche Woche ist gerade dran, was kommt als Nächstes — auf einen Blick.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">📊</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Stimmungs-Tagebuch mit KI-Analyse</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Trag wöchentlich kurz ein wie's lief — die KI fasst eure Woche zusammen und gibt konkrete Tipps für die nächste.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">🏆</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Wochen-Aufgaben &amp; Abzeichen</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Jede Woche kleine Trainings-Aufgaben passend zu eurem Plan. Geschafft = Abzeichen für die Sammlung.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">💬</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">KI-Trainer für Rückfragen</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Stell jederzeit Fragen — der KI-Trainer antwortet rund um die Uhr mit dem Wissen unseres Hundetrainer-Teams.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:10px 0;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">📚</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Spezial-Module</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Wenn ${escapeHtml(dogName)} weitere Themen hat — z.B. Trennungsangst, Reise, Erste-Hilfe — gibt's gezielte Module dazu.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+    </table>`;
+
   const html = wrapTemplate({
     preheader: `Dein ${monthsLabel} für ${dogName} ist fertig.`,
     headline: `Dein ${monthsLabel} für ${dogName} ist fertig`,
     intro: `${greeting} dein persönlicher Trainings-Plan ist soeben für dich erstellt worden — komplett zugeschnitten auf ${dogName} und euer Haupt-Thema. ${weeksTotal} Wochen, mit konkreten Übungen für jeden Tag, Wochenzielen, Fortschritts-Markern und einem klaren roten Faden.`,
-    bodyHtml: `${week1Preview}<p style="margin:0 0 8px;font-size:13px;color:#4B5563;line-height:1.55;">Im Mitglieder-Bereich kannst du den ganzen Plan durchklicken, Woche für Woche.</p>`,
-    ctaText: "Plan ansehen",
+    bodyHtml: `${pdfHinweis}${mitgliederShowcase}`,
+    ctaText: "Mitglieder-Bereich öffnen →",
     ctaUrl,
     footerHint: `Der Button enthält einen Einmal-Login — du landest direkt eingeloggt im Mitglieder-Bereich. Der Link gilt 1 Stunde und ist nur für dich.`,
   });
