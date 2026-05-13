@@ -132,6 +132,7 @@ export async function GET(req: NextRequest) {
         http_status: res.status,
         ok: finalResult?.ok ?? res.ok,
         error: finalResult?.error,
+        details: finalResult?.details,
       });
 
       console.log(
