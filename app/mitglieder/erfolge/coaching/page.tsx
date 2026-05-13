@@ -53,7 +53,8 @@ export default async function CoachingPage() {
   });
 
   const dogName = member.dog_name?.trim() || null;
-  const dog = dogName || "deinem Hund";
+  // "Dein Plan für X" — Akkusativ, daher "deinen Hund" als Fallback
+  const dog = dogName || "deinen Hund";
   const isPaid = member.purchase_status === "paid";
 
   const problemKey =
@@ -121,15 +122,15 @@ export default async function CoachingPage() {
         </p>
       </div>
 
-      {/* Plan-Status (nur Paid) */}
-      {isPaid && totalWeeks > 0 && (
+      {/* Plan-Status (nur Paid) — bevorzugt echter Plan (12W), Fallback Module (~4W) */}
+      {isPaid && (hasRichPlan ? planTotalWeeks : totalWeeks) > 0 && (
         <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 mb-5">
           <div className="flex items-center justify-between mb-3">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355]">
               Dein Stand im Plan
             </p>
             <span className="text-[12px] font-bold text-[#1a1a1a]">
-              Woche {currentWeekNumber} / {totalWeeks}
+              Woche {hasRichPlan ? planCurrentWeek : currentWeekNumber} / {hasRichPlan ? planTotalWeeks : totalWeeks}
             </span>
           </div>
           <div className="w-full h-2 bg-[#F0EBE3] rounded-full overflow-hidden mb-2">
@@ -138,12 +139,19 @@ export default async function CoachingPage() {
               style={{
                 width: `${Math.min(
                   100,
-                  (currentWeekNumber / totalWeeks) * 100
+                  ((hasRichPlan ? planCurrentWeek : currentWeekNumber) /
+                    (hasRichPlan ? planTotalWeeks : totalWeeks)) *
+                    100
                 )}%`,
               }}
             />
           </div>
-          {nextWeek && (
+          {hasRichPlan && planCurrentWeek < planTotalWeeks && (
+            <p className="text-[12px] text-[#6B7280] leading-snug">
+              Nächste Woche wird Woche {planCurrentWeek + 1} freigeschaltet.
+            </p>
+          )}
+          {!hasRichPlan && nextWeek && (
             <p className="text-[12px] text-[#6B7280] leading-snug">
               Nächste Woche wird Woche {nextWeek.weekNumber} freigeschaltet.
             </p>
