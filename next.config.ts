@@ -8,11 +8,22 @@ const nextConfig: NextConfig = {
   // pdf-assets/ und werden gezielt mitgenommen.
   outputFileTracingExcludes: {
     "*": [
-      "public/**/*.mp4",
-      "public/**/*.mov",
-      "public/**/*.webm",
-      "public/**/*.pdf",
-      "public/**/*.html",
+      // public/ — alles raus (wird als statische Assets via CDN ausgeliefert,
+      // nie aus Server-Code gelesen).
+      "public/**/*",
+      // Andere Generator-Scripts (nur fuer CLI-Sample-Builds, nicht von
+      // Production-Server-Code referenziert).
+      "generate-monatsplan-pdf.mjs",
+      "generate-3monatsplan-pdf.mjs",
+      "generate-6monatsplan-pdf.mjs",
+      "generate-zusatzmodul-pdf.mjs",
+      "generate-ernaehrung-*.mjs",
+      "generate-erstehilfe-pdf.mjs",
+      "generate-notfall-pdf.mjs",
+      "generate-reise-pdf.mjs",
+      "generate-tagebuch-pdf.mjs",
+      // Test-/Build-Scripts
+      "scripts/**/*",
     ],
   },
   async rewrites() {
