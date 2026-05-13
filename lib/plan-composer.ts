@@ -263,14 +263,21 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
   const dogName = dog.dogName || "deinem Hund";
 
   // Pool fuer das Problem holen + nach Hund filtern
-  const rawPool = EXERCISE_LIBRARY[problem] || [];
-  const pool = filterSuitable(rawPool, dog);
-
-  if (pool.length === 0) {
-    // Fallback: Pool nicht filtert (sollte selten passieren, nur wenn alle Übungen rausgefiltert)
-    throw new Error(
-      `Kein Übungs-Pool für problem="${problem}" passend zu ${dog.dogName} (${dog.dogBreed}, ${dog.dogAgeMonths}m)`
+  let rawPool = EXERCISE_LIBRARY[problem] || [];
+  let usedFallback = false;
+  if (rawPool.length === 0) {
+    // Phase 1 POC: nur pulling hat Library-Content. Fallback fuer
+    // andere Probleme — bis Phase 2 alle Bereiche befuellt sind.
+    rawPool = EXERCISE_LIBRARY.pulling || [];
+    usedFallback = true;
+    console.warn(
+      `[plan-composer] kein Pool fuer "${problem}" — Fallback auf pulling`
     );
+  }
+  let pool = filterSuitable(rawPool, dog);
+  if (pool.length === 0) {
+    // Filter zu aggressiv — Filter ignorieren als letzte Notbremse
+    pool = rawPool;
   }
 
   // Pro Phase: wie viele Übungs-Slots brauchen wir? Je Woche 2 Übungen.
