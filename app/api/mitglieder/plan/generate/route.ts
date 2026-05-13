@@ -285,19 +285,7 @@ export async function POST(req: NextRequest) {
             estimated_cost_usd: introResult.einleitung ? 0.01 : 0,
             ms: introResult.ms,
           },
-          raw_response: undefined,
-          error: undefined,
         };
-
-        if (false) {
-          emit(ctx, {
-            event: "done",
-            ok: false,
-            error: result.error || "Generation fehlgeschlagen",
-            raw_response: result.raw_response?.slice(0, 500),
-          });
-          return;
-        }
 
         emit(ctx, { event: "stage", stage: "saving" });
 
