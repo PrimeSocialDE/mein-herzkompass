@@ -214,34 +214,82 @@ export async function POST(req: NextRequest) {
 
         emit(ctx, {
           event: "stage",
-          stage: "generating",
+          stage: "composing",
           months: planLengthMonths,
           weeks: planLengthMonths * 4,
         });
 
-        // ── 5) Generieren mit Progress-Streaming ──────────────────
-        // Anthropic-Tokens fliessen kontinuierlich -> als progress-Events
-        // weiterreichen damit Vercel/CF-Proxies die Connection nicht killen
-        const result = await generateTrainingPlan(
-          {
-            dog_name: dogName,
-            dog_breed: answers.dog_breed || null,
-            dog_age: answers.dog_age || null,
-            dog_size: answers.dog_size || null,
-            dog_problem: dogProblem,
-            dog_problem_label: PROBLEM_LABELS[dogProblem],
-            bekannte_signale: bekannteSignale,
-            trainingszeit_minuten: trainingszeit,
-            zusatz_kontext:
-              zusatzKontextLines.length > 0
-                ? zusatzKontextLines.join("\n")
-                : undefined,
-            plan_length_months: planLengthMonths,
-          },
-          (info) => emit(ctx, { event: "progress", chars: info.chars })
-        );
+        // ── 5) Plan zusammenbauen — Composer aus Übungs-Bibliothek ─
+        // Geschwindigkeit: <50ms (rein deterministisch). Optional kommt
+        // dann noch eine KI-personalisierte Einleitung (Haiku, ~3-5s).
+        const { composePlan } = await import("@/lib/plan-composer");
+        const { generatePersonalizedIntro } = await import("@/lib/plan-intro-ai");
+        const { PROBLEM_LABELS_DE } = await import("@/lib/exercise-library");
 
-        if (!result.ok || !result.plan) {
+        // Parse dog_age zu Monaten (best effort: "2 Jahre" / "6 Monate")
+        function parseAgeToMonths(s: any): number | undefined {
+          if (typeof s !== "string") return undefined;
+          const num = parseFloat(s.replace(/[^0-9.,]/g, "").replace(",", "."));
+          if (isNaN(num)) return undefined;
+          if (/monat/i.test(s)) return Math.round(num);
+          if (/jahr/i.test(s)) return Math.round(num * 12);
+          return Math.round(num);
+        }
+
+        const validProblemKey = (
+          ["pulling", "barking", "aggression", "anxiety", "recall",
+           "energy", "jumping", "destructive", "soiling", "mouthing"]
+            .includes(dogProblem) ? dogProblem : "pulling"
+        ) as keyof typeof PROBLEM_LABELS_DE;
+
+        const problemLabel = PROBLEM_LABELS_DE[validProblemKey] || dogProblem;
+
+        // KI-Intro generieren (Haiku, parallel zum Compose-Job)
+        const introPromise = generatePersonalizedIntro({
+          dogName,
+          dogBreed: answers.dog_breed || undefined,
+          dogAgeMonths: parseAgeToMonths(answers.dog_age),
+          problemLabel,
+          planLengthMonths,
+          zusatzKontext: zusatzKontextLines.join("\n") || undefined,
+        });
+
+        const introResult = await introPromise;
+        emit(ctx, {
+          event: "stage",
+          stage: "intro_generated",
+          ai_intro_ms: introResult.ms,
+          ai_intro_ok: !!introResult.einleitung,
+        });
+
+        const plan = composePlan({
+          problem: validProblemKey,
+          planLengthMonths,
+          dog: {
+            dogName,
+            dogBreed: answers.dog_breed || undefined,
+            dogAgeMonths: parseAgeToMonths(answers.dog_age),
+            dogSize: answers.dog_size || undefined,
+            trainingsZeitMinuten: trainingszeit,
+            bekannteSignale,
+          },
+          introText: introResult.einleitung || undefined,
+        });
+
+        const result = {
+          ok: true as const,
+          plan,
+          usage: {
+            input_tokens: 0,
+            output_tokens: 0,
+            estimated_cost_usd: introResult.einleitung ? 0.01 : 0,
+            ms: introResult.ms,
+          },
+          raw_response: undefined,
+          error: undefined,
+        };
+
+        if (false) {
           emit(ctx, {
             event: "done",
             ok: false,
