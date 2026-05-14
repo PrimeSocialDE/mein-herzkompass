@@ -1666,7 +1666,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Tausch ist Standard-Reaktion in Aufhebe-Situationen.",
         "Du fühlst dich nicht mehr machtlos.",
       ],
-      exerciseIds: ["m-tausch-protokoll", "m-aus-aufbauen"],
+      exerciseIds: ["m-tausch-protokoll"],
     },
     {
       title: "PFUI als Stop-Signal konditionieren",
@@ -1816,7 +1816,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Reaktionszeit ist akzeptabel.",
         "Du fühlst dich handlungsfähig.",
       ],
-      exerciseIds: ["m-aus-aufbauen", "m-tausch-protokoll"],
+      exerciseIds: ["m-pfui-konditionieren", "m-tausch-protokoll"],
     },
     {
       title: "PFUI draußen einsetzen",
@@ -1987,7 +1987,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du steckst seltener in die Hosentasche.",
         "Verhalten wird stabiler ohne Dauer-Verstärkung.",
       ],
-      exerciseIds: ["m-aus-aufbauen", "m-leinen-management"],
+      exerciseIds: ["m-belohnungs-suche", "m-leinen-management"],
     },
     {
       title: "Verschiedene Strecken: Generalisierung",
