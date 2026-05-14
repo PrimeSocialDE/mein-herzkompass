@@ -57,18 +57,27 @@ export async function GET(req: NextRequest) {
   }
 
   // 2) Welche dieser Emails haben schon einen trainingsplan-Content?
-  const emails = paidLeads.map((l: any) => l.email).filter(Boolean);
+  //    /plan/generate speichert Emails ALWAYS lowercase. Wir lowercase
+  //    daher auch die Lead-Emails fuer den Lookup, sonst fallen Mixed-Case-
+  //    Leads (z.B. "Murli7@gmx.at") durch obwohl der Plan schon existiert.
+  const emailsLower = Array.from(
+    new Set(
+      paidLeads
+        .map((l: any) => String(l.email || "").toLowerCase())
+        .filter(Boolean)
+    )
+  );
   const { data: existing } = await admin
     .from("member_plan_content")
     .select("email")
-    .in("email", emails)
+    .in("email", emailsLower)
     .eq("plan_slug", "trainingsplan");
 
   const emailsWithPlan = new Set(
     (existing || []).map((e: any) => String(e.email).toLowerCase())
   );
 
-  // 3) Unbehandelte Leads filtern
+  // 3) Unbehandelte Leads filtern (case-insensitive Vergleich)
   const todo = paidLeads.filter(
     (l: any) => l.email && !emailsWithPlan.has(String(l.email).toLowerCase())
   );
@@ -98,13 +107,17 @@ export async function GET(req: NextRequest) {
   const baseUrl = rawBase.replace(/^http:\/\//, "https://").replace(/\/+$/, "");
 
   const results: any[] = [];
-  // Auto-run (Cron alle 5 Min): max 1 pro Run — verhindert Claude-Cost-Flood
-  // und Function-Timeout (1 Plan-Gen kann 3-5 Min dauern).
-  // Manual mit ?email=... fuer gezielte Triggers.
-  const TO_PROCESS = todo.slice(0, emailFilter ? todo.length : 1);
+  // Auto-run: max 3 pro Cron-Run.
+  // Mit Composer-Architektur kostet 1 Plan-Gen nur ~$0.01 + ~20s.
+  // Bei maxDuration=60s ist 3 pro Run sicher; bei Backlog werden in
+  // 5-Min-Intervallen schnell viele Leads abgearbeitet.
+  // Manual mit ?email=... bleibt unlimitiert fuer gezielte Triggers.
+  const TO_PROCESS = todo.slice(0, emailFilter ? todo.length : 3);
 
-  for (const lead of TO_PROCESS) {
-    try {
+  // Parallel ausfuehren: ein Plan-Gen-Request ist ~15-25s, sequentiell
+  // wuerden 3 die 60s-maxDuration sprengen. Parallel: max(~25s) ≪ 60s.
+  const planRuns = await Promise.allSettled(
+    TO_PROCESS.map(async (lead: any) => {
       const res = await fetch(`${baseUrl}/api/mitglieder/plan/generate`, {
         method: "POST",
         headers: {
@@ -114,38 +127,43 @@ export async function GET(req: NextRequest) {
         body: JSON.stringify({ lead_id: lead.id, email: lead.email }),
       });
 
-      // /plan/generate streamt NDJSON — wir lesen alle Zeilen und nehmen
-      // die letzte "done"-Event als Result.
       const txt = await res.text().catch(() => "");
-      const lines = txt.split("\n").filter(Boolean);
       let finalResult: any = null;
-      for (const line of lines) {
+      for (const line of txt.split("\n").filter(Boolean)) {
         try {
           const obj = JSON.parse(line);
           if (obj.event === "done") finalResult = obj;
         } catch {}
       }
 
-      results.push({
+      console.log(
+        `[cron/process-paid-leads] ${lead.email}: ${res.status} ok=${finalResult?.ok}`
+      );
+
+      return {
         lead_id: lead.id,
         email: lead.email,
         http_status: res.status,
         ok: finalResult?.ok ?? res.ok,
         error: finalResult?.error,
         details: finalResult?.details,
-      });
+      };
+    })
+  );
 
-      console.log(
-        `[cron/process-paid-leads] ${lead.email}: ${res.status} ok=${finalResult?.ok}`
-      );
-    } catch (e: any) {
+  for (let i = 0; i < planRuns.length; i++) {
+    const r = planRuns[i];
+    if (r.status === "fulfilled") {
+      results.push(r.value);
+    } else {
+      const lead = TO_PROCESS[i];
+      console.error("[cron/process-paid-leads] error:", lead.email, r.reason?.message);
       results.push({
         lead_id: lead.id,
         email: lead.email,
         ok: false,
-        error: e?.message || "fetch_failed",
+        error: r.reason?.message || "fetch_failed",
       });
-      console.error("[cron/process-paid-leads] error:", lead.email, e?.message);
     }
   }
 

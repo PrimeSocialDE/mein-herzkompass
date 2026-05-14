@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { after } from "next/server";
 import { supabase } from "@/lib/db";
 import { getMollie } from "@/lib/mollie";
 import { generateRedeemCode } from "@/lib/referral";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Plan-Generierung kann 15-25s dauern. after() hält den Worker so lange am
+// Leben, der Webhook selbst antwortet Mollie aber sofort.
+export const maxDuration = 60;
 
 // Mollie sendet keinen Event-Body, sondern ruft uns nur mit der Payment-ID an.
 // Wir holen den vollen Payment-Status per API ab und dispatchen je nach Status.
@@ -192,18 +196,23 @@ async function handlePaid(payment: any) {
     }
   }
 
-  // Auto-Trigger Plan-Generierung — fire-and-forget, blockiert den
-  // Webhook nicht (Make.com macht parallel weiter via notifyMake).
-  // Kann via env DISABLE_INTERNAL_PLAN_GEN=1 abgeschaltet werden falls
-  // wir den Make-Pfad alleine lassen wollen.
+  // Auto-Trigger Plan-Generierung — laeuft via after() WEITER nachdem der
+  // Webhook 200 an Mollie returned hat. Verhindert dass Vercel den Container
+  // killt bevor /plan/generate fertig ist (15-25s Streaming-Response).
+  // Kann via env DISABLE_INTERNAL_PLAN_GEN=1 abgeschaltet werden.
   if (
     table === "wauwerk_leads" &&
     updateData.email &&
     process.env.DISABLE_INTERNAL_PLAN_GEN !== "1"
   ) {
-    triggerInternalPlanGeneration(referenceId, updateData.email).catch(
-      (e) => console.error("[mollie-webhook] plan-gen trigger failed:", e?.message)
-    );
+    const targetEmail = updateData.email;
+    after(async () => {
+      try {
+        await triggerInternalPlanGeneration(referenceId, targetEmail);
+      } catch (e: any) {
+        console.error("[mollie-webhook] plan-gen trigger failed:", e?.message);
+      }
+    });
   }
 
   await enrollInUpsellCampaign(table, referenceId, updateData.email);
@@ -792,9 +801,14 @@ async function notifyMake(orderId: string, payload: Record<string, any>) {
   }
 }
 
-// Internen AI-Plan-Generator triggern nach erfolgreicher Zahlung.
-// Ruft /api/mitglieder/plan/generate via fetch auf — laeuft asynchron,
-// Webhook wartet nicht. Fehler werden geloggt aber nicht propagiert.
+// Internen Plan-Generator triggern nach erfolgreicher Zahlung.
+// MUSS awaited werden — fire-and-forget wird auf Vercel beendet,
+// sobald der Webhook-Handler returned (container shutdown).
+//
+// Drei Bug-Fixes vs. vorher:
+//   1) VERCEL_URL hat KEIN Protokoll — explizit https:// vorhängen
+//   2) /plan/generate streamt NDJSON, kein JSON — Stream einzeln parsen
+//   3) Webhook MUSS auf Completion warten, sonst killt Vercel den fetch
 async function triggerInternalPlanGeneration(
   leadId: string,
   email: string
@@ -806,12 +820,14 @@ async function triggerInternalPlanGeneration(
     );
     return;
   }
-  const baseUrl = (
+
+  // Production-URL bevorzugen; VERCEL_URL kommt OHNE Protokoll
+  const rawBase =
     process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.VERCEL_URL ||
-    "https://www.pfoten-plan.de"
-  )
-    .replace(/^https?:\/\//, "https://")
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+    "https://www.pfoten-plan.de";
+  const baseUrl = rawBase
+    .replace(/^http:\/\//, "https://")
     .replace(/\/+$/, "");
 
   try {
@@ -823,6 +839,7 @@ async function triggerInternalPlanGeneration(
       },
       body: JSON.stringify({ lead_id: leadId, email }),
     });
+
     if (!res.ok) {
       const txt = await res.text().catch(() => "");
       console.error(
@@ -831,18 +848,28 @@ async function triggerInternalPlanGeneration(
       );
       return;
     }
-    const data = await res.json().catch(() => ({}));
-    if (data?.ok) {
+
+    // NDJSON-Stream: jede Zeile ist ein Event, "done" enthaelt finales Resultat
+    const txt = await res.text().catch(() => "");
+    let finalResult: any = null;
+    for (const line of txt.split("\n").filter(Boolean)) {
+      try {
+        const obj = JSON.parse(line);
+        if (obj.event === "done") finalResult = obj;
+      } catch {}
+    }
+
+    if (finalResult?.ok) {
       console.log(
-        `[mollie-webhook] plan-gen OK: ${data.plan_length_months}M, ` +
-          `${data.weeks_count} Wochen, ~$${data.usage?.estimated_cost_usd}`
+        `[mollie-webhook] plan-gen OK: ${finalResult.plan_length_months}M, ` +
+          `${finalResult.weeks_count} Wochen (~${finalResult.duration_ms}ms)`
       );
-    } else if (data?.error === "skipped_existing") {
+    } else if (finalResult?.error === "skipped_existing") {
       console.log(
-        `[mollie-webhook] plan-gen skipped (existing): ${data.existing_plan_id}`
+        `[mollie-webhook] plan-gen skipped (existing): ${finalResult.existing_plan_id}`
       );
     } else {
-      console.error("[mollie-webhook] plan-gen error:", data?.error);
+      console.error("[mollie-webhook] plan-gen error:", finalResult?.error || "(unknown)");
     }
   } catch (e: any) {
     console.error("[mollie-webhook] plan-gen fetch failed:", e?.message);
