@@ -40,12 +40,18 @@ export async function generatePersonalizedIntro(
   const systemPrompt = `Du bist erfahrene Hundetrainerin im Pfoten-Plan-Team. Du schreibst kurze, ruhige, fachlich saubere Einleitungen für personalisierte Trainingspläne.
 
 STIL-REGELN (sehr wichtig):
-- DUZE den Halter durchgehend ("du", "dein", "dich") — NIE siezen.
-- KEINE Anrede wie "Liebe Hundehalterin/Hundehalter" am Anfang — direkt in den Inhalt einsteigen.
+- DUZE den Halter durchgehend ("du", "dein", "dich"). NIE siezen.
+- KEINE Anrede wie "Liebe Hundehalterin/Hundehalter" am Anfang. Direkt in den Inhalt einsteigen.
 - Deutsche Grammatik MUSS sauber sein: "großes Glück" (NICHT "große Glück"), Genus + Kasus korrekt.
 - Keine Anglizismen, keine Buzzwords, kein Jargon.
 - 3-4 kurze Absätze (je 2-4 Sätze).
-- Ruhig, warm, professionell — nicht aufgeregt oder pathetisch.`;
+- Ruhig, warm, professionell. Nicht aufgeregt oder pathetisch.
+
+ZEICHEN-REGELN (sehr wichtig, sonst wirkt es nach KI):
+- VERMEIDE Gedankenstriche jeder Art: KEINE em-dash (—), KEINE en-dash (–), auch keine doppelten Bindestriche.
+- Stattdessen: Komma, Punkt oder kurzer Satz. "Das ist normal, gehört dazu" statt "Das ist normal — gehört dazu".
+- Wenn du eine Pause oder Betonung brauchst: zwei Sätze oder ein Doppelpunkt. Niemals Gedankenstriche.
+- Auch keine Klammern für Nebenbemerkungen. Lieber direkt sagen.`;
 
   const userPrompt = `Schreibe eine persönliche Einleitung (3-4 Absätze) für den ${planLengthMonths}-Monatsplan dieses Hundes:
 
@@ -57,7 +63,7 @@ STIL-REGELN (sehr wichtig):
 ${args.customProblemText ? `\nIndividuelle Problem-Beschreibung des Halters (Freitext aus Quiz):\n"${args.customProblemText}"\n\n→ Gehe in der Einleitung KONKRET auf diese Beschreibung ein. Zeige dass du verstanden hast, was die Person genau erlebt.` : ""}
 ${args.zusatzKontext ? `\nZusätzlicher Kontext: ${args.zusatzKontext}` : ""}
 
-Steige direkt mit dem Hund ein (z.B. "${dogName} bringt...") — KEINE Anrede vorher. Gehe kurz auf rassen-typische Eigenschaften ein wenn relevant. Erkläre wofür der Plan steht. Schreibe ruhig und in Du-Form ("dein", "du wirst sehen"...).
+Steige direkt mit dem Hund ein (z.B. "${dogName} bringt..."). KEINE Anrede vorher. Gehe kurz auf rassen-typische Eigenschaften ein wenn relevant. Erkläre wofür der Plan steht. Schreibe ruhig und in Du-Form ("dein", "du wirst sehen"...).
 
 Antworte NUR mit dem Einleitungs-Text, keine Vorrede, keine Anführungszeichen, keine Überschrift.`;
 
@@ -70,11 +76,20 @@ Antworte NUR mit dem Einleitungs-Text, keine Vorrede, keine Anführungszeichen, 
       system: systemPrompt,
       messages: [{ role: "user", content: userPrompt }],
     });
-    const text = response.content
+    const rawText = response.content
       .filter((b: any) => b.type === "text")
       .map((b: any) => b.text)
       .join("\n")
       .trim();
+    // Defensiv: Gedankenstriche raus, Markdown raus — falls Sonnet die
+    // Stil-Regeln trotz Prompt nicht 100% einhaelt.
+    const text = rawText
+      .replace(/\s—\s/g, ", ")
+      .replace(/\s–\s/g, ", ")
+      .replace(/—/g, ",")
+      .replace(/–/g, ",")
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/\*(.*?)\*/g, "$1");
     return { einleitung: text || null, ms: Date.now() - t0 };
   } catch (e: any) {
     console.warn("[plan-intro-ai] generation failed:", e?.message);
