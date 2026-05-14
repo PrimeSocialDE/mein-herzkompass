@@ -47,6 +47,31 @@ export default function HilfePage() {
     }
   }, [messages, loading]);
 
+  // Beim Mount: Chat-History aus DB laden
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/mitglieder/hilfe/chat", { method: "GET" });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled && Array.isArray(data?.messages) && data.messages.length > 0) {
+          setMessages(
+            data.messages.map((m: any) => ({
+              role: m.role,
+              content: stripMarkdown(m.content),
+            }))
+          );
+        }
+      } catch {
+        // Verbindungsfehler — egal, einfach mit leerem Verlauf starten
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   async function send(message: string) {
     const trimmed = message.trim();
     if (!trimmed || loading) return;

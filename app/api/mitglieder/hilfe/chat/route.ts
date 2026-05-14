@@ -183,6 +183,29 @@ FORMAT (WICHTIG):
         .eq("id", user.id);
     }
 
+    // ── Chat-History persistieren (letzte User-Frage + KI-Antwort) ──
+    // Strikt append-only. Failures hier blockieren die Antwort nicht
+    // (Verlauf-speicherung ist nice-to-have, KI-Antwort ist priority).
+    try {
+      const lastUserMsg = messages[messages.length - 1];
+      if (lastUserMsg?.role === "user" && lastUserMsg.content) {
+        await admin.from("member_chat_messages").insert([
+          {
+            user_id: user.id,
+            role: "user",
+            content: lastUserMsg.content.slice(0, 4000),
+          },
+          {
+            user_id: user.id,
+            role: "assistant",
+            content: cleaned.slice(0, 8000),
+          },
+        ]);
+      }
+    } catch (e: any) {
+      console.warn("[hilfe-chat] history save failed:", e?.message);
+    }
+
     return NextResponse.json({
       reply: cleaned,
       usage: limit === Infinity
@@ -196,4 +219,40 @@ FORMAT (WICHTIG):
       { status: 500 }
     );
   }
+}
+
+// GET — Chat-History laden. Nur eigene Messages (RLS + user-id Filter).
+// Default: letzte 50 Messages, chronologisch sortiert (oldest first für UI).
+export async function GET(req: NextRequest) {
+  const user = await getCurrentMember();
+  if (!user) {
+    return NextResponse.json({ error: "Nicht eingeloggt" }, { status: 401 });
+  }
+
+  const limit = Math.min(
+    parseInt(req.nextUrl.searchParams.get("limit") || "50", 10),
+    200
+  );
+
+  const admin = createMemberAdminClient();
+  const { data, error } = await admin
+    .from("member_chat_messages")
+    .select("role, content, created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("[hilfe-chat] history load error:", error);
+    return NextResponse.json({ messages: [] });
+  }
+
+  // Reverse für UI (oldest first)
+  const messages = (data || []).reverse().map((r: any) => ({
+    role: r.role as "user" | "assistant",
+    content: r.content as string,
+    timestamp: r.created_at as string,
+  }));
+
+  return NextResponse.json({ messages });
 }
