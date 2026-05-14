@@ -280,6 +280,7 @@ export async function POST(req: NextRequest) {
             bekannteSignale,
           },
           introText: introResult.einleitung || undefined,
+          customProblemText,
         });
 
         const result = {

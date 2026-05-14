@@ -31,6 +31,7 @@ export interface TrainingPlanUebung {
 export interface TrainingPlanWeek {
   num: number;                   // 1..12
   title: string;                 // "Start Alltagstruktur"
+  schwerpunkt?: string;          // 1-2 Saetze: was diese Woche besonders ist
   wochenziele: string[];         // Bullet-Liste
   tagesplan: string;             // Mehrere Absaetze, Newlines erhalten
   no_gos: string[];              // Bullet-Liste

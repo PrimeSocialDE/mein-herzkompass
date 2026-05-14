@@ -177,6 +177,16 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
 
         {/* Wochen-Inhalt */}
         <div className="px-5 py-4 space-y-4">
+          {week.schwerpunkt && (
+            <div className="bg-[#FAF7F2] border-l-[3px] border-[#C4A576] rounded-r-lg px-4 py-3">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
+                Schwerpunkt
+              </p>
+              <p className="text-[13px] text-[#4B5563] leading-relaxed whitespace-pre-line">
+                {week.schwerpunkt}
+              </p>
+            </div>
+          )}
           {week.wochenziele && week.wochenziele.length > 0 && (
             <div>
               <p className="text-[11px] font-bold uppercase tracking-widest text-[#8B7355] mb-2 flex items-center gap-1.5">
