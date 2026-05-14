@@ -11,6 +11,7 @@ interface IntroArgs {
   problemLabel: string;        // "Leinenziehen"
   planLengthMonths: 1 | 3 | 6;
   zusatzKontext?: string;       // freie Quiz-Antworten
+  customProblemText?: string;   // Freitext aus Quiz: individuelle Problembeschreibung
 }
 
 // Sonnet 4.6 für bessere deutsche Grammatik + Stil-Konsistenz.
@@ -53,6 +54,7 @@ STIL-REGELN (sehr wichtig):
 - Alter: ${ageDesc}
 - Hauptthema: ${problemLabel}
 - Plan-Länge: ${weeksTotal} Wochen
+${args.customProblemText ? `\nIndividuelle Problem-Beschreibung des Halters (Freitext aus Quiz):\n"${args.customProblemText}"\n\n→ Gehe in der Einleitung KONKRET auf diese Beschreibung ein. Zeige dass du verstanden hast, was die Person genau erlebt.` : ""}
 ${args.zusatzKontext ? `\nZusätzlicher Kontext: ${args.zusatzKontext}` : ""}
 
 Steige direkt mit dem Hund ein (z.B. "${dogName} bringt...") — KEINE Anrede vorher. Gehe kurz auf rassen-typische Eigenschaften ein wenn relevant. Erkläre wofür der Plan steht. Schreibe ruhig und in Du-Form ("dein", "du wirst sehen"...).

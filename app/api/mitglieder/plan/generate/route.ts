@@ -244,7 +244,12 @@ export async function POST(req: NextRequest) {
 
         const problemLabel = PROBLEM_LABELS_DE[validProblemKey] || dogProblem;
 
-        // KI-Intro generieren (Haiku, parallel zum Compose-Job)
+        // KI-Intro generieren (parallel zum Compose-Job)
+        const customProblemText =
+          typeof answers.custom_problem_text === "string" &&
+          answers.custom_problem_text.trim().length > 0
+            ? answers.custom_problem_text.trim()
+            : undefined;
         const introPromise = generatePersonalizedIntro({
           dogName,
           dogBreed: answers.dog_breed || undefined,
@@ -252,6 +257,7 @@ export async function POST(req: NextRequest) {
           problemLabel,
           planLengthMonths,
           zusatzKontext: zusatzKontextLines.join("\n") || undefined,
+          customProblemText,
         });
 
         const introResult = await introPromise;
