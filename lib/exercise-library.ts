@@ -1,9 +1,9 @@
-// Übungs-Bibliothek fuer den Plan-Composer.
+// Übungs-Bibliothek für den Plan-Composer.
 //
 // Pro Problem-Typ (pulling, barking, etc.) gibt es eine Liste von
 // Übungen mit Schwierigkeit, Phase und Tags. Der Composer waehlt aus
 // dieser Liste die passenden Übungen basierend auf Hund-Profil aus
-// und verteilt sie ueber die Wochen.
+// und verteilt sie über die Wochen.
 //
 // Plus Phasen-Strukturen (Wochenziele, Tagespläne, No-Gos, Fortschritt)
 // als Template pro Phase.
@@ -158,7 +158,7 @@ const PULLING_EXERCISES: ExerciseTemplate[] = [
     suitableFor: {},
   },
   {
-    id: "p-baum-draussen",
+    id: "p-baum-draußen",
     title: "Sei ein Baum draußen: Erster echter Test",
     shortDesc: "Die Stopp-Technik raus auf die ruhige Straße oder in den Hof übertragen",
     intro: "{dogName} hat drinnen gelernt: straffe Leine = stopp. Jetzt nimmst du das mit nach draußen. Die ersten Spaziergänge dieser Phase dauern länger und sind anstrengender, das ist Investition.",
@@ -209,7 +209,7 @@ const PULLING_EXERCISES: ExerciseTemplate[] = [
       "Nach 8-10 Schritten: plötzlich auf doppeltes Tempo beschleunigen, fast Joggen.",
       "Wieder Anpassung? Wieder Belohnung an der Bein-Position.",
       "Pro Spaziergang 6-10 solche Tempo-Wechsel.",
-      "Variation: kurze 90-Grad-Drehung statt Tempo-Wechsel, gleicher Effekt.",
+      "Variation: kurze 90-Grad-Drehung statt Tempo-Wechsel, gleichter Effekt.",
       "Kein starres Schema, sei unberechenbar — das ist gerade der Reiz.",
     ],
     phase: "steigerung",
@@ -218,7 +218,7 @@ const PULLING_EXERCISES: ExerciseTemplate[] = [
     suitableFor: {},
   },
   {
-    id: "p-lockere-leine-aussen",
+    id: "p-lockere-leine-außen",
     title: "Lockere Leine im echten Alltagsspaziergang",
     shortDesc: "Alle Techniken kombiniert: Stopp, Bei-Fuß, Tempo, Schnüffeln als Belohnung",
     intro: "Das ist der Alltagstest. {dogName} kennt jetzt Sei-ein-Baum, Bei-Fuß-Belohnung und Tempo-Wechsel. Jetzt kombinierst du alle Werkzeuge auf einer normalen Strecke.",
@@ -260,7 +260,7 @@ const PULLING_EXERCISES: ExerciseTemplate[] = [
 
   // ── Steigerung (Woche 5-8) ─────────────────────────────────────
   {
-    id: "p-schau-draussen",
+    id: "p-schau-draußen",
     title: "SCHAU mit Außenablenkung",
     shortDesc: "Das Signal funktioniert auch wenn draußen was los ist",
     intro: "{dogName} überträgt das gelernte SCHAU-Signal in die Außenwelt — anfangs an ruhigen Orten, dann mit mehr Ablenkung.",
@@ -317,7 +317,7 @@ const PULLING_EXERCISES: ExerciseTemplate[] = [
     suitableFor: {},
   },
   {
-    id: "p-richtungswechsel-aussen",
+    id: "p-richtungswechsel-außen",
     title: "Richtungswechsel ohne Ansage",
     shortDesc: "Aufmerksamkeit bei dir statt nach vorne ziehen",
     intro: "{dogName} entwickelt Aufmerksamkeit für deine Bewegung. Statt vor zu rennen, orientiert sie sich an dir.",
@@ -418,10 +418,10 @@ const PULLING_EXERCISES: ExerciseTemplate[] = [
 // ════════════════════════════════════════════════════════════════════
 // ENERGY (zu viel Energie / Übererregung) — 10 Übungen
 // ════════════════════════════════════════════════════════════════════
-// Trainer-Mindset: ein muede ausgelasteter Hund wird ruhig, nicht ein
-// erschoepfter. Mehr Kopfarbeit + Nasenarbeit + Ruhe-Konditionierung
+// Trainer-Mindset: ein müde ausgelasteter Hund wird ruhig, nicht ein
+// erschöpfter. Mehr Kopfarbeit + Nasenarbeit + Ruhe-Konditionierung
 // schlaegt mehr Bewegung. Viele Halter machen den Fehler "mehr Action"
-// und verstaerken damit Übererregung.
+// und verstärken damit Übererregung.
 
 const ENERGY_EXERCISES: ExerciseTemplate[] = [
   {
@@ -534,7 +534,7 @@ const ENERGY_EXERCISES: ExerciseTemplate[] = [
       "Sage SUCH und lass {dogName} der Spur folgen, schnüffelnd.",
       "Bleibe ruhig dabei. Folge der Spur mit, ohne {dogName} zu drängen.",
       "Am Ende: Jackpot — ein Häufchen Leckerlis.",
-      "Steigere täglich: längere Spur, ungleichere Abstände, andere Untergründe.",
+      "Steigere täglich: längere Spur, ungleichtere Abstände, andere Untergründe.",
       "Pro Spaziergang 1 Spuren-Such-Einheit von 15-20 Min ersetzt 30 Min normales Laufen.",
     ],
     phase: "steigerung",
@@ -570,7 +570,7 @@ const ENERGY_EXERCISES: ExerciseTemplate[] = [
     steps: [
       "Sobald {dogName} hochgefahren ist (von Spiel oder Besuch), führe sie ruhig zur Decke.",
       "Sage PLATZ in ruhiger Stimme.",
-      "Setze dich daneben, streichle sanft am Schulterblatt.",
+      "Setze dich daneben, streichhle sanft am Schulterblatt.",
       "Atme bewusst tief und langsam — {dogName} synchronisiert.",
       "Wenn {dogName} hochsteht: ruhig zurückführen, ohne Worte.",
       "Alle 30-60 Sek einen weichen Leckerli zwischen die Vorderpfoten legen, wenn {dogName} liegt.",
@@ -628,7 +628,7 @@ const ENERGY_EXERCISES: ExerciseTemplate[] = [
 // ════════════════════════════════════════════════════════════════════
 // Trainer-Mindset: NIEMALS Konfrontation, IMMER Distanz. Schwellenwert-
 // Arbeit + Gegenkonditionierung. Hund unter Schwellenwert lernt, daruber
-// reagiert er nur. Maulkorb-Training ist Pflicht-Bestandteil fuer Sicher-
+// reagiert er nur. Maulkorb-Training ist Pflicht-Bestandteil für Sicher-
 // heit und Flexibilitaet.
 
 const AGGRESSION_EXERCISES: ExerciseTemplate[] = [
@@ -776,7 +776,7 @@ const AGGRESSION_EXERCISES: ExerciseTemplate[] = [
 // MOUTHING (Aufnehmen von Gegenständen) — 6 Übungen
 // ════════════════════════════════════════════════════════════════════
 // Trainer-Mindset: AUS sauber aufbauen, Tausch statt Strafe, kurze Leine
-// an Hotspots, Maulkorb fuer Uebergang. Niemals Hand in Maul greifen.
+// an Hotspots, Maulkorb für Übergang. Niemals Hand in Maul greifen.
 
 const MOUTHING_EXERCISES: ExerciseTemplate[] = [
   {
@@ -864,7 +864,7 @@ const MOUTHING_EXERCISES: ExerciseTemplate[] = [
     shortDesc: "Sicherheit an Hochrisiko-Orten, bis das Training greift",
     intro: "Solange das Training noch nicht steht, ist ein Maulkorb das beste Sicherheits-Equipment. Nicht aus Strafe, sondern aus Vernunft — Giftköder und scharfe Gegenstände gibt es überall.",
     steps: [
-      "Konditioniere den Maulkorb positiv (siehe Aggression-Maulkorb-Übung, gleiche Methode).",
+      "Konditioniere den Maulkorb positiv (siehe Aggression-Maulkorb-Übung, gleichte Methode).",
       "Wenn die positive Verknüpfung steht: Maulkorb an Hochrisiko-Orten einsetzen.",
       "Niemals als Strafmaßnahme nutzen, niemals zu Hause aufsetzen wegen Frust.",
       "Mit Maulkorb kann {dogName} normal trinken und schnüffeln, nur nicht aufnehmen.",
@@ -901,7 +901,7 @@ const MOUTHING_EXERCISES: ExerciseTemplate[] = [
 // RECALL (unzuverlässiger Rückruf) — 7 Übungen
 // ════════════════════════════════════════════════════════════════════
 // Trainer-Mindset: HIER positiv laden, Schleppleine als Sicherheits-
-// Brücke, niemals fuer Negatives missbrauchen. Gradient: leicht → schwer.
+// Brücke, niemals für Negatives missbrauchen. Gradient: leicht → schwer.
 
 const RECALL_EXERCISES: ExerciseTemplate[] = [
   {
@@ -1044,10 +1044,10 @@ const RECALL_EXERCISES: ExerciseTemplate[] = [
 ];
 
 // ════════════════════════════════════════════════════════════════════
-// BARKING (uebermaessiges Bellen) — 7 Uebungen
+// BARKING (übermaessiges Bellen) — 7 Übungen
 // ════════════════════════════════════════════════════════════════════
 // Trainer-Mindset: erst Auslöser identifizieren, dann RUHE belohnen statt
-// Bellen bestrafen. Tuerklingel = Decken-Routine, Frust-Bellen = Ignorieren,
+// Bellen bestrafen. Türklingel = Decken-Routine, Frust-Bellen = Ignorieren,
 // reaktives Bellen = Gegenkonditionierung. Niemals anschreien.
 
 const BARKING_EXERCISES: ExerciseTemplate[] = [
@@ -1074,15 +1074,15 @@ const BARKING_EXERCISES: ExerciseTemplate[] = [
     id: "b-ruhe-marker",
     title: "RUHE-Marker etablieren",
     shortDesc: "Belohne das SCHWEIGEN, nicht das Anschreien des Bellens",
-    intro: "Statt das Bellen zu bestrafen, belohnen wir konsequent Phasen ohne Bellen. {dogName} lernt: still sein lohnt sich. Das ist die Basis fuer alles Weitere.",
+    intro: "Statt das Bellen zu bestrafen, belohnen wir konsequent Phasen ohne Bellen. {dogName} lernt: still sein lohnt sich. Das ist die Basis für alles Weitere.",
     steps: [
       "Beobachte {dogName} bewusst. Sobald 5 Sekunden Stille (nicht bellt, nicht jault): leise FEIN sagen und Leckerli geben.",
       "Erst 5 Sek, dann 10, dann 20, dann 30, dann 1 Min.",
-      "Belohnung kommt LEISE und RUHIG. Keine grosse Sache.",
+      "Belohnung kommt LEISE und RUHIG. Keine große Sache.",
       "Sage NIEMALS 'leise' oder 'still' in dieser Phase — wir bauen den Marker um Stille, nicht um ein Stop-Signal.",
       "Pro Tag 8-10 dieser Mini-Belohnungen.",
-      "Ueber 2 Wochen lernt {dogName}: Stille = manchmal kommt was Gutes.",
-      "Niemals anschreien wenn {dogName} bellt, das ist fuer den Hund auch Aufmerksamkeit.",
+      "Über 2 Wochen lernt {dogName}: Stille = manchmal kommt was Gutes.",
+      "Niemals anschreien wenn {dogName} bellt, das ist für den Hund auch Aufmerksamkeit.",
     ],
     phase: "fundament",
     difficulty: "easy",
@@ -1091,17 +1091,17 @@ const BARKING_EXERCISES: ExerciseTemplate[] = [
   },
   {
     id: "b-tuerklingel-decke",
-    title: "Tuerklingel-Routine: Klingel = Decke",
+    title: "Türklingel-Routine: Klingel = Decke",
     shortDesc: "Bei Klingelton geht {dogName} ruhig auf die Decke",
-    intro: "Wenn Klingelbellen Thema ist, etablierst du eine Alternative: bei Klingel rennt {dogName} nicht zur Tuer, sondern auf die Decke. Pavlov-Konditionierung pur.",
+    intro: "Wenn Klingelbellen Thema ist, etablierst du eine Alternative: bei Klingel rennt {dogName} nicht zur Tür, sondern auf die Decke. Pavlov-Konditionierung pur.",
     steps: [
-      "{dogName} muss vorher Decke gut kennen (Entspannungsdecke-Uebung).",
+      "{dogName} muss vorher Decke gut kennen (Entspannungsdecke-Übung).",
       "Spiele Klingel-Aufnahme leise vom Handy ab.",
       "Sage sofort PLATZ, locke {dogName} auf die Decke.",
       "Belohne mit hochwertigem Leckerli auf der Decke.",
       "10 Wiederholungen pro Session, 2 Sessions taeglich.",
-      "Steigere Klingel-Lautstaerke ueber 2 Wochen.",
-      "Dann echte Klingel mit Helfer: jemand klingelt von draussen.",
+      "Steigere Klingel-Lautstaerke über 2 Wochen.",
+      "Dann echte Klingel mit Helfer: jemand klingelt von draußen.",
       "{dogName} rennt auf Decke: JACKPOT von 5 Leckerlis.",
       "Klingel ohne Decke nicht mehr akzeptieren — konsequent.",
     ],
@@ -1112,17 +1112,17 @@ const BARKING_EXERCISES: ExerciseTemplate[] = [
   },
   {
     id: "b-counter-cond-aussen",
-    title: "Gegenkonditionierung bei Aussenreizen",
+    title: "Gegenkonditionierung bei Außenreizen",
     shortDesc: "Hund vorbei = Leckerli, nicht Bellen-Auslöser",
-    intro: "Wenn {dogName} an Fenster oder im Garten bellt: aenderung der emotionalen Verknüpfung. Reiz auftauchen = Leckerli kommt. Reiz weg = Leckerli weg. Mit Konsistenz aendert sich die Reaktion.",
+    intro: "Wenn {dogName} an Fenster oder im Garten bellt: änderung der emotionalen Verknüpfung. Reiz auftauchen = Leckerli kommt. Reiz weg = Leckerli weg. Mit Konsistenz aendert sich die Reaktion.",
     steps: [
       "An typischer Bell-Position (Fenster, Garten): warte bis ein Reiz auftaucht (Hund vorbei, Postbote).",
       "BEVOR {dogName} bellen kann: SCHAU sagen und Leckerli geben.",
       "Solange Reiz sichtbar ist, durchgehend fuettern.",
       "Reiz weg: Leckerli stop.",
       "Wichtig: das funktioniert NUR wenn du den Reiz frueh genug siehst.",
-      "Falls {dogName} schon bellt: zu spaet. Distanz vergroessern (Fenster zu, in anderen Raum).",
-      "Ueber Wochen lernt {dogName}: Reiz = positive Erwartung, nicht Bellen.",
+      "Falls {dogName} schon bellt: zu spät. Distanz vergroessern (Fenster zu, in anderen Raum).",
+      "Über Wochen lernt {dogName}: Reiz = positive Erwartung, nicht Bellen.",
       "Belohnungs-Frequenz erst nach 4 Wochen reduzieren.",
     ],
     phase: "steigerung",
@@ -1134,15 +1134,15 @@ const BARKING_EXERCISES: ExerciseTemplate[] = [
     id: "b-aufmerksamkeits-bellen",
     title: "Aufmerksamkeits-Bellen: konsequent ignorieren",
     shortDesc: "Wenn {dogName} dich anbellt um was zu kriegen: Ruecken zudrehen",
-    intro: "Manche Hunde bellen um Aufmerksamkeit, Spiel oder Futter zu kriegen. Das funktioniert NUR wenn es funktioniert. Konsequent ignorieren = das Bellen verschwindet ueber 2-3 Wochen.",
+    intro: "Manche Hunde bellen um Aufmerksamkeit, Spiel oder Futter zu kriegen. Das funktioniert NUR wenn es funktioniert. Konsequent ignorieren = das Bellen verschwindet über 2-3 Wochen.",
     steps: [
       "Identifiziere klar: bellt {dogName} um was von DIR zu wollen (anschauen, fuettern, spielen)?",
       "Bei diesem Belltyp: SOFORT Ruecken zudrehen, ohne Worte.",
-      "Verlasse den Raum wenn moeglich.",
+      "Verlasse den Raum wenn möglich.",
       "Komm zurueck wenn {dogName} 30 Sek ruhig war.",
       "Beim Ruhigwerden: FEIN + Leckerli, aber leise.",
       "Wichtig: Konsistenz ist alles. EINE Belohnung beim Bellen sabotiert 2 Wochen Arbeit.",
-      "Verstaerkungs-Spitze: in Tag 3-7 wird Bellen erst INTENSIVER, dann verschwindet es.",
+      "Verstärkungs-Spitze: in Tag 3-7 wird Bellen erst INTENSIVER, dann verschwindet es.",
       "Halte aus. Wer nachgibt, lernt {dogName}: Bellen MUSS nur intensiver werden.",
     ],
     phase: "steigerung",
@@ -1158,11 +1158,11 @@ const BARKING_EXERCISES: ExerciseTemplate[] = [
     steps: [
       "Setze {dogName} bewusst kleinen Frust-Momenten aus: vor Futter WARTE sagen, vor Spielzeug WARTE.",
       "Steigere die Wartezeit langsam: 5 Sek, 10, 20, 30.",
-      "Bei Bellen waehrend WARTE: nicht aufloesen, Hand zurueckziehen.",
-      "Erst wenn 3 Sek ruhig: Aufloesung und Belohnung.",
+      "Bei Bellen waehrend WARTE: nicht auflöesen, Hand zurueckziehen.",
+      "Erst wenn 3 Sek ruhig: Auflöesung und Belohnung.",
       "Pro Tag 5-7 solche Mini-Frust-Situationen.",
-      "Ueber Wochen lernt {dogName}: Frust kann ich aushalten, das Bellen bringt nichts.",
-      "Niemals laut werden bei Frust-Bellen — verstaerkt die Aufregung.",
+      "Über Wochen lernt {dogName}: Frust kann ich aushalten, das Bellen bringt nichts.",
+      "Niemals laut werden bei Frust-Bellen — verstärkt die Aufregung.",
     ],
     phase: "steigerung",
     difficulty: "medium",
@@ -1173,16 +1173,16 @@ const BARKING_EXERCISES: ExerciseTemplate[] = [
     id: "b-laeuten-routine",
     title: "Echte Klingel-Routine im Alltag",
     shortDesc: "Klingel = Decke = Belohnung, auch bei echten Besuchen",
-    intro: "Wenn die Tuerklingel-Decke-Routine drinnen sitzt, testen wir mit echten Besuchen. {dogName} bleibt auf der Decke, bis du das OK-Signal gibst.",
+    intro: "Wenn die Türklingel-Decke-Routine drinnen sitzt, testen wir mit echten Besuchen. {dogName} bleibt auf der Decke, bis du das OK-Signal gibst.",
     steps: [
       "Vorher: Helfer kommt zu Besuch. Du bist vorbereitet.",
       "Klingel: {dogName} sollte automatisch zur Decke laufen.",
-      "Du oeffnest die Tuer, begruesst leise.",
+      "Du oeffnest die Tür, begruesst leise.",
       "Besuch kommt rein, achtet {dogName} nicht.",
       "{dogName} bleibt auf Decke: alle 30 Sek Leckerli.",
       "Nach 5 Min mit ruhigem {dogName}: OK-Signal, sie darf vorsichtig hallo sagen.",
       "Falls {dogName} von der Decke geht: ruhig zurueckfuehren, ohne Drama.",
-      "Ueber Wochen wird Klingel zur normalen Routine, nicht zum Bell-Auslöser.",
+      "Über Wochen wird Klingel zur normalen Routine, nicht zum Bell-Auslöser.",
     ],
     phase: "generalisierung",
     difficulty: "medium",
@@ -1192,22 +1192,22 @@ const BARKING_EXERCISES: ExerciseTemplate[] = [
 ];
 
 // ════════════════════════════════════════════════════════════════════
-// ANXIETY (Trennungsangst) — 7 Uebungen
+// ANXIETY (Trennungsangst) — 7 Übungen
 // ════════════════════════════════════════════════════════════════════
 // Trainer-Mindset: graduell aufbauen von Sekunden zu Stunden, KEIN
-// Drama beim Gehen/Kommen, Kong als Verknuepfung, Auslöser-Stack lesen.
-// Bei schwerer Trennungsangst eventuell Tierarzt fuer medizinische Unterstuetzung.
+// Drama beim Gehen/Kommen, Kong als Verknüpfung, Auslöser-Stack lesen.
+// Bei schwerer Trennungsangst eventuell Tierarzt für medizinische Unterstuetzung.
 
 const ANXIETY_EXERCISES: ExerciseTemplate[] = [
   {
     id: "ax-trigger-stack",
     title: "Abschieds-Auslöser-Stack erkennen",
-    shortDesc: "Welche Vorboten kennt {dogName}? Schluessel, Schuhe, Jacke?",
-    intro: "Hunde mit Trennungsangst fangen oft schon an zu stressen BEVOR du gehst. Sie lesen Auslöser: Schluessel, Schuhe, Jacke, Computer ausschalten. Diese Woche identifizierst du den Auslöser-Stack.",
+    shortDesc: "Welche Vorboten kennt {dogName}? Schlüssel, Schuhe, Jacke?",
+    intro: "Hunde mit Trennungsangst fangen oft schon an zu stressen BEVOR du gehst. Sie lesen Auslöser: Schlüssel, Schuhe, Jacke, Computer ausschalten. Diese Woche identifizierst du den Auslöser-Stack.",
     steps: [
-      "Beobachte {dogName} 3-5 Tage genau, wenn du das Haus verlaesst.",
+      "Beobachte {dogName} 3-5 Tage genau, wenn du das Haus verlässt.",
       "Notiere: ab welchem Moment veraendert sich das Verhalten? Atmung schneller? Lecken? Hecheln?",
-      "Identifiziere den Auslöser-Stack: typischerweise Schluessel + Schuhe + Tasche + Jacke + Tuer-Hand.",
+      "Identifiziere den Auslöser-Stack: typischerweise Schlüssel + Schuhe + Tasche + Jacke + Tür-Hand.",
       "Diese Auslöser werden wir in Woche 2 entkoppeln.",
       "Bewusstheit ist 50% der Loesung.",
     ],
@@ -1218,17 +1218,17 @@ const ANXIETY_EXERCISES: ExerciseTemplate[] = [
   },
   {
     id: "ax-trigger-entkoppeln",
-    title: "Auslöser entkoppeln: Schluessel ohne Gehen",
-    shortDesc: "Schluessel nehmen, dann wieder hinlegen. {dogName} lernt: das hat keine Bedeutung mehr",
-    intro: "Wir entkoppeln die Vorboten vom Gehen. {dogName} sieht Schluessel = nichts passiert. Sieht Schuhe an = nichts passiert. Ueber Wochen verlieren die Auslöser ihre angst-ausloesende Wirkung.",
+    title: "Auslöser entkoppeln: Schlüssel ohne Gehen",
+    shortDesc: "Schlüssel nehmen, dann wieder hinlegen. {dogName} lernt: das hat keine Bedeutung mehr",
+    intro: "Wir entkoppeln die Vorboten vom Gehen. {dogName} sieht Schlüssel = nichts passiert. Sieht Schuhe an = nichts passiert. Über Wochen verlieren die Auslöser ihre angst-auslösende Wirkung.",
     steps: [
-      "10x am Tag Schluessel nehmen, in der Hand halten, hinlegen. Nicht gehen.",
+      "10x am Tag Schlüssel nehmen, in der Hand halten, hinlegen. Nicht gehen.",
       "10x Schuhe anziehen, ein paar Schritte, ausziehen. Nicht gehen.",
-      "10x Tuerklinke beruehren, drehen, loslassen. Nicht gehen.",
+      "10x Türklinke beruehren, drehen, loslassen. Nicht gehen.",
       "{dogName} schaut interessiert, dann verliert sie Interesse.",
       "Genau das ist der Lerneffekt: Auslöser = bedeutungslos.",
-      "Ueber 1-2 Wochen verlieren die Auslöser ihre Wirkung.",
-      "Wichtig: NICHT trainings-aehnlich machen, sondern beilaeufig in deinem Alltag einbauen.",
+      "Über 1-2 Wochen verlieren die Auslöser ihre Wirkung.",
+      "Wichtig: NICHT trainings-aehnlich machen, sondern beiläufig in deinem Alltag einbauen.",
     ],
     phase: "fundament",
     difficulty: "easy",
@@ -1238,7 +1238,7 @@ const ANXIETY_EXERCISES: ExerciseTemplate[] = [
   {
     id: "ax-mini-sekunden",
     title: "Allein-Sein in Sekunden aufbauen",
-    shortDesc: "Beginne mit 2 Sekunden, steigere zu Stunden — ueber Wochen",
+    shortDesc: "Beginne mit 2 Sekunden, steigere zu Stunden — über Wochen",
     intro: "Allein-bleiben wird wie ein Muskel trainiert. 2 Sekunden, 5, 10, 30, 1 Min, 5 Min. Wer zu schnell steigert, baut die Angst wieder auf. Geduld ist das ganze Spiel.",
     steps: [
       "Tag 1: {dogName} ist im Wohnzimmer, du gehst 2 Sek aus dem Raum, kommst zurueck. Wiederhole 10x.",
@@ -1256,15 +1256,15 @@ const ANXIETY_EXERCISES: ExerciseTemplate[] = [
   },
   {
     id: "ax-kong-beim-gehen",
-    title: "Kong als positive Verknuepfung beim Gehen",
+    title: "Kong als positive Verknüpfung beim Gehen",
     shortDesc: "Du gehst = der beste Kong des Tages kommt",
-    intro: "{dogName} bekommt ihren Lieblings-Kong NUR wenn du gehst. Damit wird das Gehen positiv verknuepft. Halter weg = Lieblings-Snack da.",
+    intro: "{dogName} bekommt ihren Lieblings-Kong NUR wenn du gehst. Damit wird das Gehen positiv verknüpft. Halter weg = Lieblings-Snack da.",
     steps: [
-      "Stopfe einen Kong besonders gut: Hueh Tneraserstreifen, eingefroren ist schwerer.",
+      "Stopfe einen Kong besonders gut: Hühnerstreifen, eingefroren ist schwerer.",
       "Kurz BEVOR du gehst: gib Kong an einem festen Platz (Decke oder Korb).",
       "Geh ohne Drama raus.",
-      "Komm zurueck nach (anfangs) 2 Sek bis (spaeter) Stunden.",
-      "Kong wegnehmen sobald du zurueck bist. Er ist NUR fuer die Abwesenheit reserviert.",
+      "Komm zurueck nach (anfangs) 2 Sek bis (später) Stunden.",
+      "Kong wegnehmen sobald du zurueck bist. Er ist NUR für die Abwesenheit reserviert.",
       "Wenn {dogName} den Kong noch nicht angefangen hat: Stress-Indikator. Zeit reduzieren.",
       "Wenn {dogName} ruhig kaut waehrend du gehst: Erfolg.",
     ],
@@ -1283,8 +1283,8 @@ const ANXIETY_EXERCISES: ExerciseTemplate[] = [
       "Beim Verlassen: lege {dogName} auf die Decke, gib den Kong.",
       "Die Decke liegt am festen Platz, idealerweise mit Sichtschutz (Korb, Hundesofa).",
       "Wenn {dogName} hochsteht: ruhig zurueckfuehren, dann weiter.",
-      "Ueber Zeit wird die Decke zur 'Allein-Zeit-Insel'.",
-      "Reisetasche-Version: wenn du laenger weg bist, kann eine getragene Decke (mit deinem Geruch) zusaetzlich helfen.",
+      "Über Zeit wird die Decke zur 'Allein-Zeit-Insel'.",
+      "Reisetasche-Version: wenn du länger weg bist, kann eine getragene Decke (mit deinem Geruch) zusaetzlich helfen.",
     ],
     phase: "steigerung",
     difficulty: "easy",
@@ -1300,9 +1300,9 @@ const ANXIETY_EXERCISES: ExerciseTemplate[] = [
       "Installiere eine Smartphone-Webcam oder Smart-Camera, die dir Live-Streaming gibt.",
       "Beginne mit 30 Min Abwesenheit, beobachte per Video.",
       "Kriterien: schlaeft sie? Kont sie ihren Kong ruhig? Lauft sie aufgeregt?",
-      "Wenn ruhig: naechste Stufe 45 Min, 1h, 90 Min, 2h.",
+      "Wenn ruhig: nächste Stufe 45 Min, 1h, 90 Min, 2h.",
       "Wenn Stress: zurueck zur letzten erfolgreichen Stufe, dort 1 Woche bleiben.",
-      "Zielwert: 4 Stunden ruhige Allein-Zeit. Mehr ist auch fuer ausgeglichene Hunde grenzwertig.",
+      "Zielwert: 4 Stunden ruhige Allein-Zeit. Mehr ist auch für ausgeglichene Hunde grenzwertig.",
       "Bei schwerer Trennungsangst: Tierarzt einbeziehen. Manchmal hilft medizinische Unterstuetzung.",
     ],
     phase: "generalisierung",
@@ -1314,14 +1314,14 @@ const ANXIETY_EXERCISES: ExerciseTemplate[] = [
     id: "ax-tagesroutine",
     title: "Berechenbare Tagesroutine etablieren",
     shortDesc: "Trennungsangst sinkt mit vorhersehbarer Struktur",
-    intro: "Hunde mit Trennungsangst profitieren massiv von berechenbaren Tagesablaeufen. Gleicher Spaziergang-Zeitpunkt, gleiche Fuetterungs-Zeit, gleiche Allein-Zeiten. Unsicherheit reduzieren.",
+    intro: "Hunde mit Trennungsangst profitieren massiv von berechenbaren Tagesabläufen. Gleichter Spaziergang-Zeitpunkt, gleichte Fuetterungs-Zeit, gleichte Allein-Zeiten. Unsicherheit reduzieren.",
     steps: [
-      "Etabliere feste Zeiten fuer Spaziergang, Fuetterung, Beschaeftigung, Allein-Zeit.",
+      "Etabliere feste Zeiten für Spaziergang, Fuetterung, Beschaeftigung, Allein-Zeit.",
       "Schreibe sie an den Kuehlschrank.",
       "Auch am Wochenende einhalten — Hunde unterscheiden nicht zwischen Wochenende und Werktag.",
       "Vor jeder Allein-Zeit: 15-20 Min Beschaeftigung (Spaziergang, Suchspiel).",
       "Mueder Hund + berechenbare Struktur = halbierte Trennungsangst.",
-      "Ueber 4-6 Wochen wird die Routine internalisiert.",
+      "Über 4-6 Wochen wird die Routine internalisiert.",
     ],
     phase: "generalisierung",
     difficulty: "easy",
@@ -1331,7 +1331,7 @@ const ANXIETY_EXERCISES: ExerciseTemplate[] = [
 ];
 
 // ════════════════════════════════════════════════════════════════════
-// JUMPING (Anspringen) — 6 Uebungen
+// JUMPING (Anspringen) — 6 Übungen
 // ════════════════════════════════════════════════════════════════════
 // Trainer-Mindset: 4 Pfoten auf dem Boden = Belohnung. Beim Springen
 // konsequent Aufmerksamkeit entziehen. SITZ als Alternativ-Verhalten
@@ -1342,7 +1342,7 @@ const JUMPING_EXERCISES: ExerciseTemplate[] = [
     id: "j-vier-pfoten-belohnen",
     title: "4 Pfoten auf dem Boden = Belohnung",
     shortDesc: "Das wichtigste Prinzip: nur ruhiges Stehen kriegt Aufmerksamkeit",
-    intro: "Hunde, die anspringen, lernen ueber Wochen das Gegenteil: 4 Pfoten auf dem Boden bringen Belohnung, Springen bringt NICHTS. Konsequenz ueber 2-3 Wochen wirkt.",
+    intro: "Hunde, die anspringen, lernen über Wochen das Gegenteil: 4 Pfoten auf dem Boden bringen Belohnung, Springen bringt NICHTS. Konsequenz über 2-3 Wochen wirkt.",
     steps: [
       "Bei jedem Wieder-Sehen (kommst nach Hause, in den Raum): {dogName} hat 4 Pfoten am Boden? Sofort runter, ruhig hallo sagen, leise Streicheln.",
       "Sobald sie hochspringt: Ruecken zudrehen, ignorieren, kein Augenkontakt.",
@@ -1350,7 +1350,7 @@ const JUMPING_EXERCISES: ExerciseTemplate[] = [
       "Sie springt wieder: Ruecken zudrehen.",
       "{dogName} lernt: Springen = du gehst weg. Stehen = ich kriege Hallo.",
       "Konsistenz ist ALLES. Ein Familienmitglied der einmal nachgibt, sabotiert die Arbeit.",
-      "Ueber 2-3 Wochen verschwindet das Anspringen.",
+      "Über 2-3 Wochen verschwindet das Anspringen.",
     ],
     phase: "fundament",
     difficulty: "easy",
@@ -1361,15 +1361,15 @@ const JUMPING_EXERCISES: ExerciseTemplate[] = [
     id: "j-sitz-als-gruess",
     title: "SITZ als Begruessungs-Alternative",
     shortDesc: "{dogName} soll SITZ als Begruessungs-Verhalten lernen",
-    intro: "Statt nur Springen zu unterbinden, geben wir {dogName} eine Alternative: SITZ ist die neue Begruessung. Bei Begegnung sitzt sie, kriegt dafuer Aufmerksamkeit.",
+    intro: "Statt nur Springen zu unterbinden, geben wir {dogName} eine Alternative: SITZ ist die neue Begruessung. Bei Begegnung sitzt sie, kriegt dafür Aufmerksamkeit.",
     steps: [
-      "SITZ-Signal muss vorher zuverlaessig sitzen.",
-      "Bei Begegnungen (Familie, Gaeste, Spaziergaenger): SITZ sagen.",
+      "SITZ-Signal muss vorher zuverlässig sitzen.",
+      "Bei Begegnungen (Familie, Gäste, Spaziergaenger): SITZ sagen.",
       "{dogName} sitzt: sofort FEIN + Streicheln + Leckerli.",
       "Sie steht auf zum Springen: Streicheln stop, Ruecken zudrehen.",
       "Sobald wieder SITZ: zuwenden.",
-      "Ueber Wochen wird SITZ zur automatischen Begruessungs-Routine.",
-      "Auch Gaeste anweisen: nur wenn {dogName} sitzt, darf sie sie streicheln.",
+      "Über Wochen wird SITZ zur automatischen Begruessungs-Routine.",
+      "Auch Gäste anweisen: nur wenn {dogName} sitzt, darf sie sie streichheln.",
     ],
     phase: "fundament",
     difficulty: "easy",
@@ -1378,18 +1378,18 @@ const JUMPING_EXERCISES: ExerciseTemplate[] = [
   },
   {
     id: "j-tuergaeste-routine",
-    title: "Gaeste-Begruessungs-Routine etablieren",
+    title: "Gäste-Begruessungs-Routine etablieren",
     shortDesc: "Bei Klingel: {dogName} geht auf die Decke und wartet",
     intro: "Aehnlich wie bei Bellen: Klingel = Decke. {dogName} wartet auf der Decke, bis du den Gast hereingelassen hast und ihr OK-Signal gibst.",
     steps: [
-      "Vorher: Decke und Tuerklingel-Routine muessen sitzen.",
+      "Vorher: Decke und Türklingel-Routine muessen sitzen.",
       "Klingel: {dogName} auf Decke fuehren (oder von selbst dort).",
-      "Tuer oeffnen, Gast hereinbitten, Schuhe ausziehen.",
+      "Tür oeffnen, Gast hereinbitten, Schuhe ausziehen.",
       "Gast achtet {dogName} nicht.",
       "{dogName} bleibt auf Decke: alle 30 Sek Leckerli.",
       "Nach 3-5 Min ruhigem {dogName}: OK-Signal, sie darf vorsichtig hallo sagen.",
-      "Gast streichelt nur wenn {dogName} sitzt — NICHT bei Springen.",
-      "Ueber Wochen wird Gaeste-Empfang routiniert.",
+      "Gast streichhelt nur wenn {dogName} sitzt — NICHT bei Springen.",
+      "Über Wochen wird Gäste-Empfang routiniert.",
     ],
     phase: "steigerung",
     difficulty: "medium",
@@ -1398,16 +1398,16 @@ const JUMPING_EXERCISES: ExerciseTemplate[] = [
   },
   {
     id: "j-spazier-vorbeigaenger",
-    title: "Vorbeigaenger draussen: SITZ statt Anspringen",
+    title: "Vorbeigaenger draußen: SITZ statt Anspringen",
     shortDesc: "Wenn Menschen entgegen kommen, sitzt {dogName} an der Bein-Position",
-    intro: "Anspringen draussen ist heikel: nicht jeder Mensch will hochgesprungen werden. Wir etablieren: bei Vorbeigaengern setzt sich {dogName} an deine Bein-Position.",
+    intro: "Anspringen draußen ist heikel: nicht jeder Mensch will hochgesprungen werden. Wir etablieren: bei Vorbeigaengern setzt sich {dogName} an deine Bein-Position.",
     steps: [
       "Sobald {dogName} einen Vorbeigaenger sieht (15m+ Distanz): SITZ neben deinem Bein.",
       "Belohne mit Leckerli waehrend sie sitzt.",
       "Vorbeigaenger geht vorbei.",
       "Nach Passage: FEIN und weiter.",
       "Wichtig: Vorbeigaenger anweisen, dass sie {dogName} NICHT anschauen oder ansprechen sollen wenn sie sitzt.",
-      "Ueber Wochen wird Sitzen die normale Reaktion auf vorbeikommende Menschen.",
+      "Über Wochen wird Sitzen die normale Reaktion auf vorbeikommende Menschen.",
     ],
     phase: "steigerung",
     difficulty: "medium",
@@ -1421,10 +1421,10 @@ const JUMPING_EXERCISES: ExerciseTemplate[] = [
     intro: "Anspringen ist ein Konsistenz-Problem. Wenn 1 Familienmitglied das Springen erlaubt oder belohnt, sabotiert es die ganze Arbeit. Diese Woche etablierst du Familien-Konsistenz.",
     steps: [
       "Erklaere allen Familienmitgliedern die Regel: 4 Pfoten = Hallo, Springen = ignorieren.",
-      "Auch Kindern (so weit altersgerecht): nicht streicheln waehrend Hund springt.",
-      "Auch Gaesten: 'Bitte ignoriere ihn wenn er springt'.",
-      "Schreibe die Regel an einen Zettel am Eingang, fuer Gaeste sichtbar.",
-      "Ueber 2-3 Wochen Konsistenz verschwindet das Anspringen.",
+      "Auch Kindern (so weit altersgerecht): nicht streichheln waehrend Hund springt.",
+      "Auch Gästen: 'Bitte ignoriere ihn wenn er springt'.",
+      "Schreibe die Regel an einen Zettel am Eingang, für Gäste sichtbar.",
+      "Über 2-3 Wochen Konsistenz verschwindet das Anspringen.",
       "1 Inkonsistenz pro Woche kostet 1 Woche Trainingsfortschritt.",
     ],
     phase: "generalisierung",
@@ -1434,11 +1434,11 @@ const JUMPING_EXERCISES: ExerciseTemplate[] = [
   },
   {
     id: "j-wartungs-routine",
-    title: "Wartungs-Routine: Begruessungen ueben",
-    shortDesc: "Auch nach 8 Wochen weiter aktiv Begruessungen ueben",
-    intro: "Anspringen kann zurueckkommen, wenn die Belohnungsstruktur verschwindet. Etabliere eine Wartungs-Routine: 1x taeglich bewusst Begruessungen ueben.",
+    title: "Wartungs-Routine: Begruessungen üben",
+    shortDesc: "Auch nach 8 Wochen weiter aktiv Begruessungen üben",
+    intro: "Anspringen kann zurueckkommen, wenn die Belohnungsstruktur verschwindet. Etabliere eine Wartungs-Routine: 1x taeglich bewusst Begruessungen üben.",
     steps: [
-      "Pro Tag: 1 bewusste Begruessungs-Uebung. Gehe aus dem Raum, komm zurueck.",
+      "Pro Tag: 1 bewusste Begruessungs-Übung. Gehe aus dem Raum, komm zurueck.",
       "Belohne SITZ bei Begruessung mit FEIN + Leckerli.",
       "Bei Springen: konsequent ignorieren.",
       "Aktiv kleine Sessions, statt zu hoffen dass es bleibt.",
@@ -1453,7 +1453,7 @@ const JUMPING_EXERCISES: ExerciseTemplate[] = [
 ];
 
 // ════════════════════════════════════════════════════════════════════
-// DESTRUCTIVE (Zerstoerungsverhalten) — 7 Uebungen
+// DESTRUCTIVE (Zerstoerungsverhalten) — 7 Übungen
 // ════════════════════════════════════════════════════════════════════
 // Trainer-Mindset: erst Ursache klaeren (Langeweile? Trennungsangst?
 // Beissduerfnis?). Erlaubte Kau-Objekte etablieren, Management bei
@@ -1462,12 +1462,12 @@ const JUMPING_EXERCISES: ExerciseTemplate[] = [
 const DESTRUCTIVE_EXERCISES: ExerciseTemplate[] = [
   {
     id: "d-ursachen-analyse",
-    title: "Ursachen-Analyse: warum zerstoert {dogName}?",
+    title: "Ursachen-Analyse: warum zerstört {dogName}?",
     shortDesc: "Bevor du trainierst, klaere die Wurzel — Langeweile, Angst, Beissduerfnis?",
     intro: "Zerstoerung hat verschiedene Ursachen, die voellig unterschiedliche Loesungen brauchen. Diese Woche identifizierst du den Hauptgrund.",
     steps: [
-      "Was wird zerstoert? Schuhe (Geruch-orientiert)? Moebel (Beissduerfnis)? Tueren (Trennungsangst)?",
-      "WANN wird zerstoert? Nur in deiner Abwesenheit (Trennungsangst)? Auch wenn du da bist (Langeweile/Beissduerfnis)?",
+      "Was wird zerstört? Schuhe (Geruch-orientiert)? Moebel (Beissduerfnis)? Türen (Trennungsangst)?",
+      "WANN wird zerstört? Nur in deiner Abwesenheit (Trennungsangst)? Auch wenn du da bist (Langeweile/Beissduerfnis)?",
       "WIE alt ist {dogName}? Junge Hunde (4-9 Monate) sind oft im Zahnwechsel — Beissduerfnis.",
       "Welche Auslastung kriegt {dogName}? Wenig Auslastung = Langeweile.",
       "Notiere 1 Woche lang: was, wann, wie?",
@@ -1484,13 +1484,13 @@ const DESTRUCTIVE_EXERCISES: ExerciseTemplate[] = [
     shortDesc: "Klare Liste was {dogName} kauen darf — und Rotation",
     intro: "{dogName} hat ein Beissduerfnis, das gestillt werden muss. Statt es zu unterdruecken, kanalisieren wir es in ERLAUBTE Objekte. 4-5 verschiedene, in Rotation.",
     steps: [
-      "Investiere in 4-5 verschiedene Kau-Objekte: Naturkauartikel (Bueffelhaut, Ochsenziemer), Kong, Schnueffelmatte, Holzknochen, Geweih.",
+      "Investiere in 4-5 verschiedene Kau-Objekte: Naturkauartikel (Bueffelhaut, Ochsenziemer), Kong, Schnüffelmatte, Holzknochen, Geweih.",
       "Lege NICHT alle gleichzeitig hin — Rotation.",
       "Pro Tag 1-2 verschiedene Objekte verfuegbar, andere weglegen.",
       "{dogName} lernt: 'Mein Sortiment ist interessant.'",
       "Lange Kau-Sessions (15-30 Min) reduzieren den Kau-Druck massiv.",
       "Verbotenes Objekt (Schuh): sofort Tausch mit erlaubtem Objekt.",
-      "Niemals 'Pfui' rufen ohne Alternative — das verstaerkt den Tausch-Trieb.",
+      "Niemals 'Pfui' rufen ohne Alternative — das verstärkt den Tausch-Trieb.",
     ],
     phase: "fundament",
     difficulty: "easy",
@@ -1500,15 +1500,15 @@ const DESTRUCTIVE_EXERCISES: ExerciseTemplate[] = [
   {
     id: "d-management-zonen",
     title: "Management: Sichere Zonen etablieren",
-    shortDesc: "{dogName} hat keinen Zugang zu zerstoerbaren Sachen wenn unbeobachtet",
-    intro: "Solange das Training nicht steht, hilft Management. {dogName} hat keine Moeglichkeit, Schuhe oder Moebel zu zerstoeren — weil sie nicht erreichbar sind.",
+    shortDesc: "{dogName} hat keinen Zugang zu zerstörbaren Sachen wenn unbeobachtet",
+    intro: "Solange das Training nicht steht, hilft Management. {dogName} hat keine Moeglichkeit, Schuhe oder Moebel zu zerstören — weil sie nicht erreichbar sind.",
     steps: [
       "Identifiziere die Risiko-Zonen: Flur mit Schuhen, Wohnzimmer mit Fernseher-Kabel, Buero mit Papier.",
       "Bei deiner Abwesenheit oder Unbeobachtetheit: {dogName} in einer sicheren Zone (Box, Kueche mit Babyschutz).",
       "In dieser sicheren Zone: ihre erlaubten Kau-Objekte + Wassernapf.",
       "Niemals als Strafe nutzen — das ist eine Sicherheits-Zone, kein Gefaengnis.",
-      "Ueber Zeit wird die Zone zur Lieblings-Ruhezone.",
-      "Auch bei Anwesenheit: lieber Tueren zu, statt Hund frei in Risiko-Bereiche zu lassen.",
+      "Über Zeit wird die Zone zur Lieblings-Ruhezone.",
+      "Auch bei Anwesenheit: lieber Türen zu, statt Hund frei in Risiko-Bereiche zu lassen.",
       "Management ist kein Aufgeben — es ist verantwortungsvolles Vorgehen.",
     ],
     phase: "fundament",
@@ -1519,13 +1519,13 @@ const DESTRUCTIVE_EXERCISES: ExerciseTemplate[] = [
   {
     id: "d-langeweile-auslasten",
     title: "Anti-Langeweile: Kopf + Nase + Bewegung",
-    shortDesc: "Ein unterforderter Hund zerstoert. Loesung: Auslastung verdoppeln",
+    shortDesc: "Ein unterforderter Hund zerstört. Loesung: Auslastung verdoppeln",
     intro: "Falls Langeweile die Ursache ist (oft bei jungen Hunden + wenig Auslastung): die Mischung machts. Bewegung + Kopfarbeit + Nasenarbeit, nicht nur Bewegung.",
     steps: [
       "Erstelle einen Auslastungsplan: pro Tag 1 Spaziergang (30-60 Min mit Tempo-Wechseln), 1 Nasenarbeit (Suchspiel), 1 Kopfarbeit (Trick, Kong).",
       "Falls {dogName} jung ist (4-9 Monate): wenig stumpfes Toben, viel Kopfarbeit.",
-      "Falls {dogName} erwachsen ist: mehr Spuren-Suche draussen, das beruhigt nachhaltig.",
-      "Pro Tag 30-60 Min Beschaeftigungs-Tools (Kong, Schnueffelmatte) als Mahlzeit-Ersatz.",
+      "Falls {dogName} erwachsen ist: mehr Spuren-Suche draußen, das beruhigt nachhaltig.",
+      "Pro Tag 30-60 Min Beschaeftigungs-Tools (Kong, Schnüffelmatte) als Mahlzeit-Ersatz.",
       "Nach 1-2 Wochen guter Auslastung verschwindet Langeweile-Zerstoerung.",
     ],
     phase: "steigerung",
@@ -1537,15 +1537,15 @@ const DESTRUCTIVE_EXERCISES: ExerciseTemplate[] = [
     id: "d-tausch-statt-strafe",
     title: "Tausch statt Strafe bei verbotenen Objekten",
     shortDesc: "{dogName} hat Schuh im Maul: ruhig Tausch, kein Drama",
-    intro: "Wenn du {dogName} mit einem verbotenen Objekt erwischt, ist Strafe kontraproduktiv. Tausch ist die richtige Reaktion: ruhig naehern, Leckerli anbieten, Tausch.",
+    intro: "Wenn du {dogName} mit einem verbotenen Objekt erwischt, ist Strafe kontraproduktiv. Tausch ist die richtige Reaktion: ruhig nähern, Leckerli anbieten, Tausch.",
     steps: [
       "{dogName} hat verbotenes Objekt: NICHT schreien, NICHT hinterherrennen.",
-      "Hole hochwertiges Leckerli, naehere dich ruhig.",
+      "Hole hochwertiges Leckerli, nähere dich ruhig.",
       "AUS sagen, Leckerli hochhalten.",
-      "{dogName} laesst los: FEIN + Leckerli + erlaubtes Kau-Objekt anbieten.",
+      "{dogName} lässt los: FEIN + Leckerli + erlaubtes Kau-Objekt anbieten.",
       "Verbotenes Objekt wegraeumen, ohne Drama.",
       "Niemals das verbotene Objekt zurueckgeben — Tausch ist echt.",
-      "Niemals hinterher schimpfen — {dogName} kann das nicht mit der vorigen Tat verknuepfen.",
+      "Niemals hinterher schimpfen — {dogName} kann das nicht mit der vorigen Tat verknüpfen.",
     ],
     phase: "steigerung",
     difficulty: "easy",
@@ -1556,15 +1556,15 @@ const DESTRUCTIVE_EXERCISES: ExerciseTemplate[] = [
     id: "d-allein-zeit-kong",
     title: "Allein-Zeit-Kong: 30 Min Beschaeftigung beim Gehen",
     shortDesc: "Vor jeder Abwesenheit ein gut gestopfter Kong als Beschaeftigung",
-    intro: "Falls {dogName} aus Trennungsangst oder Langeweile waehrend deiner Abwesenheit zerstoert, hilft ein gut gestopfter Kong. 30 Minuten Beschaeftigung = oft die kritische Phase.",
+    intro: "Falls {dogName} aus Trennungsangst oder Langeweile waehrend deiner Abwesenheit zerstört, hilft ein gut gestopfter Kong. 30 Minuten Beschaeftigung = oft die kritische Phase.",
     steps: [
       "Stopfe Kong dicht mit Nassfutter, eingefroren ist es 30+ Minuten Beschaeftigung.",
-      "Variante: Schnueffelmatte mit Trockenfutter, dauert 20-30 Min.",
+      "Variante: Schnüffelmatte mit Trockenfutter, dauert 20-30 Min.",
       "Vor jeder Abwesenheit gibst du den Kong ruhig.",
       "Geh ohne Drama raus.",
-      "Komm zurueck nach (anfangs kurzer, dann laengerer) Zeit.",
-      "Kong nehmen, wenn {dogName} noch arbeitet — er ist exklusiv fuer die Abwesenheit.",
-      "Ueber Wochen wird Allein-Zeit positiv verknuepft mit Lieblings-Snack.",
+      "Komm zurueck nach (anfangs kurzer, dann längerer) Zeit.",
+      "Kong nehmen, wenn {dogName} noch arbeitet — er ist exklusiv für die Abwesenheit.",
+      "Über Wochen wird Allein-Zeit positiv verknüpft mit Lieblings-Snack.",
     ],
     phase: "generalisierung",
     difficulty: "easy",
@@ -1575,14 +1575,14 @@ const DESTRUCTIVE_EXERCISES: ExerciseTemplate[] = [
     id: "d-langzeit-wartung",
     title: "Langzeit-Wartung: weiter unterhalb der Reizschwelle",
     shortDesc: "Auch nach 6 Monaten: Auslastung + Kau-Objekt-Rotation",
-    intro: "Zerstoerung kann zurueckkommen, wenn die Bedingungen sich aendern: weniger Auslastung, andere Stress-Faktoren. Wartung ueber Monate noetig.",
+    intro: "Zerstoerung kann zurueckkommen, wenn die Bedingungen sich ändern: weniger Auslastung, andere Stress-Faktoren. Wartung über Monate noetig.",
     steps: [
       "Beibehalten: 4-5 Kau-Objekte in Rotation.",
       "Beibehalten: tägliche Auslastung mit Mischung.",
-      "Beobachten: zerstoert {dogName} ploetzlich wieder? Was hat sich geaendert?",
+      "Beobachten: zerstört {dogName} plötzlich wieder? Was hat sich geaendert?",
       "Stress-Faktor checken: neue Wohnung, weniger Spaziergaenge, andere Routine?",
       "Bei Rueckfall: 1-2 Wochen wieder enger fuehren, Auslastung erhoehen.",
-      "Management bleibt sinnvoll: lieber Tueren zu in Risiko-Phasen.",
+      "Management bleibt sinnvoll: lieber Türen zu in Risiko-Phasen.",
     ],
     phase: "generalisierung",
     difficulty: "easy",
@@ -1592,24 +1592,24 @@ const DESTRUCTIVE_EXERCISES: ExerciseTemplate[] = [
 ];
 
 // ════════════════════════════════════════════════════════════════════
-// SOILING (Stubenunreinheit) — 6 Uebungen
+// SOILING (Stubenunreinheit) — 6 Übungen
 // ════════════════════════════════════════════════════════════════════
-// Trainer-Mindset: haeufige Toilettenrunden, an richtigem Platz
-// belohnen, Auslöser erkennen (schnueffeln, drehen). Bei Welpen NORMAL,
+// Trainer-Mindset: häufige Toilettenrunden, an richtigem Platz
+// belohnen, Auslöser erkennen (schnüffeln, drehen). Bei Welpen NORMAL,
 // bei erwachsenen Hunden oft medizinisch oder stress-bedingt.
 
 const SOILING_EXERCISES: ExerciseTemplate[] = [
   {
     id: "s-toiletten-routine",
     title: "Berechenbare Toiletten-Routine etablieren",
-    shortDesc: "Feste Zeiten, feste Plaetze — der Hund lernt am schnellsten ueber Vorhersehbarkeit",
-    intro: "Stubenreinheit baut sich ueber feste Routinen auf. {dogName} muss wissen: jetzt ist Toiletten-Zeit, hier ist der Ort. Vorhersehbarkeit beschleunigt den Lernprozess massiv.",
+    shortDesc: "Feste Zeiten, feste Plaetze — der Hund lernt am schnellsten über Vorhersehbarkeit",
+    intro: "Stubenreinheit baut sich über feste Routinen auf. {dogName} muss wissen: jetzt ist Toiletten-Zeit, hier ist der Ort. Vorhersehbarkeit beschleunigt den Lernprozess massiv.",
     steps: [
       "Pro Tag mindestens 5-7 Toilettenrunden: morgens, nach Mahlzeiten, nach Schlaf, abends, vor dem Schlafen.",
       "Bei jungen Hunden bzw. unreinen Hunden: alle 1-2 Stunden raus.",
-      "Immer am selben Ort, gleicher Weg.",
+      "Immer am selben Ort, gleichter Weg.",
       "Lasse {dogName} 5-10 Min Zeit zum Erledigen.",
-      "Sobald {dogName} loslaesst: leise FEIN, hochwertiges Leckerli direkt am Platz.",
+      "Sobald {dogName} loslässt: leise FEIN, hochwertiges Leckerli direkt am Platz.",
       "Niemand schimpfen wenn nichts kommt — geduldig warten.",
       "Notiere 1 Woche lang: wann passiert was? Dann kannst du Routine anpassen.",
     ],
@@ -1625,11 +1625,11 @@ const SOILING_EXERCISES: ExerciseTemplate[] = [
     intro: "Belohnung muss DIREKT am richtigen Platz und SOFORT nach dem Loslassen kommen. Bei Verzoegerung von 5+ Sekunden lernt {dogName} nichts. Timing ist alles.",
     steps: [
       "Habe immer Leckerlis dabei waehrend Toilettenrunden.",
-      "{dogName} laesst los: WAEHREND sie laeuft, leise FEIN. NICHT erst nachdem sie fertig ist.",
+      "{dogName} lässt los: WAEHREND sie läuft, leise FEIN. NICHT erst nachdem sie fertig ist.",
       "Sobald sie fertig ist: SOFORT Leckerli direkt am Platz geben.",
       "Lobwort kann ergaenzt werden, aber Leckerli ist staerker.",
-      "Niemals zu spaet belohnen — die Verknuepfung muss eng sein.",
-      "Ueber 2-3 Wochen lernt {dogName}: hier loslassen lohnt sich.",
+      "Niemals zu spät belohnen — die Verknüpfung muss eng sein.",
+      "Über 2-3 Wochen lernt {dogName}: hier loslassen lohnt sich.",
     ],
     phase: "fundament",
     difficulty: "easy",
@@ -1639,16 +1639,16 @@ const SOILING_EXERCISES: ExerciseTemplate[] = [
   {
     id: "s-trigger-lesen",
     title: "Toilettendrang lesen lernen",
-    shortDesc: "Bevor {dogName} loslaesst: schnueffeln, drehen, unruhig — du musst diese Zeichen kennen",
-    intro: "Wenn du den Toilettendrang FRUEH erkennst, kannst du rechtzeitig rausgehen. Schnueffeln am Boden, im Kreis drehen, ploetzlich unruhig werden — das sind die Auslöser.",
+    shortDesc: "Bevor {dogName} loslässt: schnüffeln, drehen, unruhig — du musst diese Zeichen kennen",
+    intro: "Wenn du den Toilettendrang FRUEH erkennst, kannst du rechtzeitig rausgehen. Schnüffeln am Boden, im Kreis drehen, plötzlich unruhig werden — das sind die Auslöser.",
     steps: [
       "Beobachte {dogName} aktiv waehrend sie wach ist.",
-      "Typische Auslöser-Verhalten: am Boden schnueffeln, im Kreis drehen, ploetzlich aufstehen, zur Tuer schauen.",
+      "Typische Auslöser-Verhalten: am Boden schnüffeln, im Kreis drehen, plötzlich aufstehen, zur Tür schauen.",
       "Sobald du eines davon siehst: SOFORT rausgehen. Nicht warten.",
       "Auch in der Wohnung mitnehmen: schnell raus, NICHT erst Schuhe anziehen mit Verzoegerung.",
-      "Im Garten oder draussen: an gewohnten Platz fuehren.",
+      "Im Garten oder draußen: an gewohnten Platz fuehren.",
       "Belohnung wie ueblich.",
-      "Ueber Wochen wirst du immer schneller mit dem Erkennen.",
+      "Über Wochen wirst du immer schneller mit dem Erkennen.",
     ],
     phase: "fundament",
     difficulty: "easy",
@@ -1659,15 +1659,15 @@ const SOILING_EXERCISES: ExerciseTemplate[] = [
     id: "s-unfaelle-managen",
     title: "Unfaelle managen: sauberer Umgang ohne Strafe",
     shortDesc: "Wenn ein Unfall passiert: ruhig saubermachen, NICHT schimpfen",
-    intro: "Unfaelle gehoeren zum Lernprozess. Wer schimpft oder bestraft, macht alles schlimmer — {dogName} versteckt sich beim naechsten Mal nur. Sauberkeit + Enzym-Reiniger + Geduld.",
+    intro: "Unfaelle gehoeren zum Lernprozess. Wer schimpft oder bestraft, macht alles schlimmer — {dogName} versteckt sich beim nächsten Mal nur. Sauberkeit + Enzym-Reiniger + Geduld.",
     steps: [
       "{dogName} hat in die Wohnung gemacht: KEIN Schimpfen, KEIN Nase-rein-druecken — das ist 1970er-Methoden, kontraproduktiv.",
       "Bringe {dogName} raus an den richtigen Platz — falls noch was kommt: dort belohnen.",
       "Reinige die Stelle GRUENDLICH mit Enzym-Reiniger (Tierhandlung).",
-      "Normaler Reiniger reicht NICHT, der Geruch bleibt fuer den Hund da, sie pinkelt nochmal genau dort.",
+      "Normaler Reiniger reicht NICHT, der Geruch bleibt für den Hund da, sie pinkelt nochmal genau dort.",
       "Notiere den Unfall ins Tagebuch: wann, was, vorheriger Toiletten-Gang?",
-      "Falls Unfaelle haeufig: Frequenz der Toilettenrunden erhoehen.",
-      "Bei erwachsenen unreinen Hunden: Tierarzt-Check — Blasenentzuendung oder andere medizinische Ursachen ausschliessen.",
+      "Falls Unfaelle häufig: Frequenz der Toilettenrunden erhoehen.",
+      "Bei erwachsenen unreinen Hunden: Tierarzt-Check — Blasenentzuendung oder andere medizinische Ursachen ausschließen.",
     ],
     phase: "steigerung",
     difficulty: "easy",
@@ -1678,14 +1678,14 @@ const SOILING_EXERCISES: ExerciseTemplate[] = [
     id: "s-stress-reduktion",
     title: "Stress-bedingtes Soiling reduzieren",
     shortDesc: "Wenn {dogName} aus Stress in die Wohnung macht: Stress-Faktor reduzieren",
-    intro: "Manche Hunde machen unter Stress in die Wohnung — bei Gewitter, neuen Menschen, Veraenderungen. Loesung: Stress aktiv reduzieren, nicht das Soiling bestrafen.",
+    intro: "Manche Hunde machen unter Stress in die Wohnung — bei Gewitter, neuen Menschen, Veränderungen. Loesung: Stress aktiv reduzieren, nicht das Soiling bestrafen.",
     steps: [
-      "Identifiziere Stress-Auslöser: Gewitter? Neue Menschen? Aenderungen im Tagesablauf? Trennungsangst?",
+      "Identifiziere Stress-Auslöser: Gewitter? Neue Menschen? Änderungen im Tagesablauf? Trennungsangst?",
       "Reduziere Stress aktiv: Sicherheits-Decke, Beruhigungs-Marker, ggf. medizinische Unterstuetzung.",
       "Vor erwartetem Stress (z.B. Gewitter): extra Toilettenrunde davor.",
       "Waehrend Stress-Phase: ruhig bleiben, nicht aufgeregt werden.",
       "Falls Soiling waehrend Stress: ruhig reinigen, ohne Drama.",
-      "Bei haeufigem Stress-Soiling: Tierarzt + Verhaltenstrainer einbeziehen, ggf. medizinische Unterstuetzung.",
+      "Bei häufigem Stress-Soiling: Tierarzt + Verhaltenstrainer einbeziehen, ggf. medizinische Unterstuetzung.",
     ],
     phase: "steigerung",
     difficulty: "medium",
@@ -1702,8 +1702,8 @@ const SOILING_EXERCISES: ExerciseTemplate[] = [
       "Bei jungen Welpen (8-16 Wochen): einmal nachts raus.",
       "Bei aelteren unreinen Hunden: erstmal alle 4-5 Stunden nachts raus, dann reduzieren.",
       "Naechtliche Runde: ruhig, kein Spiel — nur Toilette und zurueck.",
-      "Belohnung wie tagsueber.",
-      "Ueber Wochen baut sich die Blase auf: erst 4h, dann 6h, dann 8h durchhalten.",
+      "Belohnung wie tagsüber.",
+      "Über Wochen baut sich die Blase auf: erst 4h, dann 6h, dann 8h durchhalten.",
       "Falls {dogName} nachts in die Wohnung macht: nicht schimpfen, lieber Toiletten-Routine engmaschiger.",
     ],
     phase: "generalisierung",
@@ -1731,7 +1731,7 @@ export const EXERCISE_LIBRARY: Record<ProblemKey, ExerciseTemplate[]> = {
 };
 
 // ════════════════════════════════════════════════════════════════════
-// Helper: Problem-Label (deutsch) — fuer Plan-Titel + Intros
+// Helper: Problem-Label (deutsch) — für Plan-Titel + Intros
 // ════════════════════════════════════════════════════════════════════
 
 export const PROBLEM_LABELS_DE: Record<ProblemKey, string> = {

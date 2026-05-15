@@ -276,6 +276,7 @@ export async function POST(req: NextRequest) {
             dogBreed: answers.dog_breed || undefined,
             dogAgeMonths: parseAgeToMonths(answers.dog_age),
             dogSize: answers.dog_size || undefined,
+            dogGender: answers.dog_gender || undefined,
             trainingsZeitMinuten: trainingszeit,
             bekannteSignale,
           },
