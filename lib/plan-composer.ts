@@ -5600,7 +5600,7 @@ function phaseName(phase: Phase): string {
   return "Generalisierungs-Phase";
 }
 
-function buildMonatsÜbersichten(
+function buildMonatsUebersichten(
   problem: ProblemKey,
   weeksTotal: number,
   monthsTotal: number,
@@ -5824,7 +5824,7 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
       ziele: fallbackZiele,
     },
     weeks,
-    monats_übersichten: buildMonatsÜbersichten(problem, weeksTotal, monthsTotal, dog, problemLabel, customProblemText),
+    monats_uebersichten: buildMonatsUebersichten(problem, weeksTotal, monthsTotal, dog, problemLabel, customProblemText),
     abschluss:
       abschlussText ||
       `Du hast ${dogName} über ${weeksTotal} Wochen systematisch begleitet, das ist eine echte Leistung. Halte die Routinen aufrecht, beobachte die kleinen Fortschritte und bleib geduldig mit euch beiden. Veränderung ist keine Linie, sondern eine Welle.`,
