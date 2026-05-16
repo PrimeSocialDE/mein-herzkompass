@@ -48,18 +48,37 @@ export async function getOrCreateMemberProfile(opts: {
   }
 
   // 2) Quiz-Lead per Email matchen (read-only, nichts ändern dort)
-  const { data: lead } = await admin
+  // Wenn mehrere Leads existieren (Re-Quiz nach Kauf), nehmen wir den
+  // mit paid_at zuerst — sonst den neuesten als Quiz-Daten-Quelle.
+  const { data: leads } = await admin
     .from("wauwerk_leads")
     .select(
-      "id, email, customer_name, dog_name, dog_breed, dog_age, dog_problem, status, paid_at, answers"
+      "id, email, customer_name, dog_name, dog_breed, dog_age, dog_problem, status, paid_at, answers, created_at"
     )
     .ilike("email", opts.email)
     .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .limit(10);
 
-  // 3) Status ableiten: paid wenn paid_at gesetzt, sonst free
-  const isPaid = lead?.status === "paid" && !!lead?.paid_at;
+  const paidLead = (leads || []).find((l: any) => !!l.paid_at);
+  const lead = paidLead || (leads && leads[0]) || null;
+
+  // 3) Status: paid wenn IRGENDEIN Lead mit dieser Email paid_at hat,
+  //    ODER wenn schon ein member_plan_content existiert (= sicherer Kauf-Beweis)
+  let isPaid = !!lead?.paid_at;
+  let paidAtSource: string | null = lead?.paid_at || null;
+  if (!isPaid) {
+    const { data: existingPlan } = await admin
+      .from("member_plan_content")
+      .select("created_at")
+      .ilike("email", opts.email)
+      .eq("plan_slug", "trainingsplan")
+      .limit(1)
+      .maybeSingle();
+    if (existingPlan) {
+      isPaid = true;
+      paidAtSource = (existingPlan as any).created_at;
+    }
+  }
   const purchaseStatus: "free" | "paid" = isPaid ? "paid" : "free";
 
   // 4) Quiz-Snapshot aus Lead-Answers + Top-Level-Spalten
@@ -97,7 +116,7 @@ export async function getOrCreateMemberProfile(opts: {
     dog_breed: lead?.dog_breed || null,
     quiz_result: quizResult,
     purchase_status: purchaseStatus,
-    purchased_at: isPaid ? lead?.paid_at : null,
+    purchased_at: isPaid ? paidAtSource : null,
     source_lead_id: lead?.id || null,
   };
 
@@ -121,24 +140,52 @@ async function maybeUpgradeFromLead(
   profile: MemberProfile,
   admin: ReturnType<typeof createMemberAdminClient>
 ): Promise<MemberProfile | null> {
-  // Lead per Email holen (gleiche Logik wie bei Erst-Anlage)
-  const { data: lead } = await admin
+  // Mehrere Quellen pruefen — robust gegen:
+  //  a) Re-Quiz nach Kauf (neuester Lead ist pending, alter Lead paid)
+  //  b) Email-Case-Mismatch (ilike loest das, hier nochmal absichern)
+  //  c) Stripe-Customer-Email != Quiz-Email (Plan-Content matcht trotzdem)
+  // Wir holen ALLE Leads + checken auf paid_at — egal welcher status-String.
+  const { data: leads } = await admin
     .from("wauwerk_leads")
     .select("id, status, paid_at")
     .ilike("email", profile.email)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .order("paid_at", { ascending: false, nullsFirst: false })
+    .limit(5);
 
-  const leadIsPaid = lead?.status === "paid" && !!lead?.paid_at;
-  if (!leadIsPaid) return null;
+  const paidLead = (leads || []).find((l: any) => !!l.paid_at);
+
+  // Fallback: existiert ein member_plan_content fuer diese Email?
+  // Wenn ja, hat sie definitiv gekauft (Plan wird nur fuer paid Leads gebaut).
+  let planFallback: { paid_at: string; lead_id: string | null } | null = null;
+  if (!paidLead) {
+    const { data: plan } = await admin
+      .from("member_plan_content")
+      .select("created_at, source_payment_id")
+      .ilike("email", profile.email)
+      .eq("plan_slug", "trainingsplan")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (plan) {
+      planFallback = {
+        paid_at: (plan as any).created_at,
+        lead_id: (plan as any).source_payment_id || null,
+      };
+    }
+  }
+
+  if (!paidLead && !planFallback) return null;
+
+  const paidAt = paidLead?.paid_at || planFallback!.paid_at;
+  const sourceLeadId =
+    profile.source_lead_id || paidLead?.id || planFallback?.lead_id || null;
 
   const { data: updated, error } = await admin
     .from("member_users")
     .update({
       purchase_status: "paid",
-      purchased_at: lead.paid_at,
-      source_lead_id: profile.source_lead_id || lead.id,
+      purchased_at: paidAt,
+      source_lead_id: sourceLeadId,
     })
     .eq("id", profile.id)
     .select("*")
@@ -151,7 +198,8 @@ async function maybeUpgradeFromLead(
   console.log(
     "[member-db] lazy-upgraded member to paid:",
     profile.email,
-    lead.paid_at
+    paidAt,
+    paidLead ? "via_lead" : "via_plan_content"
   );
   return updated as MemberProfile;
 }
@@ -271,4 +319,77 @@ export async function getModuleBySlug(slug: string) {
     .eq("slug", slug)
     .maybeSingle();
   return data;
+}
+
+// ── Gekaufte Zusatzmodule (Trainings-PDFs) per Email ──────────────────────
+// Liest aus wauwerk_leads.upsell_modules welche der 10 Trainings-Zusatz-
+// Module der Kunde bezahlt hat. Liefert nur valide Modul-Keys zurueck.
+export const TRAININGS_ZUSATZMODUL_KEYS = [
+  "pulling", "energy", "anxiety", "aggression", "mouthing",
+  "recall", "barking", "jumping", "destructive", "soiling",
+] as const;
+
+export type TrainingsZusatzmodulKey = (typeof TRAININGS_ZUSATZMODUL_KEYS)[number];
+
+const TRAININGS_KEY_SET = new Set<string>(TRAININGS_ZUSATZMODUL_KEYS);
+
+// Anzeige-Labels fuer die UI (analog zu generate-zusatzmodul-pdf.mjs).
+export const TRAININGS_ZUSATZMODUL_LABELS: Record<TrainingsZusatzmodulKey, string> = {
+  pulling: "Leinenführungs-Plan",
+  energy: "Energie- & Ruhe-Plan",
+  anxiety: "Alleine-bleiben Plan",
+  aggression: "Aggressions-Kontrolle",
+  mouthing: "Anti-Aufnehm Plan",
+  recall: "Rückruf-Plan",
+  barking: "Anti-Bell Plan",
+  jumping: "Anti-Anspring Plan",
+  destructive: "Anti-Zerstörungs Plan",
+  soiling: "Stubenreinheits-Plan",
+};
+
+export async function listPurchasedZusatzmodule(
+  email: string
+): Promise<TrainingsZusatzmodulKey[]> {
+  if (!email) return [];
+  const admin = createMemberAdminClient();
+  // Es kann mehrere Lead-Eintraege pro Email geben (alter + neuer Quiz).
+  // Wir lesen BEIDE Spalten:
+  //   - upsell_modules (Plural, Array) — wird vom Webhook gesetzt
+  //   - upsell_module (Singular, String, optional Bundle "a+b") — wird von
+  //     der Danke-Seite direkt geschrieben, manchmal vor dem Webhook
+  // So funktioniert der Download auch wenn der Webhook noch nicht
+  // durchgelaufen ist.
+  const { data } = await admin
+    .from("wauwerk_leads")
+    .select("upsell_modules, upsell_module")
+    .ilike("email", email);
+  if (!Array.isArray(data)) return [];
+  const all = new Set<string>();
+  for (const row of data as Array<{
+    upsell_modules: unknown;
+    upsell_module: unknown;
+  }>) {
+    const arr = row.upsell_modules;
+    if (Array.isArray(arr)) {
+      for (const m of arr) if (typeof m === "string") all.add(m.trim());
+    } else if (typeof arr === "string") {
+      for (const m of arr.split(",")) all.add(m.trim());
+    }
+    const single = row.upsell_module;
+    if (typeof single === "string" && single.trim()) {
+      all.add(single.trim());
+    }
+  }
+  // Bundle-Strings wie "pulling+anxiety" auch aufteilen
+  const expanded = new Set<string>();
+  for (const m of all) {
+    if (m.includes("+")) {
+      for (const part of m.split("+")) expanded.add(part.trim());
+    } else {
+      expanded.add(m);
+    }
+  }
+  return [...expanded].filter((k): k is TrainingsZusatzmodulKey =>
+    TRAININGS_KEY_SET.has(k)
+  );
 }

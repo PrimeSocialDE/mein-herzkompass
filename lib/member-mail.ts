@@ -84,9 +84,10 @@ interface SendArgs {
   html: string;
   tags?: string[];
   attachments?: Array<{ name: string; contentBase64: string }>;
+  cc?: string | string[];
 }
 
-async function sendBrevoMail({ to, subject, html, tags, attachments }: SendArgs) {
+async function sendBrevoMail({ to, subject, html, tags, attachments, cc }: SendArgs) {
   if (!BREVO_API_KEY) {
     console.warn("[member-mail] BREVO_API_KEY fehlt — skipping send to", to);
     return { ok: false, reason: "no_api_key" };
@@ -106,6 +107,10 @@ async function sendBrevoMail({ to, subject, html, tags, attachments }: SendArgs)
       htmlContent: html,
       tags: tags || ["mitglieder"],
     };
+    if (cc) {
+      const ccArr = Array.isArray(cc) ? cc : [cc];
+      payload.cc = ccArr.filter(Boolean).map((email) => ({ email }));
+    }
     if (attachments && attachments.length > 0) {
       payload.attachment = attachments.map((a) => ({
         name: a.name,
@@ -413,6 +418,7 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
     html,
     tags: ["mitglieder", "plan-ready"],
     attachments,
+    cc: "kontakt@primesocial.de",
   });
 }
 
