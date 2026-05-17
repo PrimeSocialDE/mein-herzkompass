@@ -371,7 +371,7 @@
         <div class="progress-section">
             <div class="progress-item">
                 <div class="progress-label">
-                    <span>Verhaltensmuster analysieren</span>
+                    <span id="progress1Label">Verhaltensmuster analysieren</span>
                     <span id="progress1Percent">0%</span>
                 </div>
                 <div class="progress-bar">
@@ -381,7 +381,7 @@
 
             <div class="progress-item">
                 <div class="progress-label">
-                    <span>Trainingsplan erstellen</span>
+                    <span id="progress2Label">Trainingsplan erstellen</span>
                     <span id="progress2Percent">0%</span>
                 </div>
                 <div class="progress-bar">
@@ -391,7 +391,7 @@
 
             <div class="progress-item">
                 <div class="progress-label">
-                    <span>Personalisierung abschließen</span>
+                    <span id="progress3Label">Personalisierung abschließen</span>
                     <span id="progress3Percent">0%</span>
                 </div>
                 <div class="progress-bar">
@@ -497,7 +497,10 @@
     <script>
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         const dogAge = localStorage.getItem('dogAge') || 'adult';
-        
+        const dogBreed = localStorage.getItem('dogBreed') || 'Mischling';
+        const dogProblem = localStorage.getItem('dogProblem') || 'pulling';
+        const hasRealName = !!localStorage.getItem('dogName') && dogName !== 'deinen Hund';
+
         document.getElementById('dogNameText').textContent = dogName;
         document.getElementById('modal1DogName').textContent = dogName;
 
@@ -508,6 +511,45 @@
             'senior': 'Ältere Hunde'
         };
         document.getElementById('ageText').textContent = ageTexts[dogAge] || 'Hunde';
+
+        // ── Progress-Step-Labels personalisieren ───────────────────────
+        // Statt generisch "Verhaltensmuster analysieren" jetzt mit Namen +
+        // konkretem Problem. Labor-Illusion-Bias: User glaubt dass "echte
+        // Arbeit" passiert wenn die Steps spezifisch sind.
+        const problemForLoad = {
+            'pulling': 'Leinenziehen',
+            'barking': 'Bellen',
+            'aggression': 'Aggression',
+            'anxiety': 'Trennungsangst',
+            'energy': 'Energielevel',
+            'destructive': 'Zerstören',
+            'soiling': 'Unsauberkeit',
+            'mouthing': 'Mouthing',
+            'recall': 'Rückruf',
+            'jumping': 'Anspringen',
+            'separation': 'Trennungsstress',
+            'biting': 'Beißen',
+            'resource-guarding': 'Ressourcenverteidigung',
+            'dog-reactive': 'Hundebegegnungen',
+            'chasing': 'Jagdverhalten',
+            'general-anxiety': 'Ängstlichkeit',
+        };
+        const problemLabelLoad = problemForLoad[dogProblem] || 'Verhalten';
+        const namePoss = hasRealName ? dogName + 's' : 'Sein';
+        const nameDat = hasRealName ? dogName : 'deinem Hund';
+
+        const p1 = document.getElementById('progress1Label');
+        const p2 = document.getElementById('progress2Label');
+        const p3 = document.getElementById('progress3Label');
+        if (p1) p1.textContent = namePoss + ' ' + problemLabelLoad + '-Profil erstellen';
+        if (p2) p2.textContent = 'Passende Übungen für ' + nameDat + ' auswählen';
+        if (p3) p3.textContent = 'Plan auf ' + nameDat + ' zuschneiden';
+
+        // Trainierter-Counter: Label spezifischer wenn Rasse bekannt
+        const trainedLabelEl = document.querySelector('.trained-counter p');
+        if (trainedLabelEl && dogBreed && dogBreed !== 'Mischling') {
+            trainedLabelEl.innerHTML = '🐾 ' + dogBreed + 's und ähnliche Rassen trainiert';
+        }
 
         function animateProgress(element, percentElement, startPercent, targetPercent, duration, callback) {
             let current = startPercent;
