@@ -463,3 +463,35 @@ export async function sendWeeklyChallengesMail(
     tags: ["mitglieder", "challenges-weekly"],
   });
 }
+
+// ── Mid-Week-Reminder: jeden Mittwoch fuer User die noch nicht angefangen haben ─
+export async function sendMidweekReminderMail(
+  member: MemberProfile,
+  challenges: UserChallenge[]
+) {
+  if (!member.email) return { ok: false, reason: "no_email" };
+  if (challenges.length === 0) return { ok: false, reason: "no_challenges" };
+
+  const dog = member.dog_name?.trim() || "deinem Hund";
+  const challengesHtml = challengesAsHtml(challenges);
+  const ctaUrl = `${SITE_URL}/mitglieder/erfolge/challenges`;
+
+  // Andere Tonalitaet als Montags-Mail: spielerischer Schubs, kein Druck
+  const firstBadge = challenges[0]?.badge_label || "ein neues Abzeichen";
+  const html = wrapTemplate({
+    preheader: `Noch ein paar Tage diese Woche - schnapp dir das ${firstBadge}-Abzeichen!`,
+    headline: `Halbzeit-Schubser für ${dog} 🐾`,
+    intro: `Schon Mittwoch! Bis Sonntag ist noch genug Zeit für eure Wochen-Aufgaben. 5 Minuten am Tag reichen - und es gibt mindestens ein neues Abzeichen für die Sammlung.`,
+    bodyHtml: `<p style="margin:16px 0 8px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">Wartet noch auf euch:</p>${challengesHtml}<p style="margin:14px 0 0;font-size:13px;color:#6B7280;line-height:1.55;">Tipp: Eine Session = ein Spaziergang oder eine Übungs-Einheit. Häkelt im Mitglieder-Bereich ab, sobald ihr's gemacht habt.</p>`,
+    ctaText: "Jetzt loslegen",
+    ctaUrl,
+    footerHint: `Keine Erinnerungen mehr? Schreib uns kurz an support@pfoten-plan.de.`,
+  });
+
+  return sendBrevoMail({
+    to: member.email,
+    subject: `🐾 Halbzeit-Schubser: ${dog} wartet auf seinen Badge`,
+    html,
+    tags: ["mitglieder", "challenges-midweek"],
+  });
+}
