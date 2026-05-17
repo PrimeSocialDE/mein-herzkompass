@@ -130,7 +130,35 @@ export async function getOrCreateMemberProfile(opts: {
     console.error("[member-db] insert profile failed:", error);
     throw error;
   }
-  return created as MemberProfile;
+  const profile = created as MemberProfile;
+  // Direkt nach Anlage: wenn paid → Wochen-Challenges anlegen, damit der
+  // User beim ersten Besuch der Challenge-Page nicht "keine Aufgabe" sieht
+  if (profile.purchase_status === "paid") {
+    void seedWeekChallengesBackground(profile);
+  }
+  return profile;
+}
+
+// Fire-and-forget Helper. Importiert member-challenges dynamisch um
+// circulare Imports zu vermeiden (member-challenges importiert MemberProfile
+// aus dieser Datei).
+function seedWeekChallengesBackground(member: MemberProfile) {
+  import("./member-challenges")
+    .then((m) => m.getOrAssignWeekChallenges(member))
+    .then((cs) => {
+      if (cs.length > 0) {
+        console.log(
+          `[member-db] auto-seeded ${cs.length} challenges for ${member.email}`
+        );
+      }
+    })
+    .catch((e) =>
+      console.warn(
+        "[member-db] auto-seed challenges failed:",
+        member.email,
+        e?.message
+      )
+    );
 }
 
 // ── Lazy-Sync Helper: Free-Member → Paid wenn Lead inzwischen bezahlt ───
@@ -201,6 +229,9 @@ async function maybeUpgradeFromLead(
     paidAt,
     paidLead ? "via_lead" : "via_plan_content"
   );
+  // Sicherheitsnetz: nach Upgrade direkt Wochen-Challenges anlegen, damit
+  // der User auf /mitglieder/erfolge/challenges nicht "keine Aufgabe" sieht
+  void seedWeekChallengesBackground(updated as MemberProfile);
   return updated as MemberProfile;
 }
 
@@ -238,6 +269,16 @@ export async function syncMemberPaidStatusFromLead(opts: {
     return { updated: false, reason: "db_error" };
   }
   console.log("[syncMemberPaid] upgraded:", opts.email, "→ paid");
+  // Sicherheitsnetz: nach Sync direkt Wochen-Challenges anlegen
+  // (vollstaendiges Profil ist gerade in der DB — wir holen es nochmal kurz).
+  void admin
+    .from("member_users")
+    .select("*")
+    .eq("id", existing.id)
+    .single()
+    .then(({ data }) => {
+      if (data) seedWeekChallengesBackground(data as MemberProfile);
+    });
   return { updated: true };
 }
 

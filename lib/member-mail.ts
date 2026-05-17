@@ -464,7 +464,10 @@ export async function sendWeeklyChallengesMail(
   });
 }
 
-// ── Mid-Week-Reminder: jeden Mittwoch fuer User die noch nicht angefangen haben ─
+// ── Sonntag-Reminder: letzter Push fuer User die noch nicht angefangen haben ─
+// Sonntag = letzter Tag der Wochen-Aufgaben → "Heute noch schaffen".
+// Wird intern noch midweek-Reminder genannt (Routen-Pfad, DB-Spalte),
+// inhaltlich ist's aber die Sonntags-Mail.
 export async function sendMidweekReminderMail(
   member: MemberProfile,
   challenges: UserChallenge[]
@@ -476,22 +479,21 @@ export async function sendMidweekReminderMail(
   const challengesHtml = challengesAsHtml(challenges);
   const ctaUrl = `${SITE_URL}/mitglieder/erfolge/challenges`;
 
-  // Andere Tonalitaet als Montags-Mail: spielerischer Schubs, kein Druck
   const firstBadge = challenges[0]?.badge_label || "ein neues Abzeichen";
   const html = wrapTemplate({
-    preheader: `Noch ein paar Tage diese Woche - schnapp dir das ${firstBadge}-Abzeichen!`,
-    headline: `Halbzeit-Schubser für ${dog} 🐾`,
-    intro: `Schon Mittwoch! Bis Sonntag ist noch genug Zeit für eure Wochen-Aufgaben. 5 Minuten am Tag reichen - und es gibt mindestens ein neues Abzeichen für die Sammlung.`,
-    bodyHtml: `<p style="margin:16px 0 8px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">Wartet noch auf euch:</p>${challengesHtml}<p style="margin:14px 0 0;font-size:13px;color:#6B7280;line-height:1.55;">Tipp: Eine Session = ein Spaziergang oder eine Übungs-Einheit. Häkelt im Mitglieder-Bereich ab, sobald ihr's gemacht habt.</p>`,
-    ctaText: "Jetzt loslegen",
+    preheader: `Heute ist der letzte Tag - schnapp dir noch das ${firstBadge}-Abzeichen!`,
+    headline: `Letzter Tag - schnapp dir noch dein Badge 🏆`,
+    intro: `Schon Sonntag - und noch keine Sessions diese Woche geloggt. 10 Minuten reichen, dann gibt's das Abzeichen. Ab morgen warten neue Aufgaben.`,
+    bodyHtml: `<p style="margin:16px 0 8px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">Heute noch zu schaffen:</p>${challengesHtml}<p style="margin:14px 0 0;font-size:13px;color:#6B7280;line-height:1.55;">Tipp: Eine Session = ein kurzes Übungs-Set oder ein Spaziergang mit Fokus auf die Aufgabe. Im Mitglieder-Bereich abhaken, fertig.</p>`,
+    ctaText: "Letzte Chance - jetzt loslegen",
     ctaUrl,
     footerHint: `Keine Erinnerungen mehr? Schreib uns kurz an support@pfoten-plan.de.`,
   });
 
   return sendBrevoMail({
     to: member.email,
-    subject: `🐾 Halbzeit-Schubser: ${dog} wartet auf seinen Badge`,
+    subject: `🐾 Letzter Tag: ${dog} ist eine Session vom Badge entfernt`,
     html,
-    tags: ["mitglieder", "challenges-midweek"],
+    tags: ["mitglieder", "challenges-sunday"],
   });
 }
