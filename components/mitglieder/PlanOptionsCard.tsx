@@ -102,6 +102,10 @@ export default function PlanOptionsCard({
           dogName: dogName || undefined,
           utm_source: "member-area",
           utm_campaign: "upgrade",
+          // Dashboard-User: nach Kauf zurueck ins Dashboard, bei Abbruch
+          // zurueck zur Upgrade-Page. Sonst landen sie auf der Marketing-LP.
+          successPath: "/mitglieder?bought=1",
+          cancelPath: "/mitglieder/upgrade?canceled=1",
         }),
       });
       const data = await res.json();

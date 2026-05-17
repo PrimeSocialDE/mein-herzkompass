@@ -51,6 +51,10 @@ export async function POST(req: NextRequest) {
       cardToken,
       // billingAddress: Pflicht bei Klarna { givenName, familyName, streetAndNumber, postalCode, city, country }
       billingAddress,
+      // Dashboard-Checkout: optionaler success-Pfad. Wenn gesetzt landet
+      // der User nach Mollie-Erfolg dort statt auf der default /zusatz.html
+      // Marketing-Page (Neukunden-Upsell).
+      successPath,
     } = body;
 
     const ORDER_BUMP_PRICE_CENTS = 999;
@@ -137,10 +141,23 @@ export async function POST(req: NextRequest) {
     // mit dem korrekten redirect_status entweder zu zusatz.html (paid) oder zur
     // Cancel-Seite (canceled/failed) redirected — Verhalten identisch zu Stripe.
     const cancelUrl = `${origin}${safeCancelPath}${cancelJoiner}redirect_status=canceled`;
+
+    // Optionaler Success-Pfad (z.B. Dashboard-Checkout schickt /mitglieder?bought=1).
+    // Wenn nicht gesetzt: Return-Route faellt auf default /zusatz.html zurueck.
+    const safeSuccessPath =
+      typeof successPath === "string" &&
+      successPath.startsWith("/") &&
+      !successPath.includes("://")
+        ? successPath
+        : null;
+
     const returnUrl =
       `${origin}/api/mollie/return` +
       `?lead_id=${encodeURIComponent(leadId || "")}` +
-      `&cancel=${encodeURIComponent(cancelUrl)}`;
+      `&cancel=${encodeURIComponent(cancelUrl)}` +
+      (safeSuccessPath
+        ? `&success=${encodeURIComponent(safeSuccessPath)}`
+        : "");
 
     // Payment-Parameter zusammenbauen — method-, cardToken- und billingAddress-
     // Felder nur setzen wenn vom Frontend mitgegeben (rückwärtskompatibel).

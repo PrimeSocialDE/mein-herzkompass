@@ -17,6 +17,13 @@ export async function GET(req: NextRequest) {
   const leadId = url.searchParams.get("lead_id") || "";
   const cancelUrl =
     url.searchParams.get("cancel") || `${url.origin}/deinplan3.html?redirect_status=canceled`;
+  // Optionaler success-Pfad (Dashboard-Checkout: /mitglieder?bought=1).
+  // Wenn nicht gesetzt: default zusatz.html (Marketing-Upsell-Page).
+  const successPathRaw = url.searchParams.get("success") || "";
+  const successPath =
+    successPathRaw.startsWith("/") && !successPathRaw.includes("://")
+      ? successPathRaw
+      : "";
 
   const mollie = getMollie();
   if (!mollie || !leadId) {
@@ -128,11 +135,16 @@ export async function GET(req: NextRequest) {
       // Trotz Fehler weiterleiten — User darf nicht hängen bleiben
     }
 
-    const successUrl =
-      `${url.origin}/zusatz.html` +
-      `?lead_id=${encodeURIComponent(leadId)}` +
-      `&redirect_status=succeeded` +
-      `&mollie_payment_id=${encodeURIComponent(lead.mollie_payment_id)}`;
+    // Dashboard-Flow (successPath gesetzt): zurueck ins Dashboard mit
+    // bought=1-Flag. Marketing-Flow (kein successPath): zur Upsell-Page.
+    const successUrl = successPath
+      ? `${url.origin}${successPath}${successPath.includes("?") ? "&" : "?"}` +
+        `lead_id=${encodeURIComponent(leadId)}` +
+        `&redirect_status=succeeded`
+      : `${url.origin}/zusatz.html` +
+        `?lead_id=${encodeURIComponent(leadId)}` +
+        `&redirect_status=succeeded` +
+        `&mollie_payment_id=${encodeURIComponent(lead.mollie_payment_id)}`;
     return NextResponse.redirect(successUrl, { status: 303 });
   }
 

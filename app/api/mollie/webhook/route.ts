@@ -103,18 +103,41 @@ async function handlePaid(payment: any) {
     return;
   }
 
-  const referenceId = meta.lead_id || meta.order_id;
-  if (!referenceId) {
-    console.error(
-      `[mollie-webhook] Keine Reference-ID in Metadata für ${payment.id}`
-    );
-    return;
+  let referenceId = meta.lead_id || meta.order_id;
+
+  // Fallback: kein Reference-ID in Metadata? Versuch Lead via Email zu finden.
+  // Passiert bei Dashboard-Checkouts wenn der User noch keinen wauwerk_leads
+  // hatte (Magic-Link-Registrierung ohne Quiz).
+  let { table, data: existingRecord } = referenceId
+    ? await findLeadOrOrder(referenceId)
+    : { table: null as string | null, data: null as any };
+
+  if (!table) {
+    const fallbackEmail = (extractEmail(payment) || meta.email || "")
+      .trim()
+      .toLowerCase();
+    if (fallbackEmail) {
+      const { data: leadByEmail } = await supabase
+        .from("wauwerk_leads")
+        .select("*")
+        .ilike("email", fallbackEmail)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (leadByEmail) {
+        referenceId = leadByEmail.id;
+        existingRecord = leadByEmail;
+        table = "wauwerk_leads";
+        console.log(
+          `[mollie-webhook] Lead via email-fallback gefunden: ${fallbackEmail} → ${referenceId}`
+        );
+      }
+    }
   }
 
-  const { table, data: existingRecord } = await findLeadOrOrder(referenceId);
-  if (!table) {
+  if (!table || !referenceId) {
     console.error(
-      `[mollie-webhook] Reference-ID ${referenceId} weder in wauwerk_leads noch orders gefunden`
+      `[mollie-webhook] Lead weder via Metadata noch Email gefunden fuer payment ${payment.id}`
     );
     return;
   }
@@ -294,6 +317,7 @@ async function handleUpsellPaid(payment: any) {
     .from("wauwerk_leads")
     .update({
       upsell_modules: allModules,
+      upsell_module: module || null, // Singular-Spalte: original Kauf-String (kann Bundle "pulling+anxiety" enthalten)
       upsell_paid_at: new Date().toISOString(),
       mollie_upsell_payment_id: payment.id,
     })
@@ -318,6 +342,50 @@ async function handleUpsellPaid(payment: any) {
     } catch (e) {
       console.error("[mollie-webhook] Notfall-Karten Delivery Error:", e);
     }
+  }
+
+  // Trainings-Zusatzmodule (pulling/energy/aggression/...): pro Modul-Key
+  // ein PDF generieren und per Mail ausliefern. Modul-String kann auch
+  // mehrere mit "+" verketten (z.B. "pulling+energy").
+  //
+  // Wichtig: in after() laufen lassen, damit der Webhook sofort 200 an
+  // Mollie zurueckgibt und der Vercel-Container nicht killt bevor der
+  // Mail-Versand fertig ist. Idempotenz im send-Endpoint sorgt dafuer,
+  // dass eine evtl. doppelte Mail nicht zweimal ankommt.
+  const ZUSATZMODUL_KEYS = new Set([
+    "pulling", "energy", "anxiety", "aggression", "mouthing",
+    "recall", "barking", "jumping", "destructive", "soiling",
+  ]);
+  const triggeredKeys = (module ? String(module).split("+") : []).filter((k) =>
+    ZUSATZMODUL_KEYS.has(k.trim())
+  );
+  if (triggeredKeys.length > 0 && (email || leadData.email)) {
+    const targetEmail = email || leadData.email;
+    const dogName = meta.dog_name || leadData.dog_name || "deinen Hund";
+    const baseUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+      "https://www.pfoten-plan.de";
+    after(async () => {
+      for (const moduleKey of triggeredKeys) {
+        try {
+          const res = await fetch(`${baseUrl}/api/zusatzmodul/send`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: targetEmail, dogName, moduleKey }),
+          });
+          const data = await res.json().catch(() => ({}));
+          console.log(
+            `[mollie-webhook] zusatzmodul "${moduleKey}" -> ${res.status} ok=${data?.ok}${data?.skipped ? " (skipped)" : ""}`
+          );
+        } catch (e: any) {
+          console.error(
+            `[mollie-webhook] Zusatzmodul "${moduleKey}" Delivery Error:`,
+            e?.message
+          );
+        }
+      }
+    });
   }
 
   await notifyMake(leadData.id, {

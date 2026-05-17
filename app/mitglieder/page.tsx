@@ -10,6 +10,8 @@ import {
   listModulesForMember,
   listActiveUpsells,
   getModuleBySlug,
+  listPurchasedZusatzmodule,
+  TRAININGS_ZUSATZMODUL_LABELS,
   type MemberProfile,
 } from "@/lib/member-db";
 import FirstExerciseCard from "@/components/mitglieder/FirstExerciseCard";
@@ -19,6 +21,7 @@ import DogProfileCard from "@/components/mitglieder/DogProfileCard";
 import WeekOverview from "@/components/mitglieder/WeekOverview";
 import UpgradePopup from "@/components/mitglieder/UpgradePopup";
 import OnboardingTutorial from "@/components/mitglieder/OnboardingTutorial";
+import PurchaseSuccessBanner from "@/components/mitglieder/PurchaseSuccessBanner";
 import { groupModulesByWeek } from "@/lib/member-weeks";
 import { PROBLEM_IMAGE } from "@/lib/member-images";
 import { getPlanIntro, getBreedNote } from "@/lib/member-plan-intro";
@@ -44,7 +47,13 @@ const PROBLEM_LABELS: Record<string, string> = {
   mouthing: "Aufnehmen von Gegenständen",
 };
 
-export default async function MitgliederDashboard() {
+export default async function MitgliederDashboard({
+  searchParams,
+}: {
+  searchParams?: Promise<{ bought?: string }>;
+}) {
+  const sp = (await searchParams) || {};
+  const justBought = sp.bought === "1";
   const user = await getCurrentMember();
   if (!user) {
     return (
@@ -68,10 +77,11 @@ export default async function MitgliederDashboard() {
     );
   }
 
-  const [modules, upsells, trainingPlan] = await Promise.all([
+  const [modules, upsells, trainingPlan, purchasedZusatzmodule] = await Promise.all([
     listModulesForMember(member),
     listActiveUpsells(),
     getLatestPlanContent(user.id, member.email, "trainingsplan"),
+    listPurchasedZusatzmodule(member.email),
   ]);
   const dog = member.dog_name || "deinem Hund";
   const isPaid = member.purchase_status === "paid";
@@ -124,6 +134,8 @@ export default async function MitgliederDashboard() {
           greeting={greeting}
           subtitle={`Hier ist euer Plan für die nächsten Wochen.`}
         />
+
+        {justBought && <PurchaseSuccessBanner hasRichPlan={hasRichPlan} />}
 
         <DogProfileCard
           dogName={member.dog_name}
@@ -233,6 +245,10 @@ export default async function MitgliederDashboard() {
           )}
         </div>
 
+        {purchasedZusatzmodule.length > 0 && (
+          <PurchasedZusatzmoduleSection modules={purchasedZusatzmodule} />
+        )}
+
         {upsells.length > 0 && <UpsellSection upsells={upsells} />}
 
         {/* Onboarding-Tutorial fuer Erstbesucher (auch Paid) */}
@@ -263,6 +279,11 @@ export default async function MitgliederDashboard() {
           className="w-full aspect-[16/7] object-cover object-center"
         />
       </div>
+
+      {/* Just-bought Banner: User ist gerade vom Mollie-Erfolg gekommen aber
+          purchase_status ist noch nicht gesynced (Webhook braucht ein paar
+          Sekunden). Banner zeigt "wird erstellt" + reloadt alle 6s. */}
+      {justBought && <PurchaseSuccessBanner hasRichPlan={false} />}
 
       {/* Welcome-Block: Hund-Kontext + Wochen-Position */}
       <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 mb-5">
@@ -476,6 +497,69 @@ function Header({ greeting, subtitle }: { greeting: string; subtitle: string }) 
         {greeting}
       </h1>
       <p className="text-[15px] text-[#6B7280] mt-1.5 leading-relaxed">{subtitle}</p>
+    </div>
+  );
+}
+
+function PurchasedZusatzmoduleSection({ modules }: { modules: string[] }) {
+  const labels = TRAININGS_ZUSATZMODUL_LABELS as Record<string, string>;
+  // Mini-Beschreibung pro Modul, damit die Card nicht nackt wirkt.
+  const descriptions: Record<string, string> = {
+    pulling: "8 Übungen für entspanntes Spazierengehen ohne Ziehen.",
+    energy: "8 Übungen für mehr Ruhe, Impulskontrolle und den 'Aus-Knopf'.",
+    anxiety: "8 Übungen für sicheres Alleinbleiben in kleinen Schritten.",
+    aggression: "8 Übungen unter dem Schwellenwert, ohne Konfrontation.",
+    mouthing: "8 Übungen gegen das Aufnehmen unterwegs, mit AUS und PFUI.",
+    recall: "8 Übungen für einen verlässlichen Rückruf in jeder Situation.",
+    barking: "8 Übungen die Stille belohnen statt Bellen zu bekämpfen.",
+    jumping: "8 Übungen für entspannte Begrüßungen ohne Anspringen.",
+    destructive: "8 Übungen mit besseren Alternativen statt Verboten.",
+    soiling: "8 Übungen für klare Toiletten-Routine ohne Strafe.",
+  };
+  return (
+    <div className="mb-6">
+      <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-1">
+        Deine gekauften Zusatzmodule
+      </h2>
+      <p className="text-[13px] text-[#6B7280] mb-4">
+        Hier kannst du deine Module jederzeit als PDF herunterladen.
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {modules.map((key) => (
+          <a
+            key={key}
+            href={`/api/zusatzmodul/download?key=${encodeURIComponent(key)}`}
+            target="_blank"
+            rel="noopener"
+            className="group bg-white border border-[#EADDC5] hover:border-[#C4A576] rounded-2xl p-5 transition hover:shadow-[0_4px_16px_rgba(196,165,118,0.12)] flex items-start justify-between gap-4"
+          >
+            <div className="flex-1 min-w-0">
+              <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-[#F0FDF4] text-[#166534] px-2 py-0.5 rounded-md mb-2">
+                Gekauft
+              </span>
+              <h4 className="text-[15px] font-bold text-[#1a1a1a] mb-1 leading-snug">
+                {labels[key] || key}
+              </h4>
+              <p className="text-[12px] text-[#6B7280] leading-relaxed line-clamp-2">
+                {descriptions[key] || ""}
+              </p>
+            </div>
+            <div className="flex flex-col items-center justify-center text-[#C4A576] group-hover:text-[#8B7355] transition shrink-0">
+              <svg
+                width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2"
+                strokeLinecap="round" strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              <span className="text-[10px] font-bold mt-1">PDF</span>
+            </div>
+          </a>
+        ))}
+      </div>
     </div>
   );
 }
