@@ -2902,6 +2902,32 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         if (mockupTitleEl) mockupTitleEl.textContent = 'Trainingsplan für ' + dogName;
         document.getElementById('dogNamePlan').textContent = dogName;
 
+        // CTA-Buttons personalisieren: "Trainingsplan freischalten" → "Brunos
+        // Trainingsplan sichern" (Possessive). Endowment + direkterer
+        // Klick-Antrieb am wichtigsten Conversion-Punkt.
+        // MutationObserver weil .cta-button.innerHTML an 5 Stellen im Code
+        // resettet wird (z.B. nach Loading-State). Ohne Observer faellt der
+        // Text dann auf "Trainingsplan freischalten" zurueck.
+        (function personalizeCTAs() {
+          const hasName = !!localStorage.getItem('dogName') && dogName !== 'deinen Hund';
+          if (!hasName) return;
+          const personalize = (btn) => {
+            btn.childNodes.forEach(node => {
+              if (node.nodeType === 3 && node.textContent.includes('Trainingsplan freischalten')) {
+                node.textContent = node.textContent.replace('Trainingsplan freischalten', dogName + 's Trainingsplan sichern');
+              }
+            });
+          };
+          document.querySelectorAll('.cta-button').forEach(btn => {
+            personalize(btn);
+            new MutationObserver(() => personalize(btn)).observe(btn, {
+              childList: true,
+              characterData: true,
+              subtree: true,
+            });
+          });
+        })();
+
         // Trainer-Brief: knappe Einschätzung mit Quiz-Daten (mobile-optimiert)
         (function buildTrainerLetter() {
             const letterEl = document.getElementById('trainerLetterBody');

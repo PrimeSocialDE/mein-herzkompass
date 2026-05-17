@@ -382,7 +382,7 @@ fbq('track', 'PageView');
     </header>
 
     <div class="container">
-        <h1 class="page-title">Dein Plan ist so gut wie fertig</h1>
+        <h1 class="page-title"><span id="dogNameH1Possessive">Dein</span> Plan ist so gut wie fertig</h1>
         <p class="page-subtitle">Mit dem Plan, den wir für <strong id="dogNameTitle">deinen Hund</strong> erstellen, lässt sich <span class="problem-highlight" id="problemText">das Problem</span> innerhalb der nächsten 30 Tage lösen.</p>
         <p class="target-date" id="targetDate">20. Januar 2026</p>
 
@@ -513,6 +513,10 @@ fbq('track', 'PageView');
         // Load dog name
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         document.getElementById('dogNameTitle').textContent = dogName;
+        // Headline-Possessive: "Brunos" wenn Hundename da, sonst "Dein"
+        const hasName = !!localStorage.getItem('dogName');
+        document.getElementById('dogNameH1Possessive').textContent =
+          hasName ? dogName + 's' : 'Dein';
 
         // Load problems from localStorage
         const dogProblem = localStorage.getItem('dogProblem') || '';
