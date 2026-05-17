@@ -542,46 +542,13 @@ function drawAdPage(p, type, fonts, qrImage, dogImage, layout) {
 }
 
 // ========= PDF-Aufbau =========
-// Sanitize-Helper: pdf-lib mit StandardFonts (Helvetica) nutzt WinAnsi
-// (CP1252) und crasht bei Zeichen ausserhalb von Latin-1 + ein paar Extras.
-// Trainer-Texte enthalten oft Pfeile (→) als visuelles Zeichen, AI-Output
-// manchmal Bullet-Symbole, Smart-Quotes, etc. Wir mappen die auf sichere
-// Aequivalente, BEVOR irgendetwas an drawText geht.
-function _winansiSafe(s) {
-  if (typeof s !== "string") return s;
-  return s
-    .replace(/[→➔➜⇒]/g, ":")
-    .replace(/[←⇐]/g, "")
-    .replace(/[↑↓]/g, "")
-    .replace(/[•●◦▪▫]/g, "-")
-    .replace(/[✓✔]/g, "ok")
-    .replace(/[✗✘×]/g, "x")
-    .replace(/[‘’‚‛]/g, "'")
-    .replace(/[“”‟]/g, '"')
-    .replace(/—/g, ",")
-    .replace(/–/g, ",")
-    .replace(/…/g, "...");
-}
-
-function _sanitizeDeep(value) {
-  if (typeof value === "string") return _winansiSafe(value);
-  if (Array.isArray(value)) return value.map(_sanitizeDeep);
-  if (value && typeof value === "object") {
-    const out = {};
-    for (const k of Object.keys(value)) out[k] = _sanitizeDeep(value[k]);
-    return out;
-  }
-  return value;
-}
-
 export async function buildPdfFromContent(params = {}) {
-  const DOG_NAME     = _winansiSafe((params.dogName     ?? process.env.DOG_NAME     ?? DEFAULT_DOG_NAME).trim());
-  const DOG_BREED    = _winansiSafe((params.dogBreed    ?? process.env.DOG_BREED    ?? DEFAULT_DOG_BREED).trim());
-  const DOG_AGE      = _winansiSafe((params.dogAge      ?? process.env.DOG_AGE      ?? DEFAULT_DOG_AGE).trim());
-  const MAIN_PROBLEM = _winansiSafe((params.mainProblem ?? process.env.MAIN_PROBLEM ?? DEFAULT_MAIN_PROBLEM).trim());
+  const DOG_NAME     = (params.dogName     ?? process.env.DOG_NAME     ?? DEFAULT_DOG_NAME).trim();
+  const DOG_BREED    = (params.dogBreed    ?? process.env.DOG_BREED    ?? DEFAULT_DOG_BREED).trim();
+  const DOG_AGE      = (params.dogAge      ?? process.env.DOG_AGE      ?? DEFAULT_DOG_AGE).trim();
+  const MAIN_PROBLEM = (params.mainProblem ?? process.env.MAIN_PROBLEM ?? DEFAULT_MAIN_PROBLEM).trim();
   const planLengthMonths = params.planLengthMonths || 3;
-  // Plan-JSON komplett durchsanitisieren — schuetzt alle drawText-Aufrufe.
-  const plan = _sanitizeDeep(params.plan);
+  const plan = params.plan;
   if (!plan || !Array.isArray(plan.weeks) || plan.weeks.length === 0) {
     throw new Error("buildPdfFromContent: params.plan ist leer oder hat keine weeks[]");
   }
@@ -746,7 +713,7 @@ export async function buildPdfFromContent(params = {}) {
 
   const introZieleText =
     introData.ziele ||
-    `Am Ende dieses ${plan.weeks.length}-Wochen-Plans wird ${DOG_NAME} dein Hauptthema deutlich besser bewältigen können. Das passiert nicht durch Strafe oder Druck, sondern durch positive Verstärkung und klare Routinen. Du wirst ${DOG_NAME} besser verstehen und gemeinsam einen ruhigeren Alltag haben.`;
+    `Das übergeordnete Ziel dieses Plans ist, dass ${DOG_NAME} ein deutlich entspannteres Verhältnis zu der Situation entwickelt, die heute ${MAIN_PROBLEM} auslöst. Über die ${plan.weeks.length} Wochen lernt ${DOG_NAME} alternative Reaktionsmuster, die ihren Stress senken und dir mehr Sicherheit im Alltag geben.`;
 
   // Seite 2 — Willkommen
   {
@@ -827,7 +794,7 @@ export async function buildPdfFromContent(params = {}) {
     }
   }
 
-  // Seite 4 — Trainingsziel + Beitrag des Halters + Realistische Erwartung
+  // Seite 4 — Trainingsziel
   {
     const p = newPage();
     let y = drawSectionTitle(p, `Euer Trainingsziel`, MARGIN, A4_H - BANNER_H - 50, fontBold, 28);
@@ -836,178 +803,6 @@ export async function buildPdfFromContent(params = {}) {
       y = drawParagraph(p, para.trim(), MARGIN, y, CONTENT_W, fontReg, 12, TEXT_DARK, 17);
       y -= 10;
     }
-
-    // Zwei Trainer-Boxen unter dem Trainingsziel, damit die Seite nicht
-    // halb leer wirkt. "Was du beiträgst" + "Realistische Erwartung".
-    y -= 14;
-    const boxW = (CONTENT_W - 18) / 2;
-    const boxH2 = 200;
-    const boxY2 = y - boxH2;
-
-    // Linke Box: Was du beiträgst
-    drawRoundedRect(p, MARGIN, boxY2, boxW, boxH2, 8, BG_BAR);
-    p.drawRectangle({ x: MARGIN + 8, y: boxY2 + 10, width: 3, height: boxH2 - 20, color: GOLD });
-    let lby = boxY2 + boxH2 - 18;
-    p.drawText("Was du beiträgst", {
-      x: MARGIN + 20, y: lby, size: 12, font: fontBold, color: DARK_BROWN,
-    });
-    lby -= 18;
-    const contribLines = [
-      "Konsequenz statt Perfektion: lieber 5 Tage in der Woche 10 Minuten als 1x pro Woche 1 Stunde.",
-      "",
-      "Geduld mit Plateaus: Lernen verläuft in Wellen, nicht linear. Erwarte 1-2 Wochen ohne sichtbaren Fortschritt zwischendurch.",
-      "",
-      "Familien-Konsequenz: alle Hausbewohner ziehen die gleichen Regeln. Eine Inkonsequenz pro Tag kostet 1 Woche Lerneffekt.",
-    ];
-    for (const para of contribLines) {
-      if (!para) { lby -= 6; continue; }
-      const lines = wrapText(para, fontReg, 10, boxW - 30);
-      for (const l of lines) {
-        p.drawText(l, { x: MARGIN + 20, y: lby, size: 10, font: fontReg, color: TEXT_DARK });
-        lby -= 13;
-      }
-    }
-
-    // Rechte Box: Realistische Erwartung
-    const rx = MARGIN + boxW + 18;
-    drawRoundedRect(p, rx, boxY2, boxW, boxH2, 8, BG_BAR);
-    p.drawRectangle({ x: rx + 8, y: boxY2 + 10, width: 3, height: boxH2 - 20, color: GOLD });
-    let rby = boxY2 + boxH2 - 18;
-    p.drawText("Realistische Erwartung", {
-      x: rx + 20, y: rby, size: 12, font: fontBold, color: DARK_BROWN,
-    });
-    rby -= 18;
-    const expLines = [
-      "In Woche 1-2 siehst du oft noch wenig. Die Basis-Signale müssen erst sitzen, bevor sich das Verhalten draußen ändert.",
-      "",
-      "Ab Woche 3-4 wird der erste echte Unterschied sichtbar. Halte bis dahin den Plan strikt, auch wenn es noch nicht greift.",
-      "",
-      "Rückschritte sind normal, besonders an stressigen Tagen oder bei neuen Reizen. Wartung statt Aufgeben.",
-    ];
-    for (const para of expLines) {
-      if (!para) { rby -= 6; continue; }
-      const lines = wrapText(para, fontReg, 10, boxW - 30);
-      for (const l of lines) {
-        p.drawText(l, { x: rx + 20, y: rby, size: 10, font: fontReg, color: TEXT_DARK });
-        rby -= 13;
-      }
-    }
-  }
-
-  // Seite 5 — Mitgliederbereich-Features (KI-Trainer, Wochen-Aufgaben usw.)
-  {
-    const p = newPage();
-    let y = drawSectionTitle(p, "Dein Mitgliederbereich", MARGIN, A4_H - BANNER_H - 50, fontBold, 28);
-    y -= 6;
-    y = drawParagraph(
-      p,
-      `Dieser PDF-Plan ist nur die Basis. Im Mitglieder-Bereich begleitet euch ${DOG_NAME} und du Woche für Woche weiter — mit interaktiven Aufgaben, einem KI-Trainer fuer Rueckfragen und Werkzeugen, die deinen Fortschritt sichtbar machen.`,
-      MARGIN,
-      y,
-      CONTENT_W,
-      fontReg,
-      12,
-      TEXT_DARK,
-      17
-    );
-    y -= 14;
-
-    const features = [
-      {
-        emoji: "📅",
-        title: "Plan-Begleitung Woche fuer Woche",
-        body: "Welche Woche ist gerade dran, welche Uebungen kommen heute — auf einen Blick. Du musst nicht jedes Mal das PDF aufmachen.",
-      },
-      {
-        emoji: "🏆",
-        title: "Woechentliche Aufgaben & Abzeichen",
-        body: `Jede Woche kleine Trainings-Challenges passend zu ${DOG_NAME}s Thema. Jede abgeschlossene Aufgabe = ein Abzeichen fuer eure Sammlung.`,
-      },
-      {
-        emoji: "💬",
-        title: "KI-Trainer fuer Rueckfragen",
-        body: "Steckt ihr bei einer Uebung fest? Stell dem KI-Trainer rund um die Uhr Fragen — er kennt euren Plan und gibt konkrete Antworten statt Standardtipps.",
-      },
-      {
-        emoji: "📊",
-        title: "Stimmungs-Tagebuch mit KI-Analyse",
-        body: `Trag woechentlich kurz ein, wie's lief. Die KI fasst eure Woche zusammen und gibt fuer ${DOG_NAME} massgeschneiderte Tipps fuer die naechste.`,
-      },
-      {
-        emoji: "📚",
-        title: "Spezial-Module bei Bedarf",
-        body: `Wenn ${DOG_NAME} weitere Themen hat — z.B. Trennungsangst, Reise, Erste-Hilfe — gibts gezielte Zusatz-Module die ihr direkt im Dashboard freischalten koennt.`,
-      },
-    ];
-
-    // 5 Feature-Boxen untereinander, kompakt
-    const boxX = MARGIN;
-    const boxW = CONTENT_W;
-    const boxPad = 14;
-    for (const f of features) {
-      // Body-Lines berechnen fuer korrekte Box-Hoehe
-      const titleH = 18;
-      const bodyLines = wrapText(f.body, fontReg, 10.5, boxW - boxPad * 2 - 40);
-      const boxH = titleH + bodyLines.length * 14 + boxPad * 2;
-      const boxY = y - boxH;
-
-      drawRoundedRect(p, boxX, boxY, boxW, boxH, 8, BG_BAR);
-      // Goldener Akzent links
-      p.drawRectangle({
-        x: boxX + 8,
-        y: boxY + 10,
-        width: 3,
-        height: boxH - 20,
-        color: GOLD,
-      });
-      // Emoji als Icon links neben Titel
-      p.drawText(f.emoji, {
-        x: boxX + boxPad + 8,
-        y: boxY + boxH - boxPad - 13,
-        size: 16,
-        font: fontReg,
-        color: DARK_BROWN,
-      });
-      // Titel
-      p.drawText(f.title, {
-        x: boxX + boxPad + 32,
-        y: boxY + boxH - boxPad - 12,
-        size: 12,
-        font: fontBold,
-        color: DARK_BROWN,
-      });
-      // Body
-      let by = boxY + boxH - boxPad - 28;
-      for (const l of bodyLines) {
-        p.drawText(l, {
-          x: boxX + boxPad + 32,
-          y: by,
-          size: 10.5,
-          font: fontReg,
-          color: TEXT_DARK,
-        });
-        by -= 14;
-      }
-      y = boxY - 8;
-    }
-
-    // CTA-Footer mit URL
-    y -= 4;
-    drawRoundedRect(p, MARGIN, y - 36, CONTENT_W, 36, 8, DARK_BROWN);
-    p.drawText("So kommst du rein:", {
-      x: MARGIN + 16,
-      y: y - 14,
-      size: 10,
-      font: fontBold,
-      color: WHITE,
-    });
-    p.drawText("pfoten-plan.de/mitglieder/login - dein Magic-Link liegt schon im Postfach.", {
-      x: MARGIN + 16,
-      y: y - 28,
-      size: 10,
-      font: fontReg,
-      color: WHITE,
-    });
   }
 
   // Layout-Parameter-Bundle fuer Ad-Pages
@@ -1043,22 +838,7 @@ export async function buildPdfFromContent(params = {}) {
 
       if (week.title) {
         p.drawText(String(week.title), { x: MARGIN, y, size: 16, font: fontBold, color: DARK_BROWN });
-        y -= 24;
-      }
-
-      // Schwerpunkt-Block: "Darum geht's diese Woche" — fuellt den oberen
-      // Seitenbereich mit Trainer-Kontext (vorher war hier Leerraum)
-      const schwerpunktText = String(week.schwerpunkt || "").trim();
-      if (schwerpunktText) {
-        p.drawText("Darum geht's diese Woche", {
-          x: MARGIN, y, size: 11, font: fontBold, color: GOLD_DARK,
-        });
-        y -= 16;
-        for (const para of schwerpunktText.split(/\n\n+/).filter(Boolean)) {
-          y = drawParagraph(p, para, MARGIN, y, CONTENT_W, fontItalic, 10.5, TEXT_MEDIUM, 14);
-          y -= 4;
-        }
-        y -= 8;
+        y -= 28;
       }
 
       p.drawText("Wochenziele", { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
@@ -1073,111 +853,6 @@ export async function buildPdfFromContent(params = {}) {
       for (const para of tagesplanParas) {
         y = drawParagraph(p, para, MARGIN, y, CONTENT_W, fontReg, 10.5, TEXT_DARK, 14);
         y -= 6;
-      }
-
-      // === Unterer Bereich: Fortschritts-Check + 7-Tage-Tracker + Reflexion ===
-      // Vorher war hier oft Whitespace. Wir fuellen mit drei kompakten Bloecken,
-      // die echten Mehrwert geben: messbare Wochenziele, ein Haekchen-Tracker
-      // fuer den Halter und 2 Reflexions-Linien.
-      const fortschrittItems = Array.isArray(week.fortschritt) ? week.fortschritt : [];
-      if (y > 220) {
-        y -= 14;
-        // Zwei-Spalten-Layout: links Fortschritts-Check, rechts Wochen-Tracker
-        const colW = (CONTENT_W - 24) / 2;
-        const startY = y;
-
-        // Linke Spalte: Fortschritts-Check
-        if (fortschrittItems.length > 0) {
-          let ly = startY;
-          p.drawText("Fortschritts-Check am Ende der Woche", {
-            x: MARGIN, y: ly, size: 10.5, font: fontBold, color: GOLD_DARK,
-          });
-          ly -= 13;
-          p.drawText("(So merkst du, dass die Woche gegriffen hat)", {
-            x: MARGIN, y: ly, size: 9, font: fontItalic, color: TEXT_MEDIUM,
-          });
-          ly -= 13;
-          for (const f of fortschrittItems) {
-            if (ly < 130) break;
-            ly = drawCheckBullet(p, f, MARGIN, ly, colW, fontReg, 9, TEXT_DARK, 12);
-            ly -= 1;
-          }
-        }
-
-        // Rechte Spalte: 7-Tage-Tracker
-        const rx = MARGIN + colW + 24;
-        let ry = startY;
-        p.drawText("Deine Trainings-Woche", {
-          x: rx, y: ry, size: 10.5, font: fontBold, color: GOLD_DARK,
-        });
-        ry -= 13;
-        p.drawText("(Hake ab welchen Tag du geübt hast)", {
-          x: rx, y: ry, size: 9, font: fontItalic, color: TEXT_MEDIUM,
-        });
-        ry -= 18;
-
-        // 7 Tage-Boxen in einer Zeile
-        const tageKurz = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
-        const boxSize = 14;
-        const boxGap = 4;
-        const totalRowW = tageKurz.length * boxSize + (tageKurz.length - 1) * boxGap;
-        const startBoxX = rx + (colW - totalRowW) / 2;
-        for (let i = 0; i < tageKurz.length; i++) {
-          const bx = startBoxX + i * (boxSize + boxGap);
-          // Haekchen-Box
-          p.drawRectangle({
-            x: bx, y: ry - boxSize,
-            width: boxSize, height: boxSize,
-            borderColor: TEXT_MEDIUM, borderWidth: 0.6,
-          });
-          // Tageskuerzel darunter
-          const tw = fontReg.widthOfTextAtSize(tageKurz[i], 8.5);
-          p.drawText(tageKurz[i], {
-            x: bx + (boxSize - tw) / 2,
-            y: ry - boxSize - 11,
-            size: 8.5, font: fontReg, color: TEXT_MEDIUM,
-          });
-        }
-        ry -= boxSize + 22;
-
-        // Reflexions-Felder
-        p.drawText("Was hat diese Woche besonders gut geklappt?", {
-          x: rx, y: ry, size: 9, font: fontBold, color: TEXT_DARK,
-        });
-        ry -= 12;
-        for (let i = 0; i < 2; i++) {
-          p.drawLine({
-            start: { x: rx, y: ry },
-            end: { x: rx + colW, y: ry },
-            thickness: 0.4, color: TEXT_MEDIUM,
-          });
-          ry -= 12;
-        }
-        ry -= 4;
-        p.drawText("Wo wackelt es noch?", {
-          x: rx, y: ry, size: 9, font: fontBold, color: TEXT_DARK,
-        });
-        ry -= 12;
-        for (let i = 0; i < 2; i++) {
-          p.drawLine({
-            start: { x: rx, y: ry },
-            end: { x: rx + colW, y: ry },
-            thickness: 0.4, color: TEXT_MEDIUM,
-          });
-          ry -= 12;
-        }
-      } else if (fortschrittItems.length > 0 && y > 150) {
-        // Wenig Platz: nur kompakter Fortschritts-Check
-        y -= 14;
-        p.drawText("Fortschritts-Check am Ende der Woche", {
-          x: MARGIN, y, size: 11, font: fontBold, color: GOLD_DARK,
-        });
-        y -= 16;
-        for (const f of fortschrittItems) {
-          if (y < 95) break;
-          y = drawCheckBullet(p, f, MARGIN, y, CONTENT_W, fontReg, 10, TEXT_DARK, 13);
-          y -= 2;
-        }
       }
     }
 
@@ -1210,18 +885,21 @@ export async function buildPdfFromContent(params = {}) {
         y -= 2;
       }
 
-      // No-Gos noch hier auf der Uebung-2-Seite, weil sie thematisch zur
-      // Woche gehoeren. Der Fortschritts-Block wird NICHT mehr hier
-      // gezeigt — der steht jetzt prominenter auf der Wochen-Ubersicht
-      // (Seite 1 dieser Woche), damit es nicht doppelt erscheint und der
-      // Halter den Fortschritts-Check nicht versehentlich auf die Uebung
-      // selbst statt auf die ganze Woche bezieht.
-      if (no_gos.length && y > 170) {
+      if (no_gos.length && y > 220) {
         y -= 14;
         p.drawText("Vermeide diese Woche", { x: MARGIN, y, size: 12, font: fontBold, color: WARN_RED });
         y -= 16;
-        for (const ng of no_gos.slice(0, 5)) {
+        for (const ng of no_gos.slice(0, 4)) {
           y = drawWarnBullet(p, ng, MARGIN, y, CONTENT_W, fontReg, 10, TEXT_DARK, 13);
+          y -= 1;
+        }
+      }
+      if (fortschritt.length && y > 130) {
+        y -= 10;
+        p.drawText("Fortschritt erkennst du daran", { x: MARGIN, y, size: 12, font: fontBold, color: GOLD_DARK });
+        y -= 16;
+        for (const f of fortschritt.slice(0, 3)) {
+          y = drawCheckBullet(p, f, MARGIN, y, CONTENT_W, fontReg, 10, TEXT_DARK, 13);
           y -= 1;
         }
       }
@@ -1253,26 +931,6 @@ export async function buildPdfFromContent(params = {}) {
       if (wA.title) {
         p.drawText(String(wA.title), { x: MARGIN, y, size: 15, font: fontBold, color: DARK_BROWN });
         y -= 22;
-      }
-
-      // Schwerpunkt-Block: Trainer-Kontext fuer beide Wochen kombiniert
-      // (vorher fehlte dieser Block komplett im 6M-Layout)
-      const schwerpunktKombi = [wA.schwerpunkt, wB.schwerpunkt]
-        .filter((s) => typeof s === "string" && s.trim())
-        .join("\n\n");
-      if (schwerpunktKombi) {
-        p.drawText("Darum geht's in diesen 2 Wochen", {
-          x: MARGIN, y, size: 10.5, font: fontBold, color: GOLD_DARK,
-        });
-        y -= 14;
-        // Nur Woche A's Schwerpunkt voll zeigen, B als kurzen Zusatz —
-        // sonst wird die Seite zu voll.
-        const paras = String(wA.schwerpunkt || "").split(/\n\n+/).filter(Boolean);
-        for (const para of paras) {
-          y = drawParagraph(p, para, MARGIN, y, CONTENT_W, fontItalic, 9.5, TEXT_MEDIUM, 13);
-          y -= 3;
-        }
-        y -= 6;
       }
 
       // Zwei-Spalten-Layout für Wochenziele
@@ -1403,54 +1061,59 @@ export async function buildPdfFromContent(params = {}) {
     }
   }
 
-  // ===== Wochen-Loop mit inline Monats-Übersichten =====
-  // Monats-Übersichten ("Zwischenstand") werden jetzt INNERHALB des Plans
-  // eingestreut — direkt nach jeder Monatsgrenze (Woche 4, 8, 12, ...).
-  // Das gibt dem Halter einen natürlichen Bilanz-Moment beim Durchblättern.
-  const monatsUebersichten = Array.isArray(plan.monats_uebersichten)
-    ? plan.monats_uebersichten
-    : [];
-
-  function renderMonatsUebersicht(mu) {
-    const p = newPage();
-    let y = drawSectionTitle(
-      p, `Monat ${mu.monat} — Zwischenstand`,
-      MARGIN, A4_H - BANNER_H - 50, fontBold, 28
-    );
-    y -= 6;
-    for (const para of String(mu.text || "").split(/\n\n+/).filter(Boolean)) {
-      y = drawParagraph(p, para, MARGIN, y, CONTENT_W, fontReg, 12, TEXT_DARK, 17);
-      y -= 10;
-    }
-  }
-
+  // ===== Wochen-Loop — bei 6M paarweise als Phasen, sonst einzeln =====
   const useDoubleWeekLayout =
     planLengthMonths === 6 && plan.weeks.length >= 12;
 
   if (useDoubleWeekLayout) {
-    // 6M: 12 Phase-Pairs (je 2 Wochen). Eine Monatsgrenze entspricht 2 Pairs.
     const totalPhases = Math.floor(plan.weeks.length / 2);
     for (let phaseIdx = 0; phaseIdx < totalPhases; phaseIdx++) {
       const wA = plan.weeks[phaseIdx * 2];
       const wB = plan.weeks[phaseIdx * 2 + 1];
       renderPhasePair(wA, wB, phaseIdx);
+    }
+  } else {
+    for (let wIdx = 0; wIdx < plan.weeks.length; wIdx++) {
+      renderSingleWeek(plan.weeks[wIdx], wIdx);
+    }
+  }
 
-      // Nach jedem 2. Pair (= Woche 4, 8, 12, 16, 20, 24) Monats-Übersicht
-      const lastWeekNum = (phaseIdx + 1) * 2;
-      if (lastWeekNum % 4 === 0 && lastWeekNum / 4 <= monatsUebersichten.length) {
-        const mu = monatsUebersichten[lastWeekNum / 4 - 1];
-        if (mu) renderMonatsUebersicht(mu);
+  // ===== Monats-Übersichten =====
+  // Bei 6M paaren wir je zwei Monate auf eine Seite, um auf ca. 56 Seiten
+  // Gesamtumfang zu kommen (statt 6 separate Seiten).
+  const monatsUebersichten = Array.isArray(plan.monats_uebersichten)
+    ? plan.monats_uebersichten
+    : [];
+  if (planLengthMonths === 6 && monatsUebersichten.length >= 2) {
+    // 6M: 3 Monatsübersichten pro Seite — alle 6 Monate auf 2 Seiten gesamt.
+    for (let i = 0; i < monatsUebersichten.length; i += 3) {
+      const group = monatsUebersichten.slice(i, i + 3);
+      if (group.length === 0) continue;
+      const p = newPage();
+      const monthLabel = group.map((m) => m.monat).join(" · ");
+      let y = drawSectionTitle(
+        p,
+        group.length === 1 ? `Monat ${group[0].monat} — Zwischenstand` : `Zwischenstand · Monat ${monthLabel}`,
+        MARGIN, A4_H - BANNER_H - 50, fontBold, 22
+      );
+      y -= 6;
+
+      for (const mu of group) {
+        p.drawText(`Monat ${mu.monat}`, { x: MARGIN, y, size: 12, font: fontBold, color: GOLD_DARK });
+        y -= 16;
+        const firstPara = String(mu.text || "").split(/\n\n+/).filter(Boolean)[0] || "";
+        y = drawParagraph(p, firstPara, MARGIN, y, CONTENT_W, fontReg, 10, TEXT_DARK, 13);
+        y -= 12;
       }
     }
   } else {
-    // 1M und 3M: nach Woche 4, 8, 12 jeweils Monats-Übersicht
-    for (let wIdx = 0; wIdx < plan.weeks.length; wIdx++) {
-      renderSingleWeek(plan.weeks[wIdx], wIdx);
-
-      const weekNum = wIdx + 1;
-      if (weekNum % 4 === 0 && weekNum / 4 <= monatsUebersichten.length) {
-        const mu = monatsUebersichten[weekNum / 4 - 1];
-        if (mu) renderMonatsUebersicht(mu);
+    for (const mu of monatsUebersichten) {
+      const p = newPage();
+      let y = drawSectionTitle(p, `Monat ${mu.monat} — Zwischenstand`, MARGIN, A4_H - BANNER_H - 50, fontBold, 28);
+      y -= 6;
+      for (const para of String(mu.text || "").split(/\n\n+/).filter(Boolean)) {
+        y = drawParagraph(p, para, MARGIN, y, CONTENT_W, fontReg, 12, TEXT_DARK, 17);
+        y -= 10;
       }
     }
   }
