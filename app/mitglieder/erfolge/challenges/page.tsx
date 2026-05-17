@@ -14,8 +14,9 @@ import ChallengeCard from "@/components/mitglieder/ChallengeCard";
 
 export const dynamic = "force-dynamic";
 
-// Wieviele "ghost"-Slots auf der Badge-Wand zusaetzlich angezeigt werden
-const GHOST_BADGE_COUNT = 8;
+// Ghost-Tiles: alle noch-nicht-erspielten Abzeichen als schwarz-weisse
+// Silhouetten anzeigen. Voll-Sammlung macht das Erspielen sichtbar als
+// Fortschrittsziel. Kein hartes Cap mehr.
 
 export default async function ErfolgePage() {
   const user = await getCurrentMember();
@@ -60,10 +61,11 @@ export default async function ErfolgePage() {
         (t) => t.is_premium && !earnedSlugs.has(t.slug)
       ).slice(0, 3);
 
-  // Ghost-Abzeichen (alles was sie noch nicht haben, fuer Sammlung-Optik)
+  // Ghost-Abzeichen (alles was sie noch nicht haben, fuer Sammlung-Optik).
+  // KOMPLETTE Liste — User sieht die gesamte Trophy-Sammlung als Ziel.
   const ghostBadgeTemplates = CHALLENGE_TEMPLATES.filter(
     (t) => !earnedSlugs.has(t.slug)
-  ).slice(0, GHOST_BADGE_COUNT);
+  );
 
   return (
     <>
@@ -213,25 +215,45 @@ export default async function ErfolgePage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-            {badges.map((b: any) => (
-              <BadgeTile
-                key={b.id}
-                emoji={b.badge_emoji}
-                label={b.badge_label}
-                date={b.completed_at}
-              />
-            ))}
-            {/* Ghost-Slots fuer ungerlaufene Abzeichen — FOMO */}
-            {ghostBadgeTemplates.map((t) => (
-              <GhostBadgeTile
-                key={t.slug}
-                emoji={t.badge_emoji}
-                label={t.badge_label}
-                isPremium={t.is_premium && !isPaid}
-              />
-            ))}
-          </div>
+          <>
+            {/* Bereits erspielte Abzeichen — bunt, mit Datum */}
+            {badges.length > 0 && (
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 mb-5">
+                {badges.map((b: any) => (
+                  <BadgeTile
+                    key={b.id}
+                    emoji={b.badge_emoji}
+                    label={b.badge_label}
+                    date={b.completed_at}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Ghost-Sammlung: alle noch zu erspielenden Abzeichen */}
+            {ghostBadgeTemplates.length > 0 && (
+              <>
+                <div className="flex items-baseline justify-between mb-2">
+                  <h3 className="text-[13px] font-bold uppercase tracking-wider text-[#8B7355]">
+                    Noch zu erspielen
+                  </h3>
+                  <span className="text-[11px] text-[#9CA3AF]">
+                    {ghostBadgeTemplates.length} offen
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                  {ghostBadgeTemplates.map((t) => (
+                    <GhostBadgeTile
+                      key={t.slug}
+                      emoji={t.badge_emoji}
+                      label={t.badge_label}
+                      isPremium={t.is_premium && !isPaid}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </>
         )}
       </div>
     </>
@@ -278,13 +300,21 @@ function GhostBadgeTile({
       className="relative bg-[#FAFAFA] border border-dashed border-[#E5DDC8] rounded-xl p-3 flex flex-col items-center text-center"
       title={isPremium ? "Mit Plan freischalten" : "Noch nicht erspielt"}
     >
-      <div className="text-[28px] leading-none mb-1.5 grayscale opacity-30 blur-[2px]">
+      {/* Schwarz-Weiss-Silhouette: grayscale + leichte Opacity. Lesbar
+          genug damit User sieht WAS es zu erspielen gibt, aber klar
+          erkennbar "noch nicht da". Kein blur, kein Rate-Spiel. */}
+      <div
+        className="text-[28px] leading-none mb-1.5"
+        style={{ filter: "grayscale(1)", opacity: 0.55 }}
+      >
         {emoji}
       </div>
-      <p className="text-[11px] font-bold text-[#9CA3AF] leading-tight mb-0.5 blur-[2px] select-none">
+      <p className="text-[11px] font-bold text-[#6B7280] leading-tight mb-0.5">
         {label}
       </p>
-      <p className="text-[9px] text-[#D1D5DB]">{isPremium ? "🔒 Plan" : "?"}</p>
+      <p className="text-[9px] text-[#9CA3AF]">
+        {isPremium ? "🔒 Mit Plan" : "Noch offen"}
+      </p>
     </div>
   );
 }
