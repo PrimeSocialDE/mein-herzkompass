@@ -497,3 +497,75 @@ export async function sendMidweekReminderMail(
     tags: ["mitglieder", "challenges-sunday"],
   });
 }
+
+// ── Recovery-Mail: User hat Checkout abgebrochen (Mollie expired) ───────
+// Geht ~10 Min nach Lead-Erstellung raus wenn status != paid.
+// Magic-Link fuehrt direkt ins Dashboard wo Quiz-Daten als "Profil" sichtbar
+// sind. Kein Druck, kein Discount — erstmal Engagement-Touchpoint schaffen.
+
+export async function sendCheckoutRecoveryMail(args: {
+  to: string;
+  dogName: string | null;
+  problemLabel: string | null;
+  planLengthMonths: 1 | 3 | 6;
+}) {
+  const { to, dogName, problemLabel, planLengthMonths } = args;
+  if (!to) return { ok: false, reason: "no_recipient" };
+
+  const dog = dogName?.trim() || "deinem Hund";
+  const hasName = !!dogName?.trim();
+  const monthsLabel =
+    planLengthMonths === 1
+      ? "1-Monatsplan"
+      : planLengthMonths === 6
+        ? "6-Monatsplan"
+        : "3-Monatsplan";
+
+  // Magic-Link direkt ins Dashboard. Quiz-Daten werden beim ersten Login
+  // automatisch vom Lead ins member_users.quiz_result synced.
+  const loginUrl = await buildAutoLoginUrl(to, "/mitglieder?from=recovery");
+
+  const problemBlock = problemLabel
+    ? `<p style="margin:0 0 6px;font-size:13px;color:#6B7280;">${escapeHtml(dog)}s Schwerpunkt</p>
+       <p style="margin:0 0 16px;font-size:15px;font-weight:700;color:#1a1a1a;">${escapeHtml(problemLabel)}</p>`
+    : "";
+
+  const bodyHtml = `
+    <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;padding:18px 20px;margin:8px 0 18px;">
+      <p style="margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">Was schon da ist</p>
+      ${problemBlock}
+      <p style="margin:0 0 6px;font-size:13px;color:#6B7280;">Empfohlener Plan</p>
+      <p style="margin:0;font-size:15px;font-weight:700;color:#1a1a1a;">${monthsLabel}</p>
+    </div>
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.55;color:#4B5563;">
+      Klick einmal — du bist direkt eingeloggt, kein Passwort, kein Erneut-Quiz-Machen. Dort findest du eine erste Probier-&Uuml;bung, die du heute schon mit ${escapeHtml(dog)} testen kannst.
+    </p>
+    <p style="margin:0;font-size:13px;color:#9CA3AF;line-height:1.5;">
+      Falls du dich doch entscheidest: Plan ist im Dashboard mit 2 Klicks gekauft.
+    </p>`;
+
+  const html = wrapTemplate({
+    preheader: hasName
+      ? `${dog}s Profil wartet auf dich — direkt einloggen, kein Passwort.`
+      : `Dein Profil wartet — direkt einloggen, kein Passwort.`,
+    headline: hasName
+      ? `${dog}s Profil ist gespeichert`
+      : `Dein Profil ist gespeichert`,
+    intro: hasName
+      ? `Wir haben die Quiz-Antworten zu ${dog} schon abgelegt. Du kannst dir die Auswertung jederzeit anschauen — direkt im Dashboard, ohne dich erneut anzumelden.`
+      : `Wir haben deine Quiz-Antworten schon abgelegt. Du kannst dir die Auswertung jederzeit anschauen — direkt im Dashboard, ohne dich erneut anzumelden.`,
+    bodyHtml,
+    ctaText: hasName ? `${dog}s Profil ansehen →` : "Profil ansehen →",
+    ctaUrl: loginUrl,
+    footerHint: `Falls du den Plan doch nicht willst: einfach ignorieren — keine weitere Mail.`,
+  });
+
+  return sendBrevoMail({
+    to,
+    subject: hasName
+      ? `${dog}s Profil wartet auf dich`
+      : `Dein Pfoten-Plan-Profil wartet`,
+    html,
+    tags: ["checkout-recovery", `plan-${planLengthMonths}m`],
+  });
+}

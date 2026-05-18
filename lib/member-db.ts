@@ -101,6 +101,7 @@ export async function getOrCreateMemberProfile(opts: {
       "tagebuch_weeks",
       "notfallkarten_sent_at",
       "exit_bonus_notfallkarten",
+      "recovery_mail_sent_at",
     ]);
     for (const [k, v] of Object.entries(answers)) {
       if (!skipKeys.has(k)) quizResult[k] = v;
