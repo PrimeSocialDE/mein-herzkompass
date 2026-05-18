@@ -137,6 +137,7 @@ export async function GET(req: NextRequest) {
         dogName: lead.dog_name || answers.dog_name || null,
         problemLabel,
         planLengthMonths,
+        leadId: lead.id,
       });
       if (res.ok) {
         stats.sent++;

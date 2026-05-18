@@ -517,17 +517,21 @@ export async function sendCheckoutRecoveryMail(args: {
   dogName: string | null;
   problemLabel: string | null;
   planLengthMonths: 1 | 3 | 6;
+  leadId: string;
 }) {
-  const { to, dogName, problemLabel } = args;
+  const { to, dogName, problemLabel, leadId } = args;
   if (!to) return { ok: false, reason: "no_recipient" };
 
   const dog = dogName?.trim() || "deinen Hund";
   const dogPoss = dogName?.trim() ? `${dogName.trim()}s` : "Sein";
   const hasName = !!dogName?.trim();
 
-  // Magic-Link direkt ins Dashboard. Quiz-Daten werden beim ersten Login
-  // automatisch vom Lead ins member_users.quiz_result synced.
-  const loginUrl = await buildAutoLoginUrl(to, "/mitglieder?from=recovery");
+  // Evergreen-Login-Link: Mail bleibt ewig klickbar, bei jedem Klick wird
+  // serverseitig ein frischer Magic-Link generiert. Loest das Problem dass
+  // Supabase-Magic-Tokens nur 1h gueltig sind und alte Mails nicht mehr
+  // funktionierten. Signatur ueber WORKER_TOKEN verhindert lead_id-Raten.
+  const { buildRecoveryUrl } = await import("./recovery-link");
+  const loginUrl = buildRecoveryUrl(leadId);
 
   // 3 Bullets — konkret, anfassbar, gegen die "trau-mich-nicht"-Skepsis
   const bulletsHtml = `
