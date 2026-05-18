@@ -503,69 +503,89 @@ export async function sendMidweekReminderMail(
 // Magic-Link fuehrt direkt ins Dashboard wo Quiz-Daten als "Profil" sichtbar
 // sind. Kein Druck, kein Discount — erstmal Engagement-Touchpoint schaffen.
 
+// Zielgruppe: aeltere DE-Hundehalter, oft skeptisch gegenueber digitalen
+// Produkten. Wichtigste psychologische Hebel:
+//   1) Tangibility: konkrete Bullets was sie bekommen (echte Uebung,
+//      Auswertung, Empfehlung) — anfassbar statt "Dashboard"-Sprache
+//   2) Risikofrei: "kostenlos ansehen", "kein Kauf noetig", "keine
+//      weiteren Daten", "ohne Verpflichtung" — explizit + mehrfach
+//   3) Trust: ausgebildete Hundetrainer:innen aus Deutschland, persoenliche
+//      Antwort per Mail — gegen "irgendwas Anonymes im Internet"-Sorge
+//   4) Sofort verfuegbar: "heute schon mit deinem Hund machbar"
 export async function sendCheckoutRecoveryMail(args: {
   to: string;
   dogName: string | null;
   problemLabel: string | null;
   planLengthMonths: 1 | 3 | 6;
 }) {
-  const { to, dogName, problemLabel, planLengthMonths } = args;
+  const { to, dogName, problemLabel } = args;
   if (!to) return { ok: false, reason: "no_recipient" };
 
-  const dog = dogName?.trim() || "deinem Hund";
+  const dog = dogName?.trim() || "deinen Hund";
+  const dogPoss = dogName?.trim() ? `${dogName.trim()}s` : "Sein";
   const hasName = !!dogName?.trim();
-  const monthsLabel =
-    planLengthMonths === 1
-      ? "1-Monatsplan"
-      : planLengthMonths === 6
-        ? "6-Monatsplan"
-        : "3-Monatsplan";
 
   // Magic-Link direkt ins Dashboard. Quiz-Daten werden beim ersten Login
   // automatisch vom Lead ins member_users.quiz_result synced.
   const loginUrl = await buildAutoLoginUrl(to, "/mitglieder?from=recovery");
 
-  const problemBlock = problemLabel
-    ? `<p style="margin:0 0 6px;font-size:13px;color:#6B7280;">${escapeHtml(dog)}s Schwerpunkt</p>
-       <p style="margin:0 0 16px;font-size:15px;font-weight:700;color:#1a1a1a;">${escapeHtml(problemLabel)}</p>`
-    : "";
+  // 3 Bullets — konkret, anfassbar, gegen die "trau-mich-nicht"-Skepsis
+  const bulletsHtml = `
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:6px 0 16px;">
+      <tr><td style="padding:8px 0;vertical-align:top;">
+        <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.5;"><strong>${escapeHtml(dogPoss)} persönliche Auswertung</strong> — was wir aus dem Quiz erkennen${problemLabel ? `, plus konkrete Tipps für ${escapeHtml(problemLabel)}` : ""}.</span>
+      </td></tr>
+      <tr><td style="padding:8px 0;vertical-align:top;">
+        <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.5;"><strong>Eine erste Übung gratis</strong> — Schritt für Schritt erklärt, in 5 Minuten heute schon mit ${escapeHtml(dog)} machbar.</span>
+      </td></tr>
+      <tr><td style="padding:8px 0;vertical-align:top;">
+        <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.5;"><strong>Kein Kauf, keine weiteren Daten</strong> — ein Klick, du bist drin. Gefällt's nicht: Fenster schließen, fertig.</span>
+      </td></tr>
+    </table>`;
+
+  // Trust-Footer: zeigt dass dahinter echte Menschen + DE stehen
+  const trustBoxHtml = `
+    <div style="background:#FAFAFA;border-radius:10px;padding:12px 14px;margin:8px 0 4px;border-left:3px solid #C4A576;">
+      <p style="margin:0;font-size:12px;color:#6B7280;line-height:1.5;">
+        <strong style="color:#1a1a1a;">Hinter Pfoten-Plan:</strong> ein Team aus ausgebildeten Hundetrainer:innen aus Deutschland. Bei Fragen schreib einfach kurz an <a href="mailto:support@pfoten-plan.de" style="color:#8B7355;">support@pfoten-plan.de</a> — wir antworten persönlich.
+      </p>
+    </div>`;
+
+  const introText = hasName
+    ? `Du hast vorhin das Quiz für ${escapeHtml(dog)} ausgefüllt — aber den Plan nicht gekauft. Verstehen wir. Deshalb hier ein Vorschlag: schau dir <strong>kostenlos</strong> an, was wir für ${escapeHtml(dog)} schon erkannt haben.`
+    : `Du hast vorhin das Quiz ausgefüllt — aber den Plan nicht gekauft. Verstehen wir. Deshalb hier ein Vorschlag: schau dir <strong>kostenlos</strong> an, was wir für deinen Hund schon erkannt haben.`;
 
   const bodyHtml = `
-    <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;padding:18px 20px;margin:8px 0 18px;">
-      <p style="margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">Was schon da ist</p>
-      ${problemBlock}
-      <p style="margin:0 0 6px;font-size:13px;color:#6B7280;">Empfohlener Plan</p>
-      <p style="margin:0;font-size:15px;font-weight:700;color:#1a1a1a;">${monthsLabel}</p>
-    </div>
-    <p style="margin:0 0 16px;font-size:14px;line-height:1.55;color:#4B5563;">
-      Klick einmal — du bist direkt eingeloggt, kein Passwort, kein Erneut-Quiz-Machen. Dort findest du eine erste Probier-&Uuml;bung, die du heute schon mit ${escapeHtml(dog)} testen kannst.
+    <p style="margin:14px 0 6px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">Was dich erwartet:</p>
+    ${bulletsHtml}
+    <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#4B5563;">
+      Ein Klick auf den Button und du bist direkt drin — <strong>kein Passwort, keine erneute Anmeldung</strong>.
     </p>
-    <p style="margin:0;font-size:13px;color:#9CA3AF;line-height:1.5;">
-      Falls du dich doch entscheidest: Plan ist im Dashboard mit 2 Klicks gekauft.
-    </p>`;
+    ${trustBoxHtml}`;
 
   const html = wrapTemplate({
     preheader: hasName
-      ? `${dog}s Profil wartet auf dich — direkt einloggen, kein Passwort.`
-      : `Dein Profil wartet — direkt einloggen, kein Passwort.`,
+      ? `Kostenlos: ${dog}s Auswertung + eine Probier-Übung. Kein Kauf nötig.`
+      : `Kostenlos: deine Auswertung + eine Probier-Übung. Kein Kauf nötig.`,
     headline: hasName
-      ? `${dog}s Profil ist gespeichert`
-      : `Dein Profil ist gespeichert`,
-    intro: hasName
-      ? `Wir haben die Quiz-Antworten zu ${dog} schon abgelegt. Du kannst dir die Auswertung jederzeit anschauen — direkt im Dashboard, ohne dich erneut anzumelden.`
-      : `Wir haben deine Quiz-Antworten schon abgelegt. Du kannst dir die Auswertung jederzeit anschauen — direkt im Dashboard, ohne dich erneut anzumelden.`,
+      ? `${dogPoss} Auswertung + eine Übung gratis`
+      : `Deine Auswertung + eine Übung gratis`,
+    intro: introText,
     bodyHtml,
-    ctaText: hasName ? `${dog}s Profil ansehen →` : "Profil ansehen →",
+    ctaText: "Jetzt kostenlos ansehen",
     ctaUrl: loginUrl,
-    footerHint: `Falls du den Plan doch nicht willst: einfach ignorieren — keine weitere Mail.`,
+    footerHint: `Ohne Verpflichtung — wenn du nicht weitermachst, kommt nur diese eine Mail.`,
   });
 
   return sendBrevoMail({
     to,
     subject: hasName
-      ? `${dog}s Profil wartet auf dich`
-      : `Dein Pfoten-Plan-Profil wartet`,
+      ? `${dog}s Probier-Übung wartet — kostenlos`
+      : `Deine Probier-Übung wartet — kostenlos`,
     html,
-    tags: ["checkout-recovery", `plan-${planLengthMonths}m`],
+    tags: ["checkout-recovery"],
   });
 }
