@@ -103,9 +103,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(loginFallbackUrl(email), { status: 303 });
   }
 
-  // Response vorbereiten — Cookies werden waehrend verifyOtp gesetzt
+  // Response vorbereiten — Cookies werden waehrend verifyOtp gesetzt.
+  // Wenn preview=free mitkam (Test-Mode), zwingen wir Free-View im
+  // Dashboard.
+  const previewFree = searchParams.get("preview") === "free";
+  const targetParams = new URLSearchParams({ from: "recovery" });
+  if (previewFree) targetParams.set("preview", "free");
   const response = NextResponse.redirect(
-    `${SITE_URL}/mitglieder?from=recovery`,
+    `${SITE_URL}/mitglieder?${targetParams.toString()}`,
     { status: 303 }
   );
 

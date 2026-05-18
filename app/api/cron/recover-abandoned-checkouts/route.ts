@@ -138,6 +138,9 @@ export async function GET(req: NextRequest) {
         problemLabel,
         planLengthMonths,
         leadId: lead.id,
+        // Test-Mode forciert Free-View im Dashboard. Production-Cron
+        // (testMode=false): User ist sowieso non-paid → kein Override.
+        previewFreeView: testMode,
       });
       if (res.ok) {
         stats.sent++;

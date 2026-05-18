@@ -518,8 +518,9 @@ export async function sendCheckoutRecoveryMail(args: {
   problemLabel: string | null;
   planLengthMonths: 1 | 3 | 6;
   leadId: string;
+  previewFreeView?: boolean;
 }) {
-  const { to, dogName, problemLabel, leadId } = args;
+  const { to, dogName, problemLabel, leadId, previewFreeView } = args;
   if (!to) return { ok: false, reason: "no_recipient" };
 
   const dog = dogName?.trim() || "deinen Hund";
@@ -531,7 +532,7 @@ export async function sendCheckoutRecoveryMail(args: {
   // Supabase-Magic-Tokens nur 1h gueltig sind und alte Mails nicht mehr
   // funktionierten. Signatur ueber WORKER_TOKEN verhindert lead_id-Raten.
   const { buildRecoveryUrl } = await import("./recovery-link");
-  const loginUrl = buildRecoveryUrl(leadId);
+  const loginUrl = buildRecoveryUrl(leadId, { previewFreeView });
 
   // 3 Bullets — konkret, anfassbar, gegen die "trau-mich-nicht"-Skepsis
   const bulletsHtml = `

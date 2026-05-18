@@ -50,10 +50,14 @@ const PROBLEM_LABELS: Record<string, string> = {
 export default async function MitgliederDashboard({
   searchParams,
 }: {
-  searchParams?: Promise<{ bought?: string }>;
+  searchParams?: Promise<{ bought?: string; preview?: string }>;
 }) {
   const sp = (await searchParams) || {};
   const justBought = sp.bought === "1";
+  // Test-Override: ?preview=free zwingt die Free-View an, auch wenn der
+  // User schon paid ist. Wird vom Recovery-Cron mit ?test=1 gesetzt,
+  // damit man sieht wie ein abandoned-User die Seite erlebt.
+  const previewFreeView = sp.preview === "free";
   const user = await getCurrentMember();
   if (!user) {
     return (
@@ -84,7 +88,10 @@ export default async function MitgliederDashboard({
     listPurchasedZusatzmodule(member.email),
   ]);
   const dog = member.dog_name || "deinem Hund";
-  const isPaid = member.purchase_status === "paid";
+  // Test-Preview: zwingt Free-View auch fuer Paid-User. Production:
+  // Recovery-Klick passiert i.d.R. von einem free User -> Free-View
+  // wird automatisch genommen.
+  const isPaid = previewFreeView ? false : member.purchase_status === "paid";
 
   // KI-Plan aus member_plan_content — Quelle der Wahrheit fuer Uebungen
   const hasRichPlan =

@@ -14,7 +14,11 @@ export function signRecoveryLead(leadId: string): string {
   return createHmac("sha256", secret).update(leadId).digest("hex").slice(0, 16);
 }
 
-export function buildRecoveryUrl(leadId: string): string {
+export function buildRecoveryUrl(
+  leadId: string,
+  opts?: { previewFreeView?: boolean }
+): string {
   const sig = signRecoveryLead(leadId);
-  return `${SITE_URL}/api/mitglieder/recovery-redirect?l=${encodeURIComponent(leadId)}&s=${sig}`;
+  const previewParam = opts?.previewFreeView ? "&preview=free" : "";
+  return `${SITE_URL}/api/mitglieder/recovery-redirect?l=${encodeURIComponent(leadId)}&s=${sig}${previewParam}`;
 }
