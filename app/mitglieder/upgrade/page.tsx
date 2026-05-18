@@ -18,7 +18,16 @@ const PROBLEM_LABELS: Record<string, string> = {
   mouthing: "Aufnehmen vom Boden",
 };
 
-export default async function UpgradePage() {
+export default async function UpgradePage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ preview?: string }>;
+}) {
+  const sp = (await searchParams) || {};
+  // Test-Preview: ?preview=free zwingt Free-View an, auch wenn Paid-User
+  // (konsistent mit /mitglieder page).
+  const previewFreeView = sp.preview === "free";
+
   const user = await getCurrentMember();
   if (!user) {
     return (
@@ -36,7 +45,9 @@ export default async function UpgradePage() {
     email: user.email || "",
   });
   const upsells = await listActiveUpsells();
-  const isPaid = member.purchase_status === "paid";
+  const isPaid = previewFreeView
+    ? false
+    : member.purchase_status === "paid";
   const dog = member.dog_name?.trim() || "deinen Hund";
   const problemKey =
     member.quiz_result?.dog_problem || member.quiz_result?.problem || null;

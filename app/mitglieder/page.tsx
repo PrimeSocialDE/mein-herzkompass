@@ -401,7 +401,7 @@ export default async function MitgliederDashboard({
           </li>
         </ul>
         <Link
-          href="/mitglieder/upgrade"
+          href={previewFreeView ? "/mitglieder/upgrade?preview=free" : "/mitglieder/upgrade"}
           className="inline-block bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-2.5 px-5 rounded-xl text-[13px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
         >
           Plan ansehen
