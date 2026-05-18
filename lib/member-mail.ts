@@ -534,83 +534,43 @@ export async function sendCheckoutRecoveryMail(args: {
   const { buildRecoveryUrl } = await import("./recovery-link");
   const loginUrl = buildRecoveryUrl(leadId, { previewFreeView });
 
-  // 3 Bullets — emotional + lösungsorientiert. Reihenfolge bewusst:
-  // erst das Geschenk (Übung gratis), dann Hilfe-Versprechen, dann no-risk.
+  // Genau 3 Bullets — die 3 stärksten emotionalen Hebel:
+  //   1) Geschenk (Übung kostenlos, heute machbar)
+  //   2) Hilfe-Versprechen (Trainer-Team, persönlich, Problem-bezogen)
+  //   3) No-Risk + kein Abo (alles in einem zusammengefasst)
   const bulletsHtml = `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:6px 0 16px;">
-      <tr><td style="padding:8px 0;vertical-align:top;">
+      <tr><td style="padding:10px 0;vertical-align:top;">
         <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
-        <span style="font-size:14px;color:#1a1a1a;line-height:1.5;"><strong>Eine erste Übung gratis</strong> — heute schon mit ${escapeHtml(dog)} machbar, 5 Minuten reichen. Schritt für Schritt erklärt, kein Fachwissen nötig.</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.55;"><strong>Eine erste Übung für ${escapeHtml(dog)} — geschenkt.</strong> Heute schon machbar, 5 Minuten reichen. Schritt für Schritt erklärt, kein Vorwissen nötig.</span>
       </td></tr>
-      <tr><td style="padding:8px 0;vertical-align:top;">
+      <tr><td style="padding:10px 0;vertical-align:top;">
         <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
-        <span style="font-size:14px;color:#1a1a1a;line-height:1.5;"><strong>Wir helfen dir Schritt für Schritt</strong> — ${problemLabel ? `${escapeHtml(problemLabel)} ist kein kleines Thema. Unser Trainer-Team hat passende Übungen zusammengestellt, die genau bei ${escapeHtml(dog)}s Situation ansetzen` : `mit konkreten Übungen, die genau zu ${escapeHtml(dog)}s Thema passen — entwickelt von unserem Trainer-Team`}.</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.55;"><strong>Wir helfen dir, das ${problemLabel ? `Thema ${escapeHtml(problemLabel)}` : "Verhaltens-Thema"} zu lösen.</strong> Mit konkreten Übungen aus dem Trainer-Alltag, die genau für ${escapeHtml(dog)}s Situation passen. Plus persönliche Hilfe wenn du nicht weiterkommst.</span>
       </td></tr>
-      <tr><td style="padding:8px 0;vertical-align:top;">
+      <tr><td style="padding:10px 0;vertical-align:top;">
         <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
-        <span style="font-size:14px;color:#1a1a1a;line-height:1.5;"><strong>Kein Risiko</strong> — du musst nichts kaufen um reinzuschauen. Gefällt's nicht: Fenster schließen, fertig.</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.55;"><strong>Kein Abo, kein Risiko.</strong> Du musst nichts kaufen um reinzuschauen. Und falls du dich später entscheidest: einmaliger Kauf, lebenslanger Zugang, 30 Tage Geld-zurück.</span>
       </td></tr>
     </table>`;
 
-  // Extra-Sektion: Mitgliederbereich-Features. Macht klar: das ist mehr als
-  // nur eine Demo — da steht ein richtiges Tool dahinter. Plus alles
-  // kostenlos erkundbar = noch ein "no risk" Beweis.
-  const extraFeaturesHtml = `
-    <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:10px;padding:14px 16px;margin:4px 0 18px;">
-      <p style="margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">Plus diese Bereiche kostenlos erkundbar:</p>
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-        <tr>
-          <td style="padding:4px 0;font-size:13px;color:#4B5563;line-height:1.5;">
-            <span style="display:inline-block;width:24px;font-size:15px;">💬</span> <strong style="color:#1a1a1a;">24/7 Hilfe</strong> — Fragen stellen wenn du nicht weiterkommst, rund um die Uhr
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:4px 0;font-size:13px;color:#4B5563;line-height:1.5;">
-            <span style="display:inline-block;width:24px;font-size:15px;">🏆</span> <strong style="color:#1a1a1a;">Wochen-Aufgaben &amp; Abzeichen</strong> — kleine Erfolge sammeln, dranbleiben fällt leichter
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:4px 0;font-size:13px;color:#4B5563;line-height:1.5;">
-            <span style="display:inline-block;width:24px;font-size:15px;">📊</span> <strong style="color:#1a1a1a;">Stimmungs-Tagebuch</strong> — kurz festhalten wie's lief, wir fassen die Woche für dich zusammen
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:4px 0;font-size:13px;color:#4B5563;line-height:1.5;">
-            <span style="display:inline-block;width:24px;font-size:15px;">📚</span> <strong style="color:#1a1a1a;">Module-Bibliothek</strong> — Reise, Erste-Hilfe, Trennungsangst &amp; mehr
-          </td>
-        </tr>
-      </table>
-    </div>`;
-
-  // Sicherheits-Box: einmaliger Kauf, kein Abo, Garantie. Direkt unter
-  // den Features damit's prominent steht falls Mail schnell überflogen.
-  const noAboBoxHtml = `
-    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:12px 14px;margin:4px 0 18px;text-align:center;">
-      <p style="margin:0;font-size:13px;color:#166534;line-height:1.5;">
-        <strong>🛡️ Falls du den Plan kaufst:</strong> einmaliger Kauf, <strong>kein Abo</strong>, 30 Tage Geld-zurück-Garantie. Lebenslanger Zugang.
-      </p>
-    </div>`;
-
   // Trust-Footer: zeigt dass dahinter echte Menschen + DE stehen
   const trustBoxHtml = `
-    <div style="background:#FAFAFA;border-radius:10px;padding:12px 14px;margin:8px 0 4px;border-left:3px solid #C4A576;">
-      <p style="margin:0;font-size:12px;color:#6B7280;line-height:1.5;">
-        <strong style="color:#1a1a1a;">Hinter Pfoten-Plan:</strong> ein Team aus ausgebildeten Hundetrainer:innen aus Deutschland. Wir wissen, wie frustrierend es sein kann wenn die Tipps aus dem Internet nicht greifen — deshalb haben wir den Plan gebaut, mit echten Übungen aus dem Trainer-Alltag.<br><br>
+    <div style="background:#FAFAFA;border-radius:10px;padding:14px 16px;margin:12px 0 4px;border-left:3px solid #C4A576;">
+      <p style="margin:0;font-size:13px;color:#4B5563;line-height:1.6;">
+        Wir wissen, wie zermürbend es sein kann, wenn die Tipps aus dem Internet einfach nicht greifen — und du am Ende doch wieder Frust hast statt Fortschritt. Genau deshalb haben wir Pfoten-Plan gebaut: ein Team aus ausgebildeten Hundetrainer:innen aus Deutschland, das dir Schritt für Schritt zur Seite steht.<br><br>
         Bei Fragen schreib einfach an <a href="mailto:support@pfoten-plan.de" style="color:#8B7355;">support@pfoten-plan.de</a> — wir antworten persönlich.
       </p>
     </div>`;
 
   const introText = hasName
-    ? `${problemLabel ? `${escapeHtml(problemLabel)} bei ${escapeHtml(dog)}` : `Das Thema mit ${escapeHtml(dog)}`} ist nichts, was du alleine in den Griff kriegen musst. Wir helfen dir mit konkreten Übungen, die wir genau für ${escapeHtml(dog)}s Situation zusammengestellt haben — und du kannst <strong>kostenlos reinschauen</strong> bevor du dich entscheidest.`
-    : `Das Thema mit deinem Hund ist nichts, was du alleine in den Griff kriegen musst. Wir helfen dir mit konkreten Übungen — und du kannst <strong>kostenlos reinschauen</strong> bevor du dich entscheidest.`;
+    ? `${problemLabel ? `${escapeHtml(problemLabel)} bei ${escapeHtml(dog)}` : `Das Thema mit ${escapeHtml(dog)}`} ist nichts, was du alleine in den Griff kriegen musst. Schau dir in Ruhe an, was wir für ${escapeHtml(dog)} zusammengestellt haben — <strong>kostenlos, ohne Kauf, ohne weitere Daten</strong>.`
+    : `Das Thema mit deinem Hund ist nichts, was du alleine in den Griff kriegen musst. Schau dir in Ruhe an, was wir vorbereitet haben — <strong>kostenlos, ohne Kauf, ohne weitere Daten</strong>.`;
 
   const bodyHtml = `
-    <p style="margin:14px 0 6px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">Was du sofort siehst:</p>
     ${bulletsHtml}
-    ${extraFeaturesHtml}
-    ${noAboBoxHtml}
-    <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#4B5563;">
-      Ein Klick auf den Button und du bist direkt drin — <strong>kein Passwort, keine erneute Anmeldung</strong>.
+    <p style="margin:14px 0 0;font-size:14px;line-height:1.6;color:#4B5563;">
+      Ein Klick auf den Button und du bist direkt drin — kein Passwort, keine erneute Anmeldung.
     </p>
     ${trustBoxHtml}`;
 
