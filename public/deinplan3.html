@@ -4465,10 +4465,11 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         async function payWithMethod(method) {
             hideHybridError();
             try {
+                const payload = method ? buildCheckoutPayload({ method }) : buildCheckoutPayload({});
                 const res = await fetch('/api/mollie/wauwerk-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(buildCheckoutPayload({ method }))
+                    body: JSON.stringify(payload)
                 });
                 const data = await res.json();
                 if (data.error || !data.url) {
@@ -4482,6 +4483,13 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 console.error(err);
                 showHybridError('Verbindungsfehler. Bitte versuche es erneut.');
             }
+        }
+
+        // ── Klarna ohne Address-Modal — geht auf Mollie's Hosted-Page,
+        // dort wählt User Klarna + Adresse wird auf Mollie's/Klarna's
+        // Seite gesammelt (gleich wie Stripe Checkout funktioniert).
+        async function payOnMollieHosted() {
+            await payWithMethod(null);
         }
 
         // ── Klarna-Flow mit Address-Modal ───────────────────────────────
@@ -4757,8 +4765,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     </button>
                 </div>
 
-                <!-- Klarna kleiner darunter (braucht Address-Modal, daher nicht im Hauptflow) -->
-                <button class="hybrid-klarna-small" onclick="openKlarnaAddress()" aria-label="Mit Klarna bezahlen (Rechnungskauf)">
+                <!-- Klarna: geht auf Mollie's Hosted-Page wo User Klarna
+                     waehlt und Adresse direkt dort eingibt (wie Stripe). -->
+                <button class="hybrid-klarna-small" onclick="payOnMollieHosted()" aria-label="Mit Klarna bezahlen (Rechnungskauf)">
                     <span class="hybrid-klarna-small-text">Auf Rechnung mit</span>
                     <img src="Klarna3.png" alt="Klarna">
                 </button>
