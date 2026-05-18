@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { after } from "next/server";
 import { supabase } from "@/lib/db";
 import Stripe from "stripe";
 
@@ -487,6 +488,28 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
       await enrollInUpsellCampaign(table, referenceId, updateData.email);
       await sendNotfallkartenIfBonus(table, referenceId);
 
+      // Brevo Listen-Sync: Kunde aus #47 (Nurture) raus, in
+      // #44/#45/#46 (Plan-Listen) rein. Fire-and-forget — bei Fehler
+      // wird nur geloggt, blockt nicht den Webhook.
+      if (table === "wauwerk_leads" && updateData.email) {
+        try {
+          const { syncPaidCustomerListsFromSelectedPlan } = await import(
+            "@/lib/brevo-contacts"
+          );
+          const selectedPlan = (existingRecord as any)?.selected_plan || "3month";
+          const res = await syncPaidCustomerListsFromSelectedPlan(
+            updateData.email,
+            selectedPlan
+          );
+          console.log(
+            `[stripe-webhook] brevo-sync ${updateData.email} → ${res.planMonths}M ` +
+              `removed=${res.removed} added=${res.added}`
+          );
+        } catch (e: any) {
+          console.error("[stripe-webhook] brevo-sync failed:", e?.message);
+        }
+      }
+
       // Make benachrichtigen (orders + wauwerk_leads)
       await notifyMake(referenceId, {
         source: "checkout.session",
@@ -722,6 +745,7 @@ async function handleUpsellPaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
       .from("wauwerk_leads")
       .update({
         upsell_modules: allModules,
+        upsell_module: module || null, // Singular-Spalte: original Kauf-String (kann Bundle "pulling+anxiety" enthalten)
         upsell_paid_at: new Date().toISOString(),
         upsell_payment_intent: paymentIntent.id,
       })
@@ -756,6 +780,40 @@ async function handleUpsellPaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
       } catch (deliveryErr) {
         console.error("❌ Notfall-Karten Delivery Fehler:", deliveryErr);
       }
+    }
+
+    // Trainings-Zusatzmodule (pulling/energy/aggression/...): pro Modul-Key
+    // ein PDF generieren und per Mail ausliefern. Modul-String kann auch
+    // mehrere mit "+" verketten (z.B. "pulling+energy"). In after() um
+    // Webhook-Timeout zu vermeiden; Idempotenz im send-Endpoint.
+    const ZUSATZMODUL_KEYS = new Set([
+      'pulling', 'energy', 'anxiety', 'aggression', 'mouthing',
+      'recall', 'barking', 'jumping', 'destructive', 'soiling',
+    ]);
+    const triggeredKeys = (module ? String(module).split('+') : []).filter((k: string) =>
+      ZUSATZMODUL_KEYS.has(k.trim())
+    );
+    if (triggeredKeys.length > 0 && email) {
+      const baseUrl = 'https://www.pfoten-plan.de';
+      const dogName = paymentIntent.metadata?.dog_name || 'deinen Hund';
+      const targetEmail = email;
+      after(async () => {
+        for (const moduleKey of triggeredKeys) {
+          try {
+            const res = await fetch(`${baseUrl}/api/zusatzmodul/send`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: targetEmail, dogName, moduleKey }),
+            });
+            const data = await res.json().catch(() => ({}));
+            console.log(
+              `[stripe-webhook] zusatzmodul "${moduleKey}" -> ${res.status} ok=${data?.ok}${data?.skipped ? ' (skipped)' : ''}`
+            );
+          } catch (e: any) {
+            console.error(`[stripe-webhook] zusatzmodul "${moduleKey}" error:`, e?.message);
+          }
+        }
+      });
     }
 
     // Make benachrichtigen

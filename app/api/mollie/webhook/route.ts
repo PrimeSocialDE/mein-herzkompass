@@ -238,6 +238,35 @@ async function handlePaid(payment: any) {
     });
   }
 
+  // Brevo Listen-Sync: Kunde aus Nurture-Liste (#47) entfernen und in
+  // Plan-spezifische Liste (#44 / #45 / #46) packen. So bekommen Kaeufer
+  // keine "Du hast den Plan nicht gekauft"-Mails mehr.
+  // In after() weil das ~500ms zusatzliche API-Calls sind.
+  if (table === "wauwerk_leads" && updateData.email) {
+    const targetEmail = updateData.email;
+    const selectedPlan = (existingRecord as any)?.selected_plan || "3month";
+    after(async () => {
+      try {
+        const { syncPaidCustomerListsFromSelectedPlan } = await import(
+          "@/lib/brevo-contacts"
+        );
+        const res = await syncPaidCustomerListsFromSelectedPlan(
+          targetEmail,
+          selectedPlan
+        );
+        console.log(
+          `[mollie-webhook] brevo-sync ${targetEmail} → ${res.planMonths}M ` +
+            `removed=${res.removed} added=${res.added}`
+        );
+      } catch (e: any) {
+        console.error(
+          "[mollie-webhook] brevo-sync failed:",
+          e?.message
+        );
+      }
+    });
+  }
+
   await enrollInUpsellCampaign(table, referenceId, updateData.email);
   await sendNotfallkartenIfBonus(table, referenceId);
 
