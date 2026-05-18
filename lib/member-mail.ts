@@ -568,11 +568,11 @@ export async function sendCheckoutRecoveryMail(args: {
 
   const html = wrapTemplate({
     preheader: hasName
-      ? `Kostenlos: ${dog}s Auswertung + eine Probier-Übung. Kein Kauf nötig.`
-      : `Kostenlos: deine Auswertung + eine Probier-Übung. Kein Kauf nötig.`,
+      ? `Kostenlos: ${dog}s Auswertung + eine 5-Min-Übung. Kein Kauf nötig.`
+      : `Kostenlos: deine Auswertung + eine 5-Min-Übung. Kein Kauf nötig.`,
     headline: hasName
-      ? `${dogPoss} Auswertung + eine Übung gratis`
-      : `Deine Auswertung + eine Übung gratis`,
+      ? `5 Minuten heute für ${dog} — eine Übung gratis`
+      : `5 Minuten heute für deinen Hund — eine Übung gratis`,
     intro: introText,
     bodyHtml,
     ctaText: "Jetzt kostenlos ansehen",
@@ -583,8 +583,8 @@ export async function sendCheckoutRecoveryMail(args: {
   return sendBrevoMail({
     to,
     subject: hasName
-      ? `${dog}s Probier-Übung wartet — kostenlos`
-      : `Deine Probier-Übung wartet — kostenlos`,
+      ? `5-Min-Übung für ${dog} — heute schon machbar`
+      : `5-Min-Übung für deinen Hund — heute schon machbar`,
     html,
     tags: ["checkout-recovery"],
   });
