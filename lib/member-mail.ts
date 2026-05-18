@@ -546,6 +546,36 @@ export async function sendCheckoutRecoveryMail(args: {
       </td></tr>
     </table>`;
 
+  // Extra-Sektion: Mitgliederbereich-Features. Macht klar: das ist mehr als
+  // nur eine Demo — da steht ein richtiges Tool dahinter. Plus alles
+  // kostenlos erkundbar = noch ein "no risk" Beweis.
+  const extraFeaturesHtml = `
+    <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:10px;padding:14px 16px;margin:4px 0 18px;">
+      <p style="margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">Plus diese Bereiche kostenlos erkundbar:</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+          <td style="padding:4px 0;font-size:13px;color:#4B5563;line-height:1.5;">
+            <span style="display:inline-block;width:24px;font-size:15px;">💬</span> <strong style="color:#1a1a1a;">KI-Trainer</strong> — Fragen stellen, sofort Antwort
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0;font-size:13px;color:#4B5563;line-height:1.5;">
+            <span style="display:inline-block;width:24px;font-size:15px;">🏆</span> <strong style="color:#1a1a1a;">Wochen-Aufgaben &amp; Abzeichen</strong> — kleine Trainings-Ziele, sichtbarer Fortschritt
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0;font-size:13px;color:#4B5563;line-height:1.5;">
+            <span style="display:inline-block;width:24px;font-size:15px;">📊</span> <strong style="color:#1a1a1a;">Stimmungs-Tagebuch</strong> — wöchentlich eintragen, KI fasst zusammen
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0;font-size:13px;color:#4B5563;line-height:1.5;">
+            <span style="display:inline-block;width:24px;font-size:15px;">📚</span> <strong style="color:#1a1a1a;">Module-Bibliothek</strong> — Reise, Erste-Hilfe, Trennungsangst &amp; mehr
+          </td>
+        </tr>
+      </table>
+    </div>`;
+
   // Trust-Footer: zeigt dass dahinter echte Menschen + DE stehen
   const trustBoxHtml = `
     <div style="background:#FAFAFA;border-radius:10px;padding:12px 14px;margin:8px 0 4px;border-left:3px solid #C4A576;">
@@ -559,8 +589,9 @@ export async function sendCheckoutRecoveryMail(args: {
     : `Du hast vorhin das Quiz ausgefüllt — aber den Plan nicht gekauft. Verstehen wir. Deshalb hier ein Vorschlag: schau dir <strong>kostenlos</strong> an, was wir für deinen Hund schon erkannt haben.`;
 
   const bodyHtml = `
-    <p style="margin:14px 0 6px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">Was dich erwartet:</p>
+    <p style="margin:14px 0 6px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">Was du sofort siehst:</p>
     ${bulletsHtml}
+    ${extraFeaturesHtml}
     <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#4B5563;">
       Ein Klick auf den Button und du bist direkt drin — <strong>kein Passwort, keine erneute Anmeldung</strong>.
     </p>
