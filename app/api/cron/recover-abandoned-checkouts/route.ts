@@ -50,6 +50,10 @@ export async function GET(req: NextRequest) {
 
   const dryRun = searchParams.get("dry") === "1";
   const emailFilter = searchParams.get("email")?.toLowerCase();
+  // Test-Mode: ignoriert status-paid-Filter UND Test-Email-Filter UND
+  // Idempotenz-Flag. Schickt Mail an die angegebene Email auch wenn der
+  // User schon paid ist / Recovery-Mail schon raus war. NUR fuer Tests.
+  const testMode = searchParams.get("test") === "1" && !!emailFilter;
   const admin = createMemberAdminClient();
 
   // Lead-Window: nicht zu frueh (User braucht 5-10 Min am Checkout),
@@ -62,8 +66,10 @@ export async function GET(req: NextRequest) {
     .select(
       "id, email, dog_name, status, selected_plan, answers, created_at"
     )
-    .neq("status", "paid")
     .not("email", "is", null);
+  if (!testMode) {
+    query = query.neq("status", "paid");
+  }
 
   if (emailFilter) {
     query = query.ilike("email", emailFilter);
@@ -98,17 +104,19 @@ export async function GET(req: NextRequest) {
       stats.skipped_no_email++;
       continue;
     }
-    // Test-Emails überspringen
-    const isTest =
-      /^test@|@test\.|^example@|@example\./i.test(lead.email) ||
-      lead.email === "test@test.de";
-    if (isTest) {
-      stats.skipped_test_email++;
-      continue;
+    // Test-Emails ueberspringen (im testMode: nicht skippen)
+    if (!testMode) {
+      const isTest =
+        /^test@|@test\.|^example@|@example\./i.test(lead.email) ||
+        lead.email === "test@test.de";
+      if (isTest) {
+        stats.skipped_test_email++;
+        continue;
+      }
     }
 
     const answers = (lead.answers || {}) as Record<string, any>;
-    if (answers.recovery_mail_sent_at) {
+    if (answers.recovery_mail_sent_at && !testMode) {
       stats.skipped_already_sent++;
       continue;
     }
