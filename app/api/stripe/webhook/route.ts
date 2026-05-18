@@ -510,6 +510,42 @@ async function handleCheckoutSuccess(session: Stripe.Checkout.Session) {
         }
       }
 
+      // Facebook CAPI Purchase Event — Server-Side Tracking (siehe
+      // mollie-webhook fuer Begruendung). De-Duplication via fb_event_id
+      // (matched mit Pixel-Event vom Browser).
+      if (table === "wauwerk_leads" && updateData.email) {
+        try {
+          const meta = (session.metadata || {}) as Record<string, any>;
+          const totalCents =
+            parseInt(meta.total_amount_cents || "0", 10) ||
+            Math.round((session.amount_total || 0));
+          const planKey = meta.plan || "3month";
+          const planName =
+            planKey === "1month"
+              ? "1-Monatsplan"
+              : planKey === "6month"
+                ? "6-Monatsplan"
+                : "3-Monatsplan";
+          const { sendPurchaseEventCAPI } = await import("@/lib/fb-capi");
+          const fbRes = await sendPurchaseEventCAPI({
+            email: updateData.email,
+            valueCents: totalCents,
+            currency: session.currency?.toUpperCase() || "EUR",
+            fbp: meta.fbp || null,
+            fbc: meta.fbc || null,
+            eventId: meta.fb_event_id || `stripe-${session.id}`,
+            contentName: planName,
+            contentIds: [`plan-${planKey}`],
+          });
+          console.log(
+            `[stripe-webhook] fb-capi Purchase ${updateData.email} ` +
+              `value=${totalCents / 100} ok=${fbRes.ok}${fbRes.reason ? ` reason=${fbRes.reason}` : ""}`
+          );
+        } catch (e: any) {
+          console.error("[stripe-webhook] fb-capi failed:", e?.message);
+        }
+      }
+
       // Make benachrichtigen (orders + wauwerk_leads)
       await notifyMake(referenceId, {
         source: "checkout.session",

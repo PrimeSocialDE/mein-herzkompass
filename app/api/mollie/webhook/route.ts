@@ -267,6 +267,45 @@ async function handlePaid(payment: any) {
     });
   }
 
+  // Facebook CAPI Purchase Event — server-side Tracking damit auch
+  // Browser-Pixel-Blocker (iOS 14+, AdBlocker) den Kauf zu Facebook
+  // melden. De-Duplication via fb_event_id (Pixel + CAPI matchen sich).
+  if (table === "wauwerk_leads" && updateData.email) {
+    const totalCents =
+      parseInt(meta.total_amount_cents || "0", 10) ||
+      Math.round(parseFloat(payment.amount?.value || "0") * 100);
+    const fbp = meta.fbp || null;
+    const fbc = meta.fbc || null;
+    const fbEventId = meta.fb_event_id || `mollie-${payment.id}`;
+    const planName = meta.plan === "1month"
+      ? "1-Monatsplan"
+      : meta.plan === "6month"
+        ? "6-Monatsplan"
+        : "3-Monatsplan";
+    const targetEmail = updateData.email;
+    after(async () => {
+      try {
+        const { sendPurchaseEventCAPI } = await import("@/lib/fb-capi");
+        const res = await sendPurchaseEventCAPI({
+          email: targetEmail,
+          valueCents: totalCents,
+          currency: payment.amount?.currency || "EUR",
+          fbp,
+          fbc,
+          eventId: fbEventId,
+          contentName: planName,
+          contentIds: [`plan-${meta.plan || "3month"}`],
+        });
+        console.log(
+          `[mollie-webhook] fb-capi Purchase ${targetEmail} eventId=${fbEventId} ` +
+            `value=${totalCents / 100} ok=${res.ok}${res.reason ? ` reason=${res.reason}` : ""}`
+        );
+      } catch (e: any) {
+        console.error("[mollie-webhook] fb-capi failed:", e?.message);
+      }
+    });
+  }
+
   await enrollInUpsellCampaign(table, referenceId, updateData.email);
   await sendNotfallkartenIfBonus(table, referenceId);
 
