@@ -535,14 +535,14 @@ export async function sendCheckoutRecoveryMail(args: {
   const loginUrl = buildRecoveryUrl(leadId, { previewFreeView });
 
   // Genau 3 Bullets — die 3 stärksten emotionalen Hebel:
-  //   1) Geschenk (Übung kostenlos, heute machbar)
+  //   1) Geschenk (individuelle Übung kostenfrei, heute machbar)
   //   2) Hilfe-Versprechen (Trainer-Team, persönlich, Problem-bezogen)
-  //   3) No-Risk + kein Abo (alles in einem zusammengefasst)
+  //   3) Sicherheit (kein Abo, Garantie — aber NICHT "kein Kauf")
   const bulletsHtml = `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:6px 0 16px;">
       <tr><td style="padding:10px 0;vertical-align:top;">
         <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
-        <span style="font-size:14px;color:#1a1a1a;line-height:1.55;"><strong>Eine erste Übung für ${escapeHtml(dog)} — geschenkt.</strong> Heute schon machbar, 5 Minuten reichen. Schritt für Schritt erklärt, kein Vorwissen nötig.</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.55;"><strong>Eine Übung individuell für ${escapeHtml(dog)} — kostenfrei zum Testen.</strong> Heute schon machbar, 5 Minuten reichen. Schritt für Schritt erklärt, kein Vorwissen nötig.</span>
       </td></tr>
       <tr><td style="padding:10px 0;vertical-align:top;">
         <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
@@ -550,7 +550,7 @@ export async function sendCheckoutRecoveryMail(args: {
       </td></tr>
       <tr><td style="padding:10px 0;vertical-align:top;">
         <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
-        <span style="font-size:14px;color:#1a1a1a;line-height:1.55;"><strong>Kein Abo, kein Risiko.</strong> Du musst nichts kaufen um reinzuschauen. Und falls du dich später entscheidest: einmaliger Kauf, lebenslanger Zugang, 30 Tage Geld-zurück.</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.55;"><strong>Falls du dich später entscheidest:</strong> kein Abo, lebenslanger Zugang, 30 Tage Geld-zurück. Wenn nicht: einfach Fenster schließen, fertig.</span>
       </td></tr>
     </table>`;
 
@@ -564,8 +564,8 @@ export async function sendCheckoutRecoveryMail(args: {
     </div>`;
 
   const introText = hasName
-    ? `${problemLabel ? `${escapeHtml(problemLabel)} bei ${escapeHtml(dog)}` : `Das Thema mit ${escapeHtml(dog)}`} ist nichts, was du alleine in den Griff kriegen musst. Schau dir in Ruhe an, was wir für ${escapeHtml(dog)} zusammengestellt haben — <strong>kostenlos, ohne Kauf, ohne weitere Daten</strong>.`
-    : `Das Thema mit deinem Hund ist nichts, was du alleine in den Griff kriegen musst. Schau dir in Ruhe an, was wir vorbereitet haben — <strong>kostenlos, ohne Kauf, ohne weitere Daten</strong>.`;
+    ? `${problemLabel ? `${escapeHtml(problemLabel)} bei ${escapeHtml(dog)}` : `Das Thema mit ${escapeHtml(dog)}`} ist nichts, was du alleine in den Griff kriegen musst. Schau dir in Ruhe an, was wir <strong>individuell für ${escapeHtml(dog)}</strong> zusammengestellt haben — <strong>kostenfrei zum Testen</strong>.`
+    : `Das Thema mit deinem Hund ist nichts, was du alleine in den Griff kriegen musst. Schau dir in Ruhe an, was wir vorbereitet haben — <strong>kostenfrei zum Testen</strong>.`;
 
   const bodyHtml = `
     ${bulletsHtml}
@@ -576,8 +576,8 @@ export async function sendCheckoutRecoveryMail(args: {
 
   const html = wrapTemplate({
     preheader: hasName
-      ? `Kostenlos: ${dog}s Auswertung + eine 5-Min-Übung. Kein Kauf nötig.`
-      : `Kostenlos: deine Auswertung + eine 5-Min-Übung. Kein Kauf nötig.`,
+      ? `Kostenfrei testen: eine individuelle 5-Min-Übung für ${dog}.`
+      : `Kostenfrei testen: eine individuelle 5-Min-Übung für deinen Hund.`,
     headline: hasName
       ? `5 Minuten heute für ${dog} — eine Übung gratis`
       : `5 Minuten heute für deinen Hund — eine Übung gratis`,
