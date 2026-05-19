@@ -2406,46 +2406,40 @@
             return '';
         }
 
-        // Checkout öffnen
-        async function openCheckout() {
-            const plan = planData[selectedPlan];
-            document.getElementById('checkoutPlanDuration').textContent = plan.name;
-            document.getElementById('checkoutPrice').textContent = '€' + plan.price;
-            document.getElementById('checkoutDogName').textContent = dogName;
-            document.getElementById('checkoutDogNameFomo').textContent = dogName;
-
-            // Problem-Text
-            const problemNames = {
-                'pulling': 'Leinenziehen',
-                'barking': 'Bellen',
-                'aggression': 'Aggression',
-                'anxiety': 'Trennungsangst',
-                'recall': 'Rückruf',
-                'jumping': 'Anspringen',
-                'energy': 'Hyperaktivität',
-                'destructive': 'Zerstören',
-                'mouthing': 'Unerwünschtes Aufnehmen'
-            };
-            document.getElementById('checkoutDogProblem').textContent = problemNames[dogProblem] || 'dein Problem';
-            
-            // Plan-Benefit basierend auf Laufzeit
-            const planBenefits = {
-                '1month': 'Trainingsplan auf 4 Wochen optimiert',
-                '3month': 'Trainingsplan auf 12 Wochen optimiert',
-                '6month': 'Trainingsplan auf 24 Wochen optimiert'
-            };
-            document.getElementById('checkoutPlanBenefit').textContent = planBenefits[selectedPlan] || planBenefits['3month'];
-            
-            document.getElementById('checkoutOverlay').classList.add('active');
-
-            // Stripe initialisieren
-            if (!stripe) {
-                stripe = Stripe(STRIPE_PUBLIC_KEY);
+        // Loading-Overlay anzeigen waehrend Mollie-Checkout-URL geholt wird.
+        // Verhindert dass das alte Stripe-Inline-Overlay aufgeht (zeigt sonst
+        // kurz das 'Zahlung fehlgeschlagen'-Banner waehrend Stripe ohne
+        // clientSecret hochfaehrt).
+        function showRueckholLoadingOverlay() {
+            let overlay = document.getElementById('rueckholLoadingOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'rueckholLoadingOverlay';
+                overlay.style.cssText = 'position:fixed;inset:0;background:rgba(255,255,255,0.96);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;backdrop-filter:blur(4px);';
+                overlay.innerHTML = `
+                    <div style="width:48px;height:48px;border:4px solid #EADDC5;border-top-color:#C4A576;border-radius:50%;animation:rhSpin 0.9s linear infinite;"></div>
+                    <p style="font-size:15px;font-weight:600;color:#1a1a1a;margin:0;">Du wirst zur Zahlung weitergeleitet…</p>
+                    <p style="font-size:12px;color:#6B7280;margin:0;">Einen kleinen Moment bitte</p>
+                    <style>@keyframes rhSpin{to{transform:rotate(360deg);}}</style>`;
+                document.body.appendChild(overlay);
             }
-            
+            overlay.style.display = 'flex';
+        }
+        function hideRueckholLoadingOverlay() {
+            const overlay = document.getElementById('rueckholLoadingOverlay');
+            if (overlay) overlay.style.display = 'none';
+        }
+
+        // Checkout öffnen — direkt Loading + Mollie-Redirect, kein
+        // Stripe-Overlay mehr (Legacy-Code unten bleibt im DOM aber
+        // wird nicht mehr aktiviert).
+        async function openCheckout() {
             // Plan im localStorage speichern
             localStorage.setItem('selectedPlan', selectedPlan);
-            
+
+            // Loading sofort sichtbar — User sieht dass es laeuft
+            showRueckholLoadingOverlay();
+
             // Mollie: Direkter Redirect (kein PaymentIntent + Inline-Form)
             try {
                 const response = await fetch('/api/mollie/wauwerk-checkout', {
@@ -2473,7 +2467,8 @@
                 const data = await response.json();
 
                 if (data.error || !data.url) {
-                    showError(data.error || 'Keine Zahlungs-URL erhalten');
+                    hideRueckholLoadingOverlay();
+                    alert(data.error || 'Zahlung konnte nicht gestartet werden — bitte versuche es nochmal.');
                     return;
                 }
 
@@ -2485,7 +2480,8 @@
 
             } catch (error) {
                 console.error('Checkout error:', error);
-                showError('Fehler beim Laden. Bitte versuche es erneut.');
+                hideRueckholLoadingOverlay();
+                alert('Verbindungsfehler. Bitte versuche es erneut.');
             }
         }
 
