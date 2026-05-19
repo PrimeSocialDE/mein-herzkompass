@@ -4461,9 +4461,42 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             }
         }
 
-        // ── Method-Buttons (PayPal / SEPA) ──────────────────────────────
+        // ── Method-Buttons (PayPal / Apple Pay / Google Pay / SEPA) ─────
+        // Loading-Overlay anzeigen sodass User sieht dass er weitergeleitet
+        // wird (sonst denken sie der Klick ist verloren).
+        function showPaymentLoadingOverlay(methodLabel) {
+            let overlay = document.getElementById('paymentLoadingOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'paymentLoadingOverlay';
+                overlay.style.cssText = 'position:fixed;inset:0;background:rgba(255,255,255,0.96);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;backdrop-filter:blur(4px);';
+                overlay.innerHTML = `
+                    <div style="width:48px;height:48px;border:4px solid #EADDC5;border-top-color:#C4A576;border-radius:50%;animation:plSpin 0.9s linear infinite;"></div>
+                    <p id="paymentLoadingText" style="font-size:15px;font-weight:600;color:#1a1a1a;margin:0;">Du wirst weitergeleitet…</p>
+                    <p style="font-size:12px;color:#6B7280;margin:0;">Einen kleinen Moment bitte</p>
+                    <style>@keyframes plSpin{to{transform:rotate(360deg);}}</style>`;
+                document.body.appendChild(overlay);
+            }
+            const txt = document.getElementById('paymentLoadingText');
+            if (txt && methodLabel) txt.textContent = `Du wirst zu ${methodLabel} weitergeleitet…`;
+            overlay.style.display = 'flex';
+        }
+        function hidePaymentLoadingOverlay() {
+            const overlay = document.getElementById('paymentLoadingOverlay');
+            if (overlay) overlay.style.display = 'none';
+        }
+
+        const METHOD_LABEL = {
+            paypal: 'PayPal',
+            applepay: 'Apple Pay',
+            googlepay: 'Google Pay',
+            banktransfer: 'SEPA',
+            klarna: 'Klarna',
+        };
+
         async function payWithMethod(method) {
             hideHybridError();
+            showPaymentLoadingOverlay(METHOD_LABEL[method] || 'Mollie');
             try {
                 const payload = method ? buildCheckoutPayload({ method }) : buildCheckoutPayload({});
                 const res = await fetch('/api/mollie/wauwerk-checkout', {
@@ -4473,6 +4506,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 });
                 const data = await res.json();
                 if (data.error || !data.url) {
+                    hidePaymentLoadingOverlay();
                     showHybridError(data.error || 'Zahlung konnte nicht gestartet werden');
                     return;
                 }
@@ -4481,13 +4515,13 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 window.location.href = data.url;
             } catch (err) {
                 console.error(err);
+                hidePaymentLoadingOverlay();
                 showHybridError('Verbindungsfehler. Bitte versuche es erneut.');
             }
         }
 
-        // ── Klarna ohne Address-Modal — geht auf Mollie's Hosted-Page,
-        // dort wählt User Klarna + Adresse wird auf Mollie's/Klarna's
-        // Seite gesammelt (gleich wie Stripe Checkout funktioniert).
+        // payOnMollieHosted bleibt im Code falls woanders verlinkt — geht
+        // ohne method-Param zur Mollie-Hosted-Page mit Method-Selector.
         async function payOnMollieHosted() {
             await payWithMethod(null);
         }
@@ -4748,29 +4782,24 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     </div>
                 </div>
 
-                <!-- Express-Bezahlung: 3 gleichgroße Logo-Buttons (Shopify-Style) -->
+                <!-- Express-Bezahlung: 4 gleichgroße Logo-Buttons (Shopify-Style).
+                     Apple Pay + Google Pay default visible — Mollie filtert
+                     selbst was auf dem jeweiligen Geraet nicht geht. -->
                 <p class="hybrid-section-label">Express-Bezahlung</p>
                 <div class="hybrid-express-grid">
                     <button class="hybrid-express-btn hybrid-express-btn--paypal" onclick="payWithMethod('paypal')" aria-label="Mit PayPal bezahlen">
                         <img src="PayPal3.png" alt="PayPal">
                     </button>
-                    <button class="hybrid-express-btn hybrid-express-btn--applepay" id="applePayBtn" onclick="payWithMethod('applepay')" aria-label="Mit Apple Pay bezahlen" style="display:none;">
+                    <button class="hybrid-express-btn hybrid-express-btn--applepay" onclick="payWithMethod('applepay')" aria-label="Mit Apple Pay bezahlen">
                         <img src="Apple-Pay-Logo.jpg" alt="ApplePay">
                     </button>
-                    <button class="hybrid-express-btn hybrid-express-btn--googlepay" id="googlePayBtn" onclick="payWithMethod('googlepay')" aria-label="Mit Google Pay bezahlen" style="display:none;">
+                    <button class="hybrid-express-btn hybrid-express-btn--googlepay" onclick="payWithMethod('googlepay')" aria-label="Mit Google Pay bezahlen">
                         <img src="googlepay.png" alt="GooglePay">
                     </button>
                     <button class="hybrid-express-btn" onclick="payWithMethod('banktransfer')" aria-label="Per SEPA-Banküberweisung">
                         <img src="sepa-logo.png" alt="SEPA">
                     </button>
                 </div>
-
-                <!-- Klarna: geht auf Mollie's Hosted-Page wo User Klarna
-                     waehlt und Adresse direkt dort eingibt (wie Stripe). -->
-                <button class="hybrid-klarna-small" onclick="payOnMollieHosted()" aria-label="Mit Klarna bezahlen (Rechnungskauf)">
-                    <span class="hybrid-klarna-small-text">Auf Rechnung mit</span>
-                    <img src="Klarna3.png" alt="Klarna">
-                </button>
 
                 <div class="hybrid-divider">oder mit Karte</div>
 
