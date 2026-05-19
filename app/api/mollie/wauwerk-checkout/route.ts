@@ -199,27 +199,16 @@ export async function POST(req: NextRequest) {
     };
 
     // Hybrid: spezifische Methode + ggf. cardToken.
-    // Wenn KEIN method angegeben: explizit Methoden-Liste senden damit
-    // Mollie alle anzeigt (Apple Pay + PayPal + Klarna + Card + SEPA).
-    // Hint an Mollie welche aktiviert sein sollten — wenn Konto-seitig
-    // nicht freigeschaltet zeigt Mollie's Hosted-Page sie trotzdem
-    // nicht, aber so haben wir kein Code-seitiges Filtering.
+    // Wenn KEIN method angegeben: Feld weglassen — Mollie zeigt dann
+    // automatisch alle im Konto aktivierten Methoden auf der Hosted-Page.
+    // (Vorher hatten wir hier eine explizite Method-Liste mit
+    // klarnasliceit/klarnapaylater die Mollie mit 422 abgelehnt hat
+    // weil nicht alle aktiviert waren.)
     if (method) {
       paymentParams.method = method;
       if (method === "creditcard" && cardToken) {
         paymentParams.cardToken = cardToken;
       }
-    } else {
-      paymentParams.method = [
-        "applepay",
-        "paypal",
-        "klarna",
-        "klarnapaylater",
-        "klarnasliceit",
-        "creditcard",
-        "banktransfer",
-        "sepadirectdebit",
-      ];
     }
     // Klarna braucht zwingend eine billingAddress
     if (billingAddress && typeof billingAddress === "object") {
