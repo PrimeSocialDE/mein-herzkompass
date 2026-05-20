@@ -98,6 +98,10 @@ export async function POST(req: NextRequest) {
       : null;
   const skipMail =
     !!body?.no_mail || process.env.DISABLE_PLAN_READY_EMAIL === "1";
+  // recipientOverride: schickt Plan-Ready-Mail an diese Email statt an
+  // den Lead-Email. Nur fuer Admin-Tests (z.B. PDFs an support-Adresse
+  // schicken zur Verifikation, statt an den echten Kunden).
+  const recipientOverride = String(body?.recipient_override || "").trim().toLowerCase();
 
   if (!email && !leadId) {
     return new Response(
@@ -339,7 +343,7 @@ export async function POST(req: NextRequest) {
           try {
             const { sendPlanReadyEmail } = await import("@/lib/member-mail");
             const mailRes = await sendPlanReadyEmail({
-              to: targetEmail,
+              to: recipientOverride || targetEmail,
               dogName,
               dogBreed: answers.dog_breed || null,
               dogAge: answers.dog_age || null,
