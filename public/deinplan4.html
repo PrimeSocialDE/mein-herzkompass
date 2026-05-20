@@ -2360,8 +2360,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 <div class="benefits-bonus-feature">
                     <div class="benefits-bonus-icon">💬</div>
                     <div class="benefits-bonus-text">
-                        <strong>KI-Trainer für deine Rückfragen</strong>
-                        <span>Stell jederzeit Fragen, der KI-Trainer antwortet rund um die Uhr mit Hundetrainer-Wissen.</span>
+                        <strong>Trainerhilfe für deine Rückfragen</strong>
+                        <span>Stell jederzeit Fragen, du bekommst rund um die Uhr Antworten mit fundierten Trainer-Tipps.</span>
                     </div>
                 </div>
 
@@ -3686,18 +3686,17 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         
         const benefits = benefitsMap[dogProblem] || defaultBenefits;
         const benefitsList = document.getElementById('benefitsList');
-        // Max 4 Hauptbenefits (Rest geht im Mitglieder-Bonus-Block unter).
-        // ✓-Prefix entfernen, CSS rendert jetzt einen sauberen Checkmark-Bullet.
-        // "Bei Fragen hilft unser Trainer" rausfiltern, der Punkt steht jetzt
-        // explizit im KI-Trainer-Feature des Mitglieder-Blocks.
-        benefits
-            .filter(b => !/Bei Fragen hilft unser Trainer/i.test(b))
-            .slice(0, 4)
-            .forEach(benefit => {
-                const li = document.createElement('li');
-                li.innerHTML = benefit.replace(/^✓\s*/, '');
-                benefitsList.appendChild(li);
-            });
+        // 3 problem-spezifische Benefits + immer das "20+ Übungen"-Häkchen
+        // ans Ende. ✓-Prefix entfernen, CSS rendert den Bullet.
+        // "Bei Fragen hilft unser Trainer" raus — steht im Mitglieder-Block.
+        const filtered = benefits.filter(b => !/Bei Fragen hilft unser Trainer/i.test(b));
+        const top3 = filtered.filter(b => !/Übungen speziell für/.test(b)).slice(0, 3);
+        const items = [...top3, '✓ 20+ Übungen speziell für ' + dogName];
+        items.forEach(benefit => {
+            const li = document.createElement('li');
+            li.innerHTML = benefit.replace(/^✓\s*/, '');
+            benefitsList.appendChild(li);
+        });
 
         // ==================== DYNAMISCHER POPULAR BADGE ====================
         const popularBadge = document.getElementById('popularBadge');
