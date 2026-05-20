@@ -219,14 +219,17 @@ async function handlePaid(payment: any) {
     }
   }
 
-  // Auto-Trigger Plan-Generierung — laeuft via after() WEITER nachdem der
-  // Webhook 200 an Mollie returned hat. Verhindert dass Vercel den Container
-  // killt bevor /plan/generate fertig ist (15-25s Streaming-Response).
-  // Kann via env DISABLE_INTERNAL_PLAN_GEN=1 abgeschaltet werden.
+  // Plan-Gen wird vom pg_net DB-Trigger (status='paid' → /plan/generate)
+  // gefired. Wenn wir HIER auch noch triggerInternalPlanGeneration aufrufen,
+  // entsteht eine Race-Condition: 2 parallele Plan-Gen-Calls = 2 Plans + 2
+  // Mails an den User. Wenn pg_net mal nicht laeuft, faengt der
+  // process-paid-leads Cron das ab (alle 5 Min). Daher hier explizit AUS.
+  // Kann via env FORCE_INTERNAL_PLAN_GEN=1 manuell reaktiviert werden
+  // falls pg_net + Cron beide tot.
   if (
     table === "wauwerk_leads" &&
     updateData.email &&
-    process.env.DISABLE_INTERNAL_PLAN_GEN !== "1"
+    process.env.FORCE_INTERNAL_PLAN_GEN === "1"
   ) {
     const targetEmail = updateData.email;
     after(async () => {
