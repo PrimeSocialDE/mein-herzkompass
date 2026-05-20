@@ -216,7 +216,33 @@ function drawWeekLabel(page, weekNr, x, y, fontBold, _fontReg) {
     font: fontBold,
     color: DARK_BROWN,
   });
-  return y;
+  return boxW;
+}
+
+// Phase-Label-Box (6-Monatsplan: ersetzt Wochen-Label auf Phasen-Seiten,
+// damit kein doppeltes "Woche X" entsteht wenn Sub-Label "Woche A–B" daneben steht).
+// Gibt {boxW, subY} zurueck — subY ist die empfohlene Baseline-Y fuer ein
+// Sub-Label (Größe ~13), das vertikal mittig zur Box steht.
+function drawPhaseLabel(page, phaseNr, x, y, fontBold) {
+  const label = `Phase ${phaseNr}`;
+  const size = 22;
+  const txtW = fontBold.widthOfTextAtSize(label, size);
+  const padX = 14;
+  const padY = 7;
+  const boxW = txtW + padX * 2;
+  const boxH = size + padY * 2;
+  drawRoundedRect(page, x, y, boxW, boxH, 4, BG_BAR);
+  page.drawText(label, {
+    x: x + padX,
+    y: y + padY + 2,
+    size,
+    font: fontBold,
+    color: DARK_BROWN,
+  });
+  // Sub-Label-Baseline: Box-Mitte minus halbe Sub-Label-Visualhoehe (Faustregel
+  // baseline + size * 0.32 ≈ visueller Mittelpunkt bei Größe 13).
+  const subY = y + boxH / 2 - 13 * 0.32;
+  return { boxW, subY };
 }
 
 // Absatz mit Wrap, gibt neue Y-Position zurück
@@ -245,17 +271,17 @@ function drawArrowBullet(page, text, x, y, maxWidth, fontReg, fontBold, size = 1
 
 // Nummerierter Schritt mit goldenem Kreis + Zahl in Weiß. Für sequenzielle
 // Anleitungen (Übung Schritt für Schritt).
-function drawNumberedStep(page, n, text, x, y, maxWidth, fontReg, fontBold, size = 12.5, color = TEXT_DARK, lineGap = 17) {
-  const r = 11;
+function drawNumberedStep(page, n, text, x, y, maxWidth, fontReg, fontBold, size = 12.5, color = TEXT_DARK, lineGap = 17, radius = 11) {
+  const r = radius;
   const cx = x + r;
   const cy = y + size * 0.32;
   page.drawCircle({ x: cx, y: cy, size: r, color: GOLD });
   const num = String(n);
-  const numSize = 12;
+  const numSize = Math.max(8, Math.round(r * 1.1));
   const nw = fontBold.widthOfTextAtSize(num, numSize);
   page.drawText(num, {
     x: cx - nw / 2,
-    y: cy - numSize * 0.34,
+    y: cy - numSize * 0.32,
     size: numSize,
     font: fontBold,
     color: WHITE,
@@ -955,115 +981,75 @@ export async function buildPdfFromContent(params = {}) {
     {
       const p = newPage();
       const labelY = A4_H - BANNER_H - 50;
-      drawWeekLabel(p, phaseNum, MARGIN, labelY - 8, fontBold, fontReg);
-      // Sub-Label rechts neben dem Phase-Label: Wochen-Range
+      const { boxW, subY } = drawPhaseLabel(p, phaseNum, MARGIN, labelY - 8, fontBold);
       p.drawText(`Woche ${wAnum}–${wBnum}`, {
-        x: MARGIN + 130, y: labelY + 4, size: 13, font: fontReg, color: GOLD_DARK,
+        x: MARGIN + boxW + 14, y: subY, size: 13, font: fontReg, color: GOLD_DARK,
       });
       let y = labelY - 60;
 
       // Phase-Titel: aus Woche A.title (oder generisch)
       if (wA.title) {
         p.drawText(String(wA.title), { x: MARGIN, y, size: 15, font: fontBold, color: DARK_BROWN });
-        y -= 22;
+        y -= 26;
       }
 
       // Zwei-Spalten-Layout für Wochenziele
-      const colW = (CONTENT_W - 20) / 2;
+      const colW = (CONTENT_W - 30) / 2;
       const yStart = y;
       // Spalte links: Woche A Ziele
       let yL = yStart;
-      p.drawText(`Woche ${wAnum} · Ziele`, { x: MARGIN, y: yL, size: 11, font: fontBold, color: GOLD_DARK });
-      yL -= 16;
+      p.drawText(`Ziele · Woche ${wAnum}`, { x: MARGIN, y: yL, size: 11.5, font: fontBold, color: GOLD_DARK });
+      yL -= 20;
       for (const g of (wA.wochenziele || []).slice(0, 5)) {
-        yL = drawArrowBullet(p, g, MARGIN, yL, colW, fontReg, fontBold, 9.5, TEXT_DARK, 12);
+        yL = drawArrowBullet(p, g, MARGIN, yL, colW, fontReg, fontBold, 10, TEXT_DARK, 14);
       }
       // Spalte rechts: Woche B Ziele
       let yR = yStart;
-      const xR = MARGIN + colW + 20;
-      p.drawText(`Woche ${wBnum} · Ziele`, { x: xR, y: yR, size: 11, font: fontBold, color: GOLD_DARK });
-      yR -= 16;
+      const xR = MARGIN + colW + 30;
+      p.drawText(`Ziele · Woche ${wBnum}`, { x: xR, y: yR, size: 11.5, font: fontBold, color: GOLD_DARK });
+      yR -= 20;
       for (const g of (wB.wochenziele || []).slice(0, 5)) {
-        yR = drawArrowBullet(p, g, xR, yR, colW, fontReg, fontBold, 9.5, TEXT_DARK, 12);
+        yR = drawArrowBullet(p, g, xR, yR, colW, fontReg, fontBold, 10, TEXT_DARK, 14);
       }
 
-      y = Math.min(yL, yR) - 14;
+      y = Math.min(yL, yR) - 18;
 
       // Tagesplan-Übersicht für beide Wochen — verkürzt
       p.drawText("Tagesplan-Übersicht", { x: MARGIN, y, size: 12, font: fontBold, color: DARK_BROWN });
-      y -= 18;
+      y -= 20;
       if (wA.tagesplan) {
         p.drawText(`Woche ${wAnum}:`, { x: MARGIN, y, size: 10, font: fontBold, color: GOLD_DARK });
         y -= 14;
         const firstParaA = String(wA.tagesplan).split(/\n\n+/)[0] || "";
-        y = drawParagraph(p, firstParaA, MARGIN, y, CONTENT_W, fontReg, 9.5, TEXT_DARK, 13);
-        y -= 8;
+        y = drawParagraph(p, firstParaA, MARGIN, y, CONTENT_W, fontReg, 10, TEXT_DARK, 14);
+        y -= 10;
       }
       if (wB.tagesplan) {
         p.drawText(`Woche ${wBnum}:`, { x: MARGIN, y, size: 10, font: fontBold, color: GOLD_DARK });
         y -= 14;
         const firstParaB = String(wB.tagesplan).split(/\n\n+/)[0] || "";
-        y = drawParagraph(p, firstParaB, MARGIN, y, CONTENT_W, fontReg, 9.5, TEXT_DARK, 13);
+        y = drawParagraph(p, firstParaB, MARGIN, y, CONTENT_W, fontReg, 10, TEXT_DARK, 14);
       }
     }
 
-    // === Seite 2 — Woche A: beide Übungen kompakt ===
-    {
-      const p = newPage();
-      drawWeekLabel(p, phaseNum, MARGIN, A4_H - BANNER_H - 55, fontBold, fontReg);
-      p.drawText(`Woche ${wAnum}`, {
-        x: MARGIN + 130, y: A4_H - BANNER_H - 49, size: 13, font: fontReg, color: GOLD_DARK,
-      });
-      let y = A4_H - BANNER_H - 100;
-      const uebs = Array.isArray(wA.uebungen) ? wA.uebungen.slice(0, 2) : [];
-      for (let i = 0; i < uebs.length; i++) {
-        const u = uebs[i];
-        y = drawSectionPill(p, `ÜBUNG ${i + 1}`, MARGIN, y, fontBold, PILL_AC_GREEN, PILL_BG_GREEN, 6);
-        y -= 14;
-        p.drawText(String(u.name || ""), { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
-        y -= 20;
-        const steps = Array.isArray(u.schritte) ? u.schritte : [];
-        for (let s = 0; s < steps.length; s++) {
-          y = drawNumberedStep(p, s + 1, steps[s], MARGIN, y, CONTENT_W, fontReg, fontBold, 9.5, TEXT_DARK, 12);
-          y -= 1;
-        }
-        y -= 10;
-      }
-    }
+    // === Seite 2 — Woche A: beide Übungen ===
+    renderPhaseExercisePage(wA, wAnum, phaseNum);
 
-    // === Seite 3 — Woche B: beide Übungen kompakt ===
-    {
-      const p = newPage();
-      drawWeekLabel(p, phaseNum, MARGIN, A4_H - BANNER_H - 55, fontBold, fontReg);
-      p.drawText(`Woche ${wBnum}`, {
-        x: MARGIN + 130, y: A4_H - BANNER_H - 49, size: 13, font: fontReg, color: GOLD_DARK,
-      });
-      let y = A4_H - BANNER_H - 100;
-      const uebs = Array.isArray(wB.uebungen) ? wB.uebungen.slice(0, 2) : [];
-      for (let i = 0; i < uebs.length; i++) {
-        const u = uebs[i];
-        y = drawSectionPill(p, `ÜBUNG ${i + 1}`, MARGIN, y, fontBold, PILL_AC_GREEN, PILL_BG_GREEN, 6);
-        y -= 14;
-        p.drawText(String(u.name || ""), { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
-        y -= 20;
-        const steps = Array.isArray(u.schritte) ? u.schritte : [];
-        for (let s = 0; s < steps.length; s++) {
-          y = drawNumberedStep(p, s + 1, steps[s], MARGIN, y, CONTENT_W, fontReg, fontBold, 9.5, TEXT_DARK, 12);
-          y -= 1;
-        }
-        y -= 10;
-      }
-    }
+    // === Seite 3 — Woche B: beide Übungen ===
+    renderPhaseExercisePage(wB, wBnum, phaseNum);
 
     // === Seite 4 — Phasen-Check ===
     {
       const p = newPage();
-      drawWeekLabel(p, phaseNum, MARGIN, A4_H - BANNER_H - 55, fontBold, fontReg);
-      let y = A4_H - BANNER_H - 95;
+      const { boxW, subY } = drawPhaseLabel(p, phaseNum, MARGIN, A4_H - BANNER_H - 55, fontBold);
+      p.drawText(`Woche ${wAnum}–${wBnum}`, {
+        x: MARGIN + boxW + 14, y: subY, size: 13, font: fontReg, color: GOLD_DARK,
+      });
+      let y = A4_H - BANNER_H - 100;
       y = drawSectionPill(p, "PHASEN-CHECK", MARGIN, y, fontBold, PILL_AC_GOLD, PILL_BG_GOLD, 8);
       y -= 18;
       p.drawText("Was diese Phase festigen sollte", { x: MARGIN, y, size: 16, font: fontBold, color: DARK_BROWN });
-      y -= 24;
+      y -= 26;
 
       // No-Gos beider Wochen
       const allNoGos = [
@@ -1072,12 +1058,12 @@ export async function buildPdfFromContent(params = {}) {
       ].slice(0, 6);
       if (allNoGos.length) {
         p.drawText("Vermeide in diesen 2 Wochen", { x: MARGIN, y, size: 12, font: fontBold, color: WARN_RED });
-        y -= 18;
+        y -= 20;
         for (const ng of allNoGos) {
-          y = drawWarnBullet(p, ng, MARGIN, y, CONTENT_W, fontReg, 10.5, TEXT_DARK, 14);
-          y -= 1;
+          y = drawWarnBullet(p, ng, MARGIN, y, CONTENT_W, fontReg, 10.5, TEXT_DARK, 15);
+          y -= 2;
         }
-        y -= 10;
+        y -= 12;
       }
 
       // Fortschritt beider Wochen
@@ -1087,12 +1073,62 @@ export async function buildPdfFromContent(params = {}) {
       ].slice(0, 6);
       if (allFortschritt.length) {
         p.drawText("Fortschritt erkennst du daran", { x: MARGIN, y, size: 12, font: fontBold, color: GOLD_DARK });
-        y -= 18;
+        y -= 20;
         for (const f of allFortschritt) {
-          y = drawCheckBullet(p, f, MARGIN, y, CONTENT_W, fontReg, 10.5, TEXT_DARK, 14);
-          y -= 1;
+          y = drawCheckBullet(p, f, MARGIN, y, CONTENT_W, fontReg, 10.5, TEXT_DARK, 15);
+          y -= 2;
         }
       }
+    }
+  }
+
+  // Helper: rendert eine Übungs-Seite mit BEIDEN Übungen einer Woche kompakt
+  // auf einer Seite. Nur in seltenen Überlauf-Fällen (sehr lange Schritte)
+  // wird Übung 2 auf eine Folgeseite verschoben.
+  function renderPhaseExercisePage(week, weekNum, phaseNum) {
+    const drawHeader = (page) => {
+      const { boxW, subY } = drawPhaseLabel(page, phaseNum, MARGIN, A4_H - BANNER_H - 55, fontBold);
+      page.drawText(`Woche ${weekNum}`, {
+        x: MARGIN + boxW + 14, y: subY, size: 13, font: fontReg, color: GOLD_DARK,
+      });
+    };
+    let p = newPage();
+    drawHeader(p);
+    let y = A4_H - BANNER_H - 100;
+    const uebs = Array.isArray(week.uebungen) ? week.uebungen.slice(0, 2) : [];
+    const stepSize = 9.5;
+    const stepLineGap = 15;
+    const stepRadius = 7;
+    const stepGap = 0;
+    const minY = 50;
+    const estimateUebungHeight = (u) => {
+      const steps = Array.isArray(u.schritte) ? u.schritte : [];
+      let h = 6 + 14 + 20;
+      for (const s of steps) {
+        const lines = wrapText(String(s), fontReg, stepSize, CONTENT_W - (stepRadius * 2 + 10));
+        h += lines.length * stepLineGap + stepGap;
+      }
+      h += 12;
+      return h;
+    };
+    for (let i = 0; i < uebs.length; i++) {
+      const u = uebs[i];
+      const need = estimateUebungHeight(u);
+      if (i > 0 && y - need < minY) {
+        p = newPage();
+        drawHeader(p);
+        y = A4_H - BANNER_H - 100;
+      }
+      y = drawSectionPill(p, `ÜBUNG ${i + 1}`, MARGIN, y, fontBold, PILL_AC_GREEN, PILL_BG_GREEN, 6);
+      y -= 14;
+      p.drawText(String(u.name || ""), { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
+      y -= 20;
+      const steps = Array.isArray(u.schritte) ? u.schritte : [];
+      for (let s = 0; s < steps.length; s++) {
+        y = drawNumberedStep(p, s + 1, steps[s], MARGIN, y, CONTENT_W, fontReg, fontBold, stepSize, TEXT_DARK, stepLineGap, stepRadius);
+        y -= stepGap;
+      }
+      y -= 12;
     }
   }
 
