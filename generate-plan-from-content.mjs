@@ -541,14 +541,49 @@ function drawAdPage(p, type, fonts, qrImage, dogImage, layout) {
   );
 }
 
+// WinAnsi-Safe: pdf-lib (Helvetica + WinAnsi) crasht bei Unicode-Sonderzeichen.
+// Claude AI generiert manchmal Pfeile (→), Smart-Quotes oder Bullet-Symbole im
+// Plan-JSON. Ohne Sanitization stoppt das den ganzen PDF-Build (=> User
+// bekommt keine Mail mit Anhang, dokumentiert bei rhenaschulte/egloffdaniela).
+function winansiSafe(s) {
+  if (typeof s !== "string") return s;
+  return s
+    .replace(/[→➔➜⇒]/g, ":")
+    .replace(/[←⇐]/g, "")
+    .replace(/[↑↓]/g, "")
+    .replace(/[•●◦▪▫]/g, "-")
+    .replace(/[✓✔]/g, "+")
+    .replace(/[✗✘×]/g, "x")
+    .replace(/[‘’‚‛]/g, "'")
+    .replace(/[“”‟]/g, '"')
+    .replace(/[—–]/g, "-")
+    .replace(/…/g, "...")
+    // Emojis + andere High-Surrogate-Chars: ersetzen durch leeres
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, "");
+}
+function sanitizeDeep(obj) {
+  if (obj == null) return obj;
+  if (typeof obj === "string") return winansiSafe(obj);
+  if (Array.isArray(obj)) return obj.map(sanitizeDeep);
+  if (typeof obj === "object") {
+    const out = {};
+    for (const [k, v] of Object.entries(obj)) out[k] = sanitizeDeep(v);
+    return out;
+  }
+  return obj;
+}
+
 // ========= PDF-Aufbau =========
 export async function buildPdfFromContent(params = {}) {
-  const DOG_NAME     = (params.dogName     ?? process.env.DOG_NAME     ?? DEFAULT_DOG_NAME).trim();
-  const DOG_BREED    = (params.dogBreed    ?? process.env.DOG_BREED    ?? DEFAULT_DOG_BREED).trim();
-  const DOG_AGE      = (params.dogAge      ?? process.env.DOG_AGE      ?? DEFAULT_DOG_AGE).trim();
-  const MAIN_PROBLEM = (params.mainProblem ?? process.env.MAIN_PROBLEM ?? DEFAULT_MAIN_PROBLEM).trim();
+  const DOG_NAME     = winansiSafe((params.dogName     ?? process.env.DOG_NAME     ?? DEFAULT_DOG_NAME).trim());
+  const DOG_BREED    = winansiSafe((params.dogBreed    ?? process.env.DOG_BREED    ?? DEFAULT_DOG_BREED).trim());
+  const DOG_AGE      = winansiSafe((params.dogAge      ?? process.env.DOG_AGE      ?? DEFAULT_DOG_AGE).trim());
+  const MAIN_PROBLEM = winansiSafe((params.mainProblem ?? process.env.MAIN_PROBLEM ?? DEFAULT_MAIN_PROBLEM).trim());
   const planLengthMonths = params.planLengthMonths || 3;
-  const plan = params.plan;
+  // Plan komplett sanitizen vor Rendering — alle Strings (auch nested)
+  // werden WinAnsi-safe. Verhindert "WinAnsi cannot encode" Crash bei
+  // AI-generierten Sonderzeichen.
+  const plan = sanitizeDeep(params.plan);
   if (!plan || !Array.isArray(plan.weeks) || plan.weeks.length === 0) {
     throw new Error("buildPdfFromContent: params.plan ist leer oder hat keine weeks[]");
   }
