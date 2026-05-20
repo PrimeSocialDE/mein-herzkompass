@@ -183,6 +183,22 @@ async function handlePaid(payment: any) {
     else updateData.name = customerName;
   }
 
+  // Safety-Net: selected_plan aus Mollie-Metadata uebernehmen, falls die
+  // /wauwerk-checkout-Route den Update nicht geschafft hat (z.B. ohne
+  // leadId beim Anstoss, oder DB-Fehler dort). Bei Member-Bereich-Upgrades
+  // ist das selected_plan im Lead sonst veraltet, und Plan-Gen produziert
+  // die falsche Laenge.
+  if (
+    table === "wauwerk_leads" &&
+    (meta.plan === "1month" || meta.plan === "3month" || meta.plan === "6month") &&
+    meta.plan !== existingRecord.selected_plan
+  ) {
+    updateData.selected_plan = meta.plan;
+    console.log(
+      `[mollie-webhook] selected_plan aktualisiert: ${existingRecord.selected_plan} → ${meta.plan} (lead ${referenceId})`
+    );
+  }
+
   if (table === "orders") {
     updateData.due_at = new Date(
       Date.now() + 10 * 60 * 60 * 1000
@@ -247,7 +263,12 @@ async function handlePaid(payment: any) {
   // In after() weil das ~500ms zusatzliche API-Calls sind.
   if (table === "wauwerk_leads" && updateData.email) {
     const targetEmail = updateData.email;
-    const selectedPlan = (existingRecord as any)?.selected_plan || "3month";
+    // Prefer den frisch aktualisierten Wert aus updateData (Upgrade-Fall),
+    // fallback auf den Lead-Wert vor dem Update.
+    const selectedPlan =
+      updateData.selected_plan ||
+      (existingRecord as any)?.selected_plan ||
+      "3month";
     after(async () => {
       try {
         const { syncPaidCustomerListsFromSelectedPlan } = await import(

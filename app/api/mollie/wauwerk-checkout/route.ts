@@ -225,12 +225,16 @@ export async function POST(req: NextRequest) {
 
     const payment = await mollie.payments.create(paymentParams);
 
-    // Lead in Supabase updaten — additive Spalten, Stripe-Spalten unangetastet
+    // Lead in Supabase updaten — additive Spalten, Stripe-Spalten unangetastet.
+    // WICHTIG: selected_plan IMMER auf den frisch gewaehlten Plan setzen.
+    // Bei Member-Bereich-Upgrades (z.B. 3M-Kunde kauft 6M) wuerde der alte
+    // Wert sonst stehen bleiben → Plan-Generator triggert die falsche Laenge.
     if (leadId) {
       const updateData: any = {
         mollie_payment_id: payment.id,
         payment_provider: "mollie",
         status: "checkout_started",
+        selected_plan: plan,
       };
       if (referredByCode) updateData.referred_by_code = referredByCode;
       await supabase.from("wauwerk_leads").update(updateData).eq("id", leadId);
