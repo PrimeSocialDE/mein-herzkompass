@@ -270,6 +270,8 @@ export async function POST(req: NextRequest) {
           stage: "intro_generated",
           ai_intro_ms: introResult.ms,
           ai_intro_ok: !!introResult.einleitung,
+          ai_ziele_ok: !!introResult.ziele,
+          ai_abschluss_ok: !!introResult.abschluss,
         });
 
         const plan = composePlan({
@@ -285,6 +287,8 @@ export async function POST(req: NextRequest) {
             bekannteSignale,
           },
           introText: introResult.einleitung || undefined,
+          zieleText: introResult.ziele || undefined,
+          abschlussText: introResult.abschluss || undefined,
           customProblemText,
         });
 

@@ -34,6 +34,7 @@ export interface ComposeArgs {
   planLengthMonths: 1 | 3 | 6;
   dog: DogProfile;
   introText?: string;
+  zieleText?: string;
   abschlussText?: string;
   customProblemText?: string;
 }
@@ -5700,7 +5701,7 @@ const BONUS_SPIELE = [
 // ════════════════════════════════════════════════════════════════════
 
 export function composePlan(args: ComposeArgs): TrainingPlanContent {
-  const { problem, planLengthMonths, dog, introText, abschlussText, customProblemText } = args;
+  const { problem, planLengthMonths, dog, introText, zieleText, abschlussText, customProblemText } = args;
   const weeksTotal = planLengthMonths * 4;
   const monthsTotal = planLengthMonths;
 
@@ -5821,7 +5822,7 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
       headline: `${planLengthMonths}-Monatsplan für ${dogName}`,
       einleitung: introText || fallbackEinleitung,
       aufbau: fallbackAufbau,
-      ziele: fallbackZiele,
+      ziele: zieleText || fallbackZiele,
     },
     weeks,
     monats_uebersichten: buildMonatsUebersichten(problem, weeksTotal, monthsTotal, dog, problemLabel, customProblemText),
