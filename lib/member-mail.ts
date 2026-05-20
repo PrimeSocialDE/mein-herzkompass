@@ -377,10 +377,11 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
   });
 
   // PDF-Anhang aus dem AI-personalisierten Plan-JSON generieren.
-  // Fallback: Wenn aus irgendeinem Grund das nicht klappt — Mail trotzdem
-  // rausgehen lassen, dann ohne PDF. User sieht den Plan jedenfalls im
-  // Mitglieder-Bereich (Magic-Link im Mail-CTA).
-  let attachments: Array<{ name: string; contentBase64: string }> | undefined;
+  // WICHTIG: Bei PDF-Build-Fail wird die Mail NICHT geschickt (statt
+  // ohne Anhang, was den Kunden frustriert hat in 2 dokumentierten Faellen).
+  // Caller bekommt {ok:false} zurueck und kann via process-paid-leads Cron
+  // oder /api/admin/trigger-delivery retriggern wenn Build wieder klappt.
+  let attachments: Array<{ name: string; contentBase64: string }>;
   try {
     const { buildPlanPdfFromContent, planPdfFilename } = await import("./pdf-builder");
     const pdfBytes = await buildPlanPdfFromContent({
@@ -406,10 +407,13 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
       `[member-mail] PDF angehängt: ${attachments[0].name} (${(buf.length / 1024).toFixed(0)} KB)`
     );
   } catch (e: any) {
+    // Voller Stack-Trace damit wir Root-Cause finden koennen
     console.error(
-      "[member-mail] PDF-Build fehlgeschlagen — Mail wird ohne Anhang gesendet:",
+      `[member-mail] PDF-Build FEHLGESCHLAGEN für ${to} — Mail wird NICHT gesendet (Re-Trigger via /api/admin/trigger-delivery noetig). Fehler:`,
       e?.message || e
     );
+    if (e?.stack) console.error(e.stack);
+    return { ok: false, reason: "pdf_build_failed" };
   }
 
   return sendBrevoMail({
