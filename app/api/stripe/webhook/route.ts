@@ -753,45 +753,51 @@ async function handleUpsellPaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
 
     console.log("✅ Lead gefunden:", leadData.id);
 
-    // Bestehende upsell_modules holen (kann Array oder String sein)
-    let existingModules: string[] = [];
-    if (leadData.upsell_modules) {
-      if (Array.isArray(leadData.upsell_modules)) {
-        existingModules = leadData.upsell_modules;
-      } else if (typeof leadData.upsell_modules === 'string') {
-        existingModules = leadData.upsell_modules.split(',').filter(Boolean);
-      }
+    // DB-Spalten: upsell_module (Haupt) + upsell_2 (zweiter Slot) +
+    // upsell_prevention. KEIN upsell_modules (plural) oder upsell_paid_at.
+    const newModuleStr = isPremium
+      ? (module ? `${module}+premium` : "premium")
+      : (module || null);
+
+    const updatePayload: any = {
+      upsell_payment_intent: paymentIntent.id,
+    };
+    if (!leadData.upsell_module) {
+      updatePayload.upsell_module = newModuleStr;
+    } else if (!leadData.upsell_2) {
+      updatePayload.upsell_2 = newModuleStr;
+    } else {
+      updatePayload.upsell_module = `${leadData.upsell_module}+${newModuleStr}`;
     }
 
-    // Neue Module hinzufügen
-    const newModules = module ? module.split('+') : [];
-    if (isPremium) {
-      newModules.push('premium');
-    }
-
-    // Duplikate vermeiden
-    const allModules = [...new Set([...existingModules, ...newModules])];
-
-    console.log("🛒 Bestehende Module:", existingModules);
-    console.log("🛒 Neue Module:", newModules);
-    console.log("🛒 Alle Module:", allModules);
-
-    // Update in Supabase
     const { error: updateError } = await supabase
       .from("wauwerk_leads")
-      .update({
-        upsell_modules: allModules,
-        upsell_module: module || null, // Singular-Spalte: original Kauf-String (kann Bundle "pulling+anxiety" enthalten)
-        upsell_paid_at: new Date().toISOString(),
-        upsell_payment_intent: paymentIntent.id,
-      })
+      .update(updatePayload)
       .eq("id", leadData.id);
 
     if (updateError) {
-      console.error("❌ Fehler beim Updaten der upsell_modules:", updateError);
+      console.error("❌ Fehler beim Updaten der upsell-Spalten:", updateError);
     } else {
-      console.log("✅ upsell_modules erfolgreich aktualisiert:", allModules);
+      console.log("✅ Upsell upsell_module/upsell_2 aktualisiert:", updatePayload);
     }
+
+    // Track Auslieferungs-Zeit fuer Cron-Filter via answers
+    const updatedAnswers = {
+      ...((leadData.answers as any) || {}),
+      upsell_paid_at: new Date().toISOString(),
+    };
+    await supabase
+      .from("wauwerk_leads")
+      .update({ answers: updatedAnswers })
+      .eq("id", leadData.id);
+
+    // Alle aktuell gekauften Module fuer Folge-Logik
+    const allModulesRaw: string[] = [];
+    if (leadData.upsell_module) allModulesRaw.push(...String(leadData.upsell_module).split('+'));
+    if (leadData.upsell_2) allModulesRaw.push(...String(leadData.upsell_2).split('+'));
+    if (module) allModulesRaw.push(...module.split('+'));
+    if (isPremium) allModulesRaw.push('premium');
+    const allModules = [...new Set(allModulesRaw.map((s) => s.trim()).filter(Boolean))];
 
     // Notfall-Karten: PDF generieren und versenden
     if (module === 'notfall-karten' && email) {

@@ -108,23 +108,28 @@ export async function POST(req: NextRequest) {
       if (lead) targetLeadId = lead.id;
     }
     if (targetLeadId) {
+      // DB-Spalten: upsell_module + upsell_2 (kein upsell_modules / _paid_at)
       const { data: lead } = await supabase
         .from("wauwerk_leads")
-        .select("upsell_modules")
+        .select("upsell_module, upsell_2, upsell_prevention, answers")
         .eq("id", targetLeadId)
         .single();
-      let existing: string[] = [];
-      if (Array.isArray(lead?.upsell_modules)) existing = lead!.upsell_modules;
-      else if (typeof lead?.upsell_modules === "string")
-        existing = lead!.upsell_modules.split(",").filter(Boolean);
-      const newModules = [...new Set([...existing, module])];
+      const updatePayload: any = {};
+      if (!lead?.upsell_module) {
+        updatePayload.upsell_module = module;
+      } else if (!(lead as any).upsell_2) {
+        updatePayload.upsell_2 = module;
+      } else {
+        updatePayload.upsell_module = `${lead.upsell_module}+${module}`;
+      }
+      // Auslieferungs-Zeitstempel in answers tracken
+      updatePayload.answers = {
+        ...((lead as any)?.answers || {}),
+        upsell_paid_at: new Date().toISOString(),
+      };
       await supabase
         .from("wauwerk_leads")
-        .update({
-          upsell_modules: newModules,
-          upsell_paid_at:
-            (lead as any)?.upsell_paid_at || new Date().toISOString(),
-        })
+        .update(updatePayload)
         .eq("id", targetLeadId);
     }
 

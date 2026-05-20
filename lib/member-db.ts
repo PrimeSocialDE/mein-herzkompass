@@ -395,31 +395,21 @@ export async function listPurchasedZusatzmodule(
   if (!email) return [];
   const admin = createMemberAdminClient();
   // Es kann mehrere Lead-Eintraege pro Email geben (alter + neuer Quiz).
-  // Wir lesen BEIDE Spalten:
-  //   - upsell_modules (Plural, Array) — wird vom Webhook gesetzt
-  //   - upsell_module (Singular, String, optional Bundle "a+b") — wird von
-  //     der Danke-Seite direkt geschrieben, manchmal vor dem Webhook
-  // So funktioniert der Download auch wenn der Webhook noch nicht
-  // durchgelaufen ist.
+  // DB hat DREI Spalten fuer Module: upsell_module (Haupt), upsell_2
+  // (zweiter Slot), upsell_prevention (Prevention-Slot). Jede kann String
+  // mit Bundle-Notation "a+b" sein. (upsell_modules Plural existiert NICHT.)
   const { data } = await admin
     .from("wauwerk_leads")
-    .select("upsell_modules, upsell_module")
+    .select("upsell_module, upsell_2, upsell_prevention")
     .ilike("email", email);
   if (!Array.isArray(data)) return [];
   const all = new Set<string>();
-  for (const row of data as Array<{
-    upsell_modules: unknown;
-    upsell_module: unknown;
-  }>) {
-    const arr = row.upsell_modules;
-    if (Array.isArray(arr)) {
-      for (const m of arr) if (typeof m === "string") all.add(m.trim());
-    } else if (typeof arr === "string") {
-      for (const m of arr.split(",")) all.add(m.trim());
-    }
-    const single = row.upsell_module;
-    if (typeof single === "string" && single.trim()) {
-      all.add(single.trim());
+  for (const row of data as Array<Record<string, unknown>>) {
+    for (const col of ["upsell_module", "upsell_2", "upsell_prevention"]) {
+      const v = row[col];
+      if (typeof v === "string" && v.trim()) {
+        all.add(v.trim());
+      }
     }
   }
   // Bundle-Strings wie "pulling+anxiety" auch aufteilen

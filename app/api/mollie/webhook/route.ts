@@ -370,26 +370,49 @@ async function handleUpsellPaid(payment: any) {
     return;
   }
 
-  let existingModules: string[] = [];
-  if (leadData.upsell_modules) {
-    if (Array.isArray(leadData.upsell_modules))
-      existingModules = leadData.upsell_modules;
-    else if (typeof leadData.upsell_modules === "string")
-      existingModules = leadData.upsell_modules.split(",").filter(Boolean);
+  // DB-Spalten: upsell_module (Haupt), upsell_2 (zweiter Slot),
+  // upsell_prevention. upsell_modules (plural) und upsell_paid_at existieren
+  // NICHT als Spalten. Wir nutzen upsell_module + upsell_2 als
+  // Konkatenations-String "pulling+anxiety" da Bundle moeglich.
+  const newModuleStr = isPremium
+    ? (module ? `${module}+premium` : "premium")
+    : (module || null);
+
+  // Wenn upsell_module bereits gefuellt → in upsell_2 packen (zweiter Kauf)
+  const updatePayload: any = {
+    mollie_upsell_payment_id: payment.id,
+  };
+  if (!leadData.upsell_module) {
+    updatePayload.upsell_module = newModuleStr;
+  } else if (!leadData.upsell_2) {
+    updatePayload.upsell_2 = newModuleStr;
+  } else {
+    // Beide Slots voll — append an upsell_module mit + (Bundle-Notation)
+    updatePayload.upsell_module = `${leadData.upsell_module}+${newModuleStr}`;
   }
-  const newModules = module ? String(module).split("+") : [];
-  if (isPremium) newModules.push("premium");
-  const allModules = [...new Set([...existingModules, ...newModules])];
 
   await supabase
     .from("wauwerk_leads")
-    .update({
-      upsell_modules: allModules,
-      upsell_module: module || null, // Singular-Spalte: original Kauf-String (kann Bundle "pulling+anxiety" enthalten)
-      upsell_paid_at: new Date().toISOString(),
-      mollie_upsell_payment_id: payment.id,
-    })
+    .update(updatePayload)
     .eq("id", leadData.id);
+
+  // Track Auslieferungs-Zeit fuer 14-Tage-Cron-Filter via answers
+  const updatedAnswers = {
+    ...(leadData.answers || {}),
+    upsell_paid_at: new Date().toISOString(),
+  };
+  await supabase
+    .from("wauwerk_leads")
+    .update({ answers: updatedAnswers })
+    .eq("id", leadData.id);
+
+  // Fuer Module-Extraktion: alle gekaufte Module aus beiden Spalten + neuem Kauf
+  const allModulesRaw: string[] = [];
+  if (leadData.upsell_module) allModulesRaw.push(...String(leadData.upsell_module).split("+"));
+  if (leadData.upsell_2) allModulesRaw.push(...String(leadData.upsell_2).split("+"));
+  if (module) allModulesRaw.push(...String(module).split("+"));
+  if (isPremium) allModulesRaw.push("premium");
+  const allModules = [...new Set(allModulesRaw.map((s) => s.trim()).filter(Boolean))];
 
   if (module === "notfall-karten" && (email || leadData.email)) {
     try {

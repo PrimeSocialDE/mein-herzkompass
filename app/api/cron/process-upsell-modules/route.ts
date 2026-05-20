@@ -30,18 +30,15 @@ const TRAININGS_MODULE_KEYS = new Set([
   "recall", "barking", "jumping", "destructive", "soiling",
 ]);
 
-// Aus den Spalten upsell_module + upsell_modules alle gekauften Modul-Keys
-// extrahieren (mit Bundle-Splitting "pulling+anxiety" → 2 Keys).
+// Aus den Spalten upsell_module + upsell_2 + upsell_prevention alle
+// gekauften Modul-Keys extrahieren (Bundle-Splitting "pulling+anxiety").
 function extractModuleKeys(lead: any): string[] {
   const all = new Set<string>();
-  const arr = lead.upsell_modules;
-  if (Array.isArray(arr)) {
-    for (const m of arr) if (typeof m === "string") all.add(m.trim());
-  } else if (typeof arr === "string") {
-    for (const m of arr.split(",")) all.add(m.trim());
-  }
-  if (typeof lead.upsell_module === "string" && lead.upsell_module.trim()) {
-    all.add(lead.upsell_module.trim());
+  for (const colName of ["upsell_module", "upsell_2", "upsell_prevention"]) {
+    const v = lead[colName];
+    if (typeof v === "string" && v.trim()) {
+      all.add(v.trim());
+    }
   }
   const expanded = new Set<string>();
   for (const m of all) {
@@ -63,30 +60,23 @@ export async function GET(req: NextRequest) {
   const admin = createMemberAdminClient();
   const emailFilter = req.nextUrl.searchParams.get("email")?.toLowerCase();
 
-  // Leads mit upsell_module ODER upsell_modules holen.
-  // Filter:
-  //   - Käufe der letzten 14 Tage (upsell_paid_at >= 14d ago) ODER
-  //   - upsell_paid_at IS NULL (manueller DB-Edit oder Mollie-Bug —
-  //     in beiden Faellen wollen wir das Modul versenden)
-  // Idempotenz via answers.zusatzmodul_sent[] verhindert Doppel-Versand
-  // bei alten Leads die das schon mal bekamen.
+  // Leads mit upsell_module ODER upsell_2 ODER upsell_prevention holen.
+  // (upsell_modules + upsell_paid_at existieren NICHT als Spalten.)
+  // Zeit-Filter: Letzte 14 Tage via created_at — manueller DB-Edit auf
+  // alten Lead wird auch erfasst (Idempotenz via answers.zusatzmodul_sent[]).
   // Manuelles Triggern mit ?email= ist unbeschraenkt.
   const fourteenDaysAgo = new Date(
     Date.now() - 14 * 24 * 60 * 60 * 1000
   ).toISOString();
   let query = admin
     .from("wauwerk_leads")
-    .select("id, email, dog_name, upsell_module, upsell_modules, answers")
-    .or("upsell_module.not.is.null,upsell_modules.not.is.null")
-    .order("upsell_paid_at", { ascending: false, nullsFirst: false });
+    .select("id, email, dog_name, upsell_module, upsell_2, upsell_prevention, answers, created_at")
+    .or("upsell_module.not.is.null,upsell_2.not.is.null,upsell_prevention.not.is.null")
+    .order("created_at", { ascending: false });
   if (emailFilter) {
     query = query.ilike("email", emailFilter);
   } else {
-    query = query
-      .or(
-        `upsell_paid_at.gte.${fourteenDaysAgo},upsell_paid_at.is.null`
-      )
-      .limit(100);
+    query = query.gte("created_at", fourteenDaysAgo).limit(100);
   }
   const { data: leads, error } = await query;
 
