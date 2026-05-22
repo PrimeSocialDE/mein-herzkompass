@@ -547,29 +547,75 @@ async function handleUpsellProductPaid(payment: any) {
     leadData = data;
   }
 
-  // upsell_modules erweitern um product_<type> — Hauptstatus wird NICHT geändert
+  // DB-Update: nur Spalten die wirklich existieren (upsell_module singular!).
+  // Frueherer Bug: Code schrieb upsell_modules + upsell_paid_at (existieren NICHT)
+  // → unknown column-Error → ganzes Update silent-failed, mollie_upsell_payment_id
+  // wurde nie gespeichert. Plus kein .error-check.
   if (leadData) {
-    let existingModules: string[] = [];
-    if (leadData.upsell_modules) {
-      if (Array.isArray(leadData.upsell_modules))
-        existingModules = leadData.upsell_modules;
-      else if (typeof leadData.upsell_modules === "string")
-        existingModules = leadData.upsell_modules.split(",").filter(Boolean);
-    }
-    const productKey = `product_${product}`;
-    const allModules = [...new Set([...existingModules, productKey])];
-
-    await supabase
+    const { error: updateErr } = await supabase
       .from("wauwerk_leads")
       .update({
-        upsell_modules: allModules,
-        upsell_paid_at: new Date().toISOString(),
+        upsell_module: product,
         mollie_upsell_payment_id: payment.id,
       })
       .eq("id", leadData.id);
+    if (updateErr) {
+      console.error(
+        `[mollie-webhook] upsell_product DB-Update fehlgeschlagen lead=${leadData.id}:`,
+        updateErr.message
+      );
+    }
   }
 
-  // Notify Make.com — Make übernimmt PDF-Generierung + E-Mail-Versand für Produkte
+  // Themen-Modul (thema-*) → direkt /api/zusatzmodul/send (interne Mail-Pipeline).
+  // Sonst-Upsells (ernaehrung/zweithund/abo/reise/erstehilfe) → an Make.com.
+  // Damit der Versand nicht mehr ausschliesslich von Make abhaengt — Make hat
+  // bei Theme-Modulen mehrfach silent-failed (Elmar Walter 2x Recall bezahlt,
+  // nichts erhalten).
+  const themaModuleMap: Record<string, string> = {
+    "thema-leinen": "pulling",
+    "thema-bellen": "barking",
+    "thema-aggression": "aggression",
+    "thema-trennungsangst": "anxiety",
+    "thema-anspringen": "jumping",
+    "thema-rueckruf": "recall",
+    "thema-energie": "energy",
+    "thema-zerstoerung": "destructive",
+    "thema-stubenrein": "soiling",
+    "thema-aufnehmen": "mouthing",
+  };
+  const moduleKey = themaModuleMap[product];
+  if (moduleKey) {
+    after(async () => {
+      try {
+        const baseUrl =
+          process.env.NEXT_PUBLIC_SITE_URL ||
+          (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+          "https://www.pfoten-plan.de";
+        const r = await fetch(`${baseUrl}/api/zusatzmodul/send`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            dogName: dogName === "deinen Hund" ? undefined : dogName,
+            moduleKey,
+          }),
+        });
+        const j: any = await r.json().catch(() => ({}));
+        console.log(
+          `[mollie-webhook] zusatzmodul/send ${product}→${moduleKey} ${email}: HTTP ${r.status} ok=${j.ok} skipped=${j.skipped}`
+        );
+      } catch (e: any) {
+        console.error(
+          `[mollie-webhook] zusatzmodul/send fehlgeschlagen ${product}:`,
+          e?.message
+        );
+      }
+    });
+  }
+
+  // Notify Make.com — Make übernimmt ggf. ergaenzende Aktionen + ist die
+  // Pipeline fuer Nicht-Theme-Upsells (ernaehrung, zweithund, abo, reise, erstehilfe).
   await notifyMake(leadData?.id || email, {
     source: "mollie.upsell_product",
     type: "upsell_product",
