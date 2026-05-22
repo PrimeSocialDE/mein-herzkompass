@@ -86,6 +86,38 @@ export async function POST(req: NextRequest) {
     const exitDiscountApplied =
       exitDiscount === true || exitDiscount === "true";
 
+    // EMAIL-VALIDATION: ohne Email kann der Plan-Generator nichts ausliefern
+    // (keine Mail, keine Personalisierung). Bei Apple Pay / Klick-Buttons ohne
+    // vorherigem Quiz blieb die Email leer und der Kunde bezahlte ins Leere
+    // (siehe Mollie tr_xayhX7Ma5JHovYNSWYYRJ 22.05.). Wir fordern jetzt eine
+    // valide Email VOR Anlage der Mollie-Zahlung. Wenn das Frontend keine
+    // mitschickt aber eine leadId, versuchen wir die DB-Email als Fallback.
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    let resolvedEmail = (typeof email === "string" ? email : "").trim().toLowerCase();
+    if (!EMAIL_RE.test(resolvedEmail) && leadId) {
+      try {
+        const { data: leadRow } = await supabase
+          .from("wauwerk_leads")
+          .select("email")
+          .eq("id", leadId)
+          .maybeSingle();
+        const fallback = (leadRow?.email || "").trim().toLowerCase();
+        if (EMAIL_RE.test(fallback)) resolvedEmail = fallback;
+      } catch (e: any) {
+        console.warn("[wauwerk-checkout] email-fallback DB-lookup failed:", e?.message);
+      }
+    }
+    if (!EMAIL_RE.test(resolvedEmail)) {
+      return NextResponse.json(
+        {
+          error: "email_required",
+          message:
+            "Bitte gib zuerst deine E-Mail-Adresse ein, damit wir dir den Plan zustellen können.",
+        },
+        { status: 400 }
+      );
+    }
+
     const datafastVisitorId =
       req.cookies.get("datafast_visitor_id")?.value || "";
     const datafastSessionId =
@@ -172,7 +204,7 @@ export async function POST(req: NextRequest) {
         plan: plan,
         dog_name: dogName || "",
         timer_expired: timerExpired ? "true" : "false",
-        email: email || "",
+        email: resolvedEmail,
         order_bump: bumpApplied ? bumpDetails.id : "",
         order_bump_amount_cents: bumpApplied ? String(effectiveBumpCents) : "0",
         bump_days:
@@ -219,7 +251,7 @@ export async function POST(req: NextRequest) {
         postalCode: String(billingAddress.postalCode || "").slice(0, 16),
         city: String(billingAddress.city || "").slice(0, 100),
         country: String(billingAddress.country || "DE").slice(0, 2),
-        email: email || billingAddress.email || "",
+        email: resolvedEmail || billingAddress.email || "",
       };
     }
 
@@ -235,9 +267,21 @@ export async function POST(req: NextRequest) {
         payment_provider: "mollie",
         status: "checkout_started",
         selected_plan: plan,
+        // Email auch in den Lead schreiben falls bisher leer (z.B. Apple-Pay
+        // direkt ohne vorheriges Quiz). Damit hat die DB einen Ansprechpartner.
+        email: resolvedEmail,
       };
       if (referredByCode) updateData.referred_by_code = referredByCode;
-      await supabase.from("wauwerk_leads").update(updateData).eq("id", leadId);
+      const { error: leadUpdErr } = await supabase
+        .from("wauwerk_leads")
+        .update(updateData)
+        .eq("id", leadId);
+      if (leadUpdErr) {
+        console.error(
+          `[wauwerk-checkout] Lead-Update fehlgeschlagen lead=${leadId}:`,
+          leadUpdErr.message
+        );
+      }
     }
 
     // Card-Payment-Sonderfall: Wenn paid sofort (kein 3DS), kommt KEIN
