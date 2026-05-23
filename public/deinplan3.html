@@ -2164,6 +2164,53 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         box-shadow: 0 1px 2px rgba(139,115,85,0.2);
         font-family: inherit;
     }
+
+    /* Card-Toggle: ein Button mit Visa+Mastercard-Logo; Klick → Card-Fields expanden */
+    .hybrid-card-toggle {
+        width: 100%;
+        background: #fff;
+        border: 1px solid #E5E7EB;
+        padding: 14px 16px;
+        border-radius: 12px;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        transition: all 0.18s ease;
+        font-family: inherit;
+        box-shadow: 0 1px 2px rgba(17,24,39,0.04);
+        margin-bottom: 0;
+    }
+    .hybrid-card-toggle:hover, .hybrid-card-toggle:focus {
+        border-color: #C4A576;
+        box-shadow: 0 2px 8px rgba(196,165,118,0.18);
+        outline: none;
+    }
+    .hybrid-card-toggle-label {
+        display: flex; align-items: center; gap: 10px;
+        font-size: 14px; font-weight: 600; color: #1a1a1a;
+    }
+    .hybrid-card-toggle-logos {
+        display: flex; gap: 6px; align-items: center;
+    }
+    .hybrid-card-toggle-logos img {
+        height: 18px; width: auto; border-radius: 3px;
+    }
+    .hybrid-card-toggle-chevron {
+        font-size: 13px; color: #9CA3AF; font-weight: 600;
+        transition: transform 0.22s ease;
+    }
+    .hybrid-card-toggle.is-open .hybrid-card-toggle-chevron {
+        transform: rotate(180deg);
+    }
+    .hybrid-card-fields {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.32s ease, margin 0.32s ease;
+        margin-top: 0;
+    }
+    .hybrid-card-fields.is-open {
+        max-height: 600px;
+        margin-top: 12px;
+    }
     .hybrid-card-submit:hover:not(:disabled) {
         background: #B5946A;
         box-shadow: 0 4px 12px rgba(196,165,118,0.35), 0 1px 2px rgba(139,115,85,0.15);
@@ -2265,14 +2312,14 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         background: #000; border-color: #000;
     }
     .hybrid-express-btn--applepay img {
-        max-height: 30px; max-width: 100%; width: auto; height: auto;
+        max-height: 26px; max-width: 100%; width: auto; height: auto;
         object-fit: contain;
     }
     /* Google Pay: weißer Button, Logo zentriert */
     .hybrid-express-btn--googlepay {
         background: #fff; border-color: #E5E7EB;
     }
-    .hybrid-express-btn--googlepay img { max-height: 32px; }
+    .hybrid-express-btn--googlepay img { max-height: 46px; }
     /* SEPA-Logo: Untertitel-Detail braucht etwas mehr Höhe */
     .hybrid-express-btn img[alt="SEPA"] { max-height: 44px; }
 
@@ -4464,8 +4511,33 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
             document.getElementById('hybridOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
-            // Mollie Components beim ersten Öffnen mounten
-            mountMollieCardComponents();
+            // Card-Toggle reset: bei jedem Open wieder zu, damit User nicht
+            // mit ausgeklappten Karten-Feldern überfordert wird.
+            const cardToggle = document.getElementById('hybridCardToggle');
+            const cardFields = document.getElementById('hybridCardFields');
+            if (cardToggle && cardFields) {
+                cardToggle.classList.remove('is-open');
+                cardToggle.setAttribute('aria-expanded', 'false');
+                cardFields.classList.remove('is-open');
+            }
+            // Mollie Components werden ON DEMAND beim ersten Card-Toggle-Klick
+            // gemounted, damit iframe-Sizing stabil ist (max-height:0 Container
+            // gibt sonst beim Mount falsche Maße).
+        }
+
+        // Card-Toggle: expand Karten-Felder + lazy mount Mollie-Components
+        let cardComponentsMounted = false;
+        function toggleHybridCardFields() {
+            const toggle = document.getElementById('hybridCardToggle');
+            const fields = document.getElementById('hybridCardFields');
+            if (!toggle || !fields) return;
+            const isOpen = toggle.classList.toggle('is-open');
+            toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            fields.classList.toggle('is-open', isOpen);
+            if (isOpen && !cardComponentsMounted) {
+                cardComponentsMounted = true;
+                mountMollieCardComponents();
+            }
         }
 
         // Email ändern (Shopify-Style: Prompt zur Korrektur)
@@ -4601,7 +4673,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
         async function payWithMethod(method) {
             hideHybridError();
-            showPaymentLoadingOverlay(METHOD_LABEL[method] || 'Mollie');
+            showPaymentLoadingOverlay(METHOD_LABEL[method] || 'Bezahlung');
             try {
                 const payload = method ? buildCheckoutPayload({ method }) : buildCheckoutPayload({});
                 const res = await fetch('/api/mollie/wauwerk-checkout', {
@@ -4851,7 +4923,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             <!-- Brand-Bar -->
             <div class="hybrid-brand">
                 <img src="logo.png" alt="Pfoten-Plan" class="hybrid-brand-logo" onerror="this.style.display='none'">
-                <span class="hybrid-brand-text">Pfoten-Plan</span>
+                <span class="hybrid-brand-text">Pfoten-Plan · Sicher bezahlen</span>
                 <button class="hybrid-close" onclick="closeHybridModal()" aria-label="Schließen">×</button>
             </div>
             <div class="hybrid-header">
@@ -4866,7 +4938,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
                 <div>
-                    <strong>SSL-verschlüsselt</strong> · 30 Tage Geld-zurück · Mollie
+                    <strong>SSL-verschlüsselt</strong> · Plan kommt sofort per E-Mail · 30 Tage Geld-zurück
                 </div>
             </div>
 
@@ -4908,27 +4980,42 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
                 <div class="hybrid-divider">oder mit Karte</div>
 
-                <div class="mollie-field">
-                    <label class="mollie-field-label">Kartennummer</label>
-                    <div id="mollie-card-number"></div>
-                </div>
-                <div class="mollie-field">
-                    <label class="mollie-field-label">Karteninhaber</label>
-                    <div id="mollie-card-holder"></div>
-                </div>
-                <div class="mollie-row">
-                    <div class="mollie-field">
-                        <label class="mollie-field-label">Gültig bis</label>
-                        <div id="mollie-card-expiry"></div>
-                    </div>
-                    <div class="mollie-field">
-                        <label class="mollie-field-label">CVC</label>
-                        <div id="mollie-card-cvc"></div>
-                    </div>
-                </div>
-                <button class="hybrid-card-submit" id="hybridCardSubmitBtn" onclick="submitHybridCard()">
-                    🔒 Sicher bezahlen · €39,99
+                <!-- Card-Toggle: Klick öffnet die Karten-Felder darunter.
+                     Reduziert visuelle Überforderung beim Öffnen des Modals. -->
+                <button type="button" class="hybrid-card-toggle" id="hybridCardToggle" onclick="toggleHybridCardFields()" aria-expanded="false" aria-controls="hybridCardFields">
+                    <span class="hybrid-card-toggle-label">
+                        <span class="hybrid-card-toggle-logos">
+                            <img src="visa-logo.png" alt="Visa" onerror="this.style.display='none'">
+                            <img src="mastercard-logo.png" alt="Mastercard" onerror="this.style.display='none'">
+                        </span>
+                        <span>Mit Karte zahlen</span>
+                    </span>
+                    <span class="hybrid-card-toggle-chevron">▾</span>
                 </button>
+
+                <div class="hybrid-card-fields" id="hybridCardFields">
+                    <div class="mollie-field">
+                        <label class="mollie-field-label">Kartennummer</label>
+                        <div id="mollie-card-number"></div>
+                    </div>
+                    <div class="mollie-field">
+                        <label class="mollie-field-label">Karteninhaber</label>
+                        <div id="mollie-card-holder"></div>
+                    </div>
+                    <div class="mollie-row">
+                        <div class="mollie-field">
+                            <label class="mollie-field-label">Gültig bis</label>
+                            <div id="mollie-card-expiry"></div>
+                        </div>
+                        <div class="mollie-field">
+                            <label class="mollie-field-label">CVC</label>
+                            <div id="mollie-card-cvc"></div>
+                        </div>
+                    </div>
+                    <button class="hybrid-card-submit" id="hybridCardSubmitBtn" onclick="submitHybridCard()">
+                        🔒 Sicher bezahlen · €39,99
+                    </button>
+                </div>
             </div>
 
             <div class="hybrid-footer">
