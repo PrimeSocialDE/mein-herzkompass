@@ -241,11 +241,12 @@
         }
 
         .main-title {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 800;
             color: var(--text-dark);
             margin-bottom: 10px;
-            line-height: 1.2;
+            line-height: 1.25;
+            letter-spacing: -0.2px;
         }
 
         .preview-hint {
@@ -2133,7 +2134,7 @@
             }
 
             .main-title {
-                font-size: 24px;
+                font-size: 19px;
             }
 
             .goal-badges {
@@ -2325,6 +2326,179 @@
             .print-pitch-title { font-size: 16px; text-align: center; }
             .print-pitch-sub { text-align: center; }
         }
+
+        /* === Wow-Hero (deinplan6 Variante C — Value above-the-fold) === */
+        .wow-hero {
+            padding: 26px 16px 8px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #FAF5ED 100%);
+        }
+        .wow-hero-inner { max-width: 600px; margin: 0 auto; }
+
+        .wow-card {
+            background: #fff;
+            border: 1.5px solid #EADDC5;
+            border-radius: 18px;
+            padding: 22px 20px 18px;
+            box-shadow: 0 10px 28px rgba(139,115,85,0.10);
+            margin-bottom: 18px;
+            position: relative;
+        }
+        .wow-card-eyebrow {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFE3B4 0%, #C4A576 100%);
+            color: #fff;
+            font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 4px 10px; border-radius: 100px;
+            margin-bottom: 12px;
+        }
+        .wow-card-title {
+            font-size: 24px; font-weight: 900; line-height: 1.2;
+            color: #1a1a1a; margin: 0 0 6px;
+            letter-spacing: -0.3px;
+        }
+        .wow-card-title .wow-dog {
+            background: linear-gradient(135deg, #C4A576, #8B7355);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .wow-card-sub {
+            font-size: 14px; color: #4B5563; line-height: 1.55;
+            margin: 0 0 16px;
+        }
+        .wow-days {
+            display: flex; flex-direction: column; gap: 10px;
+            margin-bottom: 14px;
+            background: #FFFBF5;
+            border-radius: 12px;
+            padding: 12px 14px;
+            border: 1px solid #F0E6D2;
+        }
+        .wow-day {
+            display: flex; gap: 12px; align-items: flex-start;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(234,221,197,0.55);
+        }
+        .wow-day:last-child { border-bottom: none; }
+        .wow-day-num {
+            flex: 0 0 auto;
+            background: #fff;
+            color: #8B7355;
+            border: 1px solid #EADDC5;
+            font-size: 10px; font-weight: 800; letter-spacing: 0.8px;
+            text-transform: uppercase;
+            padding: 4px 8px; border-radius: 6px;
+            line-height: 1.2; margin-top: 2px;
+            white-space: nowrap;
+        }
+        .wow-day-content { flex: 1 1 auto; min-width: 0; }
+        .wow-day-title {
+            display: block;
+            font-size: 13.5px; font-weight: 700; color: #1a1a1a;
+            line-height: 1.3; margin-bottom: 2px;
+        }
+        .wow-day-desc {
+            display: block;
+            font-size: 12.5px; color: #6B7280; line-height: 1.45;
+        }
+        .wow-card-footer {
+            margin: 4px 0 0;
+            font-size: 12.5px; color: #8B7355;
+            text-align: center; font-weight: 600;
+        }
+        .wow-card-footer-count { color: #1a1a1a; font-weight: 800; }
+
+        /* 3-Säulen-Box (Warum der Plan funktioniert) */
+        .pillars {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .pillar {
+            background: #fff;
+            border: 1px solid #EADDC5;
+            border-radius: 12px;
+            padding: 14px 10px;
+            text-align: center;
+        }
+        .pillar-icon {
+            font-size: 26px; line-height: 1; margin-bottom: 8px;
+        }
+        .pillar-title {
+            font-size: 13px; font-weight: 800; color: #1a1a1a;
+            line-height: 1.25; margin-bottom: 4px;
+        }
+        .pillar-text {
+            font-size: 11.5px; color: #6B7280; line-height: 1.4;
+        }
+
+        /* Vorher/Nachher-Slider mit Bild-Platzhaltern */
+        .ba-slider-wrap {
+            margin-bottom: 6px;
+        }
+        .ba-slider-label {
+            font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+            text-transform: uppercase; color: #8B7355;
+            margin-bottom: 8px; text-align: center;
+        }
+        .ba-slider {
+            display: flex; gap: 12px; overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .ba-slider::-webkit-scrollbar { display: none; }
+        .ba-card {
+            flex: 0 0 80%;
+            scroll-snap-align: start;
+            background: #fff;
+            border: 1px solid #EADDC5;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(139,115,85,0.08);
+        }
+        .ba-image {
+            width: 100%; height: 160px;
+            background: linear-gradient(135deg, #FFE3B4 0%, #C4A576 60%, #8B7355 100%);
+            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 13px; font-weight: 700;
+            text-align: center; letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .ba-image::before {
+            content: ""; position: absolute; inset: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18), transparent 50%);
+        }
+        .ba-image-label {
+            position: relative; z-index: 1;
+        }
+        .ba-image-tag {
+            position: absolute; top: 10px; left: 10px;
+            background: rgba(0,0,0,0.55); color: #fff;
+            font-size: 9px; font-weight: 700; letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 4px 8px; border-radius: 100px;
+            z-index: 2;
+        }
+        .ba-caption {
+            padding: 12px 14px;
+        }
+        .ba-caption strong {
+            display: block;
+            font-size: 14px; font-weight: 800; color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+        .ba-caption span {
+            display: block;
+            font-size: 12.5px; color: #6B7280; line-height: 1.45;
+        }
+        @media (min-width: 720px) {
+            .ba-card { flex: 0 0 32%; }
+        }
+
     </style>
 <!-- Meta Pixel Code -->
 <script>
@@ -2377,23 +2551,14 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
     </header>
 
-    <!-- Trainer-Brief: Echo der Quiz-Antworten (Ü40-Pattern Founder-Brief) -->
-    <!-- Wrapper-bg matcht den Hero-Gradient-Top (#F5EDE3) für nahtlosen Übergang -->
-    <div style="background: #F5EDE3; padding: 22px 16px 26px;">
-        <div style="background: #FFFFFF; border-radius: 14px; border: 1px solid #EADDC5; padding: 20px 22px; box-shadow: 0 2px 12px rgba(139,115,85,0.06); max-width: 600px; margin: 0 auto;">
-            <div style="display: flex; gap: 14px; align-items: flex-start;">
-                <img src="TrainerPfoten-thumb.png" alt="Pfoten-Plan Trainer" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid #C4A576;">
-                <div style="flex: 1; min-width: 0;">
-                    <p id="trainerLetterEyebrow" style="font-size: 11px; color: #8B7355; margin: 0 0 8px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700;">Unsere Einschätzung</p>
-                    <p id="trainerLetterBody" style="font-size: 15px; color: #1a1a1a; margin: 0 0 12px; line-height: 1.6;">
-                        Mit unserem Plan lässt sich das gut lösen.
-                    </p>
-                    <p style="font-size: 12px; color: #8B7355; margin: 0; font-style: italic;">— Pfoten-Plan Trainer-Team</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Trainer-Brief entfernt — A/B-Daten zeigten dass die Section schnell ueberflogen wird
+         (Average Active Time ~0.4s). Empathie-Anker ist implizit im Wow-Hero ("Aus deinen
+         Quiz-Antworten haben wir einen Schritt-fuer-Schritt-Plan gebaut").
+         JS-Referenzen auf #trainerLetterEyebrow / #trainerLetterBody bleiben no-op safe. -->
 
+    <!-- Vorher/Nachher-Vergleich — visuell staerkster Hook, sitzt jetzt
+         direkt nach Header damit User sofort die Transformation sieht (Hund + Stats).
+         Reihenfolge: Header → Vorher/Nachher → Wow-Hero (Plan-Preview) → Rest. -->
     <section class="hero-section">
         <div class="comparison-container">
             <div class="comparison-side">
@@ -2447,12 +2612,126 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
     </section>
 
+    <!-- ════════════════════════════════════════════════════════════════
+         WOW-HERO (deinplan6 Variante C) — Value above-the-fold.
+         Plan-Preview-Card mit konkreten Übungen + 3-Säulen-Methoden-Box
+         + Vorher/Nachher-Bilder-Slider (Platzhalter).
+         User sieht in den ersten 5 Sekunden was er konkret bekommt,
+         bevor er zu Plan-Karten + Preisen runter scrollt.
+         ════════════════════════════════════════════════════════════════ -->
+    <section class="wow-hero">
+        <div class="wow-hero-inner">
+
+            <!-- Plan-Preview-Card mit Hundenamen + 3 Tagen Beispiel-Übungen -->
+            <div class="wow-card">
+                <span class="wow-card-eyebrow">✨ Plan ist fertig</span>
+                <h1 class="wow-card-title"><span class="wow-dog wow-dogName">Deines Hundes</span> Trainingsplan</h1>
+                <p class="wow-card-sub">
+                    Aus deinen Quiz-Antworten haben wir einen Schritt-für-Schritt-Plan
+                    gebaut, der genau dort startet wo <span class="wow-dogName">dein Hund</span>
+                    heute steht. So sieht <span class="wow-dogName">deines Hundes</span>
+                    erste Woche aus:
+                </p>
+                <div class="wow-days">
+                    <div class="wow-day">
+                        <span class="wow-day-num">Tag 1</span>
+                        <div class="wow-day-content">
+                            <span class="wow-day-title">SCHAU-Übung · 5 Minuten</span>
+                            <span class="wow-day-desc">
+                                <span class="wow-dogName">Dein Hund</span> lernt auf Signal in deine Augen zu schauen.
+                                Funktioniert auch wenn er noch nichts kennt.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="wow-day">
+                        <span class="wow-day-num">Tag 2</span>
+                        <div class="wow-day-content">
+                            <span class="wow-day-title">Decken-Training · 3 Minuten</span>
+                            <span class="wow-day-desc">
+                                Ein fester Ruhe-Ort wird etabliert. Senkt Stress im Alltag spürbar.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="wow-day">
+                        <span class="wow-day-num">Tag 3</span>
+                        <div class="wow-day-content">
+                            <span class="wow-day-title">Wiederholung + Tagesplan</span>
+                            <span class="wow-day-desc">
+                                Beide Übungen sitzen jetzt, du etablierst den Rhythmus für die nächsten Wochen.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <p class="wow-card-footer">
+                    Plus <span class="wow-card-footer-count" id="wowFooterCount">20+</span> konkrete Übungen über <span class="wow-card-footer-count" id="wowFooterWeeks">24</span> Wochen — mit Tagesplan, Fortschritts-Markern und Bonus-Spielen ↓
+                </p>
+            </div>
+
+            <!-- Warum der Plan funktioniert — 3 Säulen -->
+            <div class="pillars">
+                <div class="pillar">
+                    <div class="pillar-icon">🎯</div>
+                    <div class="pillar-title">Genau für<br><span class="wow-dogName">deinen Hund</span></div>
+                    <div class="pillar-text">Keine Standard-Inhalte. Plan startet bei euren echten Themen.</div>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-icon">🐾</div>
+                    <div class="pillar-title">Sanfter<br>Aufbau</div>
+                    <div class="pillar-text">Schritt für Schritt. Keine Hundeschule, kein Druck.</div>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-icon">🖨️</div>
+                    <div class="pillar-title">Plan zum<br>Drucken</div>
+                    <div class="pillar-text">PDF herunterladen und ausdrucken, fürs Mitnehmen.</div>
+                </div>
+            </div>
+
+            <!-- Slider "So ist dein Plan aufgebaut" — zeigt das KOMPLETT-Paket (was der User kriegt):
+                 1) Plan-PDF mit Übungen 2) Wochen-Bereich zum Tracken 3) Persönliche Hilfe.
+                 User ersetzt die Bild-Platzhalter spaeter mit Screenshots / Fotos. -->
+            <div class="ba-slider-wrap">
+                <p class="ba-slider-label">So ist dein Plan aufgebaut</p>
+                <div class="ba-slider">
+                    <div class="ba-card">
+                        <div class="ba-image" style="background:#F5EBD8;">
+                            <span class="ba-image-tag">1 · Dein Plan</span>
+                            <img src="Slider1-PfotenPlan.jpg" alt="Plan mit Übungen Schritt für Schritt" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
+                        </div>
+                        <div class="ba-caption">
+                            <strong>Übungen Schritt für Schritt erklärt</strong>
+                            <span>Jede Übung ausführlich beschrieben — mit Erklärung, Tagesplan und konkreten Schritten. Du musst nichts selbst zusammenstellen.</span>
+                        </div>
+                    </div>
+                    <div class="ba-card">
+                        <div class="ba-image" style="background:#E8F0DC;">
+                            <span class="ba-image-tag">2 · Wochen-Bereich</span>
+                            <img src="Slider2-PfotenPlan.jpg" alt="Wochen-Übersicht im Mitglieder-Bereich" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
+                        </div>
+                        <div class="ba-caption">
+                            <strong>Alles im Blick, Woche für Woche</strong>
+                            <span>Im Mitglieder-Bereich siehst du auf einen Blick welche Woche dran ist. Mit Hinweisen für jeden Schritt, wenn du nicht weiterkommst.</span>
+                        </div>
+                    </div>
+                    <div class="ba-card">
+                        <div class="ba-image" style="background:#DCE9F0;">
+                            <span class="ba-image-tag">3 · Direkte Hilfe</span>
+                            <img src="Slider3-PfotenPlan.jpg" alt="Persönliche Hilfe vom Trainer-Team" loading="lazy" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;display:block;">
+                        </div>
+                        <div class="ba-caption">
+                            <strong>Wir antworten persönlich</strong>
+                            <span>Per E-Mail oder direkt im Mitglieder-Bereich. Unser Trainer-Team hilft dir, wenn du irgendwo hängenbleibst.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <div class="container">
         <div class="title-section">
-            <h1 class="main-title">Hol das Beste aus <span id="dogName3">deinem Hund</span> raus</h1>
+            <h1 class="main-title" id="planMainHeadline">Löse gezielt das Hauptproblem bei <span id="dogName3">deinem Hund</span></h1>
             <p class="outcome-promise" style="display:inline-block;font-size:14px;color:#8B7355;font-weight:700;background:#FFFBF5;border:1px solid #EBDDC4;padding:8px 14px;border-radius:20px;margin:10px 0 6px;line-height:1.35;">🎯 <span id="outcomeHeadline">In 4 Wochen ein entspannter Hund</span></p>
-            <p class="preview-hint">Das ist eine Vorschau deines persönlichen Trainingsplans.<br>Die individuellen Übungen basieren auf deinen Antworten und sind nach Kauf verfügbar.</p>
-            
+
             <div class="goal-badges">
                 <div class="goal-badge">
                     <div class="goal-badge-icon icon-blue">🎯</div>
@@ -2537,65 +2816,10 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             <p id="miniTestimonialAuthor" style="font-size: 11px; color: var(--text-light); margin: 0; font-weight: 600;">– Sandra M.</p>
         </div>
 
-        <!-- Plan Mockup: Echtes Bild -->
-        <div style="margin-bottom: 20px;">
-            <!-- Personalisierte Plan-Preview (konkrete Übung aus dem Plan) -->
-            <div class="plan-preview-outer" style="background:linear-gradient(135deg,#FAF4E8,#F5EBD7);border-radius:16px;padding:30px 20px 26px;text-align:center;border:1px solid #E8DCC3;">
-                <div style="display:inline-block;background:#D97742;color:#fff;padding:8px 20px;border-radius:30px;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;">Vorschau deines Plans</div>
-
-                <h2 style="font-size:24px;font-weight:800;color:#1a1a1a;line-height:1.25;margin:0 0 6px;">Eine echte Übung aus <span id="planPreviewPossessiveName">deinem</span> Plan — Schritt für Schritt</h2>
-                <p style="font-size:14px;color:#6B6B6B;margin:0 0 22px;line-height:1.5;">So führen wir dich durch jede Trainingseinheit: <strong style="color:#1a1a1a;">klar erklärt, ruhig angeleitet, sofort im Alltag umsetzbar.</strong></p>
-
-                <!-- Weiße Innenkarte mit konkreter Übung -->
-                <div style="background:#fff;border-radius:14px;padding:20px 20px 22px;text-align:left;box-shadow:0 4px 16px rgba(0,0,0,0.05);position:relative;">
-                    <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
-                        <div style="background:#FCE8D8;color:#B55924;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:1px;">ÜBUNG 3 VON 20</div>
-                        <div style="font-size:13px;color:#6B6B6B;">Dauer: 10 Min</div>
-                    </div>
-
-                    <h3 style="font-size:20px;font-weight:800;color:#1a1a1a;margin:0 0 6px;line-height:1.25;" id="planPreviewExerciseName">Die Richtungswechsel-Methode</h3>
-                    <p style="font-size:13px;color:#6B6B6B;margin:0 0 18px;line-height:1.5;"><span id="planPreviewProblemLabel">Gegen Ziehen an der Leine</span> · <span id="planPreviewBreedLine">Für Hunde ab 1 Jahr</span></p>
-
-                    <!-- Step 1 (visible) -->
-                    <div style="background:#FAF4E8;border-radius:10px;padding:14px 14px 14px 14px;margin-bottom:10px;display:flex;gap:12px;">
-                        <div style="flex:0 0 28px;height:28px;background:#D97742;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;">1</div>
-                        <div style="flex:1;">
-                            <div style="font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:4px;" id="planPreviewStep1Title">Starte an lockerer Leine</div>
-                            <div style="font-size:13px;color:#6B6B6B;line-height:1.5;" id="planPreviewStep1Desc">Gehe langsam los. Dein Hund soll neben dir laufen, die Leine darf durchhängen.</div>
-                        </div>
-                    </div>
-
-                    <!-- Step 2 (visible) -->
-                    <div style="background:#FAF4E8;border-radius:10px;padding:14px 14px 14px 14px;margin-bottom:10px;display:flex;gap:12px;">
-                        <div style="flex:0 0 28px;height:28px;background:#D97742;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;">2</div>
-                        <div style="flex:1;">
-                            <div style="font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:4px;" id="planPreviewStep2Title">Sobald <span id="planPreviewStep2DogName">dein Hund</span> zieht: Richtungswechsel</div>
-                            <div style="font-size:13px;color:#6B6B6B;line-height:1.5;" id="planPreviewStep2Desc">Drehe dich ruhig um und gehe in die entgegengesetzte Richtung – ohne etwas zu sagen.</div>
-                        </div>
-                    </div>
-
-                    <!-- Einzelner blurred Platzhalter für Steps 3-5 + Lock-Badge -->
-                    <div style="position:relative;min-height:82px;">
-                        <div style="background:#FAF4E8;border-radius:10px;padding:14px;display:flex;gap:12px;filter:blur(5px);opacity:0.7;">
-                            <div style="flex:0 0 28px;height:28px;background:#D97742;border-radius:50%;"></div>
-                            <div style="flex:1;">
-                                <div style="height:12px;background:rgba(26,26,26,0.18);border-radius:4px;width:62%;margin-bottom:8px;"></div>
-                                <div style="height:10px;background:rgba(26,26,26,0.12);border-radius:4px;width:94%;margin-bottom:6px;"></div>
-                                <div style="height:10px;background:rgba(26,26,26,0.12);border-radius:4px;width:78%;"></div>
-                            </div>
-                        </div>
-
-                        <!-- Lock-Badge -->
-                        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a1a;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,0.35);display:inline-flex;align-items:center;gap:8px;white-space:nowrap;">
-                            <span style="font-size:15px;">🔒</span> 3 weitere Schritte
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer-Text -->
-                <p style="font-size:14px;color:#6B6B6B;margin:20px 14px 0;line-height:1.5;">Dein kompletter Plan enthält <strong style="color:#1a1a1a;">20 solcher Übungen</strong> — jede Schritt für Schritt erklärt und gezielt auf <span id="planPreviewFooterName">deinen Hund</span>s <span id="planPreviewFooterProblem">Herausforderung</span> abgestimmt. Du musst nichts selbst zusammenstellen — wir führen dich durch.</p>
-            </div>
-        </div>
+        <!-- Plan-Preview-Block (planPreviewExerciseName etc.) entfernt — war redundant zum Wow-Hero oben,
+             der bereits eine Plan-Preview mit 3 Tagen zeigt. Spart ~500 px Hoehe, CTA kommt frueher.
+             JS-Logik zur Personalisierung (planPreviewExerciseName, planPreviewStep1/2 etc.) bleibt
+             mit Null-Checks no-op-safe. -->
 
         <!-- Trust-Section: Team-Foto + persönlicher Support (Ü40-optimiert) -->
         <div style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #FFF9F0; border-radius: 14px; border: 1px solid #EADDC5; margin-bottom: 20px;">
@@ -2658,7 +2882,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     </div>
                 </div>
                 <div class="pricing-features" style="padding:10px 16px 12px;border-top:1px solid #F0EBE3;font-size:13px;color:#555;line-height:1.5;">
-                    ✓ Für Halter, die nur ein kleines Problem lösen
+                    ✓ 4 Wochen · intensiver Schnellstart
                 </div>
             </div>
 
@@ -2668,7 +2892,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
                         <div>
-                            <div class="pricing-name">EMPFOHLEN</div>
+                            <div class="pricing-name">STANDARD-PLAN</div>
                             <div class="pricing-total">Umgerechnet nur <strong style="color:var(--text-dark);">44 Cent am Tag</strong></div>
                             <span class="pricing-savings">Spare €40</span>
                         </div>
@@ -2684,7 +2908,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     </div>
                 </div>
                 <div class="pricing-features" style="padding:10px 16px 12px;border-top:1px solid #F0EBE3;font-size:13px;color:#555;line-height:1.5;">
-                    ✓ Nachhaltige Verhaltensänderung
+                    ✓ 12 Wochen · nachhaltige Veränderung
                 </div>
             </div>
 
@@ -2709,39 +2933,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     </div>
                 </div>
                 <div class="pricing-features" style="padding:10px 16px 12px;border-top:1px solid #F0EBE3;font-size:13px;color:#555;line-height:1.5;">
-                    ✓ Sanfter Aufbau für sensible Hunde
-                </div>
-            </div>
-        </div>
-
-        <!-- Premium-Print Platzhalter — visuelles Konzept fuer Print-Option als Buch.
-             Noch nicht funktional (kein Order-Bump), zeigt nur wie das aussehen koennte. -->
-        <div class="print-card">
-            <div class="print-card-mockup">
-                <div class="print-book" aria-hidden="true">
-                    <span class="print-tag">Bald</span>
-                    <div class="print-book-inner">
-                        <img src="logo.png" alt="" class="print-book-logo" onerror="this.style.display='none'">
-                        <div class="print-book-eyebrow">Pfoten-Plan</div>
-                        <div class="print-book-title">Dein Trainingsplan</div>
-                        <div class="print-book-dog">für <span id="printBookDog">deinen Hund</span></div>
-                        <div class="print-book-bottom">24 Wochen · Schritt für Schritt</div>
-                    </div>
-                </div>
-            </div>
-            <div class="print-pitch">
-                <div class="print-pitch-eyebrow">Neu · Premium-Print</div>
-                <h3 class="print-pitch-title">Lieber auf Papier? Dein Plan als gedrucktes Buch.</h3>
-                <p class="print-pitch-sub">Für alle die's lieber in den Händen halten, durchblättern und Notizen reinschreiben wollen. Hochwertiges Soft-Cover, kommt per DHL nach Hause.</p>
-                <ul class="print-bullets">
-                    <li>Gedruckter Plan im handlichen A5-Format</li>
-                    <li>Komplett auf <span id="printBookDog2">deinen Hund</span> zugeschnitten</li>
-                    <li>Plus laminierte Übungs-Karten zum Mitnehmen</li>
-                    <li>Versand in 5-7 Werktagen, sicher per DHL</li>
-                </ul>
-                <div class="print-cta-row">
-                    <button class="print-cta-btn" disabled type="button">📖 Bald verfügbar (+€19,99)</button>
-                    <span class="print-cta-hint">Wir bereiten den Druck-Versand gerade vor. Antworte auf deine Plan-Mail wenn du das willst, dann ziehen wir dich auf die Liste.</span>
+                    ✓ 24 Wochen · sanfter Aufbau, tiefe Festigung
                 </div>
             </div>
         </div>
@@ -2762,7 +2954,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     <span>Was passiert direkt nach dem Kauf?</span>
                     <span style="font-size:18px;color:#8B7355;font-weight:300;">+</span>
                 </summary>
-                <p style="font-size:13px;line-height:1.55;color:#4B5563;margin:8px 0 0;">Du bekommst innerhalb weniger Minuten den kompletten Plan als PDF per E-Mail plus den Login zum <strong>Mitglieder-Bereich</strong> mit deinem Trainings-Tagebuch und Trainerhilfe. Du kannst sofort mit Woche 1 starten.</p>
+                <p style="font-size:13px;line-height:1.55;color:#4B5563;margin:8px 0 0;">Du bekommst innerhalb weniger Minuten den kompletten Plan als PDF per E-Mail plus den Zugang zum <strong>Mitglieder-Bereich</strong> mit deinem Trainings-Tagebuch und Trainerhilfe. Du kannst sofort mit Woche 1 starten.</p>
             </details>
             <details style="padding:10px 0;">
                 <summary style="font-size:14px;font-weight:700;color:#1a1a1a;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;">
@@ -2781,7 +2973,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
 
         <div class="disclaimer">
-            ✓ <strong style="color: #166534;">Einmalzahlung</strong> – kein Abo, <strong style="color: #166534;">lebenslanger Zugang</strong> • <strong style="color: #166534;">24/7 Support</strong> • <a href="agb.html">AGB</a>
+            ✓ <strong style="color: #166534;">Einmalzahlung</strong> – kein Abo, <strong style="color: #166534;">lebenslanger Zugang</strong> • <strong style="color: #166534;">Persönliche Hilfe rund um die Uhr</strong> • <a href="agb.html">AGB</a>
         </div>
 
         <button class="cta-button glow" onclick="showCheckoutSummary()">
@@ -2800,6 +2992,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
         <div style="text-align: center; font-size: 11px; color: #999; margin-top: 4px; margin-bottom: 30px;">Per Überweisung zahlen? Wähle Klarna und dann deine Bank.</div>
 
+        <!-- Premium-Print-Platzhalter entfernt — kommt erst wieder zurueck wenn das Print-on-Demand-Setup steht.
+             CSS-Regeln (.print-card, .print-book, .print-pitch, .print-bullets, .print-cta-*) bleiben im Style-Block,
+             dienen als Vorbereitung fuer spaeteren Re-Add ohne CSS-Wiederholung. -->
 
         <!-- ========== Testimonials (ausführlicher, weiter unten) ========== -->
         <div class="testimonials-section">
@@ -3203,6 +3398,31 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         document.getElementById('dogName1').textContent = dogName;
         document.getElementById('dogName2').textContent = dogName;
         document.getElementById('dogName3').textContent = dogName;
+        // Main-Headline problem-orientiert. Dativ/Akkusativ-Placeholders {DAT}/{AKK}
+        // sodass auch ohne Hundename ("deinem Hund" / "deinen Hund") sauber rauskommt.
+        const planHeadlineEl = document.getElementById('planMainHeadline');
+        if (planHeadlineEl) {
+            const HEADLINE_MAP = {
+                pulling:     `Löse das Leinenziehen bei {DAT}`,
+                aggression:  `Lös die Reaktivität bei {DAT}`,
+                barking:     `Reduzier das übermäßige Bellen bei {DAT}`,
+                anxiety:     `Bring {AKK} sicher ans Alleinbleiben`,
+                jumping:     `Löse das Anspringen bei {DAT}`,
+                recall:      `Bring {AKK} zuverlässig zurück`,
+                energy:      `Hilf {DAT} zur Ruhe zu kommen`,
+                destructive: `Stopp das Zerstören bei {DAT}`,
+                soiling:     `Bring {AKK} stubenrein`,
+                mouthing:    `Löse das Aufheben vom Boden bei {DAT}`,
+            };
+            const headlineLower = (dogName || '').toLowerCase().trim();
+            const isGenericDog = !dogName
+                || headlineLower.length < 2
+                || ['hund','hündin','huendin','dein hund','deinem hund','deinen hund'].includes(headlineLower);
+            const dat = isGenericDog ? 'deinem Hund' : dogName;
+            const akk = isGenericDog ? 'deinen Hund' : dogName;
+            const tpl = HEADLINE_MAP[dogProblem] || `Löse gezielt das Hauptproblem bei {DAT}`;
+            planHeadlineEl.textContent = tpl.replace('{DAT}', dat).replace('{AKK}', akk);
+        }
         // Pre-Purchase-FAQ-Bubbles personalisieren (deinplan6 Variante C)
         document.querySelectorAll('.faqDogName').forEach(function(el) {
             el.textContent = dogName;
@@ -3212,6 +3432,40 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         const printBookDog2 = document.getElementById('printBookDog2');
         if (printBookDog) printBookDog.textContent = dogName;
         if (printBookDog2) printBookDog2.textContent = dogName;
+
+        // Wow-Hero personalisieren (Plan-Preview-Card, 3-Säulen).
+        // Title: "Brunos Trainingsplan" (Genitiv-Form).
+        // Sub/Subline-Stellen: "Bruno" (Nominativ).
+        // Genitiv-Helper: Endet auf s/ß/x/z → Apostroph, sonst +s.
+        // Bei Generic-Fallback (Hund/Hündin/leer/zu kurz): "deines Hundes" / "dein Hund".
+        const wowLower = (dogName || '').toLowerCase().trim();
+        const wowIsGeneric = !dogName || wowLower === 'hund' || wowLower === 'hündin' || wowLower === 'huendin' || wowLower === 'dein hund' || wowLower.length < 2;
+        function buildGenitive(name) {
+            if (wowIsGeneric) return 'deines Hundes';
+            const last = name.charAt(name.length - 1).toLowerCase();
+            return /[sßxz]/.test(last) ? name + "'" : name + 's';
+        }
+        function buildNominative() {
+            return wowIsGeneric ? 'dein Hund' : dogName;
+        }
+        const wowGenitive = buildGenitive(dogName);
+        const wowNominative = buildNominative();
+        document.querySelectorAll('.wow-dogName').forEach(el => {
+            const useGenitive = el.closest('.wow-card-title') !== null
+                || /deines Hundes/i.test(el.textContent);
+            el.textContent = useGenitive ? wowGenitive : wowNominative;
+        });
+        // 3-Phasen-Block: Hundenamen einsetzen (Akkusativ für "deinen Hund")
+        document.querySelectorAll('.phaseDog').forEach(el => {
+            // "Dein Hund" am Satzanfang → Akkusativ Großschreibung "Dein Hund" → Nominativ-Form
+            // "deinen Hund" mitten im Satz → Akkusativ kleingeschrieben
+            const isCapitalized = /^Dein Hund/.test(el.textContent);
+            if (wowIsGeneric) {
+                el.textContent = isCapitalized ? 'Dein Hund' : 'deinen Hund';
+            } else {
+                el.textContent = dogName;
+            }
+        });
         const mockupTitleEl = document.getElementById('mockupTitle');
         if (mockupTitleEl) mockupTitleEl.textContent = 'Trainingsplan für ' + dogName;
         document.getElementById('dogNamePlan').textContent = dogName;
@@ -3225,10 +3479,18 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         (function personalizeCTAs() {
           const hasName = !!localStorage.getItem('dogName') && dogName !== 'deinen Hund';
           if (!hasName) return;
+          // Generic-Fallback-Werte rausfiltern (verhindert "Hunds Trainingsplan").
+          const lowerName = dogName.toLowerCase().trim();
+          if (lowerName === 'hund' || lowerName === 'huendin' || lowerName === 'hündin' || lowerName.length < 2) return;
+          // Genitiv-Helper: Name endet auf s/ß/x/z → Apostroph, sonst +s.
+          // Verhindert grammatikalisch falsche Formen wie "Maxs", "Felixs", "Lukass".
+          const lastChar = dogName.charAt(dogName.length - 1).toLowerCase();
+          const possessive = /[sßxz]/.test(lastChar) ? dogName + "'" : dogName + 's';
+          const newLabel = possessive + ' Trainingsplan sichern';
           const personalize = (btn) => {
             btn.childNodes.forEach(node => {
               if (node.nodeType === 3 && node.textContent.includes('Trainingsplan freischalten')) {
-                node.textContent = node.textContent.replace('Trainingsplan freischalten', dogName + 's Trainingsplan sichern');
+                node.textContent = node.textContent.replace('Trainingsplan freischalten', newLabel);
               }
             });
           };
@@ -3270,9 +3532,14 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
                 'chasing-cars': 'Jagen von Autos'
             })[dogProblem] || '';
 
-            // Eyebrow personalisieren wenn Hundename da
+            // Eyebrow personalisieren — Generic-Werte ("Hund", "Hündin", leer) rausfiltern,
+            // sonst entstehen Texte wie "UNSERE EINSCHÄTZUNG FÜR HUND".
             if (eyebrowEl && dogName && dogName !== 'deinen Hund') {
-                eyebrowEl.textContent = 'Unsere Einschätzung für ' + dogName;
+                const eyebrowLower = dogName.toLowerCase().trim();
+                const eyebrowGeneric = eyebrowLower === 'hund' || eyebrowLower === 'hündin' || eyebrowLower === 'huendin' || eyebrowLower.length < 2;
+                if (!eyebrowGeneric) {
+                    eyebrowEl.textContent = 'Unsere Einschätzung für ' + dogName;
+                }
             }
 
             // Body: emotional, ehrlich, mobile-tauglich. Du-bist-nicht-allein-Hook,
@@ -4038,6 +4305,10 @@ if (popularBadge) {
         // damit zusatz.html nach dem Stripe-Redirect den richtigen Wert liest
         // (entscheidend für korrekten Supabase price-Patch).
         try { localStorage.setItem('selectedPlan', selectedPlan); } catch (e) {}
+        // Initial-Sync: Übungszahl + Wochen-Count in Benefits-Liste UND Wow-Hero-Footer
+        // auf den Default-Plan setzen. Sonst zeigt der Footer "20+ über 24 Wochen"
+        // auch wenn der User 1M oder 3M ausgewaehlt hat.
+        setTimeout(() => { if (typeof updateExerciseCount === 'function') updateExerciseCount(selectedPlan); }, 0);
 
         const planDetails = {
             '1month': {
@@ -4161,10 +4432,17 @@ if (popularBadge) {
         function updateStickyCta() {
             const stickyMain = document.getElementById('stickyMobileCtaMain');
             if (!stickyMain) return;
-            const name = (dogName && dogName !== 'deinen Hund') ? dogName : 'deinen Hund';
-            stickyMain.textContent = 'Plan für ' + name + ' sichern →';
-            // deinplan6: Preis aus Sticky-CTA entfernt (Preisschock vermeiden,
-            // bevor User die Argumente liest). Preis bleibt nur in Pricing-Cards.
+            // Plan-Länge explizit benennen — User sieht direkt was er sichert.
+            // Preis bleibt raus (Preisschock vermeiden).
+            const planLabel = {
+                '1month': 'Intensivplan',
+                '3month': 'Standardplan',
+                '6month': 'Entspannt-Plan',
+            }[selectedPlan] || 'Plan';
+            const stickyLower = (dogName || '').toLowerCase().trim();
+            const stickyGeneric = !dogName || stickyLower.length < 2 || ['hund','hündin','huendin','dein hund','deinen hund'].includes(stickyLower);
+            const dogPart = stickyGeneric ? ' für deinen Hund' : ' für ' + dogName;
+            stickyMain.textContent = planLabel + dogPart + ' sichern →';
         }
 
         // Sticky CTA: deinplan6 zeigt sie DAUERHAFT auf Mobile (statt erst
@@ -4205,6 +4483,7 @@ if (popularBadge) {
 
         function updateExerciseCount(plan) {
             const exerciseCount = plan === '1month' ? '10+' : '20+';
+            const weeksCount = plan === '1month' ? 4 : plan === '6month' ? 24 : 12;
             const benefitsList = document.getElementById('benefitsList');
             if (benefitsList) {
                 const items = benefitsList.querySelectorAll('li');
@@ -4214,6 +4493,11 @@ if (popularBadge) {
                     }
                 });
             }
+            // Wow-Hero-Footer dynamisch ans gewaehlte Plan-Length anpassen.
+            const wowFooterCount = document.getElementById('wowFooterCount');
+            const wowFooterWeeks = document.getElementById('wowFooterWeeks');
+            if (wowFooterCount) wowFooterCount.textContent = exerciseCount;
+            if (wowFooterWeeks) wowFooterWeeks.textContent = String(weeksCount);
         }
 
         pricingCards.forEach(card => {
@@ -4583,9 +4867,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
         // Preise
         const checkoutPrices = {
-            '1month': { discount: 29.99, normal: 49.99, oldTotal: 271.94, duration: 'INTENSIV-PLAN' },
-            '3month': { discount: 39.99, normal: 79.99, oldTotal: 301.94, duration: 'EMPFOHLEN' },
-            '6month': { discount: 59.99, normal: 119.99, oldTotal: 341.94, duration: 'ENTSPANNT-PLAN' }
+            '1month': { discount: 29.99, normal: 49.99, oldTotal: 271.94, duration: 'Intensivplan · 4 Wochen' },
+            '3month': { discount: 39.99, normal: 79.99, oldTotal: 301.94, duration: 'Standardplan · 12 Wochen' },
+            '6month': { discount: 59.99, normal: 119.99, oldTotal: 341.94, duration: 'Entspannt-Plan · 24 Wochen' }
         };
 
         async function openCheckoutPopup() {
@@ -4936,9 +5220,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             if (sticky) sticky.style.display = 'none';
             // Plan-Details für Modal befüllen
             const priceMap = {
-                '1month': { discount: 29.99, normal: 49.99, name: 'INTENSIV-PLAN' },
-                '3month': { discount: 39.99, normal: 79.99, name: 'EMPFOHLEN' },
-                '6month': { discount: 59.99, normal: 119.99, name: 'ENTSPANNT-PLAN' }
+                '1month': { discount: 29.99, normal: 49.99, name: 'Intensivplan · 4 Wochen' },
+                '3month': { discount: 39.99, normal: 79.99, name: 'Standardplan · 12 Wochen' },
+                '6month': { discount: 59.99, normal: 119.99, name: 'Entspannt-Plan · 24 Wochen' }
             };
             const p = priceMap[selectedPlan] || priceMap['3month'];
             const basePrice = (typeof timerExpired !== 'undefined' && timerExpired) ? p.normal : p.discount;
@@ -4951,7 +5235,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             const priceEl = document.getElementById('summaryPlanPrice');
             const priceOrigEl = document.getElementById('summaryPlanPriceOrig');
             const discountBadge = document.getElementById('summaryDiscountBadge');
-            if (nameEl) nameEl.textContent = p.name + ' · Trainingsplan';
+            if (nameEl) nameEl.textContent = p.name;
             if (dogEl) dogEl.textContent = 'Für ' + dogNameDisplay;
             if (priceEl) priceEl.textContent = '€' + effectivePrice.toFixed(2).replace('.', ',');
             if (priceOrigEl) {
@@ -5200,7 +5484,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         <div class="checkout-plan-image">🐕</div>
                         <div class="checkout-plan-info">
                             <div class="checkout-plan-name">Personalisierter Trainingsplan</div>
-                            <div class="checkout-plan-duration" id="checkoutPlanDuration">3-Monats-Plan</div>
+                            <div class="checkout-plan-duration" id="checkoutPlanDuration">Standardplan · 12 Wochen</div>
                             <div class="checkout-plan-personalized" id="checkoutPersonalized">Individuell erstellt für <span id="checkoutDogNamePlan">deinen Hund</span></div>
                         </div>
                         <div class="checkout-plan-price-box">
@@ -5302,7 +5586,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 <span class="benefit-tag">✓ Schritt-für-Schritt</span>
                 <span class="benefit-tag">✓ Sofort per Email</span>
                 <span class="benefit-tag">✓ Kein Abo</span>
-                <span class="benefit-tag">✓ Support inklusive</span>
+                <span class="benefit-tag">✓ Hilfe inklusive</span>
             </div>
 
             <button class="exit-popup-cta" onclick="claimExitBonus(); closeExitPopup(); showCheckoutSummary();">
@@ -5326,7 +5610,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             <div style="background:#FAF8F3;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
                     <div style="flex:1;">
-                        <div style="font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:2px;" id="summaryPlanName">3-Monats-Plan</div>
+                        <div style="font-size:14px;font-weight:700;color:#1a1a1a;margin-bottom:2px;" id="summaryPlanName">Standardplan · 12 Wochen</div>
                         <div style="font-size:12px;color:#666;" id="summaryPlanDog">Für deinen Hund</div>
                         <div id="summaryDiscountBadge" style="display:none;margin-top:6px;background:#E67946;color:#fff;padding:2px 8px;border-radius:12px;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;">-15% Rabatt aktiv</div>
                     </div>
