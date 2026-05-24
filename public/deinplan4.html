@@ -2229,7 +2229,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 <body>
     <!-- Sticky Mobile CTA (erscheint ab 60% Scroll, nur mobile) -->
     <div id="stickyMobileCta" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;background:white;border-top:1px solid #E8E0D2;box-shadow:0 -4px 20px rgba(0,0,0,0.1);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0)) 14px;animation:stickyCtaSlideUp 0.35s ease-out;">
-        <button id="stickyMobileCtaBtn" onclick="showCheckoutSummary()" style="width:100%;background:linear-gradient(135deg,#C4A576,#8B7355);color:#fff;border:none;border-radius:12px;padding:14px 18px;font-size:16px;font-weight:800;letter-spacing:0.3px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(196,165,118,0.4);">
+        <button id="stickyMobileCtaBtn" onclick="getMyPlan()" style="width:100%;background:linear-gradient(135deg,#C4A576,#8B7355);color:#fff;border:none;border-radius:12px;padding:14px 18px;font-size:16px;font-weight:800;letter-spacing:0.3px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(196,165,118,0.4);">
             <span id="stickyMobileCtaMain">Plan für deinen Hund sichern →</span>
         </button>
         <div style="text-align:center;font-size:11px;color:#666;margin-top:6px;">
@@ -2587,7 +2587,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ✓ <strong style="color: #166534;">Einmalzahlung</strong> – kein Abo, <strong style="color: #166534;">lebenslanger Zugang</strong> • <strong style="color: #166534;">24/7 Support</strong> • <a href="agb.html">AGB</a>
         </div>
 
-        <button class="cta-button glow" onclick="showCheckoutSummary()">
+        <button class="cta-button glow" onclick="getMyPlan()">
             Trainingsplan freischalten
             <span class="cta-subtext">Sofort per E-Mail · Kein Abo · 30 Tage Garantie</span>
         </button>
@@ -2817,7 +2817,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
         </div>
 
-        <button class="cta-button glow" onclick="showCheckoutSummary()">
+        <button class="cta-button glow" onclick="getMyPlan()">
             Trainingsplan freischalten
             <span class="cta-subtext">Sofort per E-Mail · Kein Abo · 30 Tage Garantie</span>
         </button>
@@ -5100,7 +5100,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 <span class="benefit-tag">✓ Support inklusive</span>
             </div>
 
-            <button class="exit-popup-cta" onclick="claimExitBonus(); closeExitPopup(); showCheckoutSummary();">
+            <button class="exit-popup-cta" onclick="claimExitBonus(); closeExitPopup(); getMyPlan();">
                 Mit 15% Rabatt sichern →
             </button>
             <button class="exit-popup-skip" onclick="closeExitPopup()">
