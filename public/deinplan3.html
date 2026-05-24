@@ -3584,15 +3584,18 @@ if (popularBadge) {
                 const possessive = needsApostrophe ? `${dogName}'` : `${dogName}s`;
                 timerLabel = `${possessive} ${rabattLabel} endet in:`;
             }
-            document.getElementById('timerLabel').textContent = timerLabel;
+            const labelEl = document.getElementById('timerLabel');
+            if (labelEl) labelEl.textContent = timerLabel;
         }
 
         initializeTimer();
 
         function updateTimer() {
+            const timerEl = document.getElementById('timer');
+            if (!timerEl) return; // Timer-Bar entfernt — Aktions-Banner uebernimmt
             if (timeLeft <= 0) {
                 timerExpired = true;
-                document.getElementById('timer').textContent = 'ABGELAUFEN';
+                timerEl.textContent = 'ABGELAUFEN';
                 switchToNormalPrices();
                 return;
             }
@@ -3600,7 +3603,7 @@ if (popularBadge) {
             // Format: MM:SS
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
-            document.getElementById('timer').textContent =
+            timerEl.textContent =
                 minutes.toString().padStart(2, '0') + ':' +
                 seconds.toString().padStart(2, '0');
 
