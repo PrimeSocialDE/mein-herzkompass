@@ -4604,10 +4604,12 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             }
             try {
                 mollieClient = Mollie(MOLLIE_PROFILE_ID_PUBLIC, { locale: 'de_DE', testmode: false });
+                // fontSize MUSS >= 16px sein, sonst zoomt iOS Safari automatisch
+                // ins Feld rein wenn der User reintippt — extrem irritierend.
                 const styles = {
                     base: {
                         color: '#111827',
-                        fontSize: '15px',
+                        fontSize: '16px',
                         fontWeight: '400',
                         fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif',
                         letterSpacing: '0.1px',
