@@ -82,6 +82,56 @@
         .check-icon { width: 16px; height: 16px; background: #C4A576; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; flex-shrink: 0; }
 
         @media (max-width: 500px) { h1 { font-size: 26px; } .logo { margin-top: 30px; margin-bottom: 40px; } }
+        /* Source-Pick Modal (nach Email-Submit, 1 Klick → weiter) */
+        .source-overlay {
+            display: none; position: fixed; inset: 0; z-index: 10000;
+            background: rgba(0,0,0,0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .source-overlay.active { display: flex; }
+        .source-modal {
+            background: #fff; border-radius: 16px;
+            max-width: 420px; width: 100%;
+            padding: 24px 22px 18px;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.22);
+            animation: sourceModalIn 0.25s ease-out;
+        }
+        @keyframes sourceModalIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .source-eyebrow {
+            font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+            text-transform: uppercase; color: #8B7355; margin-bottom: 4px; text-align: center;
+        }
+        .source-title {
+            font-size: 19px; font-weight: 800; color: #1a1a1a;
+            text-align: center; margin: 0 0 16px; line-height: 1.3;
+        }
+        .source-options {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .source-btn {
+            background: #fff; border: 1.5px solid #E5E7EB;
+            padding: 14px 10px; border-radius: 11px;
+            font-size: 13.5px; font-weight: 600; color: #1a1a1a;
+            cursor: pointer; transition: all 0.15s ease;
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            font-family: inherit; line-height: 1.2;
+        }
+        .source-btn:hover, .source-btn:focus {
+            border-color: #C4A576; background: #FFF9F0;
+            outline: none;
+        }
+        .source-btn:active { transform: scale(0.97); }
+        .source-btn-icon { font-size: 22px; line-height: 1; }
+        .source-btn-text { font-size: 12.5px; }
+        .source-skip {
+            display: block; background: none; border: none;
+            margin: 14px auto 0; padding: 6px 10px;
+            font-size: 12px; color: #9CA3AF; cursor: pointer;
+            text-decoration: underline; font-family: inherit;
+        }
     </style>
 <script
   defer
@@ -192,13 +242,16 @@
         function getABTestPage() {
             let variant = localStorage.getItem('ab_test_pricing_v3');
             if (!variant) {
-                variant = Math.random() < 0.50 ? 'A' : 'B';
+                // 60/40 Champion (deinplan3) vs Challenger (deinplan6)
+                // A liegt 72% vor B (9.3% vs 5.4% CR ueber 2 Tage) — mehr Traffic
+                // auf Champion, kleinere Stichprobe auf Challenger zum Weiterlernen.
+                variant = Math.random() < 0.60 ? 'A' : 'B';
                 localStorage.setItem('ab_test_pricing_v3', variant);
-                // Legacy-Key fuer Supabase-Tracking (ab_variant)
+                // Legacy-Key auch setzen damit Supabase-Tracking (ab_variant) konsistent bleibt
                 localStorage.setItem('ab_test_pricing', variant);
             }
-            // A = deinplan3.html (Champion · 1-Step-Checkout-Winner)
-            // B = deinplan6.html (Challenger · Wow-Hero + Bilder + neues Wording)
+            // A = deinplan3.html (Champion / 1-Step-Checkout-Winner)
+            // B = deinplan6.html (Challenger / Wow-Hero + Bilder + neues Wording)
             return variant === 'A' ? 'deinplan3.html' : 'deinplan6.html';
         }
 
@@ -295,6 +348,9 @@
             };
 
             let leadId = null;
+            // Cache komplette answers fuer spaeteren source-Pick PATCH
+            // (sonst wuerde der PATCH die answers-JSONB-Spalte ueberschreiben).
+            localStorage.setItem('quizAnswersCache', JSON.stringify(answers));
 
             // 1. Supabase speichern
             try {
@@ -327,10 +383,93 @@
                 console.log('Supabase error:', err);
             }
             
-            // 2. Weiter zur Checkout-Seite
+            // 2. Source-Modal anzeigen — User klickt 1× woher er uns kennt,
+            //    speichert + redirected zur Plan-Seite. Skip-Link unten erlaubt
+            //    direkten Weiter-Klick ohne Antwort.
             clearTimeout(redirectTimeout);
-            window.location.href = targetPage;
+            showSourceModal(leadId, targetPage);
         });
+
+        // Source-Pick (1-Klick): zeigt Modal, speichert answer + redirected.
+        // Sicherheits-Timeout 8s, falls Modal nicht angeklickt wird.
+        function showSourceModal(leadId, targetPage) {
+            const overlay = document.getElementById('sourceOverlay');
+            if (!overlay) {
+                window.location.href = targetPage;
+                return;
+            }
+            overlay.classList.add('active');
+
+            const fallback = setTimeout(() => {
+                window.location.href = targetPage;
+            }, 12000);
+
+            async function pick(source) {
+                clearTimeout(fallback);
+                localStorage.setItem('referral_source', source);
+                if (leadId) {
+                    try {
+                        await fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Prefer': 'return=minimal'
+                            },
+                            body: JSON.stringify({
+                                answers: {
+                                    ...(JSON.parse(localStorage.getItem('quizAnswersCache') || '{}')),
+                                    referral_source: source
+                                }
+                            })
+                        });
+                    } catch (e) { console.log('source-save error:', e); }
+                }
+                window.location.href = targetPage;
+            }
+
+            overlay.querySelectorAll('[data-source]').forEach(btn => {
+                btn.addEventListener('click', () => pick(btn.dataset.source));
+            });
+            const skip = overlay.querySelector('.source-skip');
+            if (skip) skip.addEventListener('click', () => pick('skipped'));
+        }
     </script>
+
+    <!-- Source-Pick Modal (1-Klick) -->
+    <div class="source-overlay" id="sourceOverlay" role="dialog" aria-labelledby="sourceTitle">
+        <div class="source-modal">
+            <div class="source-eyebrow">Letzte Frage</div>
+            <h2 id="sourceTitle" class="source-title">Wie hast du von uns gehört?</h2>
+            <div class="source-options">
+                <button class="source-btn" type="button" data-source="hundeschule">
+                    <span class="source-btn-icon">🐕</span>
+                    <span class="source-btn-text">Hundeschule oder Trainer</span>
+                </button>
+                <button class="source-btn" type="button" data-source="facebook">
+                    <span class="source-btn-icon">📱</span>
+                    <span class="source-btn-text">Facebook</span>
+                </button>
+                <button class="source-btn" type="button" data-source="instagram">
+                    <span class="source-btn-icon">📷</span>
+                    <span class="source-btn-text">Instagram</span>
+                </button>
+                <button class="source-btn" type="button" data-source="empfehlung">
+                    <span class="source-btn-icon">👥</span>
+                    <span class="source-btn-text">Empfehlung von Bekannten</span>
+                </button>
+                <button class="source-btn" type="button" data-source="google">
+                    <span class="source-btn-icon">🔎</span>
+                    <span class="source-btn-text">Google-Suche</span>
+                </button>
+                <button class="source-btn" type="button" data-source="other">
+                    <span class="source-btn-icon">❓</span>
+                    <span class="source-btn-text">Andere</span>
+                </button>
+            </div>
+            <button type="button" class="source-skip">Überspringen</button>
+        </div>
+    </div>
 </body>
 </html>
