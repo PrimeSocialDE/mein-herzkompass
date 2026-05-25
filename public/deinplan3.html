@@ -4031,24 +4031,12 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         };
         
         function showExitPopup() {
-            if (exitPopupShown) return;
-            exitPopupShown = true;
-            sessionStorage.setItem('exitPopupShown', 'true');
-            
-            // Dynamic headline based on problem
-            const popupHeadlineEl = document.getElementById('popupHeadline');
-            if (popupHeadlineEl) {
-                const headline = emotionalHeadlines[dogProblem] || 'In 4 Wochen ein entspannter Hund';
-                popupHeadlineEl.textContent = headline;
-            }
-            
-            document.getElementById('exitPopup').classList.add('active');
-            
-            // Trigger line animation
-            const popup = document.querySelector('.exit-popup');
-            popup.classList.remove('animate');
-            void popup.offsetWidth; // Force reflow
-            popup.classList.add('animate');
+            // Exit-Popup deaktiviert. Bei 70% Pending-Rate schadet der
+            // Rabatt-Push beim Verlassen dem Vertrauen mehr als er rettet.
+            // Funktion bleibt als No-Op damit existierende Trigger nicht
+            // kaputtgehen. Markup + Styles bleiben drin — wenn wieder
+            // gewollt einfach den early-return entfernen.
+            return;
         }
         
         function closeExitPopup() {
