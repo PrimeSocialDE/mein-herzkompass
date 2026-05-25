@@ -118,11 +118,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const datafastVisitorId =
-      req.cookies.get("datafast_visitor_id")?.value || "";
-    const datafastSessionId =
-      req.cookies.get("datafast_session_id")?.value || "";
-
     // Preis ermitteln (identisch zu Stripe-Logik)
     const priceData = PRICES[plan as keyof typeof PRICES] || PRICES["1month"];
     const baseAmount = timerExpired ? priceData.normal : priceData.discount;
@@ -195,43 +190,46 @@ export async function POST(req: NextRequest) {
         ? `&success=${encodeURIComponent(safeSuccessPath)}`
         : "");
 
-    // Payment-Parameter zusammenbauen — method-, cardToken- und billingAddress-
-    // Felder nur setzen wenn vom Frontend mitgegeben (rückwärtskompatibel).
+    // Payment-Parameter zusammenbauen — Mollie metadata-Limit ist ~1024 bytes.
+    // Vorher haben wir leere Felder + ungekuerzte FB-Tracking-IDs reingeschoben
+    // → Mollie returnte "metadata storage limited" Error → User sah roten Banner
+    // im Modal → bricht ab. Fix: nur non-empty Felder + Truncate auf safe-Laengen.
+    // datafast_* raus (wird im Webhook nicht ausgelesen, Datafast tracked selbst).
+    const t = (v: any, max: number) => String(v ?? "").slice(0, max);
+    const meta: Record<string, string> = {};
+    const set = (k: string, v: string) => { if (v) meta[k] = v; };
+
+    set("lead_id", t(leadId, 36));
+    set("plan", plan);
+    set("dog_name", t(dogName, 60));
+    set("email", t(resolvedEmail, 80));
+    set("plan_amount_cents", String(planAmountCents));
+    set("total_amount_cents", String(totalCents));
+    if (timerExpired) set("timer_expired", "1");
+    if (exitDiscountApplied) set("exit_discount_15", "1");
+    if (bumpApplied) {
+      set("order_bump", t(bumpDetails.id, 32));
+      set("order_bump_amount_cents", String(effectiveBumpCents));
+      if (effectiveBumpType === "tagebuch") set("bump_days", String(effectiveBumpDays));
+    }
+    set("utm_source", t(utm_source, 30));
+    set("utm_medium", t(utm_medium, 30));
+    set("utm_campaign", t(utm_campaign, 50));
+    set("utm_content", t(utm_content, 50));
+    set("fbclid", t(fbclid, 60));
+    set("fbp", t(fbp, 50));
+    set("fbc", t(fbc, 60));
+    set("fb_event_id", t(fb_event_id, 40));
+    set("ttclid", t(ttclid, 50));
+    set("referred_by_code", t(referredByCode, 24));
+
     const paymentParams: any = {
       amount: { currency: "EUR", value: formatAmountEUR(totalCents) },
       description: description.slice(0, 255),
       redirectUrl: returnUrl,
       webhookUrl: `${webhookBase}/api/mollie/webhook`,
       locale: Locale.de_DE,
-      metadata: {
-        lead_id: leadId || "",
-        plan: plan,
-        dog_name: dogName || "",
-        timer_expired: timerExpired ? "true" : "false",
-        email: resolvedEmail,
-        order_bump: bumpApplied ? bumpDetails.id : "",
-        order_bump_amount_cents: bumpApplied ? String(effectiveBumpCents) : "0",
-        bump_days:
-          bumpApplied && effectiveBumpType === "tagebuch"
-            ? String(effectiveBumpDays)
-            : "",
-        exit_discount_15: exitDiscountApplied ? "true" : "false",
-        plan_amount_cents: String(planAmountCents),
-        base_amount_cents: String(baseAmount),
-        total_amount_cents: String(totalCents),
-        utm_source: utm_source || "",
-        utm_medium: utm_medium || "",
-        utm_campaign: utm_campaign || "",
-        utm_content: utm_content || "",
-        fbclid: fbclid || "",
-        fbp: fbp || "",
-        fbc: fbc || "",
-        fb_event_id: fb_event_id || "",
-        ttclid: ttclid || "",
-        datafast_visitor_id: datafastVisitorId,
-        datafast_session_id: datafastSessionId,
-        referred_by_code: referredByCode || "",
-      },
+      metadata: meta,
     };
 
     // Hybrid: spezifische Methode + ggf. cardToken.
