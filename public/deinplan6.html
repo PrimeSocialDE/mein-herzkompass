@@ -4446,35 +4446,37 @@ if (popularBadge) {
             stickyMain.textContent = planLabel + dogPart + ' sichern →';
         }
 
-        // Sticky CTA: deinplan6 zeigt sie DAUERHAFT auf Mobile (statt erst
-         // nach pricing-section-Scroll-Past). User soll jederzeit kaufen
-         // koennen ohne zu scrollen. Wird nur ausgeblendet wenn pricing-Section
-         // gerade aktiv im Viewport ist (Doppel-CTA vermeiden).
+        // Sticky CTA: erscheint erst wenn User die Pricing-Section ueberscrollt hat
+         // (= Preise gesehen, ist drunter). Vorher war der Button dauerhaft sichtbar,
+         // User konnten ihn klicken bevor sie ueberhaupt den Preis kannten → direkter
+         // Mollie-Redirect mit unbekanntem Betrag → Hosted-Page-Abbruch.
         (function() {
             const isMobile = window.innerWidth <= 768;
             if (!isMobile) return;
             const sticky = document.getElementById('stickyMobileCta');
             const pricingSection = document.querySelector('.pricing-section');
-            if (!sticky) return;
+            if (!sticky || !pricingSection) return;
 
-            // Sofort sichtbar
-            sticky.style.display = 'block';
-            document.body.classList.add('has-sticky-cta');
-            updateStickyCta();
+            // Default: versteckt
+            sticky.style.display = 'none';
+            document.body.classList.remove('has-sticky-cta');
 
-            // Nur ausblenden wenn pricing-Section gerade voll im Viewport ist
-            // (Doppel-Button-Verwirrung vermeiden).
-            if (!pricingSection) return;
+            let shown = false;
             function checkScroll() {
-                const rect = pricingSection.getBoundingClientRect();
+                const pricingBottom = pricingSection.getBoundingClientRect().bottom;
                 const viewportHeight = window.innerHeight;
-                const pricingInView = rect.top < viewportHeight * 0.7 && rect.bottom > viewportHeight * 0.3;
-                if (pricingInView) {
-                    sticky.style.display = 'none';
-                    document.body.classList.remove('has-sticky-cta');
-                } else {
+                // Anzeigen wenn pricing-section komplett oberhalb des Viewports ist
+                // (User ist DRUNTER, kennt die Preise)
+                const shouldShow = pricingBottom < viewportHeight * 0.3;
+                if (shouldShow && !shown) {
                     sticky.style.display = 'block';
                     document.body.classList.add('has-sticky-cta');
+                    shown = true;
+                    updateStickyCta();
+                } else if (!shouldShow && shown) {
+                    sticky.style.display = 'none';
+                    document.body.classList.remove('has-sticky-cta');
+                    shown = false;
                 }
             }
             window.addEventListener('scroll', checkScroll, { passive: true });
