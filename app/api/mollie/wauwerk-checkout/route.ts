@@ -156,10 +156,11 @@ export async function POST(req: NextRequest) {
         : "https://pfoten-plan.de";
 
     // Beschreibung im Mollie-Checkout sichtbar (Hosted-Page, PayPal-Receipt,
-    // Bank-Statement bei manchen Methoden). Trust-Signale gegen Abo-Angst +
-    // klare Erwartung wann/wie der Plan ankommt.
+    // Bank-Statement bei manchen Methoden). 'Pfoten-Plan' hier raus, weil der
+    // Markenname schon aus dem Mollie-Profile-Trade-Name im Header steht
+    // — sonst doppelt.
     const description =
-      `Pfoten-Plan ${planName} für ${dogName || "deinen Hund"}` +
+      `${planName} für ${dogName || "deinen Hund"}` +
       (bumpApplied ? ` + ${bumpDetails.name}` : "") +
       ` · Einmalzahlung, kein Abo · direkt per E-Mail zum Herunterladen & Ausdrucken`;
 
