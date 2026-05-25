@@ -155,10 +155,13 @@ export async function POST(req: NextRequest) {
         ? process.env.NEXT_PUBLIC_BASE_URL
         : "https://pfoten-plan.de";
 
+    // Beschreibung im Mollie-Checkout sichtbar (Hosted-Page, PayPal-Receipt,
+    // Bank-Statement bei manchen Methoden). Trust-Signale gegen Abo-Angst +
+    // klare Erwartung wann der Plan ankommt.
     const description =
       `Pfoten-Plan ${planName} für ${dogName || "deinen Hund"}` +
       (bumpApplied ? ` + ${bumpDetails.name}` : "") +
-      ` · kommt sofort per E-Mail`;
+      ` · Einmalzahlung, kein Abo · lebenslanger Zugang · Plan kommt sofort per E-Mail`;
 
     const safeCancelPath =
       typeof cancelPath === "string" &&
