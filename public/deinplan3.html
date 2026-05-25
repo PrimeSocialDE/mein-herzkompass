@@ -4508,23 +4508,14 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 emailConfirm.style.display = 'none';
             }
 
-            // Wallet-Detection: Apple Pay nur in iOS Safari (nicht Insta/FB-Webview),
-            // Google Pay nur in Android Chrome (nicht Webview). In-App-Browser haben
-            // zwar ApplePaySession-Property, koennen die Wallets aber nicht oeffnen —
-            // Button-Klick fuehrt dort ins Leere und User springt ab (52% pending heute).
-            const applePayBtn = document.getElementById('applePayBtn');
-            const googlePayBtn = document.getElementById('googlePayBtn');
-            const expressGrid = document.querySelector('.hybrid-express-grid');
-
+            // Wallet-Detection: Apple Pay + Google Pay Buttons sind IMMER sichtbar
+            // (Trust-Signal). Wenn Geraet die Methode nicht unterstuetzt und User
+            // klickt drauf → freundlicher Hinweis statt toter Klick (siehe payWithMethod).
             const ua = navigator.userAgent || '';
             const isIOS = /iPhone|iPad|iPod/i.test(ua);
             const isAndroid = /Android/i.test(ua);
-            // In-App-Webview: Instagram, Facebook, TikTok, LinkedIn, Snapchat
             const isInAppBrowser = /(FBAN|FBAV|Instagram|FB_IAB|FB4A|TikTok|musical_ly|LinkedInApp|Snapchat)/i.test(ua);
 
-            // ApplePaySession ist Safari-only (iOS + macOS); canMakePayments() prueft
-            // ob Wallet eingerichtet ist. In-App-Webview hat zwar das Property,
-            // kann aber den Apple-Pay-Sheet nicht oeffnen → explizit ausschliessen.
             let canApplePay = false;
             try {
                 canApplePay = !!(
@@ -4534,22 +4525,15 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     window.ApplePaySession.canMakePayments()
                 );
             } catch (e) {}
-
-            // Google Pay: Android Chrome (kein Webview, kein iOS).
-            // PaymentRequest allein ist nicht stark genug — Insta-Webview hat es auch.
             const canGooglePay = !canApplePay &&
                 !isInAppBrowser &&
                 isAndroid &&
                 !isIOS &&
                 typeof window.PaymentRequest === 'function';
 
-            if (applePayBtn) applePayBtn.style.display = canApplePay ? '' : 'none';
-            if (googlePayBtn) googlePayBtn.style.display = canGooglePay ? '' : 'none';
-            if (expressGrid) {
-                // Sichtbare Buttons zaehlen → Grid dynamisch (2/3/4 Spalten).
-                const visibleCount = Array.from(expressGrid.children).filter(b => b.style.display !== 'none').length;
-                expressGrid.style.gridTemplateColumns = `repeat(${Math.max(visibleCount, 2)}, 1fr)`;
-            }
+            // Flags global ablegen damit payWithMethod() sie nutzen kann.
+            window.__canApplePay = canApplePay;
+            window.__canGooglePay = canGooglePay;
 
             document.getElementById('hybridOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -4717,6 +4701,18 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
         async function payWithMethod(method) {
             hideHybridError();
+            // Apple/Google Pay sind immer sichtbar als Trust-Signal, aber auf
+            // nicht-unterstuetzten Geraeten (z.B. Insta-Webview, Android-Apple-Pay
+            // oder iOS-GooglePay) wuerde der Klick ins Leere fuehren. Stattdessen
+            // freundlicher Hinweis → User klickt PayPal oder Karte.
+            if (method === 'applepay' && !window.__canApplePay) {
+                showHybridError('Apple Pay funktioniert auf diesem Geraet nicht. Bitte wähle PayPal oder „Mit Karte zahlen“ unten.');
+                return;
+            }
+            if (method === 'googlepay' && !window.__canGooglePay) {
+                showHybridError('Google Pay funktioniert auf diesem Geraet nicht. Bitte wähle PayPal oder „Mit Karte zahlen“ unten.');
+                return;
+            }
             showPaymentLoadingOverlay(METHOD_LABEL[method] || 'Bezahlung');
             try {
                 const payload = method ? buildCheckoutPayload({ method }) : buildCheckoutPayload({});
@@ -5015,10 +5011,10 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     <button class="hybrid-express-btn hybrid-express-btn--paypal" onclick="payWithMethod('paypal')" aria-label="Mit PayPal bezahlen">
                         <img src="PayPal3.png" alt="PayPal">
                     </button>
-                    <button id="applePayBtn" class="hybrid-express-btn hybrid-express-btn--applepay" onclick="payWithMethod('applepay')" aria-label="Mit Apple Pay bezahlen" style="display:none;">
+                    <button id="applePayBtn" class="hybrid-express-btn hybrid-express-btn--applepay" onclick="payWithMethod('applepay')" aria-label="Mit Apple Pay bezahlen">
                         <img src="Apple-Pay-Logo.jpg" alt="ApplePay">
                     </button>
-                    <button id="googlePayBtn" class="hybrid-express-btn hybrid-express-btn--googlepay" onclick="payWithMethod('googlepay')" aria-label="Mit Google Pay bezahlen" style="display:none;">
+                    <button id="googlePayBtn" class="hybrid-express-btn hybrid-express-btn--googlepay" onclick="payWithMethod('googlepay')" aria-label="Mit Google Pay bezahlen">
                         <img src="googlepay.png" alt="GooglePay">
                     </button>
                     <button class="hybrid-express-btn" onclick="payWithMethod('banktransfer')" aria-label="Per SEPA-Banküberweisung">
