@@ -2118,6 +2118,21 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     }
     .hybrid-close:hover { background: #E5E7EB; color: #111827; }
 
+    /* "Kein Abo"-Badge im Header — adressiert Subscription-Angst (Bedenken #1
+       bei Quiz-basierten Plaenen). Kompakt rechts, gruen, Haekchen-Icon. */
+    .hybrid-no-abo-badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: #DCFCE7; color: #166534;
+        font-size: 11px; font-weight: 700; letter-spacing: 0.2px;
+        padding: 6px 10px; border-radius: 8px;
+        white-space: nowrap; flex-shrink: 0;
+        line-height: 1;
+    }
+    .hybrid-no-abo-badge svg { flex-shrink: 0; }
+    @media (max-width: 380px) {
+        .hybrid-no-abo-badge { font-size: 10px; padding: 5px 8px; }
+    }
+
     .hybrid-trust {
         background: #F9FAFB; padding: 10px 24px;
         display: flex; align-items: center; gap: 8px;
@@ -4959,6 +4974,10 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     <h2>Bezahlen · <span id="hybridPriceLabel">€39,99</span></h2>
                     <div class="sub" id="hybridPlanName">3-Monats-Plan</div>
                 </div>
+                <span class="hybrid-no-abo-badge" aria-label="Einmalzahlung, kein Abonnement">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Kein Abo
+                </span>
             </div>
 
             <div class="hybrid-trust">
