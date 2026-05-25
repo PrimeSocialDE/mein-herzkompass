@@ -4464,10 +4464,11 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             } catch(e) {}
 
             // Plan-Info merken für späteren Submit (Preis, Name, etc.)
+            // name wird im hybrid-modal als Untertitel angezeigt ("Dein X-Plan für Bruno").
             const priceMap = {
-                '1month': { d: 29.99, n: 49.99, name: '1-Monats-Plan' },
-                '3month': { d: 39.99, n: 79.99, name: '3-Monats-Plan' },
-                '6month': { d: 59.99, n: 119.99, name: '6-Monats-Plan' }
+                '1month': { d: 29.99, n: 49.99, name: 'Dein 4-Wochen-Trainingsplan' },
+                '3month': { d: 39.99, n: 79.99, name: 'Dein 12-Wochen-Trainingsplan' },
+                '6month': { d: 59.99, n: 119.99, name: 'Dein 6-Monats-Trainingsplan' }
             };
             const planInfo = priceMap[selectedPlan] || priceMap['3month'];
             const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';

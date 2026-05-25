@@ -135,11 +135,11 @@ export async function POST(req: NextRequest) {
     const totalCents = planAmountCents + (bumpApplied ? effectiveBumpCents : 0);
 
     const planNames: Record<string, string> = {
-      "1month": "1-Monats-Plan",
-      "3month": "3-Monats-Plan",
-      "6month": "6-Monats-Plan",
+      "1month": "Dein 4-Wochen-Trainingsplan",
+      "3month": "Dein 12-Wochen-Trainingsplan",
+      "6month": "Dein 6-Monats-Trainingsplan",
     };
-    const planName = planNames[plan] || "1-Monats-Plan";
+    const planName = planNames[plan] || "Dein 4-Wochen-Trainingsplan";
 
     // Origin (identische Logik wie Stripe)
     const rawOrigin = req.headers.get("origin") || "https://pfoten-plan.de";
