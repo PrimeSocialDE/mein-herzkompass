@@ -233,15 +233,51 @@ export async function POST(req: NextRequest) {
     };
 
     // Hybrid: spezifische Methode + ggf. cardToken.
-    // Wenn KEIN method angegeben: Feld weglassen — Mollie zeigt dann
-    // automatisch alle im Konto aktivierten Methoden auf der Hosted-Page.
-    // (Vorher hatten wir hier eine explizite Method-Liste mit
-    // klarnasliceit/klarnapaylater die Mollie mit 422 abgelehnt hat
-    // weil nicht alle aktiviert waren.)
     if (method) {
       paymentParams.method = method;
       if (method === "creditcard" && cardToken) {
         paymentParams.cardToken = cardToken;
+      }
+    }
+
+    // ── Customer + Mandate fuer One-Click-Upsells ─────────────────────
+    // Beim Erstkauf erstellen wir einen Mollie-Customer + sequenceType='first'.
+    // Nach paid speichert der Webhook die Mandate-ID. Bei Upsell-Klick auf
+    // zusatz.html chargen wir dann ohne Redirect (sequenceType='recurring').
+    //
+    // Recurring funktioniert nur mit creditcard/paypal/sepadirectdebit/etc.
+    // ApplePay/GooglePay/Klarna unterstuetzen kein recurring → kein Mandate
+    // → User muss bei Upsell den alten Redirect-Flow nutzen (Fallback).
+    const RECURRING_METHODS = new Set([
+      "creditcard",
+      "paypal",
+      "sepadirectdebit",
+      "bancontact",
+      "ideal",
+    ]);
+    const supportsMandate = !method || RECURRING_METHODS.has(method);
+    let createdCustomerId: string | null = null;
+    if (supportsMandate && resolvedEmail) {
+      try {
+        const customer = await mollie.customers.create({
+          email: resolvedEmail,
+          name: (dogName || resolvedEmail.split("@")[0]).slice(0, 100),
+          locale: Locale.de_DE,
+          metadata: {
+            lead_id: leadId || "",
+            source: "wauwerk-checkout",
+          },
+        });
+        createdCustomerId = customer.id;
+        paymentParams.customerId = customer.id;
+        paymentParams.sequenceType = "first";
+      } catch (e: any) {
+        // Customer-Erstellung darf den Checkout nie blockieren — fallback auf
+        // klassischen one-off payment ohne Mandate.
+        console.warn(
+          "[wauwerk-checkout] Customer-Create fehlgeschlagen, fahre ohne Mandate fort:",
+          e?.message
+        );
       }
     }
     // Klarna braucht zwingend eine billingAddress
@@ -274,6 +310,9 @@ export async function POST(req: NextRequest) {
         email: resolvedEmail,
       };
       if (referredByCode) updateData.referred_by_code = referredByCode;
+      // Customer-ID schon jetzt speichern (auch wenn Zahlung noch open ist).
+      // Webhook ergaenzt spaeter die Mandate-ID + Payment-Method bei paid.
+      if (createdCustomerId) updateData.mollie_customer_id = createdCustomerId;
       const { error: leadUpdErr } = await supabase
         .from("wauwerk_leads")
         .update(updateData)

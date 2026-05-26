@@ -1297,6 +1297,69 @@
         document.querySelector('.upsell-header h2').innerHTML = content.header;
         document.getElementById('upsellStat').innerHTML = content.stat;
 
+        // One-Click-Upsell via Mollie Mandate (Recurring Payment).
+        // Wenn Erstkauf mit recurring-faehiger Methode (creditcard/paypal/sepa)
+        // gemacht wurde, hat der Webhook ein Mandate gespeichert → wir koennen
+        // hier OHNE Redirect chargen. Bei ApplePay/GooglePay/Klarna fallback
+        // auf den klassischen Redirect-Flow.
+        //
+        // Returns true wenn 1-Click erfolgreich war (UI updated, kein weiterer Schritt
+        // noetig). Returns false wenn Caller den alten Redirect-Flow nutzen soll.
+        async function tryOneClickUpsell(payload, moduleName) {
+            try {
+                const r = await fetch('/api/mollie/upsell-recurring', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const j = await r.json();
+                if (j.ok) {
+                    console.log('✓ 1-Click-Upsell ok:', moduleName, j.paymentId);
+                    showUpsellSuccess(moduleName || 'Modul');
+                    return true;
+                }
+                if (j.fallback_to_redirect) {
+                    console.log('ℹ 1-Click nicht moeglich (kein Mandate), fallback auf Redirect');
+                    return false;
+                }
+                console.warn('1-Click error, fallback:', j.error);
+                return false;
+            } catch (e) {
+                console.warn('1-Click exception, fallback:', e?.message || e);
+                return false;
+            }
+        }
+
+        // Success-Overlay nach erfolgreichem 1-Click-Upsell.
+        // Zeigt 2.5s einen sanften Bestaetigungs-State, dann reload mit ?added=module
+        // damit das Modul nicht nochmal gekauft werden kann (Card disabled).
+        function showUpsellSuccess(moduleName) {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;animation:upsellFadeIn 0.2s ease-out;';
+            overlay.innerHTML = `
+                <style>
+                    @keyframes upsellFadeIn { from{opacity:0;} to{opacity:1;} }
+                    @keyframes upsellPop { 0%{transform:scale(0.8);opacity:0;} 60%{transform:scale(1.05);} 100%{transform:scale(1);opacity:1;} }
+                    @keyframes upsellCheck { from{stroke-dashoffset:60;} to{stroke-dashoffset:0;} }
+                </style>
+                <div style="background:#fff;border-radius:16px;padding:32px 28px;max-width:380px;width:100%;text-align:center;box-shadow:0 24px 48px rgba(0,0,0,0.22);animation:upsellPop 0.35s cubic-bezier(0.34,1.56,0.64,1);">
+                    <div style="width:64px;height:64px;background:#DCFCE7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12" stroke-dasharray="60" style="animation:upsellCheck 0.4s ease-out 0.2s both;"/>
+                        </svg>
+                    </div>
+                    <h3 style="font-size:18px;font-weight:800;color:#1a1a1a;margin:0 0 8px;">${moduleName} hinzugefügt!</h3>
+                    <p style="font-size:14px;color:#4B5563;line-height:1.5;margin:0;">Wird sofort an deine E-Mail geschickt.</p>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            setTimeout(() => {
+                const url = new URL(window.location.href);
+                url.searchParams.set('added', encodeURIComponent(moduleName));
+                window.location.href = url.toString();
+            }, 2500);
+        }
+
         // Premium kaufen
         async function buyPremium() {
             const btn = document.querySelector('.premium-btn');
@@ -1351,6 +1414,16 @@
             }
 
             try {
+                // 1-Click via Mandate versuchen
+                const oneClickOk = await tryOneClickUpsell({
+                    module: 'premium',
+                    leadId: leadId,
+                    email: userEmail,
+                    dogName: dogName,
+                    price: 24999
+                }, 'Premium');
+                if (oneClickOk) return; // Success-UI uebernimmt, kein Redirect
+
                 const returnUrl = window.location.origin + '/danke-final.html?premium=true&lead_id=' + encodeURIComponent(leadId || '');
                 const response = await fetch('/api/mollie/upsell-checkout', {
                     method: 'POST',
@@ -1413,6 +1486,15 @@
             document.getElementById('paymentBenefits').innerHTML = benefitsHtml;
 
             try {
+                // 1-Click via Mandate versuchen
+                const oneClickOk = await tryOneClickUpsell({
+                    module: module,
+                    leadId: leadId,
+                    email: userEmail,
+                    dogName: dogName
+                }, (moduleData[module] && moduleData[module].name) || 'Modul');
+                if (oneClickOk) return;
+
                 const returnUrl = window.location.origin + '/danke-zusatz.html?module=' + encodeURIComponent(module) + '&lead_id=' + encodeURIComponent(leadId || '');
                 const response = await fetch('/api/mollie/upsell-checkout', {
                     method: 'POST',
@@ -1478,6 +1560,17 @@
 
             try {
                 const bundleModule = module1 + '+' + module2;
+                // 1-Click via Mandate versuchen
+                const oneClickOk = await tryOneClickUpsell({
+                    module: bundleModule,
+                    leadId: leadId,
+                    email: userEmail,
+                    dogName: dogName,
+                    bundle: true,
+                    price: 2499
+                }, 'Komplett-Paket');
+                if (oneClickOk) return;
+
                 const returnUrl = window.location.origin + '/danke-zusatz.html?module=' + encodeURIComponent(bundleModule) + '&lead_id=' + encodeURIComponent(leadId || '');
                 const response = await fetch('/api/mollie/upsell-checkout', {
                     method: 'POST',

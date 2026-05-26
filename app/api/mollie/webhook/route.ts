@@ -183,6 +183,19 @@ async function handlePaid(payment: any) {
     else updateData.name = customerName;
   }
 
+  // ── Mandate-Info fuer One-Click-Upsells speichern ──────────────────
+  // Wenn beim Erstkauf sequenceType='first' gesetzt war und die Methode
+  // recurring-faehig ist, liefert Mollie nach paid eine mandateId. Damit
+  // koennen wir spaeter ueber /api/mollie/upsell-recurring-checkout ohne
+  // Redirect chargen.
+  if (table === "wauwerk_leads") {
+    const mandateId = (payment as any).mandateId;
+    const mollieCustomerId = (payment as any).customerId;
+    if (mandateId) updateData.mollie_mandate_id = mandateId;
+    if (mollieCustomerId) updateData.mollie_customer_id = mollieCustomerId;
+    if (payment.method) updateData.mollie_payment_method = payment.method;
+  }
+
   // Safety-Net: selected_plan aus Mollie-Metadata uebernehmen, falls die
   // /wauwerk-checkout-Route den Update nicht geschafft hat (z.B. ohne
   // leadId beim Anstoss, oder DB-Fehler dort). Bei Member-Bereich-Upgrades
