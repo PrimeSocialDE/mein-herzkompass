@@ -154,18 +154,6 @@ export async function GET(req: NextRequest) {
             },
           })
           .eq("id", lead.id);
-        // Lead in Brevo Warm-Recovery-Liste verschieben (raus aus Nurture)
-        // damit er keinen generischen Brevo-Workflow mehr kriegt — unser
-        // 5-Mail-Drip uebernimmt von hier (Stage 1 ab T+2h via warm-recovery-drip).
-        import("@/lib/brevo-contacts")
-          .then((m) => m.syncWarmRecoveryLists(lead.email))
-          .catch((e) =>
-            console.warn(
-              "[recover-cron] warm-recovery sync failed:",
-              lead.email,
-              e?.message
-            )
-          );
       } else {
         stats.failed++;
         console.warn(
