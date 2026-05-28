@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notfall-Karten | Pfoten-Plan</title>
+    <title>Eine Empfehlung für dich | Pfoten-Plan</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favconHund.png">
 
@@ -27,370 +27,155 @@
         fbq('track', 'PageView');
     </script>
 
-    <!-- Stripe -->
-    <script src="https://js.stripe.com/v3/"></script>
-
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #FAF8F5;
             min-height: 100vh;
             padding: 20px;
         }
-
-        .container {
-            max-width: 440px;
-            margin: 0 auto;
-        }
+        .container { max-width: 440px; margin: 0 auto; }
 
         /* Plan gesichert Banner */
         .secured-banner {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            display: flex; align-items: center; gap: 10px;
             padding: 12px 16px;
             background: #F0FDF4;
             border: 1px solid #BBF7D0;
             border-radius: 12px;
             margin-bottom: 24px;
         }
-
         .secured-banner .check {
-            width: 28px;
-            height: 28px;
-            background: #22C55E;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+            width: 28px; height: 28px; background: #22C55E; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
+        .secured-banner .check svg { width: 14px; height: 14px; color: white; }
+        .secured-banner p { font-size: 14px; color: #166534; font-weight: 600; }
 
-        .secured-banner .check svg {
-            width: 14px;
-            height: 14px;
-            color: white;
-        }
-
-        .secured-banner p {
-            font-size: 14px;
-            color: #166534;
-            font-weight: 600;
-        }
-
-        /* Downsell Card */
-        .downsell-card {
-            background: white;
-            border-radius: 20px;
+        /* Hero Card */
+        .upsell-card {
+            background: white; border-radius: 20px;
             padding: 28px 22px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.06);
             margin-bottom: 16px;
         }
+        .upsell-card .eyebrow {
+            font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; color: #8B7355; margin-bottom: 6px;
+        }
+        .upsell-card h2 {
+            font-size: 22px; font-weight: 800; color: #1a1a1a;
+            line-height: 1.3; margin-bottom: 12px;
+        }
+        .upsell-hook {
+            background: #FFF8E7; border-left: 3px solid #C4A576;
+            padding: 12px 14px; border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+            font-size: 13.5px; color: #5C4A2A; line-height: 1.55;
+        }
 
-        .downsell-card h2 {
-            font-size: 22px;
-            font-weight: 800;
-            color: #1a1a1a;
+        /* Module Card */
+        .module-card {
+            background: #FFFBF5; border: 2px solid #C4A576;
+            border-radius: 14px; padding: 18px;
+            position: relative; margin-bottom: 14px;
+        }
+        .module-card .badge {
+            position: absolute; top: -10px; left: 16px;
+            background: #C4A576; color: white;
+            font-size: 11px; font-weight: 700;
+            padding: 3px 10px; border-radius: 6px;
+        }
+        .module-header {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 10px;
+        }
+        .module-icon { font-size: 28px; }
+        .module-name {
+            font-size: 16px; font-weight: 700; color: #1a1a1a;
             line-height: 1.3;
+        }
+        .module-desc {
+            font-size: 14px; color: #555; line-height: 1.55;
             margin-bottom: 12px;
         }
-
-        .downsell-desc {
-            font-size: 15px;
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 22px;
+        .module-benefits {
+            display: flex; flex-direction: column; gap: 6px;
+            margin-bottom: 14px;
         }
-
-        /* Example Cards */
-        .examples {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 24px;
+        .module-benefit {
+            font-size: 13px; color: #1a1a1a; line-height: 1.5;
+            padding-left: 22px; position: relative;
         }
-
-        .example-card {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 16px;
-            background: #FAFAFA;
-            border-radius: 12px;
-            border: 1px solid #f0f0f0;
+        .module-benefit::before {
+            content: '✓'; position: absolute; left: 0; top: 0;
+            color: #166534; font-weight: 700;
         }
-
-        .example-icon {
-            width: 40px;
-            height: 40px;
-            background: #FEF3E7;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
+        .module-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px; flex-wrap: wrap;
         }
-
-        .example-info {
-            flex: 1;
+        .module-price-old {
+            font-size: 13px; color: #999; text-decoration: line-through;
+            margin-right: 8px;
         }
-
-        .example-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 2px;
+        .module-price-new {
+            font-size: 18px; font-weight: 800; color: #C4A576;
         }
-
-        .example-steps {
-            font-size: 12px;
-            color: #888;
-        }
-
-        /* How it works */
-        .how-it-works {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px;
-            background: #F8F6F3;
-            border-radius: 10px;
-            margin-bottom: 24px;
-        }
-
-        .how-it-works span {
-            font-size: 13px;
-            color: #666;
-            line-height: 1.5;
-        }
-
-        /* Price */
-        .price-section {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .price-amount {
-            font-size: 32px;
-            font-weight: 800;
-            color: #C4A576;
-        }
-
-        .price-info {
-            font-size: 13px;
-            color: #888;
-            margin-top: 4px;
-        }
-
-        /* CTA */
-        .cta-btn {
-            display: block;
-            width: 100%;
-            padding: 16px;
+        .module-btn {
             background: linear-gradient(135deg, #C4A576, #8B7355);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
+            color: white; border: none;
+            padding: 12px 22px; border-radius: 10px;
+            font-size: 14px; font-weight: 700; cursor: pointer;
             transition: all 0.2s;
-            margin-bottom: 8px;
+        }
+        .module-btn:hover { transform: translateY(-1px); }
+        .module-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .module-disclaimer {
+            text-align: center; margin-top: 10px;
+            font-size: 12px; color: #166534; font-weight: 500;
         }
 
-        .cta-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.4);
+        /* Social Proof */
+        .social-proof {
+            text-align: center; margin-top: 14px; font-size: 13px; color: #666;
         }
-
-        .cta-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
+        .social-proof .dot {
+            display: inline-block; width: 8px; height: 8px;
+            background: #22C55E; border-radius: 50%; margin-right: 6px;
+            box-shadow: 0 0 6px rgba(34,197,94,0.6);
+            animation: livePulse 2s infinite;
         }
-
-        .guarantee-text {
-            text-align: center;
-            font-size: 12px;
-            color: #166534;
-            font-weight: 500;
-            margin-bottom: 16px;
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         /* Skip */
         .skip-btn {
-            display: block;
-            width: 100%;
-            text-align: center;
-            font-size: 13px;
-            color: #999;
-            background: none;
-            border: none;
-            padding: 12px;
-            cursor: pointer;
-            text-decoration: underline;
-            transition: color 0.2s;
+            display: block; width: 100%; text-align: center;
+            font-size: 13px; color: #999; background: none; border: none;
+            padding: 12px; cursor: pointer; text-decoration: underline;
+            transition: color 0.2s; opacity: 0;
         }
+        .skip-btn:hover { color: #666; }
 
-        .skip-btn:hover {
-            color: #666;
-        }
-
-        /* Payment Overlay */
-        .payment-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .payment-overlay.active {
-            display: flex;
-        }
-
-        .payment-popup {
-            background: white;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 440px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .payment-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .payment-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #1a1a1a;
-        }
-
-        .payment-close {
-            background: none;
-            border: none;
-            font-size: 20px;
-            color: #999;
-            cursor: pointer;
-            padding: 4px;
-        }
-
-        .payment-body {
-            padding: 20px;
-        }
-
-        .payment-product {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px;
-            background: #FAFAFA;
-            border-radius: 12px;
-            margin-bottom: 16px;
-        }
-
-        .payment-product-icon {
-            font-size: 28px;
-        }
-
-        .payment-product-info h3 {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .payment-product-info p {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .payment-product-price {
-            margin-left: auto;
-            font-size: 18px;
-            font-weight: 700;
-            color: #C4A576;
-        }
-
-        .payment-error {
-            background: #FEF2F2;
-            color: #DC2626;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            display: none;
-            margin-bottom: 12px;
-        }
-
-        .payment-error.visible {
-            display: block;
-        }
-
-        .payment-btn {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #C4A576, #8B7355);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 16px;
-        }
-
-        .payment-btn:disabled {
-            opacity: 0.7;
-        }
-
-        .payment-guarantee {
-            text-align: center;
-            font-size: 12px;
-            color: #166534;
-            margin-top: 12px;
-            font-weight: 500;
-        }
-
+        /* Spinner */
         .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
+            display: inline-block; width: 16px; height: 16px;
             border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
+            border-top-color: white; border-radius: 50%;
             animation: spin 0.6s linear infinite;
-            vertical-align: middle;
-            margin-right: 6px;
+            vertical-align: middle; margin-right: 6px;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        /* 1-Click Success Overlay */
+        @keyframes upsellFadeIn { from{opacity:0;} to{opacity:1;} }
+        @keyframes upsellPop { 0%{transform:scale(0.8);opacity:0;} 60%{transform:scale(1.05);} 100%{transform:scale(1);opacity:1;} }
+        @keyframes upsellCheck { from{stroke-dashoffset:60;} to{stroke-dashoffset:0;} }
     </style>
-<script
-  defer
-  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
-  data-domain="pfoten-plan.de"
-  src="https://datafa.st/js/script.js">
-</script>
 </head>
 <body>
     <div class="container">
@@ -401,218 +186,320 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
                 </svg>
             </div>
-            <p>Dein Trainingsplan ist gesichert</p>
+            <p>Dein Plan für <span class="dog-name">deinen Hund</span> ist gesichert</p>
         </div>
 
-        <!-- Downsell Card -->
-        <div class="downsell-card">
-            <h2>Okay – aber das hier könnte dir sofort helfen</h2>
+        <!-- Module Recommendation -->
+        <div class="upsell-card">
+            <p class="eyebrow">Eine ergänzende Empfehlung für <span class="dog-name">deinen Hund</span></p>
+            <h2 id="upsellTitle">Mach <span class="dog-name">deinen Hund</span>s Training komplett</h2>
 
-            <p class="downsell-desc">
-                Die <strong>10 häufigsten Notfall-Situationen</strong> mit Hund.
-                Jede Karte gibt dir eine klare 3-Schritt-Anleitung.
-                Zum Ausdrucken oder aufs Handy speichern.
-            </p>
-
-            <!-- Examples -->
-            <div class="examples">
-                <div class="example-card">
-                    <div class="example-icon">🚪</div>
-                    <div class="example-info">
-                        <div class="example-title">Hund bellt an der Tür</div>
-                        <div class="example-steps">3 Schritte → sofort ruhig</div>
-                    </div>
-                </div>
-                <div class="example-card">
-                    <div class="example-icon">💨</div>
-                    <div class="example-info">
-                        <div class="example-title">Hund zieht plötzlich los</div>
-                        <div class="example-steps">3 Schritte → sofort stoppen</div>
-                    </div>
-                </div>
-                <div class="example-card">
-                    <div class="example-icon">🐕</div>
-                    <div class="example-info">
-                        <div class="example-title">Hund bellt anderen Hund an</div>
-                        <div class="example-steps">3 Schritte → Situation entschärfen</div>
-                    </div>
-                </div>
+            <div class="upsell-hook" id="upsellHook">
+                <!-- dynamisch befuellt -->
             </div>
 
-            <div class="how-it-works">
-                <span>📋</span>
-                <span>10 Karten · PDF zum Ausdrucken · Sofort per E-Mail</span>
+            <div id="upsellModule">
+                <!-- dynamisch befuellt -->
             </div>
 
-            <!-- Price -->
-            <div class="price-section">
-                <div class="price-amount">€9,99</div>
-                <div class="price-info">Einmalzahlung · Kein Abo</div>
-            </div>
-
-            <!-- CTA -->
-            <button class="cta-btn" id="ctaBtn" onclick="buyNotfallKarten()">
-                Notfall-Karten mitnehmen – €9,99
-            </button>
-
-            <div class="guarantee-text">
-                🛡️ 30 Tage Geld-zurück-Garantie
+            <div class="social-proof">
+                <span class="dot"></span>
+                <span style="color:#C4A576;font-weight:600;">347 Hundebesitzer</span> haben sich diese Ergänzung dazu geholt
             </div>
         </div>
 
         <!-- Skip -->
-        <button class="skip-btn" id="skipBtn" style="opacity: 0; transition: opacity 0.5s;" onclick="skipToFinal()">
-            Nein danke, ich starte nur mit dem Plan
+        <button class="skip-btn" id="skipBtn" onclick="skipToFinal()">
+            Nein danke, nur meinen Plan starten →
         </button>
     </div>
 
-    <!-- Payment Popup -->
-    <div class="payment-overlay" id="paymentOverlay">
-        <div class="payment-popup">
-            <div class="payment-header">
-                <span class="payment-title">Notfall-Karten sichern</span>
-                <button class="payment-close" onclick="closePaymentPopup()">✕</button>
-            </div>
-            <div class="payment-body">
-                <div class="payment-product">
-                    <div class="payment-product-icon">🆘</div>
-                    <div class="payment-product-info">
-                        <h3>10 Notfall-Karten</h3>
-                        <p>PDF · Sofort per E-Mail</p>
-                    </div>
-                    <div class="payment-product-price">€9,99</div>
-                </div>
-
-                <div id="paymentError" class="payment-error"></div>
-                <div id="payment-element"></div>
-
-                <button class="payment-btn" id="paymentBtn" onclick="submitPayment()">
-                    🔒 Jetzt bezahlen
-                </button>
-
-                <div class="payment-guarantee">
-                    🛡️ Sichere Zahlung • 30 Tage Geld-zurück
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
-        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
-
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
+        const dogAge = localStorage.getItem('dogAge') || 'adult';
+        const urlParamsInit = new URLSearchParams(window.location.search);
+        const leadId = urlParamsInit.get('lead_id') || localStorage.getItem('leadId') || '';
         const userEmail = localStorage.getItem('userEmail') || '';
-        const leadId = new URLSearchParams(window.location.search).get('lead_id') || localStorage.getItem('leadId') || '';
 
-        let stripe = null;
-        let elements = null;
-        let paymentElement = null;
-        let clientSecret = null;
+        document.querySelectorAll('.dog-name').forEach(el => { el.textContent = dogName; });
 
-        // Skip Button nach 3 Sekunden einblenden
+        // Skip nach 3s einblenden
         setTimeout(() => {
-            document.getElementById('skipBtn').style.opacity = '1';
+            const sb = document.getElementById('skipBtn');
+            if (sb) sb.style.opacity = '1';
         }, 3000);
 
         function skipToFinal() {
-            window.location.href = 'danke-final.html?lead_id=' + leadId;
+            // Relativer Pfad — funktioniert sowohl lokal (file://) als auch live (Vercel)
+            window.location.href = 'danke-final.html?lead_id=' + encodeURIComponent(leadId || '');
         }
 
-        async function buyNotfallKarten() {
-            const btn = document.getElementById('ctaBtn');
-            btn.textContent = 'Lädt...';
+        // ── Module mit Loss-Aversion / Schutz-Wording (40+ Hundebesitzer) ──
+        // Statt "Trennungsangst-Praevention" → "Wenn du mal weg musst..."
+        // Statt "Anti-Bell" → "Falls Bruno zum Beller wird"
+        // Konkrete Pain-Trigger statt abstrakte Lernziele.
+        const moduleData = {
+            'anxiety': {
+                icon: '🏠',
+                name: 'Sicher allein bleiben — auch wenn du mal weg musst',
+                exercises: '6 Übungen · 2 Wochen',
+                benefits: [
+                    'Ruhig bleiben wenn du in den Urlaub musst oder zum Arzt',
+                    'Abschiedsrituale die den Stress sofort senken',
+                    'Schritt-für-Schritt-Aufbau ohne Trauma'
+                ],
+                desc: 'Damit ' + dogName + ' nicht in Panik gerät, falls du mal kurzfristig weg musst.',
+                hook: 'Trennungsangst kommt oft erst, wenn man sie nicht mehr verhindern kann — meist nach einer ersten längeren Trennung. Die Übungen darauf vor sind in 2 Wochen drin.'
+            },
+            'pulling': {
+                icon: '🦮',
+                name: 'Entspannte Spaziergänge — auch bei Hundebegegnungen',
+                exercises: '6 Übungen · 2 Wochen',
+                benefits: [
+                    'Leinenziehen sicher stoppen — auch bei Ablenkung',
+                    'Die Richtungswechsel-Technik aus dem Trainer-Alltag',
+                    'Andere Hunde, Radfahrer, Jogger entspannt passieren lassen'
+                ],
+                desc: 'Damit du mit ' + dogName + ' wieder gerne rausgehst — ohne dass die Schulter wehtut.',
+                hook: 'Leinenziehen wird selten von alleine besser, gerade bei reaktiven Hunden. Diese Übungen geben dir konkrete Techniken für den Alltag.'
+            },
+            'barking': {
+                icon: '🔕',
+                name: 'Ruhe für Besuch, Nachbarn & Nächte',
+                exercises: '6 Übungen · 2 Wochen',
+                benefits: [
+                    'Bellen an der Tür konsequent abbauen',
+                    'Ein klares Ruhe-Signal auf Kommando',
+                    'Auslöser entschärfen statt unterdrücken'
+                ],
+                desc: 'Damit ' + dogName + ' nicht zum Stressfaktor in der Wohnung wird — gerade in der Mietwohnung.',
+                hook: 'Viele Hunde fangen mit Bellen an, wenn das Haupt-Training erste Erfolge zeigt — ein Verdrängungsverhalten. Dieses Modul fängt das ab.'
+            },
+            'aggression': {
+                icon: '🛡️',
+                name: 'Sicherheit bei Hundebegegnungen',
+                exercises: '6 Übungen · 2 Wochen',
+                benefits: [
+                    'Brenzlige Situationen rechtzeitig entschärfen',
+                    'Impulskontrolle in echten Begegnungen aufbauen',
+                    'Entspannung bei Distanz herstellen'
+                ],
+                desc: 'Damit du mit ' + dogName + ' wieder ohne Sorge an die Leine gehst — auch dort wo viele Hunde sind.',
+                hook: 'Reaktivität auf andere Hunde wird ohne gezieltes Training schlimmer, nicht besser. Diese Übungen geben dir konkrete Werkzeuge für jede Begegnung.'
+            },
+            'recall': {
+                icon: '📣',
+                name: 'Sicherer Rückruf — auch am Wald und an der Straße',
+                exercises: '6 Übungen · 2 Wochen',
+                benefits: [
+                    'Zuverlässiger Rückruf — auch bei hohem Reizniveau',
+                    'Den Rückruf richtig aufbauen, nicht "verbrennen"',
+                    'Freilauf ohne ständige Sorge'
+                ],
+                desc: 'Damit ' + dogName + ' im Notfall sofort zurückkommt — auch wenn ein Reh oder ein Auto in Sicht ist.',
+                hook: 'Ein verbrannter Rückruf ist eines der größten Sicherheitsrisiken im Hundealltag. Diese Übungen bauen ihn sauber neu auf.'
+            },
+            'jumping': {
+                icon: '🚪',
+                name: 'Ruhige Begrüßungen — bei Besuch und an der Tür',
+                exercises: '6 Übungen · 2 Wochen',
+                benefits: [
+                    'Vier-Pfoten-Regel die wirklich funktioniert',
+                    'Besucher entspannt empfangen lassen',
+                    'Anspringen umlenken statt verbieten'
+                ],
+                desc: 'Damit ' + dogName + ' Besuch ruhig begrüßt — gerade bei älteren Menschen oder Kindern.',
+                hook: 'Anspringen ist gerade bei mittelgroßen und großen Hunden ein Sicherheitsthema. Dieses Modul löst es nachhaltig.'
+            },
+            'energy': {
+                icon: '🌿',
+                name: 'Lernen, abzuschalten — Ruhe-Training',
+                exercises: '6 Übungen · 2 Wochen',
+                benefits: [
+                    'Gezielte Ruheübungen für jeden Tag',
+                    'Kopfarbeit statt mehr Auspowern',
+                    'Entspannungs-Signal aufbauen'
+                ],
+                desc: 'Damit ' + dogName + ' lernt, auch mal abzuschalten — statt ständig auf Empfang zu sein.',
+                hook: 'Hunde die nicht zur Ruhe kommen, lernen schlechter. Ohne Ruhetraining bremst sich ' + dogName + ' im Alltag selbst aus.'
+            },
+            'destructive': {
+                icon: '🧸',
+                name: 'Möbel & Schuhe bleiben heil',
+                exercises: '6 Übungen · 2 Wochen',
+                benefits: [
+                    'Erlaubte Alternativen sicher etablieren',
+                    'Kauen und Zerstören umlenken statt strafen',
+                    'Allein-zu-Hause ohne Chaos'
+                ],
+                desc: 'Damit du nicht jede Woche neue Schuhe oder Möbel kaufen musst.',
+                hook: 'Zerstörungsverhalten ist meist ein Symptom von Stress oder Unterforderung. Dieses Modul setzt an der Ursache an.'
+            },
+            'mouthing': {
+                icon: '🦴',
+                name: 'Sicher draußen — nichts mehr vom Boden',
+                exercises: '6 Übungen · 2 Wochen',
+                benefits: [
+                    'Das "Aus"-Kommando sicher aufbauen',
+                    'Giftköder-Schutz im Alltag',
+                    'Spaziergänge ohne Sorge'
+                ],
+                desc: 'Damit du nicht ständig kontrollieren musst was ' + dogName + ' aufnimmt.',
+                hook: 'Giftköder, Glasscherben, Essensreste — draußen ist viel was gefährlich werden kann. Diese Übungen sichern dich ab.'
+            }
+        };
+
+        // Dog-Problem aus Quiz / localStorage
+        const answers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
+        const dogGoal = answers.dog_goal || localStorage.getItem('dogProblemKey') || '';
+        const dogProblem = answers.dog_problem || localStorage.getItem('dogProblem') || '';
+        const dogBehaviors = answers.dog_behaviors || JSON.parse(localStorage.getItem('dogBehaviors') || '[]');
+        const allUserProblems = [...new Set([dogGoal, dogProblem, ...dogBehaviors].filter(p => p))];
+
+        // Relevanz-Map: welches Modul passt am besten zum Hauptproblem
+        const relevanceMap = {
+            'pulling':      ['recall', 'energy', 'jumping', 'aggression', 'barking', 'anxiety', 'destructive'],
+            'recall':       ['pulling', 'energy', 'aggression', 'jumping', 'barking', 'anxiety', 'destructive'],
+            'aggression':   ['energy', 'pulling', 'recall', 'anxiety', 'barking', 'jumping', 'destructive'],
+            'anxiety':      ['destructive', 'energy', 'barking', 'pulling', 'recall', 'jumping', 'aggression'],
+            'barking':      ['anxiety', 'energy', 'aggression', 'jumping', 'pulling', 'recall', 'destructive'],
+            'jumping':      ['recall', 'pulling', 'energy', 'barking', 'aggression', 'anxiety', 'destructive'],
+            'energy':       ['pulling', 'destructive', 'recall', 'jumping', 'barking', 'anxiety', 'aggression'],
+            'destructive':  ['anxiety', 'energy', 'barking', 'pulling', 'recall', 'jumping', 'aggression'],
+            'mouthing':     ['recall', 'energy', 'pulling', 'destructive', 'anxiety', 'barking', 'aggression']
+        };
+
+        function renderRecommendedModule() {
+            const allModules = Object.keys(moduleData);
+            const available = allModules.filter(m => !allUserProblems.includes(m));
+            if (available.length === 0) {
+                document.getElementById('upsellModule').innerHTML =
+                    '<p style="text-align:center;color:#666;padding:20px;">Du hast schon alle Übungen — direkt loslegen!</p>';
+                return;
+            }
+            const mainProblem = dogProblem || dogGoal || '';
+            const order = relevanceMap[mainProblem] || [];
+            const sorted = available.sort((a, b) => {
+                const iA = order.indexOf(a); const iB = order.indexOf(b);
+                return (iA === -1 ? 999 : iA) - (iB === -1 ? 999 : iB);
+            });
+            const recommended = sorted[0];
+            const mod = moduleData[recommended];
+
+            document.getElementById('upsellHook').textContent = mod.hook;
+
+            const card = document.createElement('div');
+            card.className = 'module-card';
+            card.innerHTML = `
+                <div class="badge">Passend zu deinem Plan</div>
+                <div class="module-header">
+                    <span class="module-icon">${mod.icon}</span>
+                    <span class="module-name">${mod.name}</span>
+                </div>
+                <p class="module-desc">${mod.desc}</p>
+                <div class="module-benefits">
+                    ${mod.benefits.map(b => '<div class="module-benefit">' + b + '</div>').join('')}
+                </div>
+                <div class="module-footer">
+                    <div>
+                        <span class="module-price-old">€39</span>
+                        <span class="module-price-new">€19,99</span>
+                    </div>
+                    <button class="module-btn" id="moduleBuyBtn" onclick="buyModule('${recommended}', '${mod.name.replace(/'/g, "\\'")}')">
+                        Zum Plan hinzufügen
+                    </button>
+                </div>
+                <div class="module-disclaimer">${mod.exercises} · Sofort per E-Mail · 30 Tage Garantie</div>
+            `;
+            document.getElementById('upsellModule').appendChild(card);
+        }
+        renderRecommendedModule();
+
+        // ── 1-Click via Mandate / Fallback Mollie-Redirect ──
+        async function tryOneClickUpsell(payload, productName) {
+            try {
+                const r = await fetch('/api/mollie/upsell-recurring', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const j = await r.json();
+                if (j.ok) {
+                    showUpsellSuccess(productName);
+                    return true;
+                }
+                return false;
+            } catch (e) { return false; }
+        }
+
+        function showUpsellSuccess(productName) {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;animation:upsellFadeIn 0.2s ease-out;';
+            overlay.innerHTML = `
+                <div style="background:#fff;border-radius:16px;padding:32px 28px;max-width:380px;width:100%;text-align:center;box-shadow:0 24px 48px rgba(0,0,0,0.22);animation:upsellPop 0.35s cubic-bezier(0.34,1.56,0.64,1);">
+                    <div style="width:64px;height:64px;background:#DCFCE7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12" stroke-dasharray="60" style="animation:upsellCheck 0.4s ease-out 0.2s both;"/>
+                        </svg>
+                    </div>
+                    <h3 style="font-size:18px;font-weight:800;color:#1a1a1a;margin:0 0 8px;">${productName} hinzugefügt!</h3>
+                    <p style="font-size:14px;color:#4B5563;line-height:1.5;margin:0;">Kommt sofort per E-Mail.</p>
+                </div>`;
+            document.body.appendChild(overlay);
+            setTimeout(() => {
+                window.location.href = 'danke-final.html?downsell=true&lead_id=' + encodeURIComponent(leadId || '');
+            }, 2500);
+        }
+
+        async function buyModule(module, productName) {
+            const btn = document.getElementById('moduleBuyBtn');
+            const originalText = btn.textContent;
+            btn.innerHTML = '<span class="spinner"></span> Lädt...';
             btn.disabled = true;
 
             if (!userEmail) {
                 alert('Fehler: Keine E-Mail gefunden.');
-                btn.textContent = 'Notfall-Karten mitnehmen – €9,99';
+                btn.textContent = originalText;
                 btn.disabled = false;
                 return;
             }
 
+            const oneClickOk = await tryOneClickUpsell({
+                module: module,
+                leadId: leadId,
+                email: userEmail,
+                dogName: dogName
+            }, productName);
+            if (oneClickOk) return;
+
             try {
-                const returnUrl = window.location.origin + '/danke-final.html?downsell=true&lead_id=' + encodeURIComponent(leadId || '');
+                const returnUrl = window.location.origin + '/danke-final.html?downsell=true&module=' + encodeURIComponent(module) + '&lead_id=' + encodeURIComponent(leadId || '');
                 const response = await fetch('/api/mollie/upsell-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        module: 'notfall-karten',
+                        module: module,
                         leadId: leadId,
                         email: userEmail,
                         dogName: dogName,
-                        price: 999,
                         returnUrl: returnUrl
                     })
                 });
-
                 const result = await response.json();
-
                 if (result.error || !result.url) {
                     alert('Fehler beim Laden. Bitte versuche es erneut.');
-                    btn.textContent = 'Notfall-Karten mitnehmen – €9,99';
+                    btn.textContent = originalText;
                     btn.disabled = false;
                     return;
                 }
-
                 window.location.href = result.url;
-
             } catch (err) {
-                console.error('Error:', err);
+                console.error('Module Error:', err);
                 alert('Fehler beim Laden.');
-                btn.textContent = 'Notfall-Karten mitnehmen – €9,99';
+                btn.textContent = originalText;
                 btn.disabled = false;
             }
         }
-
-        async function submitPayment() {
-            const payBtn = document.getElementById('paymentBtn');
-            payBtn.disabled = true;
-            payBtn.innerHTML = '<span class="spinner"></span> Wird verarbeitet...';
-            document.getElementById('paymentError').classList.remove('visible');
-
-            if (!stripe || !elements) {
-                showError('Stripe nicht initialisiert. Bitte Seite neu laden.');
-                payBtn.disabled = false;
-                payBtn.innerHTML = '🔒 Jetzt bezahlen';
-                return;
-            }
-
-            try {
-                const { error } = await stripe.confirmPayment({
-                    elements,
-                    confirmParams: {
-                        return_url: window.location.origin + '/danke-final.html?downsell=true&lead_id=' + leadId
-                    }
-                });
-
-                if (error) {
-                    showError(error.message || 'Zahlung fehlgeschlagen');
-                    payBtn.disabled = false;
-                    payBtn.innerHTML = '🔒 Jetzt bezahlen';
-                }
-            } catch (err) {
-                showError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
-                payBtn.disabled = false;
-                payBtn.innerHTML = '🔒 Jetzt bezahlen';
-            }
-        }
-
-        function showError(msg) {
-            const el = document.getElementById('paymentError');
-            el.textContent = msg;
-            el.classList.add('visible');
-        }
-
-        function closePaymentPopup() {
-            document.getElementById('paymentOverlay').classList.remove('active');
-            if (paymentElement) { paymentElement.unmount(); paymentElement = null; }
-        }
-
-        document.getElementById('paymentOverlay').addEventListener('click', function(e) {
-            if (e.target === this) closePaymentPopup();
-        });
     </script>
 </body>
 </html>

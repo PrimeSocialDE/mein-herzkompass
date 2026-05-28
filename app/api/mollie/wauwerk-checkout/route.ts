@@ -325,6 +325,20 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // ── Brevo Warm-Recovery-Sync ─────────────────────────────────────
+    // Sobald Mollie-Checkout angelegt ist (status='checkout_started'), bewegen
+    // wir den Lead aus Nurture in Warm-Recovery. Wenn er nicht zahlt, kriegt
+    // er ab T+2h unseren 5-Mail-Drip statt generische Nurture-Mails. Bei paid
+    // wird er vom Webhook wieder aus Warm-Recovery entfernt + in die Plan-Liste.
+    if (resolvedEmail) {
+      // Non-blocking — Brevo-Latenz darf den Checkout nicht ausbremsen
+      import("@/lib/brevo-contacts")
+        .then((m) => m.syncWarmRecoveryLists(resolvedEmail))
+        .catch((e) =>
+          console.warn("[wauwerk-checkout] Brevo warm-sync failed:", e?.message)
+        );
+    }
+
     // Card-Payment-Sonderfall: Wenn paid sofort (kein 3DS), kommt KEIN
     // Checkout-Link — wir leiten Frontend direkt zur Success-URL.
     const status = payment.status;

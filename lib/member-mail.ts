@@ -87,7 +87,7 @@ interface SendArgs {
   cc?: string | string[];
 }
 
-async function sendBrevoMail({ to, subject, html, tags, attachments, cc }: SendArgs) {
+export async function sendBrevoMail({ to, subject, html, tags, attachments, cc }: SendArgs) {
   if (!BREVO_API_KEY) {
     console.warn("[member-mail] BREVO_API_KEY fehlt — skipping send to", to);
     return { ok: false, reason: "no_api_key" };
@@ -138,7 +138,7 @@ async function sendBrevoMail({ to, subject, html, tags, attachments, cc }: SendA
 }
 
 // ── HTML-Template (gemeinsam fuer alle Mitglieder-Mails) ───────────────
-function wrapTemplate(opts: {
+export function wrapTemplate(opts: {
   preheader: string;
   headline: string;
   intro: string;
@@ -427,7 +427,7 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
 }
 
 // Tiny HTML escape (kein dom-purify, reicht fuer dog names / quiz answers)
-function escapeHtml(s: string): string {
+export function escapeHtml(s: string): string {
   return String(s)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")

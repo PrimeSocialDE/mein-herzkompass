@@ -18,6 +18,14 @@ const LIST_NURTURE = parseInt(process.env.BREVO_LIST_NURTURE || "47", 10);
 const LIST_1M = parseInt(process.env.BREVO_LIST_1M || "44", 10);
 const LIST_3M = parseInt(process.env.BREVO_LIST_3M || "45", 10);
 const LIST_6M = parseInt(process.env.BREVO_LIST_6M || "46", 10);
+// Warm-Recovery: User die im Checkout abgebrochen haben (pending/failed).
+// Sie verlassen Nurture und kriegen unseren eigenen 5-Mail-Drip statt des
+// generischen Brevo-Workflows. Bei Conversion zu paid landen sie in
+// LIST_1M/3M/6M — diese Sync-Logik ist in syncPaidCustomerLists().
+const LIST_WARM_RECOVERY = parseInt(
+  process.env.BREVO_LIST_WARM_RECOVERY || "82",
+  10
+);
 
 type PlanLength = 1 | 3 | 6;
 
@@ -115,6 +123,43 @@ export async function syncPaidCustomerLists(
     removed: removeRes.ok,
     added: addRes.ok,
   };
+}
+
+// Bei pending/failed (User hat Checkout begonnen, aber nicht abgeschlossen):
+// User aus Nurture rausnehmen + in Warm-Recovery rein. Damit kriegen sie
+// nicht doppelt Mails (Brevo-Workflow + unser Drip). User muss den generischen
+// Brevo-Workflow im UI auf "nur Nurture-Liste" filtern lassen.
+//
+// Idempotent — kann safe mehrfach gerufen werden.
+export async function syncWarmRecoveryLists(email: string): Promise<{
+  movedFromNurture: boolean;
+  addedToWarmRecovery: boolean;
+}> {
+  if (!email) return { movedFromNurture: false, addedToWarmRecovery: false };
+  const lower = email.trim().toLowerCase();
+  if (!lower) return { movedFromNurture: false, addedToWarmRecovery: false };
+
+  const [removeRes, addRes] = await Promise.all([
+    brevoRemoveFromList(lower, LIST_NURTURE),
+    brevoAddToList(lower, LIST_WARM_RECOVERY),
+  ]);
+
+  return {
+    movedFromNurture: removeRes.ok,
+    addedToWarmRecovery: addRes.ok,
+  };
+}
+
+// Bei paid (User hat doch noch gekauft): aus Warm-Recovery entfernen.
+// Wird vom Mollie-Webhook zusammen mit syncPaidCustomerLists aufgerufen.
+export async function removeFromWarmRecoveryList(
+  email: string
+): Promise<{ ok: boolean }> {
+  if (!email) return { ok: false };
+  const lower = email.trim().toLowerCase();
+  if (!lower) return { ok: false };
+  const res = await brevoRemoveFromList(lower, LIST_WARM_RECOVERY);
+  return { ok: res.ok };
 }
 
 // Helper fuer Backfill — wenn jemand schon paid ist aber Listen noch alt

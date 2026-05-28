@@ -284,16 +284,19 @@ async function handlePaid(payment: any) {
       "3month";
     after(async () => {
       try {
-        const { syncPaidCustomerListsFromSelectedPlan } = await import(
-          "@/lib/brevo-contacts"
-        );
-        const res = await syncPaidCustomerListsFromSelectedPlan(
-          targetEmail,
-          selectedPlan
-        );
+        const {
+          syncPaidCustomerListsFromSelectedPlan,
+          removeFromWarmRecoveryList,
+        } = await import("@/lib/brevo-contacts");
+        const [res, warmRes] = await Promise.all([
+          syncPaidCustomerListsFromSelectedPlan(targetEmail, selectedPlan),
+          // Falls der User vorher in Warm-Recovery war: rausnehmen,
+          // damit er keine Drip-Mails mehr kriegt (er hat ja jetzt gekauft).
+          removeFromWarmRecoveryList(targetEmail),
+        ]);
         console.log(
           `[mollie-webhook] brevo-sync ${targetEmail} → ${res.planMonths}M ` +
-            `removed=${res.removed} added=${res.added}`
+            `removed=${res.removed} added=${res.added} warm-removed=${warmRes.ok}`
         );
       } catch (e: any) {
         console.error(

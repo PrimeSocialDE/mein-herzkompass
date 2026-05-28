@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zusatz-Übungen | Pfoten-Plan</title>
+    <title>Bestellung bestätigt | Pfoten-Plan</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favconHund.png">
 
@@ -22,19 +22,13 @@
             const urlParams = new URLSearchParams(window.location.search);
             const redirectStatus = urlParams.get('redirect_status');
             const paymentIntent = urlParams.get('payment_intent');
-            
-            // Wenn redirect_status vorhanden aber NICHT "succeeded" → Zahlung abgebrochen
+            // Zahlung abgebrochen → zurueck zur Plan-Seite
             if (redirectStatus && redirectStatus !== 'succeeded') {
                 console.log('❌ Zahlung abgebrochen, redirect_status:', redirectStatus);
-                // Zurück zur Plan-Seite
                 window.location.href = '/deinplan.html';
                 return;
             }
-            
-            // Wenn payment_intent vorhanden aber kein redirect_status → auch prüfen
-            // (Manche Payment Methods wie Klarna setzen redirect_status nicht immer)
             if (paymentIntent && !redirectStatus) {
-                // Das ist okay - wir lassen es durchlaufen und prüfen unten
                 console.log('ℹ️ Payment Intent ohne redirect_status, prüfe weiter...');
             }
         })();
@@ -47,7 +41,7 @@
             t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         })(window, document, "clarity", "script", "ufxcf43805");
-    </script> 
+    </script>
 
     <!-- Meta Pixel -->
     <script>
@@ -71,747 +65,131 @@
         }(window, document, 'ttq');
     </script>
 
-    <!-- Stripe -->
-    <script src="https://js.stripe.com/v3/"></script>
-
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #FAF8F5;
-            padding: 40px 20px;
             min-height: 100vh;
-        }
-
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        /* Payment Popup Overlay */
-        .payment-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
             padding: 20px;
         }
+        .container { max-width: 440px; margin: 0 auto; }
 
-        .payment-overlay.active {
-            display: flex;
-        }
-
-        .payment-popup {
-            background: white;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 400px;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        .payment-header {
-            padding: 14px 20px;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .payment-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1a1a1a;
-        }
-
-        .payment-close {
-            width: 28px;
-            height: 28px;
-            border: none;
-            background: #f5f5f5;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: #666;
-        }
-
-        .payment-body {
-            padding: 14px 20px;
-        }
-
-        .payment-product {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: #FAFAFA;
-            border-radius: 10px;
-            margin-bottom: 12px;
-        }
-
-        .payment-product-icon {
-            width: 44px;
-            height: 44px;
-            background: #FEF3E7;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-        }
-
-        .payment-product-info h3 {
-            font-size: 14px;
-            color: #1a1a1a;
-            margin-bottom: 2px;
-        }
-
-        .payment-product-info p {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .payment-product-price {
-            margin-left: auto;
-            font-size: 18px;
-            font-weight: 700;
-            color: #C4A576;
-        }
-
-        .payment-benefits {
-            background: #F8F8F8;
-            border-radius: 8px;
-            padding: 10px 12px;
-            margin-bottom: 12px;
-        }
-
-        .payment-benefit {
-            font-size: 12px;
-            color: #333;
-            padding: 4px 0;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .payment-benefit:first-child {
-            padding-top: 0;
-        }
-
-        .payment-benefit:last-child {
-            padding-bottom: 0;
-        }
-
-        #payment-element {
-            margin-bottom: 12px;
-        }
-
-        .payment-error {
-            background: #FEF2F2;
-            color: #DC2626;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            margin-bottom: 12px;
-            display: none;
-        }
-
-        .payment-error.visible {
-            display: block;
-        }
-
-        .payment-btn {
-            width: 100%;
-            background: #C4A576;
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .payment-btn:hover {
-            background: #B8956A;
-        }
-
-        .payment-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        .payment-guarantee {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-top: 10px;
-            font-size: 11px;
-            color: #666;
-        }
-
-        .spinner {
-            width: 18px;
-            height: 18px;
-            border: 2px solid white;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Success */
+        /* Bestellung bestätigt - groß */
         .success-msg {
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
-
         .success-check {
-            width: 56px;
-            height: 56px;
+            width: 56px; height: 56px;
             background: #22C55E;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             margin: 0 auto 14px;
+            box-shadow: 0 4px 14px rgba(34,197,94,0.3);
         }
-
-        .success-check svg {
-            width: 28px;
-            height: 28px;
-            color: white;
-        }
-
+        .success-check svg { width: 28px; height: 28px; color: white; }
         .success-msg h1 {
-            font-size: 20px;
-            color: #1a1a1a;
-            margin-bottom: 6px;
-        }
-
-        .success-msg p {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .dog-name {
-            color: #C4A576;
-            font-weight: 600;
-        }
-
-        /* Upsell Box */
-        .upsell-box {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        }
-
-        .upsell-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .upsell-icon {
-            width: 42px;
-            height: 42px;
-            background: #FEF3E7;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .upsell-header h2 {
-            font-size: 15px;
-            color: #1a1a1a;
-            line-height: 1.4;
-        }
-
-        .upsell-stat {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 16px;
-            padding: 12px 14px;
-            background: #FFF8F0;
-            border-radius: 10px;
-            border: 1px solid #E8DDD0;
-            text-align: center;
-            line-height: 1.5;
-        }
-
-        .upsell-stat strong {
-            color: #C4A576;
-            font-weight: 600;
-        }
-
-        .limited-offer-banner {
-            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
-            color: #2E7D32;
-            padding: 10px 14px;
-            border-radius: 10px;
-            margin-bottom: 16px;
-            text-align: center;
-            font-size: 13px;
-            font-weight: 600;
-            border: 1px solid #A5D6A7;
-        }
-
-        /* Options */
-        .upsell-option {
-            padding: 16px;
-            background: #FAFAFA;
-            border-radius: 12px;
-            margin-bottom: 12px;
-        }
-
-        .option-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .option-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .option-icon {
-            font-size: 20px;
-        }
-
-        .option-name {
-            font-size: 15px;
-            color: #1a1a1a;
-            font-weight: 600;
-        }
-
-        .option-badge {
-            font-size: 11px;
-            color: #666;
-            background: #E8E8E8;
-            padding: 3px 8px;
-            border-radius: 4px;
-        }
-
-        .option-desc {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-
-        .option-points {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 14px;
-        }
-
-        .option-point {
-            font-size: 12px;
-            color: #444;
-            background: white;
-            padding: 4px 10px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .option-point::before {
-            content: "✓";
-            color: #22C55E;
-            font-weight: 600;
-        }
-
-        .option-footer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            padding-top: 14px;
-            border-top: 1px solid #E8E8E8;
-        }
-
-        .option-price {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .option-price-old {
-            font-size: 14px;
-            color: #999;
-            text-decoration: line-through;
-        }
-
-        .option-price-new {
-            font-size: 22px;
-            font-weight: 700;
-            color: #C4A576;
-        }
-
-        .option-btn {
-            background: #C4A576;
-            border: none;
-            color: white;
-            padding: 14px 28px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-            text-align: center;
-        }
-
-        @keyframes livePulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        .option-btn:hover {
-            background: #B8956A;
-        }
-
-        /* Bundle Styles */
-        .bundle-option {
-            background: linear-gradient(135deg, #F5F0E8 0%, #FFFFFF 100%);
-            border: 2px solid #C4A576;
-            border-radius: 16px;
-            padding: 28px 20px 20px 20px;
-            margin-bottom: 16px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .bundle-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: linear-gradient(135deg, #C4A576, #8B7355);
-            color: white;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 0 14px 0 12px;
-        }
-
-        .bundle-header {
-            margin-bottom: 16px;
-        }
-
-        .bundle-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .bundle-subtitle {
-            font-size: 13px;
-            color: #666;
-        }
-
-        .bundle-modules {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .bundle-module {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            background: white;
-            padding: 12px;
-            border-radius: 10px;
-        }
-
-        .bundle-module-icon {
-            font-size: 24px;
-            flex-shrink: 0;
-        }
-
-        .bundle-module-info h4 {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-
-        .bundle-module-points {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .bundle-point {
-            font-size: 11px;
-            color: #555;
-            background: #F5F5F5;
-            padding: 3px 8px;
-            border-radius: 4px;
-        }
-
-        .bundle-point::before {
-            content: "✓ ";
-            color: #22C55E;
-            font-weight: 600;
-        }
-
-        .bundle-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 16px;
-            border-top: 1px solid #E8E8E8;
-        }
-
-        .bundle-price {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .bundle-price-old {
-            font-size: 13px;
-            color: #999;
-            text-decoration: line-through;
-        }
-
-        .bundle-price-new {
-            font-size: 24px;
-            font-weight: 700;
-            color: #C4A576;
-        }
-
-        .bundle-price-save {
-            font-size: 11px;
-            color: #22C55E;
-            font-weight: 600;
-        }
-
-        .bundle-btn {
-            background: linear-gradient(135deg, #C4A576, #8B7355);
-            border: none;
-            color: white;
-            padding: 14px 24px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .bundle-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(196, 165, 118, 0.4);
-        }
-
-        /* Premium Option */
-        .premium-option {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            border: 2px solid #C4A576;
-            border-radius: 16px;
-            padding: 24px 20px;
-            margin-bottom: 16px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .premium-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: linear-gradient(135deg, #C4A576, #D4B996);
-            color: #1a1a1a;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 0 14px 0 12px;
-        }
-
-        .premium-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .premium-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-        .premium-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 4px;
-        }
-
-        .premium-subtitle {
-            font-size: 13px;
-            color: #C4A576;
-        }
-
-        .premium-features {
-            margin-bottom: 20px;
-        }
-
-        .premium-feature {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            color: #fff;
-            font-size: 14px;
-        }
-
-        .premium-feature:last-child {
-            border-bottom: none;
-        }
-
-        .premium-feature-icon {
-            color: #C4A576;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-
-        .premium-feature-text {
-            flex: 1;
-        }
-
-        .premium-feature-value {
-            color: #888;
-            font-size: 12px;
-        }
-
-        .premium-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 16px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .premium-price {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .premium-price-old {
-            font-size: 13px;
-            color: #888;
-            text-decoration: line-through;
-        }
-
-        .premium-price-new {
-            font-size: 28px;
-            font-weight: 700;
-            color: #C4A576;
-        }
-
-        .premium-price-info {
-            font-size: 11px;
-            color: #888;
-        }
-
-        .premium-btn {
-            background: linear-gradient(135deg, #C4A576, #D4B996);
-            border: none;
-            color: #1a1a1a;
-            padding: 14px 28px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .premium-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5);
-        }
-
-        .section-divider {
-            text-align: center;
-            color: #999;
-            font-size: 13px;
-            margin: 24px 0;
-            position: relative;
-        }
-
-        .section-divider::before,
-        .section-divider::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 30%;
-            height: 1px;
-            background: #E8E8E8;
-        }
-
-        .section-divider::before {
-            left: 0;
-        }
-
-        .section-divider::after {
-            right: 0;
-        }
-
-        /* Skip */
-        .skip {
-            text-align: center;
-            margin-top: 16px;
-        }
-
-        .skip-btn {
-            display: inline-block;
-            font-size: 14px;
-            color: white;
-            background: #8B7355;
-            padding: 12px 24px;
-            border-radius: 8px;
-            text-decoration: none;
+            font-size: 24px; font-weight: 800; color: #166534;
+            line-height: 1.2; margin-bottom: 6px;
+        }
+        .success-msg .plan-unterwegs {
+            font-size: 15px; color: #166534; font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .success-msg .time-hint {
+            font-size: 14px; color: #4B5563; line-height: 1.5;
             font-weight: 500;
-            transition: all 0.2s;
         }
 
-        .skip-btn:hover {
-            background: #7A6548;
+        /* Hero Card: Notfall-Karten */
+        .upsell-card {
+            background: white; border-radius: 20px;
+            padding: 28px 22px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            margin-bottom: 16px;
         }
+        .upsell-card .eyebrow {
+            font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; color: #8B7355; margin-bottom: 6px;
+        }
+        .upsell-card h2 {
+            font-size: 22px; font-weight: 800; color: #1a1a1a;
+            line-height: 1.3; margin-bottom: 12px;
+        }
+        .upsell-desc {
+            font-size: 15px; color: #555; line-height: 1.6; margin-bottom: 22px;
+        }
+        .upsell-desc strong { color: #1a1a1a; }
+
+        /* Example Cards */
+        .examples { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+        .example-card {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 16px; background: #FAFAFA;
+            border-radius: 12px; border: 1px solid #f0f0f0;
+        }
+        .example-icon {
+            width: 40px; height: 40px; background: #FEF3E7; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0;
+        }
+        .example-info { flex: 1; }
+        .example-title { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px; }
+        .example-steps { font-size: 12px; color: #888; }
+
+        /* How it works */
+        .how-it-works {
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px; background: #F8F6F3; border-radius: 10px;
+            margin-bottom: 22px;
+        }
+        .how-it-works span { font-size: 13px; color: #666; line-height: 1.5; }
+
+        /* Price */
+        .price-section { text-align: center; margin-bottom: 18px; }
+        .price-amount { font-size: 32px; font-weight: 800; color: #C4A576; }
+        .price-info { font-size: 13px; color: #888; margin-top: 4px; }
+
+        /* CTA */
+        .cta-btn {
+            display: block; width: 100%; padding: 16px;
+            background: linear-gradient(135deg, #C4A576, #8B7355);
+            color: white; border: none; border-radius: 12px;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+            transition: all 0.2s; margin-bottom: 8px;
+        }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(196, 165, 118, 0.4); }
+        .cta-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        .guarantee-text {
+            text-align: center; font-size: 12px; color: #166534;
+            font-weight: 500; margin-bottom: 16px;
+        }
+
+        /* Skip — links to /downsell.html for modules */
+        .skip-btn {
+            display: block; width: 100%; text-align: center;
+            font-size: 13px; color: #999; background: none; border: none;
+            padding: 12px; cursor: pointer; text-decoration: underline;
+            transition: color 0.2s; opacity: 0; transition: opacity 0.5s;
+        }
+        .skip-btn:hover { color: #666; }
+
+        /* Spinner */
+        .spinner {
+            display: inline-block; width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white; border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle; margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* 1-Click Success Overlay */
+        @keyframes upsellFadeIn { from{opacity:0;} to{opacity:1;} }
+        @keyframes upsellPop { 0%{transform:scale(0.8);opacity:0;} 60%{transform:scale(1.05);} 100%{transform:scale(1);opacity:1;} }
+        @keyframes upsellCheck { from{stroke-dashoffset:60;} to{stroke-dashoffset:0;} }
     </style>
 <script
   defer
@@ -822,7 +200,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Success -->
+        <!-- Bestellung bestätigt -->
         <div class="success-msg">
             <div class="success-check">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -830,19 +208,19 @@
                 </svg>
             </div>
             <h1>Bestellung bestätigt!</h1>
-            <p>Plan für <span class="dog-name">Luna</span> ist unterwegs</p>
-            <p style="font-size: 15px; font-weight: 600; margin-top: 8px;">Bis dein Plan per E-Mail ankommt, kann es bis zu 20 Minuten dauern 🐶</p>
+            <p class="plan-unterwegs">Plan für <span class="dog-name">deinen Hund</span> ist unterwegs</p>
+            <p class="time-hint">Bis dein Plan per E-Mail ankommt, kann es bis zu 20 Minuten dauern 🐶</p>
         </div>
 
         <!-- Backup-Support-Hinweis: erscheint erst nach 20 Min -->
-        <div id="supportFallback" style="display:none; margin: 0 auto 20px; max-width: 540px; background: #FFF7ED; border: 1.5px solid #FED7AA; border-radius: 14px; padding: 18px 22px;">
+        <div id="supportFallback" style="display:none; margin-bottom: 20px; background: #FFF7ED; border: 1.5px solid #FED7AA; border-radius: 14px; padding: 18px 22px;">
             <div style="display:flex; align-items:flex-start; gap:14px;">
                 <div style="font-size:28px; flex-shrink:0; line-height:1;">📩</div>
                 <div style="flex:1;">
                     <p style="font-size:15px; font-weight:700; color:#9A3412; margin:0 0 6px;">Plan noch nicht angekommen?</p>
                     <p style="font-size:14px; color:#7C2D12; line-height:1.55; margin:0 0 12px;">
                         Manchmal landet die E-Mail im Spam-Ordner — schau dort kurz nach.
-                        <br>Falls auch da nichts ist (oder du dich vertippt hast bei der Eingabe): <strong>schreib uns direkt</strong>, wir schicken dir den Plan persönlich zu. Unser Support ist immer für dich da.
+                        <br>Falls auch da nichts ist: <strong>schreib uns direkt</strong>, wir schicken den Plan persönlich.
                     </p>
                     <a id="supportFallbackLink" href="mailto:support@pfoten-plan.de" style="display:inline-block; background:#9A3412; color:#fff; text-decoration:none; padding:10px 18px; border-radius:8px; font-size:14px; font-weight:600;">
                         Plan anfordern → support@pfoten-plan.de
@@ -850,321 +228,134 @@
                 </div>
             </div>
         </div>
-        <script>
-            // Nach 20 Minuten Support-Hinweis sichtbar machen + Mail-Link mit User-Daten vorbefüllen
-            setTimeout(function() {
-                try {
-                    const el = document.getElementById('supportFallback');
-                    if (!el) return;
-                    el.style.display = 'block';
-                    const link = document.getElementById('supportFallbackLink');
-                    if (link) {
-                        const mail = (typeof userEmail !== 'undefined' && userEmail) ? userEmail : (localStorage.getItem('userEmail') || '');
-                        const dog  = (typeof dogName  !== 'undefined' && dogName)  ? dogName  : (localStorage.getItem('dogName')  || '');
-                        const subject = encodeURIComponent('Plan nicht angekommen — Hilfe bitte');
-                        const body = encodeURIComponent(
-                            'Hallo Pfoten-Plan-Team,\n\n' +
-                            'mein Plan ist nach über 20 Minuten noch nicht angekommen. Bitte schickt ihn mir manuell zu.\n\n' +
-                            'Hund: ' + (dog || '(bitte ausfüllen)') + '\n' +
-                            'E-Mail (zum Versand): ' + (mail || '(bitte ausfüllen)') + '\n\n' +
-                            'Vielen Dank!'
-                        );
-                        link.href = 'mailto:support@pfoten-plan.de?subject=' + subject + '&body=' + body;
-                    }
-                } catch(e) { console.error('SupportFallback error:', e); }
-            }, 20 * 60 * 1000);
-        </script>
 
-        <!-- Upsell -->
-        <div class="upsell-box">
+        <!-- Upsell: Notfall-Karten als ERSTER Slot -->
+        <div class="upsell-card">
+            <p class="eyebrow">Empfehlung für dich</p>
+            <h2>10 Notfall-Karten für deine Hunde-Tasche</h2>
 
-            <div class="upsell-stat" id="upsellStat">
-                <strong>Warte kurz!</strong> Dein Trainingsplan ist unterwegs. Aber eine Sache fehlt noch:
-            </div>
+            <p class="upsell-desc">
+                Die <strong>10 häufigsten Notfall-Situationen</strong> mit Hund.
+                Jede Karte gibt dir eine klare 3-Schritt-Anleitung. Zum Ausdrucken,
+                in die Tasche oder auf dem Handy gespeichert — du bist vorbereitet,
+                wenn's drauf ankommt.
+            </p>
 
-            <div class="upsell-header">
-                <div class="upsell-icon">🎯</div>
-                <h2>Mach <span class="dog-name">Luna</span>s Training komplett</h2>
-            </div>
-
-            <!-- Option 1: Trennungsangst -->
-            <div class="upsell-options" id="upsellOptions">
-                <!-- Wird dynamisch befüllt -->
-            </div>
-        </div>
-
-        <div class="skip" id="skipSection" style="opacity: 0; transition: opacity 0.5s;">
-            <a href="#" class="skip-btn" style="background: none; color: #999; font-size: 13px; padding: 12px; text-decoration: underline;">Nein danke, nur meinen Plan</a>
-        </div>
-    </div>
-
-    <!-- Payment Popup -->
-    <div class="payment-overlay" id="paymentOverlay">
-        <div class="payment-popup">
-            <div class="payment-header">
-                <span class="payment-title">Zum Plan hinzufügen</span>
-                <button class="payment-close" onclick="closePaymentPopup()">✕</button>
-            </div>
-            <div class="payment-body">
-                <div class="payment-product">
-                    <div class="payment-product-icon" id="paymentIcon">😰</div>
-                    <div class="payment-product-info">
-                        <h3 id="paymentModuleName">Falls dein Hund nicht alleine bleiben kann</h3>
-                        <p>8 Übungen • 2 Wochen</p>
+            <div class="examples">
+                <div class="example-card">
+                    <div class="example-icon">🚪</div>
+                    <div class="example-info">
+                        <div class="example-title">Hund bellt an der Tür</div>
+                        <div class="example-steps">3 Schritte → sofort ruhig</div>
                     </div>
-                    <div class="payment-product-price">€19,99</div>
                 </div>
-
-                <!-- Modul Benefits -->
-                <div class="payment-benefits" id="paymentBenefits">
-                    <div class="payment-benefit">✓ <span>Alleine-bleiben Training</span></div>
-                    <div class="payment-benefit">✓ <span>Abschiedsrituale</span></div>
-                    <div class="payment-benefit">✓ <span>Ruhe-Signale aufbauen</span></div>
-                    <div class="payment-benefit">✓ <span>Schritt-für-Schritt Anleitung</span></div>
+                <div class="example-card">
+                    <div class="example-icon">💨</div>
+                    <div class="example-info">
+                        <div class="example-title">Hund zieht plötzlich los</div>
+                        <div class="example-steps">3 Schritte → sofort stoppen</div>
+                    </div>
                 </div>
-
-                <div id="paymentError" class="payment-error"></div>
-
-                <div id="payment-element"></div>
-
-                <button class="payment-btn" id="paymentBtn" onclick="submitUpsellPayment()">
-                    🔒 Jetzt bezahlen
-                </button>
-
-                <div class="payment-guarantee">
-                    🛡️ Sichere Zahlung • 30 Tage Geld-zurück
+                <div class="example-card">
+                    <div class="example-icon">🐕</div>
+                    <div class="example-info">
+                        <div class="example-title">Hund bellt anderen Hund an</div>
+                        <div class="example-steps">3 Schritte → Situation entschärfen</div>
+                    </div>
                 </div>
             </div>
+
+            <div class="how-it-works">
+                <span>📋</span>
+                <span>10 Karten · PDF zum Ausdrucken · Kommt sofort per E-Mail</span>
+            </div>
+
+            <div class="price-section">
+                <div class="price-amount">€9,99</div>
+                <div class="price-info">Einmalzahlung · Kein Abo</div>
+            </div>
+
+            <button class="cta-btn" id="ctaBtn" onclick="buyNotfallKarten()">
+                Notfall-Karten dazu nehmen – €9,99
+            </button>
+
+            <div class="guarantee-text">
+                🛡️ 30 Tage Geld-zurück-Garantie
+            </div>
         </div>
+
+        <!-- Skip → weiter zu /downsell.html (Module als nächste Stufe) -->
+        <button class="skip-btn" id="skipBtn" onclick="skipToModules()">
+            Nein danke, andere Trainings-Module ansehen →
+        </button>
     </div>
 
     <script>
-        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
-        
-        // Supabase Config
-        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
-        
-        const dogName = localStorage.getItem('dogName') || 'Luna';
-        const dogAge = localStorage.getItem('dogAge') || 'puppy';
-        
-        // leadId aus URL oder localStorage
+        // Daten aus localStorage / URL
+        const dogName = localStorage.getItem('dogName') || 'deinen Hund';
+        const userEmail = localStorage.getItem('userEmail') || '';
         const urlParamsInit = new URLSearchParams(window.location.search);
         const leadId = urlParamsInit.get('lead_id') || localStorage.getItem('leadId') || '';
-        console.log('🔍 zusatz.html - leadId aus URL:', urlParamsInit.get('lead_id'));
-        console.log('🔍 zusatz.html - leadId aus localStorage:', localStorage.getItem('leadId'));
-        console.log('🔍 zusatz.html - verwendete leadId:', leadId);
-        
-        const userEmail = localStorage.getItem('userEmail') || '';
         const selectedPlan = localStorage.getItem('selectedPlan') || '3month';
-        
-        let stripe = null;
-        let elements = null;
-        let paymentElement = null;
-        let currentModule = null;
-        let clientSecret = null;
 
-        // Modul-Daten mit Benefits
-        const moduleData = {
-            'anxiety': {
-                icon: '😰',
-                name: 'Alleine-bleiben Training',
-                exercises: '6 Zusatz-Übungen',
-                benefits: ['Dein Hund bleibt entspannt wenn du gehst', 'Abschiedsrituale die sofort wirken', 'Ruhe-Signale gegen Trennungsstress'],
-                desc: 'Die perfekte Ergänzung zu deinem Plan – damit ' + dogName + ' auch alleine entspannt bleibt.',
-                hook: 'Hunde mit Verhaltensproblemen entwickeln oft auch Trennungsstress – dieses Modul verhindert das.'
-            },
-            'pulling': {
-                icon: '🦮',
-                name: 'Leinenführigkeit Training',
-                exercises: '6 Zusatz-Übungen',
-                benefits: ['Entspannte Spaziergänge ohne Ziehen', 'Die Richtungswechsel-Technik', 'Begegnungen mit anderen Hunden meistern'],
-                desc: 'Die perfekte Ergänzung zu deinem Plan – damit Spaziergänge mit ' + dogName + ' endlich entspannt werden.',
-                hook: 'Leinenziehen ist das #1 Zusatzproblem bei Hundebesitzern – dieses Modul löst es.'
-            },
-            'barking': {
-                icon: '🔊',
-                name: 'Anti-Bell Training',
-                exercises: '6 Zusatz-Übungen',
-                benefits: ['Dein Hund bleibt bei Geräuschen ruhig', 'Ruhe-Signal auf Kommando', 'Auslöser gezielt entschärfen'],
-                desc: 'Die perfekte Ergänzung zu deinem Plan – damit ' + dogName + ' in jeder Situation ruhig bleibt.',
-                hook: 'Viele Hunde fangen mit Bellen an wenn das Hauptproblem besser wird – dieses Modul verhindert das.'
-            },
-            'aggression': {
-                icon: '😤',
-                name: 'Aggressions-Kontrolle',
-                exercises: '6 Zusatz-Übungen',
-                benefits: ['Entspannte Hundebegegnungen', 'Brenzlige Situationen entschärfen', 'Impulskontrolle aufbauen'],
-                desc: 'Die perfekte Ergänzung zu deinem Plan – damit ' + dogName + ' auch bei anderen Hunden gelassen bleibt.',
-                hook: 'Dieses Modul sorgt dafür, dass ' + dogName + ' in stressigen Situationen ruhig bleibt.'
-            },
-            'recall': {
-                icon: '📣',
-                name: 'Rückruf-Training',
-                exercises: '6 Zusatz-Übungen',
-                benefits: ['Zuverlässiger Rückruf in jeder Situation', 'Den Rückruf richtig aufbauen', 'Freilauf ohne Sorgen'],
-                desc: 'Die perfekte Ergänzung zu deinem Plan – damit ' + dogName + ' immer zuverlässig zurückkommt.',
-                hook: 'Ein sicherer Rückruf macht dein gesamtes Training effektiver – das hier beschleunigt deinen Plan.'
-            },
-            'jumping': {
-                icon: '🐕',
-                name: 'Anti-Anspring Training',
-                exercises: '6 Zusatz-Übungen',
-                benefits: ['Ruhige Begrüßungen statt Chaos', 'Die Vier-Pfoten-Regel', 'Entspannte Besucher-Situationen'],
-                desc: 'Die perfekte Ergänzung zu deinem Plan – damit ' + dogName + ' Besucher ruhig begrüßt.',
-                hook: 'Anspringen ist oft ein Zeichen fehlender Impulskontrolle – genau das trainierst du hier.'
-            },
-            'energy': {
-                icon: '⚡',
-                name: 'Ruhe & Entspannung',
-                exercises: '6 Zusatz-Übungen',
-                benefits: ['Dein Hund lernt sich zu entspannen', 'Gezielte Ruheübungen', 'Kopfarbeit für mehr Ausgeglichenheit'],
-                desc: 'Die perfekte Ergänzung zu deinem Plan – damit ' + dogName + ' lernt, auch mal abzuschalten.',
-                hook: 'Ohne Ruhetraining kann dein Haupttraining nicht richtig wirken – dieses Modul ist der Turbo.'
-            },
-            'destructive': {
-                icon: '🧸',
-                name: 'Anti-Zerstörungs Training',
-                exercises: '6 Zusatz-Übungen',
-                benefits: ['Schuhe und Möbel bleiben heil', 'Die richtigen Alternativen anbieten', 'Kauen und Zerstören umlenken'],
-                desc: 'Die perfekte Ergänzung zu deinem Plan – damit ' + dogName + ' lernt, was erlaubt ist und was nicht.',
-                hook: 'Zerstörungsverhalten kommt oft bei unterforderten Hunden – dieses Modul gibt ' + dogName + ' die richtige Beschäftigung.'
-            },
-            'mouthing': {
-                icon: '🦴',
-                name: 'Anti-Aufnehm Training',
-                exercises: '6 Zusatz-Übungen',
-                benefits: ['Dein Hund nimmt draußen nichts mehr auf', 'Das Aus-Kommando sicher aufbauen', 'Giftköder-Schutz für Spaziergänge'],
-                desc: 'Die perfekte Ergänzung zu deinem Plan – damit Spaziergänge mit ' + dogName + ' sicher werden.',
-                hook: 'Draußen alles aufnehmen kann lebensgefährlich werden – dieses Modul schützt ' + dogName + '.'
-            }
-        };
+        // Supabase Config (fuer Purchase-Status-Update)
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
 
-        // Alle Probleme aus localStorage/wauwerk_answers holen
-        const answers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
-        
-        // Alle ausgewählten Probleme sammeln
-        const dogGoal = answers.dog_goal || localStorage.getItem('dogProblemKey') || '';
-        const dogProblem = answers.dog_problem || localStorage.getItem('dogProblem') || '';
-        const dogBehaviors = answers.dog_behaviors || JSON.parse(localStorage.getItem('dogBehaviors') || '[]');
-        
-        // Alle Probleme kombinieren (ohne Duplikate)
-        const allUserProblems = [...new Set([dogGoal, dogProblem, ...dogBehaviors].filter(p => p))];
+        // Hundenamen in Banner ersetzen
+        document.querySelectorAll('.dog-name').forEach(el => { el.textContent = dogName; });
 
-        console.log('🐕 dog_goal:', dogGoal);
-        console.log('🐕 dog_problem:', dogProblem);
-        console.log('🐕 dog_behaviors:', dogBehaviors);
-        console.log('🐕 Alle ausgeschlossenen Probleme:', allUserProblems);
+        // Skip-Button nach 3 Sekunden einblenden
+        setTimeout(() => {
+            const sb = document.getElementById('skipBtn');
+            if (sb) sb.style.opacity = '1';
+        }, 3000);
 
-        // Relevanz-Mapping: Welches Modul passt am besten zum Problem?
-        const relevanceMap = {
-            'pulling':      ['recall', 'energy', 'jumping', 'aggression', 'barking', 'anxiety', 'destructive'],
-            'recall':       ['pulling', 'energy', 'aggression', 'jumping', 'barking', 'anxiety', 'destructive'],
-            'aggression':   ['energy', 'pulling', 'recall', 'anxiety', 'barking', 'jumping', 'destructive'],
-            'anxiety':      ['destructive', 'energy', 'barking', 'pulling', 'recall', 'jumping', 'aggression'],
-            'barking':      ['anxiety', 'energy', 'aggression', 'jumping', 'pulling', 'recall', 'destructive'],
-            'jumping':      ['recall', 'pulling', 'energy', 'barking', 'aggression', 'anxiety', 'destructive'],
-            'energy':       ['pulling', 'destructive', 'recall', 'jumping', 'barking', 'anxiety', 'aggression'],
-            'destructive':  ['anxiety', 'energy', 'barking', 'pulling', 'recall', 'jumping', 'aggression']
-        };
-
-        // Upsell-Optionen rendern: 1 empfohlenes Modul
-        function renderUpsellOptions() {
-            const container = document.getElementById('upsellOptions');
-            const allModules = Object.keys(moduleData);
-
-            // Filter: Module die der User nicht im Plan hat
-            const availableModules = allModules.filter(m => !allUserProblems.includes(m));
-
-            if (availableModules.length === 0) {
-                container.innerHTML = '<p style="text-align:center;color:#666;padding:20px;">Du hast bereits alle Übungen!</p>';
-                return;
-            }
-
-            // Nach Relevanz sortieren
-            const mainProblem = dogProblem || dogGoal || '';
-            const relevanceOrder = relevanceMap[mainProblem] || [];
-
-            const sortedModules = availableModules.sort((a, b) => {
-                const indexA = relevanceOrder.indexOf(a);
-                const indexB = relevanceOrder.indexOf(b);
-                const scoreA = indexA === -1 ? 999 : indexA;
-                const scoreB = indexB === -1 ? 999 : indexB;
-                return scoreA - scoreB;
-            });
-
-            const recommended = sortedModules[0];
-            const recModule = moduleData[recommended];
-
-            let html = '';
-
-            // Hook-Text (warum dieses Modul relevant ist)
-            html += '<div style="background: #FFF8E7; border-left: 3px solid #C4A576; padding: 10px 14px; border-radius: 0 8px 8px 0; margin-bottom: 14px; font-size: 13px; color: #5C4A2A; line-height: 1.5;">' +
-                recModule.hook +
-            '</div>';
-
-            // ========== EMPFOHLENES MODUL ==========
-            html += '<div style="background: #FFFBF5; border: 2px solid #C4A576; border-radius: 14px; padding: 18px; position: relative;">' +
-                '<div style="position: absolute; top: -10px; left: 16px; background: #C4A576; color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 6px;">Passend zu deinem Plan</div>' +
-                '<div class="option-header">' +
-                    '<div class="option-left">' +
-                        '<span class="option-icon">' + recModule.icon + '</span>' +
-                        '<span class="option-name">' + recModule.name + '</span>' +
-                    '</div>' +
-                    '<span class="option-badge">' + recModule.exercises + '</span>' +
-                '</div>' +
-                '<p class="option-desc">' + recModule.desc + '</p>' +
-                '<div class="option-points">' + recModule.benefits.map(b => '<span class="option-point">' + b + '</span>').join('') + '</div>' +
-                '<div class="option-footer">' +
-                    '<div class="option-price">' +
-                        '<span class="option-price-old">€39</span>' +
-                        '<span class="option-price-new">€19,99</span>' +
-                    '</div>' +
-                    '<button class="option-btn" style="background: linear-gradient(135deg, #C4A576, #8B7355); padding: 14px 28px; font-size: 15px; font-weight: 700;" onclick="buyUpsell(\'' + recommended + '\')">Zum Plan hinzufügen</button>' +
-                '</div>' +
-                '<div style="text-align: center; margin-top: 10px; font-size: 12px; color: #166534; font-weight: 500;">Sofort per E-Mail · Einmalzahlung · Kein Abo</div>' +
-            '</div>';
-
-            // Social Proof
-            html += '<div style="text-align: center; margin-top: 14px; font-size: 13px; color: #666;">' +
-                '<span style="display: inline-block; width: 8px; height: 8px; background: #22C55E; border-radius: 50%; margin-right: 6px; box-shadow: 0 0 6px rgba(34,197,94,0.6); animation: livePulse 2s infinite;"></span><span style="color: #C4A576; font-weight: 600;">347 Hundebesitzer</span> haben dieses Modul zu ihrem Plan hinzugefügt' +
-            '</div>';
-
-            container.innerHTML = html;
+        function skipToModules() {
+            // Relativer Pfad — funktioniert sowohl lokal (file://) als auch live (Vercel)
+            window.location.href = 'downsell.html?lead_id=' + encodeURIComponent(leadId || '');
         }
 
-        // Upsell-Optionen beim Laden rendern
-        renderUpsellOptions();
+        // Support-Fallback nach 20 Min einblenden
+        setTimeout(function() {
+            try {
+                const el = document.getElementById('supportFallback');
+                if (!el) return;
+                el.style.display = 'block';
+                const link = document.getElementById('supportFallbackLink');
+                if (link) {
+                    const mail = userEmail || '';
+                    const dog = dogName || '';
+                    const subject = encodeURIComponent('Plan nicht angekommen — Hilfe bitte');
+                    const body = encodeURIComponent(
+                        'Hallo Pfoten-Plan-Team,\n\n' +
+                        'mein Plan ist nach über 20 Minuten noch nicht angekommen. Bitte schickt ihn mir manuell zu.\n\n' +
+                        'Hund: ' + (dog || '(bitte ausfüllen)') + '\n' +
+                        'E-Mail: ' + (mail || '(bitte ausfüllen)') + '\n\n' +
+                        'Vielen Dank!'
+                    );
+                    link.href = 'mailto:support@pfoten-plan.de?subject=' + subject + '&body=' + body;
+                }
+            } catch(e) {}
+        }, 20 * 60 * 1000);
 
-        // Timer entfernt - Banner bleibt statisch
-
-        // Preise je Plan
-        const planPrices = {
-            '1month': 29.99,
-            '3month': 39.99,
-            '6month': 59.99
-        };
+        // ==================== PURCHASE TRACKING (1. PLAN-KAUF) ====================
+        // WICHTIG: feuert NUR fuer den Erstkauf des Plans, NICHT fuer Upsells.
+        // Selbe Deduplizierungs-Logik wie vorher.
+        const planPrices = { '1month': 29.99, '3month': 39.99, '6month': 59.99 };
         const purchaseValue = planPrices[selectedPlan] || 39.99;
-
-        // ==================== PURCHASE TRACKING ====================
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session_id');
         const paymentIntent = urlParams.get('payment_intent');
         const redirectStatus = urlParams.get('redirect_status');
-        
-        // NUR wenn redirect_status=succeeded ODER payment_intent vorhanden (Stripe Redirect)
         const isValidPurchase = (redirectStatus === 'succeeded') || (paymentIntent && !redirectStatus);
-        
-        // Gleicher Key wie in danke.html für Deduplizierung
         const uniqueKey = paymentIntent || sessionId || leadId || 'unknown';
         const trackingKey = 'wauwerk_purchase_tracked_' + uniqueKey;
 
         if (isValidPurchase && !localStorage.getItem(trackingKey)) {
             console.log('🔥 Purchase Event feuern:', purchaseValue, 'EUR');
-            
-            // Event ID für Meta Deduplizierung (STABIL - ohne Date.now() für korrekte Deduplizierung)
             const eventId = 'purchase_' + uniqueKey;
-            
+
             if (typeof fbq !== 'undefined') {
                 fbq('track', 'Purchase', {
                     value: purchaseValue,
@@ -1172,10 +363,7 @@
                     content_type: 'product',
                     content_ids: ['wauwerk_' + selectedPlan],
                     content_name: 'Pfoten-Plan Trainingsplan ' + selectedPlan,
-                    contents: [{
-                        id: 'wauwerk_' + selectedPlan,
-                        quantity: 1
-                    }]
+                    contents: [{ id: 'wauwerk_' + selectedPlan, quantity: 1 }]
                 }, { eventID: eventId });
                 console.log('✅ Meta Purchase gefeuert (Event ID:', eventId, ')');
             }
@@ -1206,106 +394,52 @@
             }
 
             localStorage.setItem(trackingKey, 'true');
-            
-            // Status in Supabase auf "paid" setzen
-            const updatePaidStatus = async () => {
-                let updateUrl = '';
-                
-                if (leadId) {
-                    updateUrl = `${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}`;
-                } else if (userEmail) {
-                    // Fallback: nach Email suchen
-                    updateUrl = `${SUPABASE_URL}/rest/v1/wauwerk_leads?email=eq.${encodeURIComponent(userEmail)}&order=created_at.desc&limit=1`;
-                }
-                
-                if (updateUrl) {
-                    try {
-                        const response = await fetch(updateUrl, {
-                            method: 'PATCH',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'apikey': SUPABASE_ANON_KEY,
-                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                            },
-                            body: JSON.stringify({
-                                status: 'paid',
-                                selected_plan: selectedPlan,
-                                price: purchaseValue,
-                                stripe_payment_intent: paymentIntent || null,
-                                paid_at: new Date().toISOString()
-                            })
-                        });
-                        
-                        if (response.ok) {
-                            console.log('✅ Supabase Status auf "paid" gesetzt');
-                        } else {
-                            console.error('❌ Supabase update failed:', response.status);
-                        }
-                    } catch (err) {
-                        console.error('Supabase update error:', err);
-                    }
-                } else {
-                    console.warn('⚠️ Keine leadId oder Email - kann Status nicht updaten');
-                }
-            };
-            
-            updatePaidStatus();
 
-            // Tagebuch-Bump-Auslieferung als Fallback antriggern (idempotent server-seitig).
-            // Greift falls der Stripe-Webhook nicht durchlief — checkt via Stripe-API
-            // ob der Bump tatsächlich gekauft wurde und liefert dann das PDF.
+            // Supabase Status auf "paid" setzen (Fallback falls Webhook nicht durchlief)
+            (async () => {
+                let updateUrl = '';
+                if (leadId) {
+                    updateUrl = SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + leadId;
+                } else if (userEmail) {
+                    updateUrl = SUPABASE_URL + '/rest/v1/wauwerk_leads?email=eq.' + encodeURIComponent(userEmail) + '&order=created_at.desc&limit=1';
+                }
+                if (!updateUrl) return;
+                try {
+                    await fetch(updateUrl, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                        },
+                        body: JSON.stringify({
+                            status: 'paid',
+                            selected_plan: selectedPlan,
+                            price: purchaseValue,
+                            stripe_payment_intent: paymentIntent || null,
+                            paid_at: new Date().toISOString()
+                        })
+                    });
+                    console.log('✅ Supabase Status auf paid gesetzt');
+                } catch (err) { console.error('Supabase update error:', err); }
+            })();
+
+            // Tagebuch-Bump-Auslieferung idempotent triggern
             if (leadId) {
                 fetch('/api/tagebuch/check-and-deliver', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ leadId })
-                }).then(r => r.json()).then(d => {
-                    console.log('📓 Tagebuch-Check:', d);
-                }).catch(e => console.error('Tagebuch-Check Fehler:', e));
+                }).then(r => r.json()).then(d => console.log('📓 Tagebuch-Check:', d)).catch(() => {});
             }
         } else {
             console.log('⏭️ Purchase bereits getrackt, skip');
         }
         // ==================== END TRACKING ====================
-        
-        document.querySelectorAll('.dog-name').forEach(el => {
-            el.textContent = dogName;
-        });
 
-        // Dynamische Texte basierend auf Alter
-        const ageContent = {
-            'puppy': {
-                stat: '<strong>Warte kurz!</strong> Dein Trainingsplan für ' + dogName + ' ist unterwegs. Aber eine Sache fehlt noch:',
-                header: 'Mach ' + dogName + 's Training komplett'
-            },
-            'young': {
-                stat: '<strong>Warte kurz!</strong> Dein Trainingsplan für ' + dogName + ' ist unterwegs. Aber eine Sache fehlt noch:',
-                header: 'Mach ' + dogName + 's Training komplett'
-            },
-            'adult': {
-                stat: '<strong>Warte kurz!</strong> Dein Trainingsplan für ' + dogName + ' ist unterwegs. Aber eine Sache fehlt noch:',
-                header: 'Mach ' + dogName + 's Training komplett'
-            },
-            'senior': {
-                stat: '<strong>Warte kurz!</strong> Dein Trainingsplan für ' + dogName + ' ist unterwegs. Aber eine Sache fehlt noch:',
-                header: 'Mach ' + dogName + 's Training komplett'
-            }
-        };
-
-        const content = ageContent[dogAge] || ageContent['adult'];
-        
-        document.querySelector('.upsell-header h2').innerHTML = content.header;
-        document.getElementById('upsellStat').innerHTML = content.stat;
-
-        // One-Click-Upsell via Mollie Mandate (Recurring Payment).
-        // Wenn Erstkauf mit recurring-faehiger Methode (creditcard/paypal/sepa)
-        // gemacht wurde, hat der Webhook ein Mandate gespeichert → wir koennen
-        // hier OHNE Redirect chargen. Bei ApplePay/GooglePay/Klarna fallback
-        // auf den klassischen Redirect-Flow.
-        //
-        // Returns true wenn 1-Click erfolgreich war (UI updated, kein weiterer Schritt
-        // noetig). Returns false wenn Caller den alten Redirect-Flow nutzen soll.
-        async function tryOneClickUpsell(payload, moduleName) {
+        // ==================== NOTFALL-KARTEN UPSELL ====================
+        // 1-Click via Mandate (recurring) versuchen, sonst Redirect zu Mollie.
+        async function tryOneClickUpsell(payload, productName) {
             try {
                 const r = await fetch('/api/mollie/upsell-recurring', {
                     method: 'POST',
@@ -1314,372 +448,89 @@
                 });
                 const j = await r.json();
                 if (j.ok) {
-                    console.log('✓ 1-Click-Upsell ok:', moduleName, j.paymentId);
-                    showUpsellSuccess(moduleName || 'Modul');
+                    console.log('✓ 1-Click ok:', productName, j.paymentId);
+                    showUpsellSuccess(productName);
                     return true;
                 }
-                if (j.fallback_to_redirect) {
-                    console.log('ℹ 1-Click nicht moeglich (kein Mandate), fallback auf Redirect');
-                    return false;
-                }
-                console.warn('1-Click error, fallback:', j.error);
                 return false;
             } catch (e) {
-                console.warn('1-Click exception, fallback:', e?.message || e);
+                console.warn('1-Click exception:', e?.message || e);
                 return false;
             }
         }
 
-        // Success-Overlay nach erfolgreichem 1-Click-Upsell.
-        // Zeigt 2.5s einen sanften Bestaetigungs-State, dann reload mit ?added=module
-        // damit das Modul nicht nochmal gekauft werden kann (Card disabled).
-        function showUpsellSuccess(moduleName) {
+        function showUpsellSuccess(productName) {
             const overlay = document.createElement('div');
             overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;animation:upsellFadeIn 0.2s ease-out;';
             overlay.innerHTML = `
-                <style>
-                    @keyframes upsellFadeIn { from{opacity:0;} to{opacity:1;} }
-                    @keyframes upsellPop { 0%{transform:scale(0.8);opacity:0;} 60%{transform:scale(1.05);} 100%{transform:scale(1);opacity:1;} }
-                    @keyframes upsellCheck { from{stroke-dashoffset:60;} to{stroke-dashoffset:0;} }
-                </style>
                 <div style="background:#fff;border-radius:16px;padding:32px 28px;max-width:380px;width:100%;text-align:center;box-shadow:0 24px 48px rgba(0,0,0,0.22);animation:upsellPop 0.35s cubic-bezier(0.34,1.56,0.64,1);">
                     <div style="width:64px;height:64px;background:#DCFCE7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
                         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="20 6 9 17 4 12" stroke-dasharray="60" style="animation:upsellCheck 0.4s ease-out 0.2s both;"/>
                         </svg>
                     </div>
-                    <h3 style="font-size:18px;font-weight:800;color:#1a1a1a;margin:0 0 8px;">${moduleName} hinzugefügt!</h3>
-                    <p style="font-size:14px;color:#4B5563;line-height:1.5;margin:0;">Wird sofort an deine E-Mail geschickt.</p>
-                </div>
-            `;
+                    <h3 style="font-size:18px;font-weight:800;color:#1a1a1a;margin:0 0 8px;">${productName} hinzugefügt!</h3>
+                    <p style="font-size:14px;color:#4B5563;line-height:1.5;margin:0;">Kommt sofort per E-Mail.</p>
+                </div>`;
             document.body.appendChild(overlay);
             setTimeout(() => {
-                const url = new URL(window.location.href);
-                url.searchParams.set('added', encodeURIComponent(moduleName));
-                window.location.href = url.toString();
+                window.location.href = 'danke-final.html?upsell=true&lead_id=' + encodeURIComponent(leadId || '');
             }, 2500);
         }
 
-        // Premium kaufen
-        async function buyPremium() {
-            const btn = document.querySelector('.premium-btn');
-            btn.textContent = 'Lädt...';
+        async function buyNotfallKarten() {
+            const btn = document.getElementById('ctaBtn');
+            const originalText = btn.textContent;
+            btn.innerHTML = '<span class="spinner"></span> Lädt...';
             btn.disabled = true;
 
-            currentModule = 'premium';
-
-            // Popup SOFORT öffnen und aktualisieren - mit Trainer-Bild
-            document.querySelector('.payment-product').innerHTML = 
-                '<div class="payment-trainer-img">' +
-                    '<img src="TrainerWau.png" alt="Dein Trainer" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid #C4A576;">' +
-                '</div>' +
-                '<div class="payment-product-info">' +
-                    '<h3 id="paymentModuleName">Pfoten-Plan Premium</h3>' +
-                    '<p>Persönliche Betreuung für ' + dogName + '</p>' +
-                '</div>' +
-                '<div class="payment-product-price" style="font-size: 16px; text-align: right;">' +
-                    '<div style="font-size: 18px; font-weight: 700;">€249,99</div>' +
-                    '<div style="font-size: 11px; color: #888;">≈ €83,33/Monat</div>' +
-                '</div>';
-
-            // Premium Benefits - besser erklärt
-            const premiumBenefitsHtml = 
-                '<div class="payment-benefit">✓ <span>Leinenführigkeit, Anti-Bell, Rückruf, Trennungsangst & mehr</span></div>' +
-                '<div class="payment-benefit">✓ <span>3 Monate persönlicher Support via WhatsApp</span></div>' +
-                '<div class="payment-benefit">✓ <span>Schick Videos – bekomm Feedback</span></div>' +
-                '<div class="payment-benefit">✓ <span>Wöchentliche Check-ins: "Wie läuft\'s?"</span></div>';
-            document.getElementById('paymentBenefits').innerHTML = premiumBenefitsHtml;
-
-            // WhatsApp Hinweis hinzufügen
-            const whatsappNote = document.createElement('div');
-            whatsappNote.style.cssText = 'background: #E8F5E9; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 12px; color: #2E7D32; text-align: center;';
-            whatsappNote.innerHTML = '📱 <strong>Nach dem Kauf:</strong> Du bekommst per Email deine WhatsApp-Zugangsdaten';
-            
-            const paymentBenefits = document.getElementById('paymentBenefits');
-            paymentBenefits.parentNode.insertBefore(whatsappNote, paymentBenefits.nextSibling);
-
-            // Popup Title ändern
-            document.querySelector('.payment-title').textContent = 'Premium sichern';
-
-            // Popup SOFORT öffnen
-            document.getElementById('paymentOverlay').classList.add('active');
-
-            // Check email
             if (!userEmail) {
-                alert('Bitte zuerst E-Mail eingeben.');
-                btn.textContent = 'Premium sichern';
+                alert('Fehler: Keine E-Mail gefunden.');
+                btn.textContent = originalText;
                 btn.disabled = false;
-                closePaymentPopup();
                 return;
             }
 
-            try {
-                // 1-Click via Mandate versuchen
-                const oneClickOk = await tryOneClickUpsell({
-                    module: 'premium',
-                    leadId: leadId,
-                    email: userEmail,
-                    dogName: dogName,
-                    price: 24999
-                }, 'Premium');
-                if (oneClickOk) return; // Success-UI uebernimmt, kein Redirect
+            // 1-Click via Mandate versuchen
+            const oneClickOk = await tryOneClickUpsell({
+                module: 'notfall-karten',
+                leadId: leadId,
+                email: userEmail,
+                dogName: dogName,
+                price: 999
+            }, 'Notfall-Karten');
+            if (oneClickOk) return;
 
-                const returnUrl = window.location.origin + '/danke-final.html?premium=true&lead_id=' + encodeURIComponent(leadId || '');
+            // Fallback: klassischer Mollie-Redirect-Flow
+            try {
+                const returnUrl = window.location.origin + '/danke-final.html?upsell=true&lead_id=' + encodeURIComponent(leadId || '');
                 const response = await fetch('/api/mollie/upsell-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        module: 'premium',
+                        module: 'notfall-karten',
                         leadId: leadId,
                         email: userEmail,
                         dogName: dogName,
-                        price: 24999,
-                        returnUrl: returnUrl,
-                        referredByCode: localStorage.getItem('referred_by_code') || ''
+                        price: 999,
+                        returnUrl: returnUrl
                     })
                 });
-
                 const result = await response.json();
                 if (result.error || !result.url) {
-                    alert('Fehler: ' + (result.error || 'Keine Zahlungs-URL erhalten'));
-                    btn.textContent = 'Premium sichern';
-                    btn.disabled = false;
-                    closePaymentPopup();
-                    return;
-                }
-
-                window.location.href = result.url;
-
-            } catch (err) {
-                console.error('Premium Error:', err);
-                alert('Fehler beim Laden. Bitte versuche es erneut.');
-                btn.textContent = 'Premium sichern';
-                btn.disabled = false;
-                closePaymentPopup();
-            }
-        }
-
-        // Payment Popup öffnen
-        async function buyUpsell(module) {
-            const btn = event.target;
-            btn.textContent = 'Lädt...';
-            btn.disabled = true;
-
-            // Check if email exists
-            if (!userEmail) {
-                alert('Bitte zuerst E-Mail eingeben.');
-                btn.textContent = 'Hinzufügen';
-                btn.disabled = false;
-                return;
-            }
-
-            currentModule = module;
-            const data = moduleData[module] || moduleData['anxiety'];
-
-            // Popup aktualisieren
-            document.getElementById('paymentIcon').textContent = data.icon;
-            document.getElementById('paymentModuleName').textContent = data.name;
-            document.querySelector('.payment-product-info p').textContent = data.exercises + ' • 2 Wochen';
-
-            // Benefits aktualisieren
-            const benefitsHtml = data.benefits.map(b => '<div class="payment-benefit">✓ <span>' + b + '</span></div>').join('');
-            document.getElementById('paymentBenefits').innerHTML = benefitsHtml;
-
-            try {
-                // 1-Click via Mandate versuchen
-                const oneClickOk = await tryOneClickUpsell({
-                    module: module,
-                    leadId: leadId,
-                    email: userEmail,
-                    dogName: dogName
-                }, (moduleData[module] && moduleData[module].name) || 'Modul');
-                if (oneClickOk) return;
-
-                const returnUrl = window.location.origin + '/danke-zusatz.html?module=' + encodeURIComponent(module) + '&lead_id=' + encodeURIComponent(leadId || '');
-                const response = await fetch('/api/mollie/upsell-checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        module: module,
-                        leadId: leadId,
-                        email: userEmail,
-                        dogName: dogName,
-                        returnUrl: returnUrl,
-                        referredByCode: localStorage.getItem('referred_by_code') || ''
-                    })
-                });
-
-                const result = await response.json();
-                if (result.error || !result.url) {
-                    alert('Fehler: ' + (result.error || 'Keine Zahlungs-URL erhalten'));
-                    btn.textContent = 'Hinzufügen';
+                    alert('Fehler beim Laden. Bitte versuche es erneut.');
+                    btn.textContent = originalText;
                     btn.disabled = false;
                     return;
                 }
-
                 window.location.href = result.url;
-
             } catch (err) {
-                console.error('Error:', err);
-                alert('Fehler beim Laden. Bitte versuche es erneut.');
-                btn.textContent = 'Hinzufügen';
+                console.error('Notfall-Karten Error:', err);
+                alert('Fehler beim Laden.');
+                btn.textContent = originalText;
                 btn.disabled = false;
             }
         }
-
-        // Bundle kaufen (beide Module)
-        async function buyBundle(module1, module2) {
-            const btn = event.target;
-            btn.textContent = 'Lädt...';
-            btn.disabled = true;
-
-            if (!userEmail) {
-                alert('Bitte zuerst E-Mail eingeben.');
-                btn.textContent = 'Bundle sichern';
-                btn.disabled = false;
-                return;
-            }
-
-            currentModule = module1 + '+' + module2; // Bundle: beide Module
-            const data1 = moduleData[module1];
-            const data2 = moduleData[module2];
-
-            // Popup für Bundle aktualisieren
-            document.getElementById('paymentIcon').textContent = '📦';
-            document.getElementById('paymentModuleName').textContent = 'Komplett-Paket';
-            document.querySelector('.payment-product-info p').textContent = data1.name + ' + ' + data2.name;
-            document.querySelector('.payment-product-price').textContent = '€24,99';
-
-            // Benefits für Bundle (je 2 von jedem Modul)
-            const bundleBenefits = [
-                ...data1.benefits.slice(0, 2),
-                ...data2.benefits.slice(0, 2)
-            ];
-            const benefitsHtml = bundleBenefits.map(b => '<div class="payment-benefit">✓ <span>' + b + '</span></div>').join('');
-            document.getElementById('paymentBenefits').innerHTML = benefitsHtml;
-
-            try {
-                const bundleModule = module1 + '+' + module2;
-                // 1-Click via Mandate versuchen
-                const oneClickOk = await tryOneClickUpsell({
-                    module: bundleModule,
-                    leadId: leadId,
-                    email: userEmail,
-                    dogName: dogName,
-                    bundle: true,
-                    price: 2499
-                }, 'Komplett-Paket');
-                if (oneClickOk) return;
-
-                const returnUrl = window.location.origin + '/danke-zusatz.html?module=' + encodeURIComponent(bundleModule) + '&lead_id=' + encodeURIComponent(leadId || '');
-                const response = await fetch('/api/mollie/upsell-checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        module: bundleModule,
-                        leadId: leadId,
-                        email: userEmail,
-                        dogName: dogName,
-                        bundle: true,
-                        price: 2499,
-                        returnUrl: returnUrl,
-                        referredByCode: localStorage.getItem('referred_by_code') || ''
-                    })
-                });
-
-                const result = await response.json();
-                if (result.error || !result.url) {
-                    alert('Fehler: ' + (result.error || 'Keine Zahlungs-URL erhalten'));
-                    btn.textContent = 'Bundle sichern';
-                    btn.disabled = false;
-                    return;
-                }
-
-                window.location.href = result.url;
-
-            } catch (err) {
-                console.error('Bundle Error:', err);
-                alert('Fehler beim Laden. Bitte versuche es erneut.');
-                btn.textContent = 'Bundle sichern';
-                btn.disabled = false;
-            }
-        }
-
-        // Zahlung abschicken
-        async function submitUpsellPayment() {
-            const payBtn = document.getElementById('paymentBtn');
-            payBtn.disabled = true;
-            payBtn.innerHTML = '<span class="spinner"></span> Wird verarbeitet...';
-            
-            hidePaymentError();
-
-            if (!stripe || !elements) {
-                showPaymentError('Stripe nicht initialisiert. Bitte Seite neu laden.');
-                payBtn.disabled = false;
-                payBtn.innerHTML = '🔒 Jetzt bezahlen';
-                return;
-            }
-
-            try {
-                console.log('💳 Starte Zahlung...');
-                const { error } = await stripe.confirmPayment({
-                    elements,
-                    confirmParams: {
-                        return_url: window.location.origin + '/danke-zusatz.html?module=' + currentModule + '&lead_id=' + leadId
-                    }
-                });
-
-                if (error) {
-                    console.error('❌ Stripe Fehler:', error);
-                    showPaymentError(error.message || 'Zahlung fehlgeschlagen');
-                    payBtn.disabled = false;
-                    payBtn.innerHTML = '🔒 Jetzt bezahlen';
-                }
-            } catch (err) {
-                console.error('❌ Catch Fehler:', err);
-                showPaymentError('Zahlung fehlgeschlagen. Bitte versuche es erneut.');
-                payBtn.disabled = false;
-                payBtn.innerHTML = '🔒 Jetzt bezahlen';
-            }
-        }
-
-        function showPaymentError(message) {
-            const errorEl = document.getElementById('paymentError');
-            errorEl.textContent = message;
-            errorEl.classList.add('visible');
-        }
-
-        function hidePaymentError() {
-            document.getElementById('paymentError').classList.remove('visible');
-        }
-
-        function closePaymentPopup() {
-            document.getElementById('paymentOverlay').classList.remove('active');
-            // Payment Element unmounten
-            if (paymentElement) {
-                paymentElement.unmount();
-                paymentElement = null;
-            }
-        }
-
-        // Skip Button erst nach 5 Sekunden einblenden
-        setTimeout(function() {
-            const skipEl = document.getElementById('skipSection');
-            if (skipEl) skipEl.style.opacity = '1';
-        }, 5000);
-
-        // Skip Button → Downsell-Seite
-        document.querySelector('.skip-btn').addEventListener('click', function(e) {
-            e.preventDefault();
-            window.location.href = 'downsell.html?lead_id=' + leadId;
-        });
-
-        // Overlay schließen bei Klick außerhalb
-        document.getElementById('paymentOverlay').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closePaymentPopup();
-            }
-        });
     </script>
 </body>
 </html>
