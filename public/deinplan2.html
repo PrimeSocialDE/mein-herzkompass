@@ -255,37 +255,19 @@
             .keyfacts { grid-template-columns: 1fr; }
         }
 
-        /* Video-Card (unterhalb der Aufmerksamkeits-Übung) */
+        /* Video-Card (unterhalb der Aufmerksamkeits-Übung) — vertikales 9:16-Video */
         .video-card {
             position: relative;
-            width: 100%; aspect-ratio: 16/9; border-radius: 14px;
-            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
-            overflow: hidden; cursor: pointer;
+            width: 100%; max-width: 340px;
+            margin: 20px auto 0;
+            aspect-ratio: 9/16; border-radius: 14px;
+            background: #1a1a1a;
+            overflow: hidden;
             box-shadow: 0 8px 28px rgba(0,0,0,0.12);
-            margin-top: 20px;
         }
-        .video-card .placeholder-grid {
-            position: absolute; inset: 0;
-            background:
-                linear-gradient(135deg, rgba(196,165,118,0.2) 0%, rgba(139,115,85,0.4) 100%),
-                repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0 10px, transparent 10px 20px);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .video-card .play-button {
-            width: 64px; height: 64px; border-radius: 50%;
-            background: rgba(255,255,255,0.95);
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-            transition: transform 0.2s;
-        }
-        .video-card:hover .play-button { transform: scale(1.05); }
-        .video-card .play-button svg { width: 26px; height: 26px; color: var(--warm-brown); margin-left: 4px; }
-        .video-card .video-label {
-            position: absolute; bottom: 14px; left: 14px;
-            background: rgba(0,0,0,0.65); color: white;
-            padding: 6px 12px; border-radius: 8px;
-            font-size: 12px; font-weight: 600;
-            backdrop-filter: blur(4px);
+        .video-card video {
+            width: 100%; height: 100%; object-fit: cover;
+            display: block;
         }
 
         .day-card {
@@ -878,16 +860,9 @@
             </div>
         </div>
 
-        <!-- 5) Video-Platzhalter -->
-        <div class="video-card" id="planVideo" onclick="playPlanVideo()">
-            <div class="placeholder-grid">
-                <div class="play-button">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M8 5v14l11-7z"/>
-                    </svg>
-                </div>
-            </div>
-            <div class="video-label">[PLATZHALTER] So sieht dein Plan aus · 45 Sek.</div>
+        <!-- 5) Plan-Einblick-Video (vertikal, 9:16) -->
+        <div class="video-card">
+            <video src="PfotenPlanEinblick.mp4" controls playsinline preload="metadata" poster=""></video>
         </div>
     </section>
 
@@ -1346,9 +1321,6 @@ personalisiert</div>
                 afterName.textContent = dogName;
             }
         })();
-
-        // Video-Platzhalter
-        function playPlanVideo() { alert('[PLATZHALTER] Plan-Vorschau-Video (45 Sek.) folgt.'); }
 
         // Sticky-Header. erscheint NACH Scroll-Past-Hero
         const stickyHeader = document.getElementById('stickyHeader');
