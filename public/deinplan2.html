@@ -223,6 +223,38 @@
             width: 100%; height: auto; display: block;
         }
 
+        /* Keyfacts-Leiste (kompakt, 2×2 auf Desktop, gestapelt auf schmalen Screens) */
+        .keyfacts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .keyfact {
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 14px 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .keyfact-icon {
+            font-size: 22px; line-height: 1; flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .keyfact-title {
+            font-size: 13.5px; font-weight: 700; color: var(--text-dark);
+            line-height: 1.3;
+        }
+        .keyfact-text {
+            font-size: 12px; color: var(--text-medium);
+            line-height: 1.4; margin-top: 2px;
+        }
+        @media (max-width: 380px) {
+            .keyfacts { grid-template-columns: 1fr; }
+        }
+
         /* Video-Card (unterhalb der Aufmerksamkeits-Übung) */
         .video-card {
             position: relative;
@@ -319,7 +351,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
-        /* SECTION 3: Testimonial */
+        /* SECTION 3: Testimonials (3er-Stack) */
         .testimonial-section {
             background: var(--warm-cream);
             padding: 56px 20px;
@@ -332,26 +364,33 @@
             border-radius: 16px; padding: 4px 12px;
             font-size: 12px; font-weight: 600;
             color: var(--dark-brown);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
+        .testimonial-stack { display: flex; flex-direction: column; gap: 12px; }
         .testimonial-card {
             background: white; border-radius: 14px;
-            padding: 24px; box-shadow: 0 2px 14px rgba(0,0,0,0.04);
+            padding: 18px 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04);
             border: 1px solid var(--border-light);
         }
-        .testimonial-stars { display: flex; gap: 4px; margin-bottom: 12px; }
-        .testimonial-stars span { font-size: 16px; color: #F5A623; }
+        .testimonial-stars { display: flex; gap: 2px; margin-bottom: 8px; }
+        .star-box {
+            width: 16px; height: 16px;
+            background: #00B67A;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 1px;
+        }
+        .star-box svg { width: 11px; height: 11px; fill: white; }
         .testimonial-quote {
-            font-size: 16px; color: var(--text-dark);
-            line-height: 1.7; margin-bottom: 18px;
+            font-size: 14.5px; color: var(--text-dark);
+            line-height: 1.55; margin-bottom: 14px;
             font-style: italic;
         }
         .testimonial-author { display: flex; align-items: center; gap: 12px; }
         .testimonial-avatar {
-            width: 44px; height: 44px; border-radius: 50%;
+            width: 40px; height: 40px; border-radius: 50%;
             background: linear-gradient(135deg, var(--accent-brown), var(--warm-cream));
             display: flex; align-items: center; justify-content: center;
-            font-size: 11px; color: var(--dark-brown); font-weight: 700;
+            font-size: 13px; color: var(--dark-brown); font-weight: 700;
             border: 1px solid var(--border-light);
             flex-shrink: 0; overflow: hidden;
         }
@@ -359,13 +398,54 @@
             width: 100%; height: 100%; object-fit: cover; display: block;
         }
         .testimonial-author-info { flex: 1; min-width: 0; }
-        .testimonial-author-name { font-size: 14px; font-weight: 700; color: var(--text-dark); }
-        .testimonial-author-meta { font-size: 12px; color: var(--text-light); margin-top: 1px; }
+        .testimonial-author-name { font-size: 13.5px; font-weight: 700; color: var(--text-dark); }
+        .testimonial-author-meta { font-size: 11.5px; color: var(--text-light); margin-top: 1px; }
         .testimonial-verified {
             background: rgba(168, 197, 160, 0.2); color: #3F6B3B;
-            border-radius: 8px; padding: 4px 10px;
-            font-size: 11px; font-weight: 700; white-space: nowrap;
+            border-radius: 6px; padding: 3px 8px;
+            font-size: 10.5px; font-weight: 700; white-space: nowrap;
         }
+
+        /* SECTION 6.5: Was passiert nach dem Kauf (3-Step) */
+        .after-purchase {
+            padding: 0 20px 44px; max-width: 540px; margin: 0 auto;
+        }
+        .after-purchase h2 {
+            font-size: 20px; font-weight: 800; color: var(--text-dark);
+            text-align: center; margin-bottom: 18px;
+            letter-spacing: -0.2px;
+        }
+        .after-steps { display: flex; flex-direction: column; gap: 12px; }
+        .after-step {
+            background: white; border-radius: 12px;
+            border: 1px solid var(--border-light);
+            padding: 14px 16px;
+            display: flex; align-items: flex-start; gap: 14px;
+        }
+        .after-step-num {
+            min-width: 32px; height: 32px; border-radius: 50%;
+            background: var(--warm-brown); color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 800; flex-shrink: 0;
+        }
+        .after-step-title {
+            font-size: 14px; font-weight: 700; color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+        .after-step-text {
+            font-size: 13px; color: var(--text-medium); line-height: 1.5;
+        }
+        .after-step-text strong { color: var(--text-dark); }
+
+        /* Price-Reason unter Compare-Grid */
+        .compare-reason {
+            margin-top: 18px;
+            font-size: 13.5px; color: var(--text-medium);
+            line-height: 1.55;
+            max-width: 460px;
+            margin-left: auto; margin-right: auto;
+        }
+        .compare-reason strong { color: var(--text-dark); }
 
         /* SECTION 4: Trainer */
         .trainer-card {
@@ -694,6 +774,7 @@
                 <div class="progress-fill"></div>
             </div>
             <p class="progress-hint" id="progressHint">87 % der Halter:innen sehen in den ersten 7 Tagen Veränderung</p>
+            <p style="margin-top:4px;font-size:11.5px;color:var(--text-light);font-style:italic;">Basierend auf Feedback von 847 Kund:innen</p>
         </div>
     </section>
 
@@ -765,7 +846,39 @@
             </div>
         </div>
 
-        <!-- 4) Video-Platzhalter -->
+        <!-- 4) Keyfacts-Leiste (kompakt, 2×2 Grid, scanbar in 2 Sek.) -->
+        <div class="keyfacts">
+            <div class="keyfact">
+                <span class="keyfact-icon">📋</span>
+                <div>
+                    <div class="keyfact-title">20+ Übungen</div>
+                    <div class="keyfact-text">gezielt auf dein Problem</div>
+                </div>
+            </div>
+            <div class="keyfact">
+                <span class="keyfact-icon">🗓️</span>
+                <div>
+                    <div class="keyfact-title">Klarer Wochen-Fahrplan</div>
+                    <div class="keyfact-text">Phase für Phase</div>
+                </div>
+            </div>
+            <div class="keyfact">
+                <span class="keyfact-icon">💬</span>
+                <div>
+                    <div class="keyfact-title">Trainer-Support</div>
+                    <div class="keyfact-text">per Chat im Mitglieder-Bereich</div>
+                </div>
+            </div>
+            <div class="keyfact">
+                <span class="keyfact-icon">📔</span>
+                <div>
+                    <div class="keyfact-title">Trainings-Tagebuch</div>
+                    <div class="keyfact-text">Fortschritt sichtbar ab Tag 1</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5) Video-Platzhalter -->
         <div class="video-card" id="planVideo" onclick="playPlanVideo()">
             <div class="placeholder-grid">
                 <div class="play-button">
@@ -778,25 +891,12 @@
         </div>
     </section>
 
-    <!-- 3. SECTION Testimonial -->
+    <!-- 3. SECTION Testimonials (3er-Stack, dynamisch ge-matcht) -->
     <section class="testimonial-section">
         <div class="testimonial-inner">
             <span class="testimonial-match-pill" id="testimonialMatch">Halter:innen mit ähnlichem Profil</span>
-            <div class="testimonial-card">
-                <div class="testimonial-stars">
-                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                </div>
-                <p class="testimonial-quote" id="testimonialQuote">
-                    „Unser Hund hat nach 10 Tagen aufgehört, an der Leine zu ziehen. Ich war mega skeptisch, aber die Übungen sind so einfach, dass man sie wirklich jeden Tag machen kann."
-                </p>
-                <div class="testimonial-author">
-                    <div class="testimonial-avatar"><span>[BILD]</span></div>
-                    <div class="testimonial-author-info">
-                        <div class="testimonial-author-name" id="testimonialName">Sandra M.</div>
-                        <div class="testimonial-author-meta" id="testimonialMeta">Labrador, 3 Jahre · Hamburg</div>
-                    </div>
-                    <div class="testimonial-verified">✓ Verifiziert</div>
-                </div>
+            <div class="testimonial-stack" id="testimonialStack">
+                <!-- 3 Cards werden per JS gerendert -->
             </div>
         </div>
     </section>
@@ -844,6 +944,10 @@ personalisiert</div>
                     <div class="price">ab 29,99 €</div>
                 </div>
             </div>
+            <p class="compare-reason">
+                <strong>Kein Einzeltraining vor Ort</strong> — deshalb nur ein Bruchteil der Kosten.
+                Du machst die Übungen zuhause und unterwegs. mit klarer Anleitung und Trainer-Support im Chat.
+            </p>
         </div>
     </section>
 
@@ -896,6 +1000,34 @@ personalisiert</div>
         </div>
     </section>
 
+    <!-- 6.5 SECTION Was passiert nach dem Kauf -->
+    <section class="after-purchase">
+        <h2>Was passiert nach dem Kauf</h2>
+        <div class="after-steps">
+            <div class="after-step">
+                <div class="after-step-num">1</div>
+                <div>
+                    <div class="after-step-title">Du bezahlst sicher</div>
+                    <div class="after-step-text">SSL-verschlüsselt über Stripe oder Mollie. <strong>Einmalzahlung, kein Abo.</strong></div>
+                </div>
+            </div>
+            <div class="after-step">
+                <div class="after-step-num">2</div>
+                <div>
+                    <div class="after-step-title">Dein Plan kommt sofort per E-Mail</div>
+                    <div class="after-step-text">Personalisiert auf <span id="afterStepDogName">deinen Hund</span>. inklusive Login zum Mitglieder-Bereich.</div>
+                </div>
+            </div>
+            <div class="after-step">
+                <div class="after-step-num">3</div>
+                <div>
+                    <div class="after-step-title">Mitglieder-Bereich mit Trainer-Support</div>
+                    <div class="after-step-text">Übungs-Videos, Trainings-Tagebuch, Wochen-Challenges. und <strong>direkter Chat mit unserem Trainer-Team</strong>, wenn du Fragen hast.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- 7. SECTION Garantie -->
     <section class="guarantee-section">
         <div class="guarantee-box">
@@ -917,7 +1049,12 @@ personalisiert</div>
         </details>
         <details class="faq-item">
             <summary>Was bekomme ich genau? <span class="plus">+</span></summary>
-            <div class="faq-answer">Einen personalisierten Trainingsplan als PDF per E-Mail, plus Zugang zum Mitglieder-Bereich mit Trainings-Tagebuch, Wochen-Challenges und Trainer-Support.</div>
+            <div class="faq-answer">
+                <strong>Deinen personalisierten Trainingsplan + vollen Zugang zum Mitglieder-Bereich.</strong>
+                Im Mitglieder-Bereich findest du dein Trainings-Tagebuch, Wochen-Challenges, alle Übungs-Videos
+                und direkten Trainer-Support per Chat. Der Plan kommt sofort nach dem Kauf per E-Mail. mit
+                Login-Link in den Mitglieder-Bereich.
+            </div>
         </details>
         <details class="faq-item">
             <summary>Wie viel Zeit brauche ich täglich? <span class="plus">+</span></summary>
@@ -1088,10 +1225,10 @@ personalisiert</div>
 
         // Testimonials gefiltert nach Problem + Rasse
         const TESTIMONIALS = [
-            { tags:['pulling','labrador'], name:'Sandra M.', meta:'Labrador, 3 Jahre · Hamburg', quote:'„Unser Labrador Buddy hat nach 10 Tagen aufgehört, an der Leine zu ziehen. Ich war mega skeptisch, aber die Übungen sind so einfach, dass man sie wirklich jeden Tag machen kann. Wir gehen jetzt entspannt spazieren. zum ersten Mal seit 2 Jahren."' },
+            { tags:['pulling','labrador'], name:'Sandra M.', meta:'Labrador, 3 Jahre · Hamburg', avatar:'Sandra.jpg', quote:'„Unser Labrador Buddy hat nach 10 Tagen aufgehört, an der Leine zu ziehen. Ich war mega skeptisch, aber die Übungen sind so einfach, dass man sie wirklich jeden Tag machen kann. Wir gehen jetzt entspannt spazieren. zum ersten Mal seit 2 Jahren."' },
             { tags:['recall','labrador'], name:'Markus K.', meta:'Labrador, 4 Jahre · Bremen', avatar:'Markus.jpg', quote:'„Bento ist im Freilauf endlich ansprechbar. Vorher war er weg, sobald er Wild gewittert hat. Nach 3 Wochen Training: zuverlässiger Rückruf. auch im Wald."' },
             { tags:['pulling','mischling'], name:'Nina S.', meta:'Mischling, 2 Jahre · Köln', quote:'„Sage zieht nicht mehr wie ein Bagger. Die Stehen-bleiben-Methode wirkt. am Anfang viel Geduld, aber nach 14 Tagen war es Routine."' },
-            { tags:['recall','mischling'], name:'Thomas B.', meta:'Mischling, 3 Jahre · München', quote:'„Endlich kommt mein Mischling wieder zurück, wenn ich rufe. Die Übungen aus dem Plan haben uns in 4 Wochen weiter gebracht als 6 Monate Hundeschule."' },
+            { tags:['recall','mischling'], name:'Thomas B.', meta:'Mischling, 3 Jahre · München', avatar:'Thomas.jpg', quote:'„Endlich kommt mein Mischling wieder zurück, wenn ich rufe. Die Übungen aus dem Plan haben uns in 4 Wochen weiter gebracht als 6 Monate Hundeschule."' },
             { tags:['energy','mischling'], name:'Lisa K.', meta:'Mischling, 2 Jahre · Berlin', quote:'„Lotte konnte nie zur Ruhe kommen. Mit den Ruhe-Übungen schläft sie jetzt nach dem Spaziergang ENTSPANNT. vorher war sie 2 Stunden hyperaktiv."' },
             { tags:['anxiety'], name:'Andrea R.', meta:'Hovawart, 5 Jahre · Stuttgart', quote:'„Wir konnten endlich kurz einkaufen gehen, ohne dass Cooper die Wohnung zerlegt. Schritt-für-Schritt-Plan, kein Drama."' },
             { tags:['barking','dackel'], name:'Karin H.', meta:'Dackel, 4 Jahre · Düsseldorf', quote:'„Schluss mit dem Dauer-Bellen an der Tür. Unser Dackel hat ein Ruhe-Signal gelernt. innerhalb von 3 Wochen."' },
@@ -1105,6 +1242,51 @@ personalisiert</div>
             for (const t of TESTIMONIALS) if (t.tags.includes(problem) && t.tags.includes(breedKey)) return t;
             for (const t of TESTIMONIALS) if (t.tags.includes(problem)) return t;
             return TESTIMONIALS[TESTIMONIALS.length - 1];
+        }
+        // 3 Testimonials picken: best match (problem+breed) → problem-only → generic.
+        // Keine Duplikate, immer genau n Cards.
+        function pickTestimonials(problem, breed, n = 3) {
+            const breedKey = (breed||'').trim().toLowerCase().split(/\s+/)[0];
+            const picked = [];
+            const seen = new Set();
+            const add = (t) => { if (t && !seen.has(t.name)) { picked.push(t); seen.add(t.name); } };
+            // 1) problem + breed
+            for (const t of TESTIMONIALS) { if (picked.length >= n) break;
+                if (problem && t.tags.includes(problem) && breedKey && t.tags.includes(breedKey)) add(t); }
+            // 2) problem only
+            for (const t of TESTIMONIALS) { if (picked.length >= n) break;
+                if (problem && t.tags.includes(problem)) add(t); }
+            // 3) breed only
+            for (const t of TESTIMONIALS) { if (picked.length >= n) break;
+                if (breedKey && t.tags.includes(breedKey)) add(t); }
+            // 4) generic
+            for (const t of TESTIMONIALS) { if (picked.length >= n) break; add(t); }
+            return picked.slice(0, n);
+        }
+        function renderTestimonialStack(items) {
+            const stack = document.getElementById('testimonialStack');
+            if (!stack) return;
+            const initials = (name) => name.replace(/[„""]/g,'').trim().split(/[\s&]+/).slice(0,2).map(w => w[0] || '').join('').toUpperCase() || '★';
+            const starBox = `<div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>`;
+            const stars5 = starBox.repeat(5);
+            stack.innerHTML = items.map(t => {
+                const avatarHTML = t.avatar
+                    ? `<img src="${t.avatar}" alt="${t.name}" onerror="this.parentElement.innerHTML='${initials(t.name)}';">`
+                    : initials(t.name);
+                return `
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">${stars5}</div>
+                    <p class="testimonial-quote">${t.quote}</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">${avatarHTML}</div>
+                        <div class="testimonial-author-info">
+                            <div class="testimonial-author-name">${t.name}</div>
+                            <div class="testimonial-author-meta">${t.meta}</div>
+                        </div>
+                        <div class="testimonial-verified">✓ Verifiziert</div>
+                    </div>
+                </div>`;
+            }).join('');
         }
 
         // Personalisierung anwenden
@@ -1151,18 +1333,17 @@ personalisiert</div>
             img.onload = function() { placeholder.style.display = 'none'; };
             breedImgEl.insertBefore(img, placeholder);
 
-            // Testimonial matched
-            const tm = pickTestimonial(dogProblemKey, dogBreed);
+            // 3er-Testimonial-Stack matched
+            const tms = pickTestimonials(dogProblemKey, dogBreed, 3);
             const problemLabel = (pm && pm.label) || 'ähnliches Profil';
             const breedFull = (dogBreed || '').trim() || 'Halter:innen';
             document.getElementById('testimonialMatch').textContent = `${breedFull} · ${problemLabel}`;
-            document.getElementById('testimonialQuote').textContent = tm.quote;
-            document.getElementById('testimonialName').textContent = tm.name;
-            document.getElementById('testimonialMeta').textContent = tm.meta;
-            // Avatar-Foto rendern wenn vorhanden, sonst Platzhalter
-            const avatarEl = document.querySelector('.testimonial-avatar');
-            if (avatarEl && tm.avatar) {
-                avatarEl.innerHTML = `<img src="${tm.avatar}" alt="${tm.name}" onerror="this.parentElement.innerHTML='[BILD]';">`;
+            renderTestimonialStack(tms);
+
+            // After-Purchase-Block: Hundenamen einsetzen
+            const afterName = document.getElementById('afterStepDogName');
+            if (afterName && dogName && dogName !== 'deinen Hund') {
+                afterName.textContent = dogName;
             }
         })();
 
