@@ -1476,8 +1476,31 @@ personalisiert</div>
         async function saveToSupabase() {
             const existingLeadId = currentLeadId || localStorage.getItem('leadId');
             if (!existingLeadId) return null;
-            const answers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
-            answers.selected_plan = selectedPlan;
+
+            // KRITISCH: answers-Spalte darf NICHT mit sparser Local-Daten ueberschrieben werden.
+            // kurz-schritt11.html cached die kompletten Quiz-Answers in quizAnswersCache
+            // (inkl. UTM, dog_name, dog_breed, dog_problem, etc.) genau fuer diesen Fall.
+            // Fallback-Kette: quizAnswersCache > wauwerk_answers > NICHT patchen.
+            let answers = null;
+            try {
+                const cache = localStorage.getItem('quizAnswersCache');
+                const w = localStorage.getItem('wauwerk_answers');
+                if (cache) answers = JSON.parse(cache);
+                else if (w) answers = JSON.parse(w);
+            } catch {}
+
+            const patchBody = {
+                selected_plan: selectedPlan,
+                price: ({'1month':'€29,99','3month':'€39,99','6month':'€59,99'})[selectedPlan] || '€39,99',
+                timer_expired: timerExpired,
+                status: 'pending'
+            };
+            // answers nur mitschicken wenn wir wirklich rich data haben (sonst answers-Spalte unangetastet lassen)
+            if (answers && typeof answers === 'object' && Object.keys(answers).length > 0) {
+                answers.selected_plan = selectedPlan;
+                patchBody.answers = answers;
+            }
+
             try {
                 const res = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + existingLeadId, {
                     method: 'PATCH',
@@ -1487,13 +1510,7 @@ personalisiert</div>
                         'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
                         'Prefer': 'return=representation'
                     },
-                    body: JSON.stringify({
-                        selected_plan: selectedPlan,
-                        price: ({'1month':'€29,99','3month':'€39,99','6month':'€59,99'})[selectedPlan] || '€39,99',
-                        timer_expired: timerExpired,
-                        status: 'pending',
-                        answers: answers
-                    })
+                    body: JSON.stringify(patchBody)
                 });
                 if (res.ok) return existingLeadId;
             } catch (e) { console.error('Supabase patch failed:', e); }
