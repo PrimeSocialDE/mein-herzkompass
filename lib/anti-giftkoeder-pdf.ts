@@ -92,6 +92,55 @@ function resolveBreedShortTip(breed: string): string {
   );
 }
 
+// Pro-Seite eigene Trainer-Tipps. Einige sind rasse-aware, andere generisch.
+// Jeder Tipp ist eine eigene Aussage — kein Copy-Paste der Rasse-Standard-Zeile.
+function getPageTrainerTip(
+  page: 3 | 4 | 5 | 6 | 7 | 9,
+  dogName: string,
+  breedKey: string
+): string {
+  const k = breedKey.trim().toLowerCase();
+  const isRetriever =
+    k === "labrador" || k === "labrador retriever" || k === "golden retriever";
+  const isSchaeferhund =
+    k === "deutscher schäferhund" || k === "schäferhund" || k === "german shepherd";
+  const isWorkingDog =
+    k === "australian shepherd" || k === "aussie" || k === "border collie";
+  const isBeagle = k === "beagle";
+  const isDackel = k === "dackel";
+
+  switch (page) {
+    case 3:
+      if (isRetriever)
+        return `Bei futtergetriebenen Hunden wie ${dogName} brauchst du am Anfang Geduld — er fixiert sich auf die Faust. Bleib ruhig, der Moment des Wegschauens kommt.`;
+      if (isSchaeferhund)
+        return `Bei Schäferhunden sitzt das „Aus” oft schon nach 2–3 Tagen — sie lernen schnell und arbeiten gerne mit dir.`;
+      if (isBeagle)
+        return `Bei Beagles dauert das Wegschauen länger — die Nase gewinnt fast immer. Lieber kürzere, häufigere Sessions als lange.`;
+      if (isDackel)
+        return `Bei Dackeln hilft Geduld und ein wirklich hochwertiges Leckerli aus der zweiten Hand. Kurze Sessions (3–5 Min) sind effektiver.`;
+      return `Der erste Moment, in dem ${dogName} von alleine wegschaut, ist der Durchbruch. Bleib geduldig — er kommt.`;
+    case 4:
+      return `Starte mit langweiligem Trockenfutter am Boden. Erst wenn das sitzt, steigere auf Wurst oder Käse.`;
+    case 5:
+      return `Draußen brauchst du höherwertiges Hand-Futter als drinnen. Käse oder gekochtes Hühnchen schlägt alles am Boden.`;
+    case 6:
+      if (isSchaeferhund)
+        return `Das „Zeig mir”-Signal ist bei Schäferhunden besonders effektiv — sie arbeiten gerne MIT dir statt gegen ein Verbot.`;
+      if (isWorkingDog)
+        return `Arbeitshunde wie ${dogName} lieben das „Zeig mir”-Signal — endlich ein Job statt nur ein Verbot.`;
+      if (isBeagle)
+        return `Bei Beagles ist das „Zeig mir”-Signal der Game-Changer — die Nase darf arbeiten, aber das Maul bleibt zu.`;
+      if (isRetriever)
+        return `Retriever lieben Aufgaben. Das Zeigen statt Fressen IST eine Aufgabe — sie nehmen sie gerne an.`;
+      return `Das „Zeig mir”-Signal funktioniert für jeden Hund — er bekommt eine Aufgabe statt ein Verbot.`;
+    case 7:
+      return `Kurze Sessions von 3–5 Minuten reichen. Impulskontrolle ist mental anstrengender als ein einstündiger Spaziergang.`;
+    case 9:
+      return `Rollendes Futter ist die Königsdisziplin. Wenn ${dogName} das ignoriert, seid ihr durch.`;
+  }
+}
+
 // Alter-Label (puppy/young/adult/senior – menschenlesbar)
 function ageLabel(age: string | null | undefined): string {
   const a = (age || "").toLowerCase();
@@ -663,7 +712,7 @@ export async function generateAntiGiftkoederPDF(
     );
 
     y -= 4;
-    y = drawTrainerTip(p, fonts, breedTipShort, y);
+    y = drawTrainerTip(p, fonts, getPageTrainerTip(3, dogName, breedKey), y);
 
     // Erfolgskriterium + Mini-Tracker
     y = drawInfoBox(
@@ -747,7 +796,7 @@ export async function generateAntiGiftkoederPDF(
       y,
       BG_WARM
     );
-    y = drawTrainerTip(p, fonts, breedTipShort, y);
+    y = drawTrainerTip(p, fonts, getPageTrainerTip(4, dogName, breedKey), y);
 
     drawFooter(p, fonts, 4, TOTAL);
   }
@@ -813,12 +862,7 @@ export async function generateAntiGiftkoederPDF(
       y,
       BG_WARM
     );
-    y = drawTrainerTip(
-      p,
-      fonts,
-      `Draußen brauchst du höherwertiges Hand-Futter. Käse, gekochtes Hühnchen oder Wurst — etwas, das stärker zieht als das Boden-Futter.`,
-      y
-    );
+    y = drawTrainerTip(p, fonts, getPageTrainerTip(5, dogName, breedKey), y);
 
     drawFooter(p, fonts, 5, TOTAL);
   }
@@ -884,7 +928,7 @@ export async function generateAntiGiftkoederPDF(
       y,
       BG_LIGHT
     );
-    y = drawTrainerTip(p, fonts, breedTipShort, y);
+    y = drawTrainerTip(p, fonts, getPageTrainerTip(6, dogName, breedKey), y);
 
     drawFooter(p, fonts, 6, TOTAL);
   }
@@ -942,7 +986,7 @@ export async function generateAntiGiftkoederPDF(
       y,
       BG_LIGHT
     );
-    y = drawTrainerTip(p, fonts, breedTipShort, y);
+    y = drawTrainerTip(p, fonts, getPageTrainerTip(7, dogName, breedKey), y);
 
     drawFooter(p, fonts, 7, TOTAL);
   }
@@ -1065,7 +1109,7 @@ export async function generateAntiGiftkoederPDF(
       y,
       BG_LIGHT
     );
-    y = drawTrainerTip(p, fonts, breedTipShort, y);
+    y = drawTrainerTip(p, fonts, getPageTrainerTip(9, dogName, breedKey), y);
 
     drawFooter(p, fonts, 9, TOTAL);
   }
