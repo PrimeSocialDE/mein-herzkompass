@@ -133,8 +133,24 @@
             line-height: 1.22; margin-bottom: 14px;
             letter-spacing: -0.3px;
         }
-        .hero-headline .hero-name { color: var(--warm-brown); }
-        .hero-headline .hero-breed { color: var(--text-medium); font-weight: 700; }
+        .hero-headline .hero-name {
+            display: block;
+            color: var(--warm-brown);
+            font-size: 36px;
+            line-height: 1.15;
+        }
+        .hero-headline .hero-subline {
+            display: block;
+            margin-top: 8px;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-medium);
+            letter-spacing: 0;
+        }
+        @media (max-width: 480px) {
+            .hero-headline .hero-name { font-size: 30px; }
+            .hero-headline .hero-subline { font-size: 15px; margin-top: 6px; }
+        }
         .hero-text {
             font-size: 16px; color: var(--text-medium); line-height: 1.6;
             margin-bottom: 28px;
@@ -741,7 +757,8 @@
                 <span class="dot"></span> Analyse abgeschlossen
             </div>
             <h1 class="hero-headline">
-                <span class="hero-name" id="heroName">Dein Hund</span><span id="heroBreedSep"></span><span class="hero-breed" id="heroBreed"></span><span id="heroAgeSep"></span><span id="heroAge"></span>
+                <span class="hero-name" id="heroName">Dein Hund</span>
+                <span class="hero-subline" id="heroSubline"></span>
             </h1>
             <p class="hero-text">
                 <span id="heroEmotionalLead">Du kennst das Gefühl wahrscheinlich nur zu gut.</span>
@@ -1351,28 +1368,14 @@ personalisiert</div>
             const ageLabel   = AGE_LABELS[dogAge] || '';
             const hasName    = dogName && dogName !== 'deinen Hund';
 
-            // Header: [Hundename], [Vollständige Rasse] · [Alter]
+            // Header (2-zeilig): Name gross + Subline klein "Rasse · Alter"
             const nameEl = document.getElementById('heroName');
-            const breedSepEl = document.getElementById('heroBreedSep');
-            const breedEl = document.getElementById('heroBreed');
-            const ageSepEl = document.getElementById('heroAgeSep');
-            const ageEl = document.getElementById('heroAge');
-
+            const sublineEl = document.getElementById('heroSubline');
             nameEl.textContent = hasName ? dogName : 'Dein Hund';
-            if (breedFull) {
-                breedSepEl.textContent = hasName ? ', ' : ' · ';
-                breedEl.textContent = breedFull;
-            } else {
-                breedSepEl.textContent = '';
-                breedEl.textContent = '';
-            }
-            if (ageLabel) {
-                ageSepEl.textContent = (breedFull || hasName) ? ' · ' : '';
-                ageEl.textContent = ageLabel;
-            } else {
-                ageSepEl.textContent = '';
-                ageEl.textContent = '';
-            }
+            const sublineParts = [];
+            if (breedFull) sublineParts.push(breedFull);
+            if (ageLabel)  sublineParts.push(ageLabel);
+            sublineEl.textContent = sublineParts.join(' · ');
 
             const pm = PROBLEM_MAP[dogProblemKey];
             if (pm) {
