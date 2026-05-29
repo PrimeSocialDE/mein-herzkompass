@@ -770,7 +770,10 @@
                 <div class="progress-fill"></div>
             </div>
             <p class="progress-hint" id="progressHint">87 % der Hundehalter sehen in den ersten 7 Tagen Veränderung</p>
-            <p style="margin-top:4px;font-size:11.5px;color:var(--text-light);font-style:italic;">Basierend auf Feedback von 847 Kunden</p>
+            <p id="breedTrait" style="margin-top:8px;font-size:13px;color:var(--text-medium);line-height:1.5;">
+                Dein Plan ist individuell auf den Charakter deines Hundes abgestimmt.
+            </p>
+            <p style="margin-top:6px;font-size:11.5px;color:var(--text-light);font-style:italic;">Basierend auf Feedback von 847 Kunden</p>
         </div>
     </section>
 
@@ -1194,6 +1197,30 @@ personalisiert</div>
             const k = breed.trim().toLowerCase();
             return BREED_IMAGES[k] || BREED_FALLBACK;
         }
+
+        // Rasse-spezifische Trainings-Eigenheit. Plural-Subjekt + Spezialität.
+        const BREED_TRAITS = {
+            'labrador': 'Labradore reagieren besonders gut auf Belohnungs-Training',
+            'labrador retriever': 'Labradore reagieren besonders gut auf Belohnungs-Training',
+            'golden retriever': 'Golden Retriever reagieren besonders gut auf sanftes Wiederholungs-Training',
+            'deutscher schäferhund': 'Schäferhunde reagieren besonders gut auf klare Strukturen und konsequentes Training',
+            'schäferhund': 'Schäferhunde reagieren besonders gut auf klare Strukturen und konsequentes Training',
+            'german shepherd': 'Schäferhunde reagieren besonders gut auf klare Strukturen und konsequentes Training',
+            'australian shepherd': 'Australian Shepherds reagieren besonders gut auf Aufgaben-orientiertes Training mit Kopfarbeit',
+            'aussie': 'Australian Shepherds reagieren besonders gut auf Aufgaben-orientiertes Training mit Kopfarbeit',
+            'border collie': 'Border Collies reagieren besonders gut auf abwechslungsreiches Training mit klaren Signalen',
+            'dackel': 'Dackel reagieren besonders gut auf geduldiges, motivierendes Training',
+            'goldendoodle': 'Goldendoodles reagieren besonders gut auf positive Verstärkung und ruhige Übungen',
+            'havaneser': 'Havaneser reagieren besonders gut auf sanftes, lobbasiertes Training',
+            'havanese': 'Havaneser reagieren besonders gut auf sanftes, lobbasiertes Training',
+            'mischling': 'Mischlinge profitieren besonders von einem Plan, der auf ihren individuellen Charakter zugeschnitten ist',
+        };
+        function resolveBreedTrait(breed) {
+            const k = (breed || '').trim().toLowerCase();
+            const trait = BREED_TRAITS[k];
+            if (trait) return trait + ' — dein Plan ist genau darauf abgestimmt.';
+            return 'Dein Plan ist individuell auf den Charakter deines Hundes abgestimmt.';
+        }
         function shortBreed(b) {
             if (!b) return null;
             const s = String(b).trim();
@@ -1292,6 +1319,10 @@ personalisiert</div>
                 document.getElementById('progressHint').textContent =
                     `87 % der ${breedWord}-Halter sehen in den ersten 7 Tagen Veränderung`;
             }
+
+            // Rasse-spezifischer Trainings-Trait
+            const traitEl = document.getElementById('breedTrait');
+            if (traitEl) traitEl.textContent = resolveBreedTrait(dogBreed);
 
             // Breed-Image. Bei 404 ein einmaliger Fallback auf Allgemein.jpg,
             // danach (sehr unwahrscheinlich) bleibt nur der Cream-Gradient.
