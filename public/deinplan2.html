@@ -1082,28 +1082,33 @@ personalisiert</div>
 
     <script>
         // ──────────────────────────────────────────────────────────
-        //  Quiz-Daten aus localStorage. wauwerk_answers ist autoritativ;
-        //  die individuellen Keys werden gespiegelt (siehe deinplan3/4/6).
-        //  Sonst liest deinplan2 stale Daten aus einem vorherigen Quiz-Lauf.
+        //  Quiz-Daten lesen. Priorität:
+        //    1. individuelle localStorage-Keys (vom Quiz direkt geschrieben)
+        //    2. wauwerk_answers (von deinplan3/6 nach Lead-Save geschrieben)
+        //    3. wauwerk_answers_backup (info.html als Notfall-Fallback)
+        //  Wir UEBERSCHREIBEN niemals — frischere individuelle Keys gewinnen.
         // ──────────────────────────────────────────────────────────
-        (function bootstrapAnswers() {
+        function readQuizField(individualKey, answerKey) {
+            const direct = localStorage.getItem(individualKey);
+            if (direct) return direct;
             try {
-                const answers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
-                if (answers && typeof answers === 'object') {
-                    if (answers.dog_name)         localStorage.setItem('dogName',  answers.dog_name);
-                    if (answers.dog_age)          localStorage.setItem('dogAge',   answers.dog_age);
-                    if (answers.dog_breed)        localStorage.setItem('dogBreed', answers.dog_breed);
-                    if (answers.dog_problem)      localStorage.setItem('dogProblem', answers.dog_problem);
-                }
-            } catch (e) { /* defekter JSON -> nichts spiegeln, individuelle Keys bleiben */ }
-        })();
+                const ans = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
+                if (ans && ans[answerKey]) return ans[answerKey];
+            } catch {}
+            try {
+                const back = JSON.parse(localStorage.getItem('wauwerk_answers_backup') || '{}');
+                if (back && back[answerKey]) return back[answerKey];
+            } catch {}
+            return '';
+        }
 
-        const dogName       = localStorage.getItem('dogName')   || 'deinen Hund';
-        const dogBreed      = localStorage.getItem('dogBreed')  || '';
-        const dogAge        = localStorage.getItem('dogAge')    || '';
-        const dogProblemKey = localStorage.getItem('dogProblem') || (function(){
-            try { return (JSON.parse(localStorage.getItem('wauwerk_answers')||'{}')).dog_problem || ''; } catch { return ''; }
-        })();
+        const dogName       = readQuizField('dogName',    'dog_name')    || 'deinen Hund';
+        const dogBreed      = readQuizField('dogBreed',   'dog_breed');
+        const dogAge        = readQuizField('dogAge',     'dog_age');
+        const dogProblemKey = readQuizField('dogProblem', 'dog_problem');
+
+        // Debug-Output. Erkennt bei verbuggten Sessions sofort woran's liegt.
+        try { console.log('[deinplan2] Quiz-Daten:', { dogName, dogBreed, dogAge, dogProblemKey }); } catch {}
 
         const AGE_LABELS = { puppy:'Welpe', young:'Junghund', adult:'erwachsen', senior:'Senior' };
 
