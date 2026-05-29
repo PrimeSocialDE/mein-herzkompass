@@ -234,22 +234,25 @@
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
 
-        // A/B Test v5: Rollback auf den bewaehrten Split — deinplan3 vs deinplan6.
-        // deinplan2 wurde temporaer als Challenger getestet, aber wegen Bugs
-        // (Rasse/Bilder unzuverlaessig in einigen Sessions) zurueckgenommen.
-        // 70/30 zugunsten des Champions — mehr Schutz nach dem Rollback.
+        // A/B Test v6: Champion (deinplan3) vs Challenger (deinplan2 v2).
+        // deinplan2 ist die personalisierte Quiz-Result-Page mit Rasse-Bild,
+        // Trait-Satz pro Rasse, 3 Testimonials (rasse-prio), Plan-Einblick-Video,
+        // After-Purchase-3-Steps. SyntaxError + Quiz-Daten-Bug sind gefixt
+        // (Commits f9635f8 + 613d15f), Hard-Reload-Tests bestanden.
+        // 50/50 fuer schnellere Stichprobe — Aufmerksam beobachten,
+        // bei klarer schlechter CR sofort revertieren.
         function getABTestPage() {
-            let variant = localStorage.getItem('ab_test_pricing_v5');
+            let variant = localStorage.getItem('ab_test_pricing_v6');
             if (!variant) {
-                // 70/30 Champion (deinplan3) vs Challenger (deinplan6)
-                variant = Math.random() < 0.70 ? 'A' : 'B';
-                localStorage.setItem('ab_test_pricing_v5', variant);
+                // 50/50 Champion (deinplan3) vs Challenger (deinplan2)
+                variant = Math.random() < 0.50 ? 'A' : 'B';
+                localStorage.setItem('ab_test_pricing_v6', variant);
                 // Legacy-Key auch setzen damit Supabase-Tracking (ab_variant) konsistent bleibt
                 localStorage.setItem('ab_test_pricing', variant);
             }
             // A = deinplan3.html (Champion)
-            // B = deinplan6.html (Challenger / Wow-Hero + Bilder + neues Wording)
-            return variant === 'A' ? 'deinplan3.html' : 'deinplan6.html';
+            // B = deinplan2.html (Challenger / personalisierte Quiz-Result-Page)
+            return variant === 'A' ? 'deinplan3.html' : 'deinplan2.html';
         }
 
         // Hundename aus localStorage
