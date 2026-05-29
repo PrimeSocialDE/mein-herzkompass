@@ -439,7 +439,7 @@ export async function generateAntiGiftkoederPDF(
   const italic = await doc.embedFont(StandardFonts.HelveticaOblique);
   const fonts: Fonts = { regular, bold, italic };
 
-  const TOTAL = 13;
+  const TOTAL = 12;
 
   // Versuche das Rasse-Bild zu laden (fuer Seite 1)
   let breedImg: PDFImage | null = null;
@@ -1347,105 +1347,6 @@ export async function generateAntiGiftkoederPDF(
     });
 
     drawFooter(p, fonts, 12, TOTAL);
-  }
-
-  // ═══════════ SEITE 13: 4-Wochen-Tracker ═══════════
-  {
-    const p = newPage(doc);
-    let y = drawPageHeader(
-      p,
-      fonts,
-      "ÜBERBLICK",
-      "Dein 4-Wochen-Tracker"
-    );
-
-    y = drawParagraph(
-      p,
-      fonts,
-      `Hak jeden Tag ab, an dem du trainiert hast. Trag am Wochenende deine Erfolgsrate ein — so siehst du die Veränderung von ${dogName} Schritt für Schritt.`,
-      y,
-      { color: TEXT_DARK }
-    );
-    y -= 10;
-
-    const weeks = [
-      "Woche 1 · Aus-Signal + Indoor",
-      "Woche 2 · Outdoor + Zeig mir",
-      "Woche 3 · Impulskontrolle + echter Spaziergang",
-      "Woche 4 · Ablenkung + Freilauf-Übergang",
-    ];
-
-    for (let w = 0; w < 4; w++) {
-      p.drawText(weeks[w], {
-        x: MARGIN,
-        y,
-        size: 11,
-        font: fonts.bold,
-        color: DARK_BROWN,
-      });
-      y -= 14;
-
-      // 7 Tag-Boxen pro Woche
-      const boxSize = 22;
-      const gap = 6;
-      const totalBoxW = 7 * boxSize + 6 * gap;
-      const startX = MARGIN + (CONTENT_W - totalBoxW) / 2;
-      for (let d = 0; d < 7; d++) {
-        const x = startX + d * (boxSize + gap);
-        p.drawRectangle({
-          x,
-          y: y - boxSize,
-          width: boxSize,
-          height: boxSize,
-          borderColor: BORDER_LIGHT,
-          borderWidth: 1,
-        });
-        const dayNum = String(w * 7 + d + 1);
-        const dnW = fonts.regular.widthOfTextAtSize(dayNum, 8);
-        p.drawText(dayNum, {
-          x: x + (boxSize - dnW) / 2,
-          y: y - 8,
-          size: 8,
-          font: fonts.regular,
-          color: TEXT_LIGHT,
-        });
-      }
-      y -= boxSize + 6;
-      p.drawText(
-        `Erfolgsrate: ___/10 Futterstellen ignoriert`,
-        {
-          x: MARGIN,
-          y,
-          size: 9.5,
-          font: fonts.italic,
-          color: TEXT_MEDIUM,
-        }
-      );
-      y -= 22;
-    }
-
-    y -= 6;
-    y = drawInfoBox(
-      p,
-      fonts,
-      "Geschafft",
-      `Wenn ${dogName} nach 4 Wochen zuverlässig Futter am Boden ignoriert, hast du ihm die wichtigste Schutzübung beigebracht, die es gibt. Weiter so.`,
-      y,
-      BG_LIGHT
-    );
-
-    p.drawText(
-      "Trag deine Ergebnisse zusätzlich ins Trainings-Tagebuch ein (Mitglieder-Bereich).",
-      {
-        x: MARGIN,
-        y,
-        size: 9,
-        font: fonts.italic,
-        color: TEXT_LIGHT,
-      }
-    );
-
-    drawFooter(p, fonts, 13, TOTAL);
   }
 
   return doc.save();
