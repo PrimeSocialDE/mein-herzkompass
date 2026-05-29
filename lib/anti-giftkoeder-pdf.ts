@@ -390,7 +390,7 @@ export async function generateAntiGiftkoederPDF(
   const italic = await doc.embedFont(StandardFonts.HelveticaOblique);
   const fonts: Fonts = { regular, bold, italic };
 
-  const TOTAL = 12;
+  const TOTAL = 13;
 
   // Versuche das Rasse-Bild zu laden (fuer Seite 1)
   let breedImg: PDFImage | null = null;
@@ -623,7 +623,7 @@ export async function generateAntiGiftkoederPDF(
     y = drawParagraph(
       p,
       fonts,
-      `Das „Aus” (oder „Nein”) ist das Abbruchsignal. Wenn ${dogName} es zuverlässig kennt, kannst du in echten Situationen reagieren — bevor etwas passiert.`,
+      `Das „Aus” (oder „Nein\") ist das Abbruchsignal. Wenn ${dogName} es zuverlässig kennt, kannst du in echten Situationen reagieren — bevor etwas passiert.`,
       y,
       { color: TEXT_DARK }
     );
@@ -650,7 +650,7 @@ export async function generateAntiGiftkoederPDF(
       fonts,
       3,
       `Sofort „Aus” sagen + Leckerli aus ANDERER Hand geben`,
-      "Im Moment des Wegschauens: ruhig „Aus”, dann Leckerli aus der freien Hand. Nie aus der Faust selbst.",
+      "Im Moment des Wegschauens: ruhig „Aus\", dann Leckerli aus der freien Hand. Nie aus der Faust selbst.",
       y
     );
     y = drawStep(
@@ -913,7 +913,7 @@ export async function generateAntiGiftkoederPDF(
       fonts,
       1,
       "Futter vor die Pfoten legen",
-      `${dogName} muss Blickkontakt halten — erst auf dein Signal („Nimm!”) fressen. Beginne mit 2 Sekunden, steigere auf 10.`,
+      `${dogName} muss Blickkontakt halten — erst auf dein Signal („Nimm!\") fressen. Beginne mit 2 Sekunden, steigere auf 10.`,
       y
     );
     y = drawStep(
@@ -1135,24 +1135,81 @@ export async function generateAntiGiftkoederPDF(
     drawFooter(p, fonts, 10, TOTAL);
   }
 
-  // ═══════════ SEITE 11: Notfall-Protokoll (Verhalten only) ═══════════
+  // ═══════════ SEITE 11: Notfall-Szenarien (5 typische Situationen) ═══════════
   {
     const p = newPage(doc);
     let y = drawPageHeader(
       p,
       fonts,
-      "NOTFALL",
-      `Falls ${dogName} doch etwas aufnimmt`
+      "NOTFALL-SZENARIEN",
+      "Wenn doch etwas passiert — typische Situationen"
     );
 
     y = drawParagraph(
       p,
       fonts,
-      "Verhaltens-Anweisungen für den Notfall. Was du tust, bevor du den Tierarzt anrufst.",
-      y,
-      { color: TEXT_DARK }
+      `Du kannst nicht jeden Köder verhindern. Aber du kannst dich auf die Situationen vorbereiten, in denen ${dogName} am wahrscheinlichsten etwas aufnimmt. Für jedes Szenario hier: was du sofort tust.`,
+      y
     );
-    y -= 6;
+    y -= 8;
+
+    const scenarios: Array<{ n: number; title: string; desc: string }> = [
+      {
+        n: 1,
+        title: "Auf dem Spaziergang — Essensreste am Boden",
+        desc:
+          "Ein Brötchen, eine Wurstscheibe, etwas Unbekanntes — kommt fast täglich vor. Sofort „Aus”. Wenn er ausgespuckt hat: Foto vom Objekt, Probe in einen Beutel. Tierarzt informieren, auch wenn er fit wirkt. Manche Stoffe wirken verzögert.",
+      },
+      {
+        n: 2,
+        title: "Obst-Reste / Trauben im Park oder Wald",
+        desc:
+          "Manche Obstsorten sind für Hunde problematisch — die genaue Liste klärst du am besten mit deinem Tierarzt ab. Sofort: Maul checken, Reste sichern. Standort merken (was wuchs da, welche Farbe). Tierarzt anrufen mit der Info — die wissen, ob Eile geboten ist.",
+      },
+      {
+        n: 3,
+        title: "Picknick, Café, Restaurant — menschliches Essen",
+        desc:
+          "Käse, Schokolade, Süßes, Reste vom Teller. Sofort: Maul prüfen, Reste rausnehmen wenn sicher möglich. Nicht versuchen Erbrechen auszulösen ohne tierärztliche Anweisung. Tierarzt-Anruf — die entscheiden, was nötig ist.",
+      },
+      {
+        n: 4,
+        title: "Zuhause — Mülleimer, Tüten, Hausapotheke",
+        desc:
+          "Tabletten am Boden, alte Lebensmittel, eine vergessene Tüte. Sofort: was war da? Welche Verpackung? Tabletten-Packung mitnehmen wenn er an die Hausapotheke kam — der Tierarzt braucht den Wirkstoffnamen.",
+      },
+      {
+        n: 5,
+        title: "Du weißt nicht WAS er aufgenommen hat",
+        desc:
+          "Wichtigster Fall — schnell handeln statt rätseln. Maul checken, Boden absuchen, Foto vom Ort. Tierarzt sofort anrufen und Standort + Beobachtung schildern. Lieber einmal zu früh anrufen als zu spät.",
+      },
+    ];
+
+    for (const s of scenarios) {
+      y = drawStep(p, fonts, s.n, s.title, s.desc, y);
+    }
+
+    drawFooter(p, fonts, 11, TOTAL);
+  }
+
+  // ═══════════ SEITE 12: Akut-Protokoll + Notfall-Kontakte ═══════════
+  {
+    const p = newPage(doc);
+    let y = drawPageHeader(
+      p,
+      fonts,
+      "AKUT-PROTOKOLL",
+      "Die 5 Schritte im Ernstfall"
+    );
+
+    y = drawParagraph(
+      p,
+      fonts,
+      `Egal welches Szenario — diese fünf Schritte gelten immer. In dieser Reihenfolge.`,
+      y
+    );
+    y -= 8;
 
     y = drawStep(
       p,
@@ -1183,7 +1240,7 @@ export async function generateAntiGiftkoederPDF(
       fonts,
       4,
       "Futter sichern",
-      "Foto machen, Probe in einen Beutel. Hilft dem Tierarzt enorm.",
+      "Foto machen, Probe in einen Beutel, Verpackung mitnehmen. Hilft dem Tierarzt enorm bei der Einschätzung.",
       y
     );
     y = drawStep(
@@ -1191,24 +1248,24 @@ export async function generateAntiGiftkoederPDF(
       fonts,
       5,
       "SOFORT Tierarzt anrufen",
-      "Nicht warten. Auch wenn der Hund noch keine Symptome zeigt — Zeit ist hier alles.",
+      "Nicht warten. Auch wenn der Hund noch keine Symptome zeigt — Zeit ist hier alles. Manche Stoffe wirken erst nach Stunden.",
       y
     );
 
     y -= 4;
     // Notfall-Kontakt-Box zum Ausfuellen
-    drawRoundedRect(p, MARGIN, y - 110, CONTENT_W, 110, 6, BG_LIGHT);
+    drawRoundedRect(p, MARGIN, y - 120, CONTENT_W, 120, 6, BG_LIGHT);
     p.drawRectangle({
       x: MARGIN,
-      y: y - 110,
+      y: y - 120,
       width: 3,
-      height: 110,
+      height: 120,
       color: DARK_BROWN,
     });
-    p.drawText("Deine Notfall-Kontakte (jetzt ausfüllen!)", {
-      x: MARGIN + 12,
-      y: y - 12,
-      size: 10,
+    p.drawText("Deine Notfall-Kontakte — JETZT ausfüllen", {
+      x: MARGIN + 14,
+      y: y - 14,
+      size: 10.5,
       font: fonts.bold,
       color: DARK_BROWN,
     });
@@ -1218,27 +1275,26 @@ export async function generateAntiGiftkoederPDF(
       "Tierärztlicher Notdienst:                Tel:",
       "Giftnotruf:                                            Tel:",
     ];
-    let cy = y - 32;
+    let cy = y - 36;
     for (const c of contacts) {
       p.drawText(c, {
-        x: MARGIN + 12,
+        x: MARGIN + 14,
         y: cy,
         size: 9.5,
         font: fonts.regular,
         color: TEXT_DARK,
       });
-      // Linie zum Ausfuellen unter dem Text
       p.drawLine({
-        start: { x: MARGIN + 12, y: cy - 4 },
-        end: { x: MARGIN + CONTENT_W - 12, y: cy - 4 },
+        start: { x: MARGIN + 14, y: cy - 4 },
+        end: { x: MARGIN + CONTENT_W - 14, y: cy - 4 },
         thickness: 0.5,
         color: BORDER_LIGHT,
       });
-      cy -= 18;
+      cy -= 19;
     }
 
     y = cy - 14;
-    p.drawText("Fülle diese Box JETZT aus und häng sie an deinen Kühlschrank.", {
+    p.drawText("Tipp: Fülle diese Box jetzt aus und häng sie an deinen Kühlschrank.", {
       x: MARGIN,
       y,
       size: 9.5,
@@ -1246,10 +1302,10 @@ export async function generateAntiGiftkoederPDF(
       color: TEXT_MEDIUM,
     });
 
-    drawFooter(p, fonts, 11, TOTAL);
+    drawFooter(p, fonts, 12, TOTAL);
   }
 
-  // ═══════════ SEITE 12: 4-Wochen-Tracker ═══════════
+  // ═══════════ SEITE 13: 4-Wochen-Tracker ═══════════
   {
     const p = newPage(doc);
     let y = drawPageHeader(
@@ -1345,7 +1401,7 @@ export async function generateAntiGiftkoederPDF(
       }
     );
 
-    drawFooter(p, fonts, 12, TOTAL);
+    drawFooter(p, fonts, 13, TOTAL);
   }
 
   return doc.save();
