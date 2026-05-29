@@ -1399,9 +1399,13 @@ personalisiert</div>
             return existingLeadId;
         }
 
-        // Checkout (Stripe-Session. gleiche Route wie bisher)
+        // Checkout via Mollie hosted-payment (Stripe ist deaktiviert).
+        // Endpoint waehlt method-Auswahl selbst (Mollie-Hosted Payment-Page).
         async function getMyPlan() {
             const ctaBtn = document.querySelector('.cta-button');
+            const restoreCta = () => {
+                if (ctaBtn) { ctaBtn.disabled = false; ctaBtn.innerHTML = 'Meinen Trainingsplan freischalten<span class="cta-subtext">Sofort per E-Mail · 30 Tage Geld-zurück-Garantie</span>'; }
+            };
             if (ctaBtn) { ctaBtn.disabled = true; ctaBtn.innerHTML = 'Weiter zur Kasse…'; }
 
             try {
@@ -1426,7 +1430,7 @@ personalisiert</div>
             try { const id = await saveToSupabase(); if (id) currentLeadId = id; } catch (e) {}
 
             try {
-                const response = await fetch('/api/wauwerk-checkout-session', {
+                const response = await fetch('/api/mollie/wauwerk-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1448,15 +1452,21 @@ personalisiert</div>
                 });
                 const data = await response.json();
                 if (data.error) {
-                    alert('Fehler: ' + data.error);
-                    if (ctaBtn) { ctaBtn.disabled = false; ctaBtn.innerHTML = 'Meinen Trainingsplan freischalten<span class="cta-subtext">Sofort per E-Mail · 30 Tage Geld-zurück-Garantie</span>'; }
+                    // Mollie-Route gibt bei fehlender E-Mail "email_required" + freundliche message zurueck
+                    alert(data.message || ('Fehler: ' + data.error));
+                    restoreCta();
                     return;
                 }
-                localStorage.setItem('wentToStripe', 'true');
+                if (!data.url) {
+                    alert('Checkout konnte nicht gestartet werden. Bitte versuche es erneut.');
+                    restoreCta();
+                    return;
+                }
+                localStorage.setItem('wentToCheckout', 'true');
                 window.location.href = data.url;
             } catch (err) {
                 alert('Verbindungsfehler. Bitte versuche es erneut.');
-                if (ctaBtn) { ctaBtn.disabled = false; ctaBtn.innerHTML = 'Meinen Trainingsplan freischalten<span class="cta-subtext">Sofort per E-Mail · 30 Tage Geld-zurück-Garantie</span>'; }
+                restoreCta();
             }
         }
     </script>
