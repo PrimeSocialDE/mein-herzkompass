@@ -269,6 +269,34 @@
             width: 100%; height: 100%; object-fit: cover;
             display: block;
         }
+        /* Weisser Play-Button mittig auf dem Poster */
+        .video-play-overlay {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: transparent;
+            border: none; padding: 0; margin: 0; cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+        .video-play-overlay::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.15);
+        }
+        .video-play-overlay .play-circle {
+            position: relative;
+            width: 72px; height: 72px; border-radius: 50%;
+            background: rgba(255,255,255,0.96);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 22px rgba(0,0,0,0.35);
+            transition: transform 0.2s ease;
+        }
+        .video-play-overlay:hover .play-circle { transform: scale(1.06); }
+        .video-play-overlay .play-circle svg {
+            width: 30px; height: 30px;
+            fill: var(--warm-brown);
+            margin-left: 5px;
+        }
+        .video-card.playing .video-play-overlay { display: none; }
 
         .day-card {
             background: white; border-radius: 14px; overflow: hidden;
@@ -860,9 +888,14 @@
             </div>
         </div>
 
-        <!-- 5) Plan-Einblick-Video (vertikal, 9:16) -->
-        <div class="video-card">
-            <video src="PfotenErklaerung.mp4" controls playsinline preload="none" poster="Thumbnail-Laura.jpg"></video>
+        <!-- 5) Plan-Einblick-Video (vertikal, 9:16, weisser Play-Button als Overlay) -->
+        <div class="video-card" id="planVideoCard">
+            <video id="planVideo" src="PfotenErklaerung.mp4" playsinline preload="none" poster="Thumbnail-Laura.jpg"></video>
+            <button class="video-play-overlay" type="button" aria-label="Video abspielen" onclick="startPlanVideo()">
+                <span class="play-circle">
+                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </span>
+            </button>
         </div>
     </section>
 
@@ -1321,6 +1354,18 @@ personalisiert</div>
                 afterName.textContent = dogName;
             }
         })();
+
+        // Plan-Einblick-Video: weisser Play-Button startet das Video,
+        // Controls werden erst dann sichtbar (sauberer Look auf dem Poster)
+        function startPlanVideo() {
+            const card = document.getElementById('planVideoCard');
+            const v = document.getElementById('planVideo');
+            if (!card || !v) return;
+            card.classList.add('playing');
+            v.setAttribute('controls', 'controls');
+            const p = v.play();
+            if (p && typeof p.catch === 'function') p.catch(() => {});
+        }
 
         // Sticky-Header. erscheint NACH Scroll-Past-Hero
         const stickyHeader = document.getElementById('stickyHeader');
