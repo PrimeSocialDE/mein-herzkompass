@@ -149,16 +149,6 @@
             box-shadow: 0 8px 28px rgba(0,0,0,0.07);
         }
         .breed-image-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .breed-image .placeholder-content {
-            position: absolute; inset: 0;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--dark-brown);
-        }
-        .breed-image .placeholder-icon { font-size: 64px; margin-bottom: 6px; }
-        .breed-image .placeholder-label {
-            font-size: 12px; font-weight: 600;
-            background: rgba(255,255,255,0.85); padding: 4px 10px; border-radius: 6px;
-        }
         .breed-goal-overlay {
             position: absolute; bottom: 14px; left: 14px; right: 14px;
             background: rgba(255,255,255,0.95);
@@ -761,10 +751,6 @@
 
         <div class="breed-card fade-up delay-1">
             <div class="breed-image" id="breedImage">
-                <div class="placeholder-content" id="breedImagePlaceholder">
-                    <span class="placeholder-icon">🐕</span>
-                    <span class="placeholder-label">[PLATZHALTER] Bild folgt</span>
-                </div>
                 <div class="breed-goal-overlay">
                     <div style="min-width:0;flex:1;">
                         <div class="breed-goal-label">Dein Ziel</div>
@@ -1307,23 +1293,25 @@ personalisiert</div>
                     `87 % der ${breedWord}-Halter:innen sehen in den ersten 7 Tagen Veränderung`;
             }
 
-            // Breed-Image mit Fallback-Placeholder
+            // Breed-Image. Bei 404 ein einmaliger Fallback auf Allgemein.jpg,
+            // danach (sehr unwahrscheinlich) bleibt nur der Cream-Gradient.
             const breedImgEl = document.getElementById('breedImage');
-            const placeholder = document.getElementById('breedImagePlaceholder');
             const img = document.createElement('img');
             img.className = 'breed-image-img';
             img.alt = (breedShort || 'Hund') + ' Trainingsbild';
             img.src = resolveBreedImage(dogBreed, dogAge);
             img.style.position = 'relative';
             img.style.zIndex = '1';
+            let triedFallback = false;
             img.onerror = function() {
-                this.style.display = 'none';
-                placeholder.style.display = 'flex';
-                placeholder.querySelector('.placeholder-label').textContent =
-                    `[PLATZHALTER] ${breedShort || 'Hund'}-Bild folgt`;
+                if (!triedFallback) {
+                    triedFallback = true;
+                    this.src = BREED_FALLBACK;
+                } else {
+                    this.style.display = 'none';
+                }
             };
-            img.onload = function() { placeholder.style.display = 'none'; };
-            breedImgEl.insertBefore(img, placeholder);
+            breedImgEl.insertBefore(img, breedImgEl.firstChild);
 
             // 3er-Testimonial-Stack matched
             const tms = pickTestimonials(dogProblemKey, dogBreed, 3);
