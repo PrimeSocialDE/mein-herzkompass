@@ -1412,8 +1412,8 @@ personalisiert</div>
             // 3er-Testimonial-Stack matched
             const tms = pickTestimonials(dogProblemKey, dogBreed, 3);
             const problemLabel = (pm && pm.label) || 'ähnliches Profil';
-            const breedFull = (dogBreed || '').trim() || 'Hundehalter';
-            document.getElementById('testimonialMatch').textContent = `${breedFull} · ${problemLabel}`;
+            const matchBreed = breedFull || (dogBreed || '').trim() || 'Hundehalter';
+            document.getElementById('testimonialMatch').textContent = `${matchBreed} · ${problemLabel}`;
             renderTestimonialStack(tms);
 
             // After-Purchase-Block: Hundenamen einsetzen
