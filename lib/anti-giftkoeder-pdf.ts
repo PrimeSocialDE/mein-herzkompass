@@ -194,18 +194,19 @@ function drawPageHeader(
   pillText: string,
   title: string
 ): number {
-  let y = A4_H - 50;
-  // Pill (gold)
-  const pillW = fonts.bold.widthOfTextAtSize(pillText, 9) + 16;
+  let y = A4_H - 60;
+  // Pill (gold) — bisschen mehr Padding innen
+  const pillW = fonts.bold.widthOfTextAtSize(pillText, 9) + 18;
   drawRoundedRect(page, MARGIN, y - 18, pillW, 22, 4, GOLD);
   page.drawText(pillText, {
-    x: MARGIN + 8,
+    x: MARGIN + 9,
     y: y - 12,
     size: 9,
     font: fonts.bold,
     color: WHITE,
   });
-  y -= 38;
+  // Deutlich mehr Luft zwischen Pill und Titel (vorher 38, jetzt 56)
+  y -= 56;
   // Titel
   const titleLines = wrapText(title, fonts.bold, 22, CONTENT_W);
   for (const line of titleLines) {
@@ -218,7 +219,7 @@ function drawPageHeader(
     });
     y -= 28;
   }
-  y -= 6;
+  y -= 12;
   page.drawRectangle({
     x: MARGIN,
     y,
@@ -226,7 +227,7 @@ function drawPageHeader(
     height: 1,
     color: BORDER_LIGHT,
   });
-  y -= 18;
+  y -= 22;
   return y;
 }
 
@@ -235,15 +236,16 @@ function drawParagraph(
   fonts: Fonts,
   text: string,
   y: number,
-  options: { size?: number; color?: ReturnType<typeof rgb>; font?: PDFFont } = {}
+  options: { size?: number; color?: ReturnType<typeof rgb>; font?: PDFFont; lineGap?: number } = {}
 ): number {
   const size = options.size ?? 11;
   const color = options.color ?? TEXT_DARK;
   const font = options.font ?? fonts.regular;
+  const lineGap = options.lineGap ?? 6;
   const lines = wrapText(text, font, size, CONTENT_W);
   for (const line of lines) {
     page.drawText(line, { x: MARGIN, y, size, font, color });
-    y -= size + 4;
+    y -= size + lineGap;
   }
   return y;
 }
@@ -254,35 +256,35 @@ function drawTrainerTip(
   tipText: string,
   y: number
 ): number {
-  const lines = wrapText(tipText, fonts.regular, 9.5, CONTENT_W - 36);
-  const boxH = 24 + lines.length * 12;
-  drawRoundedRect(page, MARGIN, y - boxH + 12, CONTENT_W, boxH, 5, BG_LIGHT);
+  const lines = wrapText(tipText, fonts.regular, 10, CONTENT_W - 32);
+  const boxH = 36 + lines.length * 13;
+  drawRoundedRect(page, MARGIN, y - boxH + 14, CONTENT_W, boxH, 6, BG_LIGHT);
   page.drawRectangle({
     x: MARGIN,
-    y: y - boxH + 12,
+    y: y - boxH + 14,
     width: 3,
     height: boxH,
     color: GOLD,
   });
   page.drawText("Trainer-Tipp", {
-    x: MARGIN + 12,
-    y,
-    size: 9.5,
+    x: MARGIN + 14,
+    y: y - 2,
+    size: 10,
     font: fonts.bold,
     color: DARK_BROWN,
   });
-  y -= 14;
+  y -= 18;
   for (const line of lines) {
     page.drawText(line, {
-      x: MARGIN + 12,
+      x: MARGIN + 14,
       y,
-      size: 9.5,
+      size: 10,
       font: fonts.regular,
       color: TEXT_MEDIUM,
     });
-    y -= 12;
+    y -= 13;
   }
-  return y - 12;
+  return y - 16;
 }
 
 function drawStep(
@@ -293,28 +295,28 @@ function drawStep(
   desc: string,
   y: number
 ): number {
-  page.drawCircle({ x: MARGIN + 10, y: y - 1, size: 10, color: DARK_BROWN });
+  page.drawCircle({ x: MARGIN + 11, y: y - 1, size: 11, color: DARK_BROWN });
   const nText = String(n);
-  const nW = fonts.bold.widthOfTextAtSize(nText, 10);
+  const nW = fonts.bold.widthOfTextAtSize(nText, 11);
   page.drawText(nText, {
-    x: MARGIN + 10 - nW / 2,
+    x: MARGIN + 11 - nW / 2,
     y: y - 4,
-    size: 10,
+    size: 11,
     font: fonts.bold,
     color: WHITE,
   });
   page.drawText(title, {
-    x: MARGIN + 26,
+    x: MARGIN + 30,
     y: y - 1,
-    size: 11.5,
+    size: 12,
     font: fonts.bold,
     color: TEXT_DARK,
   });
-  y -= 16;
-  const descLines = wrapText(desc, fonts.regular, 10, CONTENT_W - 26);
+  y -= 18;
+  const descLines = wrapText(desc, fonts.regular, 10, CONTENT_W - 30);
   for (const line of descLines) {
     page.drawText(line, {
-      x: MARGIN + 26,
+      x: MARGIN + 30,
       y,
       size: 10,
       font: fonts.regular,
@@ -322,7 +324,7 @@ function drawStep(
     });
     y -= 13;
   }
-  return y - 8;
+  return y - 12;
 }
 
 function drawInfoBox(
@@ -333,35 +335,35 @@ function drawInfoBox(
   y: number,
   bgColor = BG_WARM
 ): number {
-  const lines = wrapText(text, fonts.regular, 10, CONTENT_W - 28);
-  const boxH = 26 + lines.length * 13;
-  drawRoundedRect(page, MARGIN, y - boxH + 14, CONTENT_W, boxH, 5, bgColor);
+  const lines = wrapText(text, fonts.regular, 10.5, CONTENT_W - 32);
+  const boxH = 40 + lines.length * 14;
+  drawRoundedRect(page, MARGIN, y - boxH + 16, CONTENT_W, boxH, 6, bgColor);
   page.drawRectangle({
     x: MARGIN,
-    y: y - boxH + 14,
+    y: y - boxH + 16,
     width: 3,
     height: boxH,
     color: DARK_BROWN,
   });
   page.drawText(label, {
-    x: MARGIN + 12,
-    y,
-    size: 10,
+    x: MARGIN + 14,
+    y: y - 2,
+    size: 10.5,
     font: fonts.bold,
     color: DARK_BROWN,
   });
-  y -= 15;
+  y -= 20;
   for (const line of lines) {
     page.drawText(line, {
-      x: MARGIN + 12,
+      x: MARGIN + 14,
       y,
-      size: 10,
+      size: 10.5,
       font: fonts.regular,
       color: TEXT_MEDIUM,
     });
-    y -= 13;
+    y -= 14;
   }
-  return y - 14;
+  return y - 18;
 }
 
 // ───────── Public API ─────────
@@ -487,6 +489,48 @@ export async function generateAntiGiftkoederPDF(
       color: TEXT_LIGHT,
     });
 
+    // ─── Disclaimer-Box auf dem Deckblatt (rechtliche Absicherung) ───
+    const discTitle = "Wichtiger Hinweis";
+    const discBody =
+      "Pfoten-Plan ist kein Tierarzt und ersetzt keine tierärztliche Beratung, Diagnose oder Behandlung. Dieses Trainingsmodul vermittelt ausschließlich präventives Verhaltens-Training. Bei Verdacht auf Vergiftung oder einer akuten Notlage kontaktiere sofort deinen Tierarzt oder den tierärztlichen Notdienst. Die Anwendung der hier beschriebenen Übungen erfolgt auf eigene Verantwortung.";
+    const discLines = wrapText(discBody, fonts.regular, 8.5, CONTENT_W - 28);
+    const discBoxH = 30 + discLines.length * 11;
+    const discY = 60 + discBoxH; // direkt oberhalb des Standard-Footers
+    drawRoundedRect(
+      p,
+      MARGIN,
+      discY - discBoxH,
+      CONTENT_W,
+      discBoxH,
+      5,
+      BG_WARM
+    );
+    p.drawRectangle({
+      x: MARGIN,
+      y: discY - discBoxH,
+      width: 3,
+      height: discBoxH,
+      color: DARK_BROWN,
+    });
+    p.drawText(discTitle, {
+      x: MARGIN + 12,
+      y: discY - 14,
+      size: 9.5,
+      font: fonts.bold,
+      color: DARK_BROWN,
+    });
+    let dty = discY - 28;
+    for (const line of discLines) {
+      p.drawText(line, {
+        x: MARGIN + 12,
+        y: dty,
+        size: 8.5,
+        font: fonts.regular,
+        color: TEXT_MEDIUM,
+      });
+      dty -= 11;
+    }
+
     drawFooter(p, fonts, 1, TOTAL);
   }
 
@@ -572,8 +616,8 @@ export async function generateAntiGiftkoederPDF(
     let y = drawPageHeader(
       p,
       fonts,
-      "WOCHE 1 · TAG 1–3",
-      "Dein wichtigstes Werkzeug: Das „Aus”-Signal"
+      "DEIN ERSTES SIGNAL",
+      "Das „Aus” — dein wichtigstes Werkzeug"
     );
 
     y = drawParagraph(
@@ -640,7 +684,7 @@ export async function generateAntiGiftkoederPDF(
     let y = drawPageHeader(
       p,
       fonts,
-      "WOCHE 1 · TAG 4–7",
+      "WAS DRINNEN ÜBEN",
       "Futter am Boden ignorieren — drinnen"
     );
 
@@ -714,7 +758,7 @@ export async function generateAntiGiftkoederPDF(
     let y = drawPageHeader(
       p,
       fonts,
-      "WOCHE 2 · TAG 8–11",
+      "WAS DRAUSSEN ÜBEN",
       "Raus in den Garten oder vor die Haustür"
     );
 
@@ -785,8 +829,8 @@ export async function generateAntiGiftkoederPDF(
     let y = drawPageHeader(
       p,
       fonts,
-      "WOCHE 2 · TAG 12–14",
-      "Das „Zeig mir”-Signal — Futter melden statt fressen"
+      "DAS MELDE-SIGNAL",
+      "„Zeig mir” — Futter melden statt fressen"
     );
 
     y = drawParagraph(
@@ -851,8 +895,8 @@ export async function generateAntiGiftkoederPDF(
     let y = drawPageHeader(
       p,
       fonts,
-      "WOCHE 3 · TAG 15–18",
-      "Impulskontrolle stärken — Warten können"
+      "IMPULSKONTROLLE",
+      "Warten können — die Basis für alles"
     );
 
     y = drawParagraph(
@@ -909,8 +953,8 @@ export async function generateAntiGiftkoederPDF(
     let y = drawPageHeader(
       p,
       fonts,
-      "WOCHE 3 · TAG 19–21",
-      "Der echte Spaziergang — Realsituation trainieren"
+      "DIE REALSITUATION",
+      "Der echte Spaziergang"
     );
 
     y = drawParagraph(
@@ -974,8 +1018,8 @@ export async function generateAntiGiftkoederPDF(
     let y = drawPageHeader(
       p,
       fonts,
-      "WOCHE 4 · TAG 22–25",
-      "Wenn es schwierig wird — Ablenkung unter Stress"
+      "UNTER STRESS",
+      "Wenn es schwierig wird — Ablenkung trainieren"
     );
 
     y = drawParagraph(
@@ -1032,8 +1076,8 @@ export async function generateAntiGiftkoederPDF(
     let y = drawPageHeader(
       p,
       fonts,
-      "WOCHE 4 · TAG 26–28",
-      "Freilauf mit Sicherheit — Ohne Leine"
+      "MIT FREILAUF",
+      "Ohne Leine — Freilauf mit Sicherheit"
     );
 
     y = drawInfoBox(
