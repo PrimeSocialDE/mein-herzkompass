@@ -133,7 +133,8 @@
             line-height: 1.22; margin-bottom: 14px;
             letter-spacing: -0.3px;
         }
-        .hero-headline .hero-breed { color: var(--warm-brown); }
+        .hero-headline .hero-name { color: var(--warm-brown); }
+        .hero-headline .hero-breed { color: var(--text-medium); font-weight: 700; }
         .hero-text {
             font-size: 16px; color: var(--text-medium); line-height: 1.6;
             margin-bottom: 28px;
@@ -740,7 +741,7 @@
                 <span class="dot"></span> Analyse abgeschlossen
             </div>
             <h1 class="hero-headline">
-                Dein <span class="hero-breed" id="heroBreed">Hund</span><span id="heroAgeSep">, </span><span id="heroAge">erwachsen</span>
+                <span class="hero-name" id="heroName">Dein Hund</span><span id="heroBreedSep">, </span><span class="hero-breed" id="heroBreed">Labrador</span><span id="heroAgeSep"> · </span><span id="heroAge">erwachsen</span>
             </h1>
             <p class="hero-text">
                 <span id="heroEmotionalLead">Du kennst das Gefühl wahrscheinlich nur zu gut.</span>
@@ -1221,11 +1222,40 @@ personalisiert</div>
             if (trait) return trait + ' — dein Plan ist genau darauf abgestimmt.';
             return 'Dein Plan ist individuell auf den Charakter deines Hundes abgestimmt.';
         }
-        function shortBreed(b) {
+        // Vollständige Rasse, Title-Cased, mit Trim. Nutzt das was der User
+        // im Quiz ausgewaehlt hat — komplett (nicht abkuerzen).
+        function displayBreed(b) {
             if (!b) return null;
             const s = String(b).trim();
             if (!s || /unknown/i.test(s)) return null;
-            return s.split(/\s+/)[0];
+            return s.split(/\s+/).map(w =>
+                w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+            ).join(' ');
+        }
+
+        // Kurz-Token fuer dynamische "X-Halter"-Pattern. Bei zusammengesetzten
+        // Rassen die markante Kurzform statt der erstes-Wort-Heuristik.
+        const PREFIX_BREED = {
+            'deutscher schäferhund': 'Schäferhund',
+            'schäferhund': 'Schäferhund',
+            'german shepherd': 'Schäferhund',
+            'labrador': 'Labrador',
+            'labrador retriever': 'Labrador',
+            'golden retriever': 'Golden-Retriever',
+            'australian shepherd': 'Aussie',
+            'aussie': 'Aussie',
+            'border collie': 'Border-Collie',
+            'dackel': 'Dackel',
+            'goldendoodle': 'Goldendoodle',
+            'havaneser': 'Havaneser',
+            'havanese': 'Havaneser',
+            'mischling': 'Mischlings',
+        };
+        function prefixBreed(b) {
+            if (!b) return null;
+            const k = String(b).trim().toLowerCase();
+            if (!k || /unknown/i.test(k)) return null;
+            return PREFIX_BREED[k] || displayBreed(b);
         }
 
         // Testimonials gefiltert nach Problem + Rasse
@@ -1296,20 +1326,43 @@ personalisiert</div>
 
         // Personalisierung anwenden
         (function init() {
-            const breedShort = shortBreed(dogBreed);
+            const breedFull  = displayBreed(dogBreed);     // "Deutscher Schäferhund"
+            const breedToken = prefixBreed(dogBreed);      // "Schäferhund" fuer X-Halter
             const ageLabel   = AGE_LABELS[dogAge] || '';
+            const hasName    = dogName && dogName !== 'deinen Hund';
 
-            document.getElementById('heroBreed').textContent = breedShort || 'Hund';
-            if (ageLabel) {
-                document.getElementById('heroAge').textContent = ageLabel;
+            // Header: [Hundename], [Vollständige Rasse] · [Alter]
+            const nameEl = document.getElementById('heroName');
+            const breedSepEl = document.getElementById('heroBreedSep');
+            const breedEl = document.getElementById('heroBreed');
+            const ageSepEl = document.getElementById('heroAgeSep');
+            const ageEl = document.getElementById('heroAge');
+
+            if (hasName) {
+                nameEl.textContent = dogName;
             } else {
-                document.getElementById('heroAge').textContent = '';
-                document.getElementById('heroAgeSep').textContent = '';
+                nameEl.textContent = 'Dein Hund';
+            }
+            if (breedFull && hasName) {
+                breedEl.textContent = breedFull;
+            } else if (breedFull) {
+                // Kein Name -> "Dein Hund · Labrador"
+                breedSepEl.textContent = ' · ';
+                breedEl.textContent = breedFull;
+            } else {
+                breedSepEl.textContent = '';
+                breedEl.textContent = '';
+            }
+            if (ageLabel) {
+                ageEl.textContent = ageLabel;
+            } else {
+                ageEl.textContent = '';
+                ageSepEl.textContent = '';
             }
 
             const pm = PROBLEM_MAP[dogProblemKey];
             if (pm) {
-                const breedWord = breedShort || 'Hund';
+                const breedWord = breedToken || 'Hund';
                 document.getElementById('heroEmotionalLead').textContent = pm.lead;
                 document.getElementById('heroTimeframe').textContent =
                     `Die meisten ${breedWord}-Halter sehen schon nach 5–7 Tagen die ersten Veränderungen. kleine, aber spürbare Momente, in denen sich plötzlich etwas verändert.`;
@@ -1329,7 +1382,7 @@ personalisiert</div>
             const breedImgEl = document.getElementById('breedImage');
             const img = document.createElement('img');
             img.className = 'breed-image-img';
-            img.alt = (breedShort || 'Hund') + ' Trainingsbild';
+            img.alt = (breedFull || 'Hund') + ' Trainingsbild';
             img.src = resolveBreedImage(dogBreed, dogAge);
             img.style.position = 'relative';
             img.style.zIndex = '1';
