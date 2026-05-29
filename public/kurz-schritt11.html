@@ -237,12 +237,12 @@
         // A/B Test v5: Rollback auf den bewaehrten Split — deinplan3 vs deinplan6.
         // deinplan2 wurde temporaer als Challenger getestet, aber wegen Bugs
         // (Rasse/Bilder unzuverlaessig in einigen Sessions) zurueckgenommen.
-        // Neuer LocalStorage-Key (v5) wuerfelt alle User frisch.
+        // 70/30 zugunsten des Champions — mehr Schutz nach dem Rollback.
         function getABTestPage() {
             let variant = localStorage.getItem('ab_test_pricing_v5');
             if (!variant) {
-                // 60/40 Champion (deinplan3) vs Challenger (deinplan6)
-                variant = Math.random() < 0.60 ? 'A' : 'B';
+                // 70/30 Champion (deinplan3) vs Challenger (deinplan6)
+                variant = Math.random() < 0.70 ? 'A' : 'B';
                 localStorage.setItem('ab_test_pricing_v5', variant);
                 // Legacy-Key auch setzen damit Supabase-Tracking (ab_variant) konsistent bleibt
                 localStorage.setItem('ab_test_pricing', variant);
