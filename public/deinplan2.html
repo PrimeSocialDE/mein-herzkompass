@@ -1229,6 +1229,7 @@ personalisiert</div>
             'goldendoodle':'/breeds/Goldendoodle.jpg',
             'havaneser':'/breeds/Havanese.jpg',
             'havanese':'/breeds/Havanese.jpg',
+            'mischling':'/breeds/Mischling.jpg',
         };
         function resolveBreedImage(breed, age) {
             if (!breed) return BREED_FALLBACK;
@@ -1251,13 +1252,15 @@ personalisiert</div>
             'goldendoodle': 'Goldendoodles reagieren besonders gut auf positive Verstärkung und ruhige Übungen',
             'havaneser': 'Havaneser reagieren besonders gut auf sanftes, lobbasiertes Training',
             'havanese': 'Havaneser reagieren besonders gut auf sanftes, lobbasiertes Training',
-            'mischling': 'Mischlinge profitieren besonders von einem Plan, der auf ihren individuellen Charakter zugeschnitten ist',
+            'mischling': 'Jeder Mischling ist einzigartig — und genau deshalb funktionieren Standard-Trainings oft nicht. Dein Plan ist auf das konkrete Verhalten deines Hundes abgestimmt, nicht auf eine Rasse aus dem Lehrbuch.',
         };
         function resolveBreedTrait(breed) {
             const k = (breed || '').trim().toLowerCase();
             const trait = BREED_TRAITS[k];
-            if (trait) return trait + ' — dein Plan ist genau darauf abgestimmt.';
-            return 'Dein Plan ist individuell auf den Charakter deines Hundes abgestimmt.';
+            if (!trait) return 'Dein Plan ist individuell auf den Charakter deines Hundes abgestimmt.';
+            // Wenn der Trait-Text schon mit Punkt endet, ist er komplett (z. B. Mischling).
+            // Sonst Standard-Suffix anhaengen.
+            return /[.!?]\s*$/.test(trait) ? trait : trait + ' — dein Plan ist genau darauf abgestimmt.';
         }
         // Vollständige Rasse, Title-Cased, mit Trim. Nutzt das was der User
         // im Quiz ausgewaehlt hat — komplett (nicht abkuerzen).
@@ -1315,22 +1318,27 @@ personalisiert</div>
             for (const t of TESTIMONIALS) if (t.tags.includes(problem)) return t;
             return TESTIMONIALS[TESTIMONIALS.length - 1];
         }
-        // 3 Testimonials picken: best match (problem+breed) → problem-only → generic.
-        // Keine Duplikate, immer genau n Cards.
+        // 3 Testimonials picken. Rasse-Match hat Vorrang vor Problem-Match,
+        // weil "der hat die gleiche Rasse wie ich" staerker als Social-Proof
+        // wirkt als "der hat das gleiche Problem". Reihenfolge:
+        //   1. breed + problem (perfekter Match)
+        //   2. breed only (gleiche Rasse — z. B. Nina bei Mischling-Besuchern)
+        //   3. problem only
+        //   4. generic
         function pickTestimonials(problem, breed, n = 3) {
             const breedKey = (breed||'').trim().toLowerCase().split(/\s+/)[0];
             const picked = [];
             const seen = new Set();
             const add = (t) => { if (t && !seen.has(t.name)) { picked.push(t); seen.add(t.name); } };
-            // 1) problem + breed
+            // 1) breed + problem
             for (const t of TESTIMONIALS) { if (picked.length >= n) break;
-                if (problem && t.tags.includes(problem) && breedKey && t.tags.includes(breedKey)) add(t); }
-            // 2) problem only
-            for (const t of TESTIMONIALS) { if (picked.length >= n) break;
-                if (problem && t.tags.includes(problem)) add(t); }
-            // 3) breed only
+                if (breedKey && t.tags.includes(breedKey) && problem && t.tags.includes(problem)) add(t); }
+            // 2) breed only
             for (const t of TESTIMONIALS) { if (picked.length >= n) break;
                 if (breedKey && t.tags.includes(breedKey)) add(t); }
+            // 3) problem only
+            for (const t of TESTIMONIALS) { if (picked.length >= n) break;
+                if (problem && t.tags.includes(problem)) add(t); }
             // 4) generic
             for (const t of TESTIMONIALS) { if (picked.length >= n) break; add(t); }
             return picked.slice(0, n);
