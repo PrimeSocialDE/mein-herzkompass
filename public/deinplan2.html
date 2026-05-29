@@ -752,6 +752,7 @@
 
         <div class="breed-card fade-up delay-1">
             <div class="breed-image" id="breedImage">
+                <img id="breedImageImg" class="breed-image-img" src="/breeds/Allgemein.jpg" alt="Hund Trainingsbild" style="position:relative;z-index:1;" onerror="this.src='/breeds/Allgemein.jpg';this.onerror=null;">
                 <div class="breed-goal-overlay">
                     <div style="min-width:0;flex:1;">
                         <div class="breed-goal-label">Dein Ziel</div>
@@ -1391,25 +1392,17 @@ personalisiert</div>
             const traitEl = document.getElementById('breedTrait');
             if (traitEl) traitEl.textContent = resolveBreedTrait(dogBreed);
 
-            // Breed-Image. Bei 404 ein einmaliger Fallback auf Allgemein.jpg,
-            // danach (sehr unwahrscheinlich) bleibt nur der Cream-Gradient.
-            const breedImgEl = document.getElementById('breedImage');
-            const img = document.createElement('img');
-            img.className = 'breed-image-img';
-            img.alt = (breedFull || 'Hund') + ' Trainingsbild';
-            img.src = resolveBreedImage(dogBreed, dogAge);
-            img.style.position = 'relative';
-            img.style.zIndex = '1';
-            let triedFallback = false;
-            img.onerror = function() {
-                if (!triedFallback) {
-                    triedFallback = true;
-                    this.src = BREED_FALLBACK;
-                } else {
-                    this.style.display = 'none';
+            // Breed-Image. Das <img> existiert bereits im HTML mit Allgemein.jpg
+            // als initialer Source — Foto wird also IMMER gerendert. Wenn die
+            // Rasse gemappt ist, swappen wir nur die src auf das spezifische Bild.
+            const breedImg = document.getElementById('breedImageImg');
+            if (breedImg) {
+                breedImg.alt = (breedFull || 'Hund') + ' Trainingsbild';
+                const specific = resolveBreedImage(dogBreed, dogAge);
+                if (specific && specific !== BREED_FALLBACK) {
+                    breedImg.src = specific;
                 }
-            };
-            breedImgEl.insertBefore(img, breedImgEl.firstChild);
+            }
 
             // 3er-Testimonial-Stack matched
             const tms = pickTestimonials(dogProblemKey, dogBreed, 3);
