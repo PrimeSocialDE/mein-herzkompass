@@ -234,25 +234,26 @@
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
 
-        // A/C Test v3: Champion (deinplan3) vs Challenger (deinplan6).
-        // deinplan3 hat 10-Tage-Daten den 1-Step-Checkout-Vorteil gezeigt (8.44% CR).
-        // deinplan6 = neue Variante mit Wow-Hero, problem-orientierter Headline,
-        // 3-Phasen-Bilder-Slider, kein "Monatsplan"-Wording, kleinerem Title.
-        // Neuer LocalStorage-Key (v3) wuerfelt alle User frisch.
+        // A/B Test v4: Champion (deinplan3) vs Challenger (deinplan2).
+        // deinplan3 = Champion mit bestaetigter CR (1-Step-Checkout).
+        // deinplan2 = neue personalisierte Quiz-Result-Page mit
+        //   Rasse-Bild + Trait-Satz, 3 Testimonials, Plan-Einblick-Video,
+        //   After-Purchase-3-Steps. Erste Live-Validierung.
+        // Neuer LocalStorage-Key (v4) wuerfelt alle User frisch.
         function getABTestPage() {
-            let variant = localStorage.getItem('ab_test_pricing_v3');
+            let variant = localStorage.getItem('ab_test_pricing_v4');
             if (!variant) {
-                // 60/40 Champion (deinplan3) vs Challenger (deinplan6)
-                // A liegt 72% vor B (9.3% vs 5.4% CR ueber 2 Tage) — mehr Traffic
-                // auf Champion, kleinere Stichprobe auf Challenger zum Weiterlernen.
+                // 60/40 Champion (deinplan3) vs Challenger (deinplan2)
+                // 40 % auf den Challenger, weil noch nie live getestet —
+                // bei schlechter CR schnell zurueckdrehen, bei guter CR auf 50/50.
                 variant = Math.random() < 0.60 ? 'A' : 'B';
-                localStorage.setItem('ab_test_pricing_v3', variant);
+                localStorage.setItem('ab_test_pricing_v4', variant);
                 // Legacy-Key auch setzen damit Supabase-Tracking (ab_variant) konsistent bleibt
                 localStorage.setItem('ab_test_pricing', variant);
             }
-            // A = deinplan3.html (Champion / 1-Step-Checkout-Winner)
-            // B = deinplan6.html (Challenger / Wow-Hero + Bilder + neues Wording)
-            return variant === 'A' ? 'deinplan3.html' : 'deinplan6.html';
+            // A = deinplan3.html (Champion)
+            // B = deinplan2.html (Challenger / personalisierte Quiz-Result-Page)
+            return variant === 'A' ? 'deinplan3.html' : 'deinplan2.html';
         }
 
         // Hundename aus localStorage
