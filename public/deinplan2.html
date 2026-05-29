@@ -1358,26 +1358,20 @@ personalisiert</div>
             const ageSepEl = document.getElementById('heroAgeSep');
             const ageEl = document.getElementById('heroAge');
 
-            if (hasName) {
-                nameEl.textContent = dogName;
-            } else {
-                nameEl.textContent = 'Dein Hund';
-            }
-            if (breedFull && hasName) {
-                breedEl.textContent = breedFull;
-            } else if (breedFull) {
-                // Kein Name -> "Dein Hund · Labrador"
-                breedSepEl.textContent = ' · ';
+            nameEl.textContent = hasName ? dogName : 'Dein Hund';
+            if (breedFull) {
+                breedSepEl.textContent = hasName ? ', ' : ' · ';
                 breedEl.textContent = breedFull;
             } else {
                 breedSepEl.textContent = '';
                 breedEl.textContent = '';
             }
             if (ageLabel) {
+                ageSepEl.textContent = (breedFull || hasName) ? ' · ' : '';
                 ageEl.textContent = ageLabel;
             } else {
-                ageEl.textContent = '';
                 ageSepEl.textContent = '';
+                ageEl.textContent = '';
             }
 
             const pm = PROBLEM_MAP[dogProblemKey];
