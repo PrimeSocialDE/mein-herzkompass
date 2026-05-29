@@ -741,7 +741,7 @@
                 <span class="dot"></span> Analyse abgeschlossen
             </div>
             <h1 class="hero-headline">
-                <span class="hero-name" id="heroName">Dein Hund</span><span id="heroBreedSep">, </span><span class="hero-breed" id="heroBreed">Labrador</span><span id="heroAgeSep"> · </span><span id="heroAge">erwachsen</span>
+                <span class="hero-name" id="heroName">Dein Hund</span><span id="heroBreedSep"></span><span class="hero-breed" id="heroBreed"></span><span id="heroAgeSep"></span><span id="heroAge"></span>
             </h1>
             <p class="hero-text">
                 <span id="heroEmotionalLead">Du kennst das Gefühl wahrscheinlich nur zu gut.</span>
@@ -1081,8 +1081,22 @@ personalisiert</div>
 
     <script>
         // ──────────────────────────────────────────────────────────
-        //  Quiz-Daten aus localStorage
+        //  Quiz-Daten aus localStorage. wauwerk_answers ist autoritativ;
+        //  die individuellen Keys werden gespiegelt (siehe deinplan3/4/6).
+        //  Sonst liest deinplan2 stale Daten aus einem vorherigen Quiz-Lauf.
         // ──────────────────────────────────────────────────────────
+        (function bootstrapAnswers() {
+            try {
+                const answers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
+                if (answers && typeof answers === 'object') {
+                    if (answers.dog_name)         localStorage.setItem('dogName',  answers.dog_name);
+                    if (answers.dog_age)          localStorage.setItem('dogAge',   answers.dog_age);
+                    if (answers.dog_breed)        localStorage.setItem('dogBreed', answers.dog_breed);
+                    if (answers.dog_problem)      localStorage.setItem('dogProblem', answers.dog_problem);
+                }
+            } catch (e) { /* defekter JSON -> nichts spiegeln, individuelle Keys bleiben */ }
+        })();
+
         const dogName       = localStorage.getItem('dogName')   || 'deinen Hund';
         const dogBreed      = localStorage.getItem('dogBreed')  || '';
         const dogAge        = localStorage.getItem('dogAge')    || '';
