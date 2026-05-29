@@ -1185,44 +1185,28 @@ personalisiert</div>
             },
         };
 
-        // Breed-Image-Mapping [PLATZHALTER. Bilder müssen noch erstellt werden]
+        // Breed-Image-Mapping. Nur die Top-Rassen haben ein eigenes Bild;
+        // alles andere (inkl. Mischling) faellt auf Allgemein.jpg zurueck.
+        const BREED_FALLBACK = '/breeds/Allgemein.jpg';
         const BREED_IMAGES = {
-            'labrador':'/breeds/labrador.jpg',
-            'golden retriever':'/breeds/golden-retriever.jpg',
-            'deutscher schäferhund':'/breeds/schaeferhund.jpg',
-            'schäferhund':'/breeds/schaeferhund.jpg',
-            'australian shepherd':'/breeds/aussie.jpg',
-            'border collie':'/breeds/border-collie.jpg',
-            'dackel':'/breeds/dackel.jpg',
-            'französische bulldogge':'/breeds/franzbulldogge.jpg',
-            'chihuahua':'/breeds/chihuahua.jpg',
-            'pudel':'/breeds/pudel.jpg',
-            'goldendoodle':'/breeds/goldendoodle.jpg',
-            'mischling':'/breeds/mischling.jpg',
-            'havaneser':'/breeds/havaneser.jpg',
-            'beagle':'/breeds/beagle.jpg',
-            'rhodesian ridgeback':'/breeds/ridgeback.jpg',
-            'bolonka zwetna':'/breeds/bolonka.jpg',
-            'malinois':'/breeds/malinois.jpg',
-            'boxer':'/breeds/boxer.jpg',
-            'jack russell':'/breeds/jack-russell.jpg',
-            'husky':'/breeds/husky.jpg',
-            'rottweiler':'/breeds/rottweiler.jpg',
-            'mops':'/breeds/mops.jpg',
-            'spitz':'/breeds/spitz.jpg',
-            'shih tzu':'/breeds/shih-tzu.jpg',
-            'magyar vizsla':'/breeds/vizsla.jpg',
-        };
-        const SIZE_FALLBACKS = {
-            small:'/breeds/_size-small.jpg', medium:'/breeds/_size-medium.jpg',
-            large:'/breeds/_size-large.jpg', xlarge:'/breeds/_size-xlarge.jpg',
-            puppy:'/breeds/_size-puppy.jpg',
+            'labrador':'/breeds/Labrador-Retriever.jpg',
+            'labrador retriever':'/breeds/Labrador-Retriever.jpg',
+            'golden retriever':'/breeds/Golden-Retriever.jpg',
+            'deutscher schäferhund':'/breeds/German-Shepard.jpg',
+            'schäferhund':'/breeds/German-Shepard.jpg',
+            'german shepherd':'/breeds/German-Shepard.jpg',
+            'australian shepherd':'/breeds/Australian-Shepherd.jpg',
+            'aussie':'/breeds/Australian-Shepherd.jpg',
+            'border collie':'/breeds/Border-Collie.jpg',
+            'dackel':'/breeds/Dackel.jpg',
+            'goldendoodle':'/breeds/Goldendoodle.jpg',
+            'havaneser':'/breeds/Havanese.jpg',
+            'havanese':'/breeds/Havanese.jpg',
         };
         function resolveBreedImage(breed, age) {
-            if (age === 'puppy') return SIZE_FALLBACKS.puppy;
-            if (!breed) return SIZE_FALLBACKS.medium;
+            if (!breed) return BREED_FALLBACK;
             const k = breed.trim().toLowerCase();
-            return BREED_IMAGES[k] || SIZE_FALLBACKS.medium;
+            return BREED_IMAGES[k] || BREED_FALLBACK;
         }
         function shortBreed(b) {
             if (!b) return null;
