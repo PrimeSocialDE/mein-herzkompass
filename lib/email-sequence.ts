@@ -306,7 +306,7 @@ function buildMailDef(n: number, lead: SequenceLead): MailDef | null {
     if (!hasAntiGift) {
       modules.push({
         title: "Anti-Giftköder-Trainingsplan",
-        desc: "12 Seiten, personalisiert. Schritt-für-Schritt-Training für „Aus", „Zeig mir" und 5 Notfall-Szenarien für draußen.",
+        desc: "12 Seiten, personalisiert. Schritt-für-Schritt-Training für „Aus”, „Zeig mir” und 5 Notfall-Szenarien für draußen.",
         price: "9,99 €",
       });
     }
