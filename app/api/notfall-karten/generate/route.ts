@@ -29,7 +29,7 @@ export async function POST(request: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        sender: { name: "Pfoten-Plan", email: "support@pfoten-plan.de" },
+        sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
         to: [{ email }],
         cc: [{ email: "kontakt@primesocial.de" }],
         subject: `Hier sind deine 10 Notfall-Karten für ${name}`,

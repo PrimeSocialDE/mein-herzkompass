@@ -320,7 +320,7 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        sender: { name: "Pfoten-Plan", email: "support@pfoten-plan.de" },
+        sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
         replyTo: { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" },
         to: [{ email: payload.user.email }],
         subject,

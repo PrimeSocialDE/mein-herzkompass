@@ -1067,7 +1067,7 @@ async function sendReferralRewardEmail(opts: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        sender: { name: "Pfoten-Plan", email: "support@pfoten-plan.de" },
+        sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
         to: [{ email: opts.to }],
         subject: `🎁 Dein Gratis-Modul wartet (${opts.redeemCode})`,
         htmlContent: html,

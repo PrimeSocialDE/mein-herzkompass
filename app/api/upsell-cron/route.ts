@@ -271,7 +271,7 @@ export async function GET(request: Request) {
           method: "POST",
           headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
           body: JSON.stringify({
-            sender: { name: "Pfoten-Plan", email: "support@pfoten-plan.de" },
+            sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
             to: [{ email }],
             subject: item.subject(dogName),
             htmlContent: item.htmlContent(dogName, email, lead.id),

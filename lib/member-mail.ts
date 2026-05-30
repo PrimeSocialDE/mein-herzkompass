@@ -97,7 +97,7 @@ export async function sendBrevoMail({ to, subject, html, tags, attachments, cc }
   }
   try {
     const payload: Record<string, unknown> = {
-      sender: { name: "Pfoten-Plan", email: "support@pfoten-plan.de" },
+      sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
       replyTo: {
         email: "support@pfoten-plan.de",
         name: "Pfoten-Plan Support",

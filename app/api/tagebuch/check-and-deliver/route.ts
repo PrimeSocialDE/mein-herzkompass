@@ -38,7 +38,7 @@ async function sendTagebuchMail(args: {
       method: "POST",
       headers: { "api-key": BREVO_API_KEY!, "Content-Type": "application/json" },
       body: JSON.stringify({
-        sender: { name: "Pfoten-Plan", email: "support@pfoten-plan.de" },
+        sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
         to: [{ email }],
         cc: [{ email: "kontakt@primesocial.de" }],
         subject: `Dein ${periodLabel}-Trainings-Tagebuch für ${dogName}`,
