@@ -814,6 +814,55 @@ async function deliverOrderBumpIfPurchased(payment: any, leadRecord: any) {
     } catch (e) {
       console.error("[mollie-webhook] Tagebuch-Bump Error:", e);
     }
+    return;
+  }
+
+  if (bumpId === "antigiftkoeder") {
+    try {
+      // Rasse + Alter aus dem Lead-Record holen, sonst aus answers
+      const ansRaw = (leadRecord?.answers || {}) as Record<string, any>;
+      const breed =
+        leadRecord?.dog_breed ||
+        ansRaw.dog_breed ||
+        meta.dog_breed ||
+        "Mischling";
+      const age =
+        ansRaw.dog_age || meta.dog_age || "adult";
+
+      const res = await fetch(`${baseUrl}/api/anti-giftkoeder/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, dogName, breed, age }),
+      });
+      if (res.ok && leadId) {
+        const { data: lead } = await supabase
+          .from("wauwerk_leads")
+          .select("answers")
+          .eq("id", leadId)
+          .single();
+        const prev = (lead?.answers || {}) as Record<string, any>;
+        await supabase
+          .from("wauwerk_leads")
+          .update({
+            answers: {
+              ...prev,
+              order_bump_delivered: "antigiftkoeder",
+              order_bump_delivered_at: new Date().toISOString(),
+              order_bump_amount_cents: meta.order_bump_amount_cents || "999",
+              antigiftkoeder_sent_at: new Date().toISOString(),
+            },
+          })
+          .eq("id", leadId);
+      } else if (!res.ok) {
+        console.error(
+          "[mollie-webhook] Anti-Giftkoeder Generate failed:",
+          res.status,
+          await res.text().catch(() => "")
+        );
+      }
+    } catch (e) {
+      console.error("[mollie-webhook] Anti-Giftkoeder-Bump Error:", e);
+    }
   }
 }
 

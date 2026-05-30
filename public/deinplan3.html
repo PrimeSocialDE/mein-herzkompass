@@ -2664,6 +2664,24 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ✓ <strong style="color: #166534;">Einmalzahlung</strong> – kein Abo, <strong style="color: #166534;">lebenslanger Zugang</strong> • <strong style="color: #166534;">24/7 Support</strong> • <a href="agb.html">AGB</a>
         </div>
 
+        <!-- Order-Bump: Anti-Giftköder-Trainingsplan +€9,99 -->
+        <label for="orderBumpAntigift" style="display:flex;gap:12px;background:#FFFBF5;border:2px solid #E6D5B3;border-radius:12px;padding:14px 16px;margin:0 0 14px;cursor:pointer;align-items:flex-start;max-width:540px;">
+            <input type="checkbox" id="orderBumpAntigift" onchange="updateOrderBumpAntigift()" style="margin-top:3px;width:22px;height:22px;cursor:pointer;accent-color:#C4A576;flex-shrink:0;">
+            <div style="flex:1;">
+                <div style="display:inline-block;background:#8B7355;color:#fff;padding:2px 8px;border-radius:12px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">SCHUTZ-PAKET</div>
+                <div style="font-size:14.5px;font-weight:800;color:#1a1a1a;margin-bottom:4px;line-height:1.3;">
+                    Anti-Giftköder-Trainingsplan dazu
+                </div>
+                <div style="font-size:12.5px;color:#555;line-height:1.55;margin-bottom:8px;">
+                    12-Seiten-PDF, auf deinen Hund personalisiert. Schritt-für-Schritt-Training für „Aus", „Zeig mir" und sichere Spaziergänge — inkl. 5 Notfall-Szenarien für draußen.
+                </div>
+                <div style="font-size:12.5px;">
+                    <span style="color:#999;text-decoration:line-through;">€19,99</span>
+                    <span style="color:#E67946;font-weight:800;margin-left:6px;">nur +€9,99 einmalig</span>
+                </div>
+            </div>
+        </label>
+
         <button class="cta-button glow" onclick="getMyPlan()">
             Trainingsplan freischalten
             <span class="cta-subtext">Sofort per E-Mail · Kein Abo · 30 Tage Garantie</span>
@@ -3699,31 +3717,49 @@ if (popularBadge) {
             if (!stickyMain || !stickyPrice) return;
             const name = (dogName && dogName !== 'deinen Hund') ? dogName : 'deinen Hund';
             stickyMain.textContent = 'Plan für ' + name + ' sichern →';
-            // Preis aus aktuell selektiertem Plan + Timer-State
-            const priceMap = {
-                '1month': { d: '€29,99', n: '€49,99' },
-                '3month': { d: '€39,99', n: '€79,99' },
-                '6month': { d: '€59,99', n: '€119,99' }
+            // Preis aus aktuell selektiertem Plan + Timer-State + Exit-Discount + Bump
+            const priceMapNum = {
+                '1month': { d: 29.99, n: 49.99 },
+                '3month': { d: 39.99, n: 79.99 },
+                '6month': { d: 59.99, n: 119.99 }
             };
-            const p = priceMap[selectedPlan] || priceMap['6month'];
-            stickyPrice.textContent = (typeof timerExpired !== 'undefined' && timerExpired) ? p.n : p.d;
+            const p = priceMapNum[selectedPlan] || priceMapNum['6month'];
+            const expired = typeof timerExpired !== 'undefined' && timerExpired;
+            let val = expired ? p.n : p.d;
+            const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
+            if (exitDiscount) val = Math.round(val * 85) / 100;
+            const cb = document.getElementById('orderBumpAntigift');
+            const bumpChecked = cb
+                ? cb.checked
+                : localStorage.getItem('order_bump_antigift_checked') === 'true';
+            if (bumpChecked) {
+                val += exitDiscount ? (Math.round(999 * 0.85) / 100) : 9.99;
+                val = Math.round(val * 100) / 100;
+            }
+            stickyPrice.textContent = '€' + val.toFixed(2).replace('.', ',');
         }
 
         // Sticky CTA: Show/Hide basierend auf Scroll-Position
+        // Anker ist die Kunden-Video-Section (nach Pricing). Sticky erscheint
+        // erst wenn das Video komplett aus dem Viewport raus ist — vorher kommt
+        // die CTA gefuehlt zu frueh und ueberlagert das Video-Layer.
         (function() {
             const isMobile = window.innerWidth <= 768;
             if (!isMobile) return;
             const sticky = document.getElementById('stickyMobileCta');
-            const pricingSection = document.querySelector('.pricing-section');
-            if (!sticky || !pricingSection) return;
+            const anchor =
+                document.getElementById('testimonialVideo') ||
+                document.querySelector('.video-testimonial') ||
+                document.querySelector('.testimonials-section') ||
+                document.querySelector('.pricing-section');
+            if (!sticky || !anchor) return;
 
             let shown = false;
             function checkScroll() {
-                const pricingBottom = pricingSection.getBoundingClientRect().bottom;
-                const viewportHeight = window.innerHeight;
-                // Zeige sticky CTA wenn User an pricing-section vorbeigescrollt ist
-                // (pricing-Section ist komplett oben verschwunden)
-                const shouldShow = pricingBottom < viewportHeight * 0.3;
+                const anchorBottom = anchor.getBoundingClientRect().bottom;
+                // Sticky erst zeigen wenn der Anker (Video) komplett ueber dem
+                // oberen Viewport-Rand verschwunden ist.
+                const shouldShow = anchorBottom < 0;
                 if (shouldShow && !shown) {
                     sticky.style.display = 'block';
                     document.body.classList.add('has-sticky-cta');
@@ -4402,6 +4438,11 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         function buildCheckoutPayload(extra) {
             const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
             const cancelPath = window.location.pathname + (window.location.search || '');
+            // Order-Bump (Anti-Giftköder +€9,99): Checkbox-State im DOM, sonst persistent in localStorage
+            const cbEl = document.getElementById('orderBumpAntigift');
+            const bumpChecked = cbEl
+                ? cbEl.checked
+                : localStorage.getItem('order_bump_antigift_checked') === 'true';
             return Object.assign({
                 plan: selectedPlan,
                 timerExpired: timerExpired,
@@ -4410,6 +4451,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 email: localStorage.getItem('userEmail') || '',
                 exitDiscount: exitDiscount,
                 cancelPath: cancelPath,
+                orderBump: bumpChecked,
+                bumpType: bumpChecked ? 'antigiftkoeder' : undefined,
                 utm_source: localStorage.getItem('utm_source') || '',
                 utm_medium: localStorage.getItem('utm_medium') || '',
                 utm_campaign: localStorage.getItem('utm_campaign') || '',
@@ -4423,6 +4466,20 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             }, extra || {});
         }
 
+        // Persistiere Order-Bump-State; CTAs lesen aus DOM oder localStorage
+        function updateOrderBumpAntigift() {
+            const cb = document.getElementById('orderBumpAntigift');
+            if (!cb) return;
+            localStorage.setItem('order_bump_antigift_checked', cb.checked ? 'true' : 'false');
+            // Sticky-CTA sofort aktualisieren damit der Preis matched
+            if (typeof updateStickyCta === 'function') updateStickyCta();
+        }
+        // Beim Laden Checkbox aus persisted State wiederherstellen
+        document.addEventListener('DOMContentLoaded', () => {
+            const cb = document.getElementById('orderBumpAntigift');
+            if (cb) cb.checked = localStorage.getItem('order_bump_antigift_checked') === 'true';
+        });
+
         async function getMyPlan() {
             const ctaBtn = document.querySelector('.cta-button');
             if (ctaBtn) { ctaBtn.disabled = true; ctaBtn.innerHTML = 'Lade Bezahlung...'; }
@@ -4434,13 +4491,24 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     '3month': { d: 39.99, n: 79.99 },
                     '6month': { d: 59.99, n: 119.99 }
                 };
-                const val = timerExpired ? priceMap[selectedPlan].n : priceMap[selectedPlan].d;
+                let val = timerExpired ? priceMap[selectedPlan].n : priceMap[selectedPlan].d;
+                const _ed = localStorage.getItem('exit_discount_15') === 'true';
+                if (_ed) val = Math.round(val * 85) / 100;
+                const _bcb = document.getElementById('orderBumpAntigift');
+                const _bch = _bcb
+                    ? _bcb.checked
+                    : localStorage.getItem('order_bump_antigift_checked') === 'true';
+                if (_bch) {
+                    val += _ed ? (Math.round(999 * 0.85) / 100) : 9.99;
+                    val = Math.round(val * 100) / 100;
+                }
                 const eventId = 'ic_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
                 localStorage.setItem('fb_event_id_ic', eventId);
                 if (typeof fbq !== 'undefined') {
                     fbq('track', 'InitiateCheckout', {
                         value: val, currency: 'EUR',
-                        content_name: selectedPlan, content_category: 'Trainingsplan', num_items: 1
+                        content_name: selectedPlan, content_category: 'Trainingsplan',
+                        num_items: _bch ? 2 : 1
                     }, { eventID: eventId });
                 }
             } catch(e) {}
@@ -4462,10 +4530,19 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
             let priceVal = timerExpired ? planInfo.n : planInfo.d;
             if (exitDiscount) priceVal = Math.round(priceVal * 85) / 100;
+            // Order-Bump (Anti-Giftköder +€9,99) — 15% Rabatt gilt auch fuer den Bump.
+            const _bumpCb = document.getElementById('orderBumpAntigift');
+            const _bumpChecked = _bumpCb
+                ? _bumpCb.checked
+                : localStorage.getItem('order_bump_antigift_checked') === 'true';
+            if (_bumpChecked) {
+                const bumpAdd = exitDiscount ? (Math.round(999 * 0.85) / 100) : 9.99;
+                priceVal = Math.round((priceVal + bumpAdd) * 100) / 100;
+            }
 
             hybridContext = {
                 plan: selectedPlan,
-                planName: planInfo.name,
+                planName: planInfo.name + (_bumpChecked ? ' + Anti-Giftköder-Plan' : ''),
                 price: priceVal,
                 priceLabel: priceVal.toFixed(2).replace('.', ',') + ' €'
             };

@@ -79,6 +79,10 @@ export async function POST(req: NextRequest) {
         id: "notfallkarten",
         name: "Notfall-Karten",
       },
+      antigiftkoeder: {
+        id: "antigiftkoeder",
+        name: "Anti-Giftköder-Trainingsplan (12 Seiten, personalisiert)",
+      },
     };
     const bumpDetails =
       BUMP_DETAILS[effectiveBumpType] || BUMP_DETAILS.tagebuch;
