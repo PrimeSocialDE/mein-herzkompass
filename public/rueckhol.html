@@ -1277,8 +1277,8 @@
 
                         <!-- Plan Tabs -->
                         <div style="display: flex; gap: 4px; margin-bottom: 18px; background: #F0F0F0; border-radius: 10px; padding: 3px;">
-                            <button onclick="selectIpadTab('1month')" id="ipadTab1" class="ipad-plan-tab" style="flex: 1; padding: 8px 4px; border-radius: 8px; border: none; background: transparent; color: #888; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s;">1 Monat</button>
-                            <button onclick="selectIpadTab('3month')" id="ipadTab3" class="ipad-plan-tab" style="flex: 1; padding: 8px 4px; border-radius: 8px; border: none; background: #C4A576; color: white; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s;">3 Monate</button>
+                            <button onclick="selectIpadTab('1month')" id="ipadTab1" class="ipad-plan-tab" style="flex: 1; padding: 8px 4px; border-radius: 8px; border: none; background: transparent; color: #888; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s;">4 Wochen</button>
+                            <button onclick="selectIpadTab('3month')" id="ipadTab3" class="ipad-plan-tab" style="flex: 1; padding: 8px 4px; border-radius: 8px; border: none; background: #C4A576; color: white; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s;">12 Wochen</button>
                             <button onclick="selectIpadTab('6month')" id="ipadTab6" class="ipad-plan-tab" style="flex: 1; padding: 8px 4px; border-radius: 8px; border: none; background: transparent; color: #888; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s;">6 Monate</button>
                         </div>
 
@@ -1436,23 +1436,33 @@
         <div id="pricingSection">
             <p class="pricing-question">Wähle deinen Plan:</p>
 
+            <!-- Trust-Anker: 4,9/5 Sterne (Trustpilot-Stil) direkt ueber den Plan-Karten -->
+            <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin:0 0 18px;flex-wrap:wrap;">
+                <div style="display:flex;gap:2px;">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#00B67A;border-radius:2px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#00B67A;border-radius:2px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#00B67A;border-radius:2px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#00B67A;border-radius:2px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#00B67A;border-radius:2px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                </div>
+                <span style="font-size:13px;color:#1a1a1a;font-weight:700;">4,9 von 5</span>
+                <span style="font-size:13px;color:#666;">· 847 Bewertungen</span>
+            </div>
+
         <div class="pricing-section">
             <div class="pricing-card" data-plan="1month" data-price="29.99">
                 <div class="pricing-header">
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
                         <div>
-                            <div class="pricing-name">1-Monats-Plan</div>
-                            <div class="pricing-total"><span style="text-decoration: line-through; color: #999; font-size: 12px;">€49,99</span> <strong style="color: #C4A576;">€29,99</strong> einmalig</div>
+                            <div class="pricing-name">Dein 4-Wochen-Plan</div>
+                            <div class="pricing-total" style="font-size:12px;color:#666;margin-top:3px;">Intensiv & fokussiert — schnellster Weg zum Ergebnis</div>
                         </div>
                     </div>
-                    <div class="pricing-right">
-                        <div class="pricing-price">
-                            <span class="price-currency">€</span>
-                            <span class="price-amount">0</span>
-                            <span class="price-cents">,99</span>
-                        </div>
-                        <div class="price-period">pro Tag</div>
+                    <div class="pricing-right" style="text-align:right;">
+                        <div style="font-size:12px;color:#999;text-decoration:line-through;line-height:1;">€49,99</div>
+                        <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">€29,99</div>
+                        <div style="font-size:11px;color:#999;margin-top:2px;">einmalig</div>
                     </div>
                 </div>
             </div>
@@ -1463,17 +1473,14 @@
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
                         <div>
-                            <div class="pricing-name">3-Monats-Plan</div>
-                            <div class="pricing-total"><span style="text-decoration: line-through; color: #999; font-size: 12px;">€79,99</span> <strong style="color: #C4A576;">€39,99</strong> einmalig</div>
+                            <div class="pricing-name">Dein 12-Wochen-Plan</div>
+                            <div class="pricing-total" style="font-size:12px;color:#666;margin-top:3px;">Intensiv über 12 Wochen — für nachhaltige Veränderung</div>
                         </div>
                     </div>
-                    <div class="pricing-right">
-                        <div class="pricing-price">
-                            <span class="price-currency">€</span>
-                            <span class="price-amount">0</span>
-                            <span class="price-cents">,44</span>
-                        </div>
-                        <div class="price-period">pro Tag</div>
+                    <div class="pricing-right" style="text-align:right;">
+                        <div style="font-size:12px;color:#999;text-decoration:line-through;line-height:1;">€79,99</div>
+                        <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">€39,99</div>
+                        <div style="font-size:11px;color:#999;margin-top:2px;">einmalig</div>
                     </div>
                 </div>
             </div>
@@ -1483,17 +1490,14 @@
                     <div class="pricing-left">
                         <div class="pricing-radio"></div>
                         <div>
-                            <div class="pricing-name">6-Monats-Plan</div>
-                            <div class="pricing-total"><span style="text-decoration: line-through; color: #999; font-size: 12px;">€119,99</span> <strong style="color: #C4A576;">€59,99</strong> einmalig</div>
+                            <div class="pricing-name">Dein 6-Monats-Plan</div>
+                            <div class="pricing-total" style="font-size:12px;color:#666;margin-top:3px;">Sanft & nachhaltig — in deinem Tempo aufgebaut</div>
                         </div>
                     </div>
-                    <div class="pricing-right">
-                        <div class="pricing-price">
-                            <span class="price-currency">€</span>
-                            <span class="price-amount">0</span>
-                            <span class="price-cents">,33</span>
-                        </div>
-                        <div class="price-period">pro Tag</div>
+                    <div class="pricing-right" style="text-align:right;">
+                        <div style="font-size:12px;color:#999;text-decoration:line-through;line-height:1;">€119,99</div>
+                        <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">€59,99</div>
+                        <div style="font-size:11px;color:#999;margin-top:2px;">einmalig</div>
                     </div>
                 </div>
             </div>
@@ -1617,7 +1621,7 @@
                     <div class="checkout-plan-image">🐕</div>
                     <div class="checkout-plan-info">
                         <div class="checkout-plan-name">Personalisierter Trainingsplan</div>
-                        <div class="checkout-plan-duration" id="checkoutPlanDuration">3-Monats-Plan</div>
+                        <div class="checkout-plan-duration" id="checkoutPlanDuration">12-Wochen-Plan</div>
                     </div>
                     <div class="checkout-plan-price-box">
                         <div class="checkout-plan-price" id="checkoutPrice">€39,99</div>
@@ -1875,8 +1879,8 @@
 
         // Plan-Daten
         const planData = {
-            '1month': { name: '1-Monats-Plan', price: '29,99', priceNum: 29.99 },
-            '3month': { name: '3-Monats-Plan', price: '39,99', priceNum: 39.99 },
+            '1month': { name: '4-Wochen-Plan', price: '29,99', priceNum: 29.99 },
+            '3month': { name: '12-Wochen-Plan', price: '39,99', priceNum: 39.99 },
             '6month': { name: '6-Monats-Plan', price: '59,99', priceNum: 59.99 }
         };
 
