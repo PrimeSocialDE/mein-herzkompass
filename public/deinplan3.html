@@ -2391,11 +2391,11 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 <body>
     <!-- Sticky Mobile CTA (erscheint ab 60% Scroll, nur mobile) -->
     <div id="stickyMobileCta" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;background:white;border-top:1px solid #E8E0D2;box-shadow:0 -4px 20px rgba(0,0,0,0.1);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0)) 14px;animation:stickyCtaSlideUp 0.35s ease-out;">
-        <button id="stickyMobileCtaBtn" onclick="getMyPlan()" style="width:100%;background:linear-gradient(135deg,#C4A576,#8B7355);color:#fff;border:none;border-radius:12px;padding:14px 18px;font-size:16px;font-weight:800;letter-spacing:0.3px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(196,165,118,0.4);">
+        <button id="stickyMobileCtaBtn" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth',block:'center'})" style="width:100%;background:linear-gradient(135deg,#C4A576,#8B7355);color:#fff;border:none;border-radius:12px;padding:14px 18px;font-size:16px;font-weight:800;letter-spacing:0.3px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(196,165,118,0.4);">
             <span id="stickyMobileCtaMain">Plan für deinen Hund sichern →</span>
         </button>
         <div style="text-align:center;font-size:11px;color:#666;margin-top:6px;">
-            <span id="stickyMobileCtaPrice">€39,99</span> · 30 Tage Geld-zurück · Kein Abo
+            30 Tage Geld-zurück · Kein Abo
         </div>
     </div>
 
@@ -2590,7 +2590,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             <p style="font-size: 12px; color: var(--text-medium); margin: 0; line-height: 1.4;">Bei anderen Problemen oder Fragen helfen dir unsere <strong style="color: var(--text-dark);">Hundetrainer 24/7 persönlich</strong> weiter.</p>
         </div>
 
-        <div class="pricing-section">
+        <div class="pricing-section" id="pricing">
             <div class="pricing-card" data-plan="1month" data-price="29.99">
                 <div class="pricing-header">
                     <div class="pricing-left">
@@ -3713,30 +3713,12 @@ if (popularBadge) {
 
         function updateStickyCta() {
             const stickyMain = document.getElementById('stickyMobileCtaMain');
-            const stickyPrice = document.getElementById('stickyMobileCtaPrice');
-            if (!stickyMain || !stickyPrice) return;
+            if (!stickyMain) return;
+            // Sticky-CTA zeigt keinen Preis mehr — der Button scrollt nur zum
+            // Pricing-Bereich, wo der Preis im Kontext steht. Nur den
+            // Button-Text personalisieren.
             const name = (dogName && dogName !== 'deinen Hund') ? dogName : 'deinen Hund';
             stickyMain.textContent = 'Plan für ' + name + ' sichern →';
-            // Preis aus aktuell selektiertem Plan + Timer-State + Exit-Discount + Bump
-            const priceMapNum = {
-                '1month': { d: 29.99, n: 49.99 },
-                '3month': { d: 39.99, n: 79.99 },
-                '6month': { d: 59.99, n: 119.99 }
-            };
-            const p = priceMapNum[selectedPlan] || priceMapNum['6month'];
-            const expired = typeof timerExpired !== 'undefined' && timerExpired;
-            let val = expired ? p.n : p.d;
-            const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
-            if (exitDiscount) val = Math.round(val * 85) / 100;
-            const cb = document.getElementById('orderBumpAntigift');
-            const bumpChecked = cb
-                ? cb.checked
-                : localStorage.getItem('order_bump_antigift_checked') === 'true';
-            if (bumpChecked) {
-                val += exitDiscount ? (Math.round(999 * 0.85) / 100) : 9.99;
-                val = Math.round(val * 100) / 100;
-            }
-            stickyPrice.textContent = '€' + val.toFixed(2).replace('.', ',');
         }
 
         // Sticky CTA: Show/Hide basierend auf Scroll-Position
@@ -4913,7 +4895,6 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     <!-- 30 Tage Garantie Badge -->
                     <div style="display: flex; gap: 8px; margin-bottom: 6px;">
                         <div class="checkout-guarantee-compact" style="flex: 1; margin-bottom: 0;">🛡️ 30 Tage Garantie</div>
-                        <div class="checkout-guarantee-compact" style="flex: 1; margin-bottom: 0;"><span style="display: inline-block; width: 7px; height: 7px; background: #22C55E; border-radius: 50%; box-shadow: 0 0 5px rgba(34,197,94,0.6); animation: livePulse 2s infinite; margin-right: 4px;"></span>Heute 20+ mal gekauft</div>
                     </div>
 
                     <div style="text-align: center; padding: 6px 10px; background: #f0fdf4; border-radius: 6px; font-size: 11px; color: #166534; margin-bottom: 10px; font-weight: 500;">
