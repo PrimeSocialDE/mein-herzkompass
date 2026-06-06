@@ -215,6 +215,33 @@
             font-size: 14px;
             display: none;
         }
+        /* ---- Tabs ---- */
+        .wf-tabs { display:flex; gap:6px; margin-bottom:28px; border-bottom:2px solid #E8E4DF; }
+        .wf-tab { background:none; border:none; border-bottom:3px solid transparent; padding:10px 16px; margin-bottom:-2px; font-size:14px; font-weight:600; color:#6B6B6B; cursor:pointer; border-radius:0; }
+        .wf-tab:hover { color:#1a1a1a; }
+        .wf-tab.active { color:#C4A576; border-bottom-color:#C4A576; }
+        /* ---- Workflow ---- */
+        .wf-summary { display:flex; gap:10px; flex-wrap:wrap; margin:6px 0 24px; }
+        .wf-kpi { background:#fff; border:1px solid #E8E4DF; border-radius:10px; padding:12px 16px; min-width:120px; }
+        .wf-kpi .num { font-size:22px; font-weight:800; color:#1a1a1a; line-height:1.1; }
+        .wf-kpi .lbl { font-size:11px; color:#6B6B6B; text-transform:uppercase; letter-spacing:.05em; margin-top:2px; }
+        .wf-flows { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+        @media(max-width:820px){ .wf-flows{ grid-template-columns:1fr; } }
+        .wf-col h2 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:#8B7355; margin:0 0 4px; }
+        .wf-col .wf-coldesc { font-size:12px; color:#6B6B6B; margin:0 0 16px; }
+        .wf-trigger { background:#1a1a1a; color:#fff; border-radius:10px; padding:12px 16px; font-size:13px; font-weight:600; }
+        .wf-trigger .sub { font-weight:400; opacity:.8; font-size:12px; margin-top:3px; }
+        .wf-arrow { text-align:center; color:#C4A576; font-size:16px; line-height:1; margin:6px 0; }
+        .wf-card { background:#fff; border:1px solid #E8E4DF; border-radius:10px; padding:13px 15px; }
+        .wf-card.ext { background:#FAF8F5; border-style:dashed; }
+        .wf-card .when { display:inline-block; background:#FAF6EE; color:#8B7355; font-size:11px; font-weight:700; padding:2px 9px; border-radius:20px; margin-bottom:7px; }
+        .wf-card .subj { font-size:14px; font-weight:600; color:#1a1a1a; line-height:1.35; margin-bottom:9px; }
+        .wf-card .subj .ph { color:#C4A576; }
+        .wf-metrics { display:flex; gap:14px; flex-wrap:wrap; border-top:1px solid #F0EBE3; padding-top:9px; }
+        .wf-metric { font-size:12px; color:#444; }
+        .wf-metric b { font-size:15px; font-weight:800; color:#1a1a1a; display:block; line-height:1.1; }
+        .wf-metric.muted { color:#9CA3AF; }
+        .wf-note { font-size:11px; color:#9CA3AF; margin-top:8px; font-style:italic; }
     </style>
 </head>
 <body>
@@ -232,6 +259,34 @@
 <!-- Main Tool -->
 <div id="main-tool" style="display:none">
     <div class="container">
+
+        <!-- Tab-Navigation -->
+        <div class="wf-tabs">
+            <button class="wf-tab active" id="tabbtn-tools" onclick="switchTab('tools')">🛠️ Tools</button>
+            <button class="wf-tab" id="tabbtn-workflow" onclick="switchTab('workflow')">📧 E-Mail-Workflow</button>
+        </div>
+
+        <!-- ============ TAB: E-Mail-Workflow ============ -->
+        <div id="tab-workflow" style="display:none">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:6px;">
+                <div>
+                    <h1 style="margin-bottom:2px;">E-Mail-Workflow</h1>
+                    <p class="subtitle" id="wf-range" style="margin:0;">Automatische Sequenzen pro Segment — Versand &amp; Öffnungsraten.</p>
+                </div>
+                <button class="btn" onclick="loadWorkflow()" id="wf-refresh" style="padding:9px 18px;white-space:nowrap;">↻ Aktualisieren</button>
+            </div>
+            <div id="wf-summary" class="wf-summary"></div>
+            <div id="wf-content" class="wf-flows">
+                <p style="color:#6B6B6B;font-size:14px;">Lade Daten …</p>
+            </div>
+            <p style="font-size:11px;color:#9CA3AF;margin-top:18px;line-height:1.5;">
+                Öffnungs-/Klickraten kommen live aus Brevo (Zeitraum letzte 90 Tage, je Mail-Tag). Versandzahlen aus der Lead-Datenbank.
+                Mail 5 (Tag 7) der Käufer-Sequenz läuft als Brevo-Automation und wird hier nicht intern getrackt.
+            </p>
+        </div>
+
+        <!-- ============ TAB: Tools ============ -->
+        <div id="tab-tools">
 
         <!-- Plan nochmal versenden -->
         <div style="background: #fff; border: 2px solid #C4A576; border-radius: 12px; padding: 20px; margin-bottom: 32px;">
@@ -353,6 +408,7 @@
                 <div class="result-text" id="result-text"></div>
             </div>
         </div>
+        </div><!-- /tab-tools -->
     </div>
 </div>
 
@@ -362,6 +418,119 @@
     const PASS = 'pfoten2024';
     let droppedFile = null;
     let toolReady = false;
+
+    // ===================== E-Mail-Workflow Tab =====================
+    let wfLoaded = false;
+    function switchTab(name) {
+        document.getElementById('tab-tools').style.display    = name === 'tools' ? 'block' : 'none';
+        document.getElementById('tab-workflow').style.display = name === 'workflow' ? 'block' : 'none';
+        document.getElementById('tabbtn-tools').classList.toggle('active', name === 'tools');
+        document.getElementById('tabbtn-workflow').classList.toggle('active', name === 'workflow');
+        if (name === 'workflow' && !wfLoaded) { wfLoaded = true; loadWorkflow(); }
+    }
+
+    // Struktur 1:1 aus dem Code (lib/email-sequence.ts + lib/warm-recovery-mail.ts)
+    const WF_BUYER = [
+        { trigger: true, when: 'Auslöser', subj: 'Kauf abgeschlossen → Plan-Mail sofort', sub: 'Der Plan wird direkt per Mail ausgeliefert (Willkommens-Touchpoint).' },
+        { num: 2, tag: 'email-seq-2', when: 'Tag 1',  subj: 'Tag 1 mit {Hund} war wahrscheinlich nicht perfekt' },
+        { num: 3, tag: 'email-seq-3', when: 'Tag 3',  subj: 'Bei {Rasse} entscheidet Tag 5' },
+        { num: 4, tag: 'email-seq-4', when: 'Tag 5',  subj: 'Nina aus Köln hatte einen {Rasse} wie {Hund}' },
+        { ext: true, when: 'Tag 7', subj: 'Übungen-Mail', note: 'Läuft als Brevo-Automation — hier nicht intern getrackt.' },
+        { num: 6, tag: 'email-seq-6', when: 'Tag 10', subj: 'Eine Frage zu {Hund} — vor Woche 2' },
+        { num: 7, tag: 'email-seq-7', when: 'Tag 14', subj: 'Was Familie und Nachbarn an {Hund} zuerst bemerken' },
+        { num: 8, tag: 'email-seq-8', when: 'Tag 21', subj: 'Ab jetzt fühlt es sich schwerer an. Warum das ein gutes Zeichen ist.' },
+        { num: 9, tag: 'email-seq-9', when: 'Tag 30', subj: '30 Tage geschafft — drei Module, die jetzt sinnvoll werden' },
+    ];
+    const WF_RECOVERY = [
+        { trigger: true, when: 'Auslöser', subj: 'Checkout abgebrochen (pending / failed)', sub: 'Lead hat Quiz gemacht, aber nicht gekauft. Bei Kauf → Stopp.' },
+        { stage: 1, tag: 'stage-1', when: 'nach ~2 Std',  subj: 'Eine Frage zu {Hund}s Trainingsplan?' },
+        { stage: 2, tag: 'stage-2', when: 'nach ~24 Std', subj: 'Wie eine andere Halterin das gleiche Thema gelöst hat' },
+        { stage: 3, tag: 'stage-3', when: 'nach ~3 Tagen', subj: 'Ein Brief von uns zu {Hund}' },
+        { stage: 4, tag: 'stage-4', when: 'nach ~5 Tagen', subj: 'Die häufigsten Fragen zu unserem Trainingsplan' },
+        { stage: 5, tag: 'stage-5', when: 'nach ~7 Tagen', subj: 'Letzte Nachricht — 15% Rabatt auf {Hund}s Plan' },
+    ];
+
+    let WF_DATA = null;
+
+    async function loadWorkflow() {
+        const btn = document.getElementById('wf-refresh');
+        btn.disabled = true; btn.textContent = '… lädt';
+        document.getElementById('wf-content').innerHTML = '<p style="color:#6B6B6B;font-size:14px;">Lade Daten aus Supabase &amp; Brevo …</p>';
+        try {
+            const res = await fetch('/api/admin/workflow-stats', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: PASS }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Fehler');
+            WF_DATA = data;
+            renderWorkflow(data);
+        } catch (e) {
+            document.getElementById('wf-content').innerHTML = '<p style="color:#b91c1c;font-size:14px;">Fehler: ' + e.message + '</p>';
+        } finally {
+            btn.disabled = false; btn.textContent = '↻ Aktualisieren';
+        }
+    }
+
+    const fmtNum = (n) => (n == null ? '–' : n.toLocaleString('de-DE'));
+    const pct = (a, b) => (!b ? null : Math.round((a / b) * 100));
+    const phSubj = (s) => s.replace(/\{Hund\}/g, '<span class="ph">{Hund}</span>').replace(/\{Rasse\}/g, '<span class="ph">{Rasse}</span>');
+
+    function metricsHtml(tag, sentCount, brevo) {
+        const b = brevo && brevo[tag];
+        let open = '<div class="wf-metric muted"><b>–</b>Öffnungen</div>';
+        let click = '<div class="wf-metric muted"><b>–</b>Klicks</div>';
+        if (b && !b.error) {
+            const oR = pct(b.uniqueOpens, b.delivered);
+            const cR = pct(b.uniqueClicks, b.delivered);
+            open  = '<div class="wf-metric"><b>' + (oR == null ? '–' : oR + '%') + '</b>geöffnet</div>';
+            click = '<div class="wf-metric"><b>' + (cR == null ? '–' : cR + '%') + '</b>geklickt</div>';
+        } else if (b && b.error) {
+            open = '<div class="wf-metric muted"><b>n/a</b>Brevo</div>'; click = '';
+        }
+        return '<div class="wf-metrics">'
+            + '<div class="wf-metric"><b>' + fmtNum(sentCount) + '</b>gesendet</div>'
+            + open + click + '</div>';
+    }
+
+    function cardHtml(step, sentCount, brevo) {
+        if (step.trigger) {
+            return '<div class="wf-trigger">▸ ' + step.subj + (step.sub ? '<div class="sub">' + step.sub + '</div>' : '') + '</div>';
+        }
+        if (step.ext) {
+            return '<div class="wf-card ext"><span class="when">' + step.when + '</span>'
+                + '<div class="subj">' + phSubj(step.subj) + '</div>'
+                + '<div class="wf-note">' + step.note + '</div></div>';
+        }
+        return '<div class="wf-card"><span class="when">' + step.when + '</span>'
+            + '<div class="subj">' + phSubj(step.subj) + '</div>'
+            + metricsHtml(step.tag, sentCount, brevo) + '</div>';
+    }
+
+    function columnHtml(title, desc, steps, sentMap, keyField, brevo) {
+        let html = '<div class="wf-col"><h2>' + title + '</h2><p class="wf-coldesc">' + desc + '</p>';
+        steps.forEach((step, i) => {
+            const sent = step[keyField] != null && sentMap ? sentMap[step[keyField]] : null;
+            html += cardHtml(step, sent, brevo);
+            if (i < steps.length - 1) html += '<div class="wf-arrow">↓</div>';
+        });
+        html += '</div>';
+        return html;
+    }
+
+    function renderWorkflow(d) {
+        document.getElementById('wf-range').textContent =
+            'Öffnungsraten: Brevo, Zeitraum ' + d.range.startDate + ' bis ' + d.range.endDate + (d.brevoConfigured ? '' : ' (Brevo-Key fehlt)');
+        const L = d.leads || {};
+        document.getElementById('wf-summary').innerHTML =
+            '<div class="wf-kpi"><div class="num">' + fmtNum(L.paid) + '</div><div class="lbl">Käufer (paid)</div></div>'
+          + '<div class="wf-kpi"><div class="num">' + fmtNum((L.pending||0)+(L.failed||0)) + '</div><div class="lbl">Abbrecher (pending/failed)</div></div>';
+        document.getElementById('wf-content').innerHTML =
+            columnHtml('Segment · Käufer (nach Kauf)', 'Onboarding-Sequenz, Tag 1 bis Tag 30. Abmelden stoppt die Folge.', WF_BUYER, d.buyerSent, 'num', d.brevo)
+          + columnHtml('Segment · Interessent / Abbrecher', 'Recovery-Drip, 2 Std bis 14 Tage. Bei Kauf wird der Lead entfernt.', WF_RECOVERY, d.recoverySent, 'stage', d.brevo);
+    }
+
 
     function showTool() {
         document.getElementById('login-screen').style.display = 'none';
