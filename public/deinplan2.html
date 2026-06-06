@@ -750,8 +750,20 @@
             <img src="logo.png" alt="Pfoten-Plan" class="logo-image" onerror="this.style.display='none'">
             <span class="logo-text">Pfoten-Plan</span>
         </a>
-        <button class="header-cta" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Plan sichern</button>
+        <button class="header-cta" onclick="smoothScrollToPricing()">Plan sichern</button>
     </div>
+    <script>
+    // Sanftes Scrollen zur Pricing-Section: schneller Start, weiches Ausklingen (easeOutCubic)
+    function smoothScrollToPricing(){
+        var el=document.getElementById('pricing'); if(!el) return;
+        var startY=window.pageYOffset;
+        var targetY=el.getBoundingClientRect().top+startY-12;
+        var dist=targetY-startY, dur=1100, t0=null;
+        function ease(p){return 1-Math.pow(1-p,3);}
+        function step(ts){ if(t0===null)t0=ts; var p=Math.min((ts-t0)/dur,1); window.scrollTo(0,startY+dist*ease(p)); if(p<1) requestAnimationFrame(step); }
+        requestAnimationFrame(step);
+    }
+    </script>
 
     <!-- 1. SECTION HERO -->
     <section class="hero-section">
@@ -979,7 +991,14 @@ personalisiert</div>
     <!-- 6. SECTION Pricing-Cards + CTA -->
     <section id="pricing" class="pricing-section">
         <h2>Wähle deinen Plan</h2>
-        <p class="pricing-sub">Einmalzahlung · Kein Abo · Lebenslanger Zugang</p>
+        <p class="pricing-sub">Einmalzahlung · Kein Abo · Lebenslanger Zugang · Plan direkt per E-Mail</p>
+
+        <p id="pricingRecoLine" style="text-align:center;font-size:13.5px;font-style:italic;color:var(--text-medium);max-width:440px;margin:10px auto 0;line-height:1.45;">„Für deinen Hund empfehlen wir den 12-Wochen-Plan, lang genug, dass die Veränderung sich wirklich festigt."</p>
+
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:10px 14px;margin:14px auto 4px;max-width:440px;">
+            <span style="font-size:16px;line-height:1;">🛡️</span>
+            <span style="font-size:13px;color:#166534;font-weight:600;line-height:1.4;">30 Tage Geld-zurück-Garantie. Funktioniert es nicht, bekommst du jeden Cent zurück.</span>
+        </div>
 
         <div class="pricing-stack">
             <div class="pricing-card" data-plan="1month" data-price="29.99" onclick="selectPlan(this)">
@@ -993,7 +1012,7 @@ personalisiert</div>
             <div class="pricing-card selected" data-plan="3month" data-price="39.99" onclick="selectPlan(this)">
                 <div class="pricing-radio"></div>
                 <div class="pricing-info">
-                    <div class="pricing-name">12-Wochen-Plan <span class="pricing-badge">BELIEBT</span></div>
+                    <div class="pricing-name">12-Wochen-Plan <span class="pricing-badge" id="pricingRecoBadge">Das empfehlen wir dir</span></div>
                     <div class="pricing-daily">Empfohlen für nachhaltige Veränderung</div>
                 </div>
                 <div class="pricing-price">€39,99</div>
@@ -1150,6 +1169,18 @@ personalisiert</div>
         const dogBreed      = readQuizField('dogBreed',   'dog_breed');
         const dogAge        = readQuizField('dogAge',     'dog_age');
         const dogProblemKey = readQuizField('dogProblem', 'dog_problem');
+
+        // Empfehlungs-Badge (Pricing) mit Hundename personalisieren
+        const recoBadge = document.getElementById('pricingRecoBadge');
+        if (recoBadge && dogName && dogName !== 'deinen Hund') recoBadge.textContent = 'Für ' + dogName + ' empfohlen';
+
+        // Personalisierte Empfehlungs-Zeile unter den 3 Punkten (Begründung passend zur Laufzeit)
+        (function(){
+            const line = document.getElementById('pricingRecoLine');
+            if (!line) return;
+            const name = (dogName && dogName !== 'deinen Hund') ? dogName : 'deinen Hund';
+            line.textContent = '„Für ' + name + ' empfehlen wir den 12-Wochen-Plan, lang genug, dass die Veränderung sich wirklich festigt."';
+        })();
 
         // Debug-Output. Erkennt bei verbuggten Sessions sofort woran's liegt.
         try { console.log('[deinplan2] Quiz-Daten:', { dogName, dogBreed, dogAge, dogProblemKey }); } catch {}

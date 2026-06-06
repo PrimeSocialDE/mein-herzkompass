@@ -2389,6 +2389,37 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 </head>
 
 <body>
+    <!-- Sticky Top-Header (Plan sichern, scrollt sanft zur Pricing-Section) -->
+    <style>
+      .dp3-sticky-header{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,0.97);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid #EADDC5;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;transform:translateY(-100%);transition:transform .3s ease;pointer-events:none;}
+      .dp3-sticky-header.scrolled{transform:translateY(0);pointer-events:auto;}
+      .dp3-sticky-header .dp3-logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;}
+      .dp3-sticky-header .dp3-logo img{width:32px;height:32px;border-radius:8px;}
+      .dp3-sticky-header .dp3-logo span{font-size:17px;font-weight:800;color:#1a1a1a;}
+      .dp3-sticky-header .dp3-cta{background:#C4A576;color:#fff;border:none;border-radius:24px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;}
+      .dp3-sticky-header .dp3-cta:hover{background:#8B7355;}
+    </style>
+    <div class="dp3-sticky-header" id="dp3StickyHeader">
+      <a href="/" class="dp3-logo"><img src="logo.png" alt="Pfoten-Plan" onerror="this.style.display='none'"><span>Pfoten-Plan</span></a>
+      <button class="dp3-cta" onclick="smoothScrollToPricing()">Plan sichern</button>
+    </div>
+    <script>
+    // Sanftes Scrollen zur Pricing-Section: schneller Start, weiches Ausklingen (easeOutCubic)
+    function smoothScrollToPricing(){
+        var el=document.getElementById('pricing'); if(!el) return;
+        var startY=window.pageYOffset;
+        var targetY=el.getBoundingClientRect().top+startY-12;
+        var dist=targetY-startY, dur=1100, t0=null;
+        function ease(p){return 1-Math.pow(1-p,3);}
+        function step(ts){ if(t0===null)t0=ts; var p=Math.min((ts-t0)/dur,1); window.scrollTo(0,startY+dist*ease(p)); if(p<1) requestAnimationFrame(step); }
+        requestAnimationFrame(step);
+    }
+    // Header erst nach Scroll-Past-Hero einblenden
+    function dp3CheckSticky(){var h=document.getElementById('dp3StickyHeader');var hero=document.querySelector('.hero-section');if(!h||!hero)return;h.classList.toggle('scrolled',hero.getBoundingClientRect().bottom<60);}
+    window.addEventListener('scroll',dp3CheckSticky,{passive:true});
+    window.addEventListener('DOMContentLoaded',dp3CheckSticky);
+    </script>
+
     <!-- Sticky Mobile CTA (erscheint ab 60% Scroll, nur mobile) -->
     <div id="stickyMobileCta" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;background:white;border-top:1px solid #E8E0D2;box-shadow:0 -4px 20px rgba(0,0,0,0.1);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0)) 14px;animation:stickyCtaSlideUp 0.35s ease-out;">
         <button id="stickyMobileCtaBtn" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth',block:'center'})" style="width:100%;background:linear-gradient(135deg,#C4A576,#8B7355);color:#fff;border:none;border-radius:12px;padding:14px 18px;font-size:16px;font-weight:800;letter-spacing:0.3px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(196,165,118,0.4);">
@@ -2661,7 +2692,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
 
         <div class="disclaimer">
-            ✓ <strong style="color: #166534;">Einmalzahlung</strong> – kein Abo, <strong style="color: #166534;">lebenslanger Zugang</strong> • <strong style="color: #166534;">24/7 Support</strong> • <a href="agb.html">AGB</a>
+            ✓ <strong style="color: #166534;">Einmalzahlung</strong> – kein Abo, <strong style="color: #166534;">lebenslanger Zugang</strong> • <strong style="color: #166534;">Plan direkt per E-Mail</strong> • <strong style="color: #166534;">24/7 Support</strong> • <a href="agb.html">AGB</a>
         </div>
 
         <!-- Order-Bump: Anti-Giftköder-Trainingsplan +€9,99 -->
@@ -2696,7 +2727,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             <img src="applepay.png" alt="Apple Pay">
             <img src="googlepay.png" alt="Google Pay">
         </div>
-        <div style="text-align: center; font-size: 11px; color: #999; margin-top: 4px; margin-bottom: 30px;">Per Überweisung zahlen? Wähle Klarna und dann deine Bank.</div>
+        <div style="height: 30px;"></div>
 
 
         <!-- ========== Testimonials (ausführlicher, weiter unten) ========== -->
@@ -3487,7 +3518,9 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         // ==================== DYNAMISCHER POPULAR BADGE ====================
         const popularBadge = document.getElementById('popularBadge');
 if (popularBadge) {
-    popularBadge.textContent = '⭐ Für dauerhafte Veränderung';
+    popularBadge.textContent = (typeof dogName !== 'undefined' && dogName && dogName !== 'deinen Hund')
+        ? '⭐ Für ' + dogName + ' empfohlen'
+        : '⭐ Das empfehlen wir dir';
 }
         
         // Problem-Label in Stat-Boxen — kurze Kategorie statt voller Problem-Phrase,
@@ -4921,7 +4954,6 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             
                         <img src="applepay.png" alt="Apple Pay">
                     </div>
-                    <div style="text-align: center; font-size: 11px; color: #999; margin-top: 4px;">Per Überweisung zahlen? Wähle Klarna und dann deine Bank.</div>
 
                     <button class="checkout-back" onclick="closeCheckoutPopup()">← Zurück</button>
                 </div>
