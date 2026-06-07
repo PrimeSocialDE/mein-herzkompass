@@ -15,7 +15,8 @@ export const maxDuration = 30;
 // Auth: Passwort im Request-Body (gleiches wie das Admin-Frontend).
 
 const ADMIN_PASS = process.env.ADMIN_PASSWORD || "pfoten2024";
-const BUYER_MAILS = [2, 3, 4, 6, 7, 8, 9];
+// Käufer-Sequenz bewusst minimal: nur noch Tag 14 (Mail 7) + Tag 30 (Mail 9).
+const BUYER_MAILS = [7, 9];
 const RECOVERY_STAGES = [1, 2, 3, 4, 5];
 
 function ymd(d: Date): string {

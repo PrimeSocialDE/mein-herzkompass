@@ -434,15 +434,11 @@
     }
 
     // Struktur 1:1 aus dem Code (lib/email-sequence.ts + lib/warm-recovery-mail.ts)
+    // Bewusst minimal: Tag 1 = Plan-Mail selbst, Tag 7 = Brevo. Im Code nur Tag 14 + 30.
     const WF_BUYER = [
-        { trigger: true, when: 'Auslöser', subj: 'Kauf abgeschlossen → Plan-Mail sofort', sub: 'Der Plan wird direkt per Mail ausgeliefert (Willkommens-Touchpoint).' },
-        { num: 2, tag: 'email-seq-2', when: 'Tag 1',  subj: 'Tag 1 mit {Hund} war wahrscheinlich nicht perfekt' },
-        { num: 3, tag: 'email-seq-3', when: 'Tag 3',  subj: 'Bei {Rasse} entscheidet Tag 5' },
-        { num: 4, tag: 'email-seq-4', when: 'Tag 5',  subj: 'Nina aus Köln hatte einen {Rasse} wie {Hund}' },
+        { trigger: true, when: 'Auslöser', subj: 'Kauf abgeschlossen → Plan-Mail sofort', sub: 'Der Plan wird direkt per Mail ausgeliefert (Willkommens-Touchpoint, keine extra Mail).' },
         { ext: true, when: 'Tag 7', subj: 'Übungen-Mail', note: 'Läuft als Brevo-Automation — hier nicht intern getrackt.' },
-        { num: 6, tag: 'email-seq-6', when: 'Tag 10', subj: 'Eine Frage zu {Hund} — vor Woche 2' },
         { num: 7, tag: 'email-seq-7', when: 'Tag 14', subj: 'Was Familie und Nachbarn an {Hund} zuerst bemerken' },
-        { num: 8, tag: 'email-seq-8', when: 'Tag 21', subj: 'Ab jetzt fühlt es sich schwerer an. Warum das ein gutes Zeichen ist.' },
         { num: 9, tag: 'email-seq-9', when: 'Tag 30', subj: '30 Tage geschafft — drei Module, die jetzt sinnvoll werden' },
     ];
     // Geplant — noch nicht live (kein Cron). Inhalte: 4 Entwürfe vorhanden, 2 neu.

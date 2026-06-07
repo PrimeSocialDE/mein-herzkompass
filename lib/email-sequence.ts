@@ -15,13 +15,11 @@ export const EMAIL_SEQUENCE_SCHEDULE: Array<{
   daysAfterPaid: number;
   label: string;
 }> = [
-  { num: 2, daysAfterPaid: 1, label: "Tag-1-Normalisierung" },
-  { num: 3, daysAfterPaid: 3, label: "Tag-3-Curiosity-Loop" },
-  { num: 4, daysAfterPaid: 5, label: "Tag-5-Social-Proof" },
-  // Mail 5 = Brevo-Automation am Tag 7 (Übungen-Mail)
-  { num: 6, daysAfterPaid: 10, label: "Tag-10-Reflexion" },
+  // Bewusst sehr minimal gehalten — Käufer sollen nicht vollgespammt werden.
+  // Tag 1 = die Plan-Auslieferung selbst, Tag 7 = Brevo-Automation (Übungen-Mail).
+  // Im Code laufen daher nur noch zwei Mails: Tag 14 + Tag 30.
+  // (Mails 2/3/4/6/8 sind deaktiviert; Inhalte liegen weiter in buildMailDef.)
   { num: 7, daysAfterPaid: 14, label: "Tag-14-Externe-Validation" },
-  { num: 8, daysAfterPaid: 21, label: "Tag-21-Plateau" },
   { num: 9, daysAfterPaid: 30, label: "Tag-30-CrossSell" },
 ];
 
