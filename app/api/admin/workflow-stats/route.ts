@@ -84,10 +84,11 @@ export async function POST(req: NextRequest) {
     const endDate = ymd(now);
 
     // --- Supabase Versandzahlen (parallel) ---
-    const [paidTotal, pendingTotal, failedTotal] = await Promise.all([
+    const [paidTotal, pendingTotal, failedTotal, capturedTotal] = await Promise.all([
       countStatus("paid"),
       countStatus("pending"),
       countStatus("failed"),
+      countStatus("email_captured"),
     ]);
 
     const buyerCountsArr = await Promise.all(BUYER_MAILS.map(countContainsMail));
@@ -110,7 +111,12 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       range: { startDate, endDate },
-      leads: { paid: paidTotal, pending: pendingTotal, failed: failedTotal },
+      leads: {
+        paid: paidTotal,
+        pending: pendingTotal,
+        failed: failedTotal,
+        email_captured: capturedTotal,
+      },
       buyerSent,
       recoverySent,
       brevo,

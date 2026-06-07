@@ -225,8 +225,12 @@
         .wf-kpi { background:#fff; border:1px solid #E8E4DF; border-radius:10px; padding:12px 16px; min-width:120px; }
         .wf-kpi .num { font-size:22px; font-weight:800; color:#1a1a1a; line-height:1.1; }
         .wf-kpi .lbl { font-size:11px; color:#6B6B6B; text-transform:uppercase; letter-spacing:.05em; margin-top:2px; }
-        .wf-flows { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-        @media(max-width:820px){ .wf-flows{ grid-template-columns:1fr; } }
+        .wf-flows { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+        @media(max-width:980px){ .wf-flows{ grid-template-columns:1fr; } }
+        .wf-col.planned { opacity:.92; }
+        .wf-col .wf-badge-soon { display:inline-block; background:#FEF3C7; color:#92400E; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; text-transform:uppercase; letter-spacing:.05em; margin-left:6px; vertical-align:middle; }
+        .wf-card.soon { border-style:dashed; background:#FFFDF7; }
+        .wf-soonnote { font-size:11px; font-weight:600; color:#B45309; border-top:1px solid #F0EBE3; padding-top:8px; }
         .wf-col h2 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:#8B7355; margin:0 0 4px; }
         .wf-col .wf-coldesc { font-size:12px; color:#6B6B6B; margin:0 0 16px; }
         .wf-trigger { background:#1a1a1a; color:#fff; border-radius:10px; padding:12px 16px; font-size:13px; font-weight:600; }
@@ -441,6 +445,17 @@
         { num: 8, tag: 'email-seq-8', when: 'Tag 21', subj: 'Ab jetzt fühlt es sich schwerer an. Warum das ein gutes Zeichen ist.' },
         { num: 9, tag: 'email-seq-9', when: 'Tag 30', subj: '30 Tage geschafft — drei Module, die jetzt sinnvoll werden' },
     ];
+    // Geplant — noch nicht live (kein Cron). Inhalte: 4 Entwürfe vorhanden, 2 neu.
+    const WF_CAPTURED = [
+        { trigger: true, when: 'Auslöser', subj: 'E-Mail abgegeben, kein Kauf', sub: '14.392 Leads — größtes Segment, soll zum Kauf geführt werden.' },
+        { planned: true, when: 'Tag 0',  subj: '{Hund}s Plan steht bereit — einmal reinschauen?' },
+        { planned: true, when: 'Tag 2',  subj: 'Probier diese eine Übung mit {Hund} aus (gratis)' },
+        { planned: true, when: 'Tag 4',  subj: 'Wie eine andere Halterin das gleiche Thema gelöst hat' },
+        { planned: true, when: 'Tag 6',  subj: 'Funktioniert das auch bei einem sturen Hund?' },
+        { planned: true, when: 'Tag 10', subj: 'Kein Risiko für dich — {Hund}s Plan ist abgesichert' },
+        { planned: true, when: 'Tag 14', subj: 'Wir halten {Hund}s Plan noch für dich bereit' },
+    ];
+
     const WF_RECOVERY = [
         { trigger: true, when: 'Auslöser', subj: 'Checkout abgebrochen (pending / failed)', sub: 'Lead hat Quiz gemacht, aber nicht gekauft. Bei Kauf → Stopp.' },
         { stage: 1, tag: 'stage-1', when: 'nach ~2 Std',  subj: 'Eine Frage zu {Hund}s Trainingsplan?' },
@@ -503,13 +518,20 @@
                 + '<div class="subj">' + phSubj(step.subj) + '</div>'
                 + '<div class="wf-note">' + step.note + '</div></div>';
         }
+        if (step.planned) {
+            return '<div class="wf-card soon"><span class="when">' + step.when + '</span>'
+                + '<div class="subj">' + phSubj(step.subj) + '</div>'
+                + '<div class="wf-soonnote">🔧 geplant — noch nicht aktiv</div></div>';
+        }
         return '<div class="wf-card"><span class="when">' + step.when + '</span>'
             + '<div class="subj">' + phSubj(step.subj) + '</div>'
             + metricsHtml(step.tag, sentCount, brevo) + '</div>';
     }
 
-    function columnHtml(title, desc, steps, sentMap, keyField, brevo) {
-        let html = '<div class="wf-col"><h2>' + title + '</h2><p class="wf-coldesc">' + desc + '</p>';
+    function columnHtml(title, desc, steps, sentMap, keyField, brevo, soon) {
+        let html = '<div class="wf-col' + (soon ? ' planned' : '') + '"><h2>' + title
+            + (soon ? '<span class="wf-badge-soon">geplant</span>' : '') + '</h2>'
+            + '<p class="wf-coldesc">' + desc + '</p>';
         steps.forEach((step, i) => {
             const sent = step[keyField] != null && sentMap ? sentMap[step[keyField]] : null;
             html += cardHtml(step, sent, brevo);
@@ -524,11 +546,13 @@
             'Öffnungsraten: Brevo, Zeitraum ' + d.range.startDate + ' bis ' + d.range.endDate + (d.brevoConfigured ? '' : ' (Brevo-Key fehlt)');
         const L = d.leads || {};
         document.getElementById('wf-summary').innerHTML =
-            '<div class="wf-kpi"><div class="num">' + fmtNum(L.paid) + '</div><div class="lbl">Käufer (paid)</div></div>'
+            '<div class="wf-kpi"><div class="num">' + fmtNum(L.email_captured) + '</div><div class="lbl">Interessenten (email_captured)</div></div>'
+          + '<div class="wf-kpi"><div class="num">' + fmtNum(L.paid) + '</div><div class="lbl">Käufer (paid)</div></div>'
           + '<div class="wf-kpi"><div class="num">' + fmtNum((L.pending||0)+(L.failed||0)) + '</div><div class="lbl">Abbrecher (pending/failed)</div></div>';
         document.getElementById('wf-content').innerHTML =
-            columnHtml('Segment · Käufer (nach Kauf)', 'Onboarding-Sequenz, Tag 1 bis Tag 30. Abmelden stoppt die Folge.', WF_BUYER, d.buyerSent, 'num', d.brevo)
-          + columnHtml('Segment · Interessent / Abbrecher', 'Recovery-Drip, 2 Std bis 14 Tage. Bei Kauf wird der Lead entfernt.', WF_RECOVERY, d.recoverySent, 'stage', d.brevo);
+            columnHtml('Segment · Interessent (kein Kauf)', 'Conversion-Sequenz: Tag 0 bis 14, erste Woche jeden 2. Tag. Bei Kauf → Stopp.', WF_CAPTURED, null, null, null, true)
+          + columnHtml('Segment · Käufer (nach Kauf)', 'Onboarding-Sequenz nach dem Kauf. Abmelden stoppt die Folge.', WF_BUYER, d.buyerSent, 'num', d.brevo)
+          + columnHtml('Segment · Abbrecher (Checkout)', 'Recovery-Drip, 2 Std bis 14 Tage. Bei Kauf wird der Lead entfernt.', WF_RECOVERY, d.recoverySent, 'stage', d.brevo);
     }
 
 
