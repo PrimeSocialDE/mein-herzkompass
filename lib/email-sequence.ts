@@ -137,8 +137,8 @@ function buildHtml(opts: {
         </table>
       </td></tr>
       <tr><td style="padding:14px 28px;background:#FAFAFA;border-top:1px solid #F0EBE3;">
-        <p style="margin:0;font-size:11px;line-height:1.5;color:#9CA3AF;text-align:center;">
-          Pfoten-Plan · <a href="${BASE}/mitglieder" style="color:#8B7355;text-decoration:underline;">Mein Bereich</a> · <a href="mailto:support@pfoten-plan.de" style="color:#8B7355;text-decoration:underline;">support@pfoten-plan.de</a>
+        <p style="margin:0;font-size:11px;line-height:1.6;color:#9CA3AF;text-align:center;">
+          Pfoten-Plan · <a href="${BASE}/mitglieder" style="color:#8B7355;text-decoration:underline;">Mein Bereich</a> · <a href="mailto:support@pfoten-plan.de" style="color:#8B7355;text-decoration:underline;">support@pfoten-plan.de</a><br><a href="{{ unsubscribe }}" style="color:#9CA3AF;text-decoration:underline;">Aus diesen E-Mails abmelden</a>
         </p>
       </td></tr>
     </table>

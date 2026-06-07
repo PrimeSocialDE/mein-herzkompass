@@ -146,9 +146,20 @@ export function wrapTemplate(opts: {
   ctaText: string;
   ctaUrl: string;
   footerHint?: string;
+  /** Nur fuer Marketing-Mails: sichtbaren Abmelde-Link (Brevo-Tag) einblenden.
+   *  NICHT fuer transaktionale Mails (Login, Plan-Auslieferung) setzen. */
+  unsubscribe?: boolean;
 }): string {
-  const { preheader, headline, intro, bodyHtml, ctaText, ctaUrl, footerHint } =
-    opts;
+  const {
+    preheader,
+    headline,
+    intro,
+    bodyHtml,
+    ctaText,
+    ctaUrl,
+    footerHint,
+    unsubscribe,
+  } = opts;
   return `<!DOCTYPE html>
 <html lang="de">
 <head>
@@ -185,8 +196,12 @@ export function wrapTemplate(opts: {
         }
         <tr>
           <td style="padding:16px 28px;background:#FAFAFA;border-top:1px solid #F0EBE3;">
-            <p style="margin:0;font-size:11px;line-height:1.5;color:#9CA3AF;text-align:center;">
-              Pfoten-Plan · Persönliches Hundetraining · <a href="${SITE_URL}/mitglieder" style="color:#8B7355;text-decoration:underline;">Mein Bereich</a>
+            <p style="margin:0;font-size:11px;line-height:1.6;color:#9CA3AF;text-align:center;">
+              Pfoten-Plan · Persönliches Hundetraining · <a href="${SITE_URL}/mitglieder" style="color:#8B7355;text-decoration:underline;">Mein Bereich</a>${
+                unsubscribe
+                  ? `<br><a href="{{ unsubscribe }}" style="color:#9CA3AF;text-decoration:underline;">Aus diesen E-Mails abmelden</a>`
+                  : ""
+              }
             </p>
           </td>
         </tr>

@@ -284,6 +284,7 @@ export async function sendWarmRecoveryMail(
     ctaText: stageContent.ctaText,
     ctaUrl,
     footerHint: stageContent.footerHint,
+    unsubscribe: true, // Marketing-Mail → sichtbarer Abmelde-Link
   });
 
   const res = await sendBrevoMail({
