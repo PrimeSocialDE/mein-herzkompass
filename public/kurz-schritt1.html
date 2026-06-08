@@ -3,6 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Wiederkehrer-Weiche: Wer das Quiz schon komplett durch hat
+        // (ab_test_pricing_v6 wird NUR in kurz-schritt11 gesetzt, also direkt vor
+        // der Plan-Seite) und noch nicht gekauft hat, springt direkt auf die
+        // Rueckhol-Seite statt nochmal durchs Quiz. location.search mitnehmen,
+        // damit die UTMs/fbclid der NEUEN Ad weiter getrackt werden.
+        (function () {
+            try {
+                var sawPlan = localStorage.getItem('ab_test_pricing_v6');
+                var bought  = localStorage.getItem('purchased');
+                if (sawPlan && !bought) {
+                    window.location.replace('rueckhol.html' + window.location.search);
+                }
+            } catch (e) { /* localStorage blockiert -> normaler Funnel */ }
+        })();
+    </script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favconHund.png">
     <title>Pfoten-Plan - Kostenloses Quiz</title>
