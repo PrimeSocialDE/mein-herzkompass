@@ -55,6 +55,9 @@ export async function POST(req: NextRequest) {
       // der User nach Mollie-Erfolg dort statt auf der default /zusatz.html
       // Marketing-Page (Neukunden-Upsell).
       successPath,
+      // Quell-Seite des Kaufs (z.B. 'rueckhol') — fuer Attribution, damit
+      // Rueckhol-Kaeufe von normalen deinplan-Kaeufen unterscheidbar sind.
+      source_page,
     } = body;
 
     const ORDER_BUMP_PRICE_CENTS = 999;
@@ -226,6 +229,7 @@ export async function POST(req: NextRequest) {
     set("fb_event_id", t(fb_event_id, 40));
     set("ttclid", t(ttclid, 50));
     set("referred_by_code", t(referredByCode, 24));
+    set("source_page", t(source_page, 20));
 
     const paymentParams: any = {
       amount: { currency: "EUR", value: formatAmountEUR(totalCents) },
@@ -317,6 +321,21 @@ export async function POST(req: NextRequest) {
       // Customer-ID schon jetzt speichern (auch wenn Zahlung noch open ist).
       // Webhook ergaenzt spaeter die Mandate-ID + Payment-Method bei paid.
       if (createdCustomerId) updateData.mollie_customer_id = createdCustomerId;
+      // Quell-Seite additiv ins answers-JSONB mergen (keine DB-Migration noetig).
+      // Read-modify-write: bestehende Quiz-Antworten bleiben erhalten.
+      if (source_page) {
+        const { data: cur, error: ansErr } = await supabase
+          .from("wauwerk_leads")
+          .select("answers")
+          .eq("id", leadId)
+          .single();
+        // NUR mergen wenn der Read sauber war — sonst answers NICHT anfassen,
+        // damit ein fehlgeschlagener Read nie die Quiz-Antworten mit {} ueberschreibt.
+        // Mollie-Metadata haelt source_page ohnehin als Fallback.
+        if (!ansErr && cur) {
+          updateData.answers = { ...(cur.answers || {}), source_page };
+        }
+      }
       const { error: leadUpdErr } = await supabase
         .from("wauwerk_leads")
         .update(updateData)
