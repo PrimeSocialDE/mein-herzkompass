@@ -349,6 +349,39 @@ async function handlePaid(payment: any) {
   await enrollInUpsellCampaign(table, referenceId, updateData.email);
   await sendNotfallkartenIfBonus(table, referenceId);
 
+  // Rückhol-Bonus: Wer über die Rückhol-Seite kauft (source_page='rueckhol',
+  // gesetzt beim Checkout in der Mollie-Metadata), bekommt den Freilauf-
+  // Perfektions-Plan (bonusKey 'freilauf' → PDF-Inhalt aus dem recall-Modul,
+  // aber exklusiv benannt + eigener Idempotenz-Key, damit ein spaeterer
+  // regulaerer recall-Kauf nicht geblockt wird). after() → Webhook gibt sofort
+  // 200 an Mollie zurück; Idempotenz im send-Endpoint verhindert Doppel-Mails.
+  const sourcePage = meta.source_page || (prevAnswers as any)?.source_page || null;
+  if (sourcePage === "rueckhol" && customerEmail && table === "wauwerk_leads") {
+    const bonusDogName = meta.dog_name || existingRecord.dog_name || "deinen Hund";
+    const bonusBaseUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+      "https://www.pfoten-plan.de";
+    after(async () => {
+      try {
+        const res = await fetch(`${bonusBaseUrl}/api/zusatzmodul/send`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: customerEmail,
+            dogName: bonusDogName,
+            bonusKey: "freilauf",
+          }),
+        });
+        console.log(
+          `[mollie-webhook] Rückhol-Bonus freilauf an ${customerEmail}: ${res.status}`
+        );
+      } catch (e: any) {
+        console.error("[mollie-webhook] Rückhol-Bonus freilauf failed:", e?.message);
+      }
+    });
+  }
+
   // Referral-Reward triggern wenn dieser Lead per Empfehlungs-Link kam.
   // Code kommt entweder aus Metadata (frisch beim Checkout mitgeschickt) oder aus
   // der referred_by_code-Spalte (bei wiederholtem Webhook-Call).

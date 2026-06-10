@@ -143,12 +143,40 @@ const MODULE_CONFIG: Record<
   },
 };
 
+// Bonus-Varianten: nutzen den PDF-Inhalt eines bestehenden Moduls (pdfModuleKey),
+// aber mit eigenem, exklusiverem Mail-Namen UND eigenem Idempotenz-Key. Wichtig:
+// der eigene Key (z.B. "freilauf") verhindert, dass ein spaeterer regulaerer
+// Kauf desselben Moduls (z.B. "recall" im Shop) faelschlich als "schon gesendet"
+// geblockt wird. Der Shop/MODULE_CONFIG bleibt unangetastet.
+const BONUS_CONFIG: Record<
+  string,
+  {
+    pdfModuleKey: string;
+    label: string;
+    subject: string;
+    intro: string;
+    body: string;
+    closing: string;
+  }
+> = {
+  freilauf: {
+    pdfModuleKey: "recall",
+    label: "Freilauf-Perfektions-Plan",
+    subject: "🎁 Dein Freilauf-Perfektions-Plan für {dogName} ist da",
+    intro: "dein exklusiver Freilauf-Perfektions-Plan für {dogName} ist freigeschaltet — heute geschenkt zu deinem Trainingsplan dazu.",
+    body: "Dieser Bonus bringt {dogName} aufs nächste Level: zuverlässig kommen — auch aus dem Spiel, bei Ablenkung oder auf Distanz — und entspannter Freilauf, dem du wirklich vertrauen kannst. Die acht Übungen bauen logisch aufeinander auf: vom sicheren KOMM-HER über die Schleppleinen-Phase bis zur souveränen Freilauf-Routine.",
+    closing: "Viel Freude mit eurem neuen Freilauf — Schritt für Schritt zur Perfektion!",
+  },
+};
+
 function personalize(s: string, name: string): string {
   return String(s || "").replace(/\{dogName\}/g, name);
 }
 
-function buildHtml(moduleKey: string, dogName: string): string {
-  const cfg = MODULE_CONFIG[moduleKey];
+function buildHtml(
+  cfg: { intro: string; body: string; closing: string },
+  dogName: string
+): string {
   const intro = personalize(cfg.intro, dogName);
   const body = personalize(cfg.body, dogName);
   const closing = personalize(cfg.closing, dogName);
@@ -182,15 +210,31 @@ function buildHtml(moduleKey: string, dogName: string): string {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, dogName, moduleKey, force } = body || {};
+    const { email, dogName, moduleKey, bonusKey, force } = body || {};
 
     if (!email) return NextResponse.json({ error: "email fehlt" }, { status: 400 });
-    if (!moduleKey || !MODULE_CONFIG[moduleKey]) {
+
+    // Entweder regulaeres Modul (moduleKey → MODULE_CONFIG) ODER Bonus-Variante
+    // (bonusKey → BONUS_CONFIG mit eigenem Namen + eigenem Idempotenz-Key).
+    const bonus = bonusKey ? BONUS_CONFIG[bonusKey] : null;
+    if (bonusKey && !bonus) {
+      return NextResponse.json(
+        { error: `bonusKey ungültig: "${bonusKey}". Verfügbar: ${Object.keys(BONUS_CONFIG).join(", ")}` },
+        { status: 400 }
+      );
+    }
+    if (!bonus && (!moduleKey || !MODULE_CONFIG[moduleKey])) {
       return NextResponse.json(
         { error: `moduleKey ungültig: "${moduleKey}". Verfügbar: ${Object.keys(MODULE_CONFIG).join(", ")}` },
         { status: 400 }
       );
     }
+
+    // Effektive Werte: Bonus hat eigenen Track-Key + eigenen Mail-Text,
+    // das PDF kommt aber aus pdfModuleKey (bestehender Modul-Inhalt).
+    const cfg = bonus ? bonus : MODULE_CONFIG[moduleKey];
+    const pdfModuleKey: string = bonus ? bonus.pdfModuleKey : moduleKey;
+    const trackKey: string = bonus ? bonusKey : moduleKey;
     if (!BREVO_API_KEY) {
       return NextResponse.json({ error: "BREVO_API_KEY fehlt" }, { status: 500 });
     }
@@ -198,33 +242,32 @@ export async function POST(request: Request) {
     // Idempotenz: wenn dieses Modul schon an diese Email gesendet wurde,
     // skip — ausser ?force=true (Re-Send vom Dashboard / Admin).
     if (!force) {
-      const alreadySent = await isAlreadySent(email, moduleKey);
+      const alreadySent = await isAlreadySent(email, trackKey);
       if (alreadySent) {
         return NextResponse.json({
           ok: true,
           skipped: true,
           reason: "already_sent",
-          moduleKey,
+          moduleKey: trackKey,
           email,
         });
       }
     }
 
     const name = (dogName || "deinen Hund").trim();
-    const cfg = MODULE_CONFIG[moduleKey];
 
     // PDF on-the-fly bauen — kein Vorab-File nötig.
     const { buildPdf } = await import("@/generate-zusatzmodul-pdf.mjs");
     const pdfBytes = await buildPdf({
       dogName: name,
       dogBreed: "Mischling",
-      moduleKey,
+      moduleKey: pdfModuleKey,
       verbose: false,
     });
     const pdfBase64 = Buffer.from(pdfBytes).toString("base64");
 
     const subject = personalize(cfg.subject, name);
-    const html = buildHtml(moduleKey, name);
+    const html = buildHtml(cfg, name);
     const filename = `Pfoten-Plan-${cfg.label.replace(/[^a-zA-Z0-9-]/g, "-")}-${name.replace(/[^a-zA-Z0-9-]/g, "")}.pdf`;
 
     const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
@@ -241,7 +284,7 @@ export async function POST(request: Request) {
         subject,
         htmlContent: html,
         attachment: [{ name: filename, content: pdfBase64 }],
-        tags: [`zusatzmodul-${moduleKey}`, "auto-trigger"],
+        tags: [`zusatzmodul-${trackKey}`, "auto-trigger"],
       }),
     });
 
@@ -255,13 +298,13 @@ export async function POST(request: Request) {
     const data = await brevoRes.json();
     // Idempotenz-Marker setzen (best-effort, blockiert die Response nicht)
     try {
-      await markAsSent(email, moduleKey);
+      await markAsSent(email, trackKey);
     } catch (e: any) {
       console.warn("[zusatzmodul/send] markAsSent failed:", e?.message);
     }
     return NextResponse.json({
       ok: true,
-      moduleKey,
+      moduleKey: trackKey,
       email,
       brevoMessageId: data.messageId || null,
     });

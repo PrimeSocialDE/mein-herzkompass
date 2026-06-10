@@ -1109,10 +1109,9 @@
 </script>
 </head>
 <body>
-    <!-- Sticky Countdown Banner -->
-    <div id="countdownBanner" style="position: sticky; top: 0; z-index: 9998; background: linear-gradient(135deg, #1a1a1a, #2d2d2d); color: white; padding: 10px 16px; text-align: center; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
-        <span>Dein persönlicher Rabatt läuft ab in</span>
-        <span id="countdownTimer" style="background: #C4A576; color: white; padding: 4px 10px; border-radius: 6px; font-weight: 800; font-size: 15px; letter-spacing: 1px; min-width: 60px;">14:59</span>
+    <!-- Banner oben (nicht sticky): Rückruf-Modul heute inklusive -->
+    <div id="bonusBanner" style="background: linear-gradient(135deg, #C4A576, #8B7355); color: white; padding: 10px 16px; text-align: center; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
+        <span>🎁 Heute geschenkt: Der Freilauf-Perfektions-Plan für <strong id="dogNameTopBanner">deinen Hund</strong></span>
     </div>
 
     <header class="header">
@@ -1460,7 +1459,6 @@
                         </div>
                     </div>
                     <div class="pricing-right" style="text-align:right;">
-                        <div style="font-size:12px;color:#999;text-decoration:line-through;line-height:1;">€49,99</div>
                         <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">€29,99</div>
                         <div style="font-size:11px;color:#999;margin-top:2px;">einmalig</div>
                     </div>
@@ -1478,7 +1476,6 @@
                         </div>
                     </div>
                     <div class="pricing-right" style="text-align:right;">
-                        <div style="font-size:12px;color:#999;text-decoration:line-through;line-height:1;">€79,99</div>
                         <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">€39,99</div>
                         <div style="font-size:11px;color:#999;margin-top:2px;">einmalig</div>
                     </div>
@@ -1495,11 +1492,19 @@
                         </div>
                     </div>
                     <div class="pricing-right" style="text-align:right;">
-                        <div style="font-size:12px;color:#999;text-decoration:line-through;line-height:1;">€119,99</div>
                         <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">€59,99</div>
                         <div style="font-size:11px;color:#999;margin-top:2px;">einmalig</div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Bonus für ALLE Pläne -->
+        <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;padding:14px 16px;margin-bottom:25px;display:flex;align-items:center;gap:12px;">
+            <span style="color:#C4A576;font-size:22px;font-weight:800;line-height:1;">+</span>
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#2C2C2E;">Heute geschenkt dazu: Der Freilauf-Perfektions-Plan</div>
+                <div style="font-size:12px;color:#6B6B6B;margin-top:2px;">Inklusive bei jedem Plan — für <strong id="dogNameBonus">deinen Hund</strong>.</div>
             </div>
         </div>
 
@@ -1992,6 +1997,10 @@
 
             // Banner personalisieren
             document.getElementById('dogNameBanner').textContent = dogName;
+            const dogNameTopBannerEl = document.getElementById('dogNameTopBanner');
+            if (dogNameTopBannerEl) dogNameTopBannerEl.textContent = dogName;
+            const dogNameBonusEl = document.getElementById('dogNameBonus');
+            if (dogNameBonusEl) dogNameBonusEl.textContent = dogName;
 
             // Dog names überall ersetzen
             document.getElementById('dogNameFinal').textContent = dogName;
@@ -2543,42 +2552,6 @@
         // Beim Laden ausführen
         loadAndPersonalize();
 
-        // ==================== COUNTDOWN TIMER ====================
-        (function() {
-            const TIMER_KEY = 'rueckhol_timer_end';
-            const TIMER_DURATION = 15 * 60 * 1000; // 15 Minuten
-
-            let endTime = localStorage.getItem(TIMER_KEY);
-            if (!endTime || parseInt(endTime) < Date.now()) {
-                endTime = Date.now() + TIMER_DURATION;
-                localStorage.setItem(TIMER_KEY, endTime);
-            } else {
-                endTime = parseInt(endTime);
-            }
-
-            const timerEl = document.getElementById('countdownTimer');
-            const bannerEl = document.getElementById('countdownBanner');
-
-            function updateTimer() {
-                const remaining = endTime - Date.now();
-                if (remaining <= 0) {
-                    timerEl.textContent = '0:00';
-                    timerEl.style.background = '#DC2626';
-                    return;
-                }
-                const mins = Math.floor(remaining / 60000);
-                const secs = Math.floor((remaining % 60000) / 1000);
-                timerEl.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
-
-                // Letzte 2 Minuten: Timer rot blinken
-                if (remaining < 120000) {
-                    timerEl.style.background = '#DC2626';
-                }
-            }
-
-            updateTimer();
-            setInterval(updateTimer, 1000);
-        })();
     </script>
 </body>
 </html>
