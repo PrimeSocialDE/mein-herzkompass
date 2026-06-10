@@ -355,8 +355,13 @@ async function handlePaid(payment: any) {
   // aber exklusiv benannt + eigener Idempotenz-Key, damit ein spaeterer
   // regulaerer recall-Kauf nicht geblockt wird). after() → Webhook gibt sofort
   // 200 an Mollie zurück; Idempotenz im send-Endpoint verhindert Doppel-Mails.
+  // Rückhol-Bonus vorerst DEAKTIVIERT (Produkt-Entscheidung: kein "geschenkter
+  // Plan" mehr, um nicht manipulativ zu wirken — der Inhalt war derselbe wie
+  // recall). source_page-Tracking bleibt aktiv. Auf true setzen, um den
+  // Freilauf-Bonus wieder auszuliefern.
+  const RUECKHOL_BONUS_ENABLED = false;
   const sourcePage = meta.source_page || (prevAnswers as any)?.source_page || null;
-  if (sourcePage === "rueckhol" && customerEmail && table === "wauwerk_leads") {
+  if (RUECKHOL_BONUS_ENABLED && sourcePage === "rueckhol" && customerEmail && table === "wauwerk_leads") {
     const bonusDogName = meta.dog_name || existingRecord.dog_name || "deinen Hund";
     const bonusBaseUrl =
       process.env.NEXT_PUBLIC_SITE_URL ||
