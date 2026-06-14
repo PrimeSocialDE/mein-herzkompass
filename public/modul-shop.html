@@ -863,6 +863,12 @@
 </head>
 <body>
     <div class="container">
+        <!-- Reward-Banner (Käufer kommt aus der Tag-30-Umfrage) -->
+        <div id="rewardBanner" style="display:none;background:linear-gradient(135deg,#C4A576,#8B7355);color:#fff;border-radius:14px;padding:14px 18px;margin:0 0 20px;text-align:center;">
+            <div style="font-size:15px;font-weight:800;">🎁 Danke für deine Antworten!</div>
+            <div style="font-size:13.5px;margin-top:4px;">Dein Dankeschön: <strong>alle Module heute 9,99 € statt 19 €</strong> — nur noch <span id="rewardTimer" style="font-variant-numeric:tabular-nums;font-weight:800;">60:00</span></div>
+        </div>
+
         <!-- Header -->
         <div class="page-header">
             <h1>Zusatzmodule für <span class="dog-name">deinen Hund</span></h1>
@@ -1211,10 +1217,37 @@
                 el.textContent = dogName;
             });
 
+            // Reward-Modus (Käufer kommt aus der Tag-30-Umfrage): alle Module
+            // 9,99 € + 1h-Countdown. Preise global überschreiben (deckt Anzeige
+            // + Einzel-Checkout automatisch ab), Bundle/Info ausblenden, Banner zeigen.
+            (function setupReward() {
+                if (new URLSearchParams(location.search).get('reward') !== '1') return;
+                var KEY = 'shop_reward_end';
+                var end = parseInt(localStorage.getItem(KEY) || '0', 10);
+                if (!end || end < Date.now()) { end = Date.now() + 60 * 60 * 1000; localStorage.setItem(KEY, String(end)); }
+                if (end < Date.now()) return; // abgelaufen → normaler Shop
+                Object.keys(moduleData).forEach(function (k) { moduleData[k].oldPrice = 19; moduleData[k].price = 9.99; });
+                var ib = document.querySelector('.info-banner'); if (ib) ib.style.display = 'none';
+                var sd = document.querySelector('.section-divider'); if (sd) sd.style.display = 'none';
+                var bs = document.querySelector('.bundle-section'); if (bs) bs.style.display = 'none';
+                var banner = document.getElementById('rewardBanner'); if (banner) banner.style.display = 'block';
+                var tEl = document.getElementById('rewardTimer');
+                function tick() {
+                    var ms = end - Date.now();
+                    if (ms <= 0) { if (tEl) tEl.textContent = '00:00'; return; }
+                    var m = Math.floor(ms / 60000), s = Math.floor((ms % 60000) / 1000);
+                    if (tEl) tEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+                }
+                tick(); setInterval(tick, 1000);
+            })();
+
             // Initial rendern
             renderModules();
             renderBundleCheckboxes();
         }
+
+        // Preis-Formatter: deutsche Komma-Schreibweise (9.99 -> €9,99; 19 -> €19)
+        function eur(n) { return '€' + String(n).replace('.', ','); }
 
         // Module rendern
         function renderModules(category = 'all') {
@@ -1245,8 +1278,8 @@
                     '<div class="module-benefits">' + benefitsHtml + '</div>' +
                     '<div class="module-footer">' +
                         '<div class="module-price">' +
-                            '<span class="price-old">€' + module.oldPrice + '</span>' +
-                            '<span class="price-new">€' + module.price + '</span>' +
+                            '<span class="price-old">' + eur(module.oldPrice) + '</span>' +
+                            '<span class="price-new">' + eur(module.price) + '</span>' +
                         '</div>' +
                         '<button class="module-btn" onclick="buyModule(\'' + moduleKey + '\', this)">Hinzufügen</button>' +
                     '</div>' +
@@ -1444,7 +1477,7 @@
             document.getElementById('paymentIcon').textContent = module.icon;
             document.getElementById('paymentModuleName').textContent = module.name;
             document.getElementById('paymentModuleMeta').textContent = module.exercises + ' • 2 Wochen';
-            document.getElementById('paymentPrice').textContent = '€' + module.price;
+            document.getElementById('paymentPrice').textContent = eur(module.price);
 
             const benefitsHtml = module.benefits.map(b =>
                 '<div class="payment-benefit">✓ <span>' + b + '</span></div>'
@@ -1473,7 +1506,7 @@
                         leadId: leadId,
                         email: userEmail,
                         dogName: dogName,
-                        price: module.price * 100,
+                        price: Math.round(module.price * 100),
                         returnUrl: returnUrl,
                         referredByCode: localStorage.getItem('referred_by_code') || ''
                     })

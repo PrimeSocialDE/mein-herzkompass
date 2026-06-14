@@ -310,18 +310,17 @@ function buildMailDef(n: number, lead: SequenceLead): MailDef | null {
 
     const plainHtml = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;">
-<div style="max-width:520px;margin:0 auto;padding:28px 22px;font-size:15.5px;line-height:1.65;">
-  <p style="margin:0 0 16px;">Hallo,</p>
-  <p style="margin:0 0 16px;">ich bin Laura und arbeite als Werkstudentin bei Pfoten-Plan. 🐾</p>
-  <p style="margin:0 0 16px;">Du trainierst jetzt seit etwa 30 Tagen mit ${dogName} — genau die richtige Zeit, um dich kurz etwas zu fragen: Ich sammle gerade Feedback, damit wir unseren Plan und unsere Website besser machen können. Es geht um <strong>4 kurze Fragen</strong> und kostet dich keine 2 Minuten.</p>
-  <p style="margin:0 0 22px;">Als kleines Dankeschön bekommst du danach ein Zusatzmodul für ${dogName} <strong>33 % günstiger</strong>.</p>
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px;"><tr><td>
-    <a href="${umfrageUrl}" target="_blank" style="display:inline-block;background:#C4A576;color:#ffffff;text-decoration:none;padding:14px 30px;border-radius:11px;font-size:15px;font-weight:700;">Zur kurzen Umfrage →</a>
+<div style="max-width:520px;margin:0 auto;padding:24px 22px;font-size:15.5px;line-height:1.65;">
+  <p style="margin:0 0 14px;">Hallo,</p>
+  <p style="margin:0 0 18px;">ich bin Laura, Werkstudentin bei Pfoten-Plan 🐾 — ich sammle gerade kurz Feedback zu deinem Training mit ${dogName}. <strong>4 Fragen, keine 2 Minuten.</strong> Als Dankeschön bekommst du danach ein Zusatzmodul <strong>33 % günstiger</strong>:</p>
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 18px;"><tr><td>
+    <a href="${umfrageUrl}" target="_blank" style="display:inline-block;background:#C4A576;color:#ffffff;text-decoration:none;padding:15px 34px;border-radius:11px;font-size:16px;font-weight:700;">Zur kurzen Umfrage →</a>
   </td></tr></table>
-  <p style="margin:0 0 16px;">Falls der Button nicht geht, hier der Link:<br><a href="${umfrageUrl}" style="color:#8B7355;word-break:break-all;">${umfrageUrl}</a></p>
+  <p style="margin:0 0 16px;color:#4B5563;">Du trainierst jetzt seit etwa 30 Tagen mit ${dogName} — genau der richtige Moment, um kurz zu schauen, was gut läuft und was wir besser machen können. Dein Feedback hilft uns wirklich.</p>
+  <p style="margin:0 0 16px;font-size:13px;color:#9CA3AF;">Falls der Button nicht geht: <a href="${umfrageUrl}" style="color:#8B7355;word-break:break-all;">hier klicken</a></p>
   <p style="margin:0 0 6px;">Dankeschön &amp; liebe Grüße</p>
   <p style="margin:0;">Laura<br><span style="color:#6B7280;font-size:13px;">Werkstudentin · Pfoten-Plan</span></p>
-  <p style="margin:22px 0 0;font-size:11px;color:#9CA3AF;line-height:1.5;">Die Teilnahme ist freiwillig. Mehr zum Datenschutz: <a href="${BASE}/datenschutz.html" style="color:#9CA3AF;">${BASE}/datenschutz.html</a></p>
+  <p style="margin:20px 0 0;font-size:11px;color:#9CA3AF;line-height:1.5;">Die Teilnahme ist freiwillig. Mehr zum Datenschutz: <a href="${BASE}/datenschutz.html" style="color:#9CA3AF;">pfoten-plan.de/datenschutz</a></p>
 </div>
 </body></html>`;
 

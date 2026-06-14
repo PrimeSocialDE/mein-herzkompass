@@ -82,6 +82,10 @@
                     </div>
                 </div>
                 <div class="q">
+                    <label class="qlabel" for="plan_beachten">5. Was sollten wir bei einem Plan für <strong id="dogNameQ">deinen Hund</strong> unbedingt beachten?</label>
+                    <textarea id="plan_beachten" placeholder="z. B. Besonderheiten, euer Alltag, was bei euch anders ist…"></textarea>
+                </div>
+                <div class="q">
                     <label class="consent">
                         <input type="checkbox" id="consent_testimonial">
                         <span>Ihr dürft mein Feedback (anonymisiert, ohne meinen vollen Namen) als Erfahrungsbericht verwenden. <em>(freiwillig)</em></span>
@@ -134,7 +138,10 @@
         var LEAD_ID = params.get('lead_id') || '';
         var EMAIL = params.get('email') || '';
         var DOG = params.get('dog') || '';
-        if (DOG) { var dn = document.getElementById('dogNameR'); if (dn) dn.textContent = DOG; }
+        if (DOG) {
+            var dn = document.getElementById('dogNameR'); if (dn) dn.textContent = DOG;
+            var dq = document.getElementById('dogNameQ'); if (dq) dq.textContent = DOG;
+        }
 
         // Skalen-Buttons (1-5)
         var picks = { zufriedenheit_plan: null, website_erlebnis: null };
@@ -167,14 +174,16 @@
                         website_erlebnis: picks.website_erlebnis,
                         was_geholfen: document.getElementById('was_geholfen').value,
                         was_fehlt: document.getElementById('was_fehlt').value,
+                        plan_beachten: document.getElementById('plan_beachten').value,
                         consent_testimonial: document.getElementById('consent_testimonial').checked
                     })
                 });
-            } catch (err) { /* Feedback nicht zustellbar -> trotzdem Reward zeigen, kein Daten-Verlust für den Kunden */ }
-            // Reward zeigen (unabhängig vom Speicher-Ergebnis — der Kunde hat seinen Teil getan)
-            document.getElementById('surveyCard').style.display = 'none';
-            document.getElementById('reward').style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (err) { /* Feedback nicht zustellbar -> trotzdem weiterleiten, kein Daten-Verlust für den Kunden */ }
+            // Weiter zum Modul-Shop im Reward-Modus (alle Module 9,99 € + 1h-Banner).
+            window.location.href = '/modul-shop.html?reward=1'
+                + '&lead_id=' + encodeURIComponent(LEAD_ID)
+                + '&email=' + encodeURIComponent(EMAIL)
+                + '&dog=' + encodeURIComponent(DOG);
         });
 
         // Reward-Checkout

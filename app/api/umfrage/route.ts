@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
     zufriedenheit_plan: body?.zufriedenheit_plan ?? null, // 1-5
     was_geholfen: (body?.was_geholfen ?? "").toString().slice(0, 2000),
     was_fehlt: (body?.was_fehlt ?? "").toString().slice(0, 2000),
+    plan_beachten: (body?.plan_beachten ?? "").toString().slice(0, 2000),
     website_erlebnis: body?.website_erlebnis ?? null, // 1-5
     consent_testimonial: body?.consent_testimonial === true,
     submitted_at: new Date().toISOString(),
@@ -84,6 +85,7 @@ async function notifyMax(
     zufriedenheit_plan: any;
     was_geholfen: string;
     was_fehlt: string;
+    plan_beachten: string;
     website_erlebnis: any;
     consent_testimonial: boolean;
     submitted_at: string;
@@ -98,6 +100,7 @@ async function notifyMax(
         <tr><td style="padding:4px 12px 4px 0;color:#6B6B6B">Website/Bestellung</td><td><strong>${esc(s.website_erlebnis)}</strong> / 5</td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#6B6B6B;vertical-align:top">Was geholfen hat</td><td>${esc(s.was_geholfen) || "—"}</td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#6B6B6B;vertical-align:top">Was fehlt / Verbesserung</td><td>${esc(s.was_fehlt) || "—"}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6B6B6B;vertical-align:top">Im Plan beachten</td><td>${esc(s.plan_beachten) || "—"}</td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#6B6B6B">Testimonial erlaubt?</td><td>${s.consent_testimonial ? "✅ ja" : "—"}</td></tr>
       </table>
     </div>`;
