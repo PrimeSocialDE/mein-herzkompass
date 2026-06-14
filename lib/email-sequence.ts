@@ -159,12 +159,19 @@ export interface SequenceLead {
 
 interface MailDef {
   subject: string;
-  preheader: string;
-  headline: string;
-  intro: string;
-  bodyHtml: string;
-  ctaText: string;
-  footerHint: string;
+  // Optionaler Absender-Name (sonst Default "Max von Pfoten-Plan").
+  senderName?: string;
+  // Wenn gesetzt, wird dieses HTML direkt als Mail verwendet (schlichte,
+  // persönliche Mail) und das Design-Template (buildHtml) übersprungen.
+  plainHtml?: string;
+  // Optionaler CTA-Ziel-Override (sonst ctaUrlFor → rueckhol).
+  ctaUrl?: string;
+  preheader?: string;
+  headline?: string;
+  intro?: string;
+  bodyHtml?: string;
+  ctaText?: string;
+  footerHint?: string;
 }
 
 function ctaUrlFor(lead: SequenceLead): string {
@@ -294,60 +301,34 @@ function buildMailDef(n: number, lead: SequenceLead): MailDef | null {
   }
 
   if (n === 9) {
-    // Cross-Sell — nur Module die User noch NICHT gekauft hat
-    const ans = lead.answers || {};
-    const hasNotfall = !!ans.notfallkarten_sent_at;
-    const hasAntiGift = !!ans.antigiftkoeder_sent_at;
-    const hasTagebuch = !!ans.tagebuch_sent_at;
+    // Tag-30: persönliche Umfrage-Mail von Laura (Werkstudentin). Schlicht
+    // gehalten (plainHtml) → wirkt persönlich + landet besser im Posteingang.
+    // 2-Min-Feedback, als Dankeschön ein vergünstigtes Zusatzmodul.
+    const umfrageUrl = `${BASE}/umfrage.html?lead_id=${encodeURIComponent(
+      lead.id
+    )}&email=${encodeURIComponent(lead.email)}&dog=${encodeURIComponent(dogName)}`;
 
-    const modules: Array<{ title: string; desc: string; price: string }> = [];
-    if (!hasAntiGift) {
-      modules.push({
-        title: "Anti-Giftköder-Trainingsplan",
-        desc: "12 Seiten, personalisiert. Schritt-für-Schritt-Training für „Aus”, „Zeig mir” und 5 Notfall-Szenarien für draußen.",
-        price: "9,99 €",
-      });
-    }
-    if (!hasNotfall) {
-      modules.push({
-        title: "Notfall-Karten",
-        desc: "10 Sofort-Hilfen für typische Problem-Situationen. Druckbar oder aufs Handy.",
-        price: "9,99 €",
-      });
-    }
-    if (!hasTagebuch) {
-      modules.push({
-        title: "Trainings-Tagebuch",
-        desc: "90-Tage-Fortschritts-Tagebuch zum Ausdrucken. Wöchentliche Reflexions-Fragen — Erfolge schwarz auf weiß.",
-        price: "9,99 €",
-      });
-    }
-    if (modules.length === 0) {
-      // User hat schon alle 3 Bumps → diese Mail komplett ueberspringen
-      return null;
-    }
-
-    const moduleRows = modules
-      .map(
-        (m) => `
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;margin:10px 0;">
-          <tr><td style="padding:14px 18px;">
-            <p style="margin:0 0 4px;font-size:14.5px;font-weight:800;color:#1a1a1a;">${m.title} <span style="color:#C4A576;">· ${m.price}</span></p>
-            <p style="margin:0;font-size:13px;line-height:1.55;color:#6B7280;">${m.desc}</p>
-          </td></tr>
-        </table>`
-      )
-      .join("");
+    const plainHtml = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;">
+<div style="max-width:520px;margin:0 auto;padding:28px 22px;font-size:15.5px;line-height:1.65;">
+  <p style="margin:0 0 16px;">Hallo,</p>
+  <p style="margin:0 0 16px;">ich bin Laura und arbeite als Werkstudentin bei Pfoten-Plan. 🐾</p>
+  <p style="margin:0 0 16px;">Du trainierst jetzt seit etwa 30 Tagen mit ${dogName} — genau die richtige Zeit, um dich kurz etwas zu fragen: Ich sammle gerade Feedback, damit wir unseren Plan und unsere Website besser machen können. Es geht um <strong>4 kurze Fragen</strong> und kostet dich keine 2 Minuten.</p>
+  <p style="margin:0 0 22px;">Als kleines Dankeschön bekommst du danach ein Zusatzmodul für ${dogName} <strong>33 % günstiger</strong>.</p>
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px;"><tr><td>
+    <a href="${umfrageUrl}" target="_blank" style="display:inline-block;background:#C4A576;color:#ffffff;text-decoration:none;padding:14px 30px;border-radius:11px;font-size:15px;font-weight:700;">Zur kurzen Umfrage →</a>
+  </td></tr></table>
+  <p style="margin:0 0 16px;">Falls der Button nicht geht, hier der Link:<br><a href="${umfrageUrl}" style="color:#8B7355;word-break:break-all;">${umfrageUrl}</a></p>
+  <p style="margin:0 0 6px;">Dankeschön &amp; liebe Grüße</p>
+  <p style="margin:0;">Laura<br><span style="color:#6B7280;font-size:13px;">Werkstudentin · Pfoten-Plan</span></p>
+  <p style="margin:22px 0 0;font-size:11px;color:#9CA3AF;line-height:1.5;">Die Teilnahme ist freiwillig. Mehr zum Datenschutz: <a href="${BASE}/datenschutz.html" style="color:#9CA3AF;">${BASE}/datenschutz.html</a></p>
+</div>
+</body></html>`;
 
     return {
-      subject: `30 Tage geschafft — drei Module, die jetzt sinnvoll werden`,
-      preheader: `Was Halter nach 30 Tagen am häufigsten zusätzlich brauchen.`,
-      headline: `${dogName} und du — 30 Tage gemeinsam.`,
-      intro: `Das ist ein echter Meilenstein. Die meisten Trainings-Programme werden nach 14 Tagen abgebrochen. Du bist über doppelt so weit. Drei Module, die wir nach den ersten 30 Tagen am häufigsten empfohlen bekommen — weil sie auf das aufbauen, was du gerade etabliert hast:`,
-      bodyHtml: `${moduleRows}
-        <p style="margin:16px 0 0;font-size:13.5px;line-height:1.6;color:#6B7280;">Du bekommst diese Empfehlung nur einmal. Wenn etwas davon für ${dogName} relevant ist, lohnt sich der Klick. Wenn nicht — auch okay, dann konzentriere dich weiter auf den Haupt-Plan.</p>`,
-      ctaText: `Module ansehen`,
-      footerHint: `Antworte auf diese Mail wenn du nicht sicher bist welches Modul für ${dogName} am besten passt — wir geben dir eine ehrliche Einschätzung statt zu pushen.`,
+      subject: `Eine kurze Frage zu ${dogName} 🐾`,
+      senderName: "Laura von Pfoten-Plan",
+      plainHtml,
     };
   }
 
@@ -363,24 +344,31 @@ export async function sendSequenceMail(
   if (!def) return { ok: false, reason: "no_content_for_mail" };
   if (!lead.email) return { ok: false, reason: "no_email" };
 
-  const html = buildHtml({
-    subject: def.subject,
-    preheader: def.preheader,
-    heroImg: getEmailImageUrl(lead.dog_breed, mailNum > 4 ? mailNum - 5 + 1 : mailNum), // Bilder 1-4 wiederverwenden für Mails 6-9
-    dogBreed: displayBreed(lead.dog_breed),
-    headline: def.headline,
-    intro: def.intro,
-    bodyHtml: def.bodyHtml,
-    ctaUrl: ctaUrlFor(lead),
-    ctaText: def.ctaText,
-    footerHint: def.footerHint,
-  });
+  // Schlichte, persönliche Mail (z.B. Laura-Umfrage) nutzt eigenes HTML und
+  // umgeht das Design-Template komplett. Sonst der normale Sequenz-Look.
+  const html =
+    def.plainHtml ??
+    buildHtml({
+      subject: def.subject,
+      preheader: def.preheader || "",
+      heroImg: getEmailImageUrl(lead.dog_breed, mailNum > 4 ? mailNum - 5 + 1 : mailNum), // Bilder 1-4 wiederverwenden für Mails 6-9
+      dogBreed: displayBreed(lead.dog_breed),
+      headline: def.headline || "",
+      intro: def.intro || "",
+      bodyHtml: def.bodyHtml || "",
+      ctaUrl: def.ctaUrl || ctaUrlFor(lead),
+      ctaText: def.ctaText || "",
+      footerHint: def.footerHint || "",
+    });
 
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
     body: JSON.stringify({
-      sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
+      sender: {
+        name: def.senderName || "Max von Pfoten-Plan",
+        email: "support@pfoten-plan.de",
+      },
       to: [{ email: lead.email }],
       subject: def.subject,
       htmlContent: html,

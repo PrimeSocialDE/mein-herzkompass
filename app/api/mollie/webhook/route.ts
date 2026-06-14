@@ -513,6 +513,30 @@ async function handleUpsellPaid(payment: any) {
     }
   }
 
+  // Anti-Giftköder als eigenständiges Modul (z.B. Tag-30-Umfrage-Reward).
+  // Bisher wurde Anti-Giftköder nur über den Order-Bump-Zweig ausgeliefert;
+  // hier zusätzlich für einen direkten Modul-Kauf (module="anti-giftkoeder").
+  if (module === "anti-giftkoeder" && (email || leadData.email)) {
+    try {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL &&
+        !process.env.NEXT_PUBLIC_BASE_URL.includes("localhost")
+          ? process.env.NEXT_PUBLIC_BASE_URL
+          : "https://www.pfoten-plan.de";
+      await fetch(`${baseUrl}/api/anti-giftkoeder/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email || leadData.email,
+          dogName: meta.dog_name || leadData.dog_name || "deinen Hund",
+          breed: (leadData.answers as any)?.dog_breed || undefined,
+        }),
+      });
+    } catch (e) {
+      console.error("[mollie-webhook] Anti-Giftköder Delivery Error:", e);
+    }
+  }
+
   // Trainings-Zusatzmodule (pulling/energy/aggression/...): pro Modul-Key
   // ein PDF generieren und per Mail ausliefern. Modul-String kann auch
   // mehrere mit "+" verketten (z.B. "pulling+energy").

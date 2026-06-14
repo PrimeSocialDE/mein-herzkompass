@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+    <title>Kurze Umfrage · Pfoten-Plan</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #FAF8F5; color: #1a1a1a; line-height: 1.55; }
+        .wrap { max-width: 560px; margin: 0 auto; padding: 28px 18px 60px; }
+        .logo { text-align: center; margin-bottom: 22px; }
+        .logo img { width: 52px; height: 52px; border-radius: 13px; border: 2px solid #C4A576; }
+        .card { background: #fff; border: 1px solid #EADDC5; border-radius: 18px; padding: 26px 22px; box-shadow: 0 2px 12px rgba(139,115,85,0.06); }
+        .laura { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+        .laura .av { width: 46px; height: 46px; border-radius: 50%; background: #C4A576; color: #fff; font-weight: 800; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .laura .who { font-size: 13px; color: #6B7280; }
+        .laura .who strong { color: #1a1a1a; font-size: 14px; }
+        h1 { font-size: 21px; font-weight: 800; margin-bottom: 8px; }
+        .lead { font-size: 14.5px; color: #4B5563; margin-bottom: 20px; }
+        .q { margin-bottom: 20px; }
+        .q label.qlabel { display: block; font-size: 14.5px; font-weight: 700; margin-bottom: 8px; }
+        .scale { display: flex; gap: 8px; }
+        .scale button { flex: 1; padding: 11px 0; border: 1.5px solid #E5E7EB; background: #fff; border-radius: 10px; font-size: 16px; font-weight: 700; color: #6B7280; cursor: pointer; transition: all .12s; }
+        .scale button.sel { border-color: #C4A576; background: #FFF9F0; color: #1a1a1a; }
+        textarea { width: 100%; border: 1.5px solid #E5E7EB; border-radius: 10px; padding: 11px 12px; font-size: 14.5px; font-family: inherit; resize: vertical; min-height: 70px; }
+        textarea:focus, .scale button:focus { outline: none; border-color: #C4A576; }
+        .consent { display: flex; gap: 10px; align-items: flex-start; background: #FFF9F0; border: 1px solid #EADDC5; border-radius: 10px; padding: 12px 14px; font-size: 12.5px; color: #5A4A3A; }
+        .consent input { margin-top: 2px; flex-shrink: 0; }
+        .submit { width: 100%; background: #C4A576; color: #fff; border: none; font-weight: 700; font-size: 15px; padding: 15px; border-radius: 12px; cursor: pointer; margin-top: 22px; }
+        .submit:disabled { opacity: .6; cursor: not-allowed; }
+        .dsgvo { font-size: 11px; color: #9CA3AF; line-height: 1.5; margin-top: 16px; text-align: center; }
+        .dsgvo a { color: #8B7355; }
+        /* Reward */
+        #reward { display: none; }
+        .reward-head { text-align: center; margin-bottom: 18px; }
+        .reward-head .big { font-size: 34px; }
+        .reward-opt { display: flex; align-items: center; gap: 14px; border: 1.5px solid #EADDC5; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; cursor: pointer; transition: border-color .12s; }
+        .reward-opt:hover { border-color: #C4A576; }
+        .reward-opt .icon { font-size: 26px; }
+        .reward-opt .t { font-weight: 800; font-size: 14.5px; }
+        .reward-opt .d { font-size: 12.5px; color: #6B7280; }
+        .reward-opt .price { margin-left: auto; text-align: right; white-space: nowrap; }
+        .reward-opt .price .old { font-size: 12px; color: #999; text-decoration: line-through; }
+        .reward-opt .price .new { font-size: 18px; font-weight: 800; color: #C4A576; }
+        .err { background: #FEF2F2; border: 1px solid #FECACA; color: #B91C1C; font-size: 13px; border-radius: 10px; padding: 10px 12px; margin-top: 12px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="logo"><img src="/logo.png" alt="Pfoten-Plan"></div>
+
+        <!-- ============ UMFRAGE ============ -->
+        <div class="card" id="surveyCard">
+            <div class="laura">
+                <div class="av">L</div>
+                <div class="who"><strong>Laura</strong><br>Werkstudentin · Pfoten-Plan</div>
+            </div>
+
+            <h1>Darf ich dich kurz was fragen?</h1>
+            <p class="lead">Hi, ich bin Laura und arbeite als Werkstudentin bei Pfoten-Plan. Ich sammle gerade Feedback, um unseren Plan und die Website besser zu machen. Das kostet dich <strong>keine 2 Minuten</strong> — und als Dankeschön bekommst du danach ein Zusatzmodul vergünstigt. Lieben Dank! 🐾</p>
+
+            <form id="surveyForm">
+                <div class="q">
+                    <label class="qlabel">1. Wie zufrieden bist du bisher mit deinem Trainingsplan?</label>
+                    <div class="scale" data-field="zufriedenheit_plan">
+                        <button type="button" value="1">1</button><button type="button" value="2">2</button><button type="button" value="3">3</button><button type="button" value="4">4</button><button type="button" value="5">5</button>
+                    </div>
+                </div>
+                <div class="q">
+                    <label class="qlabel" for="was_geholfen">2. Was hat dir bisher am meisten geholfen?</label>
+                    <textarea id="was_geholfen" placeholder="Schreib einfach frei…"></textarea>
+                </div>
+                <div class="q">
+                    <label class="qlabel" for="was_fehlt">3. Was hat dir gefehlt oder was sollten wir verbessern?</label>
+                    <textarea id="was_fehlt" placeholder="Ehrlich — genau das hilft uns am meisten."></textarea>
+                </div>
+                <div class="q">
+                    <label class="qlabel">4. Wie hast du die Website &amp; den Bestellprozess erlebt?</label>
+                    <div class="scale" data-field="website_erlebnis">
+                        <button type="button" value="1">1</button><button type="button" value="2">2</button><button type="button" value="3">3</button><button type="button" value="4">4</button><button type="button" value="5">5</button>
+                    </div>
+                </div>
+                <div class="q">
+                    <label class="consent">
+                        <input type="checkbox" id="consent_testimonial">
+                        <span>Ihr dürft mein Feedback (anonymisiert, ohne meinen vollen Namen) als Erfahrungsbericht verwenden. <em>(freiwillig)</em></span>
+                    </label>
+                </div>
+
+                <button type="submit" class="submit" id="submitBtn">Absenden &amp; Dankeschön sichern</button>
+                <div class="err" id="surveyErr"></div>
+
+                <p class="dsgvo">
+                    Deine Antworten nutzen wir ausschließlich zur Verbesserung unseres Angebots und speichern sie sicher. Die Teilnahme ist freiwillig.
+                    Mehr dazu in unserer <a href="/datenschutz.html" target="_blank">Datenschutzerklärung</a>.
+                </p>
+            </form>
+        </div>
+
+        <!-- ============ REWARD ============ -->
+        <div class="card" id="reward">
+            <div class="reward-head">
+                <div class="big">🎁</div>
+                <h1>Danke dir!</h1>
+                <p class="lead">Dein Feedback hilft uns wirklich. Hier dein Dankeschön — ein Zusatzmodul für <strong id="dogNameR">deinen Hund</strong> zum reduzierten Preis:</p>
+            </div>
+
+            <div class="reward-opt" data-module="notfall-karten">
+                <div class="icon">🚑</div>
+                <div>
+                    <div class="t">10 Notfall-Karten</div>
+                    <div class="d">Sofort-Hilfen für typische Problem-Situationen — druckbar oder aufs Handy.</div>
+                </div>
+                <div class="price"><div class="old">14,99 €</div><div class="new">9,99 €</div></div>
+            </div>
+
+            <div class="reward-opt" data-module="anti-giftkoeder">
+                <div class="icon">🛡️</div>
+                <div>
+                    <div class="t">Anti-Giftköder-Trainingsplan</div>
+                    <div class="d">Schritt-für-Schritt: „Aus“, „Zeig mir“ &amp; 5 Notfall-Szenarien für draußen.</div>
+                </div>
+                <div class="price"><div class="old">14,99 €</div><div class="new">9,99 €</div></div>
+            </div>
+
+            <div class="err" id="rewardErr"></div>
+            <p class="dsgvo">Einmalzahlung, kein Abo. Dein Modul kommt direkt per E-Mail.</p>
+        </div>
+    </div>
+
+    <script>
+        var params = new URLSearchParams(window.location.search);
+        var LEAD_ID = params.get('lead_id') || '';
+        var EMAIL = params.get('email') || '';
+        var DOG = params.get('dog') || '';
+        if (DOG) { var dn = document.getElementById('dogNameR'); if (dn) dn.textContent = DOG; }
+
+        // Skalen-Buttons (1-5)
+        var picks = { zufriedenheit_plan: null, website_erlebnis: null };
+        document.querySelectorAll('.scale').forEach(function (scale) {
+            var field = scale.getAttribute('data-field');
+            scale.querySelectorAll('button').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    picks[field] = parseInt(btn.value, 10);
+                    scale.querySelectorAll('button').forEach(function (b) { b.classList.remove('sel'); });
+                    btn.classList.add('sel');
+                });
+            });
+        });
+
+        function showErr(id, msg) { var e = document.getElementById(id); e.textContent = msg; e.style.display = 'block'; }
+
+        document.getElementById('surveyForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            var btn = document.getElementById('submitBtn');
+            document.getElementById('surveyErr').style.display = 'none';
+            btn.disabled = true; btn.textContent = 'Wird gesendet…';
+            try {
+                await fetch('/api/umfrage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lead_id: LEAD_ID,
+                        email: EMAIL,
+                        zufriedenheit_plan: picks.zufriedenheit_plan,
+                        website_erlebnis: picks.website_erlebnis,
+                        was_geholfen: document.getElementById('was_geholfen').value,
+                        was_fehlt: document.getElementById('was_fehlt').value,
+                        consent_testimonial: document.getElementById('consent_testimonial').checked
+                    })
+                });
+            } catch (err) { /* Feedback nicht zustellbar -> trotzdem Reward zeigen, kein Daten-Verlust für den Kunden */ }
+            // Reward zeigen (unabhängig vom Speicher-Ergebnis — der Kunde hat seinen Teil getan)
+            document.getElementById('surveyCard').style.display = 'none';
+            document.getElementById('reward').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Reward-Checkout
+        document.querySelectorAll('.reward-opt').forEach(function (opt) {
+            opt.addEventListener('click', async function () {
+                document.getElementById('rewardErr').style.display = 'none';
+                var module = opt.getAttribute('data-module');
+                opt.style.opacity = '.6';
+                try {
+                    var res = await fetch('/api/mollie/upsell-checkout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            module: module,
+                            price: 999,
+                            leadId: LEAD_ID,
+                            email: EMAIL,
+                            dogName: DOG,
+                            returnUrl: '/danke-final.html'
+                        })
+                    });
+                    var data = await res.json();
+                    if (data && data.url) { window.location.href = data.url; return; }
+                    showErr('rewardErr', (data && data.error) || 'Zahlung konnte nicht gestartet werden — bitte nochmal versuchen.');
+                } catch (err) {
+                    showErr('rewardErr', 'Verbindungsfehler. Bitte versuche es erneut.');
+                }
+                opt.style.opacity = '1';
+            });
+        });
+    </script>
+</body>
+</html>

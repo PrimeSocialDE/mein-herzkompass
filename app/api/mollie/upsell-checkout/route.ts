@@ -20,6 +20,7 @@ const moduleNames: Record<string, string> = {
   mouthing: "Anti-Aufnehm Training",
   "video-analyse": "Persönliche Video-Analyse",
   "notfall-karten": "10 Notfall-Karten",
+  "anti-giftkoeder": "Anti-Giftköder-Trainingsplan",
 };
 
 export async function POST(req: NextRequest) {
