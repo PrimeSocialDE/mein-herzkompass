@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
 
   let query = admin
     .from("wauwerk_leads")
-    .select("id, email, dog_name, dog_breed, selected_plan, paid_at, status, answers")
+    .select("id, email, dog_name, selected_plan, paid_at, status, answers")
     .gte("paid_at", since)
     .not("paid_at", "is", null)
     .not("email", "is", null);
