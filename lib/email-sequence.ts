@@ -17,10 +17,10 @@ export const EMAIL_SEQUENCE_SCHEDULE: Array<{
 }> = [
   // Bewusst sehr minimal gehalten — Käufer sollen nicht vollgespammt werden.
   // Tag 1 = die Plan-Auslieferung selbst, Tag 7 = Brevo-Automation (Übungen-Mail).
-  // Im Code laufen daher nur noch zwei Mails: Tag 14 + Tag 30.
-  // (Mails 2/3/4/6/8 sind deaktiviert; Inhalte liegen weiter in buildMailDef.)
-  { num: 7, daysAfterPaid: 14, label: "Tag-14-Externe-Validation" },
-  { num: 9, daysAfterPaid: 30, label: "Tag-30-CrossSell" },
+  // Entscheidung: NUR noch die Tag-30-Laura-Umfrage. Tag-14 (#7) ist bewusst
+  // DEAKTIVIERT (nicht im Schedule) → es geht ab Tag 14 nichts raus, nur ab
+  // Tag 30 die Laura-Mail. Inhalte zu #7 liegen weiter in buildMailDef (dormant).
+  { num: 9, daysAfterPaid: 30, label: "Tag-30-Laura-Umfrage" },
 ];
 
 // ── Breed-Image-Resolver ─────────────────────────────────────────────
