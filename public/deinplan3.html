@@ -4663,24 +4663,22 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         }
         // iOS-robuster Body-Lock: overflow:hidden allein stoppt Touch-Scroll auf
         // iOS NICHT — daher position:fixed + Scroll-Position merken/wiederherstellen.
-        let __lockedScrollY = 0;
+        // Body-Scroll-Lock via touchmove-Guard: blockiert jedes Scrollen, das
+        // NICHT im scrollbaren Modal stattfindet. Robuster als position:fixed —
+        // funktioniert auch bei fokussiertem Input + offener Tastatur (iOS),
+        // wo position:fixed den Body janky verschiebt.
+        function __bgScrollGuard(e) {
+            // Scrollen innerhalb des Modals erlauben, sonst blocken.
+            if (e.target && e.target.closest && e.target.closest('.hybrid-modal')) return;
+            e.preventDefault();
+        }
         function lockBodyScroll() {
-            __lockedScrollY = window.scrollY || window.pageYOffset || 0;
-            document.body.style.position = 'fixed';
-            document.body.style.top = '-' + __lockedScrollY + 'px';
-            document.body.style.left = '0';
-            document.body.style.right = '0';
-            document.body.style.width = '100%';
             document.body.style.overflow = 'hidden';
+            document.addEventListener('touchmove', __bgScrollGuard, { passive: false });
         }
         function unlockBodyScroll() {
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.left = '';
-            document.body.style.right = '';
-            document.body.style.width = '';
             document.body.style.overflow = '';
-            window.scrollTo(0, __lockedScrollY);
+            document.removeEventListener('touchmove', __bgScrollGuard, { passive: false });
         }
         function closeHybridModal() {
             document.getElementById('hybridOverlay').classList.remove('active');
