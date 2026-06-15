@@ -301,6 +301,35 @@ export async function POST(req: NextRequest) {
       };
     }
 
+    // Klarna (Pay later) verlangt zwingend Order-Lines mit MwSt — ohne lines
+    // gibt Mollie 422 "lines required". Preise sind brutto inkl. 19% USt
+    // (AGB: "inklusive der gesetzlichen Umsatzsteuer"). Summe der Zeilen = totalCents.
+    if (method === "klarna") {
+      const vat19 = (grossCents: number) =>
+        formatAmountEUR(Math.round((grossCents * 19) / 119));
+      const lines: any[] = [
+        {
+          description: planName.slice(0, 255),
+          quantity: 1,
+          unitPrice: { currency: "EUR", value: formatAmountEUR(planAmountCents) },
+          totalAmount: { currency: "EUR", value: formatAmountEUR(planAmountCents) },
+          vatRate: "19.00",
+          vatAmount: { currency: "EUR", value: vat19(planAmountCents) },
+        },
+      ];
+      if (bumpApplied) {
+        lines.push({
+          description: ((bumpDetails as any)?.name || "Zusatzmodul").slice(0, 255),
+          quantity: 1,
+          unitPrice: { currency: "EUR", value: formatAmountEUR(effectiveBumpCents) },
+          totalAmount: { currency: "EUR", value: formatAmountEUR(effectiveBumpCents) },
+          vatRate: "19.00",
+          vatAmount: { currency: "EUR", value: vat19(effectiveBumpCents) },
+        });
+      }
+      paymentParams.lines = lines;
+    }
+
     const payment = await mollie.payments.create(paymentParams);
 
     // Lead in Supabase updaten — additive Spalten, Stripe-Spalten unangetastet.
