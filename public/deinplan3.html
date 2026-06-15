@@ -3509,7 +3509,7 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         // "Bei Fragen hilft unser Trainer" raus — steht im Mitglieder-Block.
         const filtered = benefits.filter(b => !/Bei Fragen hilft unser Trainer/i.test(b));
         const top3 = filtered.filter(b => !/Übungen speziell für/.test(b)).slice(0, 3);
-        const items = [...top3, '✓ 20+ Übungen speziell für ' + dogName, '✓ Digital nutzen oder ausdrucken'];
+        const items = [...top3, '✓ 20+ Übungen speziell für ' + dogName, '✓ <strong style="font-weight:800;">Digital nutzen oder ausdrucken</strong>'];
         items.forEach(benefit => {
             const li = document.createElement('li');
             li.innerHTML = benefit;
