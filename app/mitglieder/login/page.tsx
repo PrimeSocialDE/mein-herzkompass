@@ -23,6 +23,7 @@ export default function LoginPage() {
   const searchParams = useSearchParams();
   const [mode, setMode] = useState<Mode>("anmelden");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [stage, setStage] = useState<Stage>("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -62,8 +63,44 @@ export default function LoginPage() {
     }
   }, [searchParams]);
 
-  async function sendLink(e: React.FormEvent) {
+  // Passwort-Login (DSGVO: Passwort nur im State, kein Logging, HTTPS).
+  async function loginWithPassword(e: React.FormEvent) {
     e.preventDefault();
+    if (!email.trim()) {
+      setErrorMsg("Bitte gib deine E-Mail ein.");
+      return;
+    }
+    // Kein Passwort eingetippt → automatisch den Code-Weg nehmen.
+    if (!password) {
+      return sendLink(e);
+    }
+    setStage("loading");
+    setErrorMsg("");
+
+    const supabase = createMemberBrowserClient();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password,
+    });
+
+    if (error || !data?.session) {
+      setStage("error");
+      setErrorMsg(
+        "E-Mail oder Passwort stimmt nicht. Noch kein Passwort gesetzt? Fordere unten einen Code an — und leg dir danach im Mitgliederbereich unter „Profil“ ein Passwort fest."
+      );
+      return;
+    }
+    router.push("/mitglieder");
+    router.refresh();
+  }
+
+  async function sendLink(e: React.SyntheticEvent) {
+    e.preventDefault();
+    if (!email.trim()) {
+      setErrorMsg("Bitte gib deine E-Mail ein.");
+      setStage("idle");
+      return;
+    }
     setStage("loading");
     setErrorMsg("");
 
@@ -130,6 +167,7 @@ export default function LoginPage() {
   function reset() {
     setStage("idle");
     setCode("");
+    setPassword("");
     setErrorMsg("");
   }
 
@@ -138,6 +176,7 @@ export default function LoginPage() {
     setMode(m);
     setStage("idle");
     setCode("");
+    setPassword("");
     setErrorMsg("");
   }
 
@@ -187,7 +226,7 @@ export default function LoginPage() {
           </h1>
           <p className="text-[14px] text-[#6B7280] leading-relaxed mb-6">
             {isAnmelden
-              ? "Trag deine E-Mail ein. Wir schicken dir einen 6-stelligen Code — funktioniert in jedem Browser, auch ohne Cookies."
+              ? "Mit E-Mail und Passwort einloggen. Noch kein Passwort? Lass das Feld leer — wir schicken dir einen 6-stelligen Code."
               : "Trag deine E-Mail ein. Wir schicken dir einen Magic-Link — ein Klick und dein Konto ist da."}
           </p>
 
@@ -306,7 +345,7 @@ export default function LoginPage() {
             )
           ) : (
             // ── Initialer Form (für beide Modi gleich) ──────────────
-            <form onSubmit={sendLink} className="space-y-4">
+            <form onSubmit={isAnmelden ? loginWithPassword : sendLink} className="space-y-4">
               <div>
                 <label className="block text-[12px] font-medium text-[#6B7280] mb-1.5">
                   E-Mail
@@ -323,6 +362,22 @@ export default function LoginPage() {
                 />
               </div>
 
+              {isAnmelden && (
+                <div>
+                  <label className="block text-[12px] font-medium text-[#6B7280] mb-1.5">
+                    Passwort
+                  </label>
+                  <input
+                    type="password"
+                    placeholder="Dein Passwort (falls gesetzt)"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] bg-white text-[15px] focus:outline-none focus:border-[#C4A576] focus:ring-3 focus:ring-[#C4A576]/15 transition"
+                    autoComplete="current-password"
+                  />
+                </div>
+              )}
+
               {errorMsg && (
                 <div className="bg-[#FEF2F2] border border-[#FECACA] text-[#B91C1C] text-[13px] rounded-lg px-4 py-2.5">
                   {errorMsg}
@@ -335,11 +390,22 @@ export default function LoginPage() {
                 className="w-full bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-3.5 px-5 rounded-xl text-[15px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)] disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {stage === "loading"
-                  ? "Sende…"
+                  ? "Moment…"
                   : isAnmelden
-                    ? "Code per Mail anfordern"
+                    ? "Einloggen"
                     : "Magic-Link senden"}
               </button>
+
+              {isAnmelden && (
+                <button
+                  type="button"
+                  onClick={sendLink}
+                  disabled={stage === "loading"}
+                  className="w-full text-[12px] text-[#8B7355] underline hover:text-[#1a1a1a] py-1 disabled:opacity-60"
+                >
+                  Kein Passwort? Code per E-Mail anfordern
+                </button>
+              )}
 
               <p className="text-[11px] text-[#9CA3AF] text-center pt-2 leading-relaxed">
                 {isAnmelden

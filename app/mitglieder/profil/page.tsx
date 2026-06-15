@@ -1,5 +1,6 @@
 import { getCurrentMember } from "@/lib/member-auth-server";
 import { getOrCreateMemberProfile } from "@/lib/member-db";
+import SetPasswordCard from "./SetPasswordCard";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +45,8 @@ export default async function ProfilPage() {
           />
         )}
       </div>
+
+      <SetPasswordCard />
 
       <p className="text-[12px] text-[#9CA3AF] text-center">
         Daten ändern oder Konto löschen? Schreib uns:{" "}
