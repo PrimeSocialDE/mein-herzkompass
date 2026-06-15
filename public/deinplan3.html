@@ -2068,7 +2068,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     .hybrid-modal {
         background: #fff; width: 100%; max-width: 460px;
         border-radius: 16px 16px 0 0; max-height: 94vh;
-        overflow-y: auto; -webkit-overflow-scrolling: touch;
+        overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
         box-shadow: 0 -8px 40px rgba(17,24,39,0.10);
         animation: hybridIn 0.32s cubic-bezier(0.16,1,0.3,1);
     }
@@ -2366,7 +2366,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     /* Klarna Address Modal */
     .klarna-input {
         width: 100%; background: #fff; border: 1px solid #E5E7EB;
-        border-radius: 8px; padding: 12px 14px; font-size: 15px;
+        border-radius: 8px; padding: 12px 14px; font-size: 16px;
         font-family: inherit; box-sizing: border-box;
         margin-bottom: 10px; color: #111827;
         box-shadow: 0 1px 2px rgba(17,24,39,0.04);
@@ -4617,7 +4617,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             window.__canGooglePay = canGooglePay;
 
             document.getElementById('hybridOverlay').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            lockBodyScroll();
             // Card-Toggle reset: bei jedem Open wieder zu, damit User nicht
             // mit ausgeklappten Karten-Feldern überfordert wird.
             const cardToggle = document.getElementById('hybridCardToggle');
@@ -4661,9 +4661,30 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 }
             }
         }
+        // iOS-robuster Body-Lock: overflow:hidden allein stoppt Touch-Scroll auf
+        // iOS NICHT — daher position:fixed + Scroll-Position merken/wiederherstellen.
+        let __lockedScrollY = 0;
+        function lockBodyScroll() {
+            __lockedScrollY = window.scrollY || window.pageYOffset || 0;
+            document.body.style.position = 'fixed';
+            document.body.style.top = '-' + __lockedScrollY + 'px';
+            document.body.style.left = '0';
+            document.body.style.right = '0';
+            document.body.style.width = '100%';
+            document.body.style.overflow = 'hidden';
+        }
+        function unlockBodyScroll() {
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.left = '';
+            document.body.style.right = '';
+            document.body.style.width = '';
+            document.body.style.overflow = '';
+            window.scrollTo(0, __lockedScrollY);
+        }
         function closeHybridModal() {
             document.getElementById('hybridOverlay').classList.remove('active');
-            document.body.style.overflow = '';
+            unlockBodyScroll();
             hideHybridError();
         }
 
