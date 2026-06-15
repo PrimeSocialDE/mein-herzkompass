@@ -85,6 +85,25 @@ export async function GET(req: NextRequest) {
           },
         };
 
+        // selected_plan aus der TATSÄCHLICH bezahlten Mollie-Metadata übernehmen.
+        // Sonst bleibt eine veraltete/falsche Länge stehen (z.B. vorausgewähltes
+        // 3month) und der Plan-Generator erzeugt den falschen Plan. Der Webhook
+        // macht dieselbe Korrektur — aber wenn DIESER Safety-Net die Zahlung
+        // zuerst als processed markiert, skippt der Webhook danach (Idempotenz),
+        // also muss die Korrektur hier passieren.
+        const paidPlan = payment?.metadata?.plan;
+        if (
+          (paidPlan === "1month" ||
+            paidPlan === "3month" ||
+            paidPlan === "6month") &&
+          paidPlan !== lead.selected_plan
+        ) {
+          updateData.selected_plan = paidPlan;
+          console.log(
+            `[mollie-return] selected_plan korrigiert: ${lead.selected_plan} → ${paidPlan} (lead ${leadId})`
+          );
+        }
+
         await supabase
           .from("wauwerk_leads")
           .update(updateData)
