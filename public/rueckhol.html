@@ -1499,6 +1499,21 @@
             </div>
         </div>
 
+        <!-- Order-Bump: Anti-Giftköder-Trainingsplan (+9,99 €) -->
+        <label for="antigiftBump" id="antigiftBumpBox" style="display:block; cursor:pointer; border:2px dashed #C4A576; background:linear-gradient(135deg,#FFFBF5,#FFF8EE); border-radius:14px; padding:16px; margin-bottom:25px; transition:border-color 0.2s ease;">
+            <div style="display:flex; align-items:flex-start; gap:12px;">
+                <input type="checkbox" id="antigiftBump" onchange="toggleAntigiftBump()" style="width:22px; height:22px; margin-top:2px; accent-color:#22C55E; flex-shrink:0; cursor:pointer;">
+                <div>
+                    <div style="font-size:15px; font-weight:800; color:#2C2C2E; margin-bottom:4px;">
+                        🛡️ Ja, schütze <span class="bumpDogName">deinen Hund</span> vor Giftködern <span style="color:#C4361A;">— nur +9,99 €</span>
+                    </div>
+                    <div style="font-size:13px; color:#5C4A2A; line-height:1.5;">
+                        Der <strong>Anti-Giftköder-Trainingsplan</strong> (12 Seiten, personalisiert): Bring <span class="bumpDogName">deinem Hund</span> bei, gefährliche Köder zu ignorieren und sofort auf dein Stopp-Signal zu hören. Einmalig dazubuchen — kommt direkt zusammen mit deinem Plan.
+                    </div>
+                </div>
+            </div>
+        </label>
+
         <!-- Trainer Section -->
         <div style="background: linear-gradient(135deg, #FFFBF5, #FFF8EE); border: 1px solid #E8DCC8; border-radius: 14px; padding: 20px; margin-bottom: 25px;">
             <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
@@ -1993,6 +2008,7 @@
 
             // Dog names überall ersetzen
             document.getElementById('dogNameFinal').textContent = dogName;
+            document.querySelectorAll('.bumpDogName').forEach(el => el.textContent = dogName);
             
             // Insights personalisieren
             const insightTexts = document.querySelectorAll('.insight-text');
@@ -2432,6 +2448,15 @@
             if (overlay) overlay.style.display = 'none';
         }
 
+        // Order-Bump Anti-Giftköder-Plan (+9,99 €)
+        let antigiftBumpSelected = false;
+        function toggleAntigiftBump() {
+            const cb = document.getElementById('antigiftBump');
+            antigiftBumpSelected = !!(cb && cb.checked);
+            const box = document.getElementById('antigiftBumpBox');
+            if (box) box.style.borderColor = antigiftBumpSelected ? '#22C55E' : '#C4A576';
+        }
+
         // Checkout öffnen — direkt Loading + Mollie-Redirect, kein
         // Stripe-Overlay mehr (Legacy-Code unten bleibt im DOM aber
         // wird nicht mehr aktiviert).
@@ -2455,6 +2480,8 @@
                         email: userEmail || localStorage.getItem('userEmail') || '',
                         cancelPath: '/rueckhol.html',
                         source_page: 'rueckhol',
+                        orderBump: antigiftBumpSelected,
+                        bumpType: 'antigiftkoeder',
                         utm_source: localStorage.getItem('utm_source') || '',
                         utm_medium: localStorage.getItem('utm_medium') || '',
                         utm_campaign: localStorage.getItem('utm_campaign') || '',
