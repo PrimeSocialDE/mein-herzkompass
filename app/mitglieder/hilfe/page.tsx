@@ -105,6 +105,7 @@ export default function HilfePage() {
   // Beim Mount: Chat-History + Coach-Status laden
   useEffect(() => {
     let cancelled = false;
+    let teaserTimer: ReturnType<typeof setTimeout> | undefined;
     (async () => {
       try {
         const res = await fetch("/api/mitglieder/hilfe/chat", { method: "GET" });
@@ -119,18 +120,33 @@ export default function HilfePage() {
             }))
           );
         }
-        setCoachPremium(!!data?.coach_premium);
+        const premium = !!data?.coach_premium;
+        setCoachPremium(premium);
         setCheckoutCtx({
           email: data?.email ?? null,
           leadId: data?.lead_id ?? null,
           dogName: data?.dog_name ?? null,
         });
+        // Foto-Analyse-Pop-up nach 20 Sek. — nur Nicht-Premium, einmal pro Sitzung.
+        const alreadyShown =
+          typeof window !== "undefined" &&
+          window.sessionStorage.getItem("coach_paywall_seen") === "1";
+        if (!premium && !alreadyShown) {
+          teaserTimer = setTimeout(() => {
+            if (cancelled) return;
+            setShowPaywall(true);
+            try {
+              window.sessionStorage.setItem("coach_paywall_seen", "1");
+            } catch {}
+          }, 20000);
+        }
       } catch {
         // Verbindungsfehler — einfach mit leerem Verlauf starten
       }
     })();
     return () => {
       cancelled = true;
+      if (teaserTimer) clearTimeout(teaserTimer);
     };
   }, []);
 
@@ -423,9 +439,14 @@ export default function HilfePage() {
       {!coachPremium && (
         <button
           onClick={() => setShowPaywall(true)}
-          className="mt-2 w-full text-left text-[12px] text-[#8B7355] bg-[#FFF9F0] border border-[#EADDC5] rounded-xl px-3 py-2 hover:bg-[#FAF4E8] transition"
+          className="mt-2 w-full flex items-center gap-2.5 text-left bg-gradient-to-r from-[#FFF4E0] to-[#FFF9F0] border-2 border-[#E6CFA0] rounded-xl px-3.5 py-2.5 hover:from-[#FCEBCB] hover:to-[#FFF4E0] transition shadow-[0_2px_8px_rgba(196,165,118,0.18)]"
         >
-          📷 <strong>Neu: Foto-Analyse</strong> — zeig dem Trainer deinen Hund in der Situation und erhalte sofort eine Einschätzung. Freischalten →
+          <span className="text-[20px] leading-none flex-shrink-0">📷</span>
+          <span className="flex-1 text-[12.5px] text-[#5A4A3A] leading-snug">
+            <span className="inline-block bg-[#C4A576] text-white text-[9px] font-bold uppercase tracking-wider rounded px-1.5 py-0.5 mr-1.5 align-middle">Neu</span>
+            <strong className="text-[#1a1a1a]">Foto-Analyse:</strong> Zeig dem Trainer deinen Hund und erhalte sofort eine Einschätzung.
+          </span>
+          <span className="text-[#C4A576] font-bold text-[16px] flex-shrink-0">→</span>
         </button>
       )}
 
