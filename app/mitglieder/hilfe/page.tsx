@@ -5,11 +5,24 @@ import { useEffect, useRef, useState } from "react";
 interface Message {
   role: "user" | "assistant";
   content: string;
+  hasImage?: boolean;
 }
 
 interface LimitInfo {
   limit: number;
   is_paid: boolean;
+}
+
+interface CheckoutCtx {
+  email: string | null;
+  leadId: string | null;
+  dogName: string | null;
+}
+
+interface AttachedImage {
+  media_type: string;
+  base64: string;
+  previewUrl: string;
 }
 
 const SUGGESTED_QUESTIONS = [
@@ -32,6 +45,42 @@ function stripMarkdown(text: string): string {
     .replace(/–/g, "-");
 }
 
+// Bild client-seitig verkleinern + als JPEG-base64 → kleines Payload.
+function compressImage(file: File): Promise<AttachedImage> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const maxDim = 1280;
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width >= height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject(new Error("no canvas ctx"));
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+        const base64 = dataUrl.split(",")[1] || "";
+        resolve({ media_type: "image/jpeg", base64, previewUrl: dataUrl });
+      };
+      img.onerror = () => reject(new Error("image load failed"));
+      img.src = reader.result as string;
+    };
+    reader.onerror = () => reject(new Error("file read failed"));
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function HilfePage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -39,7 +88,13 @@ export default function HilfePage() {
   const [error, setError] = useState("");
   const [limitInfo, setLimitInfo] = useState<LimitInfo | null>(null);
   const [usage, setUsage] = useState<{ used: number; limit: number; remaining: number } | null>(null);
+  const [coachPremium, setCoachPremium] = useState(false);
+  const [checkoutCtx, setCheckoutCtx] = useState<CheckoutCtx | null>(null);
+  const [attached, setAttached] = useState<AttachedImage | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [buying, setBuying] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -47,7 +102,7 @@ export default function HilfePage() {
     }
   }, [messages, loading]);
 
-  // Beim Mount: Chat-History aus DB laden
+  // Beim Mount: Chat-History + Coach-Status laden
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -55,7 +110,8 @@ export default function HilfePage() {
         const res = await fetch("/api/mitglieder/hilfe/chat", { method: "GET" });
         if (!res.ok) return;
         const data = await res.json();
-        if (!cancelled && Array.isArray(data?.messages) && data.messages.length > 0) {
+        if (cancelled) return;
+        if (Array.isArray(data?.messages) && data.messages.length > 0) {
           setMessages(
             data.messages.map((m: any) => ({
               role: m.role,
@@ -63,8 +119,14 @@ export default function HilfePage() {
             }))
           );
         }
+        setCoachPremium(!!data?.coach_premium);
+        setCheckoutCtx({
+          email: data?.email ?? null,
+          leadId: data?.lead_id ?? null,
+          dogName: data?.dog_name ?? null,
+        });
       } catch {
-        // Verbindungsfehler — egal, einfach mit leerem Verlauf starten
+        // Verbindungsfehler — einfach mit leerem Verlauf starten
       }
     })();
     return () => {
@@ -72,33 +134,90 @@ export default function HilfePage() {
     };
   }, []);
 
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (fileRef.current) fileRef.current.value = "";
+    if (!file) return;
+    // Nicht-Premium: gar nicht erst anhängen, direkt Paywall zeigen.
+    if (!coachPremium) {
+      setShowPaywall(true);
+      return;
+    }
+    try {
+      const img = await compressImage(file);
+      setAttached(img);
+      setError("");
+    } catch {
+      setError("Bild konnte nicht geladen werden. Versuch ein anderes Foto.");
+    }
+  }
+
+  function onAttachClick() {
+    if (!coachPremium) {
+      setShowPaywall(true);
+      return;
+    }
+    fileRef.current?.click();
+  }
+
   async function send(message: string) {
     const trimmed = message.trim();
-    if (!trimmed || loading) return;
+    const image = attached;
+    if ((!trimmed && !image) || loading) return;
     setError("");
+
+    // Bild ohne Premium → Paywall (Sicherheitsnetz, sollte UI eh verhindern)
+    if (image && !coachPremium) {
+      setShowPaywall(true);
+      return;
+    }
+
+    const userText = trimmed || (image ? "Was fällt dir an meinem Hund auf?" : "");
+    const prevMessages = messages;
     const newMessages: Message[] = [
       ...messages,
-      { role: "user", content: trimmed },
+      { role: "user", content: userText, hasImage: !!image },
     ];
     setMessages(newMessages);
     setInput("");
+    setAttached(null);
     setLoading(true);
+
+    // API-Messages bauen: vorherige als reiner Text, die neue ggf. mit Bild.
+    const apiMessages = prevMessages.map((m) => ({
+      role: m.role,
+      content: m.content,
+    }));
+    if (image) {
+      apiMessages.push({
+        role: "user",
+        content: [
+          { type: "text", text: userText },
+          {
+            type: "image",
+            source: { type: "base64", media_type: image.media_type, data: image.base64 },
+          },
+        ] as any,
+      });
+    } else {
+      apiMessages.push({ role: "user", content: userText });
+    }
+
     try {
       const res = await fetch("/api/mitglieder/hilfe/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: apiMessages }),
       });
       const data = await res.json();
-      if (res.status === 429 && data.error === "limit_reached") {
-        // Letzte (User-)Message wieder rausnehmen, damit kein "verlorener"
-        // Question-Bubble stehenbleibt.
-        setMessages(messages);
+      if (res.status === 402 && data.error === "coach_premium_required") {
+        setMessages(prevMessages);
         setInput(trimmed);
-        setLimitInfo({
-          limit: data.limit,
-          is_paid: !!data.is_paid,
-        });
+        setShowPaywall(true);
+      } else if (res.status === 429 && data.error === "limit_reached") {
+        setMessages(prevMessages);
+        setInput(trimmed);
+        setLimitInfo({ limit: data.limit, is_paid: !!data.is_paid });
       } else if (!res.ok || !data.reply) {
         setError(data.error || "Konnte keine Antwort holen.");
       } else {
@@ -106,20 +225,47 @@ export default function HilfePage() {
           ...newMessages,
           { role: "assistant", content: stripMarkdown(data.reply) },
         ]);
-        if (data.usage && !data.usage.unlimited) {
-          setUsage(data.usage);
-        }
+        if (data.usage && !data.usage.unlimited) setUsage(data.usage);
       }
-    } catch (e: any) {
+    } catch {
       setError("Verbindungsfehler. Versuch's gleich nochmal.");
     } finally {
       setLoading(false);
     }
   }
 
+  async function buyCoachPremium() {
+    if (buying) return;
+    setBuying(true);
+    try {
+      const res = await fetch("/api/mollie/upsell-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          module: "coach-foto",
+          price: 1900,
+          email: checkoutCtx?.email,
+          leadId: checkoutCtx?.leadId,
+          dogName: checkoutCtx?.dogName,
+          returnUrl: "/mitglieder/hilfe",
+        }),
+      });
+      const data = await res.json();
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        setBuying(false);
+        setError(data?.error || "Checkout konnte nicht gestartet werden.");
+      }
+    } catch {
+      setBuying(false);
+      setError("Verbindungsfehler beim Checkout.");
+    }
+  }
+
   return (
     <div className="flex flex-col h-[calc(100vh-160px)] md:h-[calc(100vh-100px)]">
-      {/* Header: KI-Trainer von Pfoten-Plan — clean ohne Foto */}
+      {/* Header */}
       <div className="bg-white border border-[#EADDC5] rounded-2xl px-4 py-3 mb-3">
         <div className="flex items-center gap-2 mb-0.5 flex-wrap">
           <p className="text-[15px] font-bold text-[#1a1a1a] leading-tight">
@@ -129,6 +275,11 @@ export default function HilfePage() {
             <span className="w-1.5 h-1.5 bg-[#22C55E] rounded-full"></span>
             24/7 verfügbar
           </span>
+          {coachPremium && (
+            <span className="inline-flex items-center gap-1 text-[10px] text-[#8B7355] font-bold bg-[#FFF4E0] border border-[#EADDC5] rounded-full px-2 py-0.5">
+              ★ Foto-Analyse aktiv
+            </span>
+          )}
         </div>
         <p className="text-[11px] text-[#6B7280] leading-snug">
           Unsere KI, trainiert mit dem Wissen unseres Hundetrainer-Teams
@@ -142,7 +293,6 @@ export default function HilfePage() {
       >
         {messages.length === 0 && (
           <div className="space-y-3">
-            {/* Welcome-Bubble vom Trainer-Team mit Avatar */}
             <div className="flex gap-2 items-end">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -153,7 +303,10 @@ export default function HilfePage() {
               <div className="bg-[#FFF9F0] border border-[#EADDC5] rounded-2xl rounded-bl-sm px-4 py-3 max-w-[85%]">
                 <p className="text-[13px] text-[#5A4A3A] leading-relaxed">
                   Hallo! Stell mir deine Frage zum Training, ich gebe dir
-                  konkrete Schritte.
+                  konkrete Schritte.{" "}
+                  {coachPremium
+                    ? "Du kannst mir auch ein Foto von deinem Hund schicken."
+                    : "Mit der Foto-Analyse kannst du mir sogar ein Bild deines Hundes zeigen."}
                 </p>
               </div>
             </div>
@@ -204,6 +357,22 @@ export default function HilfePage() {
         )}
       </div>
 
+      {/* Foto-Vorschau (angehängt, vor dem Senden) */}
+      {attached && (
+        <div className="flex items-center gap-2 mb-2 bg-white border border-[#EADDC5] rounded-xl px-3 py-2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={attached.previewUrl} alt="Vorschau" className="w-12 h-12 rounded-lg object-cover" />
+          <span className="text-[12px] text-[#6B7280] flex-1">Foto angehängt</span>
+          <button
+            onClick={() => setAttached(null)}
+            className="text-[#9CA3AF] hover:text-[#B91C1C] text-[18px] leading-none px-1"
+            aria-label="Foto entfernen"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       {/* Input */}
       <form
         onSubmit={(e) => {
@@ -213,16 +382,36 @@ export default function HilfePage() {
         className="flex gap-2"
       >
         <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFile}
+          className="hidden"
+        />
+        <button
+          type="button"
+          onClick={onAttachClick}
+          disabled={loading}
+          className="flex-shrink-0 w-12 rounded-xl border border-[#E5E7EB] bg-white text-[#8B7355] hover:bg-[#FAF4E8] disabled:opacity-50 transition flex items-center justify-center relative"
+          aria-label="Foto anhängen"
+          title={coachPremium ? "Foto anhängen" : "Foto-Analyse (Premium)"}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+          {!coachPremium && (
+            <span className="absolute -top-1 -right-1 bg-[#C4A576] text-white text-[8px] font-bold rounded-full w-4 h-4 flex items-center justify-center">★</span>
+          )}
+        </button>
+        <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Frag uns was..."
+          placeholder={attached ? "Frage zum Foto (optional)…" : "Frag uns was..."}
           disabled={loading}
           className="flex-1 px-4 py-3 rounded-xl border border-[#E5E7EB] bg-white text-[14px] focus:outline-none focus:border-[#C4A576] focus:ring-3 focus:ring-[#C4A576]/15 transition disabled:opacity-60"
         />
         <button
           type="submit"
-          disabled={loading || !input.trim()}
+          disabled={loading || (!input.trim() && !attached)}
           className="bg-[#C4A576] hover:bg-[#B5946A] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-5 rounded-xl text-[14px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
           aria-label="Senden"
         >
@@ -230,7 +419,17 @@ export default function HilfePage() {
         </button>
       </form>
 
-      {/* Team-Hinweis ganz unten — kleines Foto statt prominenter Header */}
+      {/* Foto-Analyse Teaser (nur Nicht-Premium) */}
+      {!coachPremium && (
+        <button
+          onClick={() => setShowPaywall(true)}
+          className="mt-2 w-full text-left text-[12px] text-[#8B7355] bg-[#FFF9F0] border border-[#EADDC5] rounded-xl px-3 py-2 hover:bg-[#FAF4E8] transition"
+        >
+          📷 <strong>Neu: Foto-Analyse</strong> — zeig dem Trainer deinen Hund in der Situation und erhalte sofort eine Einschätzung. Freischalten →
+        </button>
+      )}
+
+      {/* Team-Hinweis */}
       <div className="flex items-center gap-2 mt-2 mb-1 text-[#9CA3AF]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -243,7 +442,6 @@ export default function HilfePage() {
         </p>
       </div>
 
-      {/* Usage-Hinweis (nur Free-User, nur wenn schon mind. eine Frage gestellt) */}
       {usage && usage.remaining > 0 && (
         <p className="text-[11px] text-[#9CA3AF] text-center mt-2">
           Noch {usage.remaining} von {usage.limit} kostenlosen Fragen.
@@ -251,10 +449,97 @@ export default function HilfePage() {
         </p>
       )}
 
-      {/* Limit-Modal */}
       {limitInfo && (
         <LimitModal info={limitInfo} onClose={() => setLimitInfo(null)} />
       )}
+      {showPaywall && (
+        <CoachPaywall
+          dogName={checkoutCtx?.dogName || null}
+          buying={buying}
+          onBuy={buyCoachPremium}
+          onClose={() => setShowPaywall(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+function CoachPaywall({
+  dogName,
+  buying,
+  onBuy,
+  onClose,
+}: {
+  dogName: string | null;
+  buying: boolean;
+  onBuy: () => void;
+  onClose: () => void;
+}) {
+  const dog = dogName || "deinem Hund";
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="text-center mb-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={TRAINER_AVATAR}
+            alt="Pfoten-Plan Trainer-Team"
+            className="w-20 h-20 rounded-full object-cover border-3 border-[#C4A576] mx-auto mb-3 shadow-md"
+          />
+          <h2 className="text-[18px] font-extrabold text-[#1a1a1a] mb-1 leading-tight">
+            Foto-Analyse freischalten
+          </h2>
+          <p className="text-[13px] text-[#6B7280] leading-relaxed">
+            Schick dem Trainer ein Foto oder Video von {dog} in der Situation und
+            erhalte sofort eine persönliche Einschätzung zur Körpersprache plus
+            konkrete Tipps. <strong>30 Tage, so oft du willst.</strong>
+          </p>
+        </div>
+
+        <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-xl p-4 mb-4">
+          <ul className="space-y-1.5 text-[13px] text-[#1a1a1a]">
+            <li className="flex gap-2 items-start">
+              <span className="text-[#C4A576] flex-shrink-0">✓</span>
+              <span>Foto &amp; Video deines Hundes analysieren lassen</span>
+            </li>
+            <li className="flex gap-2 items-start">
+              <span className="text-[#C4A576] flex-shrink-0">✓</span>
+              <span>„Mach ich's richtig?" — sofortiges Feedback, 24/7</span>
+            </li>
+            <li className="flex gap-2 items-start">
+              <span className="text-[#C4A576] flex-shrink-0">✓</span>
+              <span>30 Tage unbegrenzt, einmalig statt Abo</span>
+            </li>
+          </ul>
+        </div>
+
+        <p className="text-center text-[12px] text-[#9CA3AF] mb-3">
+          Eine einzige Hundestunde kostet 80&nbsp;€.{" "}
+          <span className="text-[#1a1a1a] font-semibold">Hier: 19&nbsp;€.</span>
+        </p>
+
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={onBuy}
+            disabled={buying}
+            className="block text-center bg-[#C4A576] hover:bg-[#B5946A] disabled:opacity-60 text-white font-semibold py-3 px-5 rounded-xl text-[14px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
+          >
+            {buying ? "Wird geöffnet…" : "Foto-Analyse freischalten · 19 €"}
+          </button>
+          <button
+            onClick={onClose}
+            className="text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a] py-1"
+          >
+            Später
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -275,7 +560,6 @@ function LimitModal({
         className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Trainer-Team-Foto im Modal — verstärkt das "echte Profis" Gefühl */}
         <div className="text-center mb-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -338,6 +622,7 @@ function ChatBubble({ message }: { message: Message }) {
     return (
       <div className="flex justify-end">
         <div className="max-w-[85%] rounded-2xl rounded-tr-sm px-4 py-2.5 text-[14px] leading-relaxed whitespace-pre-wrap bg-[#C4A576] text-white">
+          {message.hasImage && <span className="mr-1">📷</span>}
           {message.content}
         </div>
       </div>

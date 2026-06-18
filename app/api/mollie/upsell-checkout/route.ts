@@ -21,6 +21,7 @@ const moduleNames: Record<string, string> = {
   "video-analyse": "Persönliche Video-Analyse",
   "notfall-karten": "10 Notfall-Karten",
   "anti-giftkoeder": "Anti-Giftköder-Trainingsplan",
+  "coach-foto": "KI-Trainer Foto-Analyse (30 Tage)",
 };
 
 export async function POST(req: NextRequest) {

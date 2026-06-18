@@ -32,9 +32,62 @@ const PROBLEM_LABELS: Record<string, string> = {
   mouthing: "Aufnehmen von Gegenständen",
 };
 
+type ContentBlock =
+  | { type: "text"; text: string }
+  | { type: "image"; source: { type: "base64"; media_type: string; data: string } };
+
 interface IncomingMessage {
   role: "user" | "assistant";
-  content: string;
+  content: string | ContentBlock[];
+}
+
+const ALLOWED_IMAGE_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+]);
+const MAX_IMAGES_PER_REQUEST = 4;
+
+// Coach-Premium = Foto/Video-Analyse freigeschaltet. Liegt in den Lead-answers
+// (coach_premium_until in der Zukunft). Robust gegen mehrere Leads pro Email.
+async function resolveCoachContext(
+  admin: ReturnType<typeof createMemberAdminClient>,
+  email: string
+): Promise<{ premium: boolean; leadId: string | null; dogName: string | null }> {
+  if (!email) return { premium: false, leadId: null, dogName: null };
+  try {
+    const { data: leads } = await admin
+      .from("wauwerk_leads")
+      .select("id, dog_name, answers, created_at")
+      .ilike("email", email)
+      .order("created_at", { ascending: false })
+      .limit(10);
+    const now = Date.now();
+    let premium = false;
+    let leadId: string | null = null;
+    let dogName: string | null = null;
+    for (const l of leads || []) {
+      if (!leadId) leadId = l.id as string;
+      if (!dogName && l.dog_name) dogName = l.dog_name as string;
+      const until = (l.answers as any)?.coach_premium_until;
+      if (until && new Date(until).getTime() > now) premium = true;
+    }
+    return { premium, leadId, dogName };
+  } catch {
+    return { premium: false, leadId: null, dogName: null };
+  }
+}
+
+// Reiner Text aus String- oder Block-Content (für History/Speicherung).
+function contentText(content: string | ContentBlock[]): string {
+  if (typeof content === "string") return content;
+  const txt = content
+    .filter((b): b is { type: "text"; text: string } => b.type === "text")
+    .map((b) => b.text)
+    .join(" ");
+  const hasImg = content.some((b) => b.type === "image");
+  return (hasImg ? "[Foto] " : "") + txt;
 }
 
 export async function POST(req: NextRequest) {
@@ -63,6 +116,12 @@ export async function POST(req: NextRequest) {
   // Limit gegen Missbrauch
   if (messages.length > 20) messages = messages.slice(-20);
 
+  const hasImage = messages.some(
+    (m) =>
+      Array.isArray(m.content) &&
+      (m.content as ContentBlock[]).some((b) => b?.type === "image")
+  );
+
   const member = await getOrCreateMemberProfile({
     userId: user.id,
     email: user.email || "",
@@ -74,6 +133,22 @@ export async function POST(req: NextRequest) {
   const limit =
     member.purchase_status === "paid" ? PAID_LIMIT : FREE_TOTAL_LIMIT;
   const admin = createMemberAdminClient();
+
+  // ── Coach-Premium-Gate: Bilder nur für Premium (Foto/Video-Analyse) ──
+  if (hasImage) {
+    const coach = await resolveCoachContext(admin, user.email || "");
+    if (!coach.premium) {
+      return NextResponse.json(
+        {
+          error: "coach_premium_required",
+          lead_id: coach.leadId,
+          dog_name: coach.dogName,
+        },
+        { status: 402 }
+      );
+    }
+  }
+
   const { data: usageRow } = await admin
     .from("member_users")
     .select("chat_usage_count")
@@ -139,6 +214,7 @@ INHALT:
 - Bleibe IMMER beim Thema Hundetraining/Pfoten-Plan. Bei Off-Topic ("welches Wetter ist heute" etc.): freundlich zurückführen.
 - Bei medizinischen Symptomen (Schmerzen, akute Krankheit): empfehle ausdrücklich einen Tierarzt-Besuch — du bist KEIN Ersatz für tierärztlichen Rat.
 - Halte Antworten unter 200 Wörter, nutze gerne kurze Listen oder Aufzählungen.
+- Wenn der Nutzer ein Foto oder Video (als Bilder) schickt: beschreibe kurz was du an ${dog}s Körpersprache/Haltung/Situation siehst, und gib daraus 1-2 konkrete Trainings-Tipps. Sei ehrlich wenn etwas auf dem Bild nicht eindeutig erkennbar ist. Das ist eine Trainings-Einschätzung, KEIN tierärztlicher Befund.
 
 FORMAT (WICHTIG):
 - Verwende KEIN Markdown. Keine Sternchen (** oder *), keine #-Headlines, keine Backticks.
@@ -153,10 +229,40 @@ FORMAT (WICHTIG):
       model: "claude-sonnet-4-6",
       max_tokens: 600,
       system: systemPrompt,
-      messages: messages.map((m) => ({
-        role: m.role,
-        content: m.content.slice(0, 4000),
-      })),
+      messages: messages.map((m) => {
+        if (typeof m.content === "string") {
+          return { role: m.role, content: m.content.slice(0, 4000) };
+        }
+        let imgCount = 0;
+        const blocks = (m.content as ContentBlock[])
+          .map((b) => {
+            if (b.type === "text") {
+              return { type: "text" as const, text: String(b.text).slice(0, 4000) };
+            }
+            if (
+              b.type === "image" &&
+              ALLOWED_IMAGE_TYPES.has(b.source?.media_type) &&
+              imgCount < MAX_IMAGES_PER_REQUEST
+            ) {
+              imgCount++;
+              return {
+                type: "image" as const,
+                source: {
+                  type: "base64" as const,
+                  media_type: b.source.media_type as
+                    | "image/jpeg"
+                    | "image/png"
+                    | "image/webp"
+                    | "image/gif",
+                  data: b.source.data,
+                },
+              };
+            }
+            return null;
+          })
+          .filter((b): b is NonNullable<typeof b> => b !== null);
+        return { role: m.role, content: blocks };
+      }),
     });
 
     const text = response.content
@@ -188,12 +294,13 @@ FORMAT (WICHTIG):
     // (Verlauf-speicherung ist nice-to-have, KI-Antwort ist priority).
     try {
       const lastUserMsg = messages[messages.length - 1];
-      if (lastUserMsg?.role === "user" && lastUserMsg.content) {
+      const lastUserText = lastUserMsg ? contentText(lastUserMsg.content) : "";
+      if (lastUserMsg?.role === "user" && lastUserText) {
         await admin.from("member_chat_messages").insert([
           {
             user_id: user.id,
             role: "user",
-            content: lastUserMsg.content.slice(0, 4000),
+            content: lastUserText.slice(0, 4000),
           },
           {
             user_id: user.id,
@@ -254,5 +361,12 @@ export async function GET(req: NextRequest) {
     timestamp: r.created_at as string,
   }));
 
-  return NextResponse.json({ messages });
+  const coach = await resolveCoachContext(admin, user.email || "");
+  return NextResponse.json({
+    messages,
+    coach_premium: coach.premium,
+    lead_id: coach.leadId,
+    dog_name: coach.dogName,
+    email: user.email || null,
+  });
 }

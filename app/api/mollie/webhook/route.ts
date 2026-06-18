@@ -537,6 +537,33 @@ async function handleUpsellPaid(payment: any) {
     }
   }
 
+  // Coach-Foto-Premium: schaltet 30 Tage Foto/Video-Analyse im KI-Trainer
+  // frei. Speicherung in answers.coach_premium_until (kein Schema-Änderung).
+  // Fresh-Read, damit der upsell_paid_at-Write oben nicht überschrieben wird.
+  if (module === "coach-foto") {
+    try {
+      const { data: freshLead } = await supabase
+        .from("wauwerk_leads")
+        .select("answers")
+        .eq("id", leadData.id)
+        .maybeSingle();
+      const prev = (freshLead?.answers as any) || (leadData.answers as any) || {};
+      const until = new Date(Date.now() + 30 * 864e5).toISOString();
+      await supabase
+        .from("wauwerk_leads")
+        .update({
+          answers: {
+            ...prev,
+            coach_premium_until: until,
+            coach_premium_purchased_at: new Date().toISOString(),
+          },
+        })
+        .eq("id", leadData.id);
+    } catch (e) {
+      console.error("[mollie-webhook] Coach-Foto Premium Error:", e);
+    }
+  }
+
   // Trainings-Zusatzmodule (pulling/energy/aggression/...): pro Modul-Key
   // ein PDF generieren und per Mail ausliefern. Modul-String kann auch
   // mehrere mit "+" verketten (z.B. "pulling+energy").
