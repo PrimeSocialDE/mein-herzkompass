@@ -234,24 +234,24 @@
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
 
-        // A/B Test v6: Champion (deinplan3) vs Challenger (deinplan2 v2).
-        // deinplan2 ist die personalisierte Quiz-Result-Page mit Rasse-Bild,
-        // Trait-Satz pro Rasse, 3 Testimonials (rasse-prio), Plan-Einblick-Video,
-        // After-Purchase-3-Steps. SyntaxError + Quiz-Daten-Bug sind gefixt
-        // (Commits f9635f8 + 613d15f), Hard-Reload-Tests bestanden.
-        // 50/50 fuer schnellere Stichprobe — Aufmerksam beobachten,
-        // bei klarer schlechter CR sofort revertieren.
+        // A/B Test (ab 2026-06-18): deinplan3 (Champion, Control) vs deinplan2.
+        // deinplan2 ist jetzt ein EXAKTER Klon von deinplan3 PLUS dem
+        // "Du bist nicht allein"-Reassurance-Block ueber der Haupt-CTA
+        // (aus echten KI-Trainer-Chatfragen abgeleitet). Der Test isoliert
+        // genau diesen einen Block. Messung via source_page (deinplan2 vs deinplan3).
+        // 50/50. localStorage-Key bleibt v6 (kurz-schritt1 Returning-Logik haengt dran).
         function getABTestPage() {
             let variant = localStorage.getItem('ab_test_pricing_v6');
             if (!variant) {
-                // 50/50 Champion (deinplan3) vs Challenger (deinplan2)
+                // 50/50: B (deinplan2) = deinplan3-Klon + Reassurance-Block,
+                // geringes Risiko → Gleichverteilung fuer schnellen, klaren Read.
                 variant = Math.random() < 0.50 ? 'A' : 'B';
                 localStorage.setItem('ab_test_pricing_v6', variant);
                 // Legacy-Key auch setzen damit Supabase-Tracking (ab_variant) konsistent bleibt
                 localStorage.setItem('ab_test_pricing', variant);
             }
-            // A = deinplan3.html (Champion)
-            // B = deinplan2.html (Challenger / personalisierte Quiz-Result-Page)
+            // A = deinplan3.html (Champion, Control)
+            // B = deinplan2.html (deinplan3-Klon + "Du bist nicht allein"-Block)
             return variant === 'A' ? 'deinplan3.html' : 'deinplan2.html';
         }
 
