@@ -82,7 +82,7 @@ async function generatePersonalizedBlock(
     1: `Schreibe 3 sachliche, ruhige Sätze (max 80 Wörter total) für eine erste Erinnerungs-Mail. Ton: respektvoll, kompetent, wie eine ausgebildete Trainerin. KEIN "Hey", KEIN umgangssprachliches "klar" oder "easy". KEIN Verkaufsdruck. Eher: konkret erklären woran es bei diesem Hund-Profil typisch hakt (Rasse + Alter berücksichtigen). Nenne einen Aspekt der Vertrauen schafft (z.B. dass das Problem trainierbar ist).`,
     2: `Schreibe eine kurze, authentische Story (70-100 Wörter) über einen fiktiven anderen Hund mit ähnlichem Profil und gleichem Problem. Vorher → Nachher in konkreten 4 Wochen. Erfinde plausible Namen (Hundename + Besitzer-Vorname). KEIN "Hey", keine Umgangssprache. Schreib wie eine kurze Erfolgsgeschichte aus dem Trainer-Alltag — sachlich, aber emotional verständlich. Schluss-Satz: was die Halterin daran lernte.`,
     3: `Schreibe einen persönlichen Trainer-Absatz (70-100 Wörter) in Ich-Form. Wie eine ausgebildete Hundetrainerin (40+) die einen Brief schreibt. Anrede in der Form "Liebe/r [Name unbekannt → einfach starten ohne Anrede, da Headline+Intro das machen]". Kompetent, empathisch, kein Verkaufsdruck. Nenne 1 konkrete Übung die zum Problem passt und heute machbar ist (5-10 Min, ohne Ausrüstung). KEIN "Hey" oder Slang.`,
-    4: `Schreibe 3 häufige Fragen + sachliche kurze Antworten (90-130 Wörter total) zu diesem Problem. Format: "Frage? Antwort." (Frage fett im html später). Fokus auf die Sorgen einer 40+ Halterin: Funktioniert das bei meiner Rasse? Wie viel Zeit brauche ich pro Tag? Was wenn der Hund nicht mitmacht? Antworten konkret, nicht werbe-typisch.`,
+    4: `Schreibe 3 häufige Fragen + sachliche kurze Antworten (90-130 Wörter total) zu diesem Problem. FORMAT STRIKT: jede Frage steht in einer EIGENEN Zeile und endet mit einem Fragezeichen; in der Zeile direkt darunter die Antwort; zwischen den Frage-Antwort-Paaren eine LEERZEILE. KEIN Markdown, KEIN HTML, keine Sternchen, kein <b>. Fokus auf die Sorgen einer 40+ Halterin — erste Frage MUSS sein: "Schaffe ich das überhaupt allein?" (beruhige: klare Schritt-für-Schritt-Anleitung, kleine Etappen, jederzeit Unterstützung bei Fragen). Danach: "Funktioniert das bei meiner Rasse?" und "Wie viel Zeit brauche ich pro Tag?". Antworten konkret, nicht werbe-typisch.`,
     5: `Schreibe 2-3 Sätze (max 60 Wörter) Last-Call-Ton: sachlich-warm. "Falls Sie sich anders entschieden haben — verständlich." Eine letzte, freundliche Erinnerung dass der Plan bereitsteht. Erwähne die 30-Tage-Geld-zurück-Garantie als Sicherheit. KEIN Rabatt erwähnen, kein Druck, KEIN "Hey", kein Slang.`,
   };
 
@@ -98,7 +98,8 @@ WICHTIG:
 - Schreibe NUR den Block selbst, KEINE Anrede ("Hallo X"), KEINE Grußformel, KEIN "Hier ist".
 - Du-Form (nicht Sie), aber respektvoll und ruhig.
 - Erwähne ${dog} bei Namen wenn passend.
-- Output: nur der Text, kein Markdown, keine Anführungszeichen drumherum.
+- Output: NUR Fließtext. KEIN Markdown, KEIN HTML, KEINE Tags wie <b>, KEINE Sternchen (*), keine Anführungszeichen drumherum. Trenne Absätze mit einer Leerzeile (doppelter Umbruch).
+- Viele Halter haben Angst, das Training allein nicht hinzubekommen. Nimm dieser Sorge beiläufig den Druck: der Plan führt Schritt für Schritt in kleinen, machbaren Etappen, und bei Fragen bekommt man jederzeit Antwort — niemand wird allein gelassen.
 - KEINE Wörter wie "Hey", "easy", "checken", "klar", "auf jeden Fall".`;
 
   try {
@@ -119,19 +120,40 @@ WICHTIG:
   }
 }
 
-// HTML-Block formatieren (Newlines → <p>-Absaetze, escapen)
+// HTML-Block formatieren: Absaetze (Leerzeile) + Zeilenumbrueche (einzelnes \n),
+// FAQ-Fragen (enden auf "?") fett. AI-Text wird vorher von Markdown/HTML
+// gesaeubert, damit NIE ein rohes <b> o.ae. sichtbar wird.
 function formatPersonalizedHtml(text: string): string {
-  const paragraphs = text
-    .split(/\n\n+/)
-    .map((p) => p.trim())
-    .filter(Boolean);
-  return paragraphs
-    .map(
-      (p) =>
-        `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1a1a1a;">${escapeHtml(
-          p
-        )}</p>`
-    )
+  const clean = text
+    .replace(/<\/?[a-z][^>]*>/gi, "") // rohe HTML-Tags raus (z.B. <b>)
+    .replace(/\*\*(.*?)\*\*/g, "$1") // **fett** -> Text
+    .replace(/__(.*?)__/g, "$1")
+    .replace(/(^|\s)\*([^*\n]+)\*(?=\s|$|[.,!?;:])/g, "$1$2"); // *kursiv* -> Text
+
+  // Absaetze an Leerzeilen; wenn keine Leerzeilen da sind, gilt jede Zeile
+  // als eigener Absatz (Haiku nutzt oft nur einfache Umbrueche → sonst Wall-of-Text).
+  const hasBlankLines = /\n\n/.test(clean);
+  const blocks = hasBlankLines
+    ? clean.split(/\n\n+/)
+    : clean.split(/\n+/);
+
+  return blocks
+    .map((block) => {
+      const lines = block
+        .split(/\n/)
+        .map((l) => l.trim())
+        .filter(Boolean)
+        .map((l) => {
+          const esc = escapeHtml(l);
+          // FAQ-Frage (Zeile endet auf ?) fett hervorheben
+          return /\?\s*$/.test(l) ? `<strong>${esc}</strong>` : esc;
+        });
+      if (!lines.length) return "";
+      return `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1a1a1a;">${lines.join(
+        "<br>"
+      )}</p>`;
+    })
+    .filter(Boolean)
     .join("\n");
 }
 
