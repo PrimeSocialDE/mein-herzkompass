@@ -100,7 +100,8 @@ WICHTIG:
 - Erwähne ${dog} bei Namen wenn passend.
 - Output: NUR Fließtext. KEIN Markdown, KEIN HTML, KEINE Tags wie <b>, KEINE Sternchen (*), keine Anführungszeichen drumherum. Trenne Absätze mit einer Leerzeile (doppelter Umbruch).
 - Viele Halter haben Angst, das Training allein nicht hinzubekommen. Nimm dieser Sorge beiläufig den Druck: der Plan führt Schritt für Schritt in kleinen, machbaren Etappen, und bei Fragen bekommt man jederzeit Antwort — niemand wird allein gelassen.
-- KEINE Wörter wie "Hey", "easy", "checken", "klar", "auf jeden Fall".`;
+- KEINE Wörter wie "Hey", "easy", "checken", "klar", "auf jeden Fall".
+- NICHT gegendert schreiben: kein ":innen", kein "*innen", kein Binnen-I. Nutze das generische Maskulinum (z.B. "Halter", "Hundebesitzer", "Hundetrainer").`;
 
   try {
     const res = await client.messages.create({
@@ -238,7 +239,7 @@ function getStageContent(args: WarmRecoveryArgs, stage: WarmRecoveryStage): Stag
       return {
         subject: `Die häufigsten Fragen zu unserem Trainingsplan`,
         preheader: `Falls du noch unsicher bist — hier alle Antworten.`,
-        headline: `Was Halter:innen uns am häufigsten fragen`,
+        headline: `Was Halter uns am häufigsten fragen`,
         intro: `Hallo, bevor du dich entscheidest, hier die häufigsten Fragen unserer Mitglieder — gerade von denen, die schon länger mit ${problemLabel} unterwegs sind:`,
         defaultBlock: `${whatYouGetBox}
           <p style="margin:0 0 10px;font-size:15px;line-height:1.6;color:#1a1a1a;"><strong>Funktioniert das auch bei meiner Rasse?</strong><br>Ja. Der Plan wird individuell nach Rasse, Alter und konkretem Verhalten von ${escapeHtml(dog)} zusammengestellt — keine Standard-Vorlage.</p>
