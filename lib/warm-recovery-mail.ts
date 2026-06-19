@@ -8,14 +8,13 @@
 //   2) +24h  — Story von einem aehnlichen Hund (Social Proof)
 //   3) +72h  — Persoenlicher Trainer-Brief mit Foto
 //   4) +5d   — Diagnose / FAQ rund um dog_problem
-//   5) +7d   — Last-Call + 15% Discount (Stop nach dieser Mail)
+//   5) +7d   — Last-Call (freundliche letzte Erinnerung, kein Rabatt, Stop danach)
 //
 // Bei Conversion zu paid: Brevo-Webhook entfernt aus Warm-Recovery,
 // Cron-Suppression: status != pending/failed → skip.
 
 import "server-only";
 import { sendBrevoMail, wrapTemplate, escapeHtml } from "./member-mail";
-import { signRecoveryLead } from "./recovery-link";
 import Anthropic from "@anthropic-ai/sdk";
 
 const SITE_URL =
@@ -50,18 +49,17 @@ export interface WarmRecoveryArgs {
 }
 
 // Recovery-Link zur richtigen Plan-Page (deinplan3 oder deinplan6 je AB-Variante)
-function buildPlanRecoveryUrl(args: WarmRecoveryArgs, stage: WarmRecoveryStage, withPromo = false): string {
-  const variant = args.abVariant === "B" ? "deinplan6.html" : "deinplan3.html";
+function buildPlanRecoveryUrl(args: WarmRecoveryArgs, stage: WarmRecoveryStage): string {
+  // Warm-Recovery führt auf die Win-Back-Seite rueckhol.html. Diese liest
+  // lead_id aus der URL und stellt Hund/E-Mail/Problem wieder her.
   const params = new URLSearchParams({
-    recover: args.leadId,
-    s: signRecoveryLead(args.leadId),
+    lead_id: args.leadId,
     utm_source: "email",
     utm_medium: "drip",
     utm_campaign: "warm-recovery",
     utm_content: `stage-${stage}`,
   });
-  if (withPromo) params.set("promo", "warm15");
-  return `${SITE_URL}/${variant}?${params.toString()}`;
+  return `${SITE_URL}/rueckhol.html?${params.toString()}`;
 }
 
 // Claude Haiku — schneller, billig, gut genug fuer kurze Personalisierungsbloecke.
@@ -85,7 +83,7 @@ async function generatePersonalizedBlock(
     2: `Schreibe eine kurze, authentische Story (70-100 Wörter) über einen fiktiven anderen Hund mit ähnlichem Profil und gleichem Problem. Vorher → Nachher in konkreten 4 Wochen. Erfinde plausible Namen (Hundename + Besitzer-Vorname). KEIN "Hey", keine Umgangssprache. Schreib wie eine kurze Erfolgsgeschichte aus dem Trainer-Alltag — sachlich, aber emotional verständlich. Schluss-Satz: was die Halterin daran lernte.`,
     3: `Schreibe einen persönlichen Trainer-Absatz (70-100 Wörter) in Ich-Form. Wie eine ausgebildete Hundetrainerin (40+) die einen Brief schreibt. Anrede in der Form "Liebe/r [Name unbekannt → einfach starten ohne Anrede, da Headline+Intro das machen]". Kompetent, empathisch, kein Verkaufsdruck. Nenne 1 konkrete Übung die zum Problem passt und heute machbar ist (5-10 Min, ohne Ausrüstung). KEIN "Hey" oder Slang.`,
     4: `Schreibe 3 häufige Fragen + sachliche kurze Antworten (90-130 Wörter total) zu diesem Problem. Format: "Frage? Antwort." (Frage fett im html später). Fokus auf die Sorgen einer 40+ Halterin: Funktioniert das bei meiner Rasse? Wie viel Zeit brauche ich pro Tag? Was wenn der Hund nicht mitmacht? Antworten konkret, nicht werbe-typisch.`,
-    5: `Schreibe 2-3 Sätze (max 60 Wörter) Last-Call-Ton: sachlich-warm. "Falls Sie sich anders entschieden haben — verständlich." Aber: eine letzte Erinnerung dass der Plan einmalig 15% günstiger verfügbar ist. Erwähne die 30-Tage-Garantie. KEIN "Hey", kein Slang.`,
+    5: `Schreibe 2-3 Sätze (max 60 Wörter) Last-Call-Ton: sachlich-warm. "Falls Sie sich anders entschieden haben — verständlich." Eine letzte, freundliche Erinnerung dass der Plan bereitsteht. Erwähne die 30-Tage-Geld-zurück-Garantie als Sicherheit. KEIN Rabatt erwähnen, kein Druck, KEIN "Hey", kein Slang.`,
   };
 
   const prompt = `Zielgruppe: deutsche Hundebesitzer, vorwiegend 35-55 Jahre, suchen seriöse Hilfe bei Hundeerziehung. Sprache: sachlich, ruhig, kompetent. KEIN Slang, KEIN "Hey", KEIN "easy/cool/checken".
@@ -229,14 +227,14 @@ function getStageContent(args: WarmRecoveryArgs, stage: WarmRecoveryStage): Stag
       };
     case 5:
       return {
-        subject: `Letzte Nachricht — 15% auf ${dog}s Plan`,
+        subject: `Letzte Nachricht zu ${dog}s Plan`,
         preheader: `Danach hörst du nichts mehr von uns.`,
         headline: `Eine letzte Erinnerung`,
         intro: `Hallo, falls du dich gegen den Plan entschieden hast — verständlich, das ist völlig ok. Aber falls du nochmal überlegst:`,
-        defaultBlock: `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1a1a1a;">Heute und morgen ist der Plan für ${escapeHtml(
+        defaultBlock: `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1a1a1a;">${escapeHtml(
           dog
-        )} mit <strong>15% Rabatt</strong> verfügbar. Plus die 30-Tage-Geld-zurück-Garantie wie immer. Du kannst ihn jederzeit zurückgeben, wenn er nicht passt.</p>${compareBox}`,
-        ctaText: `Mit 15% sichern`,
+        )}s persönlicher Plan steht bereit — mit der 30-Tage-Geld-zurück-Garantie. Du kannst ihn jederzeit zurückgeben, wenn er nicht passt. Ohne Risiko.</p>${compareBox}`,
+        ctaText: `${escapeHtml(dog)}s Plan ansehen`,
         footerHint: `Das ist die letzte Mail dieser Sequenz. Wenn du nicht reagierst, hörst du nichts mehr von uns.`,
       };
   }
@@ -253,7 +251,7 @@ export async function sendWarmRecoveryMail(
   if (!args.to) return { ok: false, reason: "no_recipient" };
 
   const stageContent = getStageContent(args, stage);
-  const ctaUrl = buildPlanRecoveryUrl(args, stage, stage === 5);
+  const ctaUrl = buildPlanRecoveryUrl(args, stage);
 
   // Versuche Claude-Personalisierung, fallback auf defaultBlock
   let personalizedHtml: string;
