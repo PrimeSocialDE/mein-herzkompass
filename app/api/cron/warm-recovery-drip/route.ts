@@ -27,7 +27,7 @@ import { syncWarmRecoveryLists } from "@/lib/brevo-contacts";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 120;
+export const maxDuration = 300;
 
 const CRON_SECRET = process.env.CRON_SECRET || "pfoten-cron-2024";
 
@@ -90,7 +90,7 @@ export async function GET(req: NextRequest) {
     query = query
       .lte("created_at", lookbackUntil)
       .gte("created_at", lookbackFrom)
-      .limit(100);
+      .limit(40);
   }
 
   const { data: leads, error } = await query;
