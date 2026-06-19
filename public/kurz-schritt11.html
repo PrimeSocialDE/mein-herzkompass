@@ -239,13 +239,13 @@
         // "Du bist nicht allein"-Reassurance-Block ueber der Haupt-CTA
         // (aus echten KI-Trainer-Chatfragen abgeleitet). Der Test isoliert
         // genau diesen einen Block. Messung via source_page (deinplan2 vs deinplan3).
-        // 50/50. localStorage-Key bleibt v6 (kurz-schritt1 Returning-Logik haengt dran).
+        // 70/30 (Variante deinplan2 = 30%). localStorage-Key bleibt v6 (kurz-schritt1 Returning-Logik haengt dran).
         function getABTestPage() {
             let variant = localStorage.getItem('ab_test_pricing_v6');
             if (!variant) {
-                // 50/50: B (deinplan2) = deinplan3-Klon + Reassurance-Block,
-                // geringes Risiko → Gleichverteilung fuer schnellen, klaren Read.
-                variant = Math.random() < 0.50 ? 'A' : 'B';
+                // 70/30: A=deinplan3 (Control) 70%, B=deinplan2 (mit Reassurance-Block)
+                // bewusst nur 30% Traffic.
+                variant = Math.random() < 0.70 ? 'A' : 'B';
                 localStorage.setItem('ab_test_pricing_v6', variant);
                 // Legacy-Key auch setzen damit Supabase-Tracking (ab_variant) konsistent bleibt
                 localStorage.setItem('ab_test_pricing', variant);
