@@ -314,8 +314,6 @@ async function handlePaid(payment: any) {
     const totalCents =
       parseInt(meta.total_amount_cents || "0", 10) ||
       Math.round(parseFloat(payment.amount?.value || "0") * 100);
-    const fbp = meta.fbp || null;
-    const fbc = meta.fbc || null;
     const fbEventId = meta.fb_event_id || `mollie-${payment.id}`;
     const planName = meta.plan === "1month"
       ? "1-Monatsplan"
@@ -323,8 +321,28 @@ async function handlePaid(payment: any) {
         ? "6-Monatsplan"
         : "3-Monatsplan";
     const targetEmail = updateData.email;
+    const refId = referenceId;
+    const metaFbp = meta.fbp || null;
     after(async () => {
       try {
+        // fbc/fbp aus dem Lead (VOLLER Wert) holen. Die Mollie-Metadaten kuerzen
+        // fbc auf 60 Zeichen → abgeschnittener fbclid → Meta-CAPI-Qualitaetsfehler
+        // ("modifizierter fbclid im fbc-Parameter"). Daher den gekuerzten meta.fbc
+        // NICHT verwenden; fbp ist kurz, deshalb meta.fbp als Fallback ok.
+        let fbc: string | null = null;
+        let fbp: string | null = metaFbp;
+        try {
+          const { data: leadRow } = await supabase
+            .from("wauwerk_leads")
+            .select("answers")
+            .eq("id", refId)
+            .maybeSingle();
+          const ans = ((leadRow?.answers as any) || {}) as Record<string, any>;
+          fbc = (ans.fbc as string) || null;
+          fbp = (ans.fbp as string) || metaFbp;
+        } catch (e: any) {
+          console.warn("[mollie-webhook] fbc/fbp lead-lookup failed:", e?.message);
+        }
         const { sendPurchaseEventCAPI } = await import("@/lib/fb-capi");
         const res = await sendPurchaseEventCAPI({
           email: targetEmail,
