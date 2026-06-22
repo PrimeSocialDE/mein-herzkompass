@@ -223,17 +223,66 @@ export async function POST(req: NextRequest) {
       set("order_bump_amount_cents", String(effectiveBumpCents));
       if (effectiveBumpType === "tagebuch") set("bump_days", String(effectiveBumpDays));
     }
-    set("utm_source", t(utm_source, 30));
-    set("utm_medium", t(utm_medium, 30));
-    set("utm_campaign", t(utm_campaign, 50));
-    set("utm_content", t(utm_content, 50));
-    set("fbclid", t(fbclid, 60));
-    set("fbp", t(fbp, 50));
+    // ── First-Touch-Attribution: maßgeblich aus dem `pp_attr`-Cookie ────────
+    // Der same-origin-Checkout-Fetch sendet das Cookie automatisch mit. Es trägt
+    // die beim ERSTEN Aufruf erfasste Herkunft (utm_*, fbclid, fbp). Das Cookie
+    // hat Vorrang vor den Body-Werten (die via `urlParams.get(...)` Last-Touch
+    // sein können). So liest der Checkout NIE aus der aktuellen URL.
+    let ft: Record<string, string> = {};
+    try {
+      const raw = req.cookies.get("pp_attr")?.value;
+      if (raw) ft = JSON.parse(decodeURIComponent(raw)) || {};
+    } catch {
+      ft = {};
+    }
+    const utmSourceF = (ft.utm_source || utm_source || "").trim();
+    const utmMediumF = (ft.utm_medium || utm_medium || "").trim();
+    const utmCampaignF = (ft.utm_campaign || utm_campaign || "").trim();
+    const utmContentF = (ft.utm_content || utm_content || "").trim();
+    const fbclidF = ft.fbclid || fbclid || "";
+    const fbpF = ft.fbp || fbp || "";
+
+    // Source-Fallback: KEIN utm_source, aber FB-Signal (fbclid ODER fbp) →
+    // facebook/paid. E-Mail-Quellen (brevo/email/newsletter) NIEMALS mit
+    // facebook überschreiben — sonst zählen Mail-Sales fälschlich als Ad.
+    let finalSource = utmSourceF;
+    let finalMedium = utmMediumF;
+    const isEmailSrc =
+      /brevo|email|newsletter|mail|klaviyo/i.test(utmSourceF) ||
+      /email|newsletter/i.test(utmMediumF);
+    if (!finalSource && !isEmailSrc && (fbclidF || fbpF)) {
+      finalSource = "facebook";
+      finalMedium = finalMedium || "paid";
+    }
+
+    // utm_source/medium kurz (Klassifizierung). utm_campaign/content NICHT mehr
+    // auf 50 kürzen — der CRM matcht utm_content gegen den vollen Meta-
+    // Anzeigennamen (z.B. "Video Trainerin (Mit drucken)"). Limit 200 = safe.
+    set("utm_source", t(finalSource, 30));
+    set("utm_medium", t(finalMedium, 30));
+    set("utm_campaign", t(utmCampaignF, 200));
+    set("utm_content", t(utmContentF, 200));
+    set("fbclid", t(fbclidF || fbclid, 60));
+    set("fbp", t(fbpF || fbp, 50));
     set("fbc", t(fbc, 60));
     set("fb_event_id", t(fb_event_id, 40));
     set("ttclid", t(ttclid, 50));
     set("referred_by_code", t(referredByCode, 24));
     set("source_page", t(source_page, 20));
+
+    // ── Byte-Budget-Guard (Mollie-Limit ~1024 Bytes) ───────────────────────
+    // utm_* sind join-kritisch und MÜSSEN überleben. Falls die Metadata zu groß
+    // wird (sehr lange Anzeigennamen), kürzen wir NUR nice-to-have-Keys in
+    // Prioritäts-Reihenfolge. fbc für CAPI kommt ohnehin aus answers.fbc, nicht
+    // aus der Metadata — Droppen hier schadet der CAPI also nicht.
+    const metaBytes = () => Buffer.byteLength(JSON.stringify(meta), "utf8");
+    for (const k of ["ttclid", "fb_event_id", "fbc", "fbclid", "fbp"]) {
+      if (metaBytes() <= 1000) break;
+      if (k in meta) {
+        delete meta[k];
+        console.warn(`[wauwerk-checkout] metadata > 1000B → "${k}" gedroppt (utm_* bleibt)`);
+      }
+    }
 
     const paymentParams: any = {
       amount: { currency: "EUR", value: formatAmountEUR(totalCents) },

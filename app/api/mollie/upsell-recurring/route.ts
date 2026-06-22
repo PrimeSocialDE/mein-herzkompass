@@ -88,6 +88,49 @@ export async function POST(req: NextRequest) {
       lead = data;
     }
 
+    // ── Safety-Net: Mandat fehlt in DB, ist aber evtl. bei Mollie da ──────
+    // Race beim Erstkauf (v.a. PayPal): der paid-Webhook feuerte, BEVOR Mollie
+    // method/mandateId am Payment gesetzt hatte → mollie_mandate_id blieb null,
+    // und die Idempotenz (processed_payment_ids) sperrte den Korrektur-Webhook
+    // aus. Beim Upsell (Sekunden nach paid) sind die Mandat-Daten settled. Wir
+    // holen das Mandat hier live nach, damit der One-Click greift statt auf den
+    // schwächeren Redirect zurückzufallen.
+    // WICHTIG: schreibt NUR mollie_*-Spalten zurück → der Plan-Trigger
+    // (AFTER UPDATE OF status) feuert NICHT; es gehen keine Pläne/Mails raus.
+    if (lead && lead.mollie_customer_id && !lead.mollie_mandate_id) {
+      try {
+        const mandates = await mollie.customerMandates.page({
+          customerId: lead.mollie_customer_id,
+        });
+        const valid =
+          mandates.find((m: any) => m.status === "valid") ||
+          mandates.find((m: any) => m.status === "pending") ||
+          null;
+        if (valid?.id) {
+          lead.mollie_mandate_id = valid.id;
+          const mandateMethod = (valid as any).method as string | undefined;
+          if (!lead.mollie_payment_method && mandateMethod) {
+            lead.mollie_payment_method = mandateMethod;
+          }
+          await supabase
+            .from("wauwerk_leads")
+            .update({
+              mollie_mandate_id: valid.id,
+              ...(mandateMethod ? { mollie_payment_method: mandateMethod } : {}),
+            })
+            .eq("id", lead.id);
+          console.log(
+            `[upsell-recurring] Mandat live nachgeholt für ${lead.id}: ${valid.id} (${mandateMethod || "?"})`
+          );
+        }
+      } catch (e: any) {
+        // Kein Mandat / Lookup-Fehler → unten regulärer 409/Redirect-Fallback
+        console.warn(
+          `[upsell-recurring] Mandate-Live-Lookup fehlgeschlagen für ${lead.id}: ${e?.message || e}`
+        );
+      }
+    }
+
     if (!lead?.mollie_customer_id || !lead?.mollie_mandate_id) {
       return NextResponse.json(
         {
