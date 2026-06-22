@@ -86,6 +86,10 @@ export async function POST(req: NextRequest) {
         id: "antigiftkoeder",
         name: "Anti-Giftköder-Trainingsplan (12 Seiten, personalisiert)",
       },
+      sommer: {
+        id: "sommer",
+        name: "Sommer-Sicherheits-Plan (18 Seiten, personalisiert)",
+      },
     };
     const bumpDetails =
       BUMP_DETAILS[effectiveBumpType] || BUMP_DETAILS.tagebuch;
