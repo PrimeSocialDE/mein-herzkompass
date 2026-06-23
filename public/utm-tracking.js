@@ -45,6 +45,14 @@
     } catch (e) {}
   }
 
+  // ── Einstiegsseite (erste Funnel-Seite) set-once merken ──────────────────
+  // Wird im Lead (kurz-schritt11 → answers.entry_page) gespeichert, damit wir
+  // Entry-Page→Sale auswerten können (z.B. kurz-schritt1 vs kurz-schritt1b).
+  try {
+    if (!localStorage.getItem("entry_page"))
+      localStorage.setItem("entry_page", location.pathname);
+  } catch (e) {}
+
   // ── FB-Cookies IMMER frisch halten (für CAPI), unabhängig vom First-Touch ─
   try {
     document.cookie.split(";").forEach(function (c) {
