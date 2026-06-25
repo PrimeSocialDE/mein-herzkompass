@@ -2,10 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 
+interface SuggestedModule {
+  slug: string;
+  title: string;
+  goal: string;
+  price_cents: number;
+}
+
 interface Message {
   role: "user" | "assistant";
   content: string;
   hasImage?: boolean;
+  suggestedModule?: SuggestedModule;
 }
 
 interface LimitInfo {
@@ -83,6 +91,9 @@ function compressImage(file: File): Promise<AttachedImage> {
 
 export default function HilfePage() {
   const [messages, setMessages] = useState<Message[]>([]);
+  // Modul-Hinweis: max. 1× pro Gespräch (Ref verhindert ein zweites Anhängen)
+  const moduleShownRef = useRef(false);
+  const [dismissedModule, setDismissedModule] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -237,10 +248,16 @@ export default function HilfePage() {
       } else if (!res.ok || !data.reply) {
         setError(data.error || "Konnte keine Antwort holen.");
       } else {
-        setMessages([
-          ...newMessages,
-          { role: "assistant", content: stripMarkdown(data.reply) },
-        ]);
+        const assistantMsg: Message = {
+          role: "assistant",
+          content: stripMarkdown(data.reply),
+        };
+        // Kontextueller Modul-Hinweis: höchstens einmal pro Gespräch anhängen
+        if (data.suggested_module && !moduleShownRef.current) {
+          assistantMsg.suggestedModule = data.suggested_module;
+          moduleShownRef.current = true;
+        }
+        setMessages([...newMessages, assistantMsg]);
         if (data.usage && !data.usage.unlimited) setUsage(data.usage);
       }
     } catch {
@@ -347,7 +364,39 @@ export default function HilfePage() {
         )}
 
         {messages.map((m, i) => (
-          <ChatBubble key={i} message={m} />
+          <div key={i}>
+            <ChatBubble message={m} />
+            {m.suggestedModule && !dismissedModule && (
+              <div className="ml-9 mt-2 mb-1 bg-[#FFF9F0] border border-[#EADDC5] rounded-2xl px-4 py-3">
+                <button
+                  onClick={() => setDismissedModule(true)}
+                  aria-label="Hinweis ausblenden"
+                  className="float-right text-[#C4B998] hover:text-[#8B7355] text-[16px] leading-none -mt-0.5"
+                >
+                  ×
+                </button>
+                <p className="text-[12px] text-[#8B7355] font-semibold mb-1">
+                  💡 Passend zu deinem Thema
+                </p>
+                <p className="text-[13px] text-[#4B5563] leading-relaxed mb-2">
+                  Wenn du das über mehrere Wochen strukturiert angehen willst, gibt
+                  es dafür das Modul <strong>„{m.suggestedModule.title}"</strong> (
+                  {m.suggestedModule.goal.toLowerCase()}). Kein Muss — ich helfe dir
+                  auch hier gerne weiter.
+                </p>
+                <a
+                  href="/mitglieder/module"
+                  className="inline-block text-[13px] font-semibold text-[#C4A576] hover:underline"
+                >
+                  Modul ansehen (
+                  {(m.suggestedModule.price_cents / 100)
+                    .toFixed(2)
+                    .replace(".", ",")}{" "}
+                  €) →
+                </a>
+              </div>
+            )}
+          </div>
         ))}
 
         {loading && (

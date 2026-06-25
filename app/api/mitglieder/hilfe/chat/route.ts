@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { getCurrentMember, createMemberAdminClient } from "@/lib/member-auth-server";
 import { getOrCreateMemberProfile } from "@/lib/member-db";
+import { THEMEN_MODULES } from "@/lib/member-themen";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -48,6 +49,71 @@ const ALLOWED_IMAGE_TYPES = new Set([
   "image/gif",
 ]);
 const MAX_IMAGES_PER_REQUEST = 4;
+
+// ── Kontextueller Modul-Hinweis ───────────────────────────────────────────
+// Erkennt das Thema der letzten Nutzer-Frage und schlägt das passende
+// Themen-Modul vor — bewusst zurückhaltend (Guardrails):
+//   • NUR bei anhaltendem Interesse: Thema muss >= 2× im Gespräch vorkommen.
+//   • NICHT das Hauptproblem des Plans (das hat der Käufer schon).
+//   • Nur für zahlende Mitglieder (Free-User → erst Plan kaufen).
+//   • max. 1×/Gespräch wird im Frontend gedeckelt.
+// Der Coach hilft immer zuerst; die Karte erscheint separat unter der Antwort.
+const THEME_PATTERNS: Record<string, RegExp> = {
+  pulling: /leine|zieht|ziehen|zerr/i,
+  barking: /bell|kläff|verbell/i,
+  aggression: /aggress|knurr|pöbel/i,
+  anxiety: /angst|allein\b|panik|trennung|winsel|jammer/i,
+  recall: /rückruf|abruf|kommt (eh |einfach |gar )?nicht|hört nicht|läuft weg|wegläuf/i,
+  jumping: /spring|anspring/i,
+  energy: /hyperaktiv|zappel|ausgelastet|überdreh|zur ruhe komm/i,
+  destructive: /zerstör|zerkau|zernag/i,
+  soiling: /stubenrein|pinkelt|uriniert|macht.*(rein|wohnung)/i,
+  mouthing: /zwick|schnapp|aufnehm|giftköder|frisst.*(boden|alles)/i,
+};
+
+function blockText(content: string | ContentBlock[]): string {
+  if (typeof content === "string") return content;
+  if (Array.isArray(content))
+    return content
+      .filter((b) => b?.type === "text")
+      .map((b: any) => b.text)
+      .join(" ");
+  return "";
+}
+
+function suggestModule(
+  messages: IncomingMessage[],
+  mainProblem: string | null
+): { slug: string; title: string; goal: string; price_cents: number } | null {
+  const userTexts = messages
+    .filter((m) => m.role === "user")
+    .map((m) => blockText(m.content).toLowerCase());
+  if (userTexts.length === 0) return null;
+
+  const last = userTexts[userTexts.length - 1];
+  let theme: string | null = null;
+  for (const [k, re] of Object.entries(THEME_PATTERNS)) {
+    if (re.test(last)) {
+      theme = k;
+      break;
+    }
+  }
+  // Kein klares Thema, oder es ist das Hauptproblem des Plans → nichts vorschlagen
+  if (!theme || theme === mainProblem) return null;
+
+  // Anhaltendes Interesse: Thema muss in >= 2 Nutzer-Nachrichten vorkommen
+  const hits = userTexts.filter((t) => THEME_PATTERNS[theme!].test(t)).length;
+  if (hits < 2) return null;
+
+  const mod = THEMEN_MODULES.find((m) => m.problem_match === theme);
+  if (!mod) return null;
+  return {
+    slug: mod.slug,
+    title: mod.title,
+    goal: mod.goal,
+    price_cents: mod.price_cents,
+  };
+}
 
 // Coach-Premium = Foto/Video-Analyse freigeschaltet. Liegt in den Lead-answers
 // (coach_premium_until in der Zukunft). Robust gegen mehrere Leads pro Email.
@@ -313,8 +379,15 @@ FORMAT (WICHTIG):
       console.warn("[hilfe-chat] history save failed:", e?.message);
     }
 
+    // Kontextueller Modul-Hinweis — nur für zahlende Mitglieder, Guardrails s.o.
+    const suggested_module =
+      member.purchase_status === "paid"
+        ? suggestModule(messages, problemKey || null)
+        : null;
+
     return NextResponse.json({
       reply: cleaned,
+      suggested_module,
       usage: limit === Infinity
         ? { unlimited: true }
         : { used: currentCount + 1, limit, remaining: Math.max(0, limit - (currentCount + 1)) },
