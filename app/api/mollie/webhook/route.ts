@@ -331,15 +331,28 @@ async function handlePaid(payment: any) {
         // NICHT verwenden; fbp ist kurz, deshalb meta.fbp als Fallback ok.
         let fbc: string | null = null;
         let fbp: string | null = metaFbp;
+        let clientIp: string | null = null;
+        let clientUserAgent: string | null = null;
         try {
           const { data: leadRow } = await supabase
             .from("wauwerk_leads")
-            .select("answers")
+            .select("answers, created_at")
             .eq("id", refId)
             .maybeSingle();
           const ans = ((leadRow?.answers as any) || {}) as Record<string, any>;
           fbc = (ans.fbc as string) || null;
           fbp = (ans.fbp as string) || metaFbp;
+          clientIp = (ans.client_ip as string) || null;
+          clientUserAgent = (ans.client_user_agent as string) || null;
+          // fbc aus fbclid ableiten, falls nicht direkt vorhanden. Meta-Format:
+          // fb.1.<ms-timestamp>.<fbclid>. Timestamp = Lead-Erstellzeit (≈ Klickzeit),
+          // sonst jetzt.
+          if (!fbc && ans.fbclid) {
+            const ts = (leadRow as any)?.created_at
+              ? new Date((leadRow as any).created_at).getTime()
+              : Date.now();
+            fbc = `fb.1.${ts}.${ans.fbclid}`;
+          }
         } catch (e: any) {
           console.warn("[mollie-webhook] fbc/fbp lead-lookup failed:", e?.message);
         }
@@ -351,6 +364,9 @@ async function handlePaid(payment: any) {
           fbp,
           fbc,
           eventId: fbEventId,
+          clientIp,
+          clientUserAgent,
+          externalId: refId,
           contentName: planName,
           contentIds: [`plan-${meta.plan || "3month"}`],
         });

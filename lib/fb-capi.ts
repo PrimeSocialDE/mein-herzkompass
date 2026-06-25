@@ -37,6 +37,7 @@ interface PurchaseEventArgs {
   eventId?: string | null;
   clientIp?: string | null;
   clientUserAgent?: string | null;
+  externalId?: string | null; // stabile User-ID (z.B. lead_id) — wird gehasht
   // Optional Custom-Data
   contentName?: string;     // "1-Monatsplan" etc.
   contentIds?: string[];    // ["plan-1month"]
@@ -65,6 +66,8 @@ export async function sendPurchaseEventCAPI(
   if (args.fbc) userData.fbc = args.fbc;
   if (args.clientIp) userData.client_ip_address = args.clientIp;
   if (args.clientUserAgent) userData.client_user_agent = args.clientUserAgent;
+  // external_id: stabile User-ID, gehasht (verbessert Match-Quality)
+  if (args.externalId) userData.external_id = [sha256(String(args.externalId))];
 
   const customData: Record<string, any> = {
     value: valueEur,

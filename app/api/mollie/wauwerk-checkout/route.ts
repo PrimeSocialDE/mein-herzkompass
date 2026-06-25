@@ -149,6 +149,14 @@ export async function POST(req: NextRequest) {
 
     // Origin (identische Logik wie Stripe)
     const rawOrigin = req.headers.get("origin") || "https://pfoten-plan.de";
+    // Client-IP + User-Agent für Meta-CAPI Match-Quality. Werden am Lead
+    // gespeichert und im Webhook ans Purchase-Event gehängt (dort ist die
+    // Request-IP die von Mollie, nicht vom Kunden — daher hier erfassen).
+    const clientIp =
+      (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() ||
+      req.headers.get("x-real-ip") ||
+      null;
+    const clientUserAgent = req.headers.get("user-agent") || null;
     const origin = rawOrigin.includes("pfoten-plan.de")
       ? "https://pfoten-plan.de"
       : rawOrigin;
@@ -403,9 +411,16 @@ export async function POST(req: NextRequest) {
       // Customer-ID schon jetzt speichern (auch wenn Zahlung noch open ist).
       // Webhook ergaenzt spaeter die Mandate-ID + Payment-Method bei paid.
       if (createdCustomerId) updateData.mollie_customer_id = createdCustomerId;
-      // Quell-Seite additiv ins answers-JSONB mergen (keine DB-Migration noetig).
-      // Read-modify-write: bestehende Quiz-Antworten bleiben erhalten.
-      if (source_page) {
+      // Quell-Seite + Client-IP/User-Agent/fbclid additiv ins answers-JSONB
+      // mergen (keine DB-Migration noetig). Read-modify-write: bestehende
+      // Quiz-Antworten bleiben erhalten. IP/UA/fbclid braucht der Webhook fuer
+      // die Meta-CAPI Match-Quality (fbc wird dort aus fbclid abgeleitet).
+      const ansMerge: Record<string, any> = {};
+      if (source_page) ansMerge.source_page = source_page;
+      if (clientIp) ansMerge.client_ip = clientIp;
+      if (clientUserAgent) ansMerge.client_user_agent = clientUserAgent;
+      if (fbclidF) ansMerge.fbclid = fbclidF;
+      if (Object.keys(ansMerge).length > 0) {
         const { data: cur, error: ansErr } = await supabase
           .from("wauwerk_leads")
           .select("answers")
@@ -413,9 +428,8 @@ export async function POST(req: NextRequest) {
           .single();
         // NUR mergen wenn der Read sauber war — sonst answers NICHT anfassen,
         // damit ein fehlgeschlagener Read nie die Quiz-Antworten mit {} ueberschreibt.
-        // Mollie-Metadata haelt source_page ohnehin als Fallback.
         if (!ansErr && cur) {
-          updateData.answers = { ...(cur.answers || {}), source_page };
+          updateData.answers = { ...(cur.answers || {}), ...ansMerge };
         }
       }
       const { error: leadUpdErr } = await supabase
