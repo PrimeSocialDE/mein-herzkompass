@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+    <!-- Kauf-Flag sofort setzen: zusatz.html wird nur nach erfolgreichem Hauptkauf
+         erreicht (Mollie routet nur 'paid' hierher). Schliesst die Luecke, dass ein
+         Kaeufer der auf der Upsell-Seite abbricht spaeter faelschlich auf rueckhol
+         (Wiederkehrer-Weiche in kurz-schritt1) landet. -->
+    <script>try { localStorage.setItem('purchased', '1'); } catch (e) {}</script>
     <script src="/utm-tracking.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
