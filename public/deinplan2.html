@@ -2715,8 +2715,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             ✓ <strong style="color: #166534;">Einmalzahlung</strong> – kein Abo, <strong style="color: #166534;">lebenslanger Zugang</strong> • <strong style="color: #166534;">Plan direkt per E-Mail</strong> • <strong style="color: #166534;">24/7 Support</strong> • <a href="agb.html">AGB</a>
         </div>
 
-        <!-- Order-Bump: Anti-Giftköder-Trainingsplan +€9,99 -->
-        <label for="orderBumpAntigift" style="display:flex;gap:12px;background:#FFFBF5;border:2px solid #E6D5B3;border-radius:12px;padding:14px 16px;margin:0 0 14px;cursor:pointer;align-items:flex-start;max-width:540px;">
+        <!-- Order-Bump: Sommer-Sicherheits-Plan +€9,99. Kein for= (Checkbox ist
+             verschachtelt) — sonst doppelter Toggle beim Klick auf den Kasten. -->
+        <label style="display:flex;gap:12px;background:#FFFBF5;border:2px solid #E6D5B3;border-radius:12px;padding:14px 16px;margin:0 0 14px;cursor:pointer;align-items:flex-start;max-width:540px;">
             <input type="checkbox" id="orderBumpAntigift" onchange="updateOrderBumpAntigift()" style="margin-top:3px;width:22px;height:22px;cursor:pointer;accent-color:#C4A576;flex-shrink:0;">
             <div style="flex:1;">
                 <div style="display:inline-block;background:#8B7355;color:#fff;padding:2px 8px;border-radius:12px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">SOMMER-SCHUTZ</div>
@@ -4537,50 +4538,6 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             if (cb) cb.checked = localStorage.getItem('order_bump_antigift_checked') === 'true';
         });
 
-        // In-Modal Order-Bump (am Zahlungs-Schritt): schreibt denselben State wie
-        // die Box oben + synchronisiert Haupt-Checkbox + aktualisiert Modal-Preise.
-        // Der Bump fliesst beim Methoden-Klick ueber buildCheckoutPayload mit.
-        function toggleModalBump() {
-            const m = document.getElementById('orderBumpModal');
-            if (!m) return;
-            localStorage.setItem('order_bump_antigift_checked', m.checked ? 'true' : 'false');
-            const main = document.getElementById('orderBumpAntigift');
-            if (main) main.checked = m.checked;
-            if (typeof updateStickyCta === 'function') updateStickyCta();
-            refreshHybridPrice();
-        }
-
-        // Modal-Preis (Plan + ggf. Bump) neu berechnen + Labels setzen. Gleiche
-        // Formel wie getMyPlan (priceMap/timer/exit-discount/Bump-Aufschlag).
-        function refreshHybridPrice() {
-            const priceMap = {
-                '1month': { d: 29.99, n: 49.99, name: 'Dein 4-Wochen-Trainingsplan' },
-                '3month': { d: 39.99, n: 79.99, name: 'Dein 12-Wochen-Trainingsplan' },
-                '6month': { d: 59.99, n: 119.99, name: 'Dein 6-Monats-Trainingsplan' }
-            };
-            const info = priceMap[selectedPlan] || priceMap['3month'];
-            const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
-            let val = timerExpired ? info.n : info.d;
-            if (exitDiscount) val = Math.round(val * 85) / 100;
-            const checked = localStorage.getItem('order_bump_antigift_checked') === 'true';
-            if (checked) {
-                const add = exitDiscount ? (Math.round(999 * 0.85) / 100) : 9.99;
-                val = Math.round((val + add) * 100) / 100;
-            }
-            hybridContext = {
-                plan: selectedPlan,
-                planName: info.name + (checked ? ' + Sommer-Sicherheits-Plan' : ''),
-                price: val,
-                priceLabel: val.toFixed(2).replace('.', ',') + ' €'
-            };
-            const pl = document.getElementById('hybridPriceLabel');
-            if (pl) pl.textContent = hybridContext.priceLabel;
-            const pn = document.getElementById('hybridPlanName');
-            if (pn) pn.textContent = hybridContext.planName + ' für ' + (dogName || 'deinen Hund');
-            const cs = document.getElementById('hybridCardSubmitBtn');
-            if (cs) cs.textContent = '🔒 Sicher bezahlen · ' + hybridContext.priceLabel;
-        }
-
         async function getMyPlan() {
             const ctaBtn = document.querySelector('.cta-button');
             if (ctaBtn) { ctaBtn.disabled = true; ctaBtn.innerHTML = 'Lade Bezahlung...'; }
@@ -4662,9 +4619,6 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             document.getElementById('hybridPriceLabel').textContent = hybridContext.priceLabel;
             document.getElementById('hybridPlanName').textContent = hybridContext.planName + ' für ' + (dogName || 'deinen Hund');
             document.getElementById('hybridCardSubmitBtn').textContent = '🔒 Sicher bezahlen · ' + hybridContext.priceLabel;
-            // In-Modal Bump-Checkbox auf aktuellen State setzen (Box oben / localStorage)
-            const _mb = document.getElementById('orderBumpModal');
-            if (_mb) _mb.checked = localStorage.getItem('order_bump_antigift_checked') === 'true';
 
             // Email-Bestätigung befüllen
             const userEmail = localStorage.getItem('userEmail') || '';
@@ -5189,19 +5143,6 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         <button type="button" class="hybrid-email-edit" onclick="editHybridEmail()">Ändern</button>
                     </div>
                 </div>
-
-                <!-- Order-Bump im Checkout (über den Methoden, höchster Intent-Moment).
-                     Toggle schreibt denselben State wie die Box oben → fliesst beim
-                     Methoden-Klick über buildCheckoutPayload mit. -->
-                <label for="orderBumpModal" style="display:flex;gap:10px;background:#FFFBF5;border:2px solid #E6D5B3;border-radius:10px;padding:9px 12px;margin:0 0 12px;cursor:pointer;align-items:center;">
-                    <input type="checkbox" id="orderBumpModal" onchange="toggleModalBump()" style="width:19px;height:19px;cursor:pointer;accent-color:#C4A576;flex-shrink:0;">
-                    <div style="flex:1;line-height:1.3;">
-                        <span style="font-size:13px;font-weight:800;color:#1a1a1a;">+ Sommer-Sicherheits-Plan</span>
-                        <span style="font-size:12.5px;color:#E67946;font-weight:800;margin-left:5px;">+9,99 €</span>
-                        <span style="font-size:11px;color:#999;text-decoration:line-through;margin-left:3px;">19,99 €</span>
-                        <div style="font-size:11px;color:#777;margin-top:1px;">18 Seiten zum Ausdrucken: Hitze-Ampel, DIY-Abkühl-Rezepte, Reise-Packliste & Notfall-Karte zum Abtrennen</div>
-                    </div>
-                </label>
 
                 <!-- Express-Bezahlung: 4 gleichgroße Logo-Buttons (Shopify-Style).
                      Apple Pay + Google Pay default visible — Mollie filtert
