@@ -20,6 +20,7 @@ import ModuleGrid from "@/components/mitglieder/ModuleGrid";
 import DogProfileCard from "@/components/mitglieder/DogProfileCard";
 import WeekOverview from "@/components/mitglieder/WeekOverview";
 import UpgradePopup from "@/components/mitglieder/UpgradePopup";
+import HundVerstehenCard from "@/components/mitglieder/HundVerstehenCard";
 import OnboardingTutorial from "@/components/mitglieder/OnboardingTutorial";
 import PurchaseSuccessBanner from "@/components/mitglieder/PurchaseSuccessBanner";
 import { groupModulesByWeek } from "@/lib/member-weeks";
@@ -151,6 +152,12 @@ export default async function MitgliederDashboard({
           planWeek={cardCurrentWeek}
           totalWeeks={cardTotalWeeks}
         />
+
+        {/* PREVIEW: vorerst nur fuer max@primesocial.de sichtbar.
+            Zum Freischalten fuer alle: diese Bedingung entfernen. */}
+        {member.email?.toLowerCase() === "max@primesocial.de" && (
+          <HundVerstehenCard dogName={member.dog_name} />
+        )}
 
         {/* Wochen-Plan — bevorzugt personalisiert aus member_plan_content */}
         <div className="mb-8">
