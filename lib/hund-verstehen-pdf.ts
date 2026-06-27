@@ -29,8 +29,10 @@ interface Fonts { regular: PDFFont; bold: PDFFont; italic: PDFFont; }
 
 // ── Content-Schnittstelle (kommt aus der KI-Generierung) ──────────────────
 export interface HundVerstehenContent {
+  currentState: string; // "Brunos aktuelle Situation" — konkret aus Quiz (Alter, Hauptthema, Trainingsstand)
   characterIntro: string;
   characterTraits: { label: string; value: string }[]; // "Auf einen Blick"
+  whyBehavior: { behavior: string; explanation: string }[]; // "Du hast angegeben X" + Rasse-Erklärung
   steckbrief: { feld: string; wert: string }[];
   bodyLanguageIntro: string;
   bodyLanguageSignals: { signal: string; bedeutung: string }[];
@@ -38,6 +40,7 @@ export interface HundVerstehenContent {
   needsIntro: string;
   needsPoints: string[];
   breedTopics: { thema: string; tipp: string }[];
+  selfCheck: string[]; // ankreuzbare Aussagen zum Einordnen
   closing: string;
 }
 
@@ -137,6 +140,22 @@ export async function buildHundVerstehenPDF(input: HundVerstehenInput): Promise<
     });
     return y - 6;
   };
+  // Selbst-Check-Zeile: Aussage (fett) + drei ankreuzbare Optionen darunter
+  const ratingRow = (p: PDFPage, t: string, y: number): number => {
+    for (const line of wrap(t, F.bold, 10.5, CONTENT_W)) { p.drawText(line, { x: MARGIN, y, size: 10.5, font: F.bold, color: TEXT_DARK }); y -= 14; }
+    y -= 3; let bx = MARGIN + 4;
+    for (const o of ["oft", "manchmal", "selten"]) {
+      p.drawRectangle({ x: bx, y: y - 9, width: 11, height: 11, borderColor: DARK_BROWN, borderWidth: 1, color: WHITE });
+      p.drawText(o, { x: bx + 15, y: y - 8, size: 9, font: F.regular, color: TEXT_MEDIUM }); bx += 15 + F.regular.widthOfTextAtSize(o, 9) + 24;
+    }
+    return y - 22;
+  };
+  // Hervorgehobener Info-Block (z.B. Ist-Zustand)
+  const infoBox = (p: PDFPage, label: string, t: string, y: number): number => {
+    const ls = wrap(t, F.regular, 11, CONTENT_W - 32); const bh = 46 + ls.length * 15; rrect(p, MARGIN, y - bh + 14, CONTENT_W, bh, 8, rgb(255 / 255, 249 / 255, 240 / 255)); p.drawRectangle({ x: MARGIN, y: y - bh + 14, width: 3, height: bh, color: GOLD });
+    p.drawText(S(label), { x: MARGIN + 16, y: y - 6, size: 10, font: F.bold, color: DARK_BROWN }); let yy = y - 26;
+    for (const line of ls) { p.drawText(line, { x: MARGIN + 16, y: yy, size: 11, font: F.regular, color: TEXT_DARK }); yy -= 15; } return y - bh - 8;
+  };
 
   // Hilfsfunktion: Bild fuer Cover (Kundenfoto bevorzugt, sonst Rassebild)
   async function embedCover(): Promise<{ img: any } | null> {
@@ -171,13 +190,30 @@ export async function buildHundVerstehenPDF(input: HundVerstehenInput): Promise<
     y = para(p, `Dieses Profil hilft dir, ${DOG} wirklich zu verstehen — wie er tickt, was in ihm steckt, wie er mit dir spricht und was er gerade braucht. Auf den Hund und die Rasse zugeschnitten.`, y, { color: TEXT_MEDIUM });
   }
 
-  // ── 2 So tickt [Hund] ────────────────────────────────────────────
+  // ── 2 Aktuelle Situation (Ist-Zustand, aus Quiz) ─────────────────
+  {
+    const p = newPage(); let y = header(p, "DEIN HUND HEUTE", `${DOG}s aktuelle Situation`);
+    y = infoBox(p, `Das hast du uns über ${DOG} erzählt`, C.currentState, y);
+    y = para(p, `Genau hier setzt dieses Profil an: Es erklärt nicht "den ${BREED}", sondern ${DOG} — auf Basis dessen, was du im Quiz angegeben hast.`, y, { color: TEXT_MEDIUM, size: 10.5 });
+  }
+
+  // ── 3 So tickt [Hund] ────────────────────────────────────────────
   {
     const p = newPage(); let y = header(p, "CHARAKTER", `So tickt ${DOG}`);
     y = para(p, C.characterIntro, y);
     if (C.characterTraits?.length) {
       y = subhead(p, "Auf einen Blick", y);
       y = table(p, y, [165, CONTENT_W - 165], ["Eigenschaft", "Bei " + DOG], C.characterTraits.map((t) => [t.label, t.value]));
+    }
+  }
+
+  // ── 4 Warum macht [Hund] das? (Quiz-Verhalten × Rasse) ───────────
+  if (C.whyBehavior?.length) {
+    const p = newPage(); let y = header(p, "VERHALTEN VERSTEHEN", `Warum macht ${DOG} das?`);
+    y = para(p, `Du hast uns konkrete Verhaltensweisen von ${DOG} genannt. Hier ist, was dahintersteckt — die Verbindung aus seiner Veranlagung und dem, was er zeigt.`, y);
+    for (const w of C.whyBehavior) {
+      y = subhead(p, w.behavior, y);
+      y = para(p, w.explanation, y, { size: 10.5, color: TEXT_MEDIUM });
     }
   }
 
@@ -218,7 +254,14 @@ export async function buildHundVerstehenPDF(input: HundVerstehenInput): Promise<
     y = table(p, y, [165, CONTENT_W - 165], ["Thema", "Was hilft"], C.breedTopics.map((t) => [t.thema, t.tipp]));
   }
 
-  // ── 7 Abschluss ──────────────────────────────────────────────────
+  // ── Selbst-Check (Spiegel) ───────────────────────────────────────
+  if (C.selfCheck?.length) {
+    const p = newPage(); let y = header(p, "SELBST-CHECK", `Wie gut kennst du ${DOG}?`);
+    y = para(p, `Kreuz spontan an, was auf ${DOG} zutrifft. Das hilft dir, ihn einzuordnen — und zeigt, wo das Training gerade am meisten bringt.`, y);
+    for (const s of C.selfCheck) y = ratingRow(p, s, y);
+  }
+
+  // ── Abschluss ────────────────────────────────────────────────────
   {
     const p = newPage(); let y = header(p, "DEIN NÄCHSTER SCHRITT", `${DOG} & du`);
     y = para(p, C.closing, y);
