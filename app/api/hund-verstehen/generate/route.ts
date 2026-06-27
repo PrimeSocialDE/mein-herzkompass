@@ -131,7 +131,7 @@ ${SCHEMA.replace(/\}$/, photo ? `,\n  "photoObservation": "2-3 Sätze aus dem Fo
     const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
     const resp = await anthropic.messages.create({
       model: "claude-sonnet-4-6",
-      max_tokens: 2000,
+      max_tokens: 4000,
       system,
       messages: [{ role: "user", content: userContent }],
     });
