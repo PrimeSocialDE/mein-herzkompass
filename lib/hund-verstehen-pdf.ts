@@ -41,6 +41,10 @@ export interface HundVerstehenContent {
   needsPoints: string[];
   breedTopics: { thema: string; tipp: string }[];
   selfCheck: string[]; // ankreuzbare Aussagen zum Einordnen
+  selfCheckResult: string; // Auflösung: was die Antworten bedeuten + Baustelle + wo anfangen
+  firstExercise: { title: string; steps: string[]; why: string }; // 1 Übung für diese Woche
+  progressNote: string; // Entwicklungs-/Re-Check-Versprechen (Abo-Hook)
+  lifePhaseOutlook: { phase: string; points: string[] }; // was in der nächsten Phase kommt
   closing: string;
 }
 
@@ -254,11 +258,44 @@ export async function buildHundVerstehenPDF(input: HundVerstehenInput): Promise<
     y = table(p, y, [165, CONTENT_W - 165], ["Thema", "Was hilft"], C.breedTopics.map((t) => [t.thema, t.tipp]));
   }
 
-  // ── Selbst-Check (Spiegel) ───────────────────────────────────────
+  // ── Selbst-Check (Spiegel) + Auflösung ───────────────────────────
   if (C.selfCheck?.length) {
     const p = newPage(); let y = header(p, "SELBST-CHECK", `Wie gut kennst du ${DOG}?`);
-    y = para(p, `Kreuz spontan an, was auf ${DOG} zutrifft. Das hilft dir, ihn einzuordnen — und zeigt, wo das Training gerade am meisten bringt.`, y);
-    for (const s of C.selfCheck) y = ratingRow(p, s, y);
+    y = para(p, `Kreuz spontan an, wie oft das auf ${DOG} zutrifft. Danach kommt die Auflösung.`, y);
+    for (const s of C.selfCheck.slice(0, 5)) y = ratingRow(p, s, y);
+    if (C.selfCheckResult) y = infoBox(p, "Deine Auflösung", C.selfCheckResult, y);
+  }
+
+  // ── Brunos erster Schritt (Quick-Win, diese Woche) ───────────────
+  if (C.firstExercise?.title) {
+    const p = newPage(); let y = header(p, "JETZT STARTEN", `${DOG}s erste Übung diese Woche`);
+    y = para(p, `Genug verstanden — jetzt machst du. Eine kleine Übung, abgestimmt auf ${DOG}. Schon ein erster Erfolg verändert, wie ihr beide draufschaut.`, y);
+    y = subhead(p, C.firstExercise.title, y);
+    if (C.firstExercise.steps?.length) {
+      let i = 1; for (const st of C.firstExercise.steps) { y = bullet(p, `${i}. ${st}`, y); i++; }
+    }
+    if (C.firstExercise.why) y = tip(p, "Warum das wirkt", C.firstExercise.why, y);
+  }
+
+  // ── Brunos Entwicklung + Ausblick (Abo-Hook) ─────────────────────
+  {
+    const p = newPage(); let y = header(p, "DRANBLEIBEN", `${DOG}s Entwicklung`);
+    if (C.progressNote) y = para(p, C.progressNote, y);
+    // Re-Check-Tracker (heute / in 4 Wochen)
+    const half = (CONTENT_W - 16) / 2;
+    rrect(p, MARGIN, y - 60, half, 56, 8, BG_LIGHT);
+    rrect(p, MARGIN + half + 16, y - 60, half, 56, 8, rgb(255 / 255, 249 / 255, 240 / 255));
+    p.drawText("HEUTE", { x: MARGIN + 14, y: y - 20, size: 9, font: F.bold, color: DARK_BROWN });
+    p.drawText("Datum: ____________", { x: MARGIN + 14, y: y - 40, size: 10, font: F.regular, color: TEXT_MEDIUM });
+    p.drawText("IN 4 WOCHEN", { x: MARGIN + half + 30, y: y - 20, size: 9, font: F.bold, color: DARK_BROWN });
+    p.drawText("Check erneut machen", { x: MARGIN + half + 30, y: y - 40, size: 10, font: F.regular, color: TEXT_MEDIUM });
+    y -= 76;
+    y = para(p, `Mach den Selbst-Check in 4 Wochen erneut und vergleiche. Was vorher "oft" war, ist dann vielleicht "manchmal" — schwarz auf weiß, dass sich was bewegt.`, y, { size: 10.5, color: TEXT_MEDIUM });
+    // Lebensphasen-Ausblick
+    if (C.lifePhaseOutlook?.points?.length) {
+      y = subhead(p, `Was als Nächstes kommt${C.lifePhaseOutlook.phase ? ": " + C.lifePhaseOutlook.phase : ""}`, y);
+      for (const pt of C.lifePhaseOutlook.points) y = bullet(p, pt, y);
+    }
   }
 
   // ── Abschluss ────────────────────────────────────────────────────

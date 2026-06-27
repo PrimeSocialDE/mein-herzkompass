@@ -48,7 +48,11 @@ const SCHEMA = `{
   "needsIntro": "1-2 Sätze passend zu Alter/Thema",
   "needsPoints": ["4-5 konkrete Bedürfnisse, alltagsnah"],
   "breedTopics": [{"thema":"rasse-typisches Thema","tipp":"was hilft, 1 Zeile"} (4-5)],
-  "selfCheck": ["5-6 kurze, beobachtbare Aussagen zum Ankreuzen, je EIN Verhalten, z.B. '[Name] springt Besucher an' — NUR die Aussage, ohne Skala/Antwort"],
+  "selfCheck": ["GENAU 5 kurze, beobachtbare Aussagen zum Ankreuzen, je EIN Verhalten, z.B. '[Name] springt Besucher an' — NUR die Aussage, ohne Skala/Antwort"],
+  "selfCheckResult": "AUFLÖSUNG des Selbst-Checks, 3-4 Sätze: benenne aus den Quiz-Daten die GRÖSSTE Baustelle (z.B. Impulskontrolle bei Außenreizen) und sag, womit der Halter im Mitgliederbereich/Trainingsplan anfangen sollte. Formuliere als Wegweiser, nicht als Urteil.",
+  "firstExercise": {"title":"Name der EINEN Übung für diese Woche, passend zum Hauptthema","steps":["3-4 kurze, sofort umsetzbare Schritte"],"why":"1-2 Sätze, warum genau das bei diesem Hund/dieser Rasse wirkt"},
+  "progressNote": "2-3 Sätze: warum sich der Blick auf den Hund weiterentwickelt und es sich lohnt, in 4 Wochen den Check erneut zu machen (Entwicklung sichtbar machen). Warm, kein Verkaufston.",
+  "lifePhaseOutlook": {"phase":"kurze Benennung der nächsten Lebensphase passend zum Alter (z.B. 'das erwachsene Hundejahr', 'das ruhigere Senior-Alter')","points":["3-4 Themen/Veränderungen, die in dieser nächsten Phase typischerweise kommen"]},
   "closing": "2-3 warme, ehrliche Sätze als Abschluss"
 }`;
 
@@ -102,6 +106,7 @@ REGELN:
 - DAS WICHTIGSTE: SPIEGLE die konkreten Quiz-Angaben dieses Halters zurueck. Schreibe NICHT generisch ueber die Rasse, sondern verknuepfe Rasse-Wissen mit GENAU dem, was der Halter angegeben hat. Statt "Labradore neigen zu Leinenziehen" -> "Du hast angegeben, dass ${dogName} bei anderen Hunden zieht. Das passt zu seinem hohen Vorwaertsantrieb als Apportierhund...". Jeder Halter mit denselben Quiz-Antworten soll sich wiedererkennen, nicht jeder Labrador-Besitzer denselben Text bekommen.
 - KONKRET + rasse-fundiert. KEINE Floskeln ("treu und verspielt"). Beziehe dich bei bekannter Rasse auf Herkunft/urspruengliche Aufgabe und was das im Alltag bedeutet. Bei Mischling/unbekannt: ueber das beobachtete Verhalten.
 - "currentState" und "whyBehavior" MUESSEN sich direkt auf die angegebenen Daten beziehen (Alter, Hauptthema, beobachtetes Verhalten, Trainingsstand). "selfCheck"-Aussagen sollen zu den genannten Verhaltensweisen + typischen Rasse-Themen passen.
+- "selfCheckResult" gibt dem Test eine echte Auflösung (Baustelle benennen + wo anfangen). "firstExercise" ist EINE konkrete, heute machbare Übung zum Hauptthema (schnelles Erfolgserlebnis). "progressNote" + "lifePhaseOutlook" schaffen einen Grund, in 4 Wochen wiederzukommen — Entwicklung sichtbar machen, neugierig auf die nächste Phase. Alles ehrlich, kein Verkaufston.
 - Ehrlich: Rasse = Tendenzen, kein Schicksal.
 - Du-Ansprache, warm, kompetent. Deutsch. Keine Markdown-Sterne, keine langen Gedankenstriche.
 ${photo ? `- Es ist ein FOTO des Hundes angehaengt. Fuelle zusaetzlich das Feld "photoObservation": 2-3 Saetze, was du an Koerpersprache/Haltung/Ausdruck SIEHST, plus 1 Tipp. Sei ehrlich wenn etwas nicht eindeutig erkennbar ist. KEIN tieraerztlicher Befund.` : `- Kein Foto vorhanden: setze "photoObservation" auf null.`}
@@ -131,7 +136,7 @@ ${SCHEMA.replace(/\}$/, photo ? `,\n  "photoObservation": "2-3 Sätze aus dem Fo
     const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
     const resp = await anthropic.messages.create({
       model: "claude-sonnet-4-6",
-      max_tokens: 4000,
+      max_tokens: 5000,
       system,
       messages: [{ role: "user", content: userContent }],
     });
@@ -157,7 +162,18 @@ ${SCHEMA.replace(/\}$/, photo ? `,\n  "photoObservation": "2-3 Sätze aus dem Fo
         needsIntro: String(p.needsIntro || ""),
         needsPoints: Array.isArray(p.needsPoints) ? p.needsPoints.slice(0, 6).map((x: any) => String(x)) : [],
         breedTopics: Array.isArray(p.breedTopics) ? p.breedTopics.slice(0, 6).map((t: any) => ({ thema: String(t.thema || ""), tipp: String(t.tipp || "") })) : [],
-        selfCheck: Array.isArray(p.selfCheck) ? p.selfCheck.slice(0, 6).map((x: any) => String(x)) : [],
+        selfCheck: Array.isArray(p.selfCheck) ? p.selfCheck.slice(0, 5).map((x: any) => String(x)) : [],
+        selfCheckResult: String(p.selfCheckResult || ""),
+        firstExercise: {
+          title: String(p.firstExercise?.title || ""),
+          steps: Array.isArray(p.firstExercise?.steps) ? p.firstExercise.steps.slice(0, 5).map((x: any) => String(x)) : [],
+          why: String(p.firstExercise?.why || ""),
+        },
+        progressNote: String(p.progressNote || ""),
+        lifePhaseOutlook: {
+          phase: String(p.lifePhaseOutlook?.phase || ""),
+          points: Array.isArray(p.lifePhaseOutlook?.points) ? p.lifePhaseOutlook.points.slice(0, 5).map((x: any) => String(x)) : [],
+        },
         closing: String(p.closing || ""),
       };
     } catch (e: any) {
