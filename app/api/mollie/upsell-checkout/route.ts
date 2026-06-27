@@ -22,6 +22,7 @@ const moduleNames: Record<string, string> = {
   "notfall-karten": "10 Notfall-Karten",
   "anti-giftkoeder": "Anti-Giftköder-Trainingsplan",
   "coach-foto": "KI-Trainer Foto-Analyse (30 Tage)",
+  "hund-verstehen": "Dein Hund verstehen — persönliches Profil",
 };
 
 export async function POST(req: NextRequest) {

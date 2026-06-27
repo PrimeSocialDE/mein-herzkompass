@@ -30,6 +30,7 @@ const moduleNames: Record<string, string> = {
   mouthing: "Anti-Aufnehm Training",
   "video-analyse": "Persönliche Video-Analyse",
   "notfall-karten": "10 Notfall-Karten",
+  "hund-verstehen": "Dein Hund verstehen — persönliches Profil",
 };
 
 export async function POST(req: NextRequest) {

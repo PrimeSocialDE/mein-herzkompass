@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <script src="/utm-tracking.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dein Hund verstehen | Pfoten-Plan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+
+    <!-- Google tag -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+
+    <!-- Meta Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ufxcf43805");
+    </script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAF8F5; min-height: 100vh; padding: 20px;
+        }
+        .container { max-width: 440px; margin: 0 auto; }
+
+        /* Mini-Bestätigung oben */
+        .mini-confirm {
+            display: flex; align-items: center; gap: 8px; justify-content: center;
+            font-size: 13px; color: #166534; font-weight: 600; margin-bottom: 18px;
+        }
+        .mini-confirm .dot { width: 18px; height: 18px; background: #22C55E; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; }
+        .mini-confirm .dot svg { width: 11px; height: 11px; color: #fff; }
+
+        .card {
+            background: #fff; border-radius: 20px; padding: 26px 22px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 14px;
+        }
+        .eyebrow {
+            font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; color: #8B7355; margin-bottom: 8px;
+        }
+        h1 {
+            font-size: 23px; font-weight: 800; color: #1a1a1a;
+            line-height: 1.28; margin-bottom: 10px;
+        }
+        .sub {
+            font-size: 15px; color: #555; line-height: 1.6; margin-bottom: 20px;
+        }
+        .sub strong { color: #1a1a1a; }
+
+        /* Was du bekommst */
+        .gets { display: flex; flex-direction: column; gap: 11px; margin-bottom: 20px; }
+        .get {
+            display: flex; align-items: flex-start; gap: 12px;
+        }
+        .get .ic {
+            width: 34px; height: 34px; flex-shrink: 0; border-radius: 9px;
+            background: #FEF3E7; display: flex; align-items: center; justify-content: center;
+            font-size: 17px;
+        }
+        .get .tx { font-size: 14px; color: #333; line-height: 1.45; padding-top: 5px; }
+        .get .tx b { color: #1a1a1a; font-weight: 700; }
+
+        /* Foto-Upload */
+        .photo-box {
+            border: 1.5px dashed #E0D3BC; border-radius: 14px; padding: 16px;
+            background: #FCFAF6; margin-bottom: 20px; text-align: center;
+        }
+        .photo-box.has-photo { border-style: solid; border-color: #C4A576; }
+        .photo-label { font-size: 13.5px; color: #6b6157; line-height: 1.5; }
+        .photo-label b { color: #1a1a1a; }
+        .photo-hint { font-size: 12px; color: #998; margin-top: 4px; }
+        #photoInput { display: none; }
+        .photo-pick {
+            display: inline-block; margin-top: 12px; padding: 9px 18px;
+            background: #fff; border: 1.5px solid #C4A576; color: #8B7355;
+            border-radius: 9px; font-size: 13.5px; font-weight: 700; cursor: pointer;
+        }
+        .photo-preview { margin-top: 12px; display: none; }
+        .photo-preview img { max-width: 130px; max-height: 130px; border-radius: 12px; object-fit: cover; }
+        .photo-remove { display: block; margin: 8px auto 0; font-size: 12px; color: #b91c1c;
+            background: none; border: none; cursor: pointer; text-decoration: underline; }
+
+        /* Preis */
+        .price-section { text-align: center; margin-bottom: 16px; }
+        .price-amount { font-size: 32px; font-weight: 800; color: #C4A576; }
+        .price-info { font-size: 13px; color: #888; margin-top: 4px; }
+
+        .cta-btn {
+            display: block; width: 100%; padding: 16px;
+            background: linear-gradient(135deg, #C4A576, #8B7355);
+            color: #fff; border: none; border-radius: 12px;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+            transition: all 0.2s; margin-bottom: 10px;
+        }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(196,165,118,0.4); }
+        .cta-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        .guarantee-text {
+            text-align: center; font-size: 12px; color: #166534; font-weight: 500; margin-bottom: 4px;
+        }
+        .skip-btn {
+            display: block; width: 100%; text-align: center; font-size: 13px; color: #999;
+            background: none; border: none; padding: 12px; cursor: pointer; text-decoration: underline;
+        }
+        .skip-btn:hover { color: #666; }
+
+        .spinner {
+            display: inline-block; width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+            border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes upsellFadeIn { from{opacity:0;} to{opacity:1;} }
+        @keyframes upsellPop { 0%{transform:scale(0.8);opacity:0;} 60%{transform:scale(1.05);} 100%{transform:scale(1);opacity:1;} }
+        @keyframes upsellCheck { from{stroke-dashoffset:60;} to{stroke-dashoffset:0;} }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="mini-confirm">
+            <span class="dot"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></span>
+            <span>Bestellung bestätigt &middot; ein letzter Gedanke</span>
+        </div>
+
+        <div class="card">
+            <p class="eyebrow">Nur für dich &amp; <span class="dog-name">deinen Hund</span></p>
+            <h1>Willst du wirklich verstehen, <span style="white-space:nowrap;">warum <span class="dog-name">dein Hund</span></span> tut, was er tut?</h1>
+            <p class="sub">
+                Du hast jetzt den Trainingsplan, der das <b>Verhalten</b> ändert.
+                Das hier geht eine Ebene tiefer: <b><span class="dog-name">dein Hund</span> selbst</b> —
+                <span id="breedPhrase">warum dein Hund so tickt</span>.
+                Kein Rasse-Lexikon, sondern ein Profil, das auf deine Quiz-Antworten eingeht.
+            </p>
+
+            <div class="gets">
+                <div class="get"><div class="ic">📍</div><div class="tx"><b><span class="dog-name">Seine</span> aktuelle Situation</b> — auf deine Angaben bezogen, nicht allgemein.</div></div>
+                <div class="get"><div class="ic">🧬</div><div class="tx"><b>Warum <span class="breed-word">dein Hund</span> so reagiert</b> — was in der Rasse steckt und was das bei <span class="dog-name">ihm</span> konkret heißt.</div></div>
+                <div class="get"><div class="ic">📜</div><div class="tx"><b>Rasse-Steckbrief:</b> wofür <span class="breed-word">dein Hund</span> ursprünglich gezüchtet wurde — das erklärt das halbe Verhalten.</div></div>
+                <div class="get"><div class="ic">💬</div><div class="tx"><b><span class="dog-name">Seine</span> Körpersprache lesen</b> — die Signale, die du im Alltag bisher übersiehst.</div></div>
+                <div class="get"><div class="ic">✅</div><div class="tx"><b>Selbst-Check mit Auflösung:</b> wo <span class="dog-name">seine</span> größte Baustelle gerade liegt — und wo du anfängst.</div></div>
+                <div class="get"><div class="ic">🎯</div><div class="tx"><b><span class="dog-name">Seine</span> erste Übung für diese Woche</b> — sofort umsetzbar, für ein schnelles Erfolgserlebnis.</div></div>
+                <div class="get"><div class="ic">📈</div><div class="tx"><b>Entwicklungs-Check:</b> in 4 Wochen siehst du schwarz auf weiß, was sich verändert hat.</div></div>
+            </div>
+
+            <div class="photo-box" id="photoBox">
+                <div class="photo-label"><b>Optional:</b> Lade ein Foto von <span class="dog-name">deinem Hund</span> hoch.<br>Wir gehen im Profil persönlich auf <span class="dog-name">ihn</span> ein.</div>
+                <div class="photo-hint">Nur fürs Profil. JPG/PNG.</div>
+                <label class="photo-pick" for="photoInput">Foto auswählen</label>
+                <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp">
+                <div class="photo-preview" id="photoPreview">
+                    <img id="photoImg" alt="Vorschau">
+                    <button class="photo-remove" id="photoRemove" type="button">Foto entfernen</button>
+                </div>
+            </div>
+
+            <div class="price-section">
+                <div class="price-amount">€14,99</div>
+                <div class="price-info">Einmalzahlung &middot; Kein Abo &middot; Kommt per E-Mail</div>
+            </div>
+
+            <button class="cta-btn" id="ctaBtn" onclick="buyProfil()">
+                Ja, <span class="dog-name">meinen Hund</span> wirklich verstehen – €14,99
+            </button>
+            <div class="guarantee-text">🛡️ 30 Tage Geld-zurück-Garantie</div>
+        </div>
+
+        <button class="skip-btn" id="skipBtn" onclick="skip()">Nein danke, weiter →</button>
+    </div>
+
+    <script>
+        // ── Daten aus localStorage / URL ─────────────────────────────────
+        const dogName = localStorage.getItem('dogName') || 'deinen Hund';
+        const userEmail = localStorage.getItem('userEmail') || '';
+        const urlParams = new URLSearchParams(window.location.search);
+        const leadId = urlParams.get('lead_id') || localStorage.getItem('leadId') || '';
+        const dogBreedRaw = (localStorage.getItem('dogBreed') || '').trim();
+        const dogAge = localStorage.getItem('dogAge') || '';
+        const dogProblem = localStorage.getItem('dogProblem') || localStorage.getItem('customProblem') || '';
+        const dogGoal = localStorage.getItem('dogGoal') || '';
+        const hadTraining = localStorage.getItem('hadTraining') || '';
+        let dogBehaviors = [];
+        let dogCommands = [];
+        try { dogBehaviors = JSON.parse(localStorage.getItem('dogBehaviors') || '[]'); } catch (e) {}
+        try { dogCommands = JSON.parse(localStorage.getItem('dogCommands') || '[]'); } catch (e) {}
+        if (!Array.isArray(dogBehaviors)) dogBehaviors = dogBehaviors ? [String(dogBehaviors)] : [];
+        if (!Array.isArray(dogCommands)) dogCommands = dogCommands ? [String(dogCommands)] : [];
+
+        // Personalisierung
+        document.querySelectorAll('.dog-name').forEach(el => { el.textContent = dogName; });
+        const breedKnown = dogBreedRaw && dogBreedRaw.length > 1;
+        if (breedKnown) {
+            document.querySelectorAll('.breed-word').forEach(el => { el.textContent = 'ein ' + dogBreedRaw; });
+            const bp = document.getElementById('breedPhrase');
+            if (bp) bp.textContent = 'warum ein ' + dogBreedRaw + ' so tickt — und was davon auf ' + dogName + ' zutrifft';
+        } else {
+            document.querySelectorAll('.breed-word').forEach(el => { el.textContent = dogName; });
+        }
+
+        // ── Foto-Upload (clientseitig auf max 1024px herunterskalieren) ───
+        let photoBase64 = null;   // ohne data:-Prefix
+        let photoType = null;
+        const photoInput = document.getElementById('photoInput');
+        const photoPreview = document.getElementById('photoPreview');
+        const photoImg = document.getElementById('photoImg');
+        const photoBox = document.getElementById('photoBox');
+        photoInput.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = function () {
+                    const MAX = 1024;
+                    let w = img.width, h = img.height;
+                    if (w > MAX || h > MAX) {
+                        if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
+                        else { w = Math.round(w * MAX / h); h = MAX; }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+                    photoType = 'image/jpeg';
+                    photoBase64 = dataUrl.split(',')[1] || null;
+                    photoImg.src = dataUrl;
+                    photoPreview.style.display = 'block';
+                    photoBox.classList.add('has-photo');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        document.getElementById('photoRemove').addEventListener('click', function () {
+            photoBase64 = null; photoType = null; photoInput.value = '';
+            photoPreview.style.display = 'none'; photoBox.classList.remove('has-photo');
+        });
+
+        function skip() {
+            window.location.href = 'danke-final.html?lead_id=' + encodeURIComponent(leadId || '');
+        }
+
+        function showSuccess() {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;animation:upsellFadeIn 0.2s ease-out;';
+            overlay.innerHTML = `
+                <div style="background:#fff;border-radius:16px;padding:32px 28px;max-width:380px;width:100%;text-align:center;box-shadow:0 24px 48px rgba(0,0,0,0.22);animation:upsellPop 0.35s cubic-bezier(0.34,1.56,0.64,1);">
+                    <div style="width:64px;height:64px;background:#DCFCE7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12" stroke-dasharray="60" style="animation:upsellCheck 0.4s ease-out 0.2s both;"/>
+                        </svg>
+                    </div>
+                    <h3 style="font-size:18px;font-weight:800;color:#1a1a1a;margin:0 0 8px;">${dogName}s Profil ist in Arbeit!</h3>
+                    <p style="font-size:14px;color:#4B5563;line-height:1.5;margin:0;">Es kommt in wenigen Minuten per E-Mail.</p>
+                </div>`;
+            document.body.appendChild(overlay);
+            setTimeout(() => {
+                window.location.href = 'danke-final.html?upsell2=true&lead_id=' + encodeURIComponent(leadId || '');
+            }, 2600);
+        }
+
+        function trackUpsellPurchase() {
+            try {
+                const eid = 'hv_' + (leadId || userEmail || Date.now());
+                if (typeof fbq !== 'undefined') fbq('track', 'Purchase', { value: 14.99, currency: 'EUR', content_name: 'Hund verstehen Profil', content_ids: ['hund-verstehen'], content_type: 'product' }, { eventID: eid });
+                if (typeof gtag !== 'undefined') gtag('event', 'conversion', { send_to: 'AW-17806525009/I3FdCL3O1NEbENGE6KpC', value: 14.99, currency: 'EUR', transaction_id: eid });
+            } catch (e) {}
+        }
+
+        async function deliverWithPhoto(paymentId) {
+            // Synchron mit Foto + Quiz ausliefern (Webhook ist der Fallback ohne Foto)
+            try {
+                await fetch('/api/hund-verstehen/order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        paymentId, leadId, email: userEmail, dogName,
+                        breed: dogBreedRaw || undefined, age: dogAge || undefined,
+                        problem: dogProblem || undefined, behaviors: dogBehaviors,
+                        hadTraining: hadTraining || undefined, commands: dogCommands,
+                        goal: dogGoal || undefined,
+                        photoBase64: photoBase64 || undefined, photoType: photoType || undefined
+                    })
+                });
+            } catch (e) { console.warn('order delivery exception (Webhook übernimmt):', e); }
+        }
+
+        async function buyProfil() {
+            const btn = document.getElementById('ctaBtn');
+            const original = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner"></span> Lädt...';
+            btn.disabled = true;
+
+            if (!userEmail) { alert('Fehler: Keine E-Mail gefunden.'); btn.innerHTML = original; btn.disabled = false; return; }
+
+            // 1-Click via Mandate versuchen
+            try {
+                const r = await fetch('/api/mollie/upsell-recurring', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ module: 'hund-verstehen', leadId, email: userEmail, dogName, price: 1499 })
+                });
+                const j = await r.json();
+                if (j.ok) {
+                    trackUpsellPurchase();
+                    await deliverWithPhoto(j.paymentId);
+                    showSuccess();
+                    return;
+                }
+            } catch (e) { console.warn('1-Click exception:', e); }
+
+            // Fallback: klassischer Mollie-Redirect (ohne Foto, Webhook liefert via Quiz)
+            try {
+                const returnUrl = window.location.origin + '/danke-final.html?upsell2=true&lead_id=' + encodeURIComponent(leadId || '');
+                const resp = await fetch('/api/mollie/upsell-checkout', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ module: 'hund-verstehen', leadId, email: userEmail, dogName, price: 1499, returnUrl })
+                });
+                const result = await resp.json();
+                if (result.error || !result.url) { alert('Fehler beim Laden. Bitte erneut versuchen.'); btn.innerHTML = original; btn.disabled = false; return; }
+                window.location.href = result.url;
+            } catch (err) {
+                console.error('Profil-Checkout Error:', err);
+                alert('Fehler beim Laden.'); btn.innerHTML = original; btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

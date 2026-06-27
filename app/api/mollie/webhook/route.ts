@@ -571,6 +571,61 @@ async function handleUpsellPaid(payment: any) {
     }
   }
 
+  // "Dein Hund verstehen"-Profil als direkter Modul-Kauf. Der schnelle
+  // One-Click-Pfad liefert schon synchron via /api/hund-verstehen/order
+  // (inkl. Foto) und setzt answers.hund_verstehen_sent_at. Dieser Zweig ist
+  // das Netz für den Redirect-Fallback (kein Mandat) — liefert dann ohne
+  // Foto auf Basis der Quiz-Daten. Idempotent über dieselbe Flag.
+  if (module === "hund-verstehen" && (email || leadData.email)) {
+    try {
+      const { data: fresh } = await supabase
+        .from("wauwerk_leads")
+        .select("answers, dog_breed, dog_name")
+        .eq("id", leadData.id)
+        .maybeSingle();
+      const ans = ((fresh?.answers as any) || (leadData.answers as any) || {}) as Record<string, any>;
+      if (!ans.hund_verstehen_sent_at) {
+        const PROBLEM_LABELS: Record<string, string> = {
+          pulling: "Leinenziehen", barking: "übermäßiges Bellen", aggression: "Aggression",
+          anxiety: "Trennungsangst", jumping: "Anspringen", recall: "Rückruf",
+          energy: "viel Energie", destructive: "Zerstörungsverhalten", soiling: "Stubenreinheit",
+          mouthing: "Aufnehmen von Gegenständen",
+        };
+        const pkey = ans.dog_problem || ans.problem;
+        const baseUrl =
+          process.env.NEXT_PUBLIC_BASE_URL &&
+          !process.env.NEXT_PUBLIC_BASE_URL.includes("localhost")
+            ? process.env.NEXT_PUBLIC_BASE_URL
+            : "https://www.pfoten-plan.de";
+        const res = await fetch(`${baseUrl}/api/hund-verstehen/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${(process.env.WORKER_TOKEN || "").trim()}` },
+          body: JSON.stringify({
+            email: email || leadData.email,
+            dogName: meta.dog_name || fresh?.dog_name || leadData.dog_name || "dein Hund",
+            breed: fresh?.dog_breed || ans.dog_breed || meta.dog_breed || "Mischling",
+            age: ans.dog_age || "adult",
+            problem: pkey ? PROBLEM_LABELS[pkey] || pkey : null,
+            behaviors: Array.isArray(ans.dog_behaviors) ? ans.dog_behaviors : [],
+            hadTraining: ans.had_training || null,
+            commands: Array.isArray(ans.dog_commands) ? ans.dog_commands : [],
+            goal: ans.dog_goal || null,
+          }),
+        });
+        if (res.ok) {
+          await supabase
+            .from("wauwerk_leads")
+            .update({ answers: { ...ans, hund_verstehen_sent_at: new Date().toISOString() } })
+            .eq("id", leadData.id);
+        } else {
+          console.error("[mollie-webhook] Hund-verstehen Delivery non-ok:", res.status);
+        }
+      }
+    } catch (e) {
+      console.error("[mollie-webhook] Hund-verstehen Delivery Error:", e);
+    }
+  }
+
   // Coach-Foto-Premium: schaltet 30 Tage Foto/Video-Analyse im KI-Trainer
   // frei. Speicherung in answers.coach_premium_until (kein Schema-Änderung).
   // Fresh-Read, damit der upsell_paid_at-Write oben nicht überschrieben wird.
