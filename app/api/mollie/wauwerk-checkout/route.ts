@@ -58,6 +58,11 @@ export async function POST(req: NextRequest) {
       // Quell-Seite des Kaufs (z.B. 'rueckhol') — fuer Attribution, damit
       // Rueckhol-Kaeufe von normalen deinplan-Kaeufen unterscheidbar sind.
       source_page,
+      // A/B-Test-Flags aus dem localStorage — beim Kauf nachreichen, damit sie
+      // zuverlaessig am Kaeufer-Lead haengen (vorher nur am email_captured-Lead).
+      ab_test_trust,
+      ab_variant,
+      entry_page,
     } = body;
 
     const ORDER_BUMP_PRICE_CENTS = 999;
@@ -420,6 +425,10 @@ export async function POST(req: NextRequest) {
       if (clientIp) ansMerge.client_ip = clientIp;
       if (clientUserAgent) ansMerge.client_user_agent = clientUserAgent;
       if (fbclidF) ansMerge.fbclid = fbclidF;
+      // A/B-Flags am Kaeufer-Lead persistieren (Mess-Attribution Step-Level-Tests)
+      if (ab_test_trust) ansMerge.ab_test_trust = ab_test_trust;
+      if (ab_variant) ansMerge.ab_variant = ab_variant;
+      if (entry_page) ansMerge.entry_page = entry_page;
       if (Object.keys(ansMerge).length > 0) {
         const { data: cur, error: ansErr } = await supabase
           .from("wauwerk_leads")

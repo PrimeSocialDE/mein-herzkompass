@@ -261,11 +261,12 @@
         
         let isNavigating = false;
 
-        // A/B Test: 30% sehen Trust-Zwischenseite, 70% gehen direkt weiter
+        // A/B Test: 50% sehen Trust-Zwischenseite, 50% gehen direkt weiter
+        // (hochgezogen von 30/70, damit der Test schneller Signifikanz erreicht)
         function getTrustVariant() {
             let variant = localStorage.getItem('ab_test_trust');
             if (!variant) {
-                variant = Math.random() < 0.30 ? 'A' : 'B';
+                variant = Math.random() < 0.50 ? 'A' : 'B';
                 localStorage.setItem('ab_test_trust', variant);
             }
             // A = Trust-Seite (kurz-schritt2b), B = direkt zu Schritt 3
