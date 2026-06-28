@@ -505,6 +505,20 @@ fbq('track', 'PageView');
                     </div>
                 </div>
             </div>
+
+            <!-- Emotionale Rückversicherung – "du bist nicht allein" (bewährter Hebel aus deinplan2, +45% A/B) -->
+            <div style="background:#FFFBF5; border:1px solid #E8DCC8; border-radius:16px; padding:18px; margin-top:18px; text-align:left; max-width:520px; margin-left:auto; margin-right:auto;">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <img src="team.png" alt="Pfoten-Plan Team" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid #C4A576; flex-shrink:0;">
+                    <div style="font-size:16px; font-weight:800; color:#2C2C2E; line-height:1.2;">Du bist nicht allein</div>
+                </div>
+                <p style="font-size:14px; color:#3a3a3a; line-height:1.55; margin:0;">
+                    Über <strong>2.078 Hundebesitzer</strong> standen genau dort, wo du gerade stehst —
+                    mit <strong><span id="reassureProblem">ähnlichen Sorgen</span></strong> bei ihrem Hund.
+                    <strong><span id="reassureDog">dein Hund</span> und du</strong>, ihr schafft das gemeinsam:
+                    ganz ohne Härte, Schritt für Schritt. Wir begleiten dich dabei.
+                </p>
+            </div>
         </div>
     </div>
 
@@ -560,6 +574,14 @@ fbq('track', 'PageView');
         }
 
         document.getElementById('problemText').textContent = problemText;
+
+        // Emotionale Rückversicherung personalisieren (Hundename + Problem)
+        (function () {
+            var rd = document.getElementById('reassureDog');
+            if (rd) rd.textContent = localStorage.getItem('dogName') || 'dein Hund';
+            var rp = document.getElementById('reassureProblem');
+            if (rp && problemText) rp.textContent = problemText;
+        })();
 
         // Calculate target date (30 days from now)
         const now = new Date();
