@@ -94,6 +94,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, already_sent: true });
     }
 
+    // Atomarer Claim (Compare-and-Swap): verhindert Mehrfach-Versand, wenn der
+    // Webhook (Mollie-Retries) parallel zu diesem Aufruf liefert. Nur der erste
+    // setzt das Flag (WHERE flag IS NULL) und liefert aus.
+    if (lead?.id) {
+      const { data: claimRows } = await supabase
+        .from("wauwerk_leads")
+        .update({ answers: { ...ans, [SENT_FLAG]: new Date().toISOString(), hund_verstehen_with_photo: !!(body?.photoBase64) } })
+        .eq("id", lead.id)
+        .is(`answers->>${SENT_FLAG}`, null)
+        .select("id");
+      if (!claimRows || !claimRows.length) {
+        return NextResponse.json({ ok: true, already_sent: true });
+      }
+    }
+
     // ── Quiz-Kontext: Browser-Daten bevorzugt, sonst aus dem Lead ──────
     const dogName = String(body?.dogName || lead?.dog_name || "dein Hund").slice(0, 40);
     const breed = String(body?.breed || lead?.dog_breed || ans.dog_breed || "Mischling");
@@ -140,27 +155,20 @@ export async function POST(req: NextRequest) {
     if (!res.ok) {
       const t = await res.text();
       console.error("[hund-verstehen/order] generate failed:", res.status, t.slice(0, 200));
+      // Claim freigeben, damit der Webhook-Fallback noch liefern kann
+      if (lead?.id) {
+        try {
+          const { data: cur } = await supabase
+            .from("wauwerk_leads").select("answers").eq("id", lead.id).maybeSingle();
+          const curAns = ((cur?.answers as any) || {}) as Record<string, any>;
+          delete curAns[SENT_FLAG];
+          await supabase.from("wauwerk_leads").update({ answers: curAns }).eq("id", lead.id);
+        } catch { /* best effort */ }
+      }
       return NextResponse.json({ error: "delivery_failed" }, { status: 502 });
     }
 
-    // ── Idempotenz-Flag setzen (Fresh-Read, damit nichts überschrieben wird) ──
-    if (lead?.id) {
-      try {
-        const { data: fresh } = await supabase
-          .from("wauwerk_leads")
-          .select("answers")
-          .eq("id", lead.id)
-          .maybeSingle();
-        const prev = ((fresh?.answers as any) || ans || {}) as Record<string, any>;
-        await supabase
-          .from("wauwerk_leads")
-          .update({ answers: { ...prev, [SENT_FLAG]: new Date().toISOString(), hund_verstehen_with_photo: !!photoBase64 } })
-          .eq("id", lead.id);
-      } catch (e: any) {
-        console.warn("[hund-verstehen/order] flag write failed:", e?.message);
-      }
-    }
-
+    // Flag wurde bereits beim Claim oben gesetzt — kein weiterer Write noetig.
     return NextResponse.json({ ok: true, with_photo: !!photoBase64 });
   } catch (err: any) {
     console.error("[hund-verstehen/order] error:", err?.message || err);

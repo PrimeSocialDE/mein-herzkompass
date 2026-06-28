@@ -508,15 +508,25 @@ async function handleUpsellPaid(payment: any) {
     .update(updatePayload)
     .eq("id", leadData.id);
 
-  // Track Auslieferungs-Zeit fuer 14-Tage-Cron-Filter via answers
-  const updatedAnswers = {
-    ...(leadData.answers || {}),
-    upsell_paid_at: new Date().toISOString(),
-  };
-  await supabase
-    .from("wauwerk_leads")
-    .update({ answers: updatedAnswers })
-    .eq("id", leadData.id);
+  // Track Auslieferungs-Zeit fuer 14-Tage-Cron-Filter via answers.
+  // WICHTIG: Fresh-Read statt des veralteten leadData.answers-Snapshots (vom
+  // Webhook-Start). Mollie ruft den Webhook pro Zahlung mehrfach auf (v.a.
+  // PayPal: created->pending->paid + Retries). Mit dem Stale-Snapshot
+  // ueberschrieb dieser Write Idempotenz-Flags, die ein frueherer Aufruf
+  // gesetzt hatte -> Modul wurde mehrfach ausgeliefert (Bug: 5x "Hund
+  // verstehen"-Profil). Fresh-Read + Merge erhaelt die Flags.
+  {
+    const { data: freshA } = await supabase
+      .from("wauwerk_leads")
+      .select("answers")
+      .eq("id", leadData.id)
+      .maybeSingle();
+    const baseAns = ((freshA?.answers as any) || (leadData.answers as any) || {}) as Record<string, any>;
+    await supabase
+      .from("wauwerk_leads")
+      .update({ answers: { ...baseAns, upsell_paid_at: new Date().toISOString() } })
+      .eq("id", leadData.id);
+  }
 
   // Fuer Module-Extraktion: alle gekaufte Module aus beiden Spalten + neuem Kauf
   const allModulesRaw: string[] = [];
@@ -584,7 +594,21 @@ async function handleUpsellPaid(payment: any) {
         .eq("id", leadData.id)
         .maybeSingle();
       const ans = ((fresh?.answers as any) || (leadData.answers as any) || {}) as Record<string, any>;
+      // Atomarer Claim (Compare-and-Swap): nur der ERSTE Aufruf (von mehreren
+      // Mollie-Retries / parallel zum /order-Endpoint) setzt das Flag und
+      // liefert aus. Der WHERE-Filter auf flag IS NULL macht das Update zum
+      // Test-and-Set — konkurrierende Aufrufe matchen 0 Zeilen.
+      let claimed = false;
       if (!ans.hund_verstehen_sent_at) {
+        const { data: claimRows } = await supabase
+          .from("wauwerk_leads")
+          .update({ answers: { ...ans, hund_verstehen_sent_at: new Date().toISOString() } })
+          .eq("id", leadData.id)
+          .is("answers->>hund_verstehen_sent_at", null)
+          .select("id");
+        claimed = !!(claimRows && claimRows.length);
+      }
+      if (claimed) {
         const PROBLEM_LABELS: Record<string, string> = {
           pulling: "Leinenziehen", barking: "übermäßiges Bellen", aggression: "Aggression",
           anxiety: "Trennungsangst", jumping: "Anspringen", recall: "Rückruf",
@@ -612,13 +636,14 @@ async function handleUpsellPaid(payment: any) {
             goal: ans.dog_goal || null,
           }),
         });
-        if (res.ok) {
-          await supabase
-            .from("wauwerk_leads")
-            .update({ answers: { ...ans, hund_verstehen_sent_at: new Date().toISOString() } })
-            .eq("id", leadData.id);
-        } else {
+        if (!res.ok) {
           console.error("[mollie-webhook] Hund-verstehen Delivery non-ok:", res.status);
+          // Claim freigeben, damit ein spaeterer Retry liefern kann
+          const { data: cur } = await supabase
+            .from("wauwerk_leads").select("answers").eq("id", leadData.id).maybeSingle();
+          const curAns = ((cur?.answers as any) || {}) as Record<string, any>;
+          delete curAns.hund_verstehen_sent_at;
+          await supabase.from("wauwerk_leads").update({ answers: curAns }).eq("id", leadData.id);
         }
       }
     } catch (e) {
