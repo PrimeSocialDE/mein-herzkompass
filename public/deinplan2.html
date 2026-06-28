@@ -4959,7 +4959,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(buildCheckoutPayload({
                         method: 'klarna',
-                        billingAddress: { givenName, familyName, streetAndNumber, postalCode, city, country: 'DE' }
+                        billingAddress: { givenName, familyName, streetAndNumber, postalCode, city, country: (document.getElementById('klarnaCountry') && document.getElementById('klarnaCountry').value) || 'DE' }
                     }))
                 });
                 const data = await res.json();
@@ -5299,6 +5299,10 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     <input type="text" class="klarna-input" id="klarnaPlz" placeholder="PLZ" autocomplete="postal-code" inputmode="numeric" style="flex: 0 0 40%;">
                     <input type="text" class="klarna-input" id="klarnaCity" placeholder="Stadt" autocomplete="address-level2">
                 </div>
+                <select class="klarna-input" id="klarnaCountry" autocomplete="country" style="appearance:auto;-webkit-appearance:menulist;">
+                    <option value="DE">Deutschland</option>
+                    <option value="AT">Österreich</option>
+                </select>
                 <button class="hybrid-card-submit" id="klarnaSubmitBtn" onclick="submitKlarna()" style="background:#FFB3C7;color:#1a1a1a;border:none;display:flex;align-items:center;justify-content:center;gap:7px;font-weight:700;">
                     <span>Weiter zu</span>
                     <span style="font-weight:800;font-size:1.12em;letter-spacing:-0.4px;">Klarna.</span>

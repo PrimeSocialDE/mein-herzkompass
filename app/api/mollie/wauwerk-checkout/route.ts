@@ -297,12 +297,34 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Land bestimmen (DE/AT/CH) — wichtig fuer Klarna: das hartcodierte de_DE
+    // zwang AT/CH-Kunden ins falsche Land ("bitte Land wechseln"). Quelle:
+    // explizit uebergebene billingAddress.country (Klarna-Modal), sonst Vercel-
+    // Geo-Header, sonst DE. Klarna gibt es bei Mollie fuer DE+AT (EUR), NICHT
+    // fuer CH — CH-Kunden zahlen mit Karte/PayPal.
+    const geoCountry = (req.headers.get("x-vercel-ip-country") || "").toUpperCase();
+    const billCountry =
+      billingAddress && typeof billingAddress === "object"
+        ? String((billingAddress as any).country || "").toUpperCase()
+        : "";
+    const checkoutCountry = ["DE", "AT", "CH"].includes(billCountry)
+      ? billCountry
+      : ["DE", "AT", "CH"].includes(geoCountry)
+        ? geoCountry
+        : "DE";
+    const paymentLocale =
+      checkoutCountry === "AT"
+        ? Locale.de_AT
+        : checkoutCountry === "CH"
+          ? Locale.de_CH
+          : Locale.de_DE;
+
     const paymentParams: any = {
       amount: { currency: "EUR", value: formatAmountEUR(totalCents) },
       description: description.slice(0, 255),
       redirectUrl: returnUrl,
       webhookUrl: `${webhookBase}/api/mollie/webhook`,
-      locale: Locale.de_DE,
+      locale: paymentLocale,
       metadata: meta,
     };
 
