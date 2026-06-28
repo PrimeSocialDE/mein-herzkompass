@@ -4,6 +4,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getMollie, formatAmountEUR, Locale } from "@/lib/mollie";
+import { createClient } from "@supabase/supabase-js";
+import { utmMetaFromAnswers } from "@/lib/attribution";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -99,6 +101,32 @@ export async function POST(req: NextRequest) {
 
     const description = `Pfoten-Plan ${moduleName} für ${dogName || "Hund"} · kommt sofort per E-Mail`;
 
+    // First-Touch-Attribution aus dem Lead holen (durabel, cookie-unabhaengig),
+    // damit auch dieser Folgekauf der urspruenglichen Anzeige zugeordnet wird.
+    let utmMeta: Record<string, string> = {};
+    try {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE!,
+        { auth: { autoRefreshToken: false, persistSession: false } }
+      );
+      let lead: any = null;
+      if (leadId) {
+        const { data } = await supabase
+          .from("wauwerk_leads").select("answers").eq("id", leadId).maybeSingle();
+        lead = data;
+      }
+      if (!lead && email) {
+        const { data } = await supabase
+          .from("wauwerk_leads").select("answers").ilike("email", email)
+          .order("paid_at", { ascending: false }).limit(1).maybeSingle();
+        lead = data;
+      }
+      utmMeta = utmMetaFromAnswers(lead?.answers);
+    } catch (e: any) {
+      console.warn("[upsell-checkout] utm-lookup fehlgeschlagen:", e?.message);
+    }
+
     const payment = await mollie.payments.create({
       amount: { currency: "EUR", value: formatAmountEUR(amountCents) },
       description: description.slice(0, 255),
@@ -117,6 +145,7 @@ export async function POST(req: NextRequest) {
         is_bundle: isBundle ? "true" : "false",
         is_premium: isPremium ? "true" : "false",
         referred_by_code: referredByCode || "",
+        ...utmMeta,
       },
     });
 

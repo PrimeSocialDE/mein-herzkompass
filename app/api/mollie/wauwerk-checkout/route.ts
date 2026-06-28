@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
       utm_medium,
       utm_campaign,
       utm_content,
+      utm_term,
       fbclid,
       fbp,
       fbc,
@@ -252,6 +253,7 @@ export async function POST(req: NextRequest) {
     const utmMediumF = (ft.utm_medium || utm_medium || "").trim();
     const utmCampaignF = (ft.utm_campaign || utm_campaign || "").trim();
     const utmContentF = (ft.utm_content || utm_content || "").trim();
+    const utmTermF = (ft.utm_term || utm_term || "").trim();
     const fbclidF = ft.fbclid || fbclid || "";
     const fbpF = ft.fbp || fbp || "";
 
@@ -275,6 +277,7 @@ export async function POST(req: NextRequest) {
     set("utm_medium", t(finalMedium, 30));
     set("utm_campaign", t(utmCampaignF, 200));
     set("utm_content", t(utmContentF, 200));
+    set("utm_term", t(utmTermF, 200));
     set("fbclid", t(fbclidF || fbclid, 60));
     set("fbp", t(fbpF || fbp, 50));
     set("fbc", t(fbc, 60));
@@ -451,7 +454,21 @@ export async function POST(req: NextRequest) {
       if (ab_test_trust) ansMerge.ab_test_trust = ab_test_trust;
       if (ab_variant) ansMerge.ab_variant = ab_variant;
       if (entry_page) ansMerge.entry_page = entry_page;
-      if (Object.keys(ansMerge).length > 0) {
+
+      // First-Touch-Attribution set-once am Lead persistieren. So erbt JEDER
+      // Folgekauf (Upsells/One-Click) dieselbe Herkunft aus answers — auch wenn
+      // das pp_attr-Cookie bis dahin weg ist (Safari ITP kappt JS-gesetzte
+      // Cookies nach 7 Tagen). Erste Belegung gewinnt; spaetere Kaeufe
+      // ueberschreiben die utm NICHT (First-Touch).
+      const ftAttr: Record<string, string> = {};
+      if (finalSource) ftAttr.utm_source = t(finalSource, 30);
+      if (finalMedium) ftAttr.utm_medium = t(finalMedium, 30);
+      if (utmCampaignF) ftAttr.utm_campaign = t(utmCampaignF, 200);
+      if (utmContentF) ftAttr.utm_content = t(utmContentF, 200);
+      if (utmTermF) ftAttr.utm_term = t(utmTermF, 200);
+      if (fbpF) ftAttr.fbp = t(fbpF, 50);
+
+      if (Object.keys(ansMerge).length > 0 || Object.keys(ftAttr).length > 0) {
         const { data: cur, error: ansErr } = await supabase
           .from("wauwerk_leads")
           .select("answers")
@@ -460,7 +477,13 @@ export async function POST(req: NextRequest) {
         // NUR mergen wenn der Read sauber war — sonst answers NICHT anfassen,
         // damit ein fehlgeschlagener Read nie die Quiz-Antworten mit {} ueberschreibt.
         if (!ansErr && cur) {
-          updateData.answers = { ...(cur.answers || {}), ...ansMerge };
+          const existingAns = (cur.answers || {}) as Record<string, any>;
+          // utm/fbp nur setzen, wenn am Lead noch nicht vorhanden → First-Touch
+          const utmSetOnce: Record<string, string> = {};
+          for (const [k, v] of Object.entries(ftAttr)) {
+            if (v && !existingAns[k]) utmSetOnce[k] = v;
+          }
+          updateData.answers = { ...existingAns, ...utmSetOnce, ...ansMerge };
         }
       }
       const { error: leadUpdErr } = await supabase

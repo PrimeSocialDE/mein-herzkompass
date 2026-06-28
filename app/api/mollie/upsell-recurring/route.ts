@@ -14,6 +14,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getMollie, formatAmountEUR, Locale } from "@/lib/mollie";
 import { createClient } from "@supabase/supabase-js";
+import { utmMetaFromAnswers } from "@/lib/attribution";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest) {
       const { data } = await supabase
         .from("wauwerk_leads")
         .select(
-          "id, email, dog_name, mollie_customer_id, mollie_mandate_id, mollie_payment_method, referred_by_code"
+          "id, email, dog_name, mollie_customer_id, mollie_mandate_id, mollie_payment_method, referred_by_code, answers"
         )
         .eq("id", leadId)
         .maybeSingle();
@@ -79,7 +80,7 @@ export async function POST(req: NextRequest) {
       const { data } = await supabase
         .from("wauwerk_leads")
         .select(
-          "id, email, dog_name, mollie_customer_id, mollie_mandate_id, mollie_payment_method, referred_by_code"
+          "id, email, dog_name, mollie_customer_id, mollie_mandate_id, mollie_payment_method, referred_by_code, answers"
         )
         .ilike("email", email)
         .not("mollie_mandate_id", "is", null)
@@ -198,6 +199,8 @@ export async function POST(req: NextRequest) {
         is_bundle: isBundle ? "true" : "false",
         is_premium: isPremium ? "true" : "false",
         one_click: "true",
+        // First-Touch-Attribution aus dem Lead erben (CRM-Join pro Anzeige)
+        ...utmMetaFromAnswers(lead.answers),
       },
     };
     const payment = await mollie.payments.create(recurringParams);

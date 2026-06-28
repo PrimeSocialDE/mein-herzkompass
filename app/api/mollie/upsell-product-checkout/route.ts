@@ -4,6 +4,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getMollie, formatAmountEUR, Locale } from "@/lib/mollie";
+import { createClient } from "@supabase/supabase-js";
+import { utmMetaFromAnswers } from "@/lib/attribution";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -103,6 +105,31 @@ export async function POST(req: NextRequest) {
           : returnUrl
         : `${origin}/zusatz.html?lead_id=${leadId || ""}`;
 
+    // First-Touch-Attribution aus dem Lead holen (cookie-unabhaengig).
+    let utmMeta: Record<string, string> = {};
+    try {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE!,
+        { auth: { autoRefreshToken: false, persistSession: false } }
+      );
+      let lead: any = null;
+      if (leadId) {
+        const { data } = await supabase
+          .from("wauwerk_leads").select("answers").eq("id", leadId).maybeSingle();
+        lead = data;
+      }
+      if (!lead && email) {
+        const { data } = await supabase
+          .from("wauwerk_leads").select("answers").ilike("email", email)
+          .order("paid_at", { ascending: false }).limit(1).maybeSingle();
+        lead = data;
+      }
+      utmMeta = utmMetaFromAnswers(lead?.answers);
+    } catch (e: any) {
+      console.warn("[upsell-product-checkout] utm-lookup fehlgeschlagen:", e?.message);
+    }
+
     // Direkt-Karten-Flow: method + cardToken setzt Payment ohne
     // Hosted-Checkout, processed direkt (ggf. mit 3DS-Redirect).
     const paymentBody: any = {
@@ -120,6 +147,7 @@ export async function POST(req: NextRequest) {
         email: email,
         lead_id: leadId || "",
         dog_name: dogName || "",
+        ...utmMeta,
       },
     };
     if (method === "creditcard" && cardToken) {
