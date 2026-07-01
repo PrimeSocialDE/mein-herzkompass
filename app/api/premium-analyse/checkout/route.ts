@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
       ownerFeeling: String(body?.ownerFeeling || ""),
       understandWish: String(body?.understandWish || "").slice(0, 400),
       hasVideo: !!body?.hasVideo,
+      videoName: String(body?.videoName || "").slice(0, 140),
       photos, // base64 — nur in der premium_intake DIESES Kaeufers, vom Premium-Webhook gelesen
       utm: body?.utm && typeof body.utm === "object" ? body.utm : {},
     };

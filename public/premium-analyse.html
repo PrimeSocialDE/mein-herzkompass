@@ -450,8 +450,17 @@
 
     const btn=document.getElementById('submitBtn'); btn.disabled=true; btn.textContent='Einen Moment …';
     try{
-      const photos=[];
-      for(const f of files.fotos.slice(0,4)){ try{ photos.push(await downscaleImage(f,1280,0.82)); }catch(_){} }
+      // Fotos verkleinern — der Upload darf die Zahlung NIE blockieren.
+      // Bei Fehler oder zu großem Payload werden Fotos weggelassen; der Kauf geht
+      // trotzdem durch (fehlende/kaputte Bilder fragen wir im Nachhinein nach).
+      let photos=[];
+      try{
+        for(const f of files.fotos.slice(0,4)){
+          try{ const img=await downscaleImage(f,1100,0.75); if(img&&img.base64) photos.push(img); }catch(_){}
+        }
+        let total=photos.reduce(function(s,p){return s+(p.base64?p.base64.length:0);},0);
+        while(photos.length>0 && total>3000000){ photos.pop(); total=photos.reduce(function(s,p){return s+(p.base64?p.base64.length:0);},0); }
+      }catch(_){ photos=[]; }
 
       const payload={
         leadId, email:emailVal,
@@ -467,6 +476,7 @@
         ownerFeeling:chipVals('feelChips')[0]||'',
         understandWish:document.getElementById('wish').value.trim(),
         hasVideo:!!files.video,
+        videoName:files.video?String(files.video.name||'').slice(0,140):'',
         utm:{
           utm_source:localStorage.getItem('utm_source')||'', utm_medium:localStorage.getItem('utm_medium')||'',
           utm_campaign:localStorage.getItem('utm_campaign')||'', utm_content:localStorage.getItem('utm_content')||'',

@@ -186,7 +186,13 @@ export function wrapTemplate(opts: {
         </tr>
         <tr>
           <td align="center" style="padding:8px 28px 28px;">
-            <a href="${ctaUrl}" style="display:inline-block;background:#C4A576;color:#FFFFFF;font-weight:700;font-size:14px;padding:14px 26px;border-radius:12px;text-decoration:none;box-shadow:0 2px 8px rgba(196,165,118,0.3);">${ctaText}</a>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+              <tr>
+                <td align="center" bgcolor="#C4A576" style="background:#C4A576;border-radius:12px;">
+                  <a href="${ctaUrl}" style="display:inline-block;padding:15px 30px;font-size:15px;font-weight:700;line-height:1;color:#FFFFFF;text-decoration:none;border-radius:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">${ctaText}</a>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
         ${

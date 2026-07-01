@@ -51,9 +51,9 @@ export function buildPremiumAnalyseEmail(opts: {
             ${value}
           </table>
 
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EAF6EE;border:1px solid #cfe9d8;border-radius:12px;margin:0 0 22px">
-            <tr><td style="padding:12px 16px;font-size:13.5px;color:#2e7d4f;line-height:1.5">
-              <b>79&nbsp;€ einmalig</b> · Lieferung in 48&nbsp;h per E-Mail · 14&nbsp;Tage Geld-zurück-Garantie
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;margin:0 0 22px">
+            <tr><td style="padding:15px 16px;font-size:14px;color:#42413f;line-height:1.6">
+              <b style="color:#1a1a1a">So einfach geht&#39;s:</b> Nimm einfach eine kurze <b>Sprachnachricht</b> auf oder lade ein <b>Video</b> hoch, wie sich ${dog} verhält - oder schreib es uns in ein paar Sätzen. Den Rest übernehmen wir und schicken dir dein persönliches Gutachten.
             </td></tr>
           </table>
 
@@ -61,8 +61,11 @@ export function buildPremiumAnalyseEmail(opts: {
             <a href="${cta}" style="display:inline-block;padding:16px 30px;font-size:17px;font-weight:800;color:#ffffff;text-decoration:none;border-radius:14px">Analyse für ${dog} anfordern →</a>
           </td></tr></table>
 
-          <p style="font-size:12.5px;line-height:1.55;color:#9aa2ad;text-align:center;margin:18px 0 0">
-            Deine bekannten Angaben sind auf der Seite schon vorausgefüllt — du ergänzt nur noch ein paar Details.
+          <p style="font-size:13px;line-height:1.6;color:#8B7355;text-align:center;font-weight:600;margin:16px 0 0">
+            Lieferung in 48&nbsp;Stunden per E-Mail · 14&nbsp;Tage Geld-zurück-Garantie
+          </p>
+          <p style="font-size:12.5px;line-height:1.55;color:#9aa2ad;text-align:center;margin:8px 0 0">
+            Deine bekannten Angaben sind auf der Seite schon vorausgefüllt — du ergänzt nur ein paar Details.
           </p>
         </td></tr>
 
