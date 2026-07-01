@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Premium-Analyse | Pfoten-Plan</title>
+<style>
+  :root{
+    --gold:#C4A576; --brown:#8B7355; --ink:#1a1a1a; --muted:#6B7280;
+    --cream:#FFF9F0; --line:#EADDC5; --soft:#FFFDF9; --green:#2e7d4f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#FBF7F0;color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:620px;margin:0 auto;padding:0 18px 60px}
+  .topbar{text-align:center;padding:18px 0 6px}
+  .topbar img{height:30px}
+  .eyebrow{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--brown);background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+
+  /* HERO */
+  .hero{margin-top:14px;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#fff;
+    box-shadow:0 6px 24px rgba(139,115,85,.07)}
+  .hero-img{width:100%;height:210px;object-fit:cover;display:block;background:var(--cream)}
+  .hero-video{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:var(--cream)}
+  .hero-body{padding:20px 20px 22px}
+  .hero h1{font-size:26px;line-height:1.18;font-weight:800;letter-spacing:-.01em}
+  .hero h1 .dog{color:var(--brown)}
+  .hero-sub{color:var(--muted);font-size:15px;margin-top:8px}
+  .pricebar{display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .price{font-size:24px;font-weight:800}
+  .price small{font-size:13px;font-weight:600;color:var(--muted)}
+  .chip-soft{font-size:12px;font-weight:700;color:var(--green);background:#EAF6EE;border-radius:999px;padding:5px 11px}
+  .bullets{list-style:none;margin:18px 0 0;display:grid;gap:9px}
+  .bullets li{position:relative;padding-left:26px;font-size:14.5px;color:#333}
+  .bullets li::before{content:"";position:absolute;left:4px;top:7px;width:8px;height:8px;border-radius:50%;
+    background:var(--gold)}
+  .value-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:18px}
+  .vcard{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:14px 14px 15px}
+  .vcard .vico{width:32px;height:32px;border-radius:9px;background:#fff;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:9px}
+  .vcard .vt{font-size:14px;font-weight:800;color:var(--ink);line-height:1.22;margin-bottom:4px}
+  .vcard .vd{font-size:12.5px;color:var(--muted);line-height:1.45}
+
+  /* SECTION CARD */
+  .card{margin-top:18px;border:1px solid var(--line);border-radius:18px;background:#fff;padding:20px}
+  .card h2{font-size:18px;font-weight:800;letter-spacing:-.01em}
+  .card .hint{font-size:13.5px;color:var(--muted);margin-top:4px}
+
+  /* KNOWN DATA */
+  .known{background:linear-gradient(180deg,var(--soft),var(--cream));border:1px solid var(--line)}
+  .known-row{display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid rgba(234,221,197,.6)}
+  .known-row:last-child{border-bottom:none}
+  .known-row label{flex:0 0 116px;font-size:12.5px;font-weight:700;color:var(--brown)}
+  .known-row input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14.5px;
+    color:var(--ink);background:#fff;font-family:inherit}
+  .known-row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,165,118,.15)}
+  .known-note{font-size:12.5px;color:var(--muted);margin-top:12px}
+
+  /* FORM */
+  label.q{display:block;font-size:15px;font-weight:700;margin-bottom:9px}
+  label.q .opt{font-weight:600;color:var(--muted);font-size:13px}
+  textarea{width:100%;min-height:120px;border:1px solid var(--line);border-radius:12px;padding:13px 14px;
+    font-size:15px;font-family:inherit;resize:vertical;color:var(--ink)}
+  textarea:focus,input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,165,118,.15)}
+  input[type=text]{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:15px;
+    font-family:inherit}
+
+  /* UPLOAD */
+  .uploads{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+  .up{border:1.5px dashed var(--line);border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;
+    transition:.15s;background:var(--soft)}
+  .up:hover{border-color:var(--gold);background:var(--cream)}
+  .up .ico{font-size:22px}
+  .up .t{font-size:13.5px;font-weight:700;margin-top:6px}
+  .up .s{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .up.full{grid-column:1 / -1}
+  .up input{display:none}
+  .filelist{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px}
+  .pill{display:inline-flex;align-items:center;gap:7px;background:var(--cream);border:1px solid var(--line);
+    border-radius:999px;padding:6px 10px;font-size:12.5px;font-weight:600}
+  .pill b{font-weight:700}
+  .pill .x{cursor:pointer;color:#b04;font-weight:800;font-size:13px;line-height:1}
+  .soon{font-size:11px;font-weight:700;color:var(--brown);background:#fff;border:1px solid var(--line);
+    border-radius:999px;padding:2px 8px;margin-left:6px}
+
+  /* SLIDER */
+  .slider-wrap{margin-top:4px}
+  input[type=range]{width:100%;accent-color:var(--gold);height:6px}
+  .slider-ends{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
+  .slider-val{text-align:center;font-size:13px;font-weight:700;color:var(--brown);margin-top:4px}
+
+  /* CHIPS */
+  .chips{display:flex;flex-wrap:wrap;gap:9px}
+  .chip{border:1.5px solid var(--line);border-radius:999px;padding:9px 15px;font-size:14px;font-weight:600;
+    cursor:pointer;background:#fff;transition:.12s;user-select:none}
+  .chip:hover{border-color:var(--gold)}
+  .chip.on{background:var(--gold);border-color:var(--gold);color:#fff}
+
+  .block{margin-top:22px}
+  .block:first-child{margin-top:0}
+
+  /* CTA */
+  .cta-card{margin-top:18px;border:1px solid var(--line);border-radius:18px;background:#fff;padding:20px;text-align:center}
+  .cta-price{font-size:15px;color:var(--muted)}
+  .cta-price b{color:var(--ink);font-size:18px}
+  .cta-btn{margin-top:12px;width:100%;border:none;border-radius:14px;padding:17px;font-size:17px;font-weight:800;
+    color:#fff;background:linear-gradient(180deg,#caa86f,#b7945a);cursor:pointer;font-family:inherit;
+    box-shadow:0 8px 20px rgba(183,148,90,.28);transition:.15s}
+  .cta-btn:hover{transform:translateY(-1px)}
+  .cta-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+  .trust{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:14px;font-size:12.5px;color:var(--muted)}
+  .trust span{display:inline-flex;align-items:center;gap:5px}
+  .email-field{margin:4px 0 2px;text-align:left}
+  .email-field label{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:7px}
+  .email-field input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:15px;font-family:inherit;color:var(--ink)}
+  .email-field input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,165,118,.15)}
+  .payment-logos{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:16px}
+  .payment-logos img{height:23px;width:auto;opacity:.72;border-radius:5px}
+  /* Social proof + Garantie */
+  .ratingbar{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:12px;flex-wrap:wrap}
+  .gstars{display:flex;gap:3px}
+  .gstar{width:16px;height:16px;background:#00B67A;display:flex;align-items:center;justify-content:center;border-radius:2px}
+  .ratingbar .rt{font-size:12.5px;color:var(--muted);font-weight:600}
+  .tcard{margin-top:18px;border:1px solid var(--line);border-radius:16px;background:#fff;padding:18px}
+  .tcard .tq{font-size:15px;color:var(--ink);line-height:1.5;font-style:italic}
+  .tcard .ta{display:flex;align-items:center;gap:9px;margin-top:13px}
+  .tcard .tav{width:34px;height:34px;border-radius:50%;background:var(--cream);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--brown);font-size:13px;flex-shrink:0}
+  .tcard .tn{font-size:13px;font-weight:700}
+  .tcard .tb{font-size:11.5px;color:var(--green);font-weight:700}
+  .guarantee{display:flex;gap:12px;align-items:flex-start;text-align:left;background:#EAF6EE;border:1px solid #cfe9d8;border-radius:14px;padding:14px 16px;margin:14px 0 2px}
+  .guarantee .g-ico{font-size:22px;line-height:1.1}
+  .guarantee b{font-size:14px;color:var(--ink)}
+  .guarantee span{font-size:12.5px;color:var(--muted);line-height:1.45}
+  .err{color:#b04;font-size:13.5px;font-weight:600;margin-top:10px;display:none}
+  .foot{text-align:center;font-size:11.5px;color:#9aa;margin-top:24px;line-height:1.6}
+  @media(max-width:430px){ .hero h1{font-size:23px} .known-row label{flex-basis:96px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar"><img src="logo.png" alt="Pfoten-Plan" onerror="this.style.display='none'"></div>
+
+  <div style="text-align:center;margin-top:8px"><span class="eyebrow">Pfoten-Plan · Premium-Analyse</span></div>
+
+  <div class="ratingbar">
+    <div class="gstars">
+      <div class="gstar"><svg viewBox="0 0 24 24" width="10" height="10" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+      <div class="gstar"><svg viewBox="0 0 24 24" width="10" height="10" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+      <div class="gstar"><svg viewBox="0 0 24 24" width="10" height="10" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+      <div class="gstar"><svg viewBox="0 0 24 24" width="10" height="10" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+      <div class="gstar"><svg viewBox="0 0 24 24" width="10" height="10" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+    </div>
+    <span class="rt">4,8/5 · von tausenden Hundehaltern</span>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <video class="hero-video" src="PfotenPremium-web.mp4" muted loop playsinline preload="none" poster="PfotenPremium-poster.jpg" aria-label="Pfoten-Plan Premium-Analyse" data-lazyvideo></video>
+    <div class="hero-body">
+      <h1>Die persönliche Premium-Analyse<br>für <span class="dog" id="dogH">deinen Hund</span></h1>
+      <p class="hero-sub">Hör auf zu raten, was in deinem Hund vorgeht. Diese Analyse zeigt dir, <b>wer er wirklich ist und warum er so tickt</b> — damit du ihn endlich verstehst, statt nur zu reagieren. Die perfekte Ergänzung zu deinem Trainingsplan.</p>
+      <div class="pricebar">
+        <div class="price">79&nbsp;€ <small>einmalig</small></div>
+        <span class="chip-soft">Kein Abo</span>
+        <span class="chip-soft">Lieferung in 48&nbsp;h</span>
+      </div>
+      <div class="value-grid">
+        <div class="vcard"><div class="vico">🔍</div><div class="vt">Verstehen, warum</div><div class="vd">Die echte Ursache hinter dem Verhalten — nicht nur das Symptom.</div></div>
+        <div class="vcard"><div class="vico">🐾</div><div class="vt">Sein wahrer Charakter</div><div class="vd">Welcher Typ Hund er ist, wie er tickt und was er wirklich braucht.</div></div>
+        <div class="vcard"><div class="vico">🩺</div><div class="vt">Klarheit statt Sorge</div><div class="vd">Was bei Rasse, Körper &amp; Lebensphase normal ist — und worauf du achtest.</div></div>
+        <div class="vcard"><div class="vico">💬</div><div class="vt">Deine Frage, beantwortet</div><div class="vd">Deine persönliche Frage über deinen Hund — direkt und ehrlich.</div></div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-top:14px;line-height:1.5">Alles in einem ausführlichen, persönlichen PDF zum Behalten und immer wieder Nachlesen — plus ein ehrlicher Ausblick, wo ihr in einem Jahr stehen könnt.</p>
+    </div>
+  </div>
+
+  <!-- KNOWN DATA -->
+  <div class="card known">
+    <h2>Das wissen wir schon über <span id="dogK">deinen Hund</span></h2>
+    <p class="hint">Das meiste haben wir aus deinem Plan — bitte kurz prüfen und das <b>Gewicht</b> noch ergänzen.</p>
+    <div style="margin-top:14px">
+      <div class="known-row"><label>Name</label><input id="fName" type="text" placeholder="Name deines Hundes"></div>
+      <div class="known-row"><label>Rasse</label><input id="fBreed" type="text" placeholder="z. B. Australian Shepherd / Mischling"></div>
+      <div class="known-row"><label>Alter</label><input id="fAge" type="text" placeholder="z. B. 2 Jahre"></div>
+      <div class="known-row"><label>Gewicht / Größe</label><input id="fWeight" type="text" placeholder="z. B. 22 kg oder „mittelgroß“"></div>
+      <div class="known-row"><label>Haupt-Thema</label><input id="fProblem" type="text" placeholder="z. B. Leinenpöbeln"></div>
+    </div>
+    <p class="known-note">Wir nutzen diese Angaben, damit die Analyse genau zu deinem Hund passt — gerade Gewicht &amp; Größe helfen uns bei Körper- und Gesundheits-Einschätzung.</p>
+  </div>
+
+  <!-- INTAKE -->
+  <div class="card">
+    <h2>Erzähl uns von <span id="dogT">deinem Hund</span></h2>
+    <p class="hint">Je konkreter, desto schärfer die Analyse. Beschreibe die Situation in deinen eigenen Worten — oder lade ein Foto, Video oder eine Sprachnachricht hoch.</p>
+
+    <div class="block">
+      <label class="q" for="schilderung">Deine Schilderung <span class="opt">(Text)</span></label>
+      <textarea id="schilderung" placeholder="Was passiert genau? Wann, wo, wie oft? Wie reagierst du? Was hast du schon probiert? Was wünschst du dir?"></textarea>
+    </div>
+
+    <div class="block">
+      <label class="q">Foto, Video oder Sprachnachricht <span class="opt">(optional, macht die Analyse besser)</span></label>
+      <div class="uploads">
+        <label class="up">
+          <div class="ico">📷</div><div class="t">Foto hochladen</div><div class="s">Körpersprache &amp; Körperbau</div>
+          <input type="file" id="upFoto" accept="image/*" multiple>
+        </label>
+        <label class="up">
+          <div class="ico">🎬</div><div class="t">Video hochladen</div><div class="s">zeig die Situation</div>
+          <input type="file" id="upVideo" accept="video/*">
+        </label>
+        <label class="up full">
+          <div class="ico">🎙️</div><div class="t">Sprachnachricht <span class="soon">in Kürze</span></div><div class="s">erzähl es uns einfach — wir hören zu</div>
+          <input type="file" id="upAudio" accept="audio/*" disabled>
+        </label>
+      </div>
+      <div class="filelist" id="fileList"></div>
+    </div>
+
+    <div class="block">
+      <label class="q">Wie schnell dreht <span class="dogN">dein Hund</span> auf?</label>
+      <div class="slider-wrap">
+        <input type="range" id="arousal" min="1" max="10" value="5">
+        <div class="slider-ends"><span>tiefenentspannt</span><span>sofort hochgefahren</span></div>
+        <div class="slider-val" id="arousalVal">5 / 10</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <label class="q">Was beruhigt ihn am meisten? <span class="opt">(Mehrfachauswahl)</span></label>
+      <div class="chips" id="calmsChips">
+        <div class="chip" data-v="Kauen">Kauen</div>
+        <div class="chip" data-v="Schnüffeln">Schnüffeln</div>
+        <div class="chip" data-v="Körperkontakt">Körperkontakt</div>
+        <div class="chip" data-v="Rückzug">Rückzug / Ruhe</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <label class="q">Wie fühlst du dich bei dem Thema?</label>
+      <div class="chips" id="feelChips">
+        <div class="chip" data-v="genervt">genervt</div>
+        <div class="chip" data-v="hilflos">hilflos</div>
+        <div class="chip" data-v="besorgt">besorgt</div>
+        <div class="chip" data-v="hoffnungsvoll">hoffnungsvoll</div>
+      </div>
+    </div>
+
+    <div class="block">
+      <label class="q" for="wish">Was würdest du am liebsten über deinen Hund verstehen? <span class="opt">(optional)</span></label>
+      <input type="text" id="wish" placeholder="z. B. Macht er das aus Angst oder will er nur kontrollieren?">
+    </div>
+  </div>
+
+  <!-- TESTIMONIAL — PLATZHALTER: vor dem Live-Gang durch ein echtes Kunden-Zitat ersetzen! -->
+  <div class="tcard">
+    <div class="gstars" style="margin-bottom:10px">
+      <div class="gstar"><svg viewBox="0 0 24 24" width="10" height="10" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+      <div class="gstar"><svg viewBox="0 0 24 24" width="10" height="10" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+      <div class="gstar"><svg viewBox="0 0 24 24" width="10" height="10" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+      <div class="gstar"><svg viewBox="0 0 24 24" width="10" height="10" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+      <div class="gstar"><svg viewBox="0 0 24 24" width="10" height="10" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+    </div>
+    <p class="tq">„Ich dachte, ich kenne meinen Hund — aber jetzt verstehe ich endlich, WARUM er so tickt. Das hat mir vorher kein Trainer so erklärt.“</p>
+    <div class="ta">
+      <div class="tav">A</div>
+      <div><div class="tn">Anna mit Balu</div><div class="tb">✓ Verifizierter Käufer</div></div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-card">
+    <div class="cta-price">Deine persönliche Premium-Analyse — <b>79 €</b> einmalig</div>
+    <div class="guarantee">
+      <div class="g-ico">🛡️</div>
+      <div><b>14 Tage Geld-zurück-Garantie</b><br><span>Wenn dir die Analyse nicht weiterhilft, schreib uns — du bekommst dein Geld zurück, ohne Diskussion.</span></div>
+    </div>
+    <div class="email-field">
+      <label for="fEmail">An diese E-Mail schicken wir deine Analyse:</label>
+      <input id="fEmail" type="email" placeholder="deine@email.de" autocomplete="email" inputmode="email">
+    </div>
+    <button class="cta-btn" id="submitBtn" onclick="startCheckout()">Analyse anfordern →</button>
+    <div class="err" id="errBox"></div>
+    <div class="trust">
+      <span>🔒 Sichere Zahlung</span>
+      <span>📄 Lieferung in 48 h</span>
+      <span>↩️ 14 Tage Geld-zurück</span>
+    </div>
+    <div class="payment-logos">
+      <img src="sepa-logo.png" alt="SEPA" onerror="this.style.display='none'">
+      <img src="visa-logo.png" alt="Visa" onerror="this.style.display='none'">
+      <img src="mastercard-logo.png" alt="Mastercard" onerror="this.style.display='none'">
+      <img src="paypal-logo.png" alt="PayPal" onerror="this.style.display='none'">
+      <img src="klarna-logo.png" alt="Klarna" onerror="this.style.display='none'">
+      <img src="applepay.png" alt="Apple Pay" onerror="this.style.display='none'">
+      <img src="googlepay.png" alt="Google Pay" onerror="this.style.display='none'">
+    </div>
+  </div>
+
+  <p class="foot">
+    Die Premium-Analyse ist ein fundiertes Verständnis-Gutachten und ersetzt keine tierärztliche Untersuchung.<br>
+    Pfoten-Plan · <a href="datenschutz.html" style="color:#9aa">Datenschutz</a>
+  </p>
+</div>
+
+<script>
+  const SUPABASE_URL='https://xomsibpyksrzrnixbdwf.supabase.co';
+  const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+  // Rasse -> Bilddatei (deckungsgleich mit dem PDF-Cover)
+  function breedFile(b){
+    const m={labrador:'Labrador-Retriever.jpg','golden retriever':'Golden-Retriever.jpg',schäferhund:'German-Shepard.jpg',
+      'german shepherd':'German-Shepard.jpg','australian shepherd':'Australian-Shepherd.jpg',aussie:'Australian-Shepherd.jpg',
+      'border collie':'Border-Collie.jpg',dackel:'Dackel.jpg',goldendoodle:'Goldendoodle.jpg',havaneser:'Havanese.jpg',
+      havanese:'Havanese.jpg',mischling:'Mischling.jpg'};
+    const lk=(b||'').trim().toLowerCase(); if(!lk) return 'Allgemein.jpg';
+    if(m[lk]) return m[lk];
+    for(const k in m){ if(lk.includes(k)) return m[k]; }
+    return 'Allgemein.jpg';
+  }
+  // Problem-Key -> Label
+  const PROBLEM_LABEL={pulling:'Leinenpöbeln / Ziehen an der Leine',barking:'Bellen',aggression:'Aggression',
+    recall:'Rückruf klappt nicht','leash-aggression':'Leinenpöbeln gegenüber Hunden',jumping:'Anspringen',
+    hyperactivity:'Hyperaktivität / Unruhe',anxiety:'Angst / Unsicherheit',separation:'Allein-bleiben / Trennungsangst',
+    destructive:'Zerstörung',mouthing:'Maulen / Beißhemmung'};
+
+  // Alters-Kategorie (young/adult/...) -> deutsches Label (editierbar fürs genaue Alter)
+  function ageLabel(a){
+    var s=String(a||'').trim().toLowerCase(); if(!s) return '';
+    if(/welp|puppy/.test(s)) return 'Welpe';
+    if(/jung|young|junior/.test(s)) return 'Junghund';
+    if(/senior|old|^alt/.test(s)) return 'Senior';
+    if(/adult|erwachsen/.test(s)) return 'Erwachsen';
+    return String(a).trim(); // schon ein echtes Alter wie "2 Jahre"
+  }
+
+  let leadId='', userEmail='', dogName='deinen Hund', dogBreed='', dogAge='', dogProblem='', dogWeight='';
+
+  function setDogName(n){
+    document.querySelectorAll('#dogH,#dogK,#dogT,#dogB,.dogN').forEach(e=>e.textContent=n);
+  }
+
+  async function init(){
+    const u=new URLSearchParams(location.search);
+    const leadParam=u.get('lead_id'); const emailParam=u.get('email');
+    ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(p=>{const v=u.get(p);if(v)localStorage.setItem(p,v);});
+    ['fbclid','gclid','ttclid'].forEach(p=>{const v=u.get(p);if(v)localStorage.setItem(p,v);});
+
+    dogName=localStorage.getItem('dogName')||dogName;
+    dogBreed=localStorage.getItem('dogBreed')||'';
+    dogAge=localStorage.getItem('dogAge')||'';
+    dogProblem=localStorage.getItem('dogProblem')||'';
+    dogWeight=localStorage.getItem('dogWeight')||'';
+    leadId=leadParam||localStorage.getItem('leadId')||'';
+    userEmail=emailParam||localStorage.getItem('userEmail')||'';
+
+    if(leadParam||emailParam){
+      try{
+        const q=leadParam?('id=eq.'+encodeURIComponent(leadParam)):('email=eq.'+encodeURIComponent(emailParam));
+        const r=await fetch(SUPABASE_URL+'/rest/v1/wauwerk_leads?'+q+'&select=*&order=created_at.desc&limit=1',
+          {headers:{apikey:SUPABASE_ANON_KEY,Authorization:'Bearer '+SUPABASE_ANON_KEY}});
+        if(r.ok){const d=await r.json(); if(d[0]){const l=d[0]; const a=l.answers||{};
+          dogName=l.dog_name||a.dog_name||dogName;
+          dogBreed=l.dog_breed||a.dog_breed||dogBreed;
+          dogAge=l.dog_age||a.dog_age||dogAge;
+          dogProblem=l.dog_problem||a.dog_problem||dogProblem;
+          dogWeight=l.dog_weight||a.dog_weight||a.dog_gewicht||a.weight||dogWeight;
+          if(l.id)leadId=l.id; if(l.email)userEmail=l.email;
+        }}
+      }catch(e){console.warn('lead fetch',e);}
+    }
+
+    // Pre-fill
+    document.getElementById('fName').value = (dogName&&dogName!=='deinen Hund')?dogName:'';
+    document.getElementById('fBreed').value = dogBreed||'';
+    document.getElementById('fAge').value = ageLabel(dogAge);
+    document.getElementById('fWeight').value = dogWeight||'';
+    document.getElementById('fProblem').value = PROBLEM_LABEL[dogProblem]||dogProblem||'';
+    document.getElementById('fEmail').value = userEmail||'';
+    setDogName((dogName&&dogName!=='deinen Hund')?dogName:'deinen Hund');
+  }
+
+  // Live name in Hero, wenn der Nutzer den Namen anpasst
+  document.addEventListener('input',e=>{
+    if(e.target.id==='fName'){ setDogName(e.target.value.trim()||'deinen Hund'); }
+  });
+
+  // Lazy-Play: Video laedt + startet erst beim Reinscrollen (oben = sofort, da im Viewport), pausiert ausserhalb.
+  (function(){var vs=document.querySelectorAll('video[data-lazyvideo]:not([data-lvinit])');if(!vs.length)return;vs.forEach(function(v){v.setAttribute('data-lvinit','1');});var play=function(v){var p=v.play();if(p&&p.catch)p.catch(function(){});};if(!('IntersectionObserver'in window)){vs.forEach(play);return;}var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)play(e.target);else e.target.pause();});},{rootMargin:'400px 0px',threshold:0});vs.forEach(function(v){io.observe(v);});})();
+
+  // Slider
+  const ar=document.getElementById('arousal');
+  ar.addEventListener('input',()=>{document.getElementById('arousalVal').textContent=ar.value+' / 10';});
+
+  // Chips
+  function wireChips(id,multi){
+    document.querySelectorAll('#'+id+' .chip').forEach(c=>c.addEventListener('click',()=>{
+      if(!multi) document.querySelectorAll('#'+id+' .chip').forEach(x=>{if(x!==c)x.classList.remove('on');});
+      c.classList.toggle('on');
+    }));
+  }
+  wireChips('calmsChips',true); wireChips('feelChips',false);
+  function chipVals(id){return [...document.querySelectorAll('#'+id+' .chip.on')].map(c=>c.dataset.v);}
+
+  // Uploads
+  const files={fotos:[],video:null,audio:null};
+  function renderFiles(){
+    const el=document.getElementById('fileList'); el.innerHTML='';
+    const add=(label,onx)=>{const p=document.createElement('span');p.className='pill';
+      p.innerHTML='<b>'+label+'</b> <span class="x">✕</span>';p.querySelector('.x').onclick=onx;el.appendChild(p);};
+    files.fotos.forEach((f,i)=>add('📷 '+f.name.slice(0,18),()=>{files.fotos.splice(i,1);renderFiles();}));
+    if(files.video)add('🎬 '+files.video.name.slice(0,18),()=>{files.video=null;document.getElementById('upVideo').value='';renderFiles();});
+    if(files.audio)add('🎙️ '+files.audio.name.slice(0,18),()=>{files.audio=null;renderFiles();});
+  }
+  document.getElementById('upFoto').addEventListener('change',e=>{files.fotos.push(...[...e.target.files].slice(0,5));files.fotos=files.fotos.slice(0,5);renderFiles();});
+  document.getElementById('upVideo').addEventListener('change',e=>{files.video=e.target.files[0]||null;renderFiles();});
+
+  // Bild clientseitig verkleinern (max 1280px, JPEG) -> kleiner Payload, kein Body-Limit-Problem
+  function downscaleImage(file,maxDim,quality){
+    return new Promise(function(res,rej){
+      var url=URL.createObjectURL(file); var img=new Image();
+      img.onload=function(){
+        var w=img.naturalWidth||1, h=img.naturalHeight||1;
+        var s=Math.min(1,maxDim/Math.max(w,h));
+        var cw=Math.max(1,Math.round(w*s)), ch=Math.max(1,Math.round(h*s));
+        var c=document.createElement('canvas'); c.width=cw; c.height=ch;
+        c.getContext('2d').drawImage(img,0,0,cw,ch);
+        URL.revokeObjectURL(url);
+        try{ var d=c.toDataURL('image/jpeg',quality); res({base64:d.split(',')[1],type:'image/jpeg'}); }
+        catch(e){ rej(e); }
+      };
+      img.onerror=function(e){ URL.revokeObjectURL(url); rej(e); };
+      img.src=url;
+    });
+  }
+
+  async function startCheckout(){
+    const err=document.getElementById('errBox'); err.style.display='none';
+    const schilderung=document.getElementById('schilderung').value.trim();
+    if(schilderung.length<20 && files.fotos.length===0 && !files.video){
+      err.textContent='Bitte beschreibe die Situation kurz (oder lade ein Foto/Video hoch), damit wir die Analyse erstellen können.';
+      err.style.display='block'; return;
+    }
+    const name=document.getElementById('fName').value.trim();
+    if(!name){ err.textContent='Bitte gib den Namen deines Hundes an.'; err.style.display='block'; return; }
+    const emailVal=document.getElementById('fEmail').value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)){ err.textContent='Bitte gib eine gültige E-Mail-Adresse an — dorthin schicken wir deine Analyse.'; err.style.display='block'; document.getElementById('fEmail').focus(); return; }
+
+    const btn=document.getElementById('submitBtn'); btn.disabled=true; btn.textContent='Einen Moment …';
+    try{
+      const photos=[];
+      for(const f of files.fotos.slice(0,4)){ try{ photos.push(await downscaleImage(f,1280,0.82)); }catch(_){} }
+
+      const payload={
+        leadId, email:emailVal,
+        dogName:name,
+        breed:document.getElementById('fBreed').value.trim(),
+        age:document.getElementById('fAge').value.trim(),
+        weight:document.getElementById('fWeight').value.trim(),
+        problem:document.getElementById('fProblem').value.trim(),
+        transcript:schilderung,
+        photos,
+        arousalSpeed:document.getElementById('arousal').value,
+        calms:chipVals('calmsChips'),
+        ownerFeeling:chipVals('feelChips')[0]||'',
+        understandWish:document.getElementById('wish').value.trim(),
+        hasVideo:!!files.video,
+        utm:{
+          utm_source:localStorage.getItem('utm_source')||'', utm_medium:localStorage.getItem('utm_medium')||'',
+          utm_campaign:localStorage.getItem('utm_campaign')||'', utm_content:localStorage.getItem('utm_content')||'',
+          fbclid:localStorage.getItem('fbclid')||''
+        }
+      };
+
+      const r=await fetch('/api/premium-analyse/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      const d=await r.json();
+      if(r.ok && d.checkoutUrl){ window.location.href=d.checkoutUrl; return; }
+      throw new Error(d.error||'Checkout fehlgeschlagen');
+    }catch(e){
+      err.textContent='Da ist etwas schiefgelaufen: '+e.message+'. Bitte versuch es erneut oder schreib uns an support@pfoten-plan.de.';
+      err.style.display='block'; btn.disabled=false; btn.textContent='Analyse anfordern →';
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

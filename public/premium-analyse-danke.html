@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Danke · Premium-Analyse | Pfoten-Plan</title>
+<style>
+  :root{--gold:#C4A576;--brown:#8B7355;--ink:#1a1a1a;--muted:#6B7280;--cream:#FFF9F0;--line:#EADDC5;--green:#2e7d4f}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#FBF7F0;color:var(--ink);line-height:1.55;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{max-width:520px;width:100%;background:#fff;border:1px solid var(--line);border-radius:20px;
+    padding:36px 28px;text-align:center;box-shadow:0 10px 30px rgba(139,115,85,.08)}
+  .check{width:66px;height:66px;border-radius:50%;background:#EAF6EE;display:flex;align-items:center;justify-content:center;
+    margin:0 auto 18px;font-size:32px}
+  h1{font-size:25px;font-weight:800;letter-spacing:-.01em;margin-bottom:10px}
+  h1 .dog{color:var(--brown)}
+  p{font-size:15.5px;color:var(--muted);margin-bottom:14px}
+  .box{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:18px;margin:20px 0;text-align:left}
+  .box .step{display:flex;gap:12px;align-items:flex-start;padding:8px 0}
+  .box .num{flex:0 0 24px;height:24px;border-radius:50%;background:var(--gold);color:#fff;font-weight:800;font-size:13px;
+    display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .box .t{font-size:14px;color:#333}
+  .eyebrow{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--brown);background:var(--cream);border:1px solid var(--line);border-radius:999px;padding:5px 12px;margin-bottom:18px}
+  .foot{font-size:12.5px;color:#9aa;margin-top:8px}
+  a{color:var(--brown)}
+</style>
+</head>
+<body>
+  <div class="card">
+    <span class="eyebrow">Pfoten-Plan · Premium-Analyse</span>
+    <div class="check">✓</div>
+    <h1>Danke! Deine Analyse für <span class="dog" id="dog">deinen Hund</span> ist in Arbeit.</h1>
+    <p>Zahlung erhalten. Unsere Experten gehen deine Schilderung jetzt persönlich durch und erstellen dein individuelles Verständnis-Gutachten.</p>
+    <div class="box">
+      <div class="step"><div class="num">1</div><div class="t">Wir analysieren deine Angaben &amp; Bilder im Detail.</div></div>
+      <div class="step"><div class="num">2</div><div class="t">Du bekommst dein persönliches PDF-Gutachten <b>innerhalb von 48 Stunden</b> per E-Mail.</div></div>
+      <div class="step"><div class="num">3</div><div class="t">Schau auch in deinen Spam-Ordner — falls nichts ankommt, schreib uns einfach.</div></div>
+    </div>
+    <p class="foot">Fragen? <a href="mailto:support@pfoten-plan.de">support@pfoten-plan.de</a></p>
+  </div>
+<script>
+  try{
+    var dog=new URLSearchParams(location.search).get('dog');
+    if(dog && dog.trim()) document.getElementById('dog').textContent=dog.trim();
+  }catch(e){}
+</script>
+</body>
+</html>

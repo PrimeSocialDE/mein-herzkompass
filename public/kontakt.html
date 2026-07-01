@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kontakt · Pfoten-Plan</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" href="/favconHund.png">
+<style>
+  :root{--gold:#C4A576;--brown:#8B7355;--ink:#2C2C2E;--muted:#6B7280;--cream:#FFF9F0;--line:#EADDC5;--soft:#FFFDF9;--green:#2e7d4f}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#FBF7F0;color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:640px;margin:0 auto;padding:0 18px 60px}
+  .topbar{text-align:center;padding:20px 0 4px}
+  .topbar img{height:30px}
+  .back{display:inline-block;font-size:13px;color:var(--brown);text-decoration:none;margin-top:14px}
+  .back:hover{text-decoration:underline}
+  h1{font-size:30px;font-weight:800;letter-spacing:-.01em;margin:18px 0 8px}
+  .lead{font-size:15.5px;color:var(--muted);margin-bottom:8px}
+  .card{margin-top:18px;border:1px solid var(--line);border-radius:16px;background:#fff;padding:22px}
+  .card.mail{background:linear-gradient(180deg,var(--soft),var(--cream))}
+  .badge{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--brown);background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 11px;margin-bottom:12px}
+  h2{font-size:19px;font-weight:800;margin-bottom:6px}
+  .card p{font-size:14.5px;color:var(--muted)}
+  .mail-row{display:flex;align-items:center;gap:12px;margin-top:14px}
+  .mail-ico{width:44px;height:44px;border-radius:12px;background:#fff;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .mail-row a{font-size:17px;font-weight:700;color:var(--ink);text-decoration:none}
+  .mail-row a:hover{color:var(--brown)}
+  label{display:block;font-size:13.5px;font-weight:700;color:var(--ink);margin:14px 0 7px}
+  input,textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:15px;
+    font-family:inherit;color:var(--ink);background:#fff}
+  textarea{min-height:130px;resize:vertical}
+  input:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,165,118,.15)}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+  .btn{margin-top:18px;width:100%;border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:800;
+    color:#fff;background:linear-gradient(180deg,#caa86f,#b7945a);cursor:pointer;font-family:inherit;
+    box-shadow:0 8px 20px rgba(183,148,90,.25);transition:.15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+  .msg{margin-top:12px;font-size:14px;font-weight:600;display:none}
+  .msg.ok{color:var(--green)}
+  .msg.err{color:#b04}
+  .foot{margin-top:26px;text-align:center;font-size:12.5px;color:#9aa;line-height:1.9}
+  .foot a{color:var(--brown);text-decoration:none;margin:0 6px}
+  .foot a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar"><img src="logo.png" alt="Pfoten-Plan" onerror="this.style.display='none'"></div>
+  <a class="back" href="/index.html">← Zurück zur Startseite</a>
+
+  <h1>Kontakt</h1>
+  <p class="lead">Du erreichst uns auf zwei Wegen — per E-Mail oder direkt über das Formular. Wir melden uns in der Regel innerhalb von 24 Stunden (werktags).</p>
+
+  <!-- Weg 1: E-Mail -->
+  <div class="card mail">
+    <span class="badge">Weg 1 · E-Mail</span>
+    <h2>Schreib uns direkt</h2>
+    <p>Für alle Fragen rund um deinen Plan, deine Bestellung oder dein Konto.</p>
+    <div class="mail-row">
+      <div class="mail-ico">✉️</div>
+      <a href="mailto:support@pfoten-plan.de">support@pfoten-plan.de</a>
+    </div>
+  </div>
+
+  <!-- Weg 2: Formular -->
+  <div class="card">
+    <span class="badge">Weg 2 · Kontaktformular</span>
+    <h2>Nachricht senden</h2>
+    <p>Schreib uns hier — deine Nachricht geht direkt an unser Support-Team.</p>
+    <form id="kontaktForm" autocomplete="on" novalidate>
+      <label for="kName">Name</label>
+      <input id="kName" name="name" type="text" placeholder="Dein Name" autocomplete="name">
+
+      <label for="kEmail">E-Mail *</label>
+      <input id="kEmail" name="email" type="email" placeholder="deine@email.de" autocomplete="email" inputmode="email" required>
+
+      <label for="kMsg">Deine Nachricht *</label>
+      <textarea id="kMsg" name="message" placeholder="Wie können wir dir helfen?" required></textarea>
+
+      <!-- Honeypot (unsichtbar, gegen Bots) -->
+      <div class="hp" aria-hidden="true"><label>Website<input type="text" id="kWebsite" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+      <button class="btn" type="submit" id="kBtn">Nachricht senden</button>
+      <div class="msg" id="kMsgBox"></div>
+    </form>
+  </div>
+
+  <div class="foot">
+    Verantwortlich für den Inhalt &amp; ladungsfähige Anschrift: siehe <a href="/impressum.html">Impressum</a><br>
+    <a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a> · <a href="/agb.html">AGB</a> · <a href="/widerruf.html">Widerruf</a>
+  </div>
+</div>
+
+<script>
+  var form=document.getElementById('kontaktForm');
+  var box=document.getElementById('kMsgBox');
+  var btn=document.getElementById('kBtn');
+  function show(type,text){box.className='msg '+type;box.textContent=text;box.style.display='block';}
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    box.style.display='none';
+    var email=document.getElementById('kEmail').value.trim();
+    var message=document.getElementById('kMsg').value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ show('err','Bitte gib eine gültige E-Mail-Adresse an.'); return; }
+    if(message.length<5){ show('err','Bitte schreib uns kurz, worum es geht.'); return; }
+    btn.disabled=true; btn.textContent='Wird gesendet …';
+    fetch('/api/kontakt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      name:document.getElementById('kName').value.trim(),
+      email:email, message:message,
+      website:document.getElementById('kWebsite').value
+    })}).then(function(r){return r.json().then(function(d){return {ok:r.ok,d:d};});})
+    .then(function(res){
+      if(res.ok && res.d.ok){
+        form.reset();
+        show('ok','Danke! Deine Nachricht ist bei uns — wir melden uns bald.');
+        btn.style.display='none';
+      } else {
+        show('err',(res.d && res.d.error) || 'Etwas ist schiefgelaufen. Bitte schreib uns direkt an support@pfoten-plan.de.');
+        btn.disabled=false; btn.textContent='Nachricht senden';
+      }
+    }).catch(function(){
+      show('err','Netzwerkfehler. Bitte schreib uns direkt an support@pfoten-plan.de.');
+      btn.disabled=false; btn.textContent='Nachricht senden';
+    });
+  });
+</script>
+</body>
+</html>
