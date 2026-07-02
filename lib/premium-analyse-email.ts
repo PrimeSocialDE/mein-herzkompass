@@ -57,8 +57,8 @@ export function buildPremiumAnalyseEmail(opts: {
             </td></tr>
           </table>
 
-          <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto"><tr><td align="center" style="border-radius:14px;background:#b7945a">
-            <a href="${cta}" style="display:inline-block;padding:16px 30px;font-size:17px;font-weight:800;color:#ffffff;text-decoration:none;border-radius:14px">Analyse für ${dog} anfordern →</a>
+          <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto"><tr><td align="center" bgcolor="#b7945a" style="border-radius:14px;background:#b7945a">
+            <a href="${cta}" style="display:inline-block;padding:16px 30px;font-size:17px;font-weight:800;line-height:1;color:#ffffff;text-decoration:none;border-radius:14px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">Analyse für ${dog} anfordern →</a>
           </td></tr></table>
 
           <p style="font-size:13px;line-height:1.6;color:#8B7355;text-align:center;font-weight:600;margin:16px 0 0">
