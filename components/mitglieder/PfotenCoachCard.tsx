@@ -12,7 +12,10 @@ export default function PfotenCoachCard({
   email?: string | null;
 }) {
   const dog = dogName?.trim() || "deinen Hund";
-  const href = `/pfoten-coach.html${email ? `?email=${encodeURIComponent(email)}` : ""}`;
+  const params = new URLSearchParams();
+  if (email) params.set("email", email);
+  if (dogName?.trim()) params.set("dog", dogName.trim());
+  const href = `/pfoten-coach${params.toString() ? `?${params.toString()}` : ""}`;
 
   const chips: [string, string][] = [
     ["🎧", "5 Sessions · 2–3 Min"],

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Danke – Kikos Coach ist freigeschaltet | Pfoten-Plan</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --ground:#FBF7F0; --card:#FFFFFF; --border:#EADDC5; --border-strong:#E2D2B4;
+    --gold1:#CAA86F; --gold2:#B0894E; --brown:#8B7355; --ink:#1a1a1a; --muted:#6B7280;
+    --serif:Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--ground);color:var(--ink);font-family:var(--sans);min-height:100vh;
+    display:flex;align-items:center;justify-content:center;padding:24px;
+    background-image:radial-gradient(1000px 360px at 50% -6%,#FBF3E7 0%,var(--ground) 60%)}
+  .box{max-width:440px;text-align:center}
+  .icon{width:84px;height:84px;border-radius:24px;object-fit:cover;margin:0 auto 18px;display:block;
+    border:1px solid var(--border-strong);box-shadow:0 16px 30px -16px rgba(120,90,45,.6)}
+  .check{font-size:34px;margin-bottom:8px}
+  h1{font-family:var(--serif);font-size:28px;line-height:1.15;font-weight:700;text-wrap:balance}
+  p{font-size:15px;line-height:1.6;color:var(--muted);margin-top:12px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-top:20px;text-align:left;
+    font-size:14px;line-height:1.6;color:#42413f}
+  .card b{color:var(--ink)}
+  .cta{display:inline-flex;align-items:center;gap:9px;font-size:16px;font-weight:800;color:#fff;
+    background:linear-gradient(180deg,var(--gold1),var(--gold2));border-radius:14px;padding:15px 26px;margin-top:22px;
+    text-decoration:none;box-shadow:0 10px 22px -10px rgba(176,137,78,.8)}
+  .brand{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--brown);margin-top:26px}
+</style>
+</head>
+<body>
+  <div class="box">
+    <img class="icon" src="/audio-coach-icon.jpg" alt="">
+    <div class="check">🎉</div>
+    <h1 id="title">Dein Coach ist unterwegs!</h1>
+    <p>Danke dir! Wir bereiten deinen persönlichen Audio-Coach vor — zugeschnitten auf <span id="dog">deinen Hund</span> und seinen Plan.</p>
+
+    <div class="card">
+      🎧 <b>So geht's weiter:</b> Dein Coach wird in Kürze in deinem Mitgliederbereich freigeschaltet. Sobald er bereit ist, bekommst du eine E-Mail von uns — dann einfach Kopfhörer auf und loslegen.
+    </div>
+
+    <a class="cta" href="/mitglieder/coach">🎧 Zu meinem Coach →</a>
+    <div class="brand">🐾 Pfoten-Plan</div>
+  </div>
+<script>
+  (function(){
+    var dog = (new URLSearchParams(location.search).get("dog") || "").trim();
+    if (dog) {
+      document.getElementById("title").textContent = dog + "s Coach ist unterwegs!";
+      document.getElementById("dog").textContent = dog;
+      document.title = dog + "s Coach – Danke | Pfoten-Plan";
+    }
+  })();
+</script>
+</body>
+</html>
