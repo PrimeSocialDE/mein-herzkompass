@@ -49,12 +49,11 @@ export default function PremiumAnalyseCard({
         </div>
 
         <div className="flex items-center justify-between gap-3 mt-4">
-          <div className="text-[15px]">
-            <span className="font-extrabold text-[#1a1a1a]">79&nbsp;€</span>{" "}
-            <span className="text-[#6B7280] text-[12.5px]">· in 48&nbsp;h per Mail</span>
+          <div className="text-[12.5px] text-[#6B7280] font-medium leading-snug">
+            In 48&nbsp;h per E-Mail<br />14&nbsp;Tage Geld-zurück-Garantie
           </div>
           <span className="inline-flex items-center gap-1.5 text-[14px] font-bold text-white bg-gradient-to-b from-[#caa86f] to-[#b7945a] rounded-xl px-4 py-2.5 shadow-sm">
-            Analyse anfordern →
+            Mehr erfahren →
           </span>
         </div>
       </div>

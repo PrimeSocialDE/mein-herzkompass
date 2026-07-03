@@ -11,6 +11,7 @@ import {
 } from "@/lib/member-db";
 import { THEMEN_MODULES, sortByUserRelevance } from "@/lib/member-themen";
 import UpsellFlipCard from "@/components/mitglieder/UpsellFlipCard";
+import PfotenCoachCard from "@/components/mitglieder/PfotenCoachCard";
 
 export const dynamic = "force-dynamic";
 
@@ -166,6 +167,12 @@ export default async function ModulShopPage() {
             ))}
           </div>
         </div>
+
+        {/* PREVIEW: Audio-Coach-Zeile — vorerst nur fuer max@primesocial.de.
+            Zum Freischalten fuer alle: diese Bedingung entfernen. */}
+        {member.email?.toLowerCase() === "max@primesocial.de" && (
+          <PfotenCoachCard dogName={member.dog_name} email={member.email} />
+        )}
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {themenModules.map((t) => (
