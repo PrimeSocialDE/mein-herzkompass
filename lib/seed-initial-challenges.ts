@@ -15,6 +15,22 @@
 // 3) getOrAssignWeekChallenges aufrufen — das triggert auto die
 //    Welcome-Challenges-Mail durch die existierende isFirstEver-Logik.
 
+// Findet einen Auth-User per E-Mail ueber ALLE Seiten (nicht nur die ersten 200).
+// Die alte "page:1"-Suche verfehlte bestehende Accounts bei >200 Usern.
+async function findAuthUserIdByEmail(sb: any, email: string): Promise<string | null> {
+  const target = email.toLowerCase();
+  for (let page = 1; page <= 60; page++) {
+    const { data, error } = await sb.auth.admin.listUsers({ page, perPage: 200 });
+    if (error || !data?.users?.length) return null;
+    const u = (data.users as any[]).find(
+      (x) => (x.email || "").toLowerCase() === target
+    );
+    if (u) return u.id;
+    if (data.users.length < 200) return null; // letzte Seite
+  }
+  return null;
+}
+
 export async function seedInitialChallengesForEmail(
   email: string
 ): Promise<{ ok: boolean; reason?: string; challenges_count?: number }> {
@@ -31,28 +47,31 @@ export async function seedInitialChallengesForEmail(
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  // 1) Auth-User suchen oder anlegen
+  // 1) Auth-User anlegen (BESTAETIGT) oder — falls vorhanden — finden UND bestaetigen.
+  //    createUser zuerst: neue Accounts sind so sofort einloggbar (email_confirm).
+  //    Bei "already registered" den bestehenden User ueber ALLE Seiten finden und
+  //    bestaetigen — das behebt den Login-Bug (unbestaetigte Alt-Accounts, die die
+  //    alte page-1-Suche verfehlte, worauf createUser scheiterte).
   let userId: string | null = null;
   try {
-    const { data: listData } = await sb.auth.admin.listUsers({
-      page: 1,
-      perPage: 200,
+    const { data: created, error: cErr } = await sb.auth.admin.createUser({
+      email,
+      email_confirm: true,
     });
-    const found = (listData?.users || []).find(
-      (u: any) => u.email?.toLowerCase() === email.toLowerCase()
-    );
-    if (found) {
-      userId = found.id;
-    } else {
-      const { data: created, error: cErr } = await sb.auth.admin.createUser({
-        email,
-        email_confirm: true,
-      });
-      if (cErr) {
-        console.warn("[challenges-seed] createUser failed:", cErr.message);
-        return { ok: false, reason: "create_user_failed" };
+    if (created?.user?.id) {
+      userId = created.user.id;
+    } else if (cErr && /(already|registered|exist)/i.test(cErr.message || "")) {
+      userId = await findAuthUserIdByEmail(sb, email);
+      if (userId) {
+        // Sicherstellen, dass der (evtl. unbestaetigte) Account bestaetigt ist.
+        const { error: uErr } = await sb.auth.admin.updateUserById(userId, {
+          email_confirm: true,
+        });
+        if (uErr) console.warn("[challenges-seed] confirm failed:", uErr.message);
       }
-      userId = created?.user?.id || null;
+    } else if (cErr) {
+      console.warn("[challenges-seed] createUser failed:", cErr.message);
+      return { ok: false, reason: "create_user_failed" };
     }
   } catch (e: any) {
     console.warn("[challenges-seed] auth-user step failed:", e?.message);
