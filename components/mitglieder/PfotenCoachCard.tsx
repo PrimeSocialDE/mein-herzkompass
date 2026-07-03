@@ -59,14 +59,17 @@ export default function PfotenCoachCard({
 
         <div className="flex items-start gap-2.5 sm:gap-4">
           <div
-            className="flex-shrink-0 w-[42px] h-[42px] sm:w-[62px] sm:h-[62px] rounded-[13px] sm:rounded-[18px] flex items-center justify-center text-[20px] sm:text-[29px]"
+            className="flex-shrink-0 w-[42px] h-[42px] sm:w-[62px] sm:h-[62px] rounded-[13px] sm:rounded-[18px] overflow-hidden border border-[#E7D3AE]"
             style={{
-              background: "linear-gradient(155deg,#4a3928,#6b533a)",
               boxShadow:
-                "0 10px 22px -10px rgba(74,57,40,.8), inset 0 1px 0 rgba(255,255,255,.15)",
+                "0 10px 22px -10px rgba(74,57,40,.6), inset 0 1px 0 rgba(255,255,255,.15)",
             }}
           >
-            🎧
+            <img
+              src="/audio-coach-icon.jpg"
+              alt=""
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="flex-1 min-w-0">
             <h2 className="text-[16px] sm:text-[20px] font-extrabold text-[#1a1a1a] leading-tight">
