@@ -469,7 +469,7 @@
                 <div class="modal-image">
                     <img src="laden1.jpg" alt="Hunde mit Besitzern">
                 </div>
-                <p class="modal-text">Hat <span id="modal1DogName">dein Hund</span> schon mal ein Gehorsamkeitstraining gemacht?</p>
+                <p class="modal-text">Kommt <span id="modal1DogName">dein Hund</span> aus dem Tierheim oder Tierschutz?</p>
             </div>
             <div class="modal-buttons">
                 <button class="modal-btn" onclick="closeModal(1, 'no')">Nein</button>
@@ -638,7 +638,7 @@
             modal.classList.remove('active');
             
             if (modalNum === 1) {
-                localStorage.setItem('hadTraining', answer);
+                localStorage.setItem('fromShelter', answer);
                 
                 animateProgress(
                     document.getElementById('progress2'),
