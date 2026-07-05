@@ -46,6 +46,45 @@ export async function deliverGrundkommandosForLead(
   const a: any = lead.answers || {};
   if (a.grundkommandos_sent_at && !opts.force) return { ok: true, reason: "already_sent" };
 
+  // Generating-Claim: verhindert, dass Sofort-Anstoss (after()) UND Cron denselben
+  // Lead gleichzeitig generieren (Doppel-Mail). Ein Claim <8 Min alt bedeutet: ein
+  // anderer Lauf ist gerade dran -> ueberlassen. Aelter = vorheriger Lauf gestorben
+  // -> neu generieren. force ueberspringt den Claim (manueller Nachschub).
+  const CLAIM_MS = 8 * 60 * 1000;
+  if (!opts.force) {
+    const claimAt = a.grundkommandos_generating_at
+      ? Date.parse(a.grundkommandos_generating_at)
+      : 0;
+    if (claimAt && Date.now() - claimAt < CLAIM_MS) {
+      return { ok: true, reason: "already_generating" };
+    }
+    // Claim setzen (frischer Read + Merge, um answers nicht zu clobbern)
+    const { data: freshClaim } = await supabase
+      .from("wauwerk_leads")
+      .select("answers")
+      .eq("id", leadId)
+      .maybeSingle();
+    const claimAnswers = (freshClaim?.answers as any) || a;
+    const freshClaimAt = claimAnswers.grundkommandos_generating_at
+      ? Date.parse(claimAnswers.grundkommandos_generating_at)
+      : 0;
+    if (
+      claimAnswers.grundkommandos_sent_at ||
+      (freshClaimAt && Date.now() - freshClaimAt < CLAIM_MS)
+    ) {
+      return { ok: true, reason: "already_generating" };
+    }
+    await supabase
+      .from("wauwerk_leads")
+      .update({
+        answers: {
+          ...claimAnswers,
+          grundkommandos_generating_at: new Date().toISOString(),
+        },
+      })
+      .eq("id", leadId);
+  }
+
   const dog = (lead.dog_name || a.dog_name || "dein Hund").toString();
   const breed = a.dog_breed ? String(a.dog_breed) : null;
   const problem = a.dog_problem || a.custom_problem_text || "Unsicherheit";

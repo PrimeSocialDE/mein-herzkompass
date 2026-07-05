@@ -1107,12 +1107,13 @@ async function deliverOrderBumpIfPurchased(payment: any, leadRecord: any) {
           })
           .eq("id", leadId);
 
-        // SOFORT anstossen (best-effort): die Generate-Route ANTRIGGERN, aber die
-        // 2-3-Min-Generierung NICHT awaiten (Mollie-Timeout). Der kurze Timeout
-        // stellt nur sicher, dass der Request rausgeht + die (separate) Funktion
-        // startet — die laeuft dann unabhaengig weiter. So kommt das PDF ~2-3 Min
-        // nach Kauf statt erst nach dem Cron. Der Cron (nur >8 Min alte Pending)
-        // ist der Backstop, falls dieser Anstoss verpufft.
+        // SOFORT anstossen: die Generate-Route mit background:true antriggern. Die
+        // antwortet SOFORT (202) und generiert per after() im Hintergrund weiter
+        // (bis 300s) — wir warten hier also NICHT auf die 2-3 Min. Wichtig: NICHT
+        // fetch+abort wie frueher (das killte die Generate-Invocation beim Abort);
+        // jetzt kommt die Antwort schnell, die Verbindung wird sauber geschlossen,
+        // und after() haelt die Generierung serverseitig am Leben. So kommt das PDF
+        // ~2-3 Min nach Kauf. Der Cron ist nur noch Backstop, falls das hier scheitert.
         const workerToken = process.env.WORKER_TOKEN;
         if (workerToken) {
           try {
@@ -1122,12 +1123,14 @@ async function deliverOrderBumpIfPurchased(payment: any, leadRecord: any) {
                 Authorization: `Bearer ${workerToken}`,
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ lead_id: leadId }),
-              signal: AbortSignal.timeout(3500),
+              body: JSON.stringify({ lead_id: leadId, background: true }),
+              signal: AbortSignal.timeout(8000),
             });
-          } catch {
-            // Timeout/Abort ist der Normalfall — wir warten bewusst nicht auf die
-            // Generierung. Die Generate-Funktion laeuft trotzdem weiter.
+          } catch (err) {
+            console.error(
+              "[mollie-webhook] Grundkommando-Sofort-Anstoss fehlgeschlagen (Cron faengt es):",
+              (err as any)?.message || err
+            );
           }
         }
       }

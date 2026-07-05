@@ -14,13 +14,15 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
 const CRON_SECRET = process.env.CRON_SECRET || "pfoten-cron-2024";
-const PER_RUN = 2; // pro Lauf (Opus + PDF je Kunde ~2-3 Min)
-// Der Mollie-Webhook stoesst die Generierung nach Kauf SOFORT an (best-effort).
-// Der Cron ist nur der Backstop: er greift nur bei Pending, die aelter als
-// STALE_MS sind — so rennt er nicht mit dem Sofort-Anstoss um die Wette (kein
-// doppeltes Generieren desselben Leads). Idempotenz-Check (grundkommandos_sent_at)
-// in deliverGrundkommandosForLead faengt Restrennen zusaetzlich ab.
-const STALE_MS = 8 * 60 * 1000; // 8 Min
+const PER_RUN = 3; // pro Lauf (Opus + PDF je Kunde ~2-3 Min, laeuft sequentiell)
+// Backstop-Logik: Nach Kauf stoesst der Webhook die Generierung SOFORT an
+// (Generate-Route mit background:true → after()). Die Deliver-Lib setzt beim Start
+// einen Claim (grundkommandos_generating_at). Der Cron soll NUR einspringen, wenn
+// dieser Sofort-Pfad NICHT laeuft — also wenn kein Claim gesetzt ist ODER der Claim
+// aelter als CLAIM_MS ist (Sofort-Lauf gestorben). So rennt der Cron nie mit dem
+// Sofort-Anstoss um die Wette (kein Doppel-Generieren), faengt aber alles ab, was
+// durchrutscht. Zusaetzlich schuetzt der Claim-Check in der Deliver-Lib selbst.
+const CLAIM_MS = 8 * 60 * 1000; // 8 Min
 
 export async function GET(req: NextRequest) {
   if (req.nextUrl.searchParams.get("secret") !== CRON_SECRET) {
@@ -40,11 +42,14 @@ export async function GET(req: NextRequest) {
   const now = Date.now();
   const todo = (data || [])
     .filter((r: any) => {
-      if (r.answers?.grundkommandos_sent_at) return false;
-      // Nur "alte" Pending anfassen — junge uebernimmt der Sofort-Anstoss im Webhook.
-      const pendingAt = Date.parse(r.answers?.grundkommandos_pending_at || "");
-      if (!Number.isFinite(pendingAt)) return true; // kein Datum -> sicherheitshalber liefern
-      return now - pendingAt >= STALE_MS;
+      const a = r.answers || {};
+      if (a.grundkommandos_sent_at) return false; // schon geliefert
+      // Frischer Claim (<8 Min) = Sofort-Pfad generiert gerade -> nicht anfassen.
+      const claimAt = a.grundkommandos_generating_at
+        ? Date.parse(a.grundkommandos_generating_at)
+        : 0;
+      if (claimAt && now - claimAt < CLAIM_MS) return false;
+      return true; // kein/alter Claim -> Backstop greift
     })
     .slice(0, PER_RUN);
 
