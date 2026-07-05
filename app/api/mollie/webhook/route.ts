@@ -958,11 +958,19 @@ async function deliverOrderBumpIfPurchased(payment: any, leadRecord: any) {
     }
   }
 
-  const baseUrl =
+  const rawBase =
     process.env.NEXT_PUBLIC_BASE_URL &&
     !process.env.NEXT_PUBLIC_BASE_URL.includes("localhost")
       ? process.env.NEXT_PUBLIC_BASE_URL
-      : "https://pfoten-plan.de";
+      : "https://www.pfoten-plan.de";
+  // WICHTIG: apex -> www normalisieren. pfoten-plan.de 307-redirected auf www,
+  // und ein Cross-Host-Redirect STRIPPT den Authorization-Header. Der
+  // authentifizierte Sofort-Anstoss an /api/grundkommandos/generate landete
+  // dadurch mit 401 im Nirwana -> Generierung startete nie (Cron rettete es spaet).
+  const baseUrl = rawBase.replace(
+    /:\/\/pfoten-plan\.de/,
+    "://www.pfoten-plan.de"
+  );
 
   if (bumpId === "notfallkarten") {
     try {
@@ -1116,22 +1124,53 @@ async function deliverOrderBumpIfPurchased(payment: any, leadRecord: any) {
         // ~2-3 Min nach Kauf. Der Cron ist nur noch Backstop, falls das hier scheitert.
         const workerToken = process.env.WORKER_TOKEN;
         if (workerToken) {
+          let triggerStatus = "unknown";
           try {
-            await fetch(`${baseUrl}/api/grundkommandos/generate`, {
+            const res = await fetch(`${baseUrl}/api/grundkommandos/generate`, {
               method: "POST",
               headers: {
                 Authorization: `Bearer ${workerToken}`,
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({ lead_id: leadId, background: true }),
+              // Redirect wuerde den Authorization-Header strippen (Cross-Host)
+              // -> lieber laut scheitern als still 401. baseUrl ist bereits www.
+              redirect: "error",
               signal: AbortSignal.timeout(8000),
             });
+            triggerStatus = String(res.status); // 202 = erfolgreich angestossen
+            if (!res.ok) {
+              console.error(
+                `[mollie-webhook] Grundkommando-Sofort-Anstoss HTTP ${res.status} (Cron faengt es)`
+              );
+            }
           } catch (err) {
+            triggerStatus = `err:${String((err as any)?.message || "").slice(0, 40)}`;
             console.error(
               "[mollie-webhook] Grundkommando-Sofort-Anstoss fehlgeschlagen (Cron faengt es):",
               (err as any)?.message || err
             );
           }
+          // Nachvollziehbarkeit: Zeitpunkt + Ergebnis des Anstosses ins Lead
+          // schreiben (frischer Merge). So sieht man pro Kauf, ob der schnelle
+          // Pfad feuerte (Status "202") oder ob der Cron uebernehmen musste.
+          try {
+            const { data: fl } = await supabase
+              .from("wauwerk_leads")
+              .select("answers")
+              .eq("id", leadId)
+              .maybeSingle();
+            await supabase
+              .from("wauwerk_leads")
+              .update({
+                answers: {
+                  ...((fl?.answers as any) || {}),
+                  grundkommandos_immediate_trigger_at: new Date().toISOString(),
+                  grundkommandos_immediate_trigger_status: triggerStatus,
+                },
+              })
+              .eq("id", leadId);
+          } catch {}
         }
       }
     } catch (e) {
