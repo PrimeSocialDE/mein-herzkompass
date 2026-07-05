@@ -104,48 +104,89 @@ export async function GET(req: NextRequest) {
           );
         }
 
-        await supabase
+        // FRISCHER Read direkt vor dem Schreiben. Bei PayPal feuern Mollie-Webhook
+        // (Server→Server) und dieser Return-Redirect (Browser) quasi zeitgleich.
+        // Der Webhook liefert den Order-Bump aus und setzt Flags in answers
+        // (order_bump_delivered, grundkommandos_pending_at). Unser prevAnswers-
+        // Snapshot ist vom Anfang des Handlers — also VOR dem Webhook. Wuerden wir
+        // damit schreiben, clobbern wir die Bump-Flags → der Grundkommando-Cron
+        // sieht den Kaeufer nie. Deshalb: frisch lesen, und wenn der Webhook uns
+        // zuvorgekommen ist (payment.id schon in processed_payment_ids), NICHTS tun
+        // (er hat DB-Update, member-sync und Make bereits erledigt). Sonst auf den
+        // FRISCHEN Stand mergen, damit evtl. schon gesetzte Flags erhalten bleiben.
+        const { data: freshLead } = await supabase
           .from("wauwerk_leads")
-          .update(updateData)
-          .eq("id", leadId);
+          .select("answers")
+          .eq("id", leadId)
+          .maybeSingle();
+        const freshAnswers = (freshLead?.answers || prevAnswers) as Record<
+          string,
+          any
+        >;
+        const freshProcessed: string[] = Array.isArray(
+          freshAnswers.processed_payment_ids
+        )
+          ? freshAnswers.processed_payment_ids
+          : [];
 
-        // Direct-Sync member_users falls schon Profil vorhanden
-        const leadEmail = lead.email || payment?.metadata?.email || null;
-        if (leadEmail) {
-          try {
-            const { syncMemberPaidStatusFromLead } = await import(
-              "@/lib/member-db"
-            );
-            await syncMemberPaidStatusFromLead({
-              email: leadEmail,
-              paidAt: updateData.paid_at,
-              leadId,
-            });
-          } catch (e: any) {
-            console.error("[mollie-return] member-sync failed:", e?.message);
+        if (freshProcessed.includes(lead.mollie_payment_id)) {
+          console.log(
+            `[mollie-return] Webhook war schneller fuer ${lead.mollie_payment_id} — ` +
+              `Safety-Net skip (kein Clobber, kein Doppel-Make)`
+          );
+        } else {
+          updateData.answers = {
+            ...freshAnswers,
+            processed_payment_ids: [
+              ...freshProcessed,
+              lead.mollie_payment_id,
+            ],
+            paid_via_safety_net_at: new Date().toISOString(),
+          };
+
+          await supabase
+            .from("wauwerk_leads")
+            .update(updateData)
+            .eq("id", leadId);
+
+          // Direct-Sync member_users falls schon Profil vorhanden
+          const leadEmail = lead.email || payment?.metadata?.email || null;
+          if (leadEmail) {
+            try {
+              const { syncMemberPaidStatusFromLead } = await import(
+                "@/lib/member-db"
+              );
+              await syncMemberPaidStatusFromLead({
+                email: leadEmail,
+                paidAt: updateData.paid_at,
+                leadId,
+              });
+            } catch (e: any) {
+              console.error("[mollie-return] member-sync failed:", e?.message);
+            }
           }
-        }
 
-        // Make.com triggern (Plan-Versand)
-        const makeUrl = process.env.MAKE_WEBHOOK_URL;
-        if (makeUrl) {
-          try {
-            await fetch(makeUrl, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                orderId: leadId,
-                source: "mollie.return.safety_net",
-                table: "wauwerk_leads",
-                email: lead.email || (payment?.metadata?.email ?? null),
-                name: lead.customer_name || null,
-                mollie_payment_id: lead.mollie_payment_id,
-                method: payment?.method,
-              }),
-            });
-            console.log(`[mollie-return] Safety-Net: Make.com getriggert`);
-          } catch (e) {
-            console.error("[mollie-return] Safety-Net Make-Fehler:", e);
+          // Make.com triggern (Plan-Versand)
+          const makeUrl = process.env.MAKE_WEBHOOK_URL;
+          if (makeUrl) {
+            try {
+              await fetch(makeUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  orderId: leadId,
+                  source: "mollie.return.safety_net",
+                  table: "wauwerk_leads",
+                  email: lead.email || (payment?.metadata?.email ?? null),
+                  name: lead.customer_name || null,
+                  mollie_payment_id: lead.mollie_payment_id,
+                  method: payment?.method,
+                }),
+              });
+              console.log(`[mollie-return] Safety-Net: Make.com getriggert`);
+            } catch (e) {
+              console.error("[mollie-return] Safety-Net Make-Fehler:", e);
+            }
           }
         }
       }

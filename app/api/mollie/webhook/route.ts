@@ -1106,6 +1106,30 @@ async function deliverOrderBumpIfPurchased(payment: any, leadRecord: any) {
             },
           })
           .eq("id", leadId);
+
+        // SOFORT anstossen (best-effort): die Generate-Route ANTRIGGERN, aber die
+        // 2-3-Min-Generierung NICHT awaiten (Mollie-Timeout). Der kurze Timeout
+        // stellt nur sicher, dass der Request rausgeht + die (separate) Funktion
+        // startet — die laeuft dann unabhaengig weiter. So kommt das PDF ~2-3 Min
+        // nach Kauf statt erst nach dem Cron. Der Cron (nur >8 Min alte Pending)
+        // ist der Backstop, falls dieser Anstoss verpufft.
+        const workerToken = process.env.WORKER_TOKEN;
+        if (workerToken) {
+          try {
+            await fetch(`${baseUrl}/api/grundkommandos/generate`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${workerToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ lead_id: leadId }),
+              signal: AbortSignal.timeout(3500),
+            });
+          } catch {
+            // Timeout/Abort ist der Normalfall — wir warten bewusst nicht auf die
+            // Generierung. Die Generate-Funktion laeuft trotzdem weiter.
+          }
+        }
       }
     } catch (e) {
       console.error("[mollie-webhook] Grundkommando-Bump Error:", e);
