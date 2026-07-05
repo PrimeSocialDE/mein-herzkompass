@@ -98,12 +98,17 @@ function suggestModule(
       break;
     }
   }
-  // Kein klares Thema, oder es ist das Hauptproblem des Plans → nichts vorschlagen
-  if (!theme || theme === mainProblem) return null;
+  // Kein klares Thema → nichts vorschlagen. (Hinweis darf jetzt AUCH beim
+  // eigenen Plan-Thema kommen — das Modul hat mehr/individuellere Übungen.
+  // Die Karte haengt UNTER der Antwort; der KI-Coach beantwortet die Frage
+  // trotzdem voll, unabhaengig vom Vorschlag.)
+  if (!theme) return null;
+  void mainProblem;
 
-  // Anhaltendes Interesse: Thema muss in >= 2 Nutzer-Nachrichten vorkommen
+  // Frueher Hinweis erlaubt: schon ab der ERSTEN klaren Frage zum Thema.
+  // (Vorher >= 2 Nachrichten noetig -> Vorschlag feuerte fast nie.)
   const hits = userTexts.filter((t) => THEME_PATTERNS[theme!].test(t)).length;
-  if (hits < 2) return null;
+  if (hits < 1) return null;
 
   const mod = THEMEN_MODULES.find((m) => m.problem_match === theme);
   if (!mod) return null;

@@ -379,10 +379,10 @@ export default function HilfePage() {
                   💡 Passend zu deinem Thema
                 </p>
                 <p className="text-[13px] text-[#4B5563] leading-relaxed mb-2">
-                  Wenn du das über mehrere Wochen strukturiert angehen willst, gibt
-                  es dafür das Modul <strong>„{m.suggestedModule.title}"</strong> (
-                  {m.suggestedModule.goal.toLowerCase()}). Kein Muss — ich helfe dir
-                  auch hier gerne weiter.
+                  Dazu haben wir das Modul <strong>„{m.suggestedModule.title}"</strong> —
+                  mit deutlich <strong>mehr und individuelleren Übungen</strong> (
+                  {m.suggestedModule.goal.toLowerCase()}), Schritt für Schritt. Kein Muss,
+                  ich helfe dir hier natürlich auch weiter.
                 </p>
                 <a
                   href="/mitglieder/module"
