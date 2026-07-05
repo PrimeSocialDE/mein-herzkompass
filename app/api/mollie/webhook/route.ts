@@ -1069,17 +1069,12 @@ async function deliverOrderBumpIfPurchased(payment: any, leadRecord: any) {
   }
 
   if (bumpId === "sommer") {
+    // Der Bump ist jetzt der NOTFALL-GRUNDKOMMANDO-PLAN (ersetzt Sommer-Hitzeschutz).
+    // Die Opus-Generierung (~2-3 Min) laeuft NICHT synchron hier (Mollie-Timeout →
+    // Doppel-Auslieferung), sondern der Cron /api/cron/generate-grundkommandos
+    // liefert aus. Hier nur Bump-Idempotenz markieren + Pending-Flag setzen.
     try {
-      const ansRaw = (leadRecord?.answers || {}) as Record<string, any>;
-      const breed =
-        leadRecord?.dog_breed || ansRaw.dog_breed || meta.dog_breed || "Mischling";
-      const age = ansRaw.dog_age || meta.dog_age || "adult";
-      const res = await fetch(`${baseUrl}/api/sommer-hitzeschutz/generate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, dogName, breed, age }),
-      });
-      if (res.ok && leadId) {
+      if (leadId) {
         const { data: lead } = await supabase
           .from("wauwerk_leads")
           .select("answers")
@@ -1091,22 +1086,17 @@ async function deliverOrderBumpIfPurchased(payment: any, leadRecord: any) {
           .update({
             answers: {
               ...prev,
-              order_bump_delivered: "sommer",
+              order_bump_delivered: "grundkommandos",
               order_bump_delivered_at: new Date().toISOString(),
               order_bump_amount_cents: meta.order_bump_amount_cents || "999",
-              sommer_sent_at: new Date().toISOString(),
+              grundkommandos_pending_at:
+                prev.grundkommandos_pending_at || new Date().toISOString(),
             },
           })
           .eq("id", leadId);
-      } else if (!res.ok) {
-        console.error(
-          "[mollie-webhook] Sommer-Plan Generate failed:",
-          res.status,
-          await res.text().catch(() => "")
-        );
       }
     } catch (e) {
-      console.error("[mollie-webhook] Sommer-Plan-Bump Error:", e);
+      console.error("[mollie-webhook] Grundkommando-Bump Error:", e);
     }
   }
 }
