@@ -151,7 +151,19 @@ async function handlePaid(payment: any) {
   // answers.processed_payment_ids — wenn dieser Webhook für GENAU diese
   // payment.id schon mal lief, skip. Bei NEUEM Payment (auch wenn Lead
   // schon paid war) → kommt durch und feuert Make.com.
-  const prevAnswers = (existingRecord.answers || {}) as Record<string, any>;
+  // WICHTIG: Frischer Read NACH deliverOrderBumpIfPurchased. Sonst ueberschreibt
+  // der Stale-Snapshot existingRecord.answers unten (updateData.answers) die vom
+  // Bump gesetzten Flags (order_bump_delivered, grundkommandos_pending_at) wieder
+  // -> der Grundkommando-Cron sah die Kaeufer nie. Vgl. webhook-delivery-idempotency.
+  let prevAnswers = (existingRecord.answers || {}) as Record<string, any>;
+  try {
+    const { data: freshLead } = await supabase
+      .from(table)
+      .select("answers")
+      .eq("id", existingRecord.id)
+      .maybeSingle();
+    if (freshLead?.answers) prevAnswers = freshLead.answers as Record<string, any>;
+  } catch {}
   const processedIds: string[] = Array.isArray(prevAnswers.processed_payment_ids)
     ? prevAnswers.processed_payment_ids
     : [];
