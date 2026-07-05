@@ -11,6 +11,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { Webhook } from "standardwebhooks";
+import { buildOneTapUrl } from "@/lib/one-tap-login";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -197,7 +198,7 @@ function buildHtml(p: SupabaseEmailHookPayload, link: string, code: string): str
 
   <!-- Hinweis Sicherheit -->
   <p style="font-size:12px;color:#9CA3AF;text-align:center;margin:18px 0 12px;line-height:1.55;">
-    🔒 Der Link gilt 1 Stunde und ist nur für dich. Falls du das nicht warst — ignorier die Mail einfach, es passiert nichts.
+    🔒 Der Login-Button funktioniert mehrere Tage lang — du kannst diese Mail also in Ruhe später öffnen. Nur für dich; falls du das nicht warst, ignorier sie einfach.
   </p>
 
   <!-- Footer -->
@@ -238,7 +239,7 @@ So einfach geht's:
 2. Du landest direkt in deinem Mitgliederbereich
 3. Fertig
 
-Link + Code gelten 1 Stunde und sind nur für dich. Falls du das nicht warst — einfach ignorieren.
+Der Login-Link funktioniert mehrere Tage lang — du kannst die Mail in Ruhe später öffnen. Der 6-stellige Code ist kürzer gültig. Beides nur für dich; falls du das nicht warst, einfach ignorieren.
 
 Fragen? support@pfoten-plan.de
 
@@ -312,8 +313,30 @@ export async function POST(req: NextRequest) {
   // payload.email_data.token ist der 6-stellige OTP-Code,
   // token_hash ist der laengere Hash fuer den Magic-Link.
   const code = payload.email_data.token || "";
-  const html = buildHtml(payload, link, code);
-  const text = buildPlainText(payload, link, code);
+
+  // Haupt-CTA: bei LOGIN-Aktionen den durable One-Tap-Link nutzen (tagelang
+  // gueltig, wiederverwendbar, scanner-sicher) statt des fragilen Einmal-Magic-
+  // Links. Genau das behebt "Code/Link schon abgelaufen als ich zurueckkam".
+  // Bei E-Mail-Aenderung braucht es den echten Bestaetigungs-Token → Original-Link.
+  const action = payload.email_data.email_action_type;
+  const isLoginAction =
+    action === "magiclink" || action === "signup" || action === "recovery";
+  let ctaUrl = link;
+  if (isLoginAction) {
+    try {
+      ctaUrl = buildOneTapUrl(PFOTEN_SITE_URL, payload.user.email, {
+        next: "/mitglieder",
+      });
+    } catch (e: any) {
+      console.error(
+        "[auth-hook] One-Tap-URL-Build fehlgeschlagen, nutze Magic-Link:",
+        e?.message
+      );
+    }
+  }
+
+  const html = buildHtml(payload, ctaUrl, code);
+  const text = buildPlainText(payload, ctaUrl, code);
 
   try {
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {
