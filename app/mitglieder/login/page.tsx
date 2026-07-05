@@ -24,6 +24,7 @@ export default function LoginPage() {
   const [mode, setMode] = useState<Mode>("anmelden");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [code, setCode] = useState("");
   const [stage, setStage] = useState<Stage>("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -168,6 +169,7 @@ export default function LoginPage() {
     setStage("idle");
     setCode("");
     setPassword("");
+    setShowPassword(false);
     setErrorMsg("");
   }
 
@@ -177,6 +179,7 @@ export default function LoginPage() {
     setStage("idle");
     setCode("");
     setPassword("");
+    setShowPassword(false);
     setErrorMsg("");
   }
 
@@ -226,7 +229,7 @@ export default function LoginPage() {
           </h1>
           <p className="text-[14px] text-[#6B7280] leading-relaxed mb-6">
             {isAnmelden
-              ? "Mit E-Mail und Passwort einloggen. Noch kein Passwort? Lass das Feld leer — wir schicken dir einen 6-stelligen Code."
+              ? "Gib deine E-Mail ein — wir schicken dir einen 6-stelligen Login-Code. Kein Passwort nötig."
               : "Trag deine E-Mail ein. Wir schicken dir einen Magic-Link — ein Klick und dein Konto ist da."}
           </p>
 
@@ -345,7 +348,7 @@ export default function LoginPage() {
             )
           ) : (
             // ── Initialer Form (für beide Modi gleich) ──────────────
-            <form onSubmit={isAnmelden ? loginWithPassword : sendLink} className="space-y-4">
+            <form onSubmit={isAnmelden ? (showPassword ? loginWithPassword : sendLink) : sendLink} className="space-y-4">
               <div>
                 <label className="block text-[12px] font-medium text-[#6B7280] mb-1.5">
                   E-Mail
@@ -362,7 +365,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              {isAnmelden && (
+              {isAnmelden && showPassword && (
                 <div>
                   <label className="block text-[12px] font-medium text-[#6B7280] mb-1.5">
                     Passwort
@@ -392,20 +395,37 @@ export default function LoginPage() {
                 {stage === "loading"
                   ? "Moment…"
                   : isAnmelden
-                    ? "Einloggen"
+                    ? showPassword
+                      ? "Einloggen"
+                      : "Login-Code anfordern"
                     : "Magic-Link senden"}
               </button>
 
-              {isAnmelden && (
-                <button
-                  type="button"
-                  onClick={sendLink}
-                  disabled={stage === "loading"}
-                  className="w-full text-[12px] text-[#8B7355] underline hover:text-[#1a1a1a] py-1 disabled:opacity-60"
-                >
-                  Kein Passwort? Code per E-Mail anfordern
-                </button>
-              )}
+              {isAnmelden &&
+                (showPassword ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPassword(false);
+                      setPassword("");
+                      setErrorMsg("");
+                    }}
+                    className="w-full text-[12px] text-[#8B7355] underline hover:text-[#1a1a1a] py-1"
+                  >
+                    Lieber per Login-Code (ohne Passwort)
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPassword(true);
+                      setErrorMsg("");
+                    }}
+                    className="w-full text-[12px] text-[#9CA3AF] underline hover:text-[#1a1a1a] py-1"
+                  >
+                    Ich habe ein Passwort eingerichtet
+                  </button>
+                ))}
 
               <p className="text-[11px] text-[#9CA3AF] text-center pt-2 leading-relaxed">
                 {isAnmelden

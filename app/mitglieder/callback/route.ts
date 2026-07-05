@@ -107,3 +107,69 @@ export async function GET(request: NextRequest) {
     `${origin}/mitglieder/login?error=fehlende_parameter`
   );
 }
+
+// POST: scanner-sicherer Weg. Die Bestaetigungsseite /mitglieder/anmelden
+// submittet hierher — der Einmal-Token wird also erst beim echten Klick
+// (nicht beim GET-Vorabruf eines E-Mail-Scanners) via verifyOtp eingeloest.
+export async function POST(request: NextRequest) {
+  const { origin } = new URL(request.url);
+
+  let tokenHash = "";
+  let typeParam: EmailOtpType | null = null;
+  let next = "/mitglieder";
+  try {
+    const form = await request.formData();
+    tokenHash = String(form.get("token_hash") || "");
+    typeParam = (String(form.get("type") || "") || null) as EmailOtpType | null;
+    const n = String(form.get("next") || "");
+    if (n.startsWith("/")) next = n; // Open-Redirect-Schutz
+  } catch (e) {
+    console.error("[mitglieder/callback POST] body parse:", e);
+  }
+
+  if (!tokenHash || !typeParam) {
+    return NextResponse.redirect(
+      `${origin}/mitglieder/login?error=fehlende_parameter`,
+      { status: 303 }
+    );
+  }
+
+  // 303 → Browser macht nach dem POST einen GET auf das Ziel (Dashboard).
+  const response = NextResponse.redirect(`${origin}${next}`, { status: 303 });
+
+  const supabase = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) =>
+          response.cookies.set(name, value, options)
+        );
+      },
+    },
+  });
+
+  const { data, error } = await supabase.auth.verifyOtp({
+    token_hash: tokenHash,
+    type: typeParam,
+  });
+  if (error || !data?.user) {
+    console.error("[mitglieder/callback POST] verifyOtp fehlgeschlagen:", error?.message);
+    return NextResponse.redirect(
+      `${origin}/mitglieder/login?error=${encodeURIComponent(
+        error?.message?.includes("expired") ? "link_abgelaufen" : "verify_failed"
+      )}`,
+      { status: 303 }
+    );
+  }
+  try {
+    await getOrCreateMemberProfile({
+      userId: data.user.id,
+      email: data.user.email || "",
+    });
+  } catch (e) {
+    console.error("[mitglieder/callback POST] profil setup fail:", e);
+  }
+  return response;
+}

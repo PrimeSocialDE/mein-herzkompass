@@ -77,7 +77,10 @@ function buildLoginUrl(p: SupabaseEmailHookPayload): string {
     type,
     next,
   });
-  return `${PFOTEN_SITE_URL}/mitglieder/callback?${params.toString()}`;
+  // Zeigt auf die scanner-sichere Bestaetigungsseite (nicht direkt auf callback).
+  // Dort loest erst ein echter Klick (POST) den Einmal-Token ein — E-Mail-Scanner
+  // (GET-Vorabruf) verbrennen ihn dadurch nicht mehr. Siehe app/mitglieder/anmelden.
+  return `${PFOTEN_SITE_URL}/mitglieder/anmelden?${params.toString()}`;
 }
 
 function buildSubject(p: SupabaseEmailHookPayload): string {
