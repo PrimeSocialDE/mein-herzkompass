@@ -547,54 +547,69 @@ export interface UserChallenge {
 
 function pickTemplatesForUser(
   member: MemberProfile,
-  recentSlugs: Set<string>
+  recentSlugs: Set<string>,
+  weekStart: string
 ): ChallengeTemplate[] {
   const isPaid = member.purchase_status === "paid";
   const problemKey =
     member.quiz_result?.dog_problem || member.quiz_result?.problem || null;
 
+  // Wochen-Rotationszahl (Wochen seit Epoch) — aendert sich jede Woche um 1.
+  // Damit rotieren "recycelte" Picks von Woche zu Woche DURCH den Pool, statt
+  // stur die erste Aufgabe zu wiederholen. Das war der Bug: sobald der Pool
+  // "verbraucht" war (alle recent), kam immer problemPool[0] = z.B. 4x "Sitz".
+  const rot = Math.floor((Date.parse(weekStart) || 0) / (7 * 86400 * 1000));
+
+  // Nimmt bis zu `count` Aufgaben aus pool: zuerst frische (nicht recent),
+  // dann — falls noetig — rotierend ab dem Wochen-Offset aufgefuellt (nie stur
+  // die erste). Ueberspringt bereits gewaehlte Slugs. So gibt es auch bei
+  // erschoepftem Pool jede Woche eine ANDERE Aufgabe statt Wiederholung.
+  const pick = (
+    pool: ChallengeTemplate[],
+    count: number,
+    chosen: ChallengeTemplate[]
+  ): ChallengeTemplate[] => {
+    const out: ChallengeTemplate[] = [];
+    const taken = new Set(chosen.map((c) => c.slug));
+    for (const t of pool) {
+      if (out.length >= count) break;
+      if (recentSlugs.has(t.slug) || taken.has(t.slug)) continue;
+      out.push(t);
+      taken.add(t.slug);
+    }
+    if (out.length < count && pool.length > 0) {
+      for (let i = 0; i < pool.length && out.length < count; i++) {
+        const idx = (((rot + i) % pool.length) + pool.length) % pool.length;
+        const t = pool[idx];
+        if (taken.has(t.slug)) continue;
+        out.push(t);
+        taken.add(t.slug);
+      }
+    }
+    return out;
+  };
+
   const result: ChallengeTemplate[] = [];
 
-  // 1) Problem-spezifische Challenge — bevorzugt non-recent, sonst recycelt
+  // 1) Problem-spezifisch (Paid: bis 2, Free: 1) — bevorzugt frisch, sonst rotierend
   const problemPool = CHALLENGE_TEMPLATES.filter(
     (t) => t.problem_match === problemKey && (isPaid || !t.is_premium)
   );
-  const problemFresh = problemPool.filter((t) => !recentSlugs.has(t.slug));
-  if (problemFresh.length > 0) {
-    result.push(problemFresh[0]);
-  } else if (problemPool.length > 0) {
-    // Alle problem-Templates schon recent — recycle das aelteste (= erstes in CHALLENGE_TEMPLATES)
-    result.push(problemPool[0]);
-  }
+  result.push(...pick(problemPool, isPaid ? 2 : 1, result));
 
-  // Bei Paid: zweite problem-spezifische Challenge (wenn vorhanden)
-  if (isPaid && problemFresh.length > 1) {
-    result.push(problemFresh[1]);
-  }
-
-  // 2) Generic Challenge — als Mindestgarantie (bevorzugt non-recent)
+  // 2) Generic — Mindestgarantie (falls kein Problem-Match griff) + Paid-Bonus
   const genericPool = CHALLENGE_TEMPLATES.filter(
-    (t) =>
-      t.problem_match === null &&
-      (isPaid || !t.is_premium) &&
-      !result.some((r) => r.slug === t.slug)
+    (t) => t.problem_match === null && (isPaid || !t.is_premium)
   );
-  const genericFresh = genericPool.filter((t) => !recentSlugs.has(t.slug));
-
-  if (result.length === 0) {
-    // Mindestgarantie: mindestens 1 Challenge, lieber recycelt als nichts
-    if (genericFresh.length > 0) result.push(genericFresh[0]);
-    else if (genericPool.length > 0) result.push(genericPool[0]);
-  }
-
-  // Bei Paid: bis zu 2 Bonus-Generic-Challenges obendrauf
-  if (isPaid) {
-    const remainingFresh = genericFresh.filter(
-      (t) => !result.some((r) => r.slug === t.slug)
-    );
-    for (const b of remainingFresh.slice(0, 2)) {
-      result.push(b);
-    }
+  const wantGeneric = isPaid
+    ? result.length === 0
+      ? 3
+      : 2
+    : result.length === 0
+    ? 1
+    : 0;
+  if (wantGeneric > 0) {
+    result.push(...pick(genericPool, wantGeneric, result));
   }
 
   return result;
@@ -640,7 +655,7 @@ export async function getOrAssignWeekChallenges(
   const isFirstEver = (countRes.count || 0) === 0;
 
   // 3) Templates picken
-  const templates = pickTemplatesForUser(member, recentSlugs);
+  const templates = pickTemplatesForUser(member, recentSlugs, weekStart);
   if (templates.length === 0) {
     // Notfall: alle wurden schon mal gemacht — recyclen, nimm irgendeine generic
     const fallback = CHALLENGE_TEMPLATES.filter(
