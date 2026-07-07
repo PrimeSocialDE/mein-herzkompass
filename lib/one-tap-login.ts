@@ -16,7 +16,10 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 const SECRET =
   process.env.LOGIN_LINK_SECRET || process.env.WORKER_TOKEN || "";
 
-const DEFAULT_TTL_DAYS = 30;
+const DEFAULT_TTL_DAYS = 365; // 1 Jahr — der Link soll "quasi ewig" halten,
+// damit Kunden nie wieder einen neuen Code anfordern muessen. Reine Zugangs-
+// Bequemlichkeit fuer ein digitales Produkt; der Link ist HMAC-signiert
+// (nicht faelschbar) und wiederverwendbar (Scanner-Prefetch schadet nicht).
 
 function b64url(buf: Buffer): string {
   return buf
