@@ -82,6 +82,12 @@
   footer a{color:#777;text-decoration:underline}
   .disc{background:#efefef;padding:10px 12px;margin-bottom:12px;font-size:11px;color:#888}
   @media (max-width:520px){ h1{font-size:24px} .dek{font-size:17px} h2{font-size:19px} body{font-size:17px} }
+  .stickycta{position:fixed;left:0;right:0;bottom:0;z-index:900;background:rgba(255,255,255,.97);border-top:1px solid #e2e2e2;box-shadow:0 -3px 14px rgba(0,0,0,.1);padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px))}
+  .stickycta a{display:block;background:var(--cta);color:#fff;text-decoration:none;font-family:Arial,sans-serif;font-weight:800;font-size:16px;text-align:center;padding:13px;border-radius:8px;box-shadow:0 2px 0 var(--cta2)}
+  .stickycta a:active{transform:translateY(1px);box-shadow:0 1px 0 var(--cta2)}
+  .stickycta .sub{display:block;font-weight:600;font-size:11px;opacity:.95;margin-top:1px}
+  body{padding-bottom:82px}
+  @media(min-width:1024px){.stickycta{display:none} body{padding-bottom:0}}
 </style>
 <script src="/cookie-banner.js" defer></script>
 </head>
@@ -198,5 +204,6 @@
   <div class="rt"><b>Hund kommt nicht zurück?</b><span class="rc">Kostenlos testen →</span></div>
 </a>
 
+<div class="stickycta"><a href="/kurz-schritt1?utm_source=google&utm_medium=cpc&utm_campaign=magazin&utm_content=rueckruf-sticky">Kostenlosen Hunde-Test starten →<span class="sub">Kostenlos · 60 Sekunden · sofort Ergebnis</span></a></div>
 </body>
 </html>
