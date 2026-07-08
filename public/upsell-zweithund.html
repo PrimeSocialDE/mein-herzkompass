@@ -204,7 +204,7 @@
                 body: JSON.stringify({ paymentIntentId: piId, type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName })
             }).then(r => r.json()).then(d => console.log('Purchase handler:', d)).catch(err => console.error('Purchase error:', err));
             if (typeof fbq !== 'undefined') fbq('track', 'Purchase', { value: 19.99, currency: 'EUR', content_name: 'Zweithund-Guide' });
-            if (typeof gtag !== 'undefined') gtag('event', 'conversion', { send_to: 'AW-17806525009/upsell_zweithund', value: 19.99, currency: 'EUR' });
+            if (typeof gtag !== 'undefined') gtag('event', 'conversion', { send_to: 'AW-17806525009/I3FdCL3O1NEbENGE6KpC', value: 19.99, currency: 'EUR', transaction_id: leadId + '_' + PRODUCT_TYPE });
         }
 
         async function buyProduct() {
