@@ -37,8 +37,8 @@ export default function ClubAboCard({
       <img
         src="/AboFoto.jpg"
         alt="Persönliche Trainings-Hilfe für deinen Hund"
-        className="block w-full h-[62px] sm:h-[74px] object-cover"
-        style={{ objectPosition: "center 38%" }}
+        className="block w-full h-[128px] sm:h-[150px] object-cover"
+        style={{ objectPosition: "center 42%" }}
       />
 
       <div className="relative px-3.5 pt-2.5 pb-3 sm:px-4 sm:pt-3 sm:pb-3.5">
