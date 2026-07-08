@@ -3,6 +3,11 @@ import { after } from "next/server";
 import { supabase } from "@/lib/db";
 import { getMollie } from "@/lib/mollie";
 import { generateRedeemCode } from "@/lib/referral";
+import {
+  activateClubForLead,
+  CLUB_PRICE_EUR,
+  CLUB_DESCRIPTION,
+} from "@/lib/club";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -50,6 +55,13 @@ export async function POST(req: NextRequest) {
     console.log(
       `[mollie-webhook] Status: ${payment.status} | Method: ${payment.method} | Amount: ${payment.amount?.value}`
     );
+
+    // ── Club-Abo-Zahlungen VOR dem normalen Plan-Flow abfangen ──────────
+    const meta0 = ((payment as any).metadata || {}) as Record<string, any>;
+    if (meta0.kind === "club_first" || meta0.kind === "club_sub") {
+      await handleClubPayment(payment, meta0);
+      return NextResponse.json({ ok: true, club: meta0.kind });
+    }
 
     switch (payment.status) {
       case "paid":
@@ -1480,6 +1492,102 @@ async function triggerInternalPlanGeneration(
     }
   } catch (e: any) {
     console.error("[mollie-webhook] plan-gen fetch failed:", e?.message);
+  }
+}
+
+// ── Club-Abo: Zahlungs-Handling ──────────────────────────────────────
+function clubSiteUrl(): string {
+  const raw =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "https://www.pfoten-plan.de";
+  return raw
+    .replace(/^http:\/\//, "https://")
+    .replace(/\/+$/, "")
+    .replace(/:\/\/pfoten-plan\.de/, "://www.pfoten-plan.de");
+}
+
+async function triggerClubNotfallkarten(email: string, dogName?: string | null) {
+  if (!email) return;
+  try {
+    await fetch(`${clubSiteUrl()}/api/notfall-karten/generate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, dogName: dogName || "deinen Hund" }),
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch (e) {
+    console.error("[club] Notfall-Karten-Trigger:", (e as any)?.message);
+  }
+}
+
+async function handleClubPayment(payment: any, meta: Record<string, any>) {
+  const leadId = meta.lead_id as string | undefined;
+  const email = String(meta.email || "").toLowerCase();
+  if (payment.status !== "paid") {
+    console.log(`[club] ${payment.id} status=${payment.status} kind=${meta.kind} — keine Freischaltung`);
+    return;
+  }
+  if (!leadId) {
+    console.error("[club] kein lead_id in Metadata");
+    return;
+  }
+
+  const { data: lead } = await supabase
+    .from("wauwerk_leads")
+    .select("answers,dog_name,mollie_customer_id")
+    .eq("id", leadId)
+    .maybeSingle();
+  const answers = (lead?.answers || {}) as Record<string, any>;
+  const customerId = payment.customerId || lead?.mollie_customer_id || null;
+
+  if (meta.kind === "club_first") {
+    // Erstzahlung: Mandate steht jetzt. Subscription anlegen (erste RECURRING-
+    // Abbuchung in 1 Monat, weil die Erstzahlung gerade lief). Idempotent.
+    if (answers.club_subscription_id) {
+      console.log(`[club] ${payment.id} — Subscription existiert schon, skip`);
+      return;
+    }
+    const mollie = getMollie();
+    let subId: string | null = null;
+    try {
+      const startDate = new Date(Date.now() + 30 * 86400 * 1000)
+        .toISOString()
+        .slice(0, 10);
+      const sub = await (mollie as any).customerSubscriptions.create({
+        customerId,
+        amount: { currency: "EUR", value: CLUB_PRICE_EUR },
+        interval: "1 month",
+        startDate,
+        description: CLUB_DESCRIPTION,
+        webhookUrl: `${clubSiteUrl()}/api/mollie/webhook`,
+        metadata: { kind: "club_sub", email, lead_id: leadId },
+      });
+      subId = sub?.id || null;
+    } catch (e) {
+      console.error("[club] Subscription-Anlage fehlgeschlagen:", (e as any)?.message);
+    }
+    // Mandate-ID sichern (fuer spaetere One-Click-Sachen)
+    if (payment.mandateId) {
+      await supabase
+        .from("wauwerk_leads")
+        .update({ mollie_mandate_id: payment.mandateId })
+        .eq("id", leadId);
+    }
+    await activateClubForLead(leadId, { subscriptionId: subId, customerId, email });
+    await triggerClubNotfallkarten(email, lead?.dog_name);
+    console.log(`[club] aktiviert (first) lead=${leadId} sub=${subId}`);
+  } else {
+    // club_sub — monatliche Abbuchung erfolgreich. Wenn (noch) nicht aktiv und
+    // nicht gekuendigt -> aktivieren (Fallback fuer den Mandate-Pfad). Sonst
+    // laeuft alles, Drip NICHT anfassen.
+    if (!answers.club_active && !answers.club_canceled_at) {
+      await activateClubForLead(leadId, { customerId, email });
+      await triggerClubNotfallkarten(email, lead?.dog_name);
+      console.log(`[club] aktiviert (sub-fallback) lead=${leadId}`);
+    } else {
+      console.log(`[club] recurring ok lead=${leadId} — laeuft`);
+    }
   }
 }
 

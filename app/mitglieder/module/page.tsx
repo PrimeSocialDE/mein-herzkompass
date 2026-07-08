@@ -11,7 +11,8 @@ import {
 } from "@/lib/member-db";
 import { THEMEN_MODULES, sortByUserRelevance } from "@/lib/member-themen";
 import UpsellFlipCard from "@/components/mitglieder/UpsellFlipCard";
-import PfotenCoachCard from "@/components/mitglieder/PfotenCoachCard";
+import ClubAboCard from "@/components/mitglieder/ClubAboCard";
+import { getClubStateForEmail } from "@/lib/club";
 
 export const dynamic = "force-dynamic";
 
@@ -111,6 +112,25 @@ export default async function ModulShopPage() {
     member.quiz_result?.dog_problem || member.quiz_result?.problem || null;
   const themenModules = sortByUserRelevance(THEMEN_MODULES, userProblemKey);
 
+  // Club-Status (defensiv — darf die Seite fuer Nicht-Club-Mitglieder NIE
+  // beeinflussen; bei jedem Fehler fallen wir auf "kein Club" zurueck).
+  let hasClub = false;
+  let clubUnlocked = new Set<string>();
+  let clubNextUnlockAt: string | null = null;
+  try {
+    if (member.email) {
+      const club = await getClubStateForEmail(member.email);
+      hasClub =
+        club.state.active ||
+        (!!club.state.accessUntil &&
+          Date.parse(club.state.accessUntil) > Date.now());
+      clubUnlocked = new Set(club.state.unlocked);
+      clubNextUnlockAt = club.state.nextUnlockAt;
+    }
+  } catch (e) {
+    console.error("[module-page] club-state read failed:", (e as any)?.message);
+  }
+
   return (
     <>
       {/* Header */}
@@ -125,6 +145,33 @@ export default async function ModulShopPage() {
           Dein Trainings-Plan plus zusätzliche Spezial-Themen.
         </p>
       </div>
+
+      {/* ── Pfoten-Plan Club (Abo) — prominent GANZ OBEN. Ersetzt die
+          fruehere Audio-Coach-Karte. VORERST NUR fuer max@ (Test-Gate) —
+          zum oeffentlichen Launch: die email-Bedingung entfernen. ── */}
+      {!hasClub &&
+        member.email?.toLowerCase() === "max@primesocial.de" && (
+          <ClubAboCard dogName={member.dog_name} email={member.email} />
+        )}
+
+      {/* ── Club aktiv: Status-Banner ────────────────────────────────── */}
+      {hasClub && (
+        <div className="rounded-2xl border border-[#E7D3AE] p-4 mb-6 flex items-center gap-3"
+          style={{ background: "linear-gradient(180deg,#FFFDF9 0%,#FFF4E1 100%)" }}
+        >
+          <span className="text-[26px]">⭐</span>
+          <div>
+            <p className="text-[13px] font-extrabold text-[#1a1a1a] leading-tight">
+              Dein Club ist aktiv — {clubUnlocked.size} von {themenModules.length} Modulen frei
+            </p>
+            <p className="text-[12px] text-[#8B7355] mt-0.5">
+              {clubNextUnlockAt
+                ? `Nächstes Modul schaltet sich am ${new Date(clubNextUnlockAt).toLocaleDateString("de-DE")} frei.`
+                : "Alle Module sind freigeschaltet 🎉"}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Plan-Status-Section entfernt — Upgrade-CTA gibts schon auf
           fast jeder anderen Seite. Hier soll der Modul-Shop im Fokus
@@ -168,37 +215,80 @@ export default async function ModulShopPage() {
           </div>
         </div>
 
-        {/* PREVIEW: Audio-Coach-Zeile — vorerst nur fuer max@primesocial.de.
-            Zum Freischalten fuer alle: diese Bedingung entfernen. */}
-        {member.email?.toLowerCase() === "max@primesocial.de" && (
-          <PfotenCoachCard dogName={member.dog_name} email={member.email} />
+        {hasClub ? (
+          /* Club-Bibliothek: frei / gesperrt (kein Kauf) */
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {themenModules.map((t) => {
+              const unlocked = clubUnlocked.has(t.slug);
+              return (
+                <div
+                  key={t.slug}
+                  className={`rounded-xl border border-[#EADDC5] overflow-hidden bg-white ${
+                    unlocked ? "" : "opacity-80"
+                  }`}
+                >
+                  <div className="relative">
+                    {t.image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={t.image_url}
+                        alt={t.title}
+                        className="w-full aspect-square object-cover"
+                      />
+                    ) : (
+                      <div className="w-full aspect-square flex items-center justify-center text-[40px] bg-[#FFF9F0]">
+                        {t.emoji}
+                      </div>
+                    )}
+                    {!unlocked && (
+                      <div className="absolute inset-0 bg-white/55 flex items-center justify-center">
+                        <span className="text-[24px]">🔒</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-2.5">
+                    <p className="text-[12px] font-bold text-[#1a1a1a] leading-tight">
+                      {t.title}
+                    </p>
+                    <p
+                      className={`text-[11px] mt-1 font-semibold ${
+                        unlocked ? "text-[#16A34A]" : "text-[#9CA3AF]"
+                      }`}
+                    >
+                      {unlocked ? "✅ Freigeschaltet" : "🔒 Schaltet bald frei"}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {themenModules.map((t) => (
+              <UpsellFlipCard
+                key={t.slug}
+                upsell={{
+                  id: t.slug,
+                  slug: t.slug,
+                  title: t.title,
+                  description: t.short,
+                  badge_text:
+                    t.problem_match === userProblemKey
+                      ? "Für dich"
+                      : t.badge_text,
+                  price_cents: t.price_cents,
+                  image_url: t.image_url || null,
+                }}
+                features={t.features}
+                emoji={t.emoji}
+                goal={t.goal}
+                email={member.email}
+                leadId={member.source_lead_id}
+                dogName={member.dog_name}
+              />
+            ))}
+          </div>
         )}
-
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {themenModules.map((t) => (
-            <UpsellFlipCard
-              key={t.slug}
-              upsell={{
-                id: t.slug,
-                slug: t.slug,
-                title: t.title,
-                description: t.short,
-                badge_text:
-                  t.problem_match === userProblemKey
-                    ? "Für dich"
-                    : t.badge_text,
-                price_cents: t.price_cents,
-                image_url: t.image_url || null,
-              }}
-              features={t.features}
-              emoji={t.emoji}
-              goal={t.goal}
-              email={member.email}
-              leadId={member.source_lead_id}
-              dogName={member.dog_name}
-            />
-          ))}
-        </div>
       </section>
 
       {/* ── Section 3: Weitere Zusatz-Module (PDFs, Abos) ──────────── */}
