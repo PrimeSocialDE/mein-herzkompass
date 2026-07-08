@@ -1,5 +1,12 @@
 {
   "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "magazin.pfoten-plan.de" }],
+      "destination": "/magazin/:path*"
+    }
+  ],
   "functions": {
     "app/api/admin/plan-korrektur/route.ts": {
       "maxDuration": 120
