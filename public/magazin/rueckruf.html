@@ -90,6 +90,31 @@
   @media(min-width:1024px){.stickycta{display:none} body{padding-bottom:0}}
 </style>
 <script src="/cookie-banner.js" defer></script>
+<!-- Google Ads Tag: erfasst gclid (Cookie _gcl_aw, domainweit über .pfoten-plan.de geteilt) für Conversion-Attribution -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17806525009');
+</script>
+<!-- gclid/gbraid/wbraid an den Funnel-CTA weiterreichen (Attribution auch ohne Cookie sicher) -->
+<script>
+(function(){
+  try{
+    var p = new URLSearchParams(location.search);
+    var add = ['gclid','gbraid','wbraid']
+      .filter(function(k){return p.get(k);})
+      .map(function(k){return k+'='+encodeURIComponent(p.get(k));});
+    if(!add.length) return;
+    document.addEventListener('DOMContentLoaded', function(){
+      document.querySelectorAll('a[href*="/kurz-schritt1"]').forEach(function(a){
+        a.href += (a.href.indexOf('?')>-1?'&':'?') + add.join('&');
+      });
+    });
+  }catch(e){}
+})();
+</script>
 </head>
 <body>
 
