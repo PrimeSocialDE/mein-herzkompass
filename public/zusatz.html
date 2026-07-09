@@ -349,7 +349,18 @@
         // WICHTIG: feuert NUR fuer den Erstkauf des Plans, NICHT fuer Upsells.
         // Selbe Deduplizierungs-Logik wie vorher.
         const planPrices = { '1month': 29.99, '3month': 39.99, '6month': 59.99 };
-        const purchaseValue = planPrices[selectedPlan] || 39.99;
+        // Kaufwert exakt wie im Checkout (deinplan3): Basis + 15% Exit-Rabatt + Order-Bump.
+        // WICHTIG: Der Order-Bump (Notfall-Grundkommando / Anti-Giftköder, +9,99 € bzw.
+        // 8,49 € mit Exit-Rabatt) MUSS mitgezählt werden, sonst sieht Google Ads nur den
+        // Plan-Preis. Meta bekommt den vollen Betrag bereits serverseitig via CAPI;
+        // die Pixel/gtag-Werte hier ziehen entsprechend nach (Dedup greift über transaction_id).
+        const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
+        const bumpBought = localStorage.getItem('order_bump_antigift_checked') === 'true'
+                        || localStorage.getItem('order_bump_checked') === 'true';
+        let purchaseValue = planPrices[selectedPlan] || 39.99;
+        if (exitDiscount) purchaseValue = Math.round(purchaseValue * 85) / 100;
+        if (bumpBought) purchaseValue += exitDiscount ? 8.49 : 9.99;
+        purchaseValue = Math.round(purchaseValue * 100) / 100;
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session_id');
         const paymentIntent = urlParams.get('payment_intent');
