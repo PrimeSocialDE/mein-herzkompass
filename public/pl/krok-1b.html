@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+    <title>ŁapaPlan - Bezpłatny quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background-light); color: var(--text-dark); line-height: 1.5; -webkit-tap-highlight-color: transparent; }
+        .header { background: var(--white); padding: 16px 0; border-bottom: 1px solid var(--border-light); text-align: center; }
+        .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-dark); }
+        .logo-image { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+        .logo-text { font-size: 22px; font-weight: 800; color: var(--text-dark); }
+        .container { max-width: 500px; margin: 0 auto; padding: 30px 20px; }
+        .quiz-header { text-align: center; margin-bottom: 20px; }
+        .quiz-hook { font-size: 13px; color: var(--text-medium); margin-bottom: 10px; }
+        .quiz-title { font-size: 24px; font-weight: 700; color: var(--text-dark); margin-bottom: 0; }
+        .progress-container { margin-bottom: 25px; }
+        .progress-bar { width: 100%; height: 6px; background: var(--border-light); border-radius: 3px; overflow: hidden; }
+        .progress-fill { width: 15%; height: 100%; background: var(--light-brown); transition: width 0.3s ease; }
+        .progress-sub { text-align: center; margin-top: 6px; font-size: 11px; color: var(--text-medium); }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .option-card {
+            background: var(--white);
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 22px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: var(--shadow-light);
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .option-card:hover { border-color: var(--light-brown); box-shadow: var(--shadow-medium); }
+        .option-card:active { background: #F8F6F3; }
+        .option-card.clicked { pointer-events: none; opacity: 0.7; border-color: var(--primary-brown); }
+        .option-image { width: 75px; height: 75px; margin: 0 auto 12px; border-radius: 8px; overflow: hidden; background: var(--border-light); }
+        .option-image img { width: 100%; height: 100%; object-fit: cover; }
+        .option-title { font-size: 15px; font-weight: 600; color: var(--text-dark); margin-bottom: 3px; }
+        .option-subtitle { font-size: 12px; color: var(--text-medium); }
+        .social-proof { display: inline-flex; align-items: center; gap: 4px; color: var(--text-medium); font-size: 11px; margin-top: 16px; }
+        .social-proof .star { width: 14px; height: 14px; background: #00B67A; display: inline-flex; align-items: center; justify-content: center; border-radius: 2px; }
+        .social-proof .star svg { width: 8px; height: 8px; fill: white; }
+
+        /* Cookie-Banner Override: kompakte Leiste */
+        #cookie-banner {
+            padding: 8px 12px !important;
+            box-shadow: 0 -1px 4px rgba(0,0,0,0.06) !important;
+            border-top: 1px solid #E8E4DF !important;
+        }
+        #cookie-banner > div {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 8px !important;
+            text-align: left !important;
+            max-width: 600px !important;
+        }
+        #cookie-banner > div > div:first-child { display: none !important; }
+        #cookie-banner > div > div:nth-child(2) {
+            font-size: 11px !important;
+            margin-bottom: 0 !important;
+            flex: 1;
+            line-height: 1.3 !important;
+        }
+        #cookie-banner > div > div:last-child {
+            flex-shrink: 0 !important;
+            margin: 0 !important;
+            display: flex !important;
+            gap: 6px !important;
+        }
+        #cookie-banner button {
+            padding: 6px 10px !important;
+            font-size: 11px !important;
+            border-radius: 5px !important;
+            white-space: nowrap !important;
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 20px 15px; }
+            .quiz-title { font-size: 20px; }
+            .options-grid { gap: 10px; }
+            .option-card { padding: 18px 10px; }
+            .option-image { width: 65px; height: 65px; }
+            .option-title { font-size: 14px; }
+            .option-subtitle { font-size: 11px; }
+        }
+    </style>
+<script
+  defer
+  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+  data-domain="pfoten-plan.de"
+  src="https://datafa.st/js/script.js">
+</script>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="ŁapaPlan Logo" class="logo-image">
+            <span class="logo-text">ŁapaPlan</span>
+        </a>
+    </header>
+    <div class="container">
+        <div class="quiz-header">
+            <p class="quiz-hook">Sprawdź, jakiego treningu naprawdę potrzebuje Twój pies</p>
+            <h1 class="quiz-title">Ile lat ma Twój pies?</h1>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar"><div class="progress-fill"></div></div>
+            <p class="progress-sub">Ponad 3447 psów wytrenowanych z sukcesem · Zajmuje tylko 2 min</p>
+        </div>
+        <div class="options-grid">
+            <div class="option-card" data-age="puppy">
+                <div class="option-image"><img src="Hund1.jpg" alt="Szczeniak"></div>
+                <h3 class="option-title">Szczeniak</h3>
+                <p class="option-subtitle">Poniżej 6 miesięcy</p>
+            </div>
+            <div class="option-card" data-age="young">
+                <div class="option-image"><img src="Hund2.jpg" alt="Młody pies"></div>
+                <h3 class="option-title">Młody pies</h3>
+                <p class="option-subtitle">6-18 miesięcy</p>
+            </div>
+            <div class="option-card" data-age="adult">
+                <div class="option-image"><img src="Hund3.jpg" alt="Dorosły"></div>
+                <h3 class="option-title">Dorosły</h3>
+                <p class="option-subtitle">1,5-7 lat</p>
+            </div>
+            <div class="option-card" data-age="senior">
+                <div class="option-image"><img src="Hund4.jpg" alt="Senior"></div>
+                <h3 class="option-title">Senior</h3>
+                <p class="option-subtitle">Powyżej 7 lat</p>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 16px;">
+            <span class="social-proof">
+                <span class="star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                <span class="star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                <span class="star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                <span class="star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                <span class="star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                Ocena 4,8/5
+            </span>
+        </div>
+    </div>
+    <script>
+        // Clear previous quiz data on fresh start
+        if (!document.referrer.includes('krok')) {
+            localStorage.removeItem('dogAge');
+            localStorage.removeItem('dogBreed');
+            localStorage.removeItem('dogGender');
+            localStorage.removeItem('dogGoal');
+            localStorage.removeItem('dogProblem');
+            localStorage.removeItem('dogBehaviors');
+            localStorage.removeItem('trainingTime');
+            localStorage.removeItem('dogName');
+            localStorage.removeItem('stressLevel');
+        }
+
+        let isNavigating = false;
+        document.querySelectorAll('.option-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isNavigating) return;
+                isNavigating = true;
+                this.classList.add('clicked');
+                localStorage.setItem('dogAge', this.dataset.age);
+                setTimeout(() => {
+                    window.location.href = 'krok-2.html';
+                }, 150);
+            });
+        });
+    </script>
+
+    <!-- Tracking Scripts - loaded after page content -->
+    <script src="utm-tracking.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-17806525009');
+    </script>
+    <script src="cookie-banner.js" defer></script>
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','864109602683515');fbq('track','PageView');</script>
+    <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","ufxcf43805");</script>
+    <script>!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};ttq.load('D4RFSQBC77U7SM7UL8A0');ttq.page();}(window,document,'ttq');</script>
+</body>
+</html>

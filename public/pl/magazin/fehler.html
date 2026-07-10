@@ -149,7 +149,7 @@ fbq('track','PageView');
       .map(function(k){return k+'='+encodeURIComponent(p.get(k));});
     if(!add.length) return;
     document.addEventListener('DOMContentLoaded', function(){
-      document.querySelectorAll('a[href*="kurz-schritt1"]').forEach(function(a){
+      document.querySelectorAll('a[href*="krok-1"]').forEach(function(a){
         a.href += (a.href.indexOf('?')>-1?'&':'?') + add.join('&');
       });
     });

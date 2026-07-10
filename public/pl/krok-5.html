@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/utm-tracking.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17806525009');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+    <title>ŁapaPlan - Problemy z zachowaniem</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background-light); color: var(--text-dark); line-height: 1.5; -webkit-tap-highlight-color: transparent; }
+        .header { background: var(--white); padding: 16px 0; border-bottom: 1px solid var(--border-light); text-align: center; }
+        .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-dark); }
+        .logo-image { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+        .logo-text { font-size: 22px; font-weight: 800; color: var(--text-dark); }
+        .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; padding-bottom: 100px; }
+        .quiz-header { text-align: center; margin-bottom: 25px; }
+        .quiz-title { font-size: 24px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; line-height: 1.3; }
+        .quiz-subtitle { font-size: 15px; color: var(--text-medium); }
+        .progress-container { margin-bottom: 30px; }
+        .progress-bar { width: 100%; height: 6px; background: var(--border-light); border-radius: 3px; overflow: hidden; }
+        .progress-fill { width: 55.5%; height: 100%; background: var(--light-brown); transition: width 0.3s ease; }
+        .progress-text { text-align: center; margin-top: 8px; color: var(--text-medium); font-size: 13px; }
+        .options-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .option-card { background: var(--white); border: 2px solid var(--border-light); border-radius: var(--border-radius); padding: 16px 20px; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow-light); display: flex; align-items: center; gap: 16px; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+        .option-card:hover { border-color: var(--light-brown); transform: translateY(-2px); box-shadow: var(--shadow-medium); }
+        .option-card.selected { border-color: var(--light-brown); background: linear-gradient(135deg, rgba(212, 185, 150, 0.05), rgba(212, 185, 150, 0.1)); }
+        .option-image { width: 60px; height: 60px; flex-shrink: 0; background: var(--border-light); border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .option-image img { width: 100%; height: 100%; object-fit: cover; }
+        .option-text { font-size: 16px; font-weight: 600; color: var(--text-dark); flex: 1; }
+        .continue-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 40px); max-width: 560px; background: var(--primary-brown); color: var(--white); border: none; border-radius: var(--border-radius); padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer; opacity: 0.5; pointer-events: none; transition: all 0.2s ease; touch-action: manipulation; }
+        .continue-btn.active { opacity: 1; pointer-events: auto; }
+        .continue-btn.active:hover { background: var(--brown-hover); }
+
+        /* Custom Problem Card */
+        .custom-card {
+            background: var(--white);
+            border: 2px dashed var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-light);
+            touch-action: manipulation;
+        }
+        .custom-card:hover { border-color: var(--light-brown); }
+        .custom-card.expanded { border-style: solid; border-color: var(--primary-brown); cursor: default; }
+        .custom-card-header { display: flex; align-items: center; gap: 16px; }
+        .custom-card-emoji { font-size: 28px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: var(--background-light); border-radius: 8px; flex-shrink: 0; }
+        .custom-card-text { font-size: 16px; font-weight: 600; color: var(--text-dark); }
+        .custom-card-hint { font-size: 13px; color: var(--text-medium); margin-top: 2px; }
+        .custom-input-wrapper {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-light);
+            display: none;
+        }
+        .custom-card.expanded .custom-input-wrapper { display: block; }
+        .custom-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            resize: none;
+            min-height: 80px;
+            transition: border-color 0.2s;
+        }
+        .custom-input:focus {
+            outline: none;
+            border-color: var(--primary-brown);
+        }
+        .custom-input::placeholder { color: #B0B0B0; }
+        .custom-char-count {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-medium);
+            margin-top: 6px;
+        }
+
+        .stress-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        .stress-overlay.active { display: flex; }
+        .stress-popup { background: var(--white); border-radius: 20px; padding: 35px 30px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: popupIn 0.3s ease; }
+        @keyframes popupIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .stress-emoji { font-size: 50px; margin-bottom: 15px; }
+        .stress-title { font-size: 22px; font-weight: 700; color: var(--text-dark); margin-bottom: 10px; line-height: 1.3; }
+        .stress-subtitle { font-size: 14px; color: var(--text-medium); margin-bottom: 30px; }
+        .slider-container { margin-bottom: 25px; }
+        .slider-labels { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; color: var(--text-medium); }
+        .stress-slider { width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(to right, #A8D5A2, #F5D76E, #E88B8B); -webkit-appearance: none; appearance: none; cursor: pointer; }
+        .stress-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; border-radius: 50%; background: var(--white); border: 3px solid var(--primary-brown); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); cursor: pointer; transition: transform 0.2s; }
+        .stress-slider::-webkit-slider-thumb:hover { transform: scale(1.1); }
+        .stress-slider::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: var(--white); border: 3px solid var(--primary-brown); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); cursor: pointer; }
+        .stress-value { font-size: 48px; font-weight: 800; color: var(--primary-brown); margin: 20px 0 10px; }
+        .stress-response { font-size: 15px; color: var(--text-dark); min-height: 45px; line-height: 1.5; margin-bottom: 25px; padding: 0 10px; }
+        .stress-continue-btn { width: 100%; background: var(--primary-brown); color: var(--white); border: none; border-radius: var(--border-radius); padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; touch-action: manipulation; }
+        .stress-continue-btn:hover { background: var(--brown-hover); }
+        @media (max-width: 480px) { .container { padding: 25px 15px; padding-bottom: 90px; } .quiz-title { font-size: 20px; } .option-card { padding: 14px 16px; gap: 14px; } .option-image { width: 50px; height: 50px; } .option-text { font-size: 14px; } .stress-popup { padding: 25px 20px; } .stress-title { font-size: 20px; } .stress-value { font-size: 40px; } .custom-card-emoji { width: 50px; height: 50px; font-size: 24px; } .custom-card-text { font-size: 14px; } }
+    </style>
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','864109602683515');fbq('track','PageView');</script>
+    <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","ufxcf43805");</script>
+<script
+  defer
+  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+  data-domain="pfoten-plan.de"
+  src="https://datafa.st/js/script.js">
+</script>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="ŁapaPlan Logo" class="logo-image">
+            <span class="logo-text">ŁapaPlan</span>
+        </a>
+    </header>
+    <div class="container">
+        <div class="quiz-header">
+            <h1 class="quiz-title" id="quizTitle">Które problemy z zachowaniem chcesz rozwiązać najpierw?</h1>
+            <p class="quiz-subtitle">Zaznacz wszystkie pasujące <strong>lub opisz swój problem poniżej:</strong></p>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar"><div class="progress-fill"></div></div>
+            <p style="text-align: center; font-size: 11px; color: var(--text-light); margin-top: 6px;">Pytanie 5 z 9</p>
+        </div>
+        <div class="options-list">
+            <div class="option-card" data-behavior="energy">
+                <div class="option-image"><img src="bsp1.jpg" alt="Nadmiar energii"></div>
+                <div class="option-text">Nadmiar energii i brak kontroli</div>
+            </div>
+            <div class="option-card" data-behavior="recall">
+                <div class="option-image"><img src="RueckrufHund.png" alt="Nie wraca"></div>
+                <div class="option-text">Nie wraca / problemy z przywołaniem</div>
+            </div>
+            <div class="option-card" data-behavior="mouthing">
+                <div class="option-image"><img src="mundboden.jpg" alt="Bierze rzeczy do pyska"></div>
+                <div class="option-text">Bierze do pyska rzeczy, których nie powinien</div>
+            </div>
+            <div class="option-card" data-behavior="aggression">
+                <div class="option-image"><img src="bsp2.jpg" alt="Agresja"></div>
+                <div class="option-text">Agresja wobec ludzi lub innych zwierząt</div>
+            </div>
+            <div class="option-card" data-behavior="pulling">
+                <div class="option-image"><img src="bsp3.jpg" alt="Ciągnięcie na smyczy"></div>
+                <div class="option-text">Ciągnięcie na smyczy</div>
+            </div>
+            <div class="option-card" data-behavior="anxiety">
+                <div class="option-image"><img src="bsp4.jpg" alt="Lęk separacyjny"></div>
+                <div class="option-text">Lęk separacyjny</div>
+            </div>
+            <div class="option-card" data-behavior="barking">
+                <div class="option-image"><img src="bsp5.jpg" alt="Nadmierne szczekanie"></div>
+                <div class="option-text">Nadmierne szczekanie</div>
+            </div>
+            <div class="option-card" data-behavior="destructive">
+                <div class="option-image"><img src="bsp6.jpg" alt="Niszczycielskie zachowanie"></div>
+                <div class="option-text">Niszczycielskie zachowanie</div>
+            </div>
+            <div class="option-card" data-behavior="soiling">
+                <div class="option-image"><img src="bsp7.jpg" alt="Załatwianie się w domu"></div>
+                <div class="option-text">Załatwianie się w domu</div>
+            </div>
+        </div>
+
+        <!-- Custom Problem Card -->
+        <div class="custom-card" id="customCard">
+            <div class="custom-card-header">
+                <div class="custom-card-emoji">✏️</div>
+                <div>
+                    <div class="custom-card-text">Szczególny problem</div>
+                    <div class="custom-card-hint">Coś innego? Opisz to krótko</div>
+                </div>
+            </div>
+            <div class="custom-input-wrapper">
+                <textarea
+                    class="custom-input"
+                    id="customInput"
+                    placeholder="np. Goni rowerzystów, boi się burzy..."
+                    maxlength="150"
+                ></textarea>
+                <div class="custom-char-count"><span id="charCount">0</span>/150</div>
+            </div>
+        </div>
+
+        <button class="continue-btn" id="continueBtn">Dalej</button>
+    </div>
+
+    <div class="stress-overlay" id="stressOverlay">
+        <div class="stress-popup">
+            <div class="stress-emoji">😤</div>
+            <h2 class="stress-title" id="stressTitle">Jak bardzo ten problem stresuje Cię na co dzień?</h2>
+            <p class="stress-subtitle">Przesuń suwak na swoją odpowiedź</p>
+            <div class="slider-container">
+                <div class="slider-labels"><span>Prawie wcale</span><span>Bardzo mocno</span></div>
+                <input type="range" min="1" max="10" value="5" class="stress-slider" id="stressSlider">
+            </div>
+            <div class="stress-value" id="stressValue">5</div>
+            <p class="stress-response" id="stressResponse">Zna to wielu właścicieli psów – z dobrym planem da się to rozwiązać.</p>
+            <button class="stress-continue-btn" id="stressContinueBtn">Dalej</button>
+        </div>
+    </div>
+
+    <script>
+        // Personalisieren basierend auf Rasse
+        const dogBreed = localStorage.getItem('dogBreed');
+        if (dogBreed && dogBreed !== 'Andere Rasse') {
+            document.getElementById('quizTitle').textContent = `Jakie problemy ma Twój ${dogBreed}?`;
+        }
+
+        const cards = document.querySelectorAll('.option-card');
+        const continueBtn = document.getElementById('continueBtn');
+        const stressOverlay = document.getElementById('stressOverlay');
+        const stressSlider = document.getElementById('stressSlider');
+        const stressValue = document.getElementById('stressValue');
+        const stressResponse = document.getElementById('stressResponse');
+        const stressContinueBtn = document.getElementById('stressContinueBtn');
+        const stressTitle = document.getElementById('stressTitle');
+        const customCard = document.getElementById('customCard');
+        const customInput = document.getElementById('customInput');
+        const charCount = document.getElementById('charCount');
+        let selectedBehaviors = [];
+
+        const problemNames = {
+            'energy': 'die übermäßige Energie',
+            'mouthing': 'das Aufnehmen von Gegenständen',
+            'aggression': 'die Aggression',
+            'pulling': 'das Leinenziehen',
+            'anxiety': 'die Trennungsangst',
+            'barking': 'das Bellen',
+            'destructive': 'das zerstörerische Verhalten',
+            'soiling': 'die Unsauberkeit',
+            'recall': 'das Rückruf-Problem'
+        };
+
+        // Custom Card Toggle
+        customCard.addEventListener('click', (e) => {
+            if (!customCard.classList.contains('expanded')) {
+                customCard.classList.add('expanded');
+                setTimeout(() => customInput.focus(), 100);
+            }
+        });
+
+        // Prevent card collapse when clicking inside input
+        customInput.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // Character count
+        customInput.addEventListener('input', () => {
+            charCount.textContent = customInput.value.length;
+            updateContinueButton();
+        });
+
+        // Intelligente Problem-Diagnose
+        function diagnoseCustomProblem(text) {
+            const lowerText = text.toLowerCase();
+
+            // Pattern-Matching für bekannte Problemkategorien
+            // Gibt { key: 'xxx', label: 'Xxx' } zurück
+            const patterns = [
+                // Angst-Kategorien
+                { keywords: ['besuch', 'klingel', 'klopf', 'tür', 'läutet', 'gäste'], key: 'visitor-anxiety', label: 'Angst bei Besuch' },
+                { keywords: ['gewitter', 'donner', 'blitz'], key: 'thunder-anxiety', label: 'Gewitterangst' },
+                { keywords: ['feuerwerk', 'böller', 'silvester', 'knall'], key: 'noise-sensitivity', label: 'Geräuschempfindlichkeit' },
+                { keywords: ['laut', 'geräusch', 'krach', 'lärm'], key: 'noise-sensitivity', label: 'Geräuschempfindlichkeit' },
+                { keywords: ['unsicher', 'ängstlich', 'angst', 'scheu', 'versteck'], key: 'general-anxiety', label: 'Ängstliches Verhalten' },
+                { keywords: ['fremd', 'menschen', 'personen', 'leute'], key: 'stranger-anxiety', label: 'Angst vor Fremden' },
+
+                // Jagd-Kategorien
+                { keywords: ['jagt', 'jagd', 'hinterher', 'rennt nach'], key: 'chasing', label: 'Jagdverhalten' },
+                { keywords: ['fahrrad', 'radfahrer', 'jogger', 'läufer'], key: 'chasing-movement', label: 'Jagt Bewegungen' },
+                { keywords: ['katze', 'eichhörn', 'vögel', 'hase', 'reh', 'wild'], key: 'prey-drive', label: 'Jagdtrieb' },
+                { keywords: ['auto', 'autos', 'fahrzeug'], key: 'chasing-cars', label: 'Jagt Autos' },
+
+                // Fress-Probleme
+                { keywords: ['frisst', 'fressen', 'schluckt', 'aufnimmt'], key: 'eating-unwanted', label: 'Frisst Unerwünschtes' },
+                { keywords: ['kot', 'dreck', 'müll', 'gift'], key: 'eating-trash', label: 'Frisst Unrat' },
+                { keywords: ['socken', 'schuhe', 'spielzeug', 'gegenstände'], key: 'eating-objects', label: 'Frisst Gegenstände' },
+
+                // Reaktivität
+                { keywords: ['postbote', 'briefträger', 'paket', 'lieferant'], key: 'postman-reactive', label: 'Reaktiv bei Postbote' },
+                { keywords: ['andere hunde', 'artgenossen', 'hundebegegnung'], key: 'dog-reactive', label: 'Reaktiv bei Hunden' },
+                { keywords: ['leine', 'angeleint', 'gespannt'], key: 'leash-reactive', label: 'Leinenreaktivität' },
+                { keywords: ['aufgeregt', 'aufgebracht', 'rastet', 'flippt', 'dreht durch'], key: 'overreaction', label: 'Überreaktion' },
+
+                // Trennungs-/Allein-Probleme
+                { keywords: ['allein', 'verlassen', 'weg', 'trennung'], key: 'separation', label: 'Trennungsstress' },
+                { keywords: ['heult', 'jault', 'winselt', 'schreit'], key: 'vocalization', label: 'Lautäußerungen' },
+
+                // Ressourcen
+                { keywords: ['futter', 'napf', 'fressen verteidigt', 'knurrt beim'], key: 'resource-guarding', label: 'Ressourcenverteidigung' },
+                { keywords: ['spielzeug verteidigt', 'abgeben', 'wegnehmen'], key: 'resource-guarding', label: 'Ressourcenverteidigung' },
+
+                // Rückruf-Probleme
+                { keywords: ['rückruf', 'kommt nicht', 'nicht zurück', 'läuft weg', 'haut ab', 'reagiert nicht', 'hört nicht'], key: 'recall', label: 'Rückruf-Probleme' },
+
+                // Sonstiges
+                { keywords: ['beißt', 'schnappt', 'zwickt', 'biss'], key: 'biting', label: 'Beißverhalten' },
+                { keywords: ['spring', 'hochspring', 'anspring'], key: 'jumping', label: 'Anspringen' },
+                { keywords: ['buddel', 'gräbt', 'graben', 'löcher'], key: 'digging', label: 'Buddeln' },
+                { keywords: ['markier', 'pinkelt', 'hebt bein'], key: 'marking', label: 'Markierverhalten' },
+            ];
+
+            // Finde passende Pattern
+            const matches = [];
+            for (const pattern of patterns) {
+                for (const keyword of pattern.keywords) {
+                    if (lowerText.includes(keyword)) {
+                        if (!matches.find(m => m.key === pattern.key)) {
+                            matches.push(pattern);
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // Kombiniere sinnvoll bei Angst + Trigger
+            if (matches.length >= 2) {
+                const angstMatch = matches.find(m => m.key.includes('anxiety'));
+                const triggerMatch = matches.find(m => !m.key.includes('anxiety'));
+
+                if (angstMatch && triggerMatch) {
+                    if (triggerMatch.key === 'visitor-anxiety' || triggerMatch.key === 'postman-reactive') {
+                        return { key: 'visitor-anxiety', label: 'Angst bei Besuch' };
+                    }
+                    if (triggerMatch.key === 'overreaction') {
+                        return { key: 'anxious-overreaction', label: 'Ängstliche Überreaktion' };
+                    }
+                    return triggerMatch;
+                }
+
+                return matches[0];
+            }
+
+            if (matches.length === 1) {
+                return matches[0];
+            }
+
+            // Fallback
+            return { key: 'custom-other', label: 'Individuelles Verhalten' };
+        }
+
+        function updateContinueButton() {
+            const hasSelection = selectedBehaviors.length > 0;
+            const hasCustomText = customInput.value.trim().length > 0;
+            continueBtn.classList.toggle('active', hasSelection || hasCustomText);
+        }
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                const behavior = card.dataset.behavior;
+                if (selectedBehaviors.includes(behavior)) {
+                    selectedBehaviors = selectedBehaviors.filter(b => b !== behavior);
+                    card.classList.remove('selected');
+                } else {
+                    selectedBehaviors.push(behavior);
+                    card.classList.add('selected');
+                }
+                updateContinueButton();
+                localStorage.setItem('dogBehaviors', JSON.stringify(selectedBehaviors));
+                localStorage.setItem('dogProblem', selectedBehaviors[0] || '');
+            });
+        });
+
+        continueBtn.addEventListener('click', () => {
+            const customText = customInput.value.trim();
+            let allBehaviors = [...selectedBehaviors];
+
+            // Custom Problem diagnostizieren und als Behavior hinzufügen
+            if (customText) {
+                const diagnosed = diagnoseCustomProblem(customText);
+                localStorage.setItem('customProblem', customText); // Freitext für Tooltip
+                localStorage.setItem('customProblemKey', diagnosed.key);
+                localStorage.setItem('customProblemLabel', diagnosed.label);
+
+                // Als Behavior hinzufügen (falls nicht schon drin)
+                if (!allBehaviors.includes(diagnosed.key)) {
+                    allBehaviors.push(diagnosed.key);
+                }
+            } else {
+                localStorage.removeItem('customProblem');
+                localStorage.removeItem('customProblemKey');
+                localStorage.removeItem('customProblemLabel');
+            }
+
+            if (allBehaviors.length > 0) {
+                // Speichern wie die anderen
+                localStorage.setItem('dogBehaviors', JSON.stringify(allBehaviors));
+                localStorage.setItem('dogProblem', allBehaviors[0] || '');
+
+                // Direkt weiter zur nächsten Seite (Slider übersprungen)
+                window.location.href = 'kurz-plan-preview.html';
+            }
+        });
+
+        const responses = {
+            low: "Dobrze, że działasz wcześnie – tak zapobiegniesz pogorszeniu.",
+            medium: "Zna to wielu właścicieli psów – z dobrym planem da się to rozwiązać.",
+            high: "To brzmi naprawdę obciążająco. Właśnie po to stworzyliśmy ten plan. 💪"
+        };
+        const emojis = { low: "😊", medium: "😤", high: "😰" };
+
+        function updateStressUI(value) {
+            stressValue.textContent = value;
+            let level = value <= 3 ? 'low' : value <= 7 ? 'medium' : 'high';
+            stressResponse.textContent = responses[level];
+            document.querySelector('.stress-emoji').textContent = emojis[level];
+        }
+
+        stressSlider.addEventListener('input', (e) => updateStressUI(e.target.value));
+
+        // Weiterleitung zur Plan-Preview Animation
+        let isNavigating = false;
+        stressContinueBtn.addEventListener('click', () => {
+            if (isNavigating) return;
+            isNavigating = true;
+            stressContinueBtn.style.opacity = '0.7';
+            stressContinueBtn.style.pointerEvents = 'none';
+            localStorage.setItem('stressLevel', stressSlider.value);
+            window.location.href = 'kurz-plan-preview.html';
+        });
+
+        // Restore saved data
+        const savedBehaviors = localStorage.getItem('dogBehaviors');
+        if (savedBehaviors) {
+            try {
+                selectedBehaviors = JSON.parse(savedBehaviors);
+                selectedBehaviors.forEach(behavior => {
+                    const card = document.querySelector(`[data-behavior="${behavior}"]`);
+                    if (card) card.classList.add('selected');
+                });
+            } catch (e) {}
+        }
+
+        const savedCustom = localStorage.getItem('customProblem');
+        if (savedCustom) {
+            customInput.value = savedCustom;
+            charCount.textContent = savedCustom.length;
+            customCard.classList.add('expanded');
+        }
+
+        updateContinueButton();
+    </script>
+</body>
+</html>
