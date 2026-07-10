@@ -264,30 +264,30 @@
         const dogName = localStorage.getItem('dogName');
         if (dogName) {
             document.getElementById('dogName').textContent = dogName;
-            document.getElementById('lockDogName').textContent = dogName + 's';
+            document.getElementById('lockDogName').textContent = dogName;
         }
 
         // iPad-Preview personalisieren
         const dogProblem = localStorage.getItem('dogProblem') || '';
         const dogBreed = localStorage.getItem('dogBreed') || '';
         const focusLabels = {
-            'pulling': 'Leinenführigkeit', 'barking': 'Bellverhalten', 'aggression': 'Aggressionsabbau',
-            'anxiety': 'Trennungsangst', 'jumping': 'Begrüßungstraining', 'recall': 'Rückruftraining',
-            'energy': 'Ruhe & Kontrolle', 'destructive': 'Impulskontrolle',
-            'mouthing': 'Impulskontrolle', 'separation': 'Alleinebleiben'
+            'pulling': 'Chodzenie na smyczy', 'barking': 'Szczekanie', 'aggression': 'Redukcja agresji',
+            'anxiety': 'Lęk separacyjny', 'jumping': 'Trening powitań', 'recall': 'Przywołanie',
+            'energy': 'Spokój i kontrola', 'destructive': 'Kontrola impulsów',
+            'mouthing': 'Kontrola impulsów', 'separation': 'Zostawanie samemu'
         };
         if (dogBreed && dogBreed !== 'other') {
             const breedLabels = {
-                'labrador': 'Labrador', 'german_shepherd': 'Schäferhund', 'golden_retriever': 'Golden Retriever',
-                'french_bulldog': 'Franz. Bulldogge', 'chihuahua': 'Chihuahua', 'poodle': 'Pudel',
-                'dachshund': 'Dackel', 'beagle': 'Beagle', 'husky': 'Husky', 'border_collie': 'Border Collie',
-                'mixed': 'Mischling'
+                'labrador': 'Labrador', 'german_shepherd': 'Owczarek niemiecki', 'golden_retriever': 'Golden Retriever',
+                'french_bulldog': 'Buldog francuski', 'chihuahua': 'Chihuahua', 'poodle': 'Pudel',
+                'dachshund': 'Jamnik', 'beagle': 'Beagle', 'husky': 'Husky', 'border_collie': 'Border Collie',
+                'mixed': 'Mieszaniec'
             };
             const breed = breedLabels[dogBreed] || dogBreed;
-            document.getElementById('iPadPlanTitle').textContent = 'Trainingsplan für ' + breed;
+            document.getElementById('iPadPlanTitle').textContent = 'Plan treningowy dla: ' + breed;
         }
         if (dogProblem && focusLabels[dogProblem]) {
-            document.getElementById('iPadPlanSubtitle').textContent = 'Fokus: ' + focusLabels[dogProblem];
+            document.getElementById('iPadPlanSubtitle').textContent = 'Cel: ' + focusLabels[dogProblem];
         }
 
         // Lock-Badge Klick → zum Email-Feld scrollen und fokussieren
@@ -314,7 +314,7 @@
 
             // Button deaktivieren
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Wird gespeichert...';
+            submitBtn.textContent = 'Zapisywanie...';
 
             // E-Mail in localStorage
             localStorage.setItem('userEmail', email);

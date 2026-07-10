@@ -222,7 +222,7 @@
     </div>
 
     <script>
-        // Personalisieren basierend auf Rasse
+        // Personalizacja na podstawie rasy
         const dogBreed = localStorage.getItem('dogBreed');
         if (dogBreed && dogBreed !== 'Andere Rasse') {
             document.getElementById('quizTitle').textContent = `Jakie problemy ma Twój ${dogBreed}?`;
@@ -242,15 +242,15 @@
         let selectedBehaviors = [];
 
         const problemNames = {
-            'energy': 'die übermäßige Energie',
-            'mouthing': 'das Aufnehmen von Gegenständen',
-            'aggression': 'die Aggression',
-            'pulling': 'das Leinenziehen',
-            'anxiety': 'die Trennungsangst',
-            'barking': 'das Bellen',
-            'destructive': 'das zerstörerische Verhalten',
-            'soiling': 'die Unsauberkeit',
-            'recall': 'das Rückruf-Problem'
+            'energy': 'nadmiar energii',
+            'mouthing': 'branie przedmiotów do pyska',
+            'aggression': 'agresja',
+            'pulling': 'ciągnięcie na smyczy',
+            'anxiety': 'lęk separacyjny',
+            'barking': 'szczekanie',
+            'destructive': 'zachowanie niszczycielskie',
+            'soiling': 'załatwianie się w domu',
+            'recall': 'problem z przywołaniem'
         };
 
         // Custom Card Toggle
@@ -272,57 +272,58 @@
             updateContinueButton();
         });
 
-        // Intelligente Problem-Diagnose
+        // Inteligentna diagnoza problemu
         function diagnoseCustomProblem(text) {
             const lowerText = text.toLowerCase();
 
-            // Pattern-Matching für bekannte Problemkategorien
-            // Gibt { key: 'xxx', label: 'Xxx' } zurück
+            // Dopasowywanie wzorców do znanych kategorii problemów
+            // Zwraca { key: 'xxx', label: 'Xxx' }
+            // key = kanoniczny kod kategorii (NIE tłumaczyć), tłumaczone są tylko keywords + label
             const patterns = [
-                // Angst-Kategorien
-                { keywords: ['besuch', 'klingel', 'klopf', 'tür', 'läutet', 'gäste'], key: 'visitor-anxiety', label: 'Angst bei Besuch' },
-                { keywords: ['gewitter', 'donner', 'blitz'], key: 'thunder-anxiety', label: 'Gewitterangst' },
-                { keywords: ['feuerwerk', 'böller', 'silvester', 'knall'], key: 'noise-sensitivity', label: 'Geräuschempfindlichkeit' },
-                { keywords: ['laut', 'geräusch', 'krach', 'lärm'], key: 'noise-sensitivity', label: 'Geräuschempfindlichkeit' },
-                { keywords: ['unsicher', 'ängstlich', 'angst', 'scheu', 'versteck'], key: 'general-anxiety', label: 'Ängstliches Verhalten' },
-                { keywords: ['fremd', 'menschen', 'personen', 'leute'], key: 'stranger-anxiety', label: 'Angst vor Fremden' },
+                // Kategorie lęku
+                { keywords: ['gość', 'goście', 'gości', 'gośćmi', 'dzwonek', 'dzwoni', 'puka', 'pukanie', 'drzwi', 'wizyta', 'odwiedziny'], key: 'visitor-anxiety', label: 'Lęk przy gościach' },
+                { keywords: ['burza', 'burzy', 'grzmot', 'grzmoty', 'piorun', 'pioruny', 'błyskawic'], key: 'thunder-anxiety', label: 'Lęk przed burzą' },
+                { keywords: ['fajerwerk', 'petard', 'sylwester', 'wystrzał', 'huk'], key: 'noise-sensitivity', label: 'Wrażliwość na hałas' },
+                { keywords: ['głośn', 'hałas', 'hałasu', 'dźwięk', 'odgłos'], key: 'noise-sensitivity', label: 'Wrażliwość na hałas' },
+                { keywords: ['niepewn', 'lękliw', 'lęk', 'boi się', 'strach', 'płochliw', 'chowa się', 'ukrywa'], key: 'general-anxiety', label: 'Lękliwe zachowanie' },
+                { keywords: ['obc', 'ludzi', 'ludźmi', 'osoby', 'osób', 'nieznajom'], key: 'stranger-anxiety', label: 'Lęk przed obcymi' },
 
-                // Jagd-Kategorien
-                { keywords: ['jagt', 'jagd', 'hinterher', 'rennt nach'], key: 'chasing', label: 'Jagdverhalten' },
-                { keywords: ['fahrrad', 'radfahrer', 'jogger', 'läufer'], key: 'chasing-movement', label: 'Jagt Bewegungen' },
-                { keywords: ['katze', 'eichhörn', 'vögel', 'hase', 'reh', 'wild'], key: 'prey-drive', label: 'Jagdtrieb' },
-                { keywords: ['auto', 'autos', 'fahrzeug'], key: 'chasing-cars', label: 'Jagt Autos' },
+                // Kategorie polowania
+                { keywords: ['goni', 'gonienie', 'poluje', 'polowanie', 'biega za', 'ugania'], key: 'chasing', label: 'Zachowania łowieckie' },
+                { keywords: ['rower', 'rowerzyst', 'biegacz', 'joger', 'joggin', 'biegaczy'], key: 'chasing-movement', label: 'Goni w ruchu' },
+                { keywords: ['kot', 'koty', 'kota', 'wiewiór', 'ptak', 'zając', 'sarn', 'zwierzyn', 'dzik'], key: 'prey-drive', label: 'Instynkt łowiecki' },
+                { keywords: ['samochod', 'samochód', 'auto', 'auta', 'pojazd'], key: 'chasing-cars', label: 'Goni samochody' },
 
-                // Fress-Probleme
-                { keywords: ['frisst', 'fressen', 'schluckt', 'aufnimmt'], key: 'eating-unwanted', label: 'Frisst Unerwünschtes' },
-                { keywords: ['kot', 'dreck', 'müll', 'gift'], key: 'eating-trash', label: 'Frisst Unrat' },
-                { keywords: ['socken', 'schuhe', 'spielzeug', 'gegenstände'], key: 'eating-objects', label: 'Frisst Gegenstände' },
+                // Problemy z jedzeniem
+                { keywords: ['zjada', 'połyka', 'podjada', 'żre', 'zbiera z ziemi'], key: 'eating-unwanted', label: 'Zjada niepożądane rzeczy' },
+                { keywords: ['odchod', 'kał', 'brud', 'śmieci', 'trucizn', 'padlin'], key: 'eating-trash', label: 'Zjada odpadki' },
+                { keywords: ['skarpet', 'but', 'buty', 'zabawk', 'przedmiot'], key: 'eating-objects', label: 'Zjada przedmioty' },
 
-                // Reaktivität
-                { keywords: ['postbote', 'briefträger', 'paket', 'lieferant'], key: 'postman-reactive', label: 'Reaktiv bei Postbote' },
-                { keywords: ['andere hunde', 'artgenossen', 'hundebegegnung'], key: 'dog-reactive', label: 'Reaktiv bei Hunden' },
-                { keywords: ['leine', 'angeleint', 'gespannt'], key: 'leash-reactive', label: 'Leinenreaktivität' },
-                { keywords: ['aufgeregt', 'aufgebracht', 'rastet', 'flippt', 'dreht durch'], key: 'overreaction', label: 'Überreaktion' },
+                // Reaktywność
+                { keywords: ['listonosz', 'kurier', 'paczk', 'doręczyciel', 'dostawc'], key: 'postman-reactive', label: 'Reaguje na listonosza' },
+                { keywords: ['inne psy', 'innych psów', 'inny pies', 'inne pieski', 'spotkania z psami', 'psy na spacerze'], key: 'dog-reactive', label: 'Reaguje na inne psy' },
+                { keywords: ['smycz', 'smyczy', 'na smyczy', 'napina'], key: 'leash-reactive', label: 'Reaktywność na smyczy' },
+                { keywords: ['pobudzon', 'podekscytowan', 'wpada w szał', 'szaleje', 'nakręca', 'nie panuje'], key: 'overreaction', label: 'Nadmierna reakcja' },
 
-                // Trennungs-/Allein-Probleme
-                { keywords: ['allein', 'verlassen', 'weg', 'trennung'], key: 'separation', label: 'Trennungsstress' },
-                { keywords: ['heult', 'jault', 'winselt', 'schreit'], key: 'vocalization', label: 'Lautäußerungen' },
+                // Problemy z rozłąką / samotnością
+                { keywords: ['sam', 'sama', 'samotn', 'zostawion', 'rozłąk', 'zostaje sam'], key: 'separation', label: 'Stres z rozłąki' },
+                { keywords: ['wyje', 'skomli', 'skowyczy', 'piszczy', 'jęczy'], key: 'vocalization', label: 'Wokalizacja' },
 
-                // Ressourcen
-                { keywords: ['futter', 'napf', 'fressen verteidigt', 'knurrt beim'], key: 'resource-guarding', label: 'Ressourcenverteidigung' },
-                { keywords: ['spielzeug verteidigt', 'abgeben', 'wegnehmen'], key: 'resource-guarding', label: 'Ressourcenverteidigung' },
+                // Zasoby
+                { keywords: ['jedzenie', 'miska', 'karmy', 'warczy przy', 'broni jedzenia'], key: 'resource-guarding', label: 'Obrona zasobów' },
+                { keywords: ['broni zabawki', 'nie oddaje', 'oddać', 'zabrać'], key: 'resource-guarding', label: 'Obrona zasobów' },
 
-                // Rückruf-Probleme
-                { keywords: ['rückruf', 'kommt nicht', 'nicht zurück', 'läuft weg', 'haut ab', 'reagiert nicht', 'hört nicht'], key: 'recall', label: 'Rückruf-Probleme' },
+                // Problemy z przywołaniem
+                { keywords: ['przywołanie', 'nie wraca', 'nie przychodzi', 'ucieka', 'nie reaguje', 'nie słucha'], key: 'recall', label: 'Problem z przywołaniem' },
 
-                // Sonstiges
-                { keywords: ['beißt', 'schnappt', 'zwickt', 'biss'], key: 'biting', label: 'Beißverhalten' },
-                { keywords: ['spring', 'hochspring', 'anspring'], key: 'jumping', label: 'Anspringen' },
-                { keywords: ['buddel', 'gräbt', 'graben', 'löcher'], key: 'digging', label: 'Buddeln' },
-                { keywords: ['markier', 'pinkelt', 'hebt bein'], key: 'marking', label: 'Markierverhalten' },
+                // Pozostałe
+                { keywords: ['gryzie', 'kąsa', 'szczypie', 'ugryz', 'pogryzł'], key: 'biting', label: 'Gryzienie' },
+                { keywords: ['skacze', 'skakanie', 'wskakuje', 'podskakuje'], key: 'jumping', label: 'Skakanie na ludzi' },
+                { keywords: ['kopie', 'kopanie', 'dziur', 'ryje'], key: 'digging', label: 'Kopanie' },
+                { keywords: ['znacz', 'znakuje', 'sika', 'siusia', 'podnosi nog', 'oznacza'], key: 'marking', label: 'Znakowanie' },
             ];
 
-            // Finde passende Pattern
+            // Znajdź pasujący wzorzec
             const matches = [];
             for (const pattern of patterns) {
                 for (const keyword of pattern.keywords) {
@@ -335,17 +336,17 @@
                 }
             }
 
-            // Kombiniere sinnvoll bei Angst + Trigger
+            // Sensowne łączenie przy lęku + wyzwalaczu
             if (matches.length >= 2) {
                 const angstMatch = matches.find(m => m.key.includes('anxiety'));
                 const triggerMatch = matches.find(m => !m.key.includes('anxiety'));
 
                 if (angstMatch && triggerMatch) {
                     if (triggerMatch.key === 'visitor-anxiety' || triggerMatch.key === 'postman-reactive') {
-                        return { key: 'visitor-anxiety', label: 'Angst bei Besuch' };
+                        return { key: 'visitor-anxiety', label: 'Lęk przy gościach' };
                     }
                     if (triggerMatch.key === 'overreaction') {
-                        return { key: 'anxious-overreaction', label: 'Ängstliche Überreaktion' };
+                        return { key: 'anxious-overreaction', label: 'Lękliwa nadmierna reakcja' };
                     }
                     return triggerMatch;
                 }
@@ -358,7 +359,7 @@
             }
 
             // Fallback
-            return { key: 'custom-other', label: 'Individuelles Verhalten' };
+            return { key: 'custom-other', label: 'Zachowanie indywidualne' };
         }
 
         function updateContinueButton() {
@@ -387,14 +388,14 @@
             const customText = customInput.value.trim();
             let allBehaviors = [...selectedBehaviors];
 
-            // Custom Problem diagnostizieren und als Behavior hinzufügen
+            // Zdiagnozuj problem własny i dodaj jako zachowanie
             if (customText) {
                 const diagnosed = diagnoseCustomProblem(customText);
-                localStorage.setItem('customProblem', customText); // Freitext für Tooltip
+                localStorage.setItem('customProblem', customText); // Wolny tekst do tooltipa
                 localStorage.setItem('customProblemKey', diagnosed.key);
                 localStorage.setItem('customProblemLabel', diagnosed.label);
 
-                // Als Behavior hinzufügen (falls nicht schon drin)
+                // Dodaj jako zachowanie (jeśli jeszcze go nie ma)
                 if (!allBehaviors.includes(diagnosed.key)) {
                     allBehaviors.push(diagnosed.key);
                 }
@@ -405,11 +406,11 @@
             }
 
             if (allBehaviors.length > 0) {
-                // Speichern wie die anderen
+                // Zapisz tak jak pozostałe
                 localStorage.setItem('dogBehaviors', JSON.stringify(allBehaviors));
                 localStorage.setItem('dogProblem', allBehaviors[0] || '');
 
-                // Direkt weiter zur nächsten Seite (Slider übersprungen)
+                // Bezpośrednio dalej do następnej strony (suwak pominięty)
                 window.location.href = 'kurz-plan-preview.html';
             }
         });
@@ -430,7 +431,7 @@
 
         stressSlider.addEventListener('input', (e) => updateStressUI(e.target.value));
 
-        // Weiterleitung zur Plan-Preview Animation
+        // Przekierowanie do animacji podglądu planu
         let isNavigating = false;
         stressContinueBtn.addEventListener('click', () => {
             if (isNavigating) return;

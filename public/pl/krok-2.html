@@ -239,13 +239,13 @@
         // Personalisieren basierend auf Alter
         const dogAge = localStorage.getItem('dogAge');
         const ageLabels = {
-            'puppy': 'Welpe',
-            'young': 'Junghund',
-            'adult': 'Hund',
+            'puppy': 'Szczeniak',
+            'young': 'Młody pies',
+            'adult': 'Dorosły',
             'senior': 'Senior'
         };
         if (dogAge && ageLabels[dogAge]) {
-            document.getElementById('quizTitle').textContent = `Welche Rasse ist dein ${ageLabels[dogAge]}?`;
+            document.getElementById('quizTitle').textContent = `Jakiej rasy jest Twój ${ageLabels[dogAge]}?`;
         }
 
         const searchInput = document.getElementById('searchInput');

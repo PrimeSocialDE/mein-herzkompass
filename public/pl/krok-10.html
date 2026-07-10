@@ -529,10 +529,10 @@ fbq('track', 'PageView');
         // Load dog name
         const dogName = localStorage.getItem('dogName') || 'Twojego psa';
         document.getElementById('dogNameTitle').textContent = dogName;
-        // Headline-Possessive: "Brunos" wenn Hundename da, sonst "Dein"
+        // Nagłówek: imię psa jeśli jest, w innym razie "Twój"
         const hasName = !!localStorage.getItem('dogName');
         document.getElementById('dogNameH1Possessive').textContent =
-          hasName ? dogName + 's' : 'Twój';
+          hasName ? dogName : 'Twój';
 
         // Load problems from localStorage
         const dogProblem = localStorage.getItem('dogProblem') || '';

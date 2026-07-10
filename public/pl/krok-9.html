@@ -145,8 +145,8 @@
     <a href="krok-10.html" class="continue-btn" id="ctaBtn">Plan dla <span id="ctaDogName">Twojego psa</span> — zobacz teraz →</a>
 
     <script>
-        const dogName = localStorage.getItem('dogName') || 'deinen Hund';
-        const dogBreed = localStorage.getItem('dogBreed') || 'Mischling';
+        const dogName = localStorage.getItem('dogName') || 'Twojego psa';
+        const dogBreed = localStorage.getItem('dogBreed') || 'Mieszaniec';
         const dogAge = localStorage.getItem('dogAge') || 'adult';
         const dogProblem = localStorage.getItem('dogProblem') || 'pulling';
         const trainingTime = localStorage.getItem('trainingTime') || '10';
@@ -160,93 +160,93 @@
         // Handlungsbedarf basierend auf Problem
         const highUrgency = ['aggression', 'anxiety', 'separation', 'biting', 'resource-guarding', 'dog-reactive'];
         const lowUrgency = ['jumping', 'energy', 'digging', 'marking'];
-        let urgencyLevel = 'Hoch';
-        if (lowUrgency.includes(dogProblem)) urgencyLevel = 'Mittel';
-        if (highUrgency.includes(dogProblem)) urgencyLevel = 'Dringend';
+        let urgencyLevel = 'Wysoka';
+        if (lowUrgency.includes(dogProblem)) urgencyLevel = 'Średnia';
+        if (highUrgency.includes(dogProblem)) urgencyLevel = 'Pilna';
         document.getElementById('urgencyDisplay').textContent = urgencyLevel;
 
-        const ageMap = { 'puppy': 'Welpe', 'young': 'Junghund', 'adult': 'Erwachsen', 'senior': 'Senior' };
-        document.getElementById('ageDisplay').textContent = ageMap[dogAge] || 'Erwachsen';
+        const ageMap = { 'puppy': 'Szczeniak', 'young': 'Młody pies', 'adult': 'Dorosły', 'senior': 'Senior' };
+        document.getElementById('ageDisplay').textContent = ageMap[dogAge] || 'Dorosły';
 
         // Erweiterte Problem-Map mit Custom Keys
         const problemMap = {
-            'pulling': 'Leinenziehen',
-            'barking': 'Übermäßiges Bellen',
-            'aggression': 'Aggression',
-            'anxiety': 'Trennungsangst',
-            'energy': 'Übermäßige Energie',
-            'destructive': 'Zerstörerisches Verhalten',
-            'soiling': 'Stubenreinheit',
-            'mouthing': 'Unerwünschtes Aufnehmen',
-            'recall': 'Rückruf-Probleme',
+            'pulling': 'Ciągnięcie na smyczy',
+            'barking': 'Nadmierne szczekanie',
+            'aggression': 'Agresja',
+            'anxiety': 'Lęk separacyjny',
+            'energy': 'Nadmierna energia',
+            'destructive': 'Zachowanie destrukcyjne',
+            'soiling': 'Załatwianie się w domu',
+            'mouthing': 'Podnoszenie niepożądanych rzeczy',
+            'recall': 'Problemy z przywołaniem',
             // Custom Problem Keys
-            'visitor-anxiety': 'Angst bei Besuch',
-            'thunder-anxiety': 'Gewitterangst',
-            'noise-sensitivity': 'Geräuschempfindlichkeit',
-            'general-anxiety': 'Ängstliches Verhalten',
-            'stranger-anxiety': 'Angst vor Fremden',
-            'chasing': 'Jagdverhalten',
-            'chasing-movement': 'Jagt Bewegungen',
-            'prey-drive': 'Jagdtrieb',
-            'chasing-cars': 'Jagt Autos',
-            'eating-unwanted': 'Frisst Unerwünschtes',
-            'eating-trash': 'Frisst Unrat',
-            'eating-objects': 'Frisst Gegenstände',
-            'postman-reactive': 'Reaktiv bei Postbote',
-            'dog-reactive': 'Reaktiv bei Hunden',
-            'leash-reactive': 'Leinenreaktivität',
-            'overreaction': 'Überreaktion',
-            'anxious-overreaction': 'Ängstliche Überreaktion',
-            'separation': 'Trennungsstress',
-            'vocalization': 'Lautäußerungen',
-            'resource-guarding': 'Ressourcenverteidigung',
-            'biting': 'Beißverhalten',
-            'jumping': 'Anspringen',
-            'digging': 'Buddeln',
-            'marking': 'Markierverhalten',
-            'custom-other': 'Individuelles Verhalten'
+            'visitor-anxiety': 'Lęk przy gościach',
+            'thunder-anxiety': 'Lęk przed burzą',
+            'noise-sensitivity': 'Wrażliwość na hałas',
+            'general-anxiety': 'Lękliwe zachowanie',
+            'stranger-anxiety': 'Lęk przed obcymi',
+            'chasing': 'Zachowanie łowieckie',
+            'chasing-movement': 'Gonienie za ruchem',
+            'prey-drive': 'Instynkt łowiecki',
+            'chasing-cars': 'Gonienie samochodów',
+            'eating-unwanted': 'Zjadanie niepożądanych rzeczy',
+            'eating-trash': 'Zjadanie śmieci',
+            'eating-objects': 'Zjadanie przedmiotów',
+            'postman-reactive': 'Reaktywność na listonosza',
+            'dog-reactive': 'Reaktywność na psy',
+            'leash-reactive': 'Reaktywność na smyczy',
+            'overreaction': 'Nadmierna reakcja',
+            'anxious-overreaction': 'Lękliwa nadmierna reakcja',
+            'separation': 'Stres separacyjny',
+            'vocalization': 'Wokalizacja',
+            'resource-guarding': 'Obrona zasobów',
+            'biting': 'Gryzienie',
+            'jumping': 'Skakanie na ludzi',
+            'digging': 'Kopanie',
+            'marking': 'Znakowanie',
+            'custom-other': 'Indywidualne zachowanie'
         };
         document.getElementById('problemDisplay').textContent = problemMap[dogProblem] || dogProblem;
 
         // Erweiterte Warning-Map mit Custom Keys
         const problemMapWarning = {
-            'pulling': 'das Leinenziehen',
-            'barking': 'das Bellen',
-            'aggression': 'die Aggression',
-            'anxiety': 'die Trennungsangst',
-            'energy': 'die übermäßige Energie',
-            'destructive': 'das zerstörerische Verhalten',
-            'soiling': 'die Unsauberkeit',
-            'mouthing': 'das Aufnehmen von Gegenständen',
-            'recall': 'das Rückruf-Problem',
+            'pulling': 'ciągnięcia na smyczy',
+            'barking': 'szczekania',
+            'aggression': 'agresji',
+            'anxiety': 'lęku separacyjnego',
+            'energy': 'nadmiernej energii',
+            'destructive': 'zachowania destrukcyjnego',
+            'soiling': 'załatwiania się w domu',
+            'mouthing': 'podnoszenia przedmiotów',
+            'recall': 'problemu z przywołaniem',
             // Custom Problem Keys
-            'visitor-anxiety': 'die Angst bei Besuch',
-            'thunder-anxiety': 'die Gewitterangst',
-            'noise-sensitivity': 'die Geräuschempfindlichkeit',
-            'general-anxiety': 'das ängstliche Verhalten',
-            'stranger-anxiety': 'die Angst vor Fremden',
-            'chasing': 'das Jagdverhalten',
-            'chasing-movement': 'das Jagen von Bewegungen',
-            'prey-drive': 'den Jagdtrieb',
-            'chasing-cars': 'das Jagen von Autos',
-            'eating-unwanted': 'das Fressen von Unerwünschtem',
-            'eating-trash': 'das Fressen von Unrat',
-            'eating-objects': 'das Fressen von Gegenständen',
-            'postman-reactive': 'die Reaktivität bei Postbote',
-            'dog-reactive': 'die Reaktivität bei Hunden',
-            'leash-reactive': 'die Leinenreaktivität',
-            'overreaction': 'die Überreaktion',
-            'anxious-overreaction': 'die ängstliche Überreaktion',
-            'separation': 'den Trennungsstress',
-            'vocalization': 'die Lautäußerungen',
-            'resource-guarding': 'die Ressourcenverteidigung',
-            'biting': 'das Beißverhalten',
-            'jumping': 'das Anspringen',
-            'digging': 'das Buddeln',
-            'marking': 'das Markierverhalten',
-            'custom-other': 'das Verhalten'
+            'visitor-anxiety': 'lęku przy gościach',
+            'thunder-anxiety': 'lęku przed burzą',
+            'noise-sensitivity': 'wrażliwości na hałas',
+            'general-anxiety': 'lękliwego zachowania',
+            'stranger-anxiety': 'lęku przed obcymi',
+            'chasing': 'zachowania łowieckiego',
+            'chasing-movement': 'gonienia za ruchem',
+            'prey-drive': 'instynktu łowieckiego',
+            'chasing-cars': 'gonienia samochodów',
+            'eating-unwanted': 'zjadania niepożądanych rzeczy',
+            'eating-trash': 'zjadania śmieci',
+            'eating-objects': 'zjadania przedmiotów',
+            'postman-reactive': 'reaktywności na listonosza',
+            'dog-reactive': 'reaktywności na psy',
+            'leash-reactive': 'reaktywności na smyczy',
+            'overreaction': 'nadmiernej reakcji',
+            'anxious-overreaction': 'lękliwej nadmiernej reakcji',
+            'separation': 'stresu separacyjnego',
+            'vocalization': 'wokalizacji',
+            'resource-guarding': 'obrony zasobów',
+            'biting': 'gryzienia',
+            'jumping': 'skakania na ludzi',
+            'digging': 'kopania',
+            'marking': 'znakowania',
+            'custom-other': 'tego zachowania'
         };
-        document.getElementById('problemTextWarning').textContent = problemMapWarning[dogProblem] || 'das Verhalten';
+        document.getElementById('problemTextWarning').textContent = problemMapWarning[dogProblem] || 'tego zachowania';
 
         // Commands count
         const commandCount = dogCommands.includes('none') ? 0 : dogCommands.length;
