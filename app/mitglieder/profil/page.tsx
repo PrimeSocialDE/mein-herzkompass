@@ -1,5 +1,6 @@
 import { getCurrentMember } from "@/lib/member-auth-server";
 import { getOrCreateMemberProfile } from "@/lib/member-db";
+import { getMemberLang } from "@/lib/member-lang";
 import SetPasswordCard from "./SetPasswordCard";
 
 export const dynamic = "force-dynamic";
@@ -13,43 +14,72 @@ export default async function ProfilPage() {
     userId: user.id,
     email: user.email || "",
   });
+  const lang = await getMemberLang(user?.email ?? member?.email ?? null);
+  const t =
+    lang === "pl"
+      ? {
+          kicker: "Profil",
+          title: "Twoje dane",
+          email: "E-mail",
+          name: "Imię",
+          dogName: "Imię psa",
+          breed: "Rasa",
+          status: "Status",
+          statusPaid: "✓ Pełny plan odblokowany",
+          statusFree: "Jeszcze bez planu",
+          purchasedAt: "Plan kupiony dnia",
+          footerPre: "Chcesz zmienić dane lub usunąć konto? Napisz do nas:",
+        }
+      : {
+          kicker: "Profil",
+          title: "Deine Daten",
+          email: "E-Mail",
+          name: "Name",
+          dogName: "Hundename",
+          breed: "Rasse",
+          status: "Status",
+          statusPaid: "✓ Voller Plan freigeschaltet",
+          statusFree: "Noch ohne Plan",
+          purchasedAt: "Plan gekauft am",
+          footerPre: "Daten ändern oder Konto löschen? Schreib uns:",
+        };
 
   return (
     <div className="space-y-6">
       <div>
         <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
-          Profil
+          {t.kicker}
         </p>
         <h1 className="text-[26px] md:text-[32px] font-extrabold tracking-tight text-[#1a1a1a]">
-          Deine Daten
+          {t.title}
         </h1>
       </div>
 
       <div className="bg-white border border-[#EADDC5] rounded-2xl p-6 space-y-4">
-        <Row label="E-Mail" value={member.email} />
-        {member.name && <Row label="Name" value={member.name} />}
-        {member.dog_name && <Row label="Hundename" value={member.dog_name} />}
-        {member.dog_breed && <Row label="Rasse" value={member.dog_breed} />}
+        <Row label={t.email} value={member.email} />
+        {member.name && <Row label={t.name} value={member.name} />}
+        {member.dog_name && <Row label={t.dogName} value={member.dog_name} />}
+        {member.dog_breed && <Row label={t.breed} value={member.dog_breed} />}
         <Row
-          label="Status"
+          label={t.status}
           value={
             member.purchase_status === "paid"
-              ? "✓ Voller Plan freigeschaltet"
-              : "Noch ohne Plan"
+              ? t.statusPaid
+              : t.statusFree
           }
         />
         {member.purchased_at && (
           <Row
-            label="Plan gekauft am"
+            label={t.purchasedAt}
             value={new Date(member.purchased_at).toLocaleDateString("de-DE")}
           />
         )}
       </div>
 
-      <SetPasswordCard />
+      <SetPasswordCard lang={lang} />
 
       <p className="text-[12px] text-[#9CA3AF] text-center">
-        Daten ändern oder Konto löschen? Schreib uns:{" "}
+        {t.footerPre}{" "}
         <a
           href="mailto:support@pfoten-plan.de"
           className="text-[#8B7355] underline"

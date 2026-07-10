@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import SiteShell from "@/components/mitglieder/SiteShell";
 import { getCurrentMember } from "@/lib/member-auth-server";
+import { getMemberLang } from "@/lib/member-lang";
 
 export const metadata: Metadata = {
   title: "Mein Pfoten-Plan",
@@ -30,6 +31,8 @@ export default async function MitgliederLayout({
   } catch {
     email = undefined;
   }
+  // Sprache des Members (answers.lang) → Navigation/Shell auf Polnisch. Default de.
+  const lang = await getMemberLang(email);
 
   return (
     <>
@@ -62,7 +65,7 @@ export default async function MitgliederLayout({
         `}
       </Script>
 
-      <SiteShell email={email}>{children}</SiteShell>
+      <SiteShell email={email} lang={lang}>{children}</SiteShell>
     </>
   );
 }

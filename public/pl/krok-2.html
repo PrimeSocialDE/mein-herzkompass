@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/utm-tracking.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ufxcf43805");
+</script>
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17806525009');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+    <title>ŁapaPlan - Wybierz rasę</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background-light); color: var(--text-dark); line-height: 1.5; -webkit-tap-highlight-color: transparent; }
+        .header { background: var(--white); padding: 16px 0; border-bottom: 1px solid var(--border-light); text-align: center; }
+        .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-dark); }
+        .logo-image { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+        .logo-text { font-size: 22px; font-weight: 800; color: var(--text-dark); }
+        .container { max-width: 500px; margin: 0 auto; padding: 40px 20px; }
+        .quiz-header { text-align: center; margin-bottom: 30px; }
+        .quiz-title { font-size: 26px; font-weight: 700; color: var(--text-dark); }
+        .progress-container { margin-bottom: 35px; }
+        .progress-bar { width: 100%; height: 6px; background: var(--border-light); border-radius: 3px; overflow: hidden; }
+        .progress-fill { width: 22.2%; height: 100%; background: var(--light-brown); transition: width 0.3s ease; }
+        .progress-text { text-align: center; margin-top: 8px; color: var(--text-medium); font-size: 13px; }
+        .search-container { margin-bottom: 20px; position: sticky; top: 0; z-index: 10; background: var(--background-light); padding-bottom: 10px; }
+        .search-input { width: 100%; padding: 14px 18px; font-size: 16px; border: 2px solid var(--border-light); border-radius: var(--border-radius); background: var(--white); }
+        .search-input:focus { outline: none; border-color: var(--light-brown); }
+        .breeds-list { display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; }
+        .breed-card {
+            background: var(--white);
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+            font-size: 16px;
+            font-weight: 500;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .breed-card:hover { border-color: var(--light-brown); background: #FDFCFA; }
+        .breed-card:active { background: #F8F6F3; }
+        .breed-card.clicked { pointer-events: none; opacity: 0.7; border-color: var(--primary-brown); }
+        .breed-card.hidden { display: none; }
+        @media (max-width: 480px) {
+            .container { padding: 25px 15px; }
+            .quiz-title { font-size: 22px; }
+            .breeds-list { max-height: 350px; }
+        }
+    </style>
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','864109602683515');fbq('track','PageView');</script>
+<script
+  defer
+  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+  data-domain="pfoten-plan.de"
+  src="https://datafa.st/js/script.js">
+</script>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="ŁapaPlan Logo" class="logo-image">
+            <span class="logo-text">ŁapaPlan</span>
+        </a>
+    </header>
+    <div class="container">
+        <div class="quiz-header">
+            <h1 class="quiz-title" id="quizTitle">Jakiej rasy jest Twój pies?</h1>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar"><div class="progress-fill"></div></div>
+            <p style="text-align: center; font-size: 11px; color: var(--text-light); margin-top: 6px;">Pytanie 2 z 9</p>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Szukaj rasy...">
+        </div>
+        <div class="breeds-list" id="breedsList">
+            <div class="breed-card" data-breed="Mischling">Mieszaniec</div>
+            <div class="breed-card" data-breed="Labrador Retriever">Labrador retriever</div>
+            <div class="breed-card" data-breed="Deutscher Schäferhund">Owczarek niemiecki</div>
+            <div class="breed-card" data-breed="Golden Retriever">Golden retriever</div>
+            <div class="breed-card" data-breed="Französische Bulldogge">Buldog francuski</div>
+            <div class="breed-card" data-breed="Chihuahua">Chihuahua</div>
+            <div class="breed-card" data-breed="Australian Shepherd">Owczarek australijski</div>
+            <div class="breed-card" data-breed="Border Collie">Border collie</div>
+            <div class="breed-card" data-breed="Beagle">Beagle</div>
+            <div class="breed-card" data-breed="Pudel">Pudel</div>
+            <div class="breed-card" data-breed="Dackel">Jamnik</div>
+            <div class="breed-card" data-breed="Rottweiler">Rottweiler</div>
+            <div class="breed-card" data-breed="Boxer">Bokser</div>
+            <div class="breed-card" data-breed="Siberian Husky">Husky syberyjski</div>
+            <div class="breed-card" data-breed="Malteser">Maltańczyk</div>
+            <div class="breed-card" data-breed="Jack Russell Terrier">Jack Russell terrier</div>
+            <div class="breed-card" data-breed="Shih Tzu">Shih tzu</div>
+            <div class="breed-card" data-breed="Yorkshire Terrier">Yorkshire terrier</div>
+            <div class="breed-card" data-breed="Airedale Terrier">Airedale terrier</div>
+            <div class="breed-card" data-breed="Akita">Akita</div>
+            <div class="breed-card" data-breed="Alaskan Malamute">Malamut alaskański</div>
+            <div class="breed-card" data-breed="American Staffordshire Terrier">American staffordshire terrier</div>
+            <div class="breed-card" data-breed="Australian Cattle Dog">Australian cattle dog</div>
+            <div class="breed-card" data-breed="Aussiedoodle">Aussiedoodle</div>
+            <div class="breed-card" data-breed="Basenji">Basenji</div>
+            <div class="breed-card" data-breed="Basset Hound">Basset hound</div>
+            <div class="breed-card" data-breed="Belgischer Schäferhund">Owczarek belgijski (Malinois)</div>
+            <div class="breed-card" data-breed="Berner Sennenhund">Berneński pies pasterski</div>
+            <div class="breed-card" data-breed="Bernedoodle">Bernedoodle</div>
+            <div class="breed-card" data-breed="Bichon Frisé">Bichon frisé</div>
+            <div class="breed-card" data-breed="Bloodhound">Bloodhound</div>
+            <div class="breed-card" data-breed="Bobtail">Bobtail (Owczarek staroangielski)</div>
+            <div class="breed-card" data-breed="Bolonka Zwetna">Bolonka Zwetna</div>
+            <div class="breed-card" data-breed="Bordeauxdogge">Dog z Bordeaux</div>
+            <div class="breed-card" data-breed="Boston Terrier">Boston terrier</div>
+            <div class="breed-card" data-breed="Briard">Briard</div>
+            <div class="breed-card" data-breed="Englische Bulldogge">Buldog angielski</div>
+            <div class="breed-card" data-breed="Bullmastiff">Bullmastif</div>
+            <div class="breed-card" data-breed="Bull Terrier">Bulterier</div>
+            <div class="breed-card" data-breed="Cairn Terrier">Cairn terrier</div>
+            <div class="breed-card" data-breed="Cane Corso">Cane corso</div>
+            <div class="breed-card" data-breed="Cavalier King Charles Spaniel">Cavalier king charles spaniel</div>
+            <div class="breed-card" data-breed="Chow Chow">Chow chow</div>
+            <div class="breed-card" data-breed="Cockapoo">Cockapoo</div>
+            <div class="breed-card" data-breed="Cocker Spaniel">Cocker spaniel</div>
+            <div class="breed-card" data-breed="Collie">Collie</div>
+            <div class="breed-card" data-breed="Welsh Corgi">Welsh corgi</div>
+            <div class="breed-card" data-breed="Dalmatiner">Dalmatyńczyk</div>
+            <div class="breed-card" data-breed="Deutsche Dogge">Dog niemiecki</div>
+            <div class="breed-card" data-breed="Deutsch Drahthaar">Wyżeł niemiecki szorstkowłosy</div>
+            <div class="breed-card" data-breed="Deutsch Kurzhaar">Wyżeł niemiecki krótkowłosy</div>
+            <div class="breed-card" data-breed="Dobermann">Doberman</div>
+            <div class="breed-card" data-breed="Englischer Setter">Seter angielski</div>
+            <div class="breed-card" data-breed="Englischer Springer Spaniel">Springer spaniel angielski</div>
+            <div class="breed-card" data-breed="Eurasier">Eurazjer</div>
+            <div class="breed-card" data-breed="Flat Coated Retriever">Flat coated retriever</div>
+            <div class="breed-card" data-breed="Foxterrier">Foksterier</div>
+            <div class="breed-card" data-breed="Goldendoodle">Goldendoodle</div>
+            <div class="breed-card" data-breed="Gordon Setter">Seter gordon</div>
+            <div class="breed-card" data-breed="Greyhound">Greyhound (Chart angielski)</div>
+            <div class="breed-card" data-breed="Großer Schweizer Sennenhund">Duży szwajcarski pies pasterski</div>
+            <div class="breed-card" data-breed="Havaneser">Hawańczyk</div>
+            <div class="breed-card" data-breed="Hovawart">Hovawart</div>
+            <div class="breed-card" data-breed="Irish Setter">Seter irlandzki</div>
+            <div class="breed-card" data-breed="Irish Wolfhound">Wilczarz irlandzki</div>
+            <div class="breed-card" data-breed="Italienisches Windspiel">Charcik włoski</div>
+            <div class="breed-card" data-breed="Japan Spitz">Szpic japoński</div>
+            <div class="breed-card" data-breed="Kangal">Kangal</div>
+            <div class="breed-card" data-breed="Kaukasischer Owtscharka">Owczarek kaukaski</div>
+            <div class="breed-card" data-breed="Kleinspitz">Szpic mały</div>
+            <div class="breed-card" data-breed="Kromfohrländer">Kromfohrländer</div>
+            <div class="breed-card" data-breed="Labradoodle">Labradoodle</div>
+            <div class="breed-card" data-breed="Lagotto Romagnolo">Lagotto romagnolo</div>
+            <div class="breed-card" data-breed="Landseer">Landseer</div>
+            <div class="breed-card" data-breed="Leonberger">Leonberger</div>
+            <div class="breed-card" data-breed="Lhasa Apso">Lhasa apso</div>
+            <div class="breed-card" data-breed="Maltipoo">Maltipoo</div>
+            <div class="breed-card" data-breed="Maremmen-Abruzzen-Schäferhund">Owczarek maremmano-abruzzese</div>
+            <div class="breed-card" data-breed="Zwergschnauzer">Sznaucer miniaturowy</div>
+            <div class="breed-card" data-breed="Mittelspitz">Szpic średni</div>
+            <div class="breed-card" data-breed="Mops">Mops</div>
+            <div class="breed-card" data-breed="Münsterländer">Münsterländer</div>
+            <div class="breed-card" data-breed="Neufundländer">Nowofundland</div>
+            <div class="breed-card" data-breed="Nova Scotia Duck Tolling Retriever">Nova Scotia duck tolling retriever</div>
+            <div class="breed-card" data-breed="Österreichischer Pinscher">Pinczer austriacki</div>
+            <div class="breed-card" data-breed="Papillon">Papillon</div>
+            <div class="breed-card" data-breed="Parson Russell Terrier">Parson russell terrier</div>
+            <div class="breed-card" data-breed="Pekinese">Pekińczyk</div>
+            <div class="breed-card" data-breed="Deutscher Pinscher">Pinczer niemiecki</div>
+            <div class="breed-card" data-breed="Pitbull">Pitbull</div>
+            <div class="breed-card" data-breed="Podenco">Podenco</div>
+            <div class="breed-card" data-breed="Pointer">Pointer</div>
+            <div class="breed-card" data-breed="Pomeranian">Pomeranian / Szpic miniaturowy</div>
+            <div class="breed-card" data-breed="Portugiesischer Wasserhund">Portugalski pies dowodny</div>
+            <div class="breed-card" data-breed="Prager Rattler">Ratlerek praski</div>
+            <div class="breed-card" data-breed="Rhodesian Ridgeback">Rhodesian ridgeback</div>
+            <div class="breed-card" data-breed="Riesenschnauzer">Sznaucer olbrzym</div>
+            <div class="breed-card" data-breed="Samojede">Samojed</div>
+            <div class="breed-card" data-breed="Schapendoes">Schapendoes</div>
+            <div class="breed-card" data-breed="Schipperke">Schipperke</div>
+            <div class="breed-card" data-breed="Schnauzer">Sznaucer</div>
+            <div class="breed-card" data-breed="Scottish Terrier">Terier szkocki</div>
+            <div class="breed-card" data-breed="Shar Pei">Shar pei</div>
+            <div class="breed-card" data-breed="Shetland Sheepdog">Owczarek szetlandzki (Sheltie)</div>
+            <div class="breed-card" data-breed="Shiba Inu">Shiba inu</div>
+            <div class="breed-card" data-breed="Deutscher Spitz">Szpic niemiecki</div>
+            <div class="breed-card" data-breed="Staffordshire Bullterrier">Staffordshire bulterier</div>
+            <div class="breed-card" data-breed="Standardpudel">Pudel duży</div>
+            <div class="breed-card" data-breed="St. Bernhardshund">Bernardyn</div>
+            <div class="breed-card" data-breed="Tibet Terrier">Terier tybetański</div>
+            <div class="breed-card" data-breed="Toy Pudel">Pudel toy</div>
+            <div class="breed-card" data-breed="Vizsla">Vizsla (Wyżeł węgierski)</div>
+            <div class="breed-card" data-breed="Weimaraner">Wyżeł weimarski</div>
+            <div class="breed-card" data-breed="Weißer Schweizer Schäferhund">Biały owczarek szwajcarski</div>
+            <div class="breed-card" data-breed="West Highland White Terrier">West highland white terrier (Westie)</div>
+            <div class="breed-card" data-breed="Whippet">Whippet</div>
+            <div class="breed-card" data-breed="Zwergpinscher">Pinczer miniaturowy</div>
+            <div class="breed-card" data-breed="Zwergpudel">Pudel miniaturowy</div>
+            <div class="breed-card" data-breed="Andere Rasse">Inna rasa / Nie wiem</div>
+        </div>
+
+        <!-- Custom Rasse eingeben -->
+        <div id="customBreedSection" style="margin-top: 16px; padding: 14px 16px; background: #FDFCFA; border: 1px solid var(--border-light); border-radius: 12px;">
+            <p style="font-size: 13px; color: var(--text-medium); margin-bottom: 8px; font-weight: 600;">Nie ma Twojej rasy na liście? Wpisz ją tutaj:</p>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="customBreedInput" placeholder="np. Airedale terrier" style="flex: 1; padding: 10px 12px; border: 1px solid var(--border-light); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none;">
+                <button id="customBreedSubmit" style="padding: 10px 18px; background: var(--primary-brown); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap;">Dalej →</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Personalisieren basierend auf Alter
+        const dogAge = localStorage.getItem('dogAge');
+        const ageLabels = {
+            'puppy': 'Szczeniak',
+            'young': 'Młody pies',
+            'adult': 'Dorosły',
+            'senior': 'Senior'
+        };
+        if (dogAge && ageLabels[dogAge]) {
+            document.getElementById('quizTitle').textContent = `Jakiej rasy jest Twój ${ageLabels[dogAge]}?`;
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        const breedCards = document.querySelectorAll('.breed-card');
+
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            breedCards.forEach(card => {
+                const breedName = card.textContent.toLowerCase();
+                card.classList.toggle('hidden', !breedName.includes(searchTerm));
+            });
+        });
+
+        let isNavigating = false;
+
+        // A/B Test: 50% sehen Trust-Zwischenseite, 50% gehen direkt weiter
+        // (hochgezogen von 30/70, damit der Test schneller Signifikanz erreicht)
+        function getTrustVariant() {
+            let variant = localStorage.getItem('ab_test_trust');
+            if (!variant) {
+                variant = Math.random() < 0.50 ? 'A' : 'B';
+                localStorage.setItem('ab_test_trust', variant);
+            }
+            // A = Trust-Seite (krok-2b), B = direkt zu Schritt 3
+            return variant === 'A' ? 'krok-2b.html' : 'krok-3.html';
+        }
+
+        function selectBreed(breed) {
+            if (isNavigating) return;
+            isNavigating = true;
+            localStorage.setItem('dogBreed', breed);
+            const targetPage = getTrustVariant();
+            setTimeout(() => {
+                window.location.href = targetPage;
+            }, 150);
+        }
+
+        breedCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isNavigating) return;
+                this.classList.add('clicked');
+                selectBreed(this.dataset.breed);
+            });
+        });
+
+        // Custom Breed Eingabe
+        const customInput = document.getElementById('customBreedInput');
+        const customSubmit = document.getElementById('customBreedSubmit');
+
+        function submitCustomBreed() {
+            const value = customInput.value.trim();
+            if (!value) {
+                customInput.focus();
+                return;
+            }
+            customSubmit.disabled = true;
+            customSubmit.textContent = '...';
+            selectBreed(value);
+        }
+
+        customSubmit.addEventListener('click', submitCustomBreed);
+        customInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitCustomBreed();
+            }
+        });
+    </script>
+</body>
+</html>

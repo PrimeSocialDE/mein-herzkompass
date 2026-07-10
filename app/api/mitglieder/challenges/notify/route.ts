@@ -13,6 +13,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createMemberAdminClient } from "@/lib/member-auth-server";
 import { getOrAssignWeekChallenges } from "@/lib/member-challenges";
 import { sendWeeklyChallengesMail } from "@/lib/member-mail";
+import { langFromEmailLookup } from "@/lib/lang";
 import type { MemberProfile } from "@/lib/member-db";
 
 export const runtime = "nodejs";
@@ -114,7 +115,7 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-      const res = await sendWeeklyChallengesMail(m, challenges);
+      const res = await sendWeeklyChallengesMail(m, challenges, await langFromEmailLookup(admin, m.email));
       if (res.ok) stats.sent++;
       else stats.failed++;
     } catch (e: any) {

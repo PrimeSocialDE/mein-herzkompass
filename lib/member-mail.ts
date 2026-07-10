@@ -8,6 +8,7 @@ import "server-only";
 import { createClient } from "@supabase/supabase-js";
 import type { UserChallenge } from "./member-challenges";
 import type { MemberProfile } from "./member-db";
+import type { Lang } from "./lang";
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
 const SITE_URL =
@@ -149,6 +150,8 @@ export function wrapTemplate(opts: {
   /** Nur fuer Marketing-Mails: sichtbaren Abmelde-Link (Brevo-Tag) einblenden.
    *  NICHT fuer transaktionale Mails (Login, Plan-Auslieferung) setzen. */
   unsubscribe?: boolean;
+  /** Sprache: "pl" schaltet Marken-Label + Footer auf Polnisch. Default "de". */
+  lang?: Lang;
 }): string {
   const {
     preheader,
@@ -159,9 +162,19 @@ export function wrapTemplate(opts: {
     ctaUrl,
     footerHint,
     unsubscribe,
+    lang = "de",
   } = opts;
+  const isPl = lang === "pl";
+  const htmlLang = isPl ? "pl" : "de";
+  const brandLabel = isPl ? "ŁapaPlan" : "Pfoten-Plan";
+  const footerBrandLine = isPl
+    ? `ŁapaPlan · Spersonalizowany trening psa · <a href="${SITE_URL}/mitglieder" style="color:#8B7355;text-decoration:underline;">Mój panel</a>`
+    : `Pfoten-Plan · Persönliches Hundetraining · <a href="${SITE_URL}/mitglieder" style="color:#8B7355;text-decoration:underline;">Mein Bereich</a>`;
+  const unsubscribeText = isPl
+    ? "Wypisz się z tych e-maili"
+    : "Aus diesen E-Mails abmelden";
   return `<!DOCTYPE html>
-<html lang="de">
+<html lang="${htmlLang}">
 <head>
 <meta charset="UTF-8">
 <title>${headline}</title>
@@ -174,7 +187,7 @@ export function wrapTemplate(opts: {
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #EADDC5;border-radius:16px;overflow:hidden;">
         <tr>
           <td style="padding:24px 28px 8px;border-bottom:1px solid #F0EBE3;">
-            <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">Pfoten-Plan</p>
+            <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">${brandLabel}</p>
           </td>
         </tr>
         <tr>
@@ -203,9 +216,9 @@ export function wrapTemplate(opts: {
         <tr>
           <td style="padding:16px 28px;background:#FAFAFA;border-top:1px solid #F0EBE3;">
             <p style="margin:0;font-size:11px;line-height:1.6;color:#9CA3AF;text-align:center;">
-              Pfoten-Plan · Persönliches Hundetraining · <a href="${SITE_URL}/mitglieder" style="color:#8B7355;text-decoration:underline;">Mein Bereich</a>${
+              ${footerBrandLine}${
                 unsubscribe
-                  ? `<br><a href="{{ unsubscribe }}" style="color:#9CA3AF;text-decoration:underline;">Aus diesen E-Mails abmelden</a>`
+                  ? `<br><a href="{{ unsubscribe }}" style="color:#9CA3AF;text-decoration:underline;">${unsubscribeText}</a>`
                   : ""
               }
             </p>
@@ -219,8 +232,9 @@ export function wrapTemplate(opts: {
 </html>`;
 }
 
-function challengesAsHtml(challenges: UserChallenge[]): string {
+function challengesAsHtml(challenges: UserChallenge[], lang: Lang = "de"): string {
   if (challenges.length === 0) return "";
+  const badgeLabel = lang === "pl" ? "→ Odznaka:" : "→ Abzeichen:";
   const items = challenges
     .map(
       (c) => `
@@ -230,7 +244,7 @@ function challengesAsHtml(challenges: UserChallenge[]): string {
           <div style="display:inline-block;vertical-align:middle;max-width:380px;">
             <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;line-height:1.3;">${c.challenge_title}</p>
             <p style="margin:0;font-size:12px;color:#6B7280;line-height:1.45;">${c.challenge_description}</p>
-            <p style="margin:4px 0 0;font-size:11px;color:#8B7355;font-weight:600;">→ Abzeichen: ${c.badge_label}</p>
+            <p style="margin:4px 0 0;font-size:11px;color:#8B7355;font-weight:600;">${badgeLabel} ${c.badge_label}</p>
           </div>
         </td>
       </tr>`
@@ -242,9 +256,39 @@ function challengesAsHtml(challenges: UserChallenge[]): string {
 // ── Welcome-Mail: 1x bei erster Anmeldung ─────────────────────────────
 export async function sendWelcomeChallengesMail(
   member: MemberProfile,
-  challenges: UserChallenge[]
+  challenges: UserChallenge[],
+  lang: Lang = "de"
 ) {
   if (!member.email) return { ok: false, reason: "no_email" };
+
+  if (lang === "pl") {
+    const dog = member.dog_name?.trim() || "Twojego psa";
+    const challengesHtml = challengesAsHtml(challenges, "pl");
+    const ctaUrl = `${SITE_URL}/mitglieder/erfolge/challenges`;
+
+    const html = wrapTemplate({
+      preheader: `Twoje pierwsze zadania tygodnia dla ${dog} są gotowe.`,
+      headline: `Witaj w ŁapaPlan${
+        member.dog_name ? `, ${member.dog_name}` : ""
+      }!`,
+      intro: `Cieszymy się, że jesteś. Żeby nie skończyło się na samym czytaniu, co tydzień dostajesz krótkie zadania treningowe dla ${dog} - skrojone dokładnie pod wasz temat. Gdy je wykonasz, zbierasz odznaki do kolekcji.`,
+      bodyHtml: `<p style="margin:16px 0 8px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">W tym tygodniu:</p>${challengesHtml}<p style="margin:0 0 8px;font-size:13px;color:#4B5563;line-height:1.55;">Wystarczy 5-10 minut dziennie. W panelu członkowskim możesz odhaczyć każde ćwiczenie, gdy tylko je wykonasz.</p>`,
+      ctaText: "Do Twoich zadań tygodnia",
+      ctaUrl,
+      footerHint: `Otrzymujesz tego e-maila, ponieważ zarejestrowałeś się w ŁapaPlan. Zadania i odznaki znajdziesz w każdej chwili w sekcji „Osiągnięcia" w panelu członkowskim.`,
+      lang: "pl",
+    });
+
+    return sendBrevoMail({
+      to: member.email,
+      subject: `🐾 Zadania tygodnia dla ${
+        member.dog_name || "Twojego psa"
+      } są gotowe`,
+      html,
+      tags: ["mitglieder", "challenges-welcome"],
+    });
+  }
+
   const dog = member.dog_name?.trim() || "deinem Hund";
   const challengesHtml = challengesAsHtml(challenges);
   const ctaUrl = `${SITE_URL}/mitglieder/erfolge/challenges`;
@@ -283,15 +327,126 @@ interface PlanReadyArgs {
   planLengthMonths: 1 | 3 | 6;
   plan: TrainingPlanContent;
   customerName?: string | null;
+  lang?: Lang;
 }
 
 export async function sendPlanReadyEmail(args: PlanReadyArgs) {
   const { to, dogName, dogBreed, dogAge, mainProblem, planLengthMonths, plan, customerName } = args;
+  const lang = args.lang ?? "de";
   if (!to) return { ok: false, reason: "no_email" };
 
   // Auto-Login-Link: User landet direkt eingeloggt auf der Coaching-Seite
   const ctaUrl = await buildAutoLoginUrl(to, "/mitglieder/erfolge/coaching");
   const weeksTotal = plan.weeks.length;
+
+  let html: string;
+  let subject: string;
+
+  if (lang === "pl") {
+    const greeting = customerName?.trim()
+      ? `Cześć ${customerName.trim().split(" ")[0]},`
+      : "Cześć,";
+
+    const monthsLabelPl =
+      planLengthMonths === 1
+        ? "plan na 1 miesiąc"
+        : planLengthMonths === 3
+          ? "plan na 3 miesiące"
+          : "plan na 6 miesięcy";
+
+    const pdfHinweisPl = `
+    <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:14px;padding:18px 20px;margin:0 0 20px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+          <td style="vertical-align:middle;width:54px;">
+            <div style="display:inline-block;width:48px;height:48px;background:#C4A576;border-radius:12px;text-align:center;line-height:48px;font-size:22px;color:#FFFFFF;">📄</div>
+          </td>
+          <td style="vertical-align:middle;padding-left:14px;">
+            <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;line-height:1.3;">Twój plan treningowy w PDF</p>
+            <p style="margin:0;font-size:12px;color:#6B7280;line-height:1.4;">W załączniku tej wiadomości · do druku · na drogę</p>
+          </td>
+        </tr>
+      </table>
+    </div>`;
+
+    const mitgliederShowcasePl = `
+    <div style="border-top:1px solid #F0EBE3;margin:24px 0 16px;"></div>
+    <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">Dostajesz jeszcze więcej</p>
+    <h2 style="margin:0 0 10px;font-size:20px;line-height:1.3;font-weight:800;color:#1a1a1a;">Twój panel członkowski</h2>
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#4B5563;">
+      Plan możesz w każdej chwili przejść także online. Automatycznie śledzimy Twoje postępy, nastrój ${escapeHtml(dogName)} i co tydzień wysyłamy Ci nowe zadania — żebyś nie musiał przechodzić przez plan w pojedynkę.
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">📅</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Prowadzenie przez plan — tydzień po tygodniu</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Który tydzień jest teraz, co będzie dalej — na pierwszy rzut oka.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">📊</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Dziennik nastroju z analizą AI</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Zapisuj co tydzień krótko, jak poszło — AI podsumuje wasz tydzień i da konkretne wskazówki na kolejny.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">🏆</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Zadania tygodnia i odznaki</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Co tydzień krótkie zadania treningowe dopasowane do waszego planu. Wykonane = odznaka do kolekcji.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">💬</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Trener AI na Twoje pytania</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Zadawaj pytania o każdej porze — trener AI odpowiada całą dobę, korzystając z wiedzy naszego zespołu trenerów psów.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:10px 0;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">📚</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Moduły specjalne</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Jeśli ${escapeHtml(dogName)} ma dodatkowe tematy — np. lęk separacyjny, podróże, pierwsza pomoc — są do tego dedykowane moduły.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+    </table>`;
+
+    html = wrapTemplate({
+      preheader: `Twój ${monthsLabelPl} dla ${dogName} jest gotowy.`,
+      headline: `Twój ${monthsLabelPl} dla ${dogName} jest gotowy`,
+      intro: `${greeting} Twój osobisty plan treningowy właśnie został dla Ciebie stworzony — w pełni skrojony pod ${dogName} i wasz główny temat. ${weeksTotal} tygodni, z konkretnymi ćwiczeniami na każdy dzień, celami tygodniowymi, znacznikami postępów i jasną nicią przewodnią.`,
+      bodyHtml: `${pdfHinweisPl}${mitgliederShowcasePl}`,
+      ctaText: "Otwórz panel członkowski →",
+      ctaUrl,
+      footerHint: `Przycisk zawiera jednorazowe logowanie — trafisz od razu zalogowany do panelu członkowskiego. Link jest ważny 1 godzinę i tylko dla Ciebie.`,
+      lang: "pl",
+    });
+    subject = `🐾 Twój ${monthsLabelPl} dla ${dogName} jest gotowy`;
+  } else {
+
   const greeting = customerName?.trim()
     ? `Hi ${customerName.trim().split(" ")[0]},`
     : "Hi,";
@@ -387,7 +542,7 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
       </td></tr>
     </table>`;
 
-  const html = wrapTemplate({
+  html = wrapTemplate({
     preheader: `Dein ${monthsLabel} für ${dogName} ist fertig.`,
     headline: `Dein ${monthsLabel} für ${dogName} ist fertig`,
     intro: `${greeting} dein persönlicher Trainings-Plan ist soeben für dich erstellt worden — komplett zugeschnitten auf ${dogName} und euer Haupt-Thema. ${weeksTotal} Wochen, mit konkreten Übungen für jeden Tag, Wochenzielen, Fortschritts-Markern und einem klaren roten Faden.`,
@@ -396,6 +551,8 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
     ctaUrl,
     footerHint: `Der Button enthält einen Einmal-Login — du landest direkt eingeloggt im Mitglieder-Bereich. Der Link gilt 1 Stunde und ist nur für dich.`,
   });
+  subject = `🐾 Dein ${monthsLabel} für ${dogName} ist da`;
+  }
 
   // PDF-Anhang aus dem AI-personalisierten Plan-JSON generieren.
   // WICHTIG: Bei PDF-Build-Fail wird die Mail NICHT geschickt (statt
@@ -439,7 +596,7 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
 
   return sendBrevoMail({
     to,
-    subject: `🐾 Dein ${monthsLabel} für ${dogName} ist da`,
+    subject,
     html,
     tags: ["mitglieder", "plan-ready"],
     attachments,
@@ -460,10 +617,37 @@ export function escapeHtml(s: string): string {
 // ── Wochen-Erinnerung: jeden Montag ────────────────────────────────────
 export async function sendWeeklyChallengesMail(
   member: MemberProfile,
-  challenges: UserChallenge[]
+  challenges: UserChallenge[],
+  lang: Lang = "de"
 ) {
   if (!member.email) return { ok: false, reason: "no_email" };
   if (challenges.length === 0) return { ok: false, reason: "no_challenges" };
+
+  if (lang === "pl") {
+    const dog = member.dog_name?.trim() || "Twojego psa";
+    const challengesHtml = challengesAsHtml(challenges, "pl");
+    const ctaUrl = `${SITE_URL}/mitglieder/erfolge/challenges`;
+
+    const html = wrapTemplate({
+      preheader: `Nowe zadania tygodnia dla ${dog} - zdobądź kolejną odznakę.`,
+      headline: `Nowy tydzień, nowe zadania dla ${dog}`,
+      intro: `W tym tygodniu czekają na was nowe krótkie ćwiczenia treningowe - wystarczy 5-10 minut dziennie. Gdy wykonasz je wszystkie, są nowe odznaki do kolekcji.`,
+      bodyHtml: `<p style="margin:16px 0 8px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">W tym tygodniu:</p>${challengesHtml}`,
+      ctaText: "Zobacz zadania",
+      ctaUrl,
+      footerHint: `Jeśli nie chcesz już tego przypomnienia, napisz do nas krótko na support@pfoten-plan.de.`,
+      lang: "pl",
+    });
+
+    return sendBrevoMail({
+      to: member.email,
+      subject: `🐾 Nowe zadania tygodnia dla ${
+        member.dog_name || "Twojego psa"
+      }`,
+      html,
+      tags: ["mitglieder", "challenges-weekly"],
+    });
+  }
 
   const dog = member.dog_name?.trim() || "deinem Hund";
   const challengesHtml = challengesAsHtml(challenges);
@@ -495,10 +679,36 @@ export async function sendWeeklyChallengesMail(
 // inhaltlich ist's aber die Sonntags-Mail.
 export async function sendMidweekReminderMail(
   member: MemberProfile,
-  challenges: UserChallenge[]
+  challenges: UserChallenge[],
+  lang: Lang = "de"
 ) {
   if (!member.email) return { ok: false, reason: "no_email" };
   if (challenges.length === 0) return { ok: false, reason: "no_challenges" };
+
+  if (lang === "pl") {
+    const dog = member.dog_name?.trim() || "Twój pies";
+    const challengesHtml = challengesAsHtml(challenges, "pl");
+    const ctaUrl = `${SITE_URL}/mitglieder/erfolge/challenges`;
+
+    const firstBadge = challenges[0]?.badge_label || "nową odznakę";
+    const html = wrapTemplate({
+      preheader: `Dziś ostatni dzień - zgarnij jeszcze ${firstBadge}!`,
+      headline: `Ostatni dzień - zgarnij jeszcze swoją odznakę 🏆`,
+      intro: `Już niedziela - a w tym tygodniu jeszcze żadnej sesji. Wystarczy 10 minut i odznaka jest Twoja. Od jutra czekają nowe zadania.`,
+      bodyHtml: `<p style="margin:16px 0 8px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">Jeszcze dziś do zrobienia:</p>${challengesHtml}<p style="margin:14px 0 0;font-size:13px;color:#6B7280;line-height:1.55;">Wskazówka: Jedna sesja = krótki zestaw ćwiczeń albo spacer ze skupieniem na zadaniu. Odhacz w panelu członkowskim i gotowe.</p>`,
+      ctaText: "Ostatnia szansa - zaczynaj teraz",
+      ctaUrl,
+      footerHint: `Nie chcesz więcej przypomnień? Napisz do nas krótko na support@pfoten-plan.de.`,
+      lang: "pl",
+    });
+
+    return sendBrevoMail({
+      to: member.email,
+      subject: `🐾 Ostatni dzień: ${dog} jest o jedną sesję od odznaki`,
+      html,
+      tags: ["mitglieder", "challenges-sunday"],
+    });
+  }
 
   const dog = member.dog_name?.trim() || "deinem Hund";
   const challengesHtml = challengesAsHtml(challenges);
@@ -544,8 +754,10 @@ export async function sendCheckoutRecoveryMail(args: {
   planLengthMonths: 1 | 3 | 6;
   leadId: string;
   previewFreeView?: boolean;
+  lang?: Lang;
 }) {
   const { to, dogName, problemLabel, leadId, previewFreeView } = args;
+  const lang = args.lang ?? "de";
   if (!to) return { ok: false, reason: "no_recipient" };
 
   const dog = dogName?.trim() || "deinen Hund";
@@ -558,6 +770,69 @@ export async function sendCheckoutRecoveryMail(args: {
   // funktionierten. Signatur ueber WORKER_TOKEN verhindert lead_id-Raten.
   const { buildRecoveryUrl } = await import("./recovery-link");
   const loginUrl = buildRecoveryUrl(leadId, { previewFreeView });
+
+  if (lang === "pl") {
+    const dogPl = dogName?.trim() || "Twojego psa";
+
+    const bulletsHtmlPl = `
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:6px 0 16px;">
+      <tr><td style="padding:10px 0;vertical-align:top;">
+        <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.55;"><strong>Jedno ćwiczenie indywidualnie dla ${escapeHtml(dogPl)} — za darmo do przetestowania.</strong> Do zrobienia już dziś, wystarczy 5 minut. Wyjaśnione krok po kroku, bez wcześniejszej wiedzy.</span>
+      </td></tr>
+      <tr><td style="padding:10px 0;vertical-align:top;">
+        <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.55;"><strong>Pomożemy Ci rozwiązać ${problemLabel ? `temat ${escapeHtml(problemLabel)}` : "temat zachowania"}.</strong> Z konkretnymi ćwiczeniami z codziennej pracy trenera, dopasowanymi dokładnie do sytuacji ${escapeHtml(dogPl)}. Plus osobista pomoc, gdy utkniesz.</span>
+      </td></tr>
+      <tr><td style="padding:10px 0;vertical-align:top;">
+        <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.55;"><strong>Jeśli zdecydujesz się później:</strong> bez abonamentu, dożywotni dostęp, 30 dni gwarancji zwrotu pieniędzy. Jeśli nie: po prostu zamknij okno i gotowe.</span>
+      </td></tr>
+    </table>`;
+
+    const trustBoxHtmlPl = `
+    <div style="background:#FAFAFA;border-radius:10px;padding:14px 16px;margin:12px 0 4px;border-left:3px solid #C4A576;">
+      <p style="margin:0;font-size:13px;color:#4B5563;line-height:1.6;">
+        Wiemy, jak frustrujące bywa, gdy porady z internetu po prostu nie działają — i na końcu znów masz frustrację zamiast postępu. Właśnie dlatego stworzyliśmy ŁapaPlan: zespół wykształconych trenerów psów, który krok po kroku jest przy Tobie.<br><br>
+        W razie pytań napisz po prostu na <a href="mailto:support@pfoten-plan.de" style="color:#8B7355;">support@pfoten-plan.de</a> — odpowiadamy osobiście.
+      </p>
+    </div>`;
+
+    const introTextPl = hasName
+      ? `${problemLabel ? `${escapeHtml(problemLabel)} u ${escapeHtml(dogPl)}` : `Temat z ${escapeHtml(dogPl)}`} to nic, z czym musisz radzić sobie sam. Zobacz spokojnie, co przygotowaliśmy <strong>indywidualnie dla ${escapeHtml(dogPl)}</strong> — <strong>za darmo do przetestowania</strong>.`
+      : `Temat z Twoim psem to nic, z czym musisz radzić sobie sam. Zobacz spokojnie, co przygotowaliśmy — <strong>za darmo do przetestowania</strong>.`;
+
+    const bodyHtmlPl = `
+    ${bulletsHtmlPl}
+    <p style="margin:14px 0 0;font-size:14px;line-height:1.6;color:#4B5563;">
+      Jedno kliknięcie w przycisk i jesteś od razu w środku — bez hasła, bez ponownej rejestracji.
+    </p>
+    ${trustBoxHtmlPl}`;
+
+    const html = wrapTemplate({
+      preheader: hasName
+        ? `Za darmo przetestuj: indywidualne 5-minutowe ćwiczenie dla ${dogPl}.`
+        : `Za darmo przetestuj: indywidualne 5-minutowe ćwiczenie dla Twojego psa.`,
+      headline: hasName
+        ? `5 minut dziś dla ${dogPl} — jedno ćwiczenie gratis`
+        : `5 minut dziś dla Twojego psa — jedno ćwiczenie gratis`,
+      intro: introTextPl,
+      bodyHtml: bodyHtmlPl,
+      ctaText: "Zobacz teraz za darmo",
+      ctaUrl: loginUrl,
+      footerHint: `Bez zobowiązań — jeśli nie kontynuujesz, przyjdzie tylko ten jeden e-mail.`,
+      lang: "pl",
+    });
+
+    return sendBrevoMail({
+      to,
+      subject: hasName
+        ? `5-minutowe ćwiczenie dla ${dogPl} — do zrobienia już dziś`
+        : `5-minutowe ćwiczenie dla Twojego psa — do zrobienia już dziś`,
+      html,
+      tags: ["checkout-recovery"],
+    });
+  }
 
   // Genau 3 Bullets — die 3 stärksten emotionalen Hebel:
   //   1) Geschenk (individuelle Übung kostenfrei, heute machbar)

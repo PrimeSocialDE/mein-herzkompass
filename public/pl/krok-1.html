@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Wiederkehrer-Weiche (Phase 2 PL): zeigt auf die PL-Rueckhol-Seite,
+        // sobald sie existiert. Bis dahin deaktiviert, damit kein 404 entsteht.
+        // (function () {
+        //     try {
+        //         var sawPlan = localStorage.getItem('ab_test_pricing_v6');
+        //         var bought  = localStorage.getItem('purchased');
+        //         if (sawPlan && !bought) {
+        //             window.location.replace('powrot.html' + window.location.search);
+        //         }
+        //     } catch (e) {}
+        // })();
+    </script>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" href="favconHund.png">
+    <title>ŁapaPlan - Bezpłatny quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-brown: #C4A576;
+            --brown-hover: #8B7355;
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --background-light: #FAFAFA;
+            --white: #FFFFFF;
+            --border-light: #E5E5E5;
+            --light-brown: #D4B996;
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--background-light); color: var(--text-dark); line-height: 1.5; -webkit-tap-highlight-color: transparent; }
+        .header { background: var(--white); padding: 16px 0; border-bottom: 1px solid var(--border-light); text-align: center; }
+        .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-dark); }
+        .logo-image { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+        .logo-text { font-size: 22px; font-weight: 800; color: var(--text-dark); }
+        .container { max-width: 500px; margin: 0 auto; padding: 40px 20px; }
+        .quiz-header { text-align: center; margin-bottom: 30px; }
+        .quiz-hook { font-size: 13px; color: var(--text-medium); margin-bottom: 12px; }
+        .quiz-title { font-size: 26px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
+        .quiz-duration { display: inline-flex; align-items: center; gap: 6px; color: var(--text-medium); font-size: 14px; background: var(--white); padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border-light); white-space: nowrap; }
+        .progress-container { margin-bottom: 35px; }
+        .progress-bar { width: 100%; height: 6px; background: var(--border-light); border-radius: 3px; overflow: hidden; }
+        .progress-fill { width: 11.1%; height: 100%; background: var(--light-brown); transition: width 0.3s ease; }
+        .progress-text { text-align: center; margin-top: 8px; color: var(--text-medium); font-size: 13px; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .option-card {
+            background: var(--white);
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: var(--shadow-light);
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .option-card:hover { border-color: var(--light-brown); box-shadow: var(--shadow-medium); }
+        .option-card:active { background: #F8F6F3; }
+        .option-card.clicked { pointer-events: none; opacity: 0.7; }
+        .option-image { width: 80px; height: 80px; margin: 0 auto 15px; border-radius: 8px; overflow: hidden; background: var(--border-light); }
+        .option-image img { width: 100%; height: 100%; object-fit: cover; }
+        .option-title { font-size: 16px; font-weight: 600; color: var(--text-dark); margin-bottom: 4px; }
+        .option-subtitle { font-size: 13px; color: var(--text-medium); }
+        .quiz-hint { text-align: center; color: var(--text-medium); font-size: 13px; margin-top: 20px; }
+        @media (max-width: 480px) {
+            .container { padding: 25px 15px; }
+            .quiz-title { font-size: 22px; }
+            .quiz-duration { font-size: 11px; padding: 5px 10px; }
+            .options-grid { gap: 12px; }
+            .option-card { padding: 20px 12px; }
+            .option-image { width: 70px; height: 70px; }
+            .option-title { font-size: 14px; }
+            .option-subtitle { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="ŁapaPlan Logo" class="logo-image">
+            <span class="logo-text">ŁapaPlan</span>
+        </a>
+    </header>
+    <div class="container">
+        <div class="quiz-header">
+            <p class="quiz-hook">🐕 Otrzymaj indywidualny plan treningowy z ćwiczeniami dopasowanymi do Twojego psa</p>
+            <h1 class="quiz-title">Ile lat ma Twój pies?</h1>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                <span class="quiz-duration"><span style="display: inline-flex; align-items: center; gap: 2px; vertical-align: middle;"><span style="width: 16px; height: 16px; background: #00B67A; display: inline-flex; align-items: center; justify-content: center; border-radius: 2px;"><svg viewBox="0 0 24 24" width="10" height="10" fill="white"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span> Już ponad 3447 psów wytrenowanych z sukcesem</span>
+                <span class="quiz-duration">🕐 Czas quizu: 2 min</span>
+            </div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar"><div class="progress-fill"></div></div>
+            <p style="text-align: center; font-size: 11px; color: var(--text-light); margin-top: 6px;">Pytanie 1 z 9</p>
+        </div>
+        <div class="options-grid">
+            <div class="option-card" data-age="puppy">
+                <div class="option-image"><img src="Hund1.jpg" alt="Szczeniak"></div>
+                <h3 class="option-title">Szczeniak</h3>
+                <p class="option-subtitle">Poniżej 6 miesięcy</p>
+            </div>
+            <div class="option-card" data-age="young">
+                <div class="option-image"><img src="Hund2.jpg" alt="Młody pies"></div>
+                <h3 class="option-title">Młody pies</h3>
+                <p class="option-subtitle">6-18 miesięcy</p>
+            </div>
+            <div class="option-card" data-age="adult">
+                <div class="option-image"><img src="Hund3.jpg" alt="Dorosły"></div>
+                <h3 class="option-title">Dorosły</h3>
+                <p class="option-subtitle">1,5-7 lat</p>
+            </div>
+            <div class="option-card" data-age="senior">
+                <div class="option-image"><img src="Hund4.jpg" alt="Senior"></div>
+                <h3 class="option-title">Senior</h3>
+                <p class="option-subtitle">Powyżej 7 lat</p>
+            </div>
+        </div>
+        <p class="quiz-hint">Na podstawie Twojego wyboru dopasujemy plan treningowy dokładnie do Twojego psa.</p>
+    </div>
+    <script>
+        // Beim frischen Start alte Quiz-Daten loeschen (PL-Slug: 'krok')
+        if (!document.referrer.includes('krok')) {
+            localStorage.removeItem('dogAge');
+            localStorage.removeItem('dogBreed');
+            localStorage.removeItem('dogGender');
+            localStorage.removeItem('dogGoal');
+            localStorage.removeItem('dogProblem');
+            localStorage.removeItem('dogBehaviors');
+            localStorage.removeItem('trainingTime');
+            localStorage.removeItem('dogName');
+            localStorage.removeItem('stressLevel');
+        }
+        // Sprache fuer den restlichen Funnel/Backend merken
+        try { localStorage.setItem('lang', 'pl'); } catch (e) {}
+
+        let isNavigating = false;
+        document.querySelectorAll('.option-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isNavigating) return;
+                isNavigating = true;
+                this.classList.add('clicked');
+                localStorage.setItem('dogAge', this.dataset.age);
+                setTimeout(() => {
+                    window.location.href = 'krok-2.html';
+                }, 150);
+            });
+        });
+    </script>
+
+    <!-- Tracking (Phase 2 PL: eigene Pixel-/Tag-IDs + PL-Cookie-Banner setzen) -->
+    <script src="utm-tracking.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-17806525009');
+    </script>
+    <script src="cookie-banner.js" defer></script>
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','864109602683515');fbq('track','PageView');</script>
+</body>
+</html>

@@ -3,6 +3,7 @@
 // ohne DB-Migration). Per-User-State liegt in member_user_challenges.
 
 import { createMemberAdminClient } from "./member-auth-server";
+import { langFromEmailLookup } from "./lang";
 import type { MemberProfile } from "./member-db";
 
 // ── Challenge-Templates ────────────────────────────────────────────
@@ -698,9 +699,15 @@ export async function getOrAssignWeekChallenges(
   // 5) Welcome-Mail nur beim allerersten Mal (idempotent ohne neue Spalte:
   //    danach hat der User immer mind. eine Zeile, also lifetimeCount > 0)
   if (isFirstEver && insertedChallenges.length > 0) {
-    // Fire-and-forget — Mail-Fail darf den Page-Load nicht blockieren
-    import("./member-mail")
-      .then((m) => m.sendWelcomeChallengesMail(member, insertedChallenges))
+    // Fire-and-forget — Mail-Fail darf den Page-Load nicht blockieren.
+    // Sprache des Members per E-Mail nachschlagen (member_users hat kein
+    // lang-Feld) → polnische Willkommens-Mail bei PL-Kunden.
+    langFromEmailLookup(createMemberAdminClient(), member.email)
+      .then((lang) =>
+        import("./member-mail").then((m) =>
+          m.sendWelcomeChallengesMail(member, insertedChallenges, lang)
+        )
+      )
       .then((res) => {
         if (!res.ok) {
           console.warn(

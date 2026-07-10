@@ -12,6 +12,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Webhook } from "standardwebhooks";
 import { buildOneTapUrl } from "@/lib/one-tap-login";
+import { supabase } from "@/lib/db";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -84,46 +85,131 @@ function buildLoginUrl(p: SupabaseEmailHookPayload): string {
   return `${PFOTEN_SITE_URL}/mitglieder/anmelden?${params.toString()}`;
 }
 
-function buildSubject(p: SupabaseEmailHookPayload): string {
-  switch (p.email_data.email_action_type) {
-    case "signup":
-      return "Willkommen bei Pfoten-Plan – dein Mitgliederbereich wartet";
-    case "recovery":
-      return "Dein Zugang zu Pfoten-Plan wieder herstellen";
-    case "email_change_current":
-    case "email_change_new":
-      return "Bestätige deine neue E-Mail bei Pfoten-Plan";
-    case "magiclink":
-    default:
-      return "Dein Login-Link für Pfoten-Plan";
+type Lang = "de" | "pl";
+
+// Sprache des Users (answers.lang am Lead) via Email nachschlagen — Default "de".
+// So bekommt ein polnischer Kunde die Login-Mail auf Polnisch (ŁapaPlan).
+async function langForEmail(email: string): Promise<Lang> {
+  if (!email) return "de";
+  try {
+    const { data } = await supabase
+      .from("wauwerk_leads")
+      .select("answers")
+      .ilike("email", email)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    return String((data?.answers as any)?.lang || "").toLowerCase() === "pl" ? "pl" : "de";
+  } catch {
+    return "de";
   }
 }
 
-function buildHeading(p: SupabaseEmailHookPayload, firstName: string): string {
+type ActionKey = "signup" | "recovery" | "email_change" | "magiclink";
+function actionKey(p: SupabaseEmailHookPayload): ActionKey {
   switch (p.email_data.email_action_type) {
     case "signup":
-      return `Willkommen bei Pfoten-Plan${firstName ? ", " + firstName : ""}!`;
+      return "signup";
     case "recovery":
-      return `Zugang frisch eingerichtet${firstName ? ", " + firstName : ""}`;
-    case "magiclink":
+      return "recovery";
+    case "email_change_current":
+    case "email_change_new":
+      return "email_change";
     default:
-      return `Hier ist dein Login${firstName ? ", " + firstName : ""}`;
+      return "magiclink";
   }
 }
 
-function buildSubtitle(p: SupabaseEmailHookPayload): string {
-  switch (p.email_data.email_action_type) {
-    case "signup":
-      return "Schön dass du dabei bist! Klick auf den Button unten — du landest direkt in deinem Mitgliederbereich.";
-    case "recovery":
-      return "Kein Stress — mit einem Klick bist du wieder drin. Dein Zugang ist frisch eingerichtet.";
-    case "email_change_current":
-    case "email_change_new":
-      return "Bitte bestätige deine neue E-Mail-Adresse, damit wir deinen Zugang umstellen können.";
-    case "magiclink":
-    default:
-      return "Ein Klick und du bist in deinem Mitgliederbereich. Kein Passwort, kein Tippen.";
-  }
+// ── Texte je Sprache ──────────────────────────────────────────────
+const T = {
+  de: {
+    brand: "Pfoten-Plan",
+    subject: {
+      signup: "Willkommen bei Pfoten-Plan – dein Mitgliederbereich wartet",
+      recovery: "Dein Zugang zu Pfoten-Plan wieder herstellen",
+      email_change: "Bestätige deine neue E-Mail bei Pfoten-Plan",
+      magiclink: "Dein Login-Link für Pfoten-Plan",
+    },
+    heading: {
+      signup: (n: string) => `Willkommen bei Pfoten-Plan${n ? ", " + n : ""}!`,
+      recovery: (n: string) => `Zugang frisch eingerichtet${n ? ", " + n : ""}`,
+      email_change: (n: string) => `Fast geschafft${n ? ", " + n : ""}`,
+      magiclink: (n: string) => `Hier ist dein Login${n ? ", " + n : ""}`,
+    },
+    subtitle: {
+      signup: "Schön dass du dabei bist! Klick auf den Button unten — du landest direkt in deinem Mitgliederbereich.",
+      recovery: "Kein Stress — mit einem Klick bist du wieder drin. Dein Zugang ist frisch eingerichtet.",
+      email_change: "Bitte bestätige deine neue E-Mail-Adresse, damit wir deinen Zugang umstellen können.",
+      magiclink: "Ein Klick und du bist in deinem Mitgliederbereich. Kein Passwort, kein Tippen.",
+    },
+    cta: "Jetzt einloggen →",
+    orCode: "— oder Code eingeben —",
+    codeHintLabel: "pfoten-plan.de/mitglieder/login",
+    codeHintPrefix: "Auf",
+    codeHintSuffix: "eintragen",
+    stepsTitle: "So einfach geht's",
+    steps: [
+      "Klick auf den Button oben",
+      "Du landest direkt in deinem Mitgliederbereich",
+      "Fertig — kein Passwort, keine Tipperei",
+    ],
+    security:
+      "🔒 Der Login-Button funktioniert mehrere Tage lang — du kannst diese Mail also in Ruhe später öffnen. Nur für dich; falls du das nicht warst, ignorier sie einfach.",
+    questionsPrefix: "Fragen? Schreib uns an",
+    regards: "Liebe Grüße, dein Pfoten-Plan Team 🐾",
+    tagline: "Pfoten-Plan · Hundetraining das funktioniert",
+    htmlLang: "de",
+  },
+  pl: {
+    brand: "ŁapaPlan",
+    subject: {
+      signup: "Witaj w ŁapaPlan – Twój panel członkowski czeka",
+      recovery: "Odzyskaj dostęp do ŁapaPlan",
+      email_change: "Potwierdź swój nowy adres e-mail w ŁapaPlan",
+      magiclink: "Twój link do logowania w ŁapaPlan",
+    },
+    heading: {
+      signup: (n: string) => `Witaj w ŁapaPlan${n ? ", " + n : ""}!`,
+      recovery: (n: string) => `Dostęp odświeżony${n ? ", " + n : ""}`,
+      email_change: (n: string) => `Już prawie${n ? ", " + n : ""}`,
+      magiclink: (n: string) => `Oto Twój login${n ? ", " + n : ""}`,
+    },
+    subtitle: {
+      signup: "Cieszymy się, że jesteś! Kliknij przycisk poniżej — trafisz prosto do swojego panelu członkowskiego.",
+      recovery: "Bez stresu — jedno kliknięcie i znów jesteś w środku. Twój dostęp został odświeżony.",
+      email_change: "Potwierdź swój nowy adres e-mail, żebyśmy mogli przełączyć Twój dostęp.",
+      magiclink: "Jedno kliknięcie i jesteś w swoim panelu. Bez hasła, bez wpisywania.",
+    },
+    cta: "Zaloguj się →",
+    orCode: "— albo wpisz kod —",
+    codeHintLabel: "pfoten-plan.de/mitglieder/login",
+    codeHintPrefix: "Wpisz na",
+    codeHintSuffix: "",
+    stepsTitle: "To takie proste",
+    steps: [
+      "Kliknij przycisk powyżej",
+      "Trafiasz prosto do swojego panelu członkowskiego",
+      "Gotowe — bez hasła, bez wpisywania",
+    ],
+    security:
+      "🔒 Przycisk logowania działa przez kilka dni — możesz spokojnie otworzyć tego maila później. Tylko dla Ciebie; jeśli to nie Ty, po prostu zignoruj tę wiadomość.",
+    questionsPrefix: "Masz pytania? Napisz do nas na",
+    regards: "Pozdrawiamy serdecznie, zespół ŁapaPlan 🐾",
+    tagline: "ŁapaPlan · Trening psa, który działa",
+    htmlLang: "pl",
+  },
+} as const;
+
+function buildSubject(p: SupabaseEmailHookPayload, lang: Lang): string {
+  return T[lang].subject[actionKey(p)];
+}
+
+function buildHeading(p: SupabaseEmailHookPayload, firstName: string, lang: Lang): string {
+  return T[lang].heading[actionKey(p)](firstName);
+}
+
+function buildSubtitle(p: SupabaseEmailHookPayload, lang: Lang): string {
+  return T[lang].subtitle[actionKey(p)];
 }
 
 function extractFirstName(email: string): string {
@@ -133,15 +219,16 @@ function extractFirstName(email: string): string {
   return candidate.charAt(0).toUpperCase() + candidate.slice(1).toLowerCase();
 }
 
-function buildHtml(p: SupabaseEmailHookPayload, link: string, code: string): string {
+function buildHtml(p: SupabaseEmailHookPayload, link: string, code: string, lang: Lang): string {
+  const t = T[lang];
   const firstName = extractFirstName(p.user.email);
-  const heading = buildHeading(p, firstName);
-  const subtitle = buildSubtitle(p);
+  const heading = buildHeading(p, firstName, lang);
+  const subtitle = buildSubtitle(p, lang);
   // Code fuer bessere Lesbarkeit gruppieren: 482591 → 482 591
   const codePretty = code.length === 6 ? `${code.slice(0, 3)} ${code.slice(3)}` : code;
 
   return `<!DOCTYPE html>
-<html lang="de"><head>
+<html lang="${t.htmlLang}"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${heading}</title>
@@ -152,8 +239,8 @@ function buildHtml(p: SupabaseEmailHookPayload, link: string, code: string): str
 
   <!-- Logo + Brand -->
   <div style="text-align:center;margin-bottom:28px;">
-    <img src="https://www.pfoten-plan.de/logo.png" alt="Pfoten-Plan" width="56" height="56" style="display:inline-block;border-radius:14px;border:2px solid #C4A576;">
-    <div style="font-size:13px;font-weight:700;color:#8B7355;letter-spacing:1.5px;text-transform:uppercase;margin-top:10px;">Pfoten-Plan</div>
+    <img src="https://www.pfoten-plan.de/logo.png" alt="${t.brand}" width="56" height="56" style="display:inline-block;border-radius:14px;border:2px solid #C4A576;">
+    <div style="font-size:13px;font-weight:700;color:#8B7355;letter-spacing:1.5px;text-transform:uppercase;margin-top:10px;">${t.brand}</div>
   </div>
 
   <!-- Card -->
@@ -166,51 +253,51 @@ function buildHtml(p: SupabaseEmailHookPayload, link: string, code: string): str
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 0 16px;width:100%;">
       <tr><td align="center">
         <a href="${link}" target="_blank" style="display:inline-block;background:#C4A576;color:#ffffff;text-decoration:none;padding:16px 36px;border-radius:12px;font-size:15px;font-weight:700;box-shadow:0 2px 4px rgba(139,115,85,0.25);">
-          Jetzt einloggen →
+          ${t.cta}
         </a>
       </td></tr>
     </table>
 
     <!-- 6-stelliger Code als Alternative -->
     <div style="text-align:center;margin:18px 0 6px;">
-      <p style="font-size:12px;color:#9CA3AF;margin:0 0 8px;">— oder Code eingeben —</p>
+      <p style="font-size:12px;color:#9CA3AF;margin:0 0 8px;">${t.orCode}</p>
       <div style="display:inline-block;background:#FFF9F0;border:2px dashed #C4A576;border-radius:10px;padding:14px 24px;font-family:'SF Mono','Monaco','Courier New',monospace;font-size:28px;font-weight:800;color:#1a1a1a;letter-spacing:6px;">
         ${codePretty}
       </div>
-      <p style="font-size:11px;color:#9CA3AF;margin:8px 0 0;line-height:1.4;">Auf <a href="https://www.pfoten-plan.de/mitglieder/login" style="color:#8B7355;text-decoration:underline;">pfoten-plan.de/mitglieder/login</a> eintragen</p>
+      <p style="font-size:11px;color:#9CA3AF;margin:8px 0 0;line-height:1.4;">${t.codeHintPrefix} <a href="https://www.pfoten-plan.de/mitglieder/login" style="color:#8B7355;text-decoration:underline;">${t.codeHintLabel}</a>${t.codeHintSuffix ? " " + t.codeHintSuffix : ""}</p>
     </div>
 
   </div>
 
   <!-- So funktioniert's -->
   <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;padding:18px 20px;margin-top:20px;">
-    <p style="font-size:12px;font-weight:700;color:#8B7355;text-transform:uppercase;letter-spacing:1px;margin:0 0 10px;">So einfach geht's</p>
+    <p style="font-size:12px;font-weight:700;color:#8B7355;text-transform:uppercase;letter-spacing:1px;margin:0 0 10px;">${t.stepsTitle}</p>
     <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="width:100%;">
       <tr>
-        <td style="font-size:13px;color:#4B5563;padding:3px 0;line-height:1.5;"><strong style="color:#C4A576;">1.</strong> Klick auf den Button oben</td>
+        <td style="font-size:13px;color:#4B5563;padding:3px 0;line-height:1.5;"><strong style="color:#C4A576;">1.</strong> ${t.steps[0]}</td>
       </tr><tr>
-        <td style="font-size:13px;color:#4B5563;padding:3px 0;line-height:1.5;"><strong style="color:#C4A576;">2.</strong> Du landest direkt in deinem Mitgliederbereich</td>
+        <td style="font-size:13px;color:#4B5563;padding:3px 0;line-height:1.5;"><strong style="color:#C4A576;">2.</strong> ${t.steps[1]}</td>
       </tr><tr>
-        <td style="font-size:13px;color:#4B5563;padding:3px 0;line-height:1.5;"><strong style="color:#C4A576;">3.</strong> Fertig — kein Passwort, keine Tipperei</td>
+        <td style="font-size:13px;color:#4B5563;padding:3px 0;line-height:1.5;"><strong style="color:#C4A576;">3.</strong> ${t.steps[2]}</td>
       </tr>
     </table>
   </div>
 
   <!-- Hinweis Sicherheit -->
   <p style="font-size:12px;color:#9CA3AF;text-align:center;margin:18px 0 12px;line-height:1.55;">
-    🔒 Der Login-Button funktioniert mehrere Tage lang — du kannst diese Mail also in Ruhe später öffnen. Nur für dich; falls du das nicht warst, ignorier sie einfach.
+    ${t.security}
   </p>
 
   <!-- Footer -->
   <div style="text-align:center;padding-top:8px;border-top:1px solid #F0EBE3;margin-top:20px;">
     <p style="font-size:13px;color:#6B7280;margin:14px 0 4px;line-height:1.5;">
-      Fragen? Schreib uns an <a href="mailto:support@pfoten-plan.de" style="color:#C4A576;text-decoration:underline;">support@pfoten-plan.de</a>
+      ${t.questionsPrefix} <a href="mailto:support@pfoten-plan.de" style="color:#C4A576;text-decoration:underline;">support@pfoten-plan.de</a>
     </p>
     <p style="font-size:13px;color:#6B7280;margin:0 0 14px;">
-      Liebe Grüße, dein Pfoten-Plan Team 🐾
+      ${t.regards}
     </p>
     <p style="font-size:10px;color:#C4B998;margin:0;">
-      Pfoten-Plan · Hundetraining das funktioniert
+      ${t.tagline}
     </p>
   </div>
 
@@ -219,10 +306,35 @@ function buildHtml(p: SupabaseEmailHookPayload, link: string, code: string): str
 </body></html>`;
 }
 
-function buildPlainText(p: SupabaseEmailHookPayload, link: string, code: string): string {
+function buildPlainText(p: SupabaseEmailHookPayload, link: string, code: string, lang: Lang): string {
   const firstName = extractFirstName(p.user.email);
-  const greeting = firstName ? `Hi ${firstName},` : "Hi,";
   const codePretty = code.length === 6 ? `${code.slice(0, 3)} ${code.slice(3)}` : code;
+  if (lang === "pl") {
+    const greeting = firstName ? `Cześć ${firstName},` : "Cześć,";
+    return `${greeting}
+
+jednym kliknięciem jesteś w swoim panelu członkowskim ŁapaPlan — bez hasła, bez wpisywania.
+
+Link do logowania:
+${link}
+
+ALBO użyj tego 6-cyfrowego kodu na pfoten-plan.de/mitglieder/login:
+
+  ${codePretty}
+
+To takie proste:
+1. Kliknij link powyżej (albo wpisz kod)
+2. Trafiasz prosto do swojego panelu członkowskiego
+3. Gotowe
+
+Link do logowania działa przez kilka dni — możesz spokojnie otworzyć maila później. Kod 6-cyfrowy jest ważny krócej. Oba tylko dla Ciebie; jeśli to nie Ty, po prostu zignoruj.
+
+Masz pytania? support@pfoten-plan.de
+
+Pozdrawiamy serdecznie,
+zespół ŁapaPlan`;
+  }
+  const greeting = firstName ? `Hi ${firstName},` : "Hi,";
   return `${greeting}
 
 mit einem Klick bist du in deinem Pfoten-Plan Mitgliederbereich — kein Passwort, kein Tippen.
@@ -309,7 +421,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const subject = buildSubject(payload);
+  // Sprache am Lead (answers.lang) → polnische Login-Mail (ŁapaPlan). Default de.
+  const lang = await langForEmail(payload.user.email);
+  const subject = buildSubject(payload, lang);
   // payload.email_data.token ist der 6-stellige OTP-Code,
   // token_hash ist der laengere Hash fuer den Magic-Link.
   const code = payload.email_data.token || "";
@@ -335,8 +449,8 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const html = buildHtml(payload, ctaUrl, code);
-  const text = buildPlainText(payload, ctaUrl, code);
+  const html = buildHtml(payload, ctaUrl, code, lang);
+  const text = buildPlainText(payload, ctaUrl, code, lang);
 
   try {
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {
@@ -346,8 +460,14 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
-        replyTo: { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" },
+        sender:
+          lang === "pl"
+            ? { name: "ŁapaPlan", email: "support@pfoten-plan.de" }
+            : { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
+        replyTo:
+          lang === "pl"
+            ? { email: "support@pfoten-plan.de", name: "ŁapaPlan" }
+            : { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" },
         to: [{ email: payload.user.email }],
         subject,
         htmlContent: html,

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17806525009');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dane firmy - ŁapaPlan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --text-light: #999999;
+            --background: #FFFFFF;
+            --white: #FFFFFF;
+            --border-light: #E8E4DF;
+            --light-brown: #D4B996;
+            --warm-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --accent-brown: #D4B996;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAF8F5;
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--white);
+            padding: 16px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-image {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .nav-link {
+            color: var(--warm-brown);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--light-brown);
+            color: var(--white);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .impressum-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-light);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--dark-brown);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--warm-brown);
+            margin-bottom: 15px;
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--warm-brown);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+
+        .company-info {
+            background: #FAF8F5;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--warm-brown);
+        }
+
+        .company-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark-brown);
+            margin-bottom: 12px;
+        }
+
+        .address {
+            margin-bottom: 15px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+
+        .contact-info {
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+
+        .contact-info strong {
+            color: var(--dark-brown);
+            font-weight: 600;
+        }
+
+        .contact-info a {
+            color: var(--warm-brown);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-info a:hover {
+            color: var(--dark-brown);
+            text-decoration: underline;
+        }
+
+        .tax-info {
+            background: #F5F0E8;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin: 15px 0;
+            border-left: 4px solid var(--accent-brown);
+            font-weight: 600;
+            color: var(--dark-brown);
+        }
+
+        .dispute-resolution {
+            background: #FFF9F0;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            border-left: 4px solid var(--warm-brown);
+        }
+
+        .dispute-resolution p {
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        .dispute-resolution p:last-child {
+            margin-bottom: 0;
+        }
+
+        .dispute-resolution a {
+            color: var(--warm-brown);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .dispute-resolution a:hover {
+            color: var(--dark-brown);
+            text-decoration: underline;
+        }
+
+        .service-description {
+            background: #FAF8F5;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+            border-left: 4px solid var(--warm-brown);
+        }
+
+        .service-description h3 {
+            color: var(--dark-brown);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .service-description p {
+            color: var(--text-medium);
+            line-height: 1.7;
+        }
+
+        .disclaimer {
+            background: #F8F8F8;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin: 25px 0;
+            border-left: 4px solid var(--text-light);
+            font-size: 14px;
+            color: var(--text-medium);
+        }
+
+        .footer-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-light);
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            background: var(--white);
+            border: 2px solid var(--warm-brown);
+            color: var(--warm-brown);
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            background: var(--warm-brown);
+            color: var(--white);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .back-link a {
+            display: inline-block;
+            background: var(--warm-brown);
+            color: white;
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .back-link a:hover {
+            background: var(--dark-brown);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--text-light);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .impressum-card {
+                padding: 25px 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .footer-navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-link {
+                width: 100%;
+                max-width: 250px;
+                text-align: center;
+            }
+        }
+    </style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ufxcf43805");
+</script>
+<script
+  defer
+  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+  data-domain="pfoten-plan.de"
+  src="https://datafa.st/js/script.js">
+</script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="ŁapaPlan Logo" class="logo-image">
+                <span class="logo-text">ŁapaPlan</span>
+            </a>
+            <a href="index.html" class="nav-link">← Powrót na stronę główną</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="impressum-card">
+            <h1>Dane firmy</h1>
+
+            <div class="service-description">
+                <h3>🐕 O ŁapaPlan</h3>
+                <p>Spersonalizowane plany szkolenia psów dla harmonijnego życia z Twoim czworonogiem. Pomagamy Ci rozwiązać problemy behawioralne i zbudować silną więź z Twoim psem.</p>
+            </div>
+
+            <h2>
+                <div class="section-icon">🏢</div>
+                <!-- REVIEW: prawnik — "§ 5 TMG" to niemiecki przepis (Telemediengesetz), który nie obowiązuje w Polsce; nagłówek zastąpiony ogólnym "Dane usługodawcy" -->
+                Dane usługodawcy
+            </h2>
+
+            <div class="company-info">
+                <div class="company-name">Debkowski & Moritz GbR</div>
+                <div class="address">
+                    Maximilian Debowski<br>
+                    Rosenbohmsweg 28a<br>
+                    26135 Oldenburg<br>
+                    Deutschland
+                </div>
+            </div>
+
+            <h2>
+                <div class="section-icon">📧</div>
+                Kontakt
+            </h2>
+            <div class="contact-info">
+                <strong>E-mail:</strong> <a href="mailto:support@pfoten-plan.de">support@pfoten-plan.de</a><br>
+                <span style="font-size: 13px; color: #666;">Odpowiedź w ciągu 24 godzin</span>
+            </div>
+
+            <h2>
+                <div class="section-icon">💰</div>
+                Numer VAT / USt-IdNr
+            </h2>
+            <div class="tax-info">
+                <strong>Numer VAT / USt-IdNr.:</strong> DE353303833
+            </div>
+
+            <h2>
+                <div class="section-icon">⚖️</div>
+                <!-- REVIEW: prawnik — sekcja o pozasądowym rozstrzyganiu sporów (VSBG/ODR) to odniesienie niemieckie/UE; sprawdzić właściwe brzmienie dla konsumentów w Polsce -->
+                Internetowe rozstrzyganie sporów
+            </h2>
+            <div class="dispute-resolution">
+
+
+                <p>Nie jesteśmy zobowiązani ani gotowi do udziału w postępowaniu w sprawie rozstrzygania sporów przed konsumencką komisją polubowną.</p>
+            </div>
+
+            <div class="disclaimer">
+                <strong>Informacja dotycząca naszych usług:</strong> Nasze plany szkoleniowe opierają się na sprawdzonych metodach pozytywnego wzmocnienia. Wyniki mają charakter zaleceń i nie zastępują profesjonalnego doradztwa behawioralnego udzielanego na miejscu przez lekarza weterynarii lub certyfikowanego trenera psów.
+            </div>
+
+            <div class="footer-navigation">
+                <a href="polityka-prywatnosci.html" class="footer-link">📋 Polityka prywatności</a>
+                <a href="regulamin.html" class="footer-link">📄 Regulamin</a>
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">🐕 Powrót do ŁapaPlan</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 ŁapaPlan. Wszelkie prawa zastrzeżone.</p>
+        <p><a href="polityka-prywatnosci.html">Polityka prywatności</a> • <a href="impressum.html">Dane firmy</a> • <a href="regulamin.html">Regulamin</a></p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <!-- Kauf-Flag: Käufer nie zurück auf die Rückhol-/Offer-Seite (siehe krok-1). -->
+    <script>try { localStorage.setItem('purchased', '1'); } catch (e) {}</script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dziękujemy! | ŁapaPlan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAF8F5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #22C55E, #16A34A);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+            animation: pop 0.5s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 26px;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+
+        .dog-name {
+            color: #C4A576;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .order-box {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            text-align: left;
+            margin-bottom: 24px;
+        }
+
+        .order-title {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-icon {
+            width: 44px;
+            height: 44px;
+            background: #FEF3E7;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .order-info h3 {
+            font-size: 15px;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+
+        .order-info p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .order-check {
+            margin-left: auto;
+            color: #22C55E;
+            font-size: 20px;
+        }
+
+        .email-note {
+            font-size: 14px;
+            color: #666;
+            background: #F8F8F8;
+            padding: 16px;
+            border-radius: 10px;
+            line-height: 1.6;
+        }
+
+        .email-note strong {
+            color: #1a1a1a;
+        }
+
+        .support-note {
+            font-size: 13px;
+            color: #999;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .support-note a {
+            color: #C4A576;
+            text-decoration: none;
+        }
+
+        .support-note a:hover {
+            text-decoration: underline;
+        }
+    </style>
+<script
+  defer
+  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+  data-domain="pfoten-plan.de"
+  src="https://datafa.st/js/script.js">
+</script>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+            </svg>
+        </div>
+
+        <h1>Idealnie, <span class="dog-name">Luna</span>!</h1>
+        <p class="subtitle">Twój rozszerzony trening jest już kompletny.</p>
+
+        <div class="order-box">
+            <div class="order-title">Twoje zamówienie</div>
+
+            <div class="order-item" id="mainPlan">
+                <div class="order-icon">📋</div>
+                <div class="order-info">
+                    <h3 id="mainProblemName">Plan treningowy</h3>
+                    <p>Główny problem</p>
+                </div>
+                <span class="order-check">✓</span>
+            </div>
+
+            <div class="order-item" id="upsellModule">
+                <div class="order-icon" id="moduleIcon">😰</div>
+                <div class="order-info">
+                    <h3 id="moduleName">Moduł dodatkowy</h3>
+                    <p id="moduleDesc">8 ćwiczeń • 2 tygodnie</p>
+                </div>
+                <span class="order-check">✓</span>
+            </div>
+        </div>
+
+        <div class="email-note">
+            📧 <strong>Oba plany</strong> zostaną wysłane na Twój e-mail w ciągu kilku minut.
+        </div>
+
+        <div class="support-note">
+            Masz pytania? Napisz do nas na <a href="mailto:support@pfoten-plan.de">support@pfoten-plan.de</a>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Config
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+        // Hundename aus localStorage
+        const dogName = localStorage.getItem('dogName') || 'Twój pies';
+        document.querySelector('.dog-name').textContent = dogName;
+
+        // Parameter aus URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const module = urlParams.get('module');
+        const leadId = urlParams.get('lead_id') || localStorage.getItem('leadId');
+
+        // ALLE Module (inkl. fehlende)
+        const moduleData = {
+            'anxiety': { icon: '😰', name: 'Profilaktyka lęku separacyjnego', exercises: '8 ćwiczeń' },
+            'pulling': { icon: '🦮', name: 'Podstawy chodzenia na smyczy', exercises: '6 ćwiczeń' },
+            'barking': { icon: '🔊', name: 'Trening przeciw szczekaniu', exercises: '6 ćwiczeń' },
+            'aggression': { icon: '😤', name: 'Kontrola agresji', exercises: '8 ćwiczeń' },
+            'recall': { icon: '📣', name: 'Trening przywołania', exercises: '6 ćwiczeń' },
+            'jumping': { icon: '🐕', name: 'Trening przeciw skakaniu', exercises: '5 ćwiczeń' },
+            'energy': { icon: '⚡', name: 'Zarządzanie energią', exercises: '6 ćwiczeń' },
+            'destructive': { icon: '🧸', name: 'Trening przeciw niszczeniu', exercises: '6 ćwiczeń' },
+            'mouthing': { icon: '🦴', name: 'Trening przeciw podnoszeniu z ziemi', exercises: '6 ćwiczeń' }
+        };
+
+        if (module) {
+            // Bundle erkennen (z.B. "pulling+anxiety")
+            const isBundle = module.includes('+');
+
+            let displayIcon, displayName, displayDesc, upsellValue;
+
+            if (isBundle) {
+                const modules = module.split('+');
+                const mainModule = modules[0];
+                displayIcon = '📦';
+                displayName = 'Pakiet kompletny';
+                displayDesc = (moduleData[mainModule]?.name || mainModule) + ' + Profilaktyka';
+                upsellValue = module; // z.B. "pulling+anxiety"
+            } else if (moduleData[module]) {
+                displayIcon = moduleData[module].icon;
+                displayName = moduleData[module].name;
+                displayDesc = moduleData[module].exercises + ' • 2 tygodnie';
+                upsellValue = module;
+            } else {
+                displayIcon = '📋';
+                displayName = 'Moduł dodatkowy';
+                displayDesc = 'Rozszerzony trening';
+                upsellValue = module;
+            }
+
+            document.getElementById('moduleIcon').textContent = displayIcon;
+            document.getElementById('moduleName').textContent = displayName;
+            document.getElementById('moduleDesc').textContent = displayDesc;
+
+            // Upsell-Modul in Supabase speichern - IMMER wenn module vorhanden
+            if (leadId) {
+                console.log('🔍 Lead ID gefunden:', leadId);
+                console.log('📦 Modul zu speichern:', upsellValue, '(Bundle:', isBundle, ')');
+
+                fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({
+                        upsell_module: upsellValue
+                    })
+                }).then(response => {
+                    console.log('📡 Supabase Response Status:', response.status);
+                    if (response.ok || response.status === 204) {
+                        console.log('✅ Upsell-Modul gespeichert:', upsellValue);
+                    } else {
+                        response.text().then(text => console.error('❌ Supabase Fehler:', text));
+                    }
+                }).catch(err => {
+                    console.error('❌ Supabase update error:', err);
+                });
+            } else {
+                console.warn('⚠️ Keine lead_id gefunden! URL:', window.location.href);
+                console.log('localStorage leadId:', localStorage.getItem('leadId'));
+            }
+        }
+
+        // ERWEITERTE problemNames mit allen Custom-Keys
+        const mainProblem = localStorage.getItem('dogProblem');
+        const problemNames = {
+            // Standard
+            'pulling': 'Ciągnięcie na smyczy',
+            'barking': 'Nadmierne szczekanie',
+            'aggression': 'Agresja',
+            'anxiety': 'Lęk separacyjny',
+            'jumping': 'Skakanie na ludzi',
+            'recall': 'Nie wraca na przywołanie',
+            'energy': 'Nadmierna energia',
+            'destructive': 'Niszczycielskie zachowanie',
+            'soiling': 'Załatwianie się w domu',
+            'mouthing': 'Podnoszenie niepożądanych rzeczy',
+            // Custom Angst
+            'visitor-anxiety': 'Lęk przy gościach',
+            'thunder-anxiety': 'Lęk przed burzą',
+            'noise-sensitivity': 'Wrażliwość na hałas',
+            'general-anxiety': 'Ogólna lękliwość',
+            'stranger-anxiety': 'Lęk przed obcymi',
+            'anxious-overreaction': 'Lękowa nadmierna reakcja',
+            'separation': 'Lęk separacyjny',
+            // Custom Jagd
+            'chasing': 'Zachowania łowieckie',
+            'chasing-movement': 'Gonienie za ruchem',
+            'prey-drive': 'Silny instynkt łowiecki',
+            'chasing-cars': 'Gonienie samochodów/rowerów',
+            // Custom Fressen
+            'eating-unwanted': 'Zjadanie niepożądanych rzeczy',
+            'eating-trash': 'Jedzenie ze śmieci',
+            'eating-objects': 'Zjadanie przedmiotów',
+            // Custom Reaktivität
+            'postman-reactive': 'Reaktywność na listonosza',
+            'dog-reactive': 'Reaktywność na inne psy',
+            'leash-reactive': 'Reaktywność na smyczy',
+            'overreaction': 'Nadmierna reakcja na bodźce',
+            // Custom Sonstiges
+            'vocalization': 'Nadmierne wokalizowanie',
+            'resource-guarding': 'Obrona zasobów',
+            'biting': 'Gryzienie/kłapanie',
+            'digging': 'Kopanie',
+            'marking': 'Znakowanie w domu',
+            'custom-other': 'Inne zachowanie'
+        };
+
+        if (mainProblem) {
+            const problemText = problemNames[mainProblem] || mainProblem;
+            document.getElementById('mainProblemName').textContent = problemText + ' – trening';
+        }
+
+        // Upsell 1 Modul in localStorage speichern für dziekujemy.html
+        if (module) {
+            localStorage.setItem('upsell1_module', module.split('+')[0]);
+        }
+
+        // Nach 2 Sekunden weiter zu Upsell 2 (Video-Analyse)
+        setTimeout(function() {
+            window.location.href = 'upsell2.html?lead_id=' + (leadId || '');
+        }, 2000);
+    </script>
+</body>
+</html>

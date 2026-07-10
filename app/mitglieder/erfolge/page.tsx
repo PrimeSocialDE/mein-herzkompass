@@ -16,6 +16,7 @@ import {
   isTrainingPlanContent,
   type TrainingPlanContent,
 } from "@/lib/member-plan-content";
+import { getMemberLang } from "@/lib/member-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -38,8 +39,70 @@ export default async function ErfolgeHubPage() {
     email: user.email || "",
   });
 
+  const lang = await getMemberLang(user?.email ?? member?.email ?? null);
+  const t =
+    lang === "pl"
+      ? {
+          kicker: "Sukcesy",
+          heroSub: "Dwie drogi, żeby nie odpuścić. Co chcesz dziś zrobić?",
+          yourPlan: "Twój plan treningowy",
+          week: "Tydzień",
+          thisWeek: "W tym tygodniu",
+          fullPlanExercises: "Kompletny plan ze wszystkimi ćwiczeniami",
+          openPlan: "Otwórz plan",
+          hereFullPlanFor: "Oto twój kompletny plan dla",
+          allWeeksPdf: "Wszystkie tygodnie, ćwiczenia i pobranie PDF",
+          badgesLabel: "odznak",
+          weeklyTasks: "Zadania tygodnia",
+          challengesDescA: "Zabawne mini-wyzwania dla",
+          challengesDescB: ". Zaliczone = odznaka do kolekcji.",
+          getTasks: "Odbierz zadania",
+          modulesFree: "modułów",
+          freeTips: "Darmowe wskazówki",
+          planCoaching: "Wsparcie w planie",
+          coachingDescA:
+            "Na jakim etapie planu jesteś? Wskazówka na dziś i kolejny moduł dla",
+          coachingDescB: " — nie odpuszczaj, to proste.",
+          viewTip: "Zobacz wskazówkę",
+          entries7d: "wpis. / 7 dni",
+          neu: "Nowe",
+          moodDiary: "Dziennik nastroju",
+          moodDesc:
+            "Po każdym ćwiczeniu szybki zapis: 😊 😐 😞 + opcjonalna notatka. Tak buduje się wasz przebieg — widzicie, kiedy jest lepiej.",
+          enter: "Zapisz",
+        }
+      : {
+          kicker: "Erfolge",
+          heroSub: "Zwei Wege, dranzubleiben. Was möchtest du heute machen?",
+          yourPlan: "Dein Trainings-Plan",
+          week: "Woche",
+          thisWeek: "Diese Woche dran",
+          fullPlanExercises: "Kompletter Plan mit allen Übungen",
+          openPlan: "Plan öffnen",
+          hereFullPlanFor: "Hier ist dein kompletter Plan für",
+          allWeeksPdf: "Alle Wochen, Übungen und der PDF-Download",
+          badgesLabel: "Abzeichen",
+          weeklyTasks: "Wochen-Aufgaben",
+          challengesDescA: "Spielerische Mini-Herausforderungen für",
+          challengesDescB: ". Geschafft = Abzeichen für die Sammlung.",
+          getTasks: "Aufgaben holen",
+          modulesFree: "Module frei",
+          freeTips: "Gratis-Tipps",
+          planCoaching: "Plan-Begleitung",
+          coachingDescA:
+            "Wo stehst du im Plan? Tagestipp und nächstes Modul für",
+          coachingDescB: " — dranbleiben leicht gemacht.",
+          viewTip: "Tipp ansehen",
+          entries7d: "Eintr. / 7 Tage",
+          neu: "Neu",
+          moodDiary: "Stimmungs-Tagebuch",
+          moodDesc:
+            "Nach jeder Übung kurz tracken: 😊 😐 😞 + optional Notiz. Daraus baut sich euer Verlauf — ihr seht wann es besser wird.",
+          enter: "Eintragen",
+        };
+
   const dogName = member.dog_name?.trim() || null;
-  const dog = dogName || "deinem Hund";
+  const dog = dogName || (lang === "pl" ? "Twojego psa" : "deinem Hund");
   const dogPossessive = dogName ? `${dogName}s` : "Eure";
   const isPaid = member.purchase_status === "paid";
 
@@ -77,7 +140,13 @@ export default async function ErfolgeHubPage() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/Herchallanges.jpg"
-          alt={`${dogPossessive} Trainings-Bereich`}
+          alt={
+            lang === "pl"
+              ? dogName
+                ? `Strefa treningowa ${dogName}`
+                : "Wasza strefa treningowa"
+              : `${dogPossessive} Trainings-Bereich`
+          }
           className="w-full aspect-[16/7] object-cover object-bottom md:rounded-2xl"
         />
       </div>
@@ -85,13 +154,19 @@ export default async function ErfolgeHubPage() {
       {/* Header */}
       <div className="mb-6">
         <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
-          Erfolge
+          {t.kicker}
         </p>
         <h1 className="text-[24px] md:text-[30px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
-          {dogName ? `${dogPossessive} Trainings-Bereich` : "Euer Trainings-Bereich"}
+          {lang === "pl"
+            ? dogName
+              ? `Strefa treningowa ${dogName}`
+              : "Wasza strefa treningowa"
+            : dogName
+              ? `${dogPossessive} Trainings-Bereich`
+              : "Euer Trainings-Bereich"}
         </h1>
         <p className="text-[14px] text-[#4B5563] mt-2 leading-relaxed">
-          Zwei Wege, dranzubleiben. Was möchtest du heute machen?
+          {t.heroSub}
         </p>
       </div>
 
@@ -104,10 +179,10 @@ export default async function ErfolgeHubPage() {
           <div className="flex items-start justify-between mb-3 gap-3">
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
-                Dein Trainings-Plan
+                {t.yourPlan}
               </p>
               <h2 className="text-[18px] md:text-[20px] font-extrabold text-[#1a1a1a] leading-tight">
-                Woche {planCurrentWeekNum} · {currentPlanWeek.title}
+                {t.week} {planCurrentWeekNum} · {currentPlanWeek.title}
               </h2>
             </div>
             <span className="flex-shrink-0 text-[10px] font-bold uppercase tracking-wider bg-white border border-[#EADDC5] text-[#8B7355] px-2 py-1 rounded-md">
@@ -131,7 +206,7 @@ export default async function ErfolgeHubPage() {
           {firstExercise && (
             <div className="bg-white/80 border border-[#EADDC5] rounded-xl p-3 mb-3">
               <p className="text-[10px] font-bold uppercase tracking-wider text-[#8B7355] mb-0.5">
-                Diese Woche dran
+                {t.thisWeek}
               </p>
               <p className="text-[13px] font-bold text-[#1a1a1a] leading-snug">
                 {firstExercise.name}
@@ -141,11 +216,11 @@ export default async function ErfolgeHubPage() {
 
           <div className="flex items-center justify-between">
             <p className="text-[12px] text-[#6B7280]">
-              Kompletter Plan mit allen Übungen
+              {t.fullPlanExercises}
               {trainingPlan?.pdf_url ? " + PDF" : ""}
             </p>
             <span className="text-[13px] font-bold text-[#C4A576] inline-flex items-center gap-1">
-              Plan öffnen <span aria-hidden>→</span>
+              {t.openPlan} <span aria-hidden>→</span>
             </span>
           </div>
         </Link>
@@ -158,13 +233,13 @@ export default async function ErfolgeHubPage() {
             <span className="text-[32px] flex-shrink-0">🗺️</span>
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-0.5">
-                Dein Trainings-Plan
+                {t.yourPlan}
               </p>
               <p className="text-[15px] font-extrabold text-[#1a1a1a] leading-tight">
-                Hier ist dein kompletter Plan für {dog}
+                {t.hereFullPlanFor} {dog}
               </p>
               <p className="text-[12px] text-[#6B7280] mt-0.5">
-                Alle Wochen, Übungen und der PDF-Download
+                {t.allWeeksPdf}
               </p>
             </div>
             <span className="flex-shrink-0 text-[13px] font-bold text-[#C4A576]">→</span>
@@ -183,19 +258,19 @@ export default async function ErfolgeHubPage() {
             <div className="text-[40px] leading-none">🏆</div>
             {badges.length > 0 && (
               <span className="text-[10px] font-bold uppercase tracking-wider bg-[#FFF9F0] text-[#8B7355] px-2 py-0.5 rounded-md">
-                {badges.length} Abzeichen
+                {badges.length} {t.badgesLabel}
               </span>
             )}
           </div>
           <h2 className="text-[18px] font-extrabold text-[#1a1a1a] mb-1.5 leading-tight">
-            Wochen-Aufgaben
+            {t.weeklyTasks}
           </h2>
           <p className="text-[13px] text-[#6B7280] leading-relaxed mb-4 flex-1">
-            Spielerische Mini-Herausforderungen für {dog}. Geschafft = Abzeichen
-            für die Sammlung.
+            {t.challengesDescA} {dog}
+            {t.challengesDescB}
           </p>
           <span className="text-[12px] font-semibold text-[#C4A576] inline-flex items-center gap-1">
-            Aufgaben holen <span aria-hidden>→</span>
+            {t.getTasks} <span aria-hidden>→</span>
           </span>
         </Link>
 
@@ -208,24 +283,24 @@ export default async function ErfolgeHubPage() {
             <div className="text-[40px] leading-none">🗺️</div>
             {isPaid && unlockedModules > 0 && (
               <span className="text-[10px] font-bold uppercase tracking-wider bg-[#F0FDF4] text-[#15803D] px-2 py-0.5 rounded-md">
-                {unlockedModules} Module frei
+                {unlockedModules} {t.modulesFree}
               </span>
             )}
             {!isPaid && (
               <span className="text-[10px] font-bold uppercase tracking-wider bg-[#FAFAFA] text-[#6B7280] px-2 py-0.5 rounded-md">
-                Gratis-Tipps
+                {t.freeTips}
               </span>
             )}
           </div>
           <h2 className="text-[18px] font-extrabold text-[#1a1a1a] mb-1.5 leading-tight">
-            Plan-Begleitung
+            {t.planCoaching}
           </h2>
           <p className="text-[13px] text-[#6B7280] leading-relaxed mb-4 flex-1">
-            Wo stehst du im Plan? Tagestipp und nächstes Modul für {dog} —
-            dranbleiben leicht gemacht.
+            {t.coachingDescA} {dog}
+            {t.coachingDescB}
           </p>
           <span className="text-[12px] font-semibold text-[#C4A576] inline-flex items-center gap-1">
-            Tipp ansehen <span aria-hidden>→</span>
+            {t.viewTip} <span aria-hidden>→</span>
           </span>
         </Link>
 
@@ -238,23 +313,22 @@ export default async function ErfolgeHubPage() {
             <div className="text-[40px] leading-none">📊</div>
             {moodCount7d > 0 ? (
               <span className="text-[10px] font-bold uppercase tracking-wider bg-[#F0FDF4] text-[#15803D] px-2 py-0.5 rounded-md">
-                {moodCount7d} Eintr. / 7 Tage
+                {moodCount7d} {t.entries7d}
               </span>
             ) : (
               <span className="text-[10px] font-bold uppercase tracking-wider bg-[#FAFAFA] text-[#6B7280] px-2 py-0.5 rounded-md">
-                Neu
+                {t.neu}
               </span>
             )}
           </div>
           <h2 className="text-[18px] font-extrabold text-[#1a1a1a] mb-1.5 leading-tight">
-            Stimmungs-Tagebuch
+            {t.moodDiary}
           </h2>
           <p className="text-[13px] text-[#6B7280] leading-relaxed mb-4 flex-1">
-            Nach jeder Übung kurz tracken: 😊 😐 😞 + optional Notiz. Daraus
-            baut sich euer Verlauf — ihr seht wann es besser wird.
+            {t.moodDesc}
           </p>
           <span className="text-[12px] font-semibold text-[#C4A576] inline-flex items-center gap-1">
-            Eintragen <span aria-hidden>→</span>
+            {t.enter} <span aria-hidden>→</span>
           </span>
         </Link>
       </div>

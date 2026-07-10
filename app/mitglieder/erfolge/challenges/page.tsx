@@ -11,6 +11,7 @@ import {
   CHALLENGE_TEMPLATES,
 } from "@/lib/member-challenges";
 import ChallengeCard from "@/components/mitglieder/ChallengeCard";
+import { getMemberLang, type Lang } from "@/lib/member-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -37,9 +38,11 @@ export default async function ErfolgePage() {
     email: user.email || "",
   });
 
+  const lang = await getMemberLang(user?.email ?? member?.email ?? null);
+
   const isPaid = member.purchase_status === "paid";
   const dogName = member.dog_name?.trim() || null;
-  const dog = dogName || "deinem Hund";
+  const dog = dogName || (lang === "pl" ? "Twojego psa" : "deinem Hund");
   const dogPossessive = dogName ? `${dogName}s` : "Eure";
 
   // Parallel: Challenges + Badges gleichzeitig holen statt nacheinander
@@ -67,6 +70,49 @@ export default async function ErfolgePage() {
     (t) => !earnedSlugs.has(t.slug)
   );
 
+  const t =
+    lang === "pl"
+      ? {
+          backToOverview: "← Przegląd sukcesów",
+          heroAlt: "Wasz tydzień treningowy",
+          thisWeek: "W tym tygodniu",
+          introPre: "Małe zadania treningowe dla ",
+          introPost:
+            ", które pasują do codzienności. Jak je wykonacie, zbieracie odznaki na ścianę.",
+          done: " zrobione",
+          newMonday: " · Nowe od poniedziałku",
+          emptyChallenges:
+            "W tym tygodniu brak nowego zadania. Ciąg dalszy w poniedziałek.",
+          bonusTasks: "Zadania bonusowe",
+          bonusPlus: "+3 zadania tygodniowo",
+          bonusUnlocked: "Odblokowane w pełnym planie",
+          unlock: "Odblokuj",
+          collected: " zebranych",
+          firstBadge: "Wykonaj pierwsze zadanie → pierwsza odznaka.",
+          stillToEarn: "Jeszcze do zdobycia",
+          openCount: " do zdobycia",
+        }
+      : {
+          backToOverview: "← Erfolge-Übersicht",
+          heroAlt: "Eure Trainings-Woche",
+          thisWeek: "Diese Woche",
+          introPre: "Kleine Trainings-Aufgaben für ",
+          introPost:
+            ", die in den Alltag passen. Schafft ihr sie, sammelt ihr Abzeichen für die Wand.",
+          done: " geschafft",
+          newMonday: " · Neue ab Montag",
+          emptyChallenges:
+            "Diese Woche keine neue Aufgabe. Montag geht’s weiter.",
+          bonusTasks: "Bonus-Aufgaben",
+          bonusPlus: "+3 Aufgaben pro Woche",
+          bonusUnlocked: "Im vollen Plan freigeschaltet",
+          unlock: "Freischalten",
+          collected: " gesammelt",
+          firstBadge: "Erste Aufgabe schaffen → erstes Abzeichen.",
+          stillToEarn: "Noch zu erspielen",
+          openCount: " offen",
+        };
+
   return (
     <>
       {/* Back-Link zum Hub */}
@@ -74,7 +120,7 @@ export default async function ErfolgePage() {
         href="/mitglieder/erfolge"
         className="inline-flex items-center gap-1 text-[12px] text-[#6B7280] mb-3"
       >
-        ← Erfolge-Übersicht
+        {t.backToOverview}
       </Link>
 
       {/* Hero-Banner — flacher (16/7), oben staerker beschnitten */}
@@ -82,7 +128,7 @@ export default async function ErfolgePage() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/Aufgaben.jpg"
-          alt="Eure Trainings-Woche"
+          alt={t.heroAlt}
           className="w-full aspect-[16/7] object-cover object-bottom md:rounded-2xl"
         />
       </div>
@@ -90,19 +136,24 @@ export default async function ErfolgePage() {
       {/* Header — Hundename prominent, kurze Einordnung darunter */}
       <div className="mb-5">
         <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
-          Diese Woche
+          {t.thisWeek}
         </p>
         <h1 className="text-[24px] md:text-[30px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
-          {dogName ? `${dogPossessive} Trainings-Woche` : "Eure Trainings-Woche"}
+          {lang === "pl"
+            ? dogName
+              ? `Tydzień treningowy ${dogName}`
+              : "Wasz tydzień treningowy"
+            : dogName
+              ? `${dogPossessive} Trainings-Woche`
+              : "Eure Trainings-Woche"}
         </h1>
         <p className="text-[14px] text-[#4B5563] mt-2 leading-relaxed">
-          Kleine Trainings-Aufgaben für {dog}, die in den Alltag passen.
-          Schafft ihr sie, sammelt ihr Abzeichen für die Wand.
+          {t.introPre}{dog}{t.introPost}
         </p>
       </div>
 
       {/* Erklaer-Slider: 3 Karten, swipebar Mobile / Grid Desktop */}
-      <ExplainerSlider />
+      <ExplainerSlider lang={lang} />
 
       {/* Wochen-Status — kompakt */}
       {totalThisWeek > 0 && (
@@ -111,8 +162,8 @@ export default async function ErfolgePage() {
             {completedThisWeek === totalThisWeek ? "✅" : "📍"}
           </span>
           <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight">
-            {completedThisWeek} / {totalThisWeek} geschafft
-            {completedThisWeek === totalThisWeek && " · Neue ab Montag"}
+            {completedThisWeek} / {totalThisWeek}{t.done}
+            {completedThisWeek === totalThisWeek && t.newMonday}
           </p>
         </div>
       )}
@@ -122,7 +173,7 @@ export default async function ErfolgePage() {
         <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 text-center">
           <p className="text-[20px] mb-1">📅</p>
           <p className="text-[13px] text-[#6B7280]">
-            Diese Woche keine neue Aufgabe. Montag geht&rsquo;s weiter.
+            {t.emptyChallenges}
           </p>
         </div>
       ) : (
@@ -150,7 +201,7 @@ export default async function ErfolgePage() {
           <div className="flex items-center gap-2 mb-3">
             <span className="text-[18px]">🔒</span>
             <h2 className="text-[16px] font-bold text-[#1a1a1a]">
-              Bonus-Aufgaben
+              {t.bonusTasks}
             </h2>
           </div>
 
@@ -177,17 +228,17 @@ export default async function ErfolgePage() {
               <span className="text-[24px] flex-shrink-0">🎁</span>
               <div className="flex-1 min-w-0">
                 <p className="text-[13px] font-bold text-[#1a1a1a] leading-tight">
-                  +3 Aufgaben pro Woche
+                  {t.bonusPlus}
                 </p>
                 <p className="text-[11px] text-[#6B7280] leading-snug">
-                  Im vollen Plan freigeschaltet
+                  {t.bonusUnlocked}
                 </p>
               </div>
               <Link
                 href="/mitglieder/upgrade"
                 className="bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-2 px-4 rounded-lg text-[12px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)] flex-shrink-0"
               >
-                Freischalten
+                {t.unlock}
               </Link>
             </div>
           </div>
@@ -198,11 +249,17 @@ export default async function ErfolgePage() {
       <div className="mb-6">
         <div className="flex items-baseline justify-between mb-3">
           <h2 className="text-[18px] font-bold text-[#1a1a1a]">
-            {dogName ? `${dogPossessive} Abzeichen` : "Eure Abzeichen"}
+            {lang === "pl"
+              ? dogName
+                ? `Odznaki ${dogName}`
+                : "Wasze odznaki"
+              : dogName
+                ? `${dogPossessive} Abzeichen`
+                : "Eure Abzeichen"}
           </h2>
           {badges.length > 0 && (
             <span className="text-[12px] text-[#9CA3AF]">
-              {badges.length} gesammelt
+              {badges.length}{t.collected}
             </span>
           )}
         </div>
@@ -211,7 +268,7 @@ export default async function ErfolgePage() {
           <div className="bg-[#FAFAFA] border border-dashed border-[#EADDC5] rounded-2xl p-6 text-center">
             <p className="text-[28px] mb-1">🏆</p>
             <p className="text-[13px] text-[#6B7280]">
-              Erste Aufgabe schaffen → erstes Abzeichen.
+              {t.firstBadge}
             </p>
           </div>
         ) : (
@@ -235,10 +292,10 @@ export default async function ErfolgePage() {
               <>
                 <div className="flex items-baseline justify-between mb-2">
                   <h3 className="text-[13px] font-bold uppercase tracking-wider text-[#8B7355]">
-                    Noch zu erspielen
+                    {t.stillToEarn}
                   </h3>
                   <span className="text-[11px] text-[#9CA3AF]">
-                    {ghostBadgeTemplates.length} offen
+                    {ghostBadgeTemplates.length}{t.openCount}
                   </span>
                 </div>
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
@@ -248,6 +305,7 @@ export default async function ErfolgePage() {
                       emoji={t.badge_emoji}
                       label={t.badge_label}
                       isPremium={t.is_premium && !isPaid}
+                      lang={lang}
                     />
                   ))}
                 </div>
@@ -290,15 +348,25 @@ function GhostBadgeTile({
   emoji,
   label,
   isPremium,
+  lang,
 }: {
   emoji: string;
   label: string;
   isPremium: boolean;
+  lang: Lang;
 }) {
   return (
     <div
       className="relative bg-[#FAFAFA] border border-dashed border-[#E5DDC8] rounded-xl p-3 flex flex-col items-center text-center"
-      title={isPremium ? "Mit Plan freischalten" : "Noch nicht erspielt"}
+      title={
+        isPremium
+          ? lang === "pl"
+            ? "Odblokuj z planem"
+            : "Mit Plan freischalten"
+          : lang === "pl"
+            ? "Jeszcze nie zdobyte"
+            : "Noch nicht erspielt"
+      }
     >
       {/* Schwarz-Weiss-Silhouette: grayscale + leichte Opacity. Lesbar
           genug damit User sieht WAS es zu erspielen gibt, aber klar
@@ -313,14 +381,42 @@ function GhostBadgeTile({
         {label}
       </p>
       <p className="text-[9px] text-[#9CA3AF]">
-        {isPremium ? "🔒 Mit Plan" : "Noch offen"}
+        {isPremium
+          ? lang === "pl"
+            ? "🔒 Z planem"
+            : "🔒 Mit Plan"
+          : lang === "pl"
+            ? "Jeszcze otwarte"
+            : "Noch offen"}
       </p>
     </div>
   );
 }
 
-function ExplainerSlider() {
-  const cards = [
+function ExplainerSlider({ lang }: { lang: Lang }) {
+  const cards =
+    lang === "pl"
+      ? [
+          {
+            emoji: "🎯",
+            title: "1 zadanie tygodniowo",
+            body: "Dopasowane do Twojego psa.",
+            tint: "from-[#FFF9F0] to-[#FFFDF6]",
+          },
+          {
+            emoji: "⏱️",
+            title: "Wystarczy 5 min",
+            body: "W codzienności, bez presji.",
+            tint: "from-[#F0FDF4] to-[#FAFFF8]",
+          },
+          {
+            emoji: "🏆",
+            title: "Zdobądź odznakę",
+            body: "Zrobione = odznaka do kolekcji.",
+            tint: "from-[#FAF5FF] to-[#FDFBFF]",
+          },
+        ]
+      : [
     {
       emoji: "🎯",
       title: "1 Aufgabe pro Woche",

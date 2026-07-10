@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opinie o ŁapaPlan | Prawdziwe recenzje</title>
+    <meta name="description" content="Prawdziwe doświadczenia właścicieli psów, którzy korzystali z ŁapaPlan. Bez filtrów, bez przesady.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --warm-brown: #C4A576;
+            --cream: #FAF8F5;
+            --white: #FFFFFF;
+            --text-dark: #2C2C2C;
+            --text-medium: #5C5C5C;
+            --text-light: #8C8C8C;
+            --border-light: #E8E4DF;
+            --border-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--cream);
+            color: var(--text-dark);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-image {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .header-link {
+            font-size: 14px;
+            color: var(--warm-brown);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .header-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Hero */
+        .hero {
+            background: var(--white);
+            padding: 50px 20px 40px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .hero h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--text-medium);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .hero-trust {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .trustpilot-stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .tp-star {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: #00B67A;
+            border-radius: 0;
+        }
+
+        .tp-star svg {
+            width: 17px;
+            height: 15px;
+            fill: white;
+        }
+
+        .trust-text {
+            font-size: 14px;
+            color: var(--text-medium);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Stats */
+        .stats-bar {
+            background: var(--warm-brown);
+            padding: 20px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* Section */
+        .section {
+            padding: 40px 20px;
+        }
+
+        .section-alt {
+            background: var(--white);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .section-intro {
+            font-size: 15px;
+            color: var(--text-medium);
+            margin-bottom: 24px;
+        }
+
+        /* Testimonials */
+        .testimonial-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 24px;
+        }
+
+        .testimonial-stars {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 12px;
+        }
+
+        .section-alt .testimonial-card {
+            background: var(--cream);
+        }
+
+        .testimonial-quote {
+            font-size: 16px;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .testimonial-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .testimonial-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--warm-brown);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .testimonial-info {
+            flex: 1;
+        }
+
+        .testimonial-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .testimonial-detail {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .testimonial-tag {
+            font-size: 11px;
+            padding: 4px 10px;
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        /* Highlight Card */
+        .highlight-card {
+            background: var(--warm-brown);
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 28px;
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .highlight-quote {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .highlight-author {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        /* CTA */
+        .cta-section {
+            background: var(--white);
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .cta-text {
+            font-size: 15px;
+            color: var(--text-medium);
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--warm-brown);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            background: transparent;
+            color: var(--warm-brown);
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            border: 2px solid var(--warm-brown);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--cream);
+        }
+
+        .cta-section .btn-secondary {
+            margin-left: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px 20px;
+            color: var(--text-light);
+            font-size: 12px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .footer a {
+            color: var(--text-light);
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .hero h1 {
+                font-size: 22px;
+            }
+
+            .stats-row {
+                gap: 24px;
+            }
+
+            .stat-number {
+                font-size: 24px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-buttons .btn-primary,
+            .hero-buttons .btn-secondary {
+                width: 100%;
+                max-width: 280px;
+                text-align: center;
+            }
+
+            .cta-section .btn-secondary {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+    </style>
+<script
+  defer
+  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+  data-domain="pfoten-plan.de"
+  src="https://datafa.st/js/script.js">
+</script>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="ŁapaPlan Logo" class="logo-image">
+                <span class="logo-text">ŁapaPlan</span>
+            </a>
+            <a href="info" class="header-link">Powrót do przeglądu</a>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>Co inni właściciele psów mówią o ŁapaPlan</h1>
+            <p class="hero-subtitle">Prawdziwe recenzje. Bez filtrów, bez przesady.</p>
+            <div class="hero-trust">
+                <div class="trustpilot-stars">
+                    <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                </div>
+                <span class="trust-text">4,8 na 5 gwiazdek</span>
+            </div>
+
+            <div class="hero-buttons">
+                <a href="krok-1.html" class="btn-primary">Jestem tu nowy</a>
+                <a href="info#returningOption" class="btn-secondary">Quiz już zrobiony</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="container">
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-number">4,8</div>
+                    <div class="stat-label">Ocena</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2.400+</div>
+                    <div class="stat-label">Utworzonych planów</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">94%</div>
+                    <div class="stat-label">Poleceń</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials Section 1 -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Struktura zamiast chaosu</h2>
+            <p class="section-intro">Wielu właścicieli psów trafia do ŁapaPlan, bo chcą mieć jasny plan działania.</p>
+
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Wcześniej obejrzałam tyle filmów i przeczytałam tyle porad, że w ogóle nie wiedziałam, od czego zacząć. Plan w końcu dał mi strukturę."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">S</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Sandra</div>
+                            <div class="testimonial-detail">Labrador, 8 miesięcy</div>
+                        </div>
+                        <span class="testimonial-tag">Plan 3-miesięczny</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Wreszcie jasny plan zamiast sprzecznych porad z internetu. Teraz każdego dnia wiem, co mam ćwiczyć."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">M</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Michał</div>
+                            <div class="testimonial-detail">Border Collie (mieszaniec), 2 lata</div>
+                        </div>
+                        <span class="testimonial-tag">Plan 6-miesięczny</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Ćwiczenia są krótkie i mieszczą się w codziennym rytmie. Żadnego wielogodzinnego treningu, tylko małe jednostki, które naprawdę coś dają."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">L</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Lena</div>
+                            <div class="testimonial-detail">Golden Retriever, 1 rok</div>
+                        </div>
+                        <span class="testimonial-tag">Plan 3-miesięczny</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Highlight -->
+    <section class="section" style="padding-top: 0; padding-bottom: 0;">
+        <div class="container">
+            <div class="highlight-card">
+                <p class="highlight-quote">„Nie czuć tego jak kurs z internetu. Raczej jak instrukcja, którą ktoś napisał specjalnie dla mojego psa."</p>
+                <p class="highlight-author">– Julia, Australian Shepherd, 10 miesięcy</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section 2 -->
+    <section class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">Prawdziwe postępy</h2>
+            <p class="section-intro">Co właściciele psów opowiadają po kilku tygodniach z planem.</p>
+
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Po 2 tygodniach mój pies już nie ciągnie na smyczy. Nie sądziłem, że pójdzie to tak szybko."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">T</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Tomasz</div>
+                            <div class="testimonial-detail">Beagle, 3 lata</div>
+                        </div>
+                        <span class="testimonial-tag">Plan 1-miesięczny</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Szczekanie przy drzwiach było naszym największym problemem. Po 3 tygodniach jest znacznie lepiej. Nie idealnie, ale to ogromna różnica."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">K</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Kasia</div>
+                            <div class="testimonial-detail">Jack Russell, 4 lata</div>
+                        </div>
+                        <span class="testimonial-tag">Plan 3-miesięczny</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Mój pies był bardzo niepewny podczas spotkań z innymi psami. Plan pokazał mi, jak sobie z tym radzić. Robimy dobre postępy."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">A</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Anna</div>
+                            <div class="testimonial-detail">Owczarek niemiecki (mieszaniec), 2 lata</div>
+                        </div>
+                        <span class="testimonial-tag">Plan 6-miesięczny</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section 3 -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Szczere opinie</h2>
+            <p class="section-intro">Nie każdy jest zachwycony. Ale większość jest zadowolona.</p>
+
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Byłem sceptyczny, czy PDF naprawdę pomoże. Ale wyjaśnienia są tak dobre, że zrozumiałem, dlaczego mój pies tak się zachowuje. To wszystko zmieniło."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">J</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Jan</div>
+                            <div class="testimonial-detail">Buldog francuski, 1 rok</div>
+                        </div>
+                        <span class="testimonial-tag">Plan 3-miesięczny</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Bez krzyku, bez przytłaczania, po prostu jasno. Dokładnie to, czego potrzebowałam."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">N</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Nina</div>
+                            <div class="testimonial-detail">Jamnik, 5 lat</div>
+                        </div>
+                        <span class="testimonial-tag">Plan 1-miesięczny</span>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                        <span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 14,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 10,9"/></svg></span>
+                    </div>
+                    <p class="testimonial-quote">„Po pierwszym przeczytaniu wiedziałem, co mam robić. Przy innych kursach tego nie miałem. Żadnych niekończących się filmów, tylko od razu wykonalne kroki."</p>
+                    <div class="testimonial-meta">
+                        <div class="testimonial-avatar">P</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Patryk</div>
+                            <div class="testimonial-detail">Husky, 1,5 roku</div>
+                        </div>
+                        <span class="testimonial-tag">Plan 6-miesięczny</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="section-title">Gotowy na swój plan?</h2>
+            <p class="cta-text">
+                Sprawdź, czy ŁapaPlan pasuje do Ciebie i Twojego psa.
+            </p>
+            <a href="krok-1.html" class="btn-primary">Stwórz plan treningowy</a>
+            <a href="info" class="btn-secondary">Dowiedz się więcej</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a href="impressum.html">Nota prawna</a> · <a href="polityka-prywatnosci.html">Polityka prywatności</a>
+    </footer>
+
+</body>
+</html>

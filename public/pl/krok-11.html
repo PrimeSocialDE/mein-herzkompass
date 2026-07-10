@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Już prawie gotowe! | ŁapaPlan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ufxcf43805");
+</script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #FFFFFF; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .logo { margin-top: 50px; margin-bottom: 50px; display: flex; align-items: center; gap: 10px; }
+        .logo img { width: 42px; height: 42px; border-radius: 10px; }
+        .logo span { font-size: 22px; font-weight: 800; color: #2C2C2E; }
+        .container { max-width: 450px; width: 100%; text-align: center; }
+        h1 { font-size: 32px; font-weight: 800; color: #1a1a1a; margin-bottom: 40px; line-height: 1.3; }
+        #dogName { color: #C4A576; }
+        .email-input { width: 100%; padding: 20px 24px; font-size: 17px; border: 1px solid #E0E0E0; border-radius: 12px; outline: none; background: #F8F8F8; margin-bottom: 20px; }
+        .email-input:focus { border-color: #C4A576; background: #FFFFFF; }
+        .email-input::placeholder { color: #999; }
+        .submit-btn { width: 100%; padding: 18px 30px; background: #C4A576; color: white; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+        .submit-btn:hover { background: #B8956A; }
+        .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .privacy-note { display: flex; align-items: flex-start; gap: 12px; margin-top: 40px; text-align: left; max-width: 400px; }
+        .lock-icon { font-size: 20px; color: #CCCCCC; flex-shrink: 0; margin-top: 2px; }
+        .privacy-text { font-size: 14px; color: #999; line-height: 1.6; }
+        .privacy-text a { color: #C4A576; text-decoration: underline; }
+        .rating-section { margin-top: 50px; text-align: center; }
+        .trustpilot-stars { display: flex; justify-content: center; gap: 2px; margin-bottom: 8px; }
+        .star-box { width: 20px; height: 20px; background: #00B67A; display: flex; align-items: center; justify-content: center; }
+        .star-box svg { width: 14px; height: 14px; fill: white; }
+        .rating-text { font-size: 14px; color: #999; }
+
+        /* Blurred iPad Preview */
+        .analyse-preview { position: relative; margin-top: 40px; }
+        .analyse-preview-lock { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; }
+        .lock-badge { background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 14px; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; backdrop-filter: blur(2px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .lock-badge:hover { transform: scale(1.03); box-shadow: 0 6px 24px rgba(0,0,0,0.4); }
+        .ipad-blurred { filter: blur(5px); pointer-events: none; user-select: none; }
+        .ipad-frame { background: #1a1a1a; border-radius: 24px; padding: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+        .ipad-screen { background: #fff; border-radius: 16px; overflow: hidden; }
+        .screen-header { background: linear-gradient(180deg, #F8F8F8, #F0F0F0); padding: 8px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E0E0E0; }
+        .screen-dots { display: flex; gap: 5px; }
+        .screen-dot { width: 7px; height: 7px; border-radius: 50%; }
+        .screen-dot.red { background: #FF5F57; }
+        .screen-dot.yellow { background: #FFBD2E; }
+        .screen-dot.green { background: #28CA41; }
+        .screen-title { font-size: 10px; color: #999; font-weight: 500; }
+        .plan-content { padding: 18px; }
+        .plan-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid #F0F0F0; }
+        .plan-logo { width: 38px; height: 38px; background: linear-gradient(135deg, #C4A576, #8B7355); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .plan-title { font-size: 13px; font-weight: 700; color: #2C2C2E; }
+        .plan-subtitle { font-size: 10px; color: #999; }
+        .plan-lines { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .plan-line { height: 9px; background: #F0F0F0; border-radius: 5px; }
+        .plan-line:nth-child(1) { width: 100%; }
+        .plan-line:nth-child(2) { width: 85%; }
+        .plan-line:nth-child(3) { width: 92%; }
+        .plan-line:nth-child(4) { width: 70%; }
+        .plan-line:nth-child(5) { width: 88%; }
+        .stats-row { display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #F0F0F0; border-bottom: 1px solid #F0F0F0; margin-bottom: 12px; }
+        .stat-number { font-size: 20px; font-weight: 800; color: #C4A576; }
+        .stat-label { font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+        .plan-checklist { text-align: left; }
+        .check-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 11px; color: #6B6B6B; }
+        .check-icon { width: 16px; height: 16px; background: #C4A576; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; flex-shrink: 0; }
+
+        @media (max-width: 500px) { h1 { font-size: 26px; } .logo { margin-top: 30px; margin-bottom: 40px; } }
+        /* Source-Pick Modal (nach Email-Submit, 1 Klick → weiter) */
+        .source-overlay {
+            display: none; position: fixed; inset: 0; z-index: 10000;
+            background: rgba(0,0,0,0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .source-overlay.active { display: flex; }
+        .source-modal {
+            background: #fff; border-radius: 16px;
+            max-width: 420px; width: 100%;
+            padding: 24px 22px 18px;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.22);
+            animation: sourceModalIn 0.25s ease-out;
+        }
+        @keyframes sourceModalIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .source-eyebrow {
+            font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+            text-transform: uppercase; color: #8B7355; margin-bottom: 4px; text-align: center;
+        }
+        .source-title {
+            font-size: 19px; font-weight: 800; color: #1a1a1a;
+            text-align: center; margin: 0 0 16px; line-height: 1.3;
+        }
+        .source-options {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .source-btn {
+            background: #fff; border: 1.5px solid #E5E7EB;
+            padding: 14px 10px; border-radius: 11px;
+            font-size: 13.5px; font-weight: 600; color: #1a1a1a;
+            cursor: pointer; transition: all 0.15s ease;
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            font-family: inherit; line-height: 1.2;
+        }
+        .source-btn:hover, .source-btn:focus {
+            border-color: #C4A576; background: #FFF9F0;
+            outline: none;
+        }
+        .source-btn:active { transform: scale(0.97); }
+        .source-btn-icon { font-size: 22px; line-height: 1; }
+        .source-btn-text { font-size: 12.5px; }
+        .source-skip {
+            display: block; background: none; border: none;
+            margin: 14px auto 0; padding: 6px 10px;
+            font-size: 12px; color: #9CA3AF; cursor: pointer;
+            text-decoration: underline; font-family: inherit;
+        }
+    </style>
+<script
+  defer
+  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+  data-domain="pfoten-plan.de"
+  src="https://datafa.st/js/script.js">
+</script>
+</head>
+<body>
+    <div class="logo">
+        <img src="logo.png" alt="ŁapaPlan">
+        <span>ŁapaPlan</span>
+    </div>
+
+    <div class="container">
+        <h1><span id="dogName">Twój pies</span><span style="color:#C4A576"> —</span> osobista analiza zachowania jest już gotowa.</h1>
+        <p style="font-size:17px;color:#6B6B6B;margin-bottom:40px;line-height:1.5">Podaj swój adres e-mail, aby zobaczyć wynik i odblokować plan treningowy — <strong>do wydruku i odhaczania, dzień po dniu.</strong></p>
+
+        <form id="emailForm">
+            <input type="email" class="email-input" id="emailInput" placeholder="Podaj swój e-mail" required>
+            <button type="submit" class="submit-btn" id="submitBtn">Odbierz plan</button>
+        </form>
+
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 0;color:#6B6B6B;font-size:14px;line-height:1.4">
+            <span>🖨️</span><span>Przejrzysty i <strong>gotowy do druku</strong> — do powieszenia na lodówce</span>
+        </div>
+
+        <div class="privacy-note">
+            <span class="lock-icon">🔒</span>
+            <p class="privacy-text">Twoje dane są bezpieczne i nie będą przekazywane dalej. <a href="polityka-prywatnosci.html">Polityka prywatności</a></p>
+        </div>
+
+        <!-- Geblurrtes iPad Plan-Preview -->
+        <div class="analyse-preview">
+            <div class="analyse-preview-lock">
+                <div class="lock-badge">🔒 <span id="lockDogName">Twój pies</span> — odblokuj plan</div>
+            </div>
+            <div class="ipad-blurred">
+                <div class="ipad-frame">
+                    <div class="ipad-screen">
+                        <div class="screen-header">
+                            <div class="screen-dots">
+                                <div class="screen-dot red"></div>
+                                <div class="screen-dot yellow"></div>
+                                <div class="screen-dot green"></div>
+                            </div>
+                            <div class="screen-title">Plan-treningowy.pdf</div>
+                            <div style="width: 40px;"></div>
+                        </div>
+                        <div class="plan-content">
+                            <div class="plan-header">
+                                <div class="plan-logo">🐕</div>
+                                <div>
+                                    <div class="plan-title" id="iPadPlanTitle">Plan treningowy</div>
+                                    <div class="plan-subtitle" id="iPadPlanSubtitle">Cel: korekta zachowania</div>
+                                </div>
+                            </div>
+                            <div class="plan-lines">
+                                <div class="plan-line"></div>
+                                <div class="plan-line"></div>
+                                <div class="plan-line"></div>
+                                <div class="plan-line"></div>
+                                <div class="plan-line"></div>
+                            </div>
+                            <div class="stats-row">
+                                <div style="text-align: center;">
+                                    <div class="stat-number">34+</div>
+                                    <div class="stat-label">Stron</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div class="stat-number">20+</div>
+                                    <div class="stat-label">Ćwiczeń</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div class="stat-number">4–6</div>
+                                    <div class="stat-label">Tygodni</div>
+                                </div>
+                            </div>
+                            <div class="plan-checklist">
+                                <div class="check-item"><div class="check-icon">✓</div><span>Instrukcje krok po kroku</span></div>
+                                <div class="check-item"><div class="check-icon">✓</div><span>Codzienny plan treningowy</span></div>
+                                <div class="check-item"><div class="check-icon">✓</div><span>Pierwsze efekty w 2 tygodnie</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rating-section">
+            <div class="trustpilot-stars">
+                <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+                <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
+            </div>
+            <p class="rating-text">4,8 na 5 od ponad 2078 psów</p>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Config
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+        // A/B Test (ab 2026-06-18): deinplan3 (Champion, Control) vs deinplan2.
+        // deinplan2 ist jetzt ein EXAKTER Klon von deinplan3 PLUS dem
+        // "Du bist nicht allein"-Reassurance-Block ueber der Haupt-CTA
+        // (aus echten KI-Trainer-Chatfragen abgeleitet). Der Test isoliert
+        // genau diesen einen Block. Messung via source_page (deinplan2 vs deinplan3).
+        // 50/50 (seit 23.06: hochgezogen von 70/30, damit B schneller Signifikanz erreicht —
+        // B lag bei ~+23% rel. CR, aber noch nicht signifikant). localStorage-Key bleibt v6
+        // (krok-1 Returning-Logik haengt dran; bestehende Nutzer behalten ihre Variante).
+        function getABTestPage() {
+            let variant = localStorage.getItem('ab_test_pricing_v6');
+            if (!variant) {
+                // 50/50: A=deinplan3 (Control), B=deinplan2 (mit "Du bist nicht allein"-Block)
+                variant = Math.random() < 0.50 ? 'A' : 'B';
+                localStorage.setItem('ab_test_pricing_v6', variant);
+                // Legacy-Key auch setzen damit Supabase-Tracking (ab_variant) konsistent bleibt
+                localStorage.setItem('ab_test_pricing', variant);
+            }
+            // A = plan.html (Champion, Control)
+            // B = plan.html (deinplan3-Klon + "Du bist nicht allein"-Block)
+            return variant === 'A' ? 'plan.html' : 'plan.html';
+        }
+
+        // Hundename aus localStorage
+        const dogName = localStorage.getItem('dogName');
+        if (dogName) {
+            document.getElementById('dogName').textContent = dogName;
+            document.getElementById('lockDogName').textContent = dogName;
+        }
+
+        // iPad-Preview personalisieren
+        const dogProblem = localStorage.getItem('dogProblem') || '';
+        const dogBreed = localStorage.getItem('dogBreed') || '';
+        const focusLabels = {
+            'pulling': 'Chodzenie na smyczy', 'barking': 'Szczekanie', 'aggression': 'Redukcja agresji',
+            'anxiety': 'Lęk separacyjny', 'jumping': 'Trening powitań', 'recall': 'Przywołanie',
+            'energy': 'Spokój i kontrola', 'destructive': 'Kontrola impulsów',
+            'mouthing': 'Kontrola impulsów', 'separation': 'Zostawanie samemu'
+        };
+        if (dogBreed && dogBreed !== 'other') {
+            const breedLabels = {
+                'labrador': 'Labrador', 'german_shepherd': 'Owczarek niemiecki', 'golden_retriever': 'Golden Retriever',
+                'french_bulldog': 'Buldog francuski', 'chihuahua': 'Chihuahua', 'poodle': 'Pudel',
+                'dachshund': 'Jamnik', 'beagle': 'Beagle', 'husky': 'Husky', 'border_collie': 'Border Collie',
+                'mixed': 'Mieszaniec'
+            };
+            const breed = breedLabels[dogBreed] || dogBreed;
+            document.getElementById('iPadPlanTitle').textContent = 'Plan treningowy dla: ' + breed;
+        }
+        if (dogProblem && focusLabels[dogProblem]) {
+            document.getElementById('iPadPlanSubtitle').textContent = 'Cel: ' + focusLabels[dogProblem];
+        }
+
+        // Lock-Badge Klick → zum Email-Feld scrollen und fokussieren
+        document.querySelector('.lock-badge').addEventListener('click', function() {
+            const emailInput = document.getElementById('emailInput');
+            emailInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => { emailInput.focus(); }, 400);
+        });
+
+        function parseJSON(str) {
+            try { return JSON.parse(str || '[]'); }
+            catch(e) { return []; }
+        }
+
+        // Brevo Contact erstellen via API Route (sicher, kein API Key im Frontend)
+        // Form Submit
+        document.getElementById('emailForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const email = document.getElementById('emailInput').value.trim();
+
+            if (!email) return;
+
+            // Button deaktivieren
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Zapisywanie...';
+
+            // E-Mail in localStorage
+            localStorage.setItem('userEmail', email);
+
+            // A/B Test Seite bestimmen
+            const targetPage = getABTestPage();
+
+            // Sicherheits-Timeout: Nach 5 Sekunden auf jeden Fall weiterleiten
+            const redirectTimeout = setTimeout(() => {
+                console.log('⏱️ Timeout - redirecting anyway');
+                window.location.href = targetPage;
+            }, 5000);
+
+            // Quiz-Daten
+            const dogNameValue = localStorage.getItem('dogName') || '';
+            const dogProblemKey = localStorage.getItem('dogProblem') || '';
+
+            const answers = {
+                email: email,
+                dog_name: dogNameValue,
+                dog_age: localStorage.getItem('dogAge'),
+                dog_breed: localStorage.getItem('dogBreed'),
+                dog_gender: localStorage.getItem('dogGender'),
+                dog_goal: localStorage.getItem('dogGoal'),
+                dog_problem: dogProblemKey,
+                dog_behaviors: parseJSON(localStorage.getItem('dogBehaviors')),
+                dog_commands: parseJSON(localStorage.getItem('dogCommands')),
+                had_training: localStorage.getItem('hadTraining'),
+                territorial_aggression: localStorage.getItem('territorialAggression'),
+                utm_source: localStorage.getItem('utm_source') || null,
+                utm_medium: localStorage.getItem('utm_medium') || null,
+                utm_campaign: localStorage.getItem('utm_campaign') || null,
+                fbclid: localStorage.getItem('fbclid') || null,
+                ab_variant: localStorage.getItem('ab_test_pricing') || null,
+                ab_test_trust: localStorage.getItem('ab_test_trust') || null,
+                entry_page: localStorage.getItem('entry_page') || null
+            };
+
+            let leadId = null;
+            // Cache komplette answers fuer spaeteren source-Pick PATCH
+            // (sonst wuerde der PATCH die answers-JSONB-Spalte ueberschreiben).
+            localStorage.setItem('quizAnswersCache', JSON.stringify(answers));
+
+            // 1. Supabase speichern
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        dog_name: dogNameValue,
+                        status: 'email_captured',
+                        answers: answers,
+                        ab_variant: localStorage.getItem('ab_test_pricing') || null
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data[0]?.id) {
+                        leadId = data[0].id;
+                        localStorage.setItem('leadId', leadId);
+                        console.log('✅ Lead saved:', leadId);
+                    }
+                }
+            } catch (err) {
+                console.log('Supabase error:', err);
+            }
+
+            // 2. Source-Modal anzeigen — User klickt 1× woher er uns kennt,
+            //    speichert + redirected zur Plan-Seite. Skip-Link unten erlaubt
+            //    direkten Weiter-Klick ohne Antwort.
+            clearTimeout(redirectTimeout);
+            showSourceModal(leadId, targetPage);
+        });
+
+        // Source-Pick (1-Klick): zeigt Modal, speichert answer + redirected.
+        // Sicherheits-Timeout 8s, falls Modal nicht angeklickt wird.
+        function showSourceModal(leadId, targetPage) {
+            const overlay = document.getElementById('sourceOverlay');
+            if (!overlay) {
+                window.location.href = targetPage;
+                return;
+            }
+            overlay.classList.add('active');
+
+            const fallback = setTimeout(() => {
+                window.location.href = targetPage;
+            }, 12000);
+
+            async function pick(source) {
+                clearTimeout(fallback);
+                localStorage.setItem('referral_source', source);
+                if (leadId) {
+                    try {
+                        await fetch(`${SUPABASE_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Prefer': 'return=minimal'
+                            },
+                            body: JSON.stringify({
+                                answers: {
+                                    ...(JSON.parse(localStorage.getItem('quizAnswersCache') || '{}')),
+                                    referral_source: source
+                                }
+                            })
+                        });
+                    } catch (e) { console.log('source-save error:', e); }
+                }
+                window.location.href = targetPage;
+            }
+
+            overlay.querySelectorAll('[data-source]').forEach(btn => {
+                btn.addEventListener('click', () => pick(btn.dataset.source));
+            });
+            const skip = overlay.querySelector('.source-skip');
+            if (skip) skip.addEventListener('click', () => pick('skipped'));
+        }
+    </script>
+
+    <!-- Source-Pick Modal (1-Klick) -->
+    <div class="source-overlay" id="sourceOverlay" role="dialog" aria-labelledby="sourceTitle">
+        <div class="source-modal">
+            <div class="source-eyebrow">Ostatnie pytanie</div>
+            <h2 id="sourceTitle" class="source-title">Skąd o nas wiesz?</h2>
+            <div class="source-options">
+                <button class="source-btn" type="button" data-source="hundeschule">
+                    <span class="source-btn-icon">🐕</span>
+                    <span class="source-btn-text">Szkoła dla psów lub trener</span>
+                </button>
+                <button class="source-btn" type="button" data-source="facebook">
+                    <span class="source-btn-icon">📱</span>
+                    <span class="source-btn-text">Facebook</span>
+                </button>
+                <button class="source-btn" type="button" data-source="instagram">
+                    <span class="source-btn-icon">📷</span>
+                    <span class="source-btn-text">Instagram</span>
+                </button>
+                <button class="source-btn" type="button" data-source="empfehlung">
+                    <span class="source-btn-icon">👥</span>
+                    <span class="source-btn-text">Polecenie od znajomych</span>
+                </button>
+                <button class="source-btn" type="button" data-source="google">
+                    <span class="source-btn-icon">🔎</span>
+                    <span class="source-btn-text">Wyszukiwarka Google</span>
+                </button>
+                <button class="source-btn" type="button" data-source="zeitung">
+                    <span class="source-btn-icon">📰</span>
+                    <span class="source-btn-text">Gazeta / prasa</span>
+                </button>
+            </div>
+            <button type="button" class="source-skip">Pomiń</button>
+        </div>
+    </div>
+</body>
+</html>

@@ -17,6 +17,7 @@ import {
 } from "@/lib/member-mood";
 import { getPlanIntro } from "@/lib/member-plan-intro";
 import WeeklyCheckIn from "@/components/mitglieder/WeeklyCheckIn";
+import { getMemberLang } from "@/lib/member-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +39,15 @@ const MOOD_LABEL: Record<Mood, string> = {
   schwierig: "schwierig",
 };
 
+const MOOD_LABEL_PL: Record<Mood, string> = {
+  gut: "dobrze",
+  mittel: "różnie",
+  schwierig: "trudno",
+};
+
 const DAY_SHORT = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+
+const DAY_SHORT_PL = ["Nd", "Pn", "Wt", "Śr", "Cz", "Pt", "So"];
 
 export default async function StimmungPage() {
   const user = await getCurrentMember();
@@ -59,7 +68,58 @@ export default async function StimmungPage() {
     email: user.email || "",
   });
 
-  const dog = member.dog_name?.trim() || "deinem Hund";
+  const lang = await getMemberLang(user?.email ?? member?.email ?? null);
+  const t =
+    lang === "pl"
+      ? {
+          back: "← Przegląd sukcesów",
+          kicker: "Cotygodniowe wsparcie",
+          diaryWith: "Dziennik z",
+          intro:
+            "Raz w tygodniu zapisz, jak wam poszło. AI podsumuje twój tydzień i sprawdzi, na jakim etapie planu jesteście.",
+          checkinBody: "Zapisz krótko, jak minął wasz tydzień z treningiem.",
+          planProgress: "Twój przebieg planu",
+          week: "Tydzień",
+          current: "Teraz",
+          future:
+            "Jeszcze przed wami — wpiszcie, gdy przyjdzie czas na ten tydzień.",
+          aiSummary: "Podsumowanie AI",
+          entryFrom: "Wpis z",
+          moodLabel: "Nastrój:",
+          last7: "Ostatnie 7 dni",
+          fromModules: "z modułów",
+          dailyHint:
+            "Te dzienne kropki powstają automatycznie, gdy po ćwiczeniu w modułach zrobisz krótki wpis.",
+          emptyStrong: "Jeszcze brak wpisów.",
+          emptyRest:
+            "Wpisz powyżej swój pierwszy tygodniowy check — AI odeśle ci wtedy krótkie podsumowanie twojego tygodnia.",
+        }
+      : {
+          back: "← Erfolge-Übersicht",
+          kicker: "Wochen-Begleitung",
+          diaryWith: "Tagebuch mit",
+          intro:
+            "Einmal pro Woche eintragen wie’s gelaufen ist. Die KI fasst deine Woche zusammen und schaut sich an, wo ihr im Plan steht.",
+          checkinBody:
+            "Trag kurz ein wie deine Woche mit dem Training gelaufen ist.",
+          planProgress: "Dein Plan-Verlauf",
+          week: "Woche",
+          current: "Aktuell",
+          future: "Kommt noch — eintragen sobald die Woche dran ist.",
+          aiSummary: "KI-Zusammenfassung",
+          entryFrom: "Eintrag vom",
+          moodLabel: "Stimmung:",
+          last7: "Letzte 7 Tage",
+          fromModules: "aus den Modulen",
+          dailyHint:
+            "Diese Tages-Punkte entstehen automatisch wenn du in den Modulen nach einer Übung kurz eintraegst.",
+          emptyStrong: "Noch keine Einträge.",
+          emptyRest:
+            "Trag oben deinen ersten Wochen-Check ein — die KI gibt dir dann eine kurze Zusammenfassung deiner Woche zurück.",
+        };
+
+  const dog =
+    member.dog_name?.trim() || (lang === "pl" ? "Twojego psa" : "deinem Hund");
   const problemKey =
     member.quiz_result?.dog_problem || member.quiz_result?.problem || null;
   const planIntro = getPlanIntro(problemKey, dog);
@@ -86,20 +146,19 @@ export default async function StimmungPage() {
         href="/mitglieder/erfolge"
         className="inline-flex items-center gap-1 text-[12px] text-[#6B7280] mb-3"
       >
-        ← Erfolge-Übersicht
+        {t.back}
       </Link>
 
       {/* Header */}
       <div className="mb-5">
         <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
-          Wochen-Begleitung
+          {t.kicker}
         </p>
         <h1 className="text-[24px] md:text-[30px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
-          Tagebuch mit {dog}
+          {t.diaryWith} {dog}
         </h1>
         <p className="text-[13px] text-[#4B5563] mt-1.5 leading-relaxed">
-          Einmal pro Woche eintragen wie&rsquo;s gelaufen ist. Die KI fasst
-          deine Woche zusammen und schaut sich an, wo ihr im Plan steht.
+          {t.intro}
         </p>
       </div>
 
@@ -117,8 +176,8 @@ export default async function StimmungPage() {
         ) : (
           <WeeklyCheckIn
             weekNum={currentWeek}
-            weekTitle={`Woche ${currentWeek}`}
-            weekBody="Trag kurz ein wie deine Woche mit dem Training gelaufen ist."
+            weekTitle={`${t.week} ${currentWeek}`}
+            weekBody={t.checkinBody}
             questions={weeklyQuestions}
             problemKey={problemKey}
             alreadyDone={currentWeekDone}
@@ -130,7 +189,7 @@ export default async function StimmungPage() {
       {planIntro && (
         <section className="mb-6">
           <h2 className="text-[16px] font-bold text-[#1a1a1a] mb-3">
-            Dein Plan-Verlauf
+            {t.planProgress}
           </h2>
           <div className="space-y-2">
             {planIntro.weeks.map((w) => {
@@ -163,11 +222,11 @@ export default async function StimmungPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355]">
-                          Woche {w.num}
+                          {t.week} {w.num}
                         </p>
                         {isCurrent && (
                           <span className="text-[9px] font-bold uppercase tracking-wider bg-[#FFF9F0] text-[#8B7355] px-1.5 py-0.5 rounded border border-[#EADDC5]">
-                            Aktuell
+                            {t.current}
                           </span>
                         )}
                         {entry && (
@@ -186,7 +245,7 @@ export default async function StimmungPage() {
                       )}
                       {isFuture && (
                         <p className="text-[11px] text-[#9CA3AF] italic">
-                          Kommt noch — eintragen sobald die Woche dran ist.
+                          {t.future}
                         </p>
                       )}
 
@@ -201,7 +260,7 @@ export default async function StimmungPage() {
                           {entry.ai_feedback && (
                             <div className="bg-gradient-to-br from-[#FFFDF8] to-[#FFF9F0] border border-[#EADDC5] rounded-lg p-3">
                               <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
-                                KI-Zusammenfassung
+                                {t.aiSummary}
                               </p>
                               <p className="text-[12px] text-[#1a1a1a] leading-relaxed whitespace-pre-wrap">
                                 {entry.ai_feedback}
@@ -210,12 +269,15 @@ export default async function StimmungPage() {
                           )}
                           {!entry.ai_feedback && (
                             <p className="text-[11px] text-[#9CA3AF]">
-                              Eintrag vom{" "}
+                              {t.entryFrom}{" "}
                               {new Date(entry.created_at).toLocaleDateString(
                                 "de-DE",
                                 { day: "2-digit", month: "2-digit" }
                               )}{" "}
-                              · Stimmung: {MOOD_LABEL[entry.mood]}
+                              · {t.moodLabel}{" "}
+                              {(lang === "pl" ? MOOD_LABEL_PL : MOOD_LABEL)[
+                                entry.mood
+                              ]}
                             </p>
                           )}
                         </div>
@@ -234,17 +296,19 @@ export default async function StimmungPage() {
         <section className="mb-6">
           <div className="flex items-baseline justify-between mb-3">
             <h2 className="text-[16px] font-bold text-[#1a1a1a]">
-              Letzte 7 Tage
+              {t.last7}
             </h2>
             <span className="text-[11px] text-[#9CA3AF]">
-              aus den Modulen
+              {t.fromModules}
             </span>
           </div>
           <div className="bg-white border border-[#EADDC5] rounded-2xl p-4">
             <div className="grid grid-cols-7 gap-2">
               {[...days7].reverse().map((d) => {
                 const dt = new Date(d.date);
-                const dayName = DAY_SHORT[dt.getDay()];
+                const dayName = (lang === "pl" ? DAY_SHORT_PL : DAY_SHORT)[
+                  dt.getDay()
+                ];
                 const dayNum = dt.getDate();
                 const color = d.predominant
                   ? MOOD_COLOR[d.predominant]
@@ -275,8 +339,7 @@ export default async function StimmungPage() {
             </div>
           </div>
           <p className="text-[11px] text-[#9CA3AF] mt-2 leading-relaxed">
-            Diese Tages-Punkte entstehen automatisch wenn du in den Modulen
-            nach einer Übung kurz eintraegst.
+            {t.dailyHint}
           </p>
         </section>
       )}
@@ -285,9 +348,7 @@ export default async function StimmungPage() {
       {weeklyLogs.length === 0 && totalDailyLogs === 0 && (
         <div className="bg-[#FFF9F0] border border-[#EADDC5] rounded-xl p-4">
           <p className="text-[13px] text-[#5A4A3A] leading-relaxed">
-            <strong>Noch keine Einträge.</strong> Trag oben deinen ersten
-            Wochen-Check ein — die KI gibt dir dann eine kurze
-            Zusammenfassung deiner Woche zurück.
+            <strong>{t.emptyStrong}</strong> {t.emptyRest}
           </p>
         </div>
       )}

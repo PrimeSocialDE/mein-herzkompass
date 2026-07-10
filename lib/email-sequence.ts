@@ -6,6 +6,8 @@
 // gesetzt ist, oder lead.status in ['refunded','cancelled'], wird NICHT versendet.
 // Mail 9 (Cross-Sell) filtert dynamisch raus, was der User schon gekauft hat.
 
+import type { Lang } from "./lang";
+
 const BREVO_API_KEY = process.env.BREVO_API_KEY!;
 const BASE = "https://www.pfoten-plan.de";
 
@@ -72,6 +74,27 @@ function pluralBreed(breed: string | null | undefined): string {
   if (k === "goldendoodle") return "Goldendoodles";
   return "Hunden wie deinem";
 }
+// Polnische Plural-Formen (Genitiv, passt zu „U ...“) für den PL-Zweig.
+function pluralBreedPl(breed: string | null | undefined): string {
+  const k = (breed || "").trim().toLowerCase();
+  if (k === "labrador" || k === "labrador retriever") return "labradorów";
+  if (k === "golden retriever") return "golden retrieverów";
+  if (
+    k === "deutscher schäferhund" ||
+    k === "schäferhund" ||
+    k === "german shepherd"
+  )
+    return "owczarków niemieckich";
+  if (k === "australian shepherd" || k === "aussie")
+    return "owczarków australijskich";
+  if (k === "border collie") return "border collie";
+  if (k === "dackel") return "jamników";
+  if (k === "beagle") return "beagle";
+  if (k === "mischling") return "kundelków";
+  if (k === "havaneser" || k === "havanese") return "hawańczyków";
+  if (k === "goldendoodle") return "goldendoodle";
+  return "psów takich jak twój";
+}
 
 // ── HTML-Template (bulletproof Button, target=_blank, Plain-Link-Fallback) ──
 function buildHtml(opts: {
@@ -85,6 +108,7 @@ function buildHtml(opts: {
   ctaUrl: string;
   ctaText: string;
   footerHint: string;
+  lang?: Lang;
 }): string {
   const {
     subject,
@@ -97,9 +121,19 @@ function buildHtml(opts: {
     ctaUrl,
     ctaText,
     footerHint,
+    lang = "de",
   } = opts;
+  // PL-Weiche für Marke + Template-Texte (Footer/Abmelden). DE bleibt identisch.
+  const isPl = lang === "pl";
+  const htmlLang = isPl ? "pl" : "de";
+  const brand = isPl ? "ŁapaPlan" : "Pfoten-Plan";
+  const linkFallback = isPl
+    ? "Przycisk nie działa? Skopiuj ten link:"
+    : "Funktioniert der Button nicht? Kopier diesen Link:";
+  const myArea = isPl ? "Mój obszar" : "Mein Bereich";
+  const unsub = isPl ? "Wypisz się z tych e-maili" : "Aus diesen E-Mails abmelden";
   return `<!DOCTYPE html>
-<html lang="de">
+<html lang="${htmlLang}">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${subject}</title></head>
 <body style="margin:0;padding:0;background:#FAF8F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;">
 <span style="display:none;font-size:1px;color:#FAF8F5;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${preheader}</span>
@@ -107,7 +141,7 @@ function buildHtml(opts: {
   <tr><td align="center" style="padding:24px 12px;">
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #EADDC5;border-radius:16px;overflow:hidden;">
       <tr><td style="padding:22px 28px 6px;">
-        <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#8B7355;">Pfoten-Plan</p>
+        <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#8B7355;">${brand}</p>
       </td></tr>
       <tr><td style="padding:8px 28px 18px;">
         <img src="${heroImg}" alt="${dogBreed}" width="544" style="width:100%;max-width:544px;height:auto;display:block;border-radius:12px;border:1px solid #F0EBE3;">
@@ -126,7 +160,7 @@ function buildHtml(opts: {
       </td></tr>
       <tr><td align="center" style="padding:0 28px 24px;">
         <p style="margin:0;font-size:11px;line-height:1.5;color:#9CA3AF;">
-          Funktioniert der Button nicht? Kopier diesen Link:<br><a href="${ctaUrl}" target="_blank" rel="noopener" style="color:#8B7355;text-decoration:underline;word-break:break-all;">${ctaUrl}</a>
+          ${linkFallback}<br><a href="${ctaUrl}" target="_blank" rel="noopener" style="color:#8B7355;text-decoration:underline;word-break:break-all;">${ctaUrl}</a>
         </p>
       </td></tr>
       <tr><td style="padding:6px 28px 22px;">
@@ -138,7 +172,7 @@ function buildHtml(opts: {
       </td></tr>
       <tr><td style="padding:14px 28px;background:#FAFAFA;border-top:1px solid #F0EBE3;">
         <p style="margin:0;font-size:11px;line-height:1.6;color:#9CA3AF;text-align:center;">
-          Pfoten-Plan · <a href="${BASE}/mitglieder" style="color:#8B7355;text-decoration:underline;">Mein Bereich</a> · <a href="mailto:support@pfoten-plan.de" style="color:#8B7355;text-decoration:underline;">support@pfoten-plan.de</a><br><a href="{{ unsubscribe }}" style="color:#9CA3AF;text-decoration:underline;">Aus diesen E-Mails abmelden</a>
+          ${brand} · <a href="${BASE}/mitglieder" style="color:#8B7355;text-decoration:underline;">${myArea}</a> · <a href="mailto:support@pfoten-plan.de" style="color:#8B7355;text-decoration:underline;">support@pfoten-plan.de</a><br><a href="{{ unsubscribe }}" style="color:#9CA3AF;text-decoration:underline;">${unsub}</a>
         </p>
       </td></tr>
     </table>
@@ -178,12 +212,39 @@ function ctaUrlFor(lead: SequenceLead): string {
   return `${BASE}/rueckhol.html?lead_id=${encodeURIComponent(lead.id)}&email=${encodeURIComponent(lead.email)}`;
 }
 
-function buildMailDef(n: number, lead: SequenceLead): MailDef | null {
-  const dogName = (lead.dog_name || "deinen Hund").trim() || "deinen Hund";
+function buildMailDef(
+  n: number,
+  lead: SequenceLead,
+  lang: Lang = "de"
+): MailDef | null {
+  const dogName =
+    lang === "pl"
+      ? (lead.dog_name || "twojego psa").trim() || "twojego psa"
+      : (lead.dog_name || "deinen Hund").trim() || "deinen Hund";
   const breed = displayBreed(lead.dog_breed);
-  const plural = pluralBreed(lead.dog_breed);
+  const plural =
+    lang === "pl" ? pluralBreedPl(lead.dog_breed) : pluralBreed(lead.dog_breed);
 
   if (n === 2) {
+    if (lang === "pl") {
+      return {
+        subject: `Dzień 1 z ${dogName} pewnie nie był idealny`,
+        preheader: `To normalne. Oto dlaczego.`,
+        headline: `Wczoraj nie poszło tak, jak sobie wyobrażałeś.`,
+        intro: `To nic niezwykłego. U większości naszych właścicieli dzień 1 jest najtrudniejszy — nie dlatego, że ćwiczenie jest trudne, ale dlatego, że ${dogName} jeszcze nie wie, czego od niego chcesz.`,
+        bodyHtml: `
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">Co większość na początku przeocza: ${dogName} potrzebuje średnio 5 do 7 powtórzeń nowego wzorca zachowania, zanim po raz pierwszy „zaskoczy”. Jeśli wczoraj udały ci się tylko 3 próby, to nie było za mało — byłeś dopiero w połowie drogi.</p>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-left:3px solid #C4A576;background:#FAF6EE;border-radius:6px;margin:14px 0;">
+          <tr><td style="padding:14px 18px;">
+            <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#8B7355;">Dziś zrób jedną rzecz inaczej</p>
+            <p style="margin:0;font-size:14px;line-height:1.6;color:#3a3a3a;">Zrób dzisiejsze ćwiczenie podczas najspokojniejszego spaceru dnia. W południe albo późnym popołudniem. Potrzebujesz skupienia — ${dogName} też.</p>
+          </td></tr>
+        </table>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Jeśli masz wrażenie, że nic nie działa: właśnie w tym momencie prawie każdy się poddaje. Właśnie teraz dzielą cię 3–4 dni od pierwszego prawdziwego momentu „aha” z ${dogName}.</p>`,
+        ctaText: `Otwórz plan ${dogName}`,
+        footerHint: `Napisz do nas, jeśli utkniesz — czytamy każdy e-mail osobiście. W ciągu 12 godzin ktoś się do ciebie odezwie.`,
+      };
+    }
     return {
       subject: `Tag 1 mit ${dogName} war wahrscheinlich nicht perfekt`,
       preheader: `Das ist normal. Hier ist warum.`,
@@ -204,6 +265,24 @@ function buildMailDef(n: number, lead: SequenceLead): MailDef | null {
   }
 
   if (n === 3) {
+    if (lang === "pl") {
+      return {
+        subject: `U ${plural} decyduje dzień 5`,
+        preheader: `To, co zrobisz dziś, decyduje, czy nadejdzie moment „aha”.`,
+        headline: `${dogName} jest w samym środku najważniejszego okna.`,
+        intro: `Za tobą trzy dni treningu z ${dogName}. W ciągu najbliższych 48 godzin rozstrzygnie się, czy z treningu powstanie rutyna, czy znów wszystko przyśnie. To wniosek z ponad 800 planów.`,
+        bodyHtml: `
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">U ${plural} takich jak ${dogName} nagroda jest najważniejszą dźwignią — ważniejszą niż liczba powtórzeń. Zrób test: to samo ćwiczenie raz z suchą karmą, raz z serem, raz z krótką zabawą. Od razu zobaczysz, co działa na ${dogName}.</p>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-left:3px solid #C4A576;background:#FAF6EE;border-radius:6px;margin:14px 0;">
+          <tr><td style="padding:14px 18px;">
+            <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#8B7355;">Na dziś i jutro</p>
+            <p style="margin:0;font-size:14px;line-height:1.6;color:#3a3a3a;">Podnieś wartość nagrody — tylko w najtrudniejszej sytuacji ćwiczeniowej. Ser albo kiełbasa zamiast suchej karmy. Dokładnie wtedy, gdy ${dogName} najłatwiej „odpływa”.</p>
+          </td></tr>
+        </table>`,
+        ctaText: `Otwórz ćwiczenie na dzień 5`,
+        footerHint: `Jeśli zastanawiasz się, czy jesteś na dobrej drodze: napisz nam krótko, jak ${dogName} reaguje na którą nagrodę. Damy ci szczerą ocenę.`,
+      };
+    }
     return {
       subject: `Bei ${plural} entscheidet Tag 5`,
       preheader: `Was du heute machst, bestimmt ob der Aha-Moment kommt.`,
@@ -223,6 +302,25 @@ function buildMailDef(n: number, lead: SequenceLead): MailDef | null {
   }
 
   if (n === 4) {
+    if (lang === "pl") {
+      return {
+        subject: `Nina z Kolonii miała ${breed}, jak ${dogName}`,
+        preheader: `Co napisała po 14 dniach.`,
+        headline: `E-mail, który dotarł do nas w zeszłym miesiącu.`,
+        intro: `Nina z Kolonii zaczęła z naszym planem. Jej suczka rasy ${breed}, Sage, ma 2 lata. Ona też miała ten sam główny problem co ${dogName}. Po 14 dniach dotarł do nas taki e-mail:`,
+        bodyHtml: `
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;margin:8px 0 16px;">
+          <tr><td style="padding:18px 20px;">
+            <p style="margin:0 0 10px;font-size:14.5px;line-height:1.7;color:#1a1a1a;font-style:italic;">„Po dniu 3 prawie się poddałam. Dzień 8 był pierwszym spacerem, podczas którego smycz ani razu się nie napięła. Popłakałam się.”</p>
+            <p style="margin:0;font-size:13px;color:#6B7280;">— Nina S., ${breed} „Sage”, 2 lata, Kolonia</p>
+          </td></tr>
+        </table>
+        <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#3a3a3a;">Wysyłamy ci to nie po to, żebyś poczuł się lepiej. Ale żebyś wiedział: to, przez co teraz przechodzisz z ${dogName}, ktoś już przed tobą przeszedł i dał radę.</p>
+        <p style="margin:0;font-size:15px;line-height:1.6;color:#3a3a3a;">Sage Niny jest dziś, 8 miesięcy później, jednym z najspokojniejszych psów w okolicy. Nie dzięki cudowi. Ale dlatego, że nie przerwała w dniu 4.</p>`,
+        ctaText: `Otwórz plan ${dogName}`,
+        footerHint: `Dostajesz e-mail Niny, bo jesteś teraz dokładnie w tym miejscu, w którym ona była wtedy. Ty też dasz radę.`,
+      };
+    }
     return {
       subject: `Nina aus Köln hatte einen ${breed} wie ${dogName}`,
       preheader: `Was sie nach 14 Tagen geschrieben hat.`,
@@ -243,6 +341,24 @@ function buildMailDef(n: number, lead: SequenceLead): MailDef | null {
   }
 
   if (n === 6) {
+    if (lang === "pl") {
+      return {
+        subject: `Pytanie o ${dogName} — przed 2. tygodniem`,
+        preheader: `30 sekund czytania, sekunda zastanowienia.`,
+        headline: `Tydzień 1 zaraz się kończy.`,
+        intro: `Zanim zaczniesz 2. tydzień, jedno pytanie do ciebie. Nie jest retoryczne — możesz spokojnie odpowiedzieć wprost na tego e-maila.`,
+        bodyHtml: `
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;margin:8px 0 16px;">
+          <tr><td style="padding:18px 20px;">
+            <p style="margin:0;font-size:15.5px;line-height:1.7;color:#1a1a1a;font-weight:700;">Kiedy dokładnie ostatnio świadomie ćwiczyłeś z ${dogName}?</p>
+          </td></tr>
+        </table>
+        <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#3a3a3a;">Jeśli odpowiedź brzmi „dziś” albo „wczoraj” — jesteś na kursie. Rób dalej tak jak dotąd.</p>
+        <p style="margin:0;font-size:15px;line-height:1.6;color:#3a3a3a;">Jeśli odpowiedź brzmi „3 dni temu” albo dawniej — bez stresu. Ale dziś krótka sesja (wystarczy 5 minut) znów was wciągnie. Tydzień 2 opiera się na tygodniu 1, a bez rutyny cała konstrukcja się rozpada.</p>`,
+        ctaText: `Otwórz plan ${dogName}`,
+        footerHint: `Odpowiedz na tego e-maila jedną liczbą: ile dni temu była ostatnia sesja? Odpowiadamy osobiście.`,
+      };
+    }
     return {
       subject: `Eine Frage zu ${dogName} — vor Woche 2`,
       preheader: `30 Sekunden lesen, eine Sekunde nachdenken.`,
@@ -262,6 +378,24 @@ function buildMailDef(n: number, lead: SequenceLead): MailDef | null {
   }
 
   if (n === 7) {
+    if (lang === "pl") {
+      return {
+        subject: `Co rodzina i sąsiedzi zauważą u ${dogName} jako pierwsi`,
+        preheader: `Nie widzisz zmiany, bo jesteś przy tym codziennie.`,
+        headline: `Inni zobaczą to, zanim ty to zobaczysz.`,
+        intro: `Kiedy widzisz ${dogName} codziennie, drobne zmiany prawie nie rzucają się w oczy. Dlatego nasi właściciele często myślą „nic się nie dzieje” — aż przychodzą goście i mówią: „Co się stało z ${dogName}? Jest o wiele spokojniejszy niż w zeszłym miesiącu.”`,
+        bodyHtml: `
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">Oto trzy zmiany, które innym najczęściej rzucają się w oczy jako pierwsze:</p>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:8px 0 16px;">
+          <tr><td style="padding:10px 0;border-bottom:1px solid #F0EBE3;"><strong style="color:#1a1a1a;">Czas reakcji na zawołanie po imieniu</strong><br><span style="color:#6B7280;font-size:13.5px;line-height:1.5;">Zamiast 5 sekund opóźnienia → natychmiast.</span></td></tr>
+          <tr><td style="padding:10px 0;border-bottom:1px solid #F0EBE3;"><strong style="color:#1a1a1a;">Napięcie na smyczy</strong><br><span style="color:#6B7280;font-size:13.5px;line-height:1.5;">Już po 2 tygodniach zwykle wyraźnie odczuwalne — nawet jeśli teraz tego nie czujesz.</span></td></tr>
+          <tr><td style="padding:10px 0;"><strong style="color:#1a1a1a;">Fazy spokoju w domu</strong><br><span style="color:#6B7280;font-size:13.5px;line-height:1.5;">Psy, które trenują w sposób uporządkowany, szybciej się w domu wyciszają. Bez tego, byś cokolwiek zmieniał.</span></td></tr>
+        </table>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#3a3a3a;">Zapytaj dziś kogoś z otoczenia, kto zna ${dogName}: „Zauważyłeś coś w nim?”. Odpowiedź cię zaskoczy.</p>`,
+        ctaText: `Otwórz plan ${dogName}`,
+        footerHint: `Jeśli ktoś zauważy coś konkretnego — napisz nam. Zbieramy takie momenty i wykorzystujemy je (anonimowo), by motywować innych.`,
+      };
+    }
     return {
       subject: `Was Familie und Nachbarn an ${dogName} zuerst bemerken`,
       preheader: `Du übersiehst die Veränderung, weil du jeden Tag dabei bist.`,
@@ -281,6 +415,25 @@ function buildMailDef(n: number, lead: SequenceLead): MailDef | null {
   }
 
   if (n === 8) {
+    if (lang === "pl") {
+      return {
+        subject: `Od teraz będzie wydawać się trudniej. Dlaczego to dobry znak.`,
+        preheader: `„Plateau” — prawie wszyscy przeżywają je między dniem 20 a 25.`,
+        headline: `Jeśli teraz przychodzi frustracja — jesteś dokładnie w planie.`,
+        intro: `Jesteś w 3. tygodniu z ${dogName}. Jeśli wkrada się teraz uczucie „nie robimy już żadnych postępów” — witaj na plateau. Prawie każdy przeżywa je dokładnie teraz. To nie błąd, to biologia zachowania.`,
+        bodyHtml: `
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">W pierwszych 2 tygodniach psy uczą się bardzo szybko — każde ćwiczenie przynosi widoczne postępy. W 3. tygodniu to zwalnia. Nie dlatego, że ${dogName} przestaje się uczyć, ale dlatego, że nauczone właśnie się utrwala (neuronaukowcy nazywają to konsolidacją).</p>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-left:3px solid #C4A576;background:#FAF6EE;border-radius:6px;margin:14px 0;">
+          <tr><td style="padding:14px 18px;">
+            <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#8B7355;">Co powinieneś zrobić TERAZ</p>
+            <p style="margin:0;font-size:14px;line-height:1.6;color:#3a3a3a;">Zmniejsz intensywność treningu, nie zwiększaj. Zamiast 3× dziennie → 1× dziennie, za to bardziej konsekwentnie. Plateau trwa 5–8 dni, potem nadchodzi kolejny skok — widoczny i często większy niż pierwszy.</p>
+          </td></tr>
+        </table>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Właśnie tu 70 % właścicieli psów rezygnuje. Pozostałe 30 % przeżywa w 4. tygodniu największy moment „aha” z całego planu.</p>`,
+        ctaText: `Otwórz plan ${dogName}`,
+        footerHint: `Frustracja nie jest tu sygnałem ostrzegawczym, lecz kamieniem milowym. Napisz nam, jeśli masz wątpliwości — chętnie potwierdzimy, że jesteś na kursie.`,
+      };
+    }
     return {
       subject: `Ab jetzt fühlt es sich schwerer an. Warum das ein gutes Zeichen ist.`,
       preheader: `Das &quot;Plateau&quot; — fast alle erleben es zwischen Tag 20 und 25.`,
@@ -324,6 +477,30 @@ function buildMailDef(n: number, lead: SequenceLead): MailDef | null {
 </div>
 </body></html>`;
 
+    if (lang === "pl") {
+      const plainHtmlPl = `<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;">
+<div style="max-width:520px;margin:0 auto;padding:24px 22px;font-size:15.5px;line-height:1.65;">
+  <p style="margin:0 0 14px;">Cześć,</p>
+  <p style="margin:0 0 18px;">jestem Laura, praktykantka w ŁapaPlan 🐾 — zbieram właśnie krótko opinie o twoim treningu z ${dogName}. <strong>4 pytania, mniej niż 2 minuty.</strong> W podziękowaniu dostaniesz potem moduł dodatkowy <strong>33 % taniej</strong>:</p>
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 18px;"><tr><td>
+    <a href="${umfrageUrl}" target="_blank" style="display:inline-block;background:#C4A576;color:#ffffff;text-decoration:none;padding:15px 34px;border-radius:11px;font-size:16px;font-weight:700;">Do krótkiej ankiety →</a>
+  </td></tr></table>
+  <p style="margin:0 0 16px;color:#4B5563;">Trenujesz z ${dogName} już od około 30 dni — to idealny moment, żeby krótko sprawdzić, co idzie dobrze, a co możemy zrobić lepiej. Twoja opinia naprawdę nam pomaga.</p>
+  <p style="margin:0 0 16px;font-size:13px;color:#9CA3AF;">Jeśli przycisk nie działa: <a href="${umfrageUrl}" style="color:#8B7355;word-break:break-all;">kliknij tutaj</a></p>
+  <p style="margin:0 0 6px;">Dziękuję &amp; serdecznie pozdrawiam</p>
+  <p style="margin:0;">Laura<br><span style="color:#6B7280;font-size:13px;">Praktykantka · ŁapaPlan</span></p>
+  <p style="margin:20px 0 0;font-size:11px;color:#9CA3AF;line-height:1.5;">Udział jest dobrowolny. Więcej o ochronie danych: <a href="${BASE}/datenschutz.html" style="color:#9CA3AF;">pfoten-plan.de/datenschutz</a></p>
+</div>
+</body></html>`;
+
+      return {
+        subject: `Krótkie pytanie o ${dogName} 🐾`,
+        senderName: "Laura z ŁapaPlan",
+        plainHtml: plainHtmlPl,
+      };
+    }
+
     return {
       subject: `Eine kurze Frage zu ${dogName} 🐾`,
       senderName: "Laura von Pfoten-Plan",
@@ -337,9 +514,10 @@ function buildMailDef(n: number, lead: SequenceLead): MailDef | null {
 // ── Send-Funktion ────────────────────────────────────────────────────
 export async function sendSequenceMail(
   mailNum: number,
-  lead: SequenceLead
+  lead: SequenceLead,
+  lang: Lang = "de"
 ): Promise<{ ok: boolean; reason?: string }> {
-  const def = buildMailDef(mailNum, lead);
+  const def = buildMailDef(mailNum, lead, lang);
   if (!def) return { ok: false, reason: "no_content_for_mail" };
   if (!lead.email) return { ok: false, reason: "no_email" };
 
@@ -358,6 +536,7 @@ export async function sendSequenceMail(
       ctaUrl: def.ctaUrl || ctaUrlFor(lead),
       ctaText: def.ctaText || "",
       footerHint: def.footerHint || "",
+      lang,
     });
 
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
@@ -365,7 +544,9 @@ export async function sendSequenceMail(
     headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
     body: JSON.stringify({
       sender: {
-        name: def.senderName || "Max von Pfoten-Plan",
+        name:
+          def.senderName ||
+          (lang === "pl" ? "Max z ŁapaPlan" : "Max von Pfoten-Plan"),
         email: "support@pfoten-plan.de",
       },
       to: [{ email: lead.email }],

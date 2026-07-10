@@ -17,6 +17,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createMemberAdminClient } from "@/lib/member-auth-server";
 import { sendWarmRecoveryMail } from "@/lib/warm-recovery-mail";
 import { syncWarmRecoveryLists } from "@/lib/brevo-contacts";
+import { langFromLead } from "@/lib/lang";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -101,7 +102,8 @@ export async function GET(req: NextRequest) {
         leadId: lead.id,
         abVariant: lead.ab_variant as "A" | "B" | null,
       },
-      STAGE
+      STAGE,
+      langFromLead(lead)
     );
     if (sendRes.ok) {
       sent++;

@@ -24,6 +24,7 @@ import {
   type WarmRecoveryStage,
 } from "@/lib/warm-recovery-mail";
 import { syncWarmRecoveryLists } from "@/lib/brevo-contacts";
+import { langFromLead } from "@/lib/lang";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -160,7 +161,8 @@ export async function GET(req: NextRequest) {
         leadId: lead.id,
         abVariant: lead.ab_variant as "A" | "B" | null,
       },
-      stage
+      stage,
+      langFromLead(lead)
     );
 
     if (sendRes.ok) {

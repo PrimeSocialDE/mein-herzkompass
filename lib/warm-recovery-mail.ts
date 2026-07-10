@@ -15,6 +15,7 @@
 
 import "server-only";
 import { sendBrevoMail, wrapTemplate, escapeHtml } from "./member-mail";
+import type { Lang } from "./lang";
 import Anthropic from "@anthropic-ai/sdk";
 
 const SITE_URL =
@@ -32,6 +33,19 @@ const PROBLEM_LABELS: Record<string, string> = {
   destructive: "Zerstörungsverhalten",
   soiling: "Stubenunreinheit",
   mouthing: "Aufnehmen vom Boden",
+};
+
+const PROBLEM_LABELS_PL: Record<string, string> = {
+  pulling: "ciągnięcie na smyczy",
+  barking: "nadmierne szczekanie",
+  aggression: "agresja podczas spotkań",
+  anxiety: "lęk separacyjny",
+  jumping: "skakanie na ludzi",
+  recall: "niepewne przywołanie",
+  energy: "nadmiar energii",
+  destructive: "niszczenie rzeczy",
+  soiling: "brak czystości w domu",
+  mouthing: "podnoszenie rzeczy z ziemi",
 };
 
 export type WarmRecoveryStage = 1 | 2 | 3 | 4 | 5;
@@ -65,8 +79,10 @@ function buildPlanRecoveryUrl(args: WarmRecoveryArgs, stage: WarmRecoveryStage):
 // Claude Haiku — schneller, billig, gut genug fuer kurze Personalisierungsbloecke.
 async function generatePersonalizedBlock(
   args: WarmRecoveryArgs,
-  stage: WarmRecoveryStage
+  stage: WarmRecoveryStage,
+  lang: Lang = "de"
 ): Promise<string | null> {
+  if (lang === "pl") return generatePersonalizedBlockPl(args, stage);
   if (!process.env.ANTHROPIC_API_KEY) return null;
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -117,6 +133,65 @@ WICHTIG:
     return text || null;
   } catch (e: any) {
     console.warn(`[warm-recovery] Claude failed stage=${stage}:`, e?.message);
+    return null;
+  }
+}
+
+// Polnische Personalisierung — eigener Zweig, damit der deutsche oben unangetastet bleibt.
+async function generatePersonalizedBlockPl(
+  args: WarmRecoveryArgs,
+  stage: WarmRecoveryStage
+): Promise<string | null> {
+  if (!process.env.ANTHROPIC_API_KEY) return null;
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+  const dog = args.dogName?.trim() || "Twojego psa";
+  const breed = args.dogBreed?.trim() || "kundelek";
+  const age = args.dogAge?.trim() || "dorosły";
+  const problem =
+    args.customProblem?.trim() ||
+    PROBLEM_LABELS_PL[args.dogProblem || ""] ||
+    "problem behawioralny";
+
+  const stagePrompt: Record<WarmRecoveryStage, string> = {
+    1: `Napisz 3 rzeczowe, spokojne zdania (maks. 80 słów łącznie) do pierwszego przypominającego e-maila. Ton: pełen szacunku, kompetentny, jak wykwalifikowana trenerka. ŻADNEGO „Hej", żadnego potocznego „jasne" czy „luzik". ŻADNEJ presji sprzedażowej. Raczej: konkretnie wyjaśnij, na czym przy tym profilu psa zwykle jest trudność (uwzględnij rasę i wiek). Wskaż aspekt budujący zaufanie (np. że ten problem da się wytrenować).`,
+    2: `Napisz krótką, autentyczną historię (70-100 słów) o zmyślonym innym psie o podobnym profilu i tym samym problemie. Przed → po w konkretne 4 tygodnie. Wymyśl wiarygodne imiona (imię psa + imię właściciela). ŻADNEGO „Hej", żadnego języka potocznego. Pisz jak krótka historia sukcesu z codzienności trenerki — rzeczowo, ale zrozumiale emocjonalnie. Zdanie końcowe: czego właścicielka się przy tym nauczyła.`,
+    3: `Napisz osobisty akapit trenerski (70-100 słów) w pierwszej osobie. Jak wykwalifikowana trenerka psów (40+), która pisze list. Zwrot w formie „Drogi/Droga [imię nieznane → po prostu zacznij bez zwrotu, bo nagłówek+wstęp to robią]". Kompetentnie, empatycznie, bez presji sprzedażowej. Wskaż 1 konkretne ćwiczenie pasujące do problemu, które da się zrobić dziś (5-10 min, bez sprzętu). ŻADNEGO „Hej" ani slangu.`,
+    4: `Napisz 3 częste pytania + rzeczowe krótkie odpowiedzi (90-130 słów łącznie) do tego problemu. FORMAT ŚCIŚLE: każde pytanie stoi w OSOBNEJ linii i kończy się znakiem zapytania; w linii bezpośrednio pod nim odpowiedź; między parami pytanie-odpowiedź PUSTA LINIA. ŻADNEGO Markdown, ŻADNEGO HTML, żadnych gwiazdek, żadnego <b>. Skup się na obawach właścicielki 40+ — pierwsze pytanie MUSI brzmieć: „Czy w ogóle dam radę sama?" (uspokój: jasna instrukcja krok po kroku, małe etapy, wsparcie przy pytaniach w każdej chwili). Potem: „Czy to zadziała u mojej rasy?" oraz „Ile czasu potrzebuję dziennie?". Odpowiedzi konkretne, nie reklamowe.`,
+    5: `Napisz 2-3 zdania (maks. 60 słów) w tonie ostatniego przypomnienia: rzeczowo-ciepłym. „Jeśli zdecydowałeś inaczej — to zrozumiałe." Jedno ostatnie, przyjazne przypomnienie, że plan jest gotowy. Wspomnij o 30-dniowej gwarancji zwrotu pieniędzy jako zabezpieczeniu. ŻADNEGO wspominania o rabacie, żadnej presji, ŻADNEGO „Hej", żadnego slangu.`,
+  };
+
+  const prompt = `Grupa docelowa: polscy właściciele psów, głównie 35-55 lat, szukają rzetelnej pomocy w wychowaniu psa. Język: rzeczowy, spokojny, kompetentny. ŻADNEGO slangu, ŻADNEGO „Hej", ŻADNEGO „luzik/spoko/ogarnąć".
+
+Pies: ${dog} (${breed}, ${age})
+Główny problem: ${problem}
+Wybrany plan: ${args.selectedPlan || "3month"}
+
+${stagePrompt[stage]}
+
+WAŻNE:
+- Napisz TYLKO sam blok, ŻADNEGO zwrotu grzecznościowego („Cześć X"), ŻADNEJ formuły pożegnalnej, ŻADNEGO „Oto".
+- Forma na „ty" (nie „Pan/Pani"), ale z szacunkiem i spokojnie.
+- Wspomnij ${dog} po imieniu, gdy to pasuje.
+- Wynik: TYLKO tekst ciągły. ŻADNEGO Markdown, ŻADNEGO HTML, ŻADNYCH tagów jak <b>, ŻADNYCH gwiazdek (*), żadnych cudzysłowów dookoła. Oddzielaj akapity pustą linią (podwójne złamanie).
+- Wielu właścicieli boi się, że nie poradzą sobie z treningiem sami. Mimochodem zdejmij tę obawę: plan prowadzi krok po kroku w małych, wykonalnych etapach, a przy pytaniach zawsze można otrzymać odpowiedź — nikt nie zostaje sam.
+- ŻADNYCH słów jak „Hej", „luzik", „ogarnąć", „jasne", „na pewno".
+- Używaj rodzaju męskiego jako generycznego (np. „właściciel", „trener psów").`;
+
+  try {
+    const res = await client.messages.create({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 400,
+      messages: [{ role: "user", content: prompt }],
+    });
+    const text = res.content
+      .filter((c: any) => c.type === "text")
+      .map((c: any) => c.text)
+      .join("\n")
+      .trim();
+    return text || null;
+  } catch (e: any) {
+    console.warn(`[warm-recovery] Claude failed (pl) stage=${stage}:`, e?.message);
     return null;
   }
 }
@@ -173,7 +248,12 @@ interface StageContent {
   footerHint?: string;
 }
 
-function getStageContent(args: WarmRecoveryArgs, stage: WarmRecoveryStage): StageContent {
+function getStageContent(
+  args: WarmRecoveryArgs,
+  stage: WarmRecoveryStage,
+  lang: Lang = "de"
+): StageContent {
+  if (lang === "pl") return getStageContentPl(args, stage);
   const dog = args.dogName?.trim() || "dein Hund";
   const problemLabel =
     args.customProblem?.trim() ||
@@ -263,23 +343,112 @@ function getStageContent(args: WarmRecoveryArgs, stage: WarmRecoveryStage): Stag
   }
 }
 
+// Polnische Stage-Inhalte — eigener Zweig, deutscher oben bleibt byte-identisch.
+function getStageContentPl(args: WarmRecoveryArgs, stage: WarmRecoveryStage): StageContent {
+  const dog = args.dogName?.trim() || "Twój pies";
+  const problemLabel =
+    args.customProblem?.trim() ||
+    PROBLEM_LABELS_PL[args.dogProblem || ""] ||
+    "kwestia behawioralna";
+
+  const whatYouGetBox = `
+    <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:10px;padding:16px 18px;margin:18px 0;">
+      <p style="margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:#8B7355;">Co dostajesz dla ${escapeHtml(dog)}</p>
+      <p style="margin:0 0 6px;font-size:14px;color:#1a1a1a;line-height:1.55;">📄 <strong>Osobisty plan treningowy w PDF</strong> — do pobrania i wydrukowania</p>
+      <p style="margin:0 0 6px;font-size:14px;color:#1a1a1a;line-height:1.55;">🐾 <strong>Twój panel członkowski</strong> z codziennymi ćwiczeniami, śledzeniem postępów i tygodniowymi wyzwaniami</p>
+      <p style="margin:0;font-size:14px;color:#1a1a1a;line-height:1.55;">💬 <strong>Czat z trenerem</strong> przy pytaniach — nie jesteś sam</p>
+    </div>`;
+
+  const compareBox = `
+    <div style="background:#F8F8F8;border-radius:10px;padding:14px 16px;margin:16px 0;font-size:13.5px;color:#1a1a1a;line-height:1.55;">
+      <p style="margin:0 0 8px;font-weight:700;color:#8B7355;">W porównaniu ze szkołą dla psów</p>
+      <p style="margin:0 0 4px;">🏫 Szkoła dla psów: 60–100 € za godzinę · stałe terminy · zwykle trening grupowy</p>
+      <p style="margin:0;">📋 ŁapaPlan: jednorazowo od 30 € · 12 tygodni treści · indywidualnie dla ${escapeHtml(dog)} · w Twoim tempie</p>
+    </div>`;
+
+  switch (stage) {
+    case 1:
+      return {
+        subject: `Pytanie o plan treningowy dla ${dog}?`,
+        preheader: `Chętnie pomożemy — jeśli coś jest niejasne.`,
+        headline: `Może coś jeszcze zostało otwarte`,
+        intro: `Cześć, wybrałeś już plan dla ${escapeHtml(
+          dog
+        )}, ale nie przeszedłeś przez koszyk do końca. Jeśli jakieś pytanie pozostało otwarte — po prostu odpowiedz na tego e-maila, czytamy każdy osobiście.`,
+        defaultBlock: `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1a1a1a;">${problemLabel} to jeden z najczęstszych tematów, z którymi zgłaszają się do nas nasi członkowie — i w większości przypadków da się nad tym bardzo dobrze pracować. Plan jest dopasowany dokładnie do profilu ${escapeHtml(
+          dog
+        )}.</p>${whatYouGetBox}`,
+        ctaText: `Zobacz plan dla ${dog}`,
+        footerHint: `Ten e-mail przychodzi jednorazowo. Jeśli nic nie zrobisz, usłyszysz od nas ponownie tylko wtedy, gdy będziemy mogli pomóc krótką historią lub pytaniem.`,
+      };
+    case 2:
+      return {
+        subject: `Jak inna właścicielka rozwiązała ten sam temat`,
+        preheader: `Krótka historia z codzienności trenerki.`,
+        headline: `Historia, która pasuje do ${escapeHtml(dog)}`,
+        intro: `Cześć, często dostajemy maile od członków, którzy byli w tym samym punkcie co Ty teraz. Oto krótka historia z psem, którego profil przypomina ${escapeHtml(
+          dog
+        )}:`,
+        defaultBlock: `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1a1a1a;font-style:italic;border-left:3px solid #C4A576;padding-left:14px;">„Długo myśleliśmy, że to część jego charakteru. Po dobrych czterech tygodniach z planem ${problemLabel} nie było już punktem spornym — tylko rutyną. Co pomogło: jasne ćwiczenia, które codziennie mogliśmy krótko wykonać."</p><p style="margin:0;font-size:14px;color:#6B7280;line-height:1.5;">— Właścicielka Bruna (mieszaniec husky, 4 lata)</p>`,
+        ctaText: `Rozpocznij plan teraz`,
+      };
+    case 3:
+      return {
+        subject: `List od nas o ${escapeHtml(dog)}`,
+        preheader: `Osobiście od naszej trenerki — żadnego marketingu.`,
+        headline: `Kilka osobistych słów`,
+        intro: `Cześć, to nie jest mail reklamowy — raczej krótki list. Przez ostatnie lata pracowaliśmy z tysiącami psów, a temat z ${escapeHtml(
+          dog
+        )} dobrze znamy.`,
+        defaultBlock: `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1a1a1a;">Czego wielu nie docenia: ${problemLabel} da się prawie zawsze widocznie zmienić w 4 do 12 tygodni, jeśli konsekwentnie się trzyma. Nie potrzebujesz wcześniejszej wiedzy — plan prowadzi Cię krok po kroku, z 10-minutowymi ćwiczeniami dziennie.</p><p style="margin:0;font-size:14px;color:#6B7280;">— Zespół trenerów ŁapaPlan</p>${compareBox}`,
+        ctaText: `Zobacz plan`,
+      };
+    case 4:
+      return {
+        subject: `Najczęstsze pytania o nasz plan treningowy`,
+        preheader: `Jeśli wciąż masz wątpliwości — tu wszystkie odpowiedzi.`,
+        headline: `O co właściciele pytają nas najczęściej`,
+        intro: `Cześć, zanim się zdecydujesz, oto najczęstsze pytania naszych członków — zwłaszcza tych, którzy już dłużej zmagają się z ${problemLabel}:`,
+        defaultBlock: `${whatYouGetBox}
+          <p style="margin:0 0 10px;font-size:15px;line-height:1.6;color:#1a1a1a;"><strong>Czy to zadziała też u mojej rasy?</strong><br>Tak. Plan jest układany indywidualnie według rasy, wieku i konkretnego zachowania ${escapeHtml(dog)} — żadnego standardowego szablonu.</p>
+          <p style="margin:0 0 10px;font-size:15px;line-height:1.6;color:#1a1a1a;"><strong>Ile czasu potrzebuję dziennie?</strong><br>10 do 20 minut wystarczy. Ćwiczenia są tak zbudowane, żeby pasowały do codzienności.</p>
+          <p style="margin:0 0 10px;font-size:15px;line-height:1.6;color:#1a1a1a;"><strong>Co jeśli ${escapeHtml(dog)} nie współpracuje?</strong><br>Właśnie po to jest czat z trenerem w panelu członkowskim. Nie jesteś sam.</p>
+          <p style="margin:0;font-size:15px;line-height:1.6;color:#1a1a1a;"><strong>A jeśli i tak nic z tego nie wyjdzie?</strong><br>30 dni zwrotu pieniędzy. Bez dyskusji. Wystarczy krótki e-mail.</p>`,
+        ctaText: `Zdobądź plan teraz`,
+      };
+    case 5:
+      return {
+        subject: `Ostatnia wiadomość o planie dla ${dog}`,
+        preheader: `Potem już nic od nas nie usłyszysz.`,
+        headline: `Ostatnie przypomnienie`,
+        intro: `Cześć, jeśli zdecydowałeś przeciw planowi — to zrozumiałe, całkowicie w porządku. Ale jeśli jeszcze się zastanawiasz:`,
+        defaultBlock: `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1a1a1a;">Osobisty plan dla ${escapeHtml(
+          dog
+        )} jest gotowy — z 30-dniową gwarancją zwrotu pieniędzy. Możesz go w każdej chwili zwrócić, jeśli nie pasuje. Bez ryzyka.</p>${compareBox}`,
+        ctaText: `Zobacz plan dla ${escapeHtml(dog)}`,
+        footerHint: `To ostatni e-mail tej sekwencji. Jeśli nie zareagujesz, nic więcej od nas nie usłyszysz.`,
+      };
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────
 // Hauptfunktion: Mail für eine bestimmte Stage senden
 // ─────────────────────────────────────────────────────────────────────
 
 export async function sendWarmRecoveryMail(
   args: WarmRecoveryArgs,
-  stage: WarmRecoveryStage
+  stage: WarmRecoveryStage,
+  lang: Lang = "de"
 ): Promise<{ ok: boolean; reason?: string; aiUsed?: boolean }> {
   if (!args.to) return { ok: false, reason: "no_recipient" };
 
-  const stageContent = getStageContent(args, stage);
+  const stageContent = getStageContent(args, stage, lang);
   const ctaUrl = buildPlanRecoveryUrl(args, stage);
 
   // Versuche Claude-Personalisierung, fallback auf defaultBlock
   let personalizedHtml: string;
   let aiUsed = false;
-  const aiText = await generatePersonalizedBlock(args, stage);
+  const aiText = await generatePersonalizedBlock(args, stage, lang);
   if (aiText) {
     personalizedHtml = formatPersonalizedHtml(aiText);
     aiUsed = true;
@@ -288,7 +457,15 @@ export async function sendWarmRecoveryMail(
   }
 
   // Garantie-Box am Ende (kurz)
-  const guaranteeBox = `
+  const guaranteeBox =
+    lang === "pl"
+      ? `
+    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 16px;margin:18px 0 4px;">
+      <p style="margin:0;font-size:13px;color:#166534;line-height:1.5;">
+        <strong>✓ Bez abonamentu · Jednorazowa płatność · 30 dni zwrotu pieniędzy.</strong> Nic nie tracisz.
+      </p>
+    </div>`
+      : `
     <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 16px;margin:18px 0 4px;">
       <p style="margin:0;font-size:13px;color:#166534;line-height:1.5;">
         <strong>✓ Kein Abo · Einmalzahlung · 30 Tage Geld-zurück.</strong> Du verlierst nichts.
@@ -306,6 +483,7 @@ export async function sendWarmRecoveryMail(
     ctaUrl,
     footerHint: stageContent.footerHint,
     unsubscribe: true, // Marketing-Mail → sichtbarer Abmelde-Link
+    lang,
   });
 
   const res = await sendBrevoMail({

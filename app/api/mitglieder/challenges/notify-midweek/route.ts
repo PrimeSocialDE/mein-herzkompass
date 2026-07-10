@@ -21,6 +21,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createMemberAdminClient } from "@/lib/member-auth-server";
 import { getOrAssignWeekChallenges, getWeekStartDate } from "@/lib/member-challenges";
 import { sendMidweekReminderMail } from "@/lib/member-mail";
+import { langFromEmailLookup } from "@/lib/lang";
 import type { MemberProfile } from "@/lib/member-db";
 import type { UserChallenge } from "@/lib/member-challenges";
 
@@ -113,7 +114,7 @@ export async function GET(req: NextRequest) {
     if (dryRun) { stats.sent++; continue; }
 
     try {
-      const res = await sendMidweekReminderMail(m, challenges);
+      const res = await sendMidweekReminderMail(m, challenges, await langFromEmailLookup(admin, m.email));
       if (res.ok) {
         stats.sent++;
         // Mark als reminded auf ALLEN Challenge-Rows der Woche.

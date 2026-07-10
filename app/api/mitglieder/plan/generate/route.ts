@@ -226,9 +226,26 @@ export async function POST(req: NextRequest) {
         // ── 5) Plan zusammenbauen — Composer aus Übungs-Bibliothek ─
         // Geschwindigkeit: <50ms (rein deterministisch). Optional kommt
         // dann noch eine KI-personalisierte Einleitung (Haiku, ~3-5s).
-        const { composePlan } = await import("@/lib/plan-composer");
-        const { generatePersonalizedIntro } = await import("@/lib/plan-intro-ai");
-        const { PROBLEM_LABELS_DE } = await import("@/lib/exercise-library");
+        // ── Sprach-Weiche ─────────────────────────────────────────
+        // Default "de" -> deutsche Dateien (unveraendert). "pl" laedt die
+        // duplizierten polnischen Bausteine. lang kommt aus answers.lang
+        // (wird im PL-Checkout gesetzt). Literale Import-Pfade, damit der
+        // Bundler beide Varianten sauber aufloest.
+        const planLang = (answers as any)?.lang === "pl" ? "pl" : "de";
+        let composePlan: typeof import("@/lib/plan-composer").composePlan;
+        let generatePersonalizedIntro: typeof import("@/lib/plan-intro-ai").generatePersonalizedIntro;
+        let problemLabelMap: Record<string, string>;
+        if (planLang === "pl") {
+          ({ composePlan } = await import("@/lib/plan-composer.pl"));
+          ({ generatePersonalizedIntro } = await import("@/lib/plan-intro-ai.pl"));
+          problemLabelMap = (await import("@/lib/exercise-library.pl"))
+            .PROBLEM_LABELS_PL as Record<string, string>;
+        } else {
+          ({ composePlan } = await import("@/lib/plan-composer"));
+          ({ generatePersonalizedIntro } = await import("@/lib/plan-intro-ai"));
+          problemLabelMap = (await import("@/lib/exercise-library"))
+            .PROBLEM_LABELS_DE as Record<string, string>;
+        }
 
         // Parse dog_age zu Monaten (best effort: "2 Jahre" / "6 Monate")
         function parseAgeToMonths(s: any): number | undefined {
@@ -240,13 +257,12 @@ export async function POST(req: NextRequest) {
           return Math.round(num);
         }
 
-        const validProblemKey = (
+        const validProblemKey =
           ["pulling", "barking", "aggression", "anxiety", "recall",
            "energy", "jumping", "destructive", "soiling", "mouthing"]
-            .includes(dogProblem) ? dogProblem : "pulling"
-        ) as keyof typeof PROBLEM_LABELS_DE;
+            .includes(dogProblem) ? dogProblem : "pulling";
 
-        const problemLabel = PROBLEM_LABELS_DE[validProblemKey] || dogProblem;
+        const problemLabel = problemLabelMap[validProblemKey] || dogProblem;
 
         // KI-Intro generieren (parallel zum Compose-Job)
         const customProblemText =
@@ -355,6 +371,7 @@ export async function POST(req: NextRequest) {
               planLengthMonths,
               plan: result.plan,
               customerName: lead.customer_name || null,
+              lang: planLang,
             });
             emit(ctx, {
               event: "stage",

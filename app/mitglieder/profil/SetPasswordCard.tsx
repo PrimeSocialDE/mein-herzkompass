@@ -7,21 +7,56 @@ import { createMemberBrowserClient } from "@/lib/member-auth";
 // DSGVO: Supabase speichert das Passwort serverseitig als bcrypt-Hash
 // (kein Klartext), Übertragung nur via HTTPS. Wir loggen das Passwort
 // NIRGENDS und halten es nur kurz im lokalen State.
-export default function SetPasswordCard() {
+export default function SetPasswordCard({ lang = "de" }: { lang?: "de" | "pl" }) {
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
+  const isPL = lang === "pl";
+  const t = isPL
+    ? {
+        errMin: "Hasło musi mieć co najmniej 8 znaków.",
+        errMismatch: "Hasła nie są takie same.",
+        errSame: "To już Twoje obecne hasło.",
+        errSave: "Nie udało się zapisać hasła. Spróbuj ponownie później.",
+        saved: "Hasło zapisane. Od teraz możesz logować się bezpośrednio e-mailem i hasłem — zupełnie bez maila z kodem.",
+        title: "Ustaw hasło",
+        intro: "Opcjonalnie — ale wygodnie: z hasłem wejdziesz w każdej chwili, bez czekania na mail z kodem.",
+        newPw: "Nowe hasło",
+        newPwPlaceholder: "Min. 8 znaków",
+        repeatPw: "Powtórz hasło",
+        repeatPwPlaceholder: "Wpisz ponownie",
+        saving: "Zapisuję…",
+        saveBtn: "Zapisz hasło",
+        secure: "🔒 Twoje hasło jest bezpiecznie szyfrowane (bcrypt) i nigdy nie jest przechowywane jako zwykły tekst.",
+      }
+    : {
+        errMin: "Das Passwort muss mindestens 8 Zeichen haben.",
+        errMismatch: "Die Passwörter stimmen nicht überein.",
+        errSame: "Das ist schon dein aktuelles Passwort.",
+        errSave: "Konnte das Passwort nicht speichern. Bitte später nochmal versuchen.",
+        saved: "Passwort gespeichert. Ab jetzt kannst du dich direkt mit E-Mail + Passwort einloggen — ganz ohne Code-Mail.",
+        title: "Passwort festlegen",
+        intro: "Optional — aber praktisch: Mit einem Passwort kommst du jederzeit rein, ohne auf eine Code-Mail zu warten.",
+        newPw: "Neues Passwort",
+        newPwPlaceholder: "Mind. 8 Zeichen",
+        repeatPw: "Passwort wiederholen",
+        repeatPwPlaceholder: "Nochmal eingeben",
+        saving: "Speichere…",
+        saveBtn: "Passwort speichern",
+        secure: "🔒 Dein Passwort wird sicher verschlüsselt gespeichert (bcrypt) und niemals im Klartext abgelegt.",
+      };
+
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setMsg(null);
     if (pw.length < 8) {
-      setMsg({ ok: false, text: "Das Passwort muss mindestens 8 Zeichen haben." });
+      setMsg({ ok: false, text: t.errMin });
       return;
     }
     if (pw !== pw2) {
-      setMsg({ ok: false, text: "Die Passwörter stimmen nicht überein." });
+      setMsg({ ok: false, text: t.errMismatch });
       return;
     }
     setBusy(true);
@@ -33,8 +68,8 @@ export default function SetPasswordCard() {
         ok: false,
         text:
           error.message?.toLowerCase().includes("should be different")
-            ? "Das ist schon dein aktuelles Passwort."
-            : "Konnte das Passwort nicht speichern. Bitte später nochmal versuchen.",
+            ? t.errSame
+            : t.errSave,
       });
       return;
     }
@@ -42,43 +77,42 @@ export default function SetPasswordCard() {
     setPw2("");
     setMsg({
       ok: true,
-      text: "Passwort gespeichert. Ab jetzt kannst du dich direkt mit E-Mail + Passwort einloggen — ganz ohne Code-Mail.",
+      text: t.saved,
     });
   }
 
   return (
     <div className="bg-white border border-[#EADDC5] rounded-2xl p-6">
       <h2 className="text-[16px] font-extrabold text-[#1a1a1a] mb-1">
-        Passwort festlegen
+        {t.title}
       </h2>
       <p className="text-[13px] text-[#6B7280] leading-relaxed mb-4">
-        Optional — aber praktisch: Mit einem Passwort kommst du jederzeit rein,
-        ohne auf eine Code-Mail zu warten.
+        {t.intro}
       </p>
 
       <form onSubmit={save} className="space-y-3">
         <div>
           <label className="block text-[12px] font-medium text-[#6B7280] mb-1.5">
-            Neues Passwort
+            {t.newPw}
           </label>
           <input
             type="password"
             value={pw}
             onChange={(e) => setPw(e.target.value)}
-            placeholder="Mind. 8 Zeichen"
+            placeholder={t.newPwPlaceholder}
             autoComplete="new-password"
             className="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] bg-white text-[15px] focus:outline-none focus:border-[#C4A576] focus:ring-3 focus:ring-[#C4A576]/15 transition"
           />
         </div>
         <div>
           <label className="block text-[12px] font-medium text-[#6B7280] mb-1.5">
-            Passwort wiederholen
+            {t.repeatPw}
           </label>
           <input
             type="password"
             value={pw2}
             onChange={(e) => setPw2(e.target.value)}
-            placeholder="Nochmal eingeben"
+            placeholder={t.repeatPwPlaceholder}
             autoComplete="new-password"
             className="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] bg-white text-[15px] focus:outline-none focus:border-[#C4A576] focus:ring-3 focus:ring-[#C4A576]/15 transition"
           />
@@ -101,12 +135,11 @@ export default function SetPasswordCard() {
           disabled={busy}
           className="w-full bg-[#C4A576] hover:bg-[#B5946A] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 px-5 rounded-xl text-[14px] transition"
         >
-          {busy ? "Speichere…" : "Passwort speichern"}
+          {busy ? t.saving : t.saveBtn}
         </button>
 
         <p className="text-[11px] text-[#9CA3AF] leading-relaxed pt-1">
-          🔒 Dein Passwort wird sicher verschlüsselt gespeichert (bcrypt) und
-          niemals im Klartext abgelegt.
+          {t.secure}
         </p>
       </form>
     </div>
