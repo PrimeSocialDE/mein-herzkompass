@@ -21,6 +21,16 @@ const nextConfig: NextConfig = {
   // packen (Videos, ungenutzte PDFs etc.). PDF-Assets liegen separat unter
   // pdf-assets/ und werden gezielt mitgenommen.
   outputFileTracingExcludes: {
+    // WICHTIG: Der Key "*" matcht in Next.js 15 nur einsegmentige Routen, NICHT
+    // verschachtelte API-Routen (z.B. /api/brevo/bounce-webhook) — dort greift
+    // der public-Exclude also nicht. Der Key "**" matcht ALLE Routen. Wir nutzen
+    // ihn NUR fuer die polnischen Anzeigebilder (public/pl/**), die von KEINER
+    // Server-Function gelesen werden — so bleiben Function-Bundles unter dem
+    // 250-MB-Limit, OHNE den bestehenden "*"-Block (und damit den DE-Pfad) zu
+    // veraendern. Deutsche Assets/Generatoren bleiben exakt wie bisher.
+    "**": [
+      "public/pl/**/*",
+    ],
     "*": [
       // public/ — alles raus (wird als statische Assets via CDN ausgeliefert,
       // nie aus Server-Code gelesen).

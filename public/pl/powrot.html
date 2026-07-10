@@ -2457,7 +2457,16 @@
         // Checkout öffnen — direkt Loading + Mollie-Redirect, kein
         // Stripe-Overlay mehr (Legacy-Code unten bleibt im DOM aber
         // wird nicht mehr aktiviert).
+        // PL: Zahlungen vorübergehend deaktiviert, bis der Mollie-PLN-Account steht.
+        // Kein EUR-Charge. Der deutsche Funnel (pfoten-plan.de) ist NICHT betroffen.
+        const PL_PAYMENTS_OFF = true;
+        function plPaymentPlaceholder() {
+            alert('Płatności będą wkrótce dostępne — pracujemy nad tym! Dziękujemy za cierpliwość. 🐾');
+            return false;
+        }
+
         async function openCheckout() {
+            if (PL_PAYMENTS_OFF) { plPaymentPlaceholder(); return; }
             // Plan im localStorage speichern
             localStorage.setItem('selectedPlan', selectedPlan);
 
@@ -2519,6 +2528,7 @@
 
         // Zahlung absenden
         async function submitPayment() {
+            if (PL_PAYMENTS_OFF) { plPaymentPlaceholder(); return; }
             const btn = document.getElementById('checkoutPayBtn');
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner"></span> Przetwarzanie...';

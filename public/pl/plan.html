@@ -4486,7 +4486,18 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             }
         }
 
+        // PL: Zahlungen vorübergehend deaktiviert, bis der Mollie-PLN-Account steht.
+        // Alle Zahl-Funktionen zeigen stattdessen einen Hinweis (kein EUR-Charge).
+        // Der deutsche Funnel (pfoten-plan.de) ist davon NICHT betroffen.
+        const PL_PAYMENTS_OFF = true;
+        function plPaymentPlaceholder() {
+            try { document.getElementById('paymentLoadingOverlay')?.remove(); } catch (e) {}
+            alert('Płatności będą wkrótce dostępne — pracujemy nad tym! Dziękujemy za cierpliwość. 🐾');
+            return false;
+        }
+
         async function goToPaymentStep() {
+            if (PL_PAYMENTS_OFF) { plPaymentPlaceholder(); return; }
             // E-Mail und Step 1 verstecken, Step 2 zeigen
             document.getElementById('checkoutStepEmail').classList.add('hidden');
             document.getElementById('checkoutStep1').classList.add('hidden');
@@ -4596,6 +4607,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         }
 
         async function submitPayment() {
+            if (PL_PAYMENTS_OFF) { plPaymentPlaceholder(); return; }
             const payBtn = document.getElementById('checkoutPayBtn');
             payBtn.disabled = true;
             payBtn.innerHTML = '<span class="spinner"></span> Przetwarzanie...';
@@ -4982,6 +4994,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
         // ── Card-Submit ──────────────────────────────────────────────────
         async function submitHybridCard() {
+            if (PL_PAYMENTS_OFF) { plPaymentPlaceholder(); return; }
             const btn = document.getElementById('hybridCardSubmitBtn');
             if (!mollieClient) { showHybridError('Pole karty nie jest gotowe'); return; }
             btn.disabled = true; btn.textContent = 'Przetwarzanie...';
@@ -5048,6 +5061,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         };
 
         async function payWithMethod(method) {
+            if (PL_PAYMENTS_OFF) { plPaymentPlaceholder(); return; }
             hideHybridError();
             // Apple/Google Pay sind immer sichtbar als Trust-Signal, aber auf
             // nicht-unterstuetzten Geraeten (z.B. Insta-Webview, Android-Apple-Pay
@@ -5088,6 +5102,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         // payOnMollieHosted bleibt im Code falls woanders verlinkt — geht
         // ohne method-Param zur Mollie-Hosted-Page mit Method-Selector.
         async function payOnMollieHosted() {
+            if (PL_PAYMENTS_OFF) { plPaymentPlaceholder(); return; }
             await payWithMethod(null);
         }
 
@@ -5101,6 +5116,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             document.getElementById('hybridOverlay').classList.add('active');
         }
         async function submitKlarna() {
+            if (PL_PAYMENTS_OFF) { plPaymentPlaceholder(); return; }
             const btn = document.getElementById('klarnaSubmitBtn');
             const givenName = document.getElementById('klarnaFirstName').value.trim();
             const familyName = document.getElementById('klarnaLastName').value.trim();
