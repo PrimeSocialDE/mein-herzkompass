@@ -18,6 +18,17 @@ const ERROR_MESSAGES: Record<string, string> = {
     "Der Link war unvollständig. Bitte fordere einen neuen an.",
 };
 
+const ERROR_MESSAGES_PL: Record<string, string> = {
+  link_abgelaufen:
+    "Link wygasł. Wpisz ponownie swój e-mail, a wyślemy Ci nowy.",
+  verify_failed:
+    "Nie udało się zweryfikować linku. Poproś o nowy.",
+  exchange_failed:
+    "Logowanie nie powiodło się. Poproś o nowy link.",
+  fehlende_parameter:
+    "Link był niekompletny. Poproś o nowy.",
+};
+
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,6 +40,122 @@ export default function LoginPage() {
   const [stage, setStage] = useState<Stage>("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [sessionChecked, setSessionChecked] = useState(false);
+  const [isPL, setIsPL] = useState(false);
+
+  // Sprach-Erkennung über Host (hydration-sicher: initial de, nach Mount pl)
+  useEffect(() => {
+    if (/(^|\.)lapaplan\.pl$/i.test(window.location.hostname)) setIsPL(true);
+  }, []);
+
+  const t = isPL
+    ? {
+        tabAnmelden: "Zaloguj się",
+        tabKonto: "Załóż konto",
+        emailRequired: "Podaj swój e-mail.",
+        passwordError:
+          "E-mail lub hasło się nie zgadza. Nie masz jeszcze hasła? Poproś poniżej o kod — a potem w panelu członkowskim w zakładce „Profil” ustaw sobie hasło.",
+        sendMailFailed: "Nie udało się wysłać e-maila z logowaniem.",
+        codeSixDigits: "Kod musi mieć 6 cyfr.",
+        codeExpired:
+          "Kod wygasł lub został już użyty. Wpisz ponownie swój e-mail, a wyślemy Ci nowy.",
+        emailUnknown:
+          "Nie znamy jeszcze tego e-maila. Przełącz się powyżej na „Załóż konto”.",
+        loginFailedPrefix: "Logowanie nie powiodło się: ",
+        codeWrong:
+          "Kod się nie zgadza. Sprawdź jeszcze raz w e-mailu albo poproś o nowy.",
+        headingAnmelden: "Dobrze, że znów jesteś",
+        headingKonto: "Załóż konto w 30 sek",
+        subAnmelden:
+          "Podaj swój e-mail — wyślemy Ci 6-cyfrowy kod logowania. Bez hasła.",
+        subKonto:
+          "Wpisz swój e-mail. Wyślemy Ci magiczny link — jedno kliknięcie i konto gotowe.",
+        codeSentPrefix: "Kod w drodze na ",
+        codeSentHint: "Wpisz poniżej 6-cyfrowy kod z e-maila.",
+        codeLabel: "6-cyfrowy kod",
+        verifying: "Sprawdzam kod…",
+        verifyBtn: "Sprawdź kod → Zaloguj się",
+        linkHint:
+          "Wolisz kliknąć link w e-mailu? Też działa — wróci automatycznie tutaj.",
+        otherEmail: "Użyj innego e-maila",
+        magicSentPrefix: "Magiczny link w drodze na ",
+        magicSentBody:
+          "Kliknij przycisk w e-mailu — konto utworzy się automatycznie i od razu wejdziesz do środka.",
+        tipStrong: "Wskazówka:",
+        tipPart1:
+          "Nie ma e-maila? Sprawdź folder ze spamem. Jeśli chcesz być zalogowany w innej przeglądarce, możesz też przełączyć się na ",
+        tipLink: "Zaloguj się",
+        tipPart2: " i tam wpisać kod z e-maila.",
+        emailLabel: "E-mail",
+        emailPlaceholder: "twoj@email.pl",
+        passwordLabel: "Hasło",
+        passwordPlaceholder: "Twoje hasło (jeśli ustawione)",
+        loadingBtn: "Chwila…",
+        loginBtn: "Zaloguj się",
+        requestCodeBtn: "Poproś o kod logowania",
+        magicLinkBtn: "Wyślij magiczny link",
+        preferCode: "Wolę przez kod logowania (bez hasła)",
+        havePassword: "Mam ustawione hasło",
+        switchToKonto:
+          "Nie masz jeszcze konta? Przełącz się powyżej na „Załóż konto”.",
+        switchToAnmelden:
+          "Masz już konto? Przełącz się powyżej na „Zaloguj się”.",
+        trustBefore: "Na tym urządzeniu pozostaniesz ",
+        trustStrong: "zalogowany przez 30 dni",
+        trustAfter: " — bez ciągłego pingpongu z e-mailami.",
+      }
+    : {
+        tabAnmelden: "Anmelden",
+        tabKonto: "Account erstellen",
+        emailRequired: "Bitte gib deine E-Mail ein.",
+        passwordError:
+          "E-Mail oder Passwort stimmt nicht. Noch kein Passwort gesetzt? Fordere unten einen Code an — und leg dir danach im Mitgliederbereich unter „Profil“ ein Passwort fest.",
+        sendMailFailed: "Konnte Login-Mail nicht verschicken.",
+        codeSixDigits: "Code muss 6 Stellen haben.",
+        codeExpired:
+          "Der Code ist abgelaufen oder bereits genutzt. Trag deine E-Mail nochmal ein damit wir dir einen neuen schicken.",
+        emailUnknown:
+          "Wir kennen diese E-Mail noch nicht. Wechsel oben auf 'Account erstellen'.",
+        loginFailedPrefix: "Anmeldung fehlgeschlagen: ",
+        codeWrong:
+          "Code stimmt nicht. Pruefe nochmal in der Mail oder fordere einen neuen an.",
+        headingAnmelden: "Schön dass du wieder da bist",
+        headingKonto: "Konto in 30 Sek anlegen",
+        subAnmelden:
+          "Gib deine E-Mail ein — wir schicken dir einen 6-stelligen Login-Code. Kein Passwort nötig.",
+        subKonto:
+          "Trag deine E-Mail ein. Wir schicken dir einen Magic-Link — ein Klick und dein Konto ist da.",
+        codeSentPrefix: "Code unterwegs an ",
+        codeSentHint: "Trag den 6-stelligen Code aus der Mail unten ein.",
+        codeLabel: "6-stelliger Code",
+        verifying: "Prüfe Code…",
+        verifyBtn: "Code prüfen → Einloggen",
+        linkHint:
+          "Lieber den Link in der Mail klicken? Geht auch — landet automatisch hier.",
+        otherEmail: "Andere E-Mail verwenden",
+        magicSentPrefix: "Magic-Link unterwegs an ",
+        magicSentBody:
+          "Klick auf den Button in der Mail — dein Konto wird automatisch erstellt und du landest direkt drin.",
+        tipStrong: "Tipp:",
+        tipPart1:
+          "Mail nicht da? Prüf den Spam-Ordner. Falls du in einem anderen Browser eingeloggt sein möchtest, kannst du auch auf ",
+        tipLink: "Anmelden",
+        tipPart2: " wechseln und dort den Code aus der Mail eintippen.",
+        emailLabel: "E-Mail",
+        emailPlaceholder: "deine@email.de",
+        passwordLabel: "Passwort",
+        passwordPlaceholder: "Dein Passwort (falls gesetzt)",
+        loadingBtn: "Moment…",
+        loginBtn: "Einloggen",
+        requestCodeBtn: "Login-Code anfordern",
+        magicLinkBtn: "Magic-Link senden",
+        preferCode: "Lieber per Login-Code (ohne Passwort)",
+        havePassword: "Ich habe ein Passwort eingerichtet",
+        switchToKonto: "Noch kein Konto? Wechsel oben auf 'Account erstellen'.",
+        switchToAnmelden: "Schon ein Konto? Wechsel oben auf 'Anmelden'.",
+        trustBefore: "Auf diesem Gerät bleibst du ",
+        trustStrong: "30 Tage eingeloggt",
+        trustAfter: " — kein ständiges Mail-Pingpong.",
+      };
 
   // Auto-Redirect wenn schon eingeloggt — User klickt auf "Anmelden" und
   // landet sofort im Mitgliederbereich, ohne Login-Form-Flash
@@ -58,17 +185,19 @@ export default function LoginPage() {
   useEffect(() => {
     const err = searchParams.get("error");
     if (err) {
-      setErrorMsg(
-        ERROR_MESSAGES[err] || `Anmeldung fehlgeschlagen: ${decodeURIComponent(err)}`
-      );
+      const map = isPL ? ERROR_MESSAGES_PL : ERROR_MESSAGES;
+      const prefix = isPL
+        ? "Logowanie nie powiodło się: "
+        : "Anmeldung fehlgeschlagen: ";
+      setErrorMsg(map[err] || `${prefix}${decodeURIComponent(err)}`);
     }
-  }, [searchParams]);
+  }, [searchParams, isPL]);
 
   // Passwort-Login (DSGVO: Passwort nur im State, kein Logging, HTTPS).
   async function loginWithPassword(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim()) {
-      setErrorMsg("Bitte gib deine E-Mail ein.");
+      setErrorMsg(t.emailRequired);
       return;
     }
     // Kein Passwort eingetippt → automatisch den Code-Weg nehmen.
@@ -86,9 +215,7 @@ export default function LoginPage() {
 
     if (error || !data?.session) {
       setStage("error");
-      setErrorMsg(
-        "E-Mail oder Passwort stimmt nicht. Noch kein Passwort gesetzt? Fordere unten einen Code an — und leg dir danach im Mitgliederbereich unter „Profil“ ein Passwort fest."
-      );
+      setErrorMsg(t.passwordError);
       return;
     }
     router.push("/mitglieder");
@@ -98,7 +225,7 @@ export default function LoginPage() {
   async function sendLink(e: React.SyntheticEvent) {
     e.preventDefault();
     if (!email.trim()) {
-      setErrorMsg("Bitte gib deine E-Mail ein.");
+      setErrorMsg(t.emailRequired);
       setStage("idle");
       return;
     }
@@ -118,7 +245,7 @@ export default function LoginPage() {
 
     if (error) {
       setStage("error");
-      setErrorMsg(error.message || "Konnte Login-Mail nicht verschicken.");
+      setErrorMsg(error.message || t.sendMailFailed);
       return;
     }
     setStage("sent");
@@ -128,7 +255,7 @@ export default function LoginPage() {
     e.preventDefault();
     const cleaned = code.replace(/\s/g, "");
     if (cleaned.length !== 6) {
-      setErrorMsg("Code muss 6 Stellen haben.");
+      setErrorMsg(t.codeSixDigits);
       return;
     }
     setStage("verifying");
@@ -145,19 +272,13 @@ export default function LoginPage() {
       setStage("sent");
       const msg = (error?.message || "").toLowerCase();
       if (msg.includes("expired") || msg.includes("invalid")) {
-        setErrorMsg(
-          "Der Code ist abgelaufen oder bereits genutzt. Trag deine E-Mail nochmal ein damit wir dir einen neuen schicken."
-        );
+        setErrorMsg(t.codeExpired);
       } else if (msg.includes("not found") || msg.includes("user not")) {
-        setErrorMsg(
-          "Wir kennen diese E-Mail noch nicht. Wechsel oben auf 'Account erstellen'."
-        );
+        setErrorMsg(t.emailUnknown);
       } else if (error?.message) {
-        setErrorMsg(`Anmeldung fehlgeschlagen: ${error.message}`);
+        setErrorMsg(`${t.loginFailedPrefix}${error.message}`);
       } else {
-        setErrorMsg(
-          "Code stimmt nicht. Pruefe nochmal in der Mail oder fordere einen neuen an."
-        );
+        setErrorMsg(t.codeWrong);
       }
       return;
     }
@@ -208,7 +329,7 @@ export default function LoginPage() {
                 : "bg-[#FAFAFA] text-[#9CA3AF]"
             }`}
           >
-            Anmelden
+            {t.tabAnmelden}
           </button>
           <button
             type="button"
@@ -219,18 +340,16 @@ export default function LoginPage() {
                 : "bg-[#FAFAFA] text-[#9CA3AF]"
             }`}
           >
-            Account erstellen
+            {t.tabKonto}
           </button>
         </div>
 
         <div className="p-7 md:p-9">
           <h1 className="text-[22px] md:text-[26px] font-extrabold tracking-tight text-[#1a1a1a] mb-2">
-            {isAnmelden ? "Schön dass du wieder da bist" : "Konto in 30 Sek anlegen"}
+            {isAnmelden ? t.headingAnmelden : t.headingKonto}
           </h1>
           <p className="text-[14px] text-[#6B7280] leading-relaxed mb-6">
-            {isAnmelden
-              ? "Gib deine E-Mail ein — wir schicken dir einen 6-stelligen Login-Code. Kein Passwort nötig."
-              : "Trag deine E-Mail ein. Wir schicken dir einen Magic-Link — ein Klick und dein Konto ist da."}
+            {isAnmelden ? t.subAnmelden : t.subKonto}
           </p>
 
           {stage === "sent" || stage === "verifying" ? (
@@ -240,17 +359,17 @@ export default function LoginPage() {
                 <div className="bg-[#FFF9F0] border-2 border-[#C4A576] rounded-xl p-4 mb-5 text-center">
                   <div className="text-[28px] mb-1">📩</div>
                   <p className="text-[14px] font-bold text-[#1a1a1a] mb-1">
-                    Code unterwegs an {email}
+                    {t.codeSentPrefix}{email}
                   </p>
                   <p className="text-[12px] text-[#5A4A3A] leading-relaxed">
-                    Trag den 6-stelligen Code aus der Mail unten ein.
+                    {t.codeSentHint}
                   </p>
                 </div>
 
                 <form onSubmit={verifyCode} className="space-y-3">
                   <div>
                     <label className="block text-[12px] font-medium text-[#6B7280] mb-1.5">
-                      6-stelliger Code
+                      {t.codeLabel}
                     </label>
                     <input
                       type="text"
@@ -288,12 +407,11 @@ export default function LoginPage() {
                     }
                     className="w-full bg-[#C4A576] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3 px-5 rounded-xl text-[14px] shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
                   >
-                    {stage === "verifying" ? "Prüfe Code…" : "Code prüfen → Einloggen"}
+                    {stage === "verifying" ? t.verifying : t.verifyBtn}
                   </button>
 
                   <p className="text-[11px] text-[#9CA3AF] text-center pt-1 leading-relaxed">
-                    Lieber den Link in der Mail klicken? Geht auch — landet
-                    automatisch hier.
+                    {t.linkHint}
                   </p>
 
                   <button
@@ -301,7 +419,7 @@ export default function LoginPage() {
                     onClick={reset}
                     className="w-full text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a] py-1"
                   >
-                    Andere E-Mail verwenden
+                    {t.otherEmail}
                   </button>
                 </form>
               </>
@@ -311,23 +429,19 @@ export default function LoginPage() {
                 <div className="bg-[#F0FDF4] border-2 border-[#16A34A] rounded-xl p-5 mb-5 text-center">
                   <div className="text-[36px] mb-2">📬</div>
                   <p className="text-[15px] font-bold text-[#166534] mb-1">
-                    Magic-Link unterwegs an {email}
+                    {t.magicSentPrefix}{email}
                   </p>
                   <p className="text-[13px] text-[#15803D] leading-relaxed">
-                    Klick auf den Button in der Mail — dein Konto wird
-                    automatisch erstellt und du landest direkt drin.
+                    {t.magicSentBody}
                   </p>
                 </div>
 
                 <div className="bg-[#FAFAFA] border border-[#EADDC5] rounded-xl p-3 mb-4">
                   <p className="text-[11px] text-[#6B7280] leading-relaxed">
-                    💡 <strong>Tipp:</strong> Mail nicht da? Prüf den Spam-Ordner.
-                    Falls du in einem anderen Browser eingeloggt sein möchtest,
-                    kannst du auch auf <button
+                    💡 <strong>{t.tipStrong}</strong> {t.tipPart1}<button
                       onClick={() => switchMode("anmelden")}
                       className="underline text-[#8B7355] font-semibold"
-                    >Anmelden</button> wechseln und dort den Code aus der Mail
-                    eintippen.
+                    >{t.tipLink}</button>{t.tipPart2}
                   </p>
                 </div>
 
@@ -342,7 +456,7 @@ export default function LoginPage() {
                   onClick={reset}
                   className="w-full text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a] py-2"
                 >
-                  Andere E-Mail verwenden
+                  {t.otherEmail}
                 </button>
               </>
             )
@@ -351,13 +465,13 @@ export default function LoginPage() {
             <form onSubmit={isAnmelden ? (showPassword ? loginWithPassword : sendLink) : sendLink} className="space-y-4">
               <div>
                 <label className="block text-[12px] font-medium text-[#6B7280] mb-1.5">
-                  E-Mail
+                  {t.emailLabel}
                 </label>
                 <input
                   type="email"
                   required
                   autoFocus
-                  placeholder="deine@email.de"
+                  placeholder={t.emailPlaceholder}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] bg-white text-[15px] focus:outline-none focus:border-[#C4A576] focus:ring-3 focus:ring-[#C4A576]/15 transition"
@@ -368,11 +482,11 @@ export default function LoginPage() {
               {isAnmelden && showPassword && (
                 <div>
                   <label className="block text-[12px] font-medium text-[#6B7280] mb-1.5">
-                    Passwort
+                    {t.passwordLabel}
                   </label>
                   <input
                     type="password"
-                    placeholder="Dein Passwort (falls gesetzt)"
+                    placeholder={t.passwordPlaceholder}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] bg-white text-[15px] focus:outline-none focus:border-[#C4A576] focus:ring-3 focus:ring-[#C4A576]/15 transition"
@@ -393,12 +507,12 @@ export default function LoginPage() {
                 className="w-full bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-3.5 px-5 rounded-xl text-[15px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)] disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {stage === "loading"
-                  ? "Moment…"
+                  ? t.loadingBtn
                   : isAnmelden
                     ? showPassword
-                      ? "Einloggen"
-                      : "Login-Code anfordern"
-                    : "Magic-Link senden"}
+                      ? t.loginBtn
+                      : t.requestCodeBtn
+                    : t.magicLinkBtn}
               </button>
 
               {isAnmelden &&
@@ -412,7 +526,7 @@ export default function LoginPage() {
                     }}
                     className="w-full text-[12px] text-[#8B7355] underline hover:text-[#1a1a1a] py-1"
                   >
-                    Lieber per Login-Code (ohne Passwort)
+                    {t.preferCode}
                   </button>
                 ) : (
                   <button
@@ -423,22 +537,19 @@ export default function LoginPage() {
                     }}
                     className="w-full text-[12px] text-[#9CA3AF] underline hover:text-[#1a1a1a] py-1"
                   >
-                    Ich habe ein Passwort eingerichtet
+                    {t.havePassword}
                   </button>
                 ))}
 
               <p className="text-[11px] text-[#9CA3AF] text-center pt-2 leading-relaxed">
-                {isAnmelden
-                  ? "Noch kein Konto? Wechsel oben auf 'Account erstellen'."
-                  : "Schon ein Konto? Wechsel oben auf 'Anmelden'."}
+                {isAnmelden ? t.switchToKonto : t.switchToAnmelden}
               </p>
 
               {/* Trust-Hinweis */}
               <div className="bg-[#FFF9F0] border border-[#EADDC5] rounded-xl px-4 py-3 mt-3 flex items-start gap-2">
                 <span className="text-[16px] flex-shrink-0">🔒</span>
                 <p className="text-[11px] text-[#5A4A3A] leading-relaxed">
-                  Auf diesem Gerät bleibst du <strong>30 Tage eingeloggt</strong> —
-                  kein ständiges Mail-Pingpong.
+                  {t.trustBefore}<strong>{t.trustStrong}</strong>{t.trustAfter}
                 </p>
               </div>
             </form>

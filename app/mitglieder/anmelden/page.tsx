@@ -11,6 +11,9 @@
 // dann funktionieren weder Link noch der 6-stellige Code. Scanner submitten
 // aber keine POST-Formulare → der Token bleibt gueltig bis zum echten Klick.
 
+import { headers } from "next/headers";
+import { langFromHost } from "@/lib/lang";
+
 export const dynamic = "force-dynamic";
 
 export default async function AnmeldenPage({
@@ -25,6 +28,28 @@ export default async function AnmeldenPage({
   if (!next.startsWith("/")) next = "/mitglieder"; // Open-Redirect-Schutz
 
   const valid = !!tokenHash;
+
+  // Pre-Auth-Seite (noch keine Member-E-Mail) → Sprache über Host: lapaplan.pl = pl.
+  const lang = langFromHost((await headers()).get("host"));
+  const t = lang === "pl"
+    ? {
+        done: "Już prawie!",
+        incomplete: "Link niekompletny",
+        clickInfo: "Kliknij raz „Zaloguj się”, żeby bezpiecznie wejść do swojego panelu członkowskiego.",
+        loginBtn: "Zaloguj się →",
+        scannerNote: "Ten krok chroni Twoje logowanie przed automatycznymi skanerami e-mail. Link jest ważny przez godzinę.",
+        expired: "Ten link do logowania jest niekompletny lub wygasł. Po prostu poproś o nowy.",
+        toLogin: "Do logowania →",
+      }
+    : {
+        done: "Fast geschafft!",
+        incomplete: "Link unvollständig",
+        clickInfo: "Klick einmal auf „Anmelden“, um sicher in deinen Mitgliederbereich zu kommen.",
+        loginBtn: "Jetzt anmelden →",
+        scannerNote: "Dieser Schritt schützt deinen Login vor automatischen E-Mail-Scannern. Der Link gilt eine Stunde.",
+        expired: "Dieser Anmelde-Link ist unvollständig oder abgelaufen. Fordere dir einfach einen neuen an.",
+        toLogin: "Zum Login →",
+      };
 
   return (
     <div
@@ -45,7 +70,7 @@ export default async function AnmeldenPage({
           margin: "0 0 10px",
         }}
       >
-        {valid ? "Fast geschafft!" : "Link unvollständig"}
+        {valid ? t.done : t.incomplete}
       </h1>
 
       {valid ? (
@@ -59,8 +84,7 @@ export default async function AnmeldenPage({
               maxWidth: "32ch",
             }}
           >
-            Klick einmal auf „Anmelden", um sicher in deinen Mitgliederbereich zu
-            kommen.
+            {t.clickInfo}
           </p>
 
           <form method="POST" action="/mitglieder/callback">
@@ -84,7 +108,7 @@ export default async function AnmeldenPage({
                 boxShadow: "0 10px 22px -10px rgba(176,137,78,.8)",
               }}
             >
-              Jetzt anmelden →
+              {t.loginBtn}
             </button>
           </form>
 
@@ -97,8 +121,7 @@ export default async function AnmeldenPage({
               maxWidth: "34ch",
             }}
           >
-            Dieser Schritt schützt deinen Login vor automatischen E-Mail-Scannern.
-            Der Link gilt eine Stunde.
+            {t.scannerNote}
           </p>
         </>
       ) : (
@@ -112,8 +135,7 @@ export default async function AnmeldenPage({
               maxWidth: "32ch",
             }}
           >
-            Dieser Anmelde-Link ist unvollständig oder abgelaufen. Fordere dir
-            einfach einen neuen an.
+            {t.expired}
           </p>
           <a
             href="/mitglieder/login"
@@ -128,7 +150,7 @@ export default async function AnmeldenPage({
               textDecoration: "none",
             }}
           >
-            Zum Login →
+            {t.toLogin}
           </a>
         </>
       )}

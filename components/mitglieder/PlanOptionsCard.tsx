@@ -73,16 +73,92 @@ const PLANS: PlanOption[] = [
   },
 ];
 
+const PLANS_PL: PlanOption[] = [
+  {
+    key: "1month",
+    months: 1,
+    weeks: 4,
+    price: "109",
+    daily: "3,60 zł",
+    popular: false,
+    badge: "Intensywnie",
+    tagline: "Pierwsze efekty w 4 tygodnie",
+    image: "/1Monat.jpg",
+    bullets: [
+      { icon: "⚡", text: "Codziennie krótki trening" },
+      { icon: "🎯", text: "Ćwiczenia bazowe na 1 temat" },
+      { icon: "💪", text: "Szybko widoczne efekty" },
+    ],
+  },
+  {
+    key: "3month",
+    months: 3,
+    weeks: 12,
+    price: "149",
+    daily: "1,70 zł",
+    popular: true,
+    badge: "Popularny",
+    tagline: "We własnym tempie, jasne rezultaty",
+    image: "/3Monat.jpg",
+    bullets: [
+      { icon: "📚", text: "Więcej ćwiczeń, większa głębia" },
+      { icon: "🌿", text: "Wystarczą 3× w tygodniu" },
+      { icon: "⚖️", text: "Kilka tematów objętych planem" },
+    ],
+  },
+  {
+    key: "6month",
+    months: 6,
+    weeks: 24,
+    price: "229",
+    daily: "1,30 zł",
+    popular: false,
+    badge: "Komplet",
+    tagline: "Zupełnie na spokojnie, do mistrzostwa",
+    image: "/6Monat.jpg",
+    bullets: [
+      { icon: "🐾", text: "Wszystkie ćwiczenia — realnie pogłębione" },
+      { icon: "🌳", text: "Wszystkie 10 modułów tematycznych" },
+      { icon: "🛋️", text: "We własnym tempie, bez presji" },
+    ],
+  },
+];
+
 export default function PlanOptionsCard({
   dogName,
   email,
   leadId,
+  lang = "de",
 }: {
   dogName?: string | null;
   email: string;
   leadId?: string | null;
+  lang?: "de" | "pl";
 }) {
-  const dog = dogName?.trim() || "deinem Hund";
+  const isPL = lang === "pl";
+  const dog = dogName?.trim() || (isPL ? "Twoim psem" : "deinem Hund");
+  const plans = isPL ? PLANS_PL : PLANS;
+  const t = isPL
+    ? {
+        heroTitle: `Rozwiąż problemy z ${dog} samodzielnie`,
+        heroSub:
+          "Krok po kroku, we własnym tempie, z domu — bez drogiej szkoły dla psów, bez stresu.",
+        choose: "Wybierz plan →",
+        loading: "Ładuję…",
+        trust: "🔒 30 dni gwarancji zwrotu · Bezpieczna płatność przez Mollie",
+        errStart: "Nie udało się rozpocząć płatności",
+        errConn: "Błąd połączenia. Spróbuj zaraz ponownie.",
+      }
+    : {
+        heroTitle: `Probleme mit ${dog} selbst lösen`,
+        heroSub:
+          "Schritt für Schritt, im eigenen Tempo, von zuhause aus — ohne teure Hundeschule, ohne Stress.",
+        choose: "Plan wählen →",
+        loading: "Lade…",
+        trust: "🔒 30 Tage Geld-zurück · Sichere Zahlung über Mollie",
+        errStart: "Konnte Checkout nicht starten",
+        errConn: "Verbindungsfehler. Versuch's gleich nochmal.",
+      };
 
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -112,11 +188,11 @@ export default function PlanOptionsCard({
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setError(data.error || "Konnte Checkout nicht starten");
+        setError(data.error || t.errStart);
         setLoadingKey(null);
       }
     } catch (e) {
-      setError("Verbindungsfehler. Versuch's gleich nochmal.");
+      setError(t.errConn);
       setLoadingKey(null);
     }
   }
@@ -126,17 +202,16 @@ export default function PlanOptionsCard({
       {/* Outcome-Hero — kurz, klar, ohne Marketing-Geschwurbel */}
       <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-2xl p-5 md:p-6">
         <h2 className="text-[20px] md:text-[24px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight mb-1.5">
-          Probleme mit {dog} selbst lösen
+          {t.heroTitle}
         </h2>
         <p className="text-[14px] text-[#4B5563] leading-relaxed">
-          Schritt für Schritt, im eigenen Tempo, von zuhause aus — ohne
-          teure Hundeschule, ohne Stress.
+          {t.heroSub}
         </p>
       </div>
 
       {/* Plan-Cards mit Bild-Header */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        {PLANS.map((p) => {
+        {plans.map((p) => {
           const isLoading = loadingKey === p.key;
           const anyLoading = !!loadingKey;
           return (
@@ -155,7 +230,7 @@ export default function PlanOptionsCard({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={p.image}
-                  alt={p.badge || `${p.months}-Monats-Plan`}
+                  alt={p.badge || (isPL ? `Plan ${p.months}-miesięczny` : `${p.months}-Monats-Plan`)}
                   className="w-full h-full object-cover"
                 />
                 {p.badge && (
@@ -190,17 +265,32 @@ export default function PlanOptionsCard({
                   ))}
                 </ul>
 
-                <div className="flex items-baseline gap-1">
-                  <span className="text-[26px] font-extrabold text-[#1a1a1a]">
-                    €{p.price.split(",")[0]}
-                  </span>
-                  <span className="text-[12px] text-[#9CA3AF]">
-                    ,{p.price.split(",")[1]}
-                  </span>
-                </div>
-                <div className="text-[11px] text-[#6B7280] mb-3">
-                  Nur <strong>{p.daily} am Tag</strong> · einmalig
-                </div>
+                {isPL ? (
+                  <>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-[26px] font-extrabold text-[#1a1a1a]">
+                        {p.price} zł
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-[#6B7280] mb-3">
+                      Tylko <strong>{p.daily} dziennie</strong> · jednorazowo
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-[26px] font-extrabold text-[#1a1a1a]">
+                        €{p.price.split(",")[0]}
+                      </span>
+                      <span className="text-[12px] text-[#9CA3AF]">
+                        ,{p.price.split(",")[1]}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-[#6B7280] mb-3">
+                      Nur <strong>{p.daily} am Tag</strong> · einmalig
+                    </div>
+                  </>
+                )}
 
                 <div
                   className={`mt-auto text-center font-semibold py-2.5 px-4 rounded-xl text-[13px] ${
@@ -209,7 +299,7 @@ export default function PlanOptionsCard({
                       : "bg-[#FAFAFA] text-[#1a1a1a] border border-[#EADDC5]"
                   }`}
                 >
-                  {isLoading ? "Lade…" : "Plan wählen →"}
+                  {isLoading ? t.loading : t.choose}
                 </div>
               </div>
             </button>
@@ -223,7 +313,7 @@ export default function PlanOptionsCard({
       {/* Trust + Payment-Logos kompakt */}
       <div className="bg-white border border-[#EADDC5] rounded-2xl p-4">
         <p className="text-[12px] text-[#15803D] font-semibold text-center mb-3">
-          🔒 30 Tage Geld-zurück · Sichere Zahlung über Mollie
+          {t.trust}
         </p>
         <div className="flex items-center justify-center gap-3 flex-wrap opacity-90">
           {/* eslint-disable-next-line @next/next/no-img-element */}

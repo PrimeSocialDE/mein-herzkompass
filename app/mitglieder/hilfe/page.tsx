@@ -40,6 +40,13 @@ const SUGGESTED_QUESTIONS = [
   'Mein Hund hört nicht auf seinen Namen draußen.',
 ];
 
+const SUGGESTED_QUESTIONS_PL = [
+  'Jak najlepiej ćwiczyć „siad" z psem?',
+  'Mój pies ciągnie na smyczy, co pomoże od razu?',
+  'Jak długo powinna trwać sesja treningowa?',
+  'Mój pies nie reaguje na swoje imię na dworze.',
+];
+
 const TRAINER_AVATAR = "/TrainerPfoten-thumb.png";
 
 // Fallback-Cleanup auf Client-Seite (falls API-Cleanup mal ausfällt).
@@ -106,6 +113,10 @@ export default function HilfePage() {
   const [buying, setBuying] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [isPL, setIsPL] = useState(false);
+  useEffect(() => {
+    if (/(^|\.)lapaplan\.pl$/i.test(window.location.hostname)) setIsPL(true);
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -175,7 +186,11 @@ export default function HilfePage() {
       setAttached(img);
       setError("");
     } catch {
-      setError("Bild konnte nicht geladen werden. Versuch ein anderes Foto.");
+      setError(
+        isPL
+          ? "Nie udało się wczytać zdjęcia. Spróbuj inne zdjęcie."
+          : "Bild konnte nicht geladen werden. Versuch ein anderes Foto."
+      );
     }
   }
 
@@ -199,7 +214,9 @@ export default function HilfePage() {
       return;
     }
 
-    const userText = trimmed || (image ? "Was fällt dir an meinem Hund auf?" : "");
+    const userText =
+      trimmed ||
+      (image ? (isPL ? "Co zauważasz u mojego psa?" : "Was fällt dir an meinem Hund auf?") : "");
     const prevMessages = messages;
     const newMessages: Message[] = [
       ...messages,
@@ -246,7 +263,7 @@ export default function HilfePage() {
         setInput(trimmed);
         setLimitInfo({ limit: data.limit, is_paid: !!data.is_paid });
       } else if (!res.ok || !data.reply) {
-        setError(data.error || "Konnte keine Antwort holen.");
+        setError(data.error || (isPL ? "Nie udało się uzyskać odpowiedzi." : "Konnte keine Antwort holen."));
       } else {
         const assistantMsg: Message = {
           role: "assistant",
@@ -261,7 +278,7 @@ export default function HilfePage() {
         if (data.usage && !data.usage.unlimited) setUsage(data.usage);
       }
     } catch {
-      setError("Verbindungsfehler. Versuch's gleich nochmal.");
+      setError(isPL ? "Błąd połączenia. Spróbuj zaraz jeszcze raz." : "Verbindungsfehler. Versuch's gleich nochmal.");
     } finally {
       setLoading(false);
     }
@@ -288,13 +305,64 @@ export default function HilfePage() {
         window.location.href = data.url;
       } else {
         setBuying(false);
-        setError(data?.error || "Checkout konnte nicht gestartet werden.");
+        setError(data?.error || (isPL ? "Nie udało się rozpocząć płatności." : "Checkout konnte nicht gestartet werden."));
       }
     } catch {
       setBuying(false);
-      setError("Verbindungsfehler beim Checkout.");
+      setError(isPL ? "Błąd połączenia podczas płatności." : "Verbindungsfehler beim Checkout.");
     }
   }
+
+  const t = isPL
+    ? {
+        headerTitle: "ŁapaPlan Trener AI",
+        statusAvailable: "dostępny 24/7",
+        photoActive: "★ Analiza zdjęć aktywna",
+        subtitle: "Nasza SI, wyszkolona wiedzą naszego zespołu trenerów psów",
+        greetingIntro: "Cześć! Zadaj mi pytanie o trening, a dam Ci konkretne kroki.",
+        greetingPremium: "Możesz też wysłać mi zdjęcie swojego psa.",
+        greetingFree: "Dzięki analizie zdjęć możesz nawet pokazać mi zdjęcie swojego psa.",
+        exampleQuestions: "Przykładowe pytania",
+        moduleHintTitle: "💡 Pasuje do Twojego tematu",
+        photoAttached: "Zdjęcie dołączone",
+        placeholderPhoto: "Pytanie do zdjęcia (opcjonalnie)…",
+        placeholderDefault: "Zapytaj nas o coś...",
+        attachPhoto: "Dołącz zdjęcie",
+        photoAnalysisPremium: "Analiza zdjęć (Premium)",
+        send: "Wyślij",
+        removePhoto: "Usuń zdjęcie",
+        dismissHint: "Ukryj wskazówkę",
+        badgeNew: "Nowość",
+        teaserLabel: "Analiza zdjęć:",
+        teaserText: "Pokaż trenerowi swojego psa i od razu otrzymaj ocenę.",
+        teamAlt: "Zespół trenerów ŁapaPlan",
+        teamHint: "SI wyszkolona przez prawdziwy zespół trenerów ŁapaPlan",
+      }
+    : {
+        headerTitle: "Pfoten-Plan KI-Trainer",
+        statusAvailable: "24/7 verfügbar",
+        photoActive: "★ Foto-Analyse aktiv",
+        subtitle: "Unsere KI, trainiert mit dem Wissen unseres Hundetrainer-Teams",
+        greetingIntro: "Hallo! Stell mir deine Frage zum Training, ich gebe dir konkrete Schritte.",
+        greetingPremium: "Du kannst mir auch ein Foto von deinem Hund schicken.",
+        greetingFree: "Mit der Foto-Analyse kannst du mir sogar ein Bild deines Hundes zeigen.",
+        exampleQuestions: "Beispiel-Fragen",
+        moduleHintTitle: "💡 Passend zu deinem Thema",
+        photoAttached: "Foto angehängt",
+        placeholderPhoto: "Frage zum Foto (optional)…",
+        placeholderDefault: "Frag uns was...",
+        attachPhoto: "Foto anhängen",
+        photoAnalysisPremium: "Foto-Analyse (Premium)",
+        send: "Senden",
+        removePhoto: "Foto entfernen",
+        dismissHint: "Hinweis ausblenden",
+        badgeNew: "Neu",
+        teaserLabel: "Foto-Analyse:",
+        teaserText: "Zeig dem Trainer deinen Hund und erhalte sofort eine Einschätzung.",
+        teamAlt: "Pfoten-Plan Trainer-Team",
+        teamHint: "KI trainiert vom echten Pfoten-Plan Trainer-Team",
+      };
+  const questions = isPL ? SUGGESTED_QUESTIONS_PL : SUGGESTED_QUESTIONS;
 
   return (
     <div className="flex flex-col h-[calc(100vh-160px)] md:h-[calc(100vh-100px)]">
@@ -302,20 +370,20 @@ export default function HilfePage() {
       <div className="bg-white border border-[#EADDC5] rounded-2xl px-4 py-3 mb-3">
         <div className="flex items-center gap-2 mb-0.5 flex-wrap">
           <p className="text-[15px] font-bold text-[#1a1a1a] leading-tight">
-            Pfoten-Plan KI-Trainer
+            {t.headerTitle}
           </p>
           <span className="inline-flex items-center gap-1 text-[10px] text-[#15803D] font-semibold">
             <span className="w-1.5 h-1.5 bg-[#22C55E] rounded-full"></span>
-            24/7 verfügbar
+            {t.statusAvailable}
           </span>
           {coachPremium && (
             <span className="inline-flex items-center gap-1 text-[10px] text-[#8B7355] font-bold bg-[#FFF4E0] border border-[#EADDC5] rounded-full px-2 py-0.5">
-              ★ Foto-Analyse aktiv
+              {t.photoActive}
             </span>
           )}
         </div>
         <p className="text-[11px] text-[#6B7280] leading-snug">
-          Unsere KI, trainiert mit dem Wissen unseres Hundetrainer-Teams
+          {t.subtitle}
         </p>
       </div>
 
@@ -335,21 +403,18 @@ export default function HilfePage() {
               />
               <div className="bg-[#FFF9F0] border border-[#EADDC5] rounded-2xl rounded-bl-sm px-4 py-3 max-w-[85%]">
                 <p className="text-[13px] text-[#5A4A3A] leading-relaxed">
-                  Hallo! Stell mir deine Frage zum Training, ich gebe dir
-                  konkrete Schritte.{" "}
-                  {coachPremium
-                    ? "Du kannst mir auch ein Foto von deinem Hund schicken."
-                    : "Mit der Foto-Analyse kannst du mir sogar ein Bild deines Hundes zeigen."}
+                  {t.greetingIntro}{" "}
+                  {coachPremium ? t.greetingPremium : t.greetingFree}
                 </p>
               </div>
             </div>
 
             <div className="pt-1">
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-2">
-                Beispiel-Fragen
+                {t.exampleQuestions}
               </p>
               <div className="space-y-1.5">
-                {SUGGESTED_QUESTIONS.map((q) => (
+                {questions.map((q) => (
                   <button
                     key={q}
                     onClick={() => send(q)}
@@ -370,29 +435,49 @@ export default function HilfePage() {
               <div className="ml-9 mt-2 mb-1 bg-[#FFF9F0] border border-[#EADDC5] rounded-2xl px-4 py-3">
                 <button
                   onClick={() => setDismissedModule(true)}
-                  aria-label="Hinweis ausblenden"
+                  aria-label={t.dismissHint}
                   className="float-right text-[#C4B998] hover:text-[#8B7355] text-[16px] leading-none -mt-0.5"
                 >
                   ×
                 </button>
                 <p className="text-[12px] text-[#8B7355] font-semibold mb-1">
-                  💡 Passend zu deinem Thema
+                  {t.moduleHintTitle}
                 </p>
                 <p className="text-[13px] text-[#4B5563] leading-relaxed mb-2">
-                  Dazu haben wir das Modul <strong>„{m.suggestedModule.title}"</strong> —
-                  mit deutlich <strong>mehr und individuelleren Übungen</strong> (
-                  {m.suggestedModule.goal.toLowerCase()}), Schritt für Schritt. Kein Muss,
-                  ich helfe dir hier natürlich auch weiter.
+                  {isPL ? (
+                    <>
+                      Do tego mamy moduł <strong>„{m.suggestedModule.title}"</strong> —
+                      z wyraźnie <strong>większą liczbą bardziej indywidualnych ćwiczeń</strong> (
+                      {m.suggestedModule.goal.toLowerCase()}), krok po kroku. Bez przymusu,
+                      tutaj też oczywiście Ci pomogę.
+                    </>
+                  ) : (
+                    <>
+                      Dazu haben wir das Modul <strong>„{m.suggestedModule.title}"</strong> —
+                      mit deutlich <strong>mehr und individuelleren Übungen</strong> (
+                      {m.suggestedModule.goal.toLowerCase()}), Schritt für Schritt. Kein Muss,
+                      ich helfe dir hier natürlich auch weiter.
+                    </>
+                  )}
                 </p>
                 <a
                   href="/mitglieder/module"
                   className="inline-block text-[13px] font-semibold text-[#C4A576] hover:underline"
                 >
-                  Modul ansehen (
-                  {(m.suggestedModule.price_cents / 100)
-                    .toFixed(2)
-                    .replace(".", ",")}{" "}
-                  €) →
+                  {isPL ? (
+                    <>
+                      Zobacz moduł (
+                      {Math.round((m.suggestedModule.price_cents / 100) * 4)} zł) →
+                    </>
+                  ) : (
+                    <>
+                      Modul ansehen (
+                      {(m.suggestedModule.price_cents / 100)
+                        .toFixed(2)
+                        .replace(".", ",")}{" "}
+                      €) →
+                    </>
+                  )}
                 </a>
               </div>
             )}
@@ -427,11 +512,11 @@ export default function HilfePage() {
         <div className="flex items-center gap-2 mb-2 bg-white border border-[#EADDC5] rounded-xl px-3 py-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={attached.previewUrl} alt="Vorschau" className="w-12 h-12 rounded-lg object-cover" />
-          <span className="text-[12px] text-[#6B7280] flex-1">Foto angehängt</span>
+          <span className="text-[12px] text-[#6B7280] flex-1">{t.photoAttached}</span>
           <button
             onClick={() => setAttached(null)}
             className="text-[#9CA3AF] hover:text-[#B91C1C] text-[18px] leading-none px-1"
-            aria-label="Foto entfernen"
+            aria-label={t.removePhoto}
           >
             ×
           </button>
@@ -458,8 +543,8 @@ export default function HilfePage() {
           onClick={onAttachClick}
           disabled={loading}
           className="flex-shrink-0 w-12 rounded-xl border border-[#E5E7EB] bg-white text-[#8B7355] hover:bg-[#FAF4E8] disabled:opacity-50 transition flex items-center justify-center relative"
-          aria-label="Foto anhängen"
-          title={coachPremium ? "Foto anhängen" : "Foto-Analyse (Premium)"}
+          aria-label={t.attachPhoto}
+          title={coachPremium ? t.attachPhoto : t.photoAnalysisPremium}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
           {!coachPremium && (
@@ -470,7 +555,7 @@ export default function HilfePage() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={attached ? "Frage zum Foto (optional)…" : "Frag uns was..."}
+          placeholder={attached ? t.placeholderPhoto : t.placeholderDefault}
           disabled={loading}
           className="flex-1 px-4 py-3 rounded-xl border border-[#E5E7EB] bg-white text-[14px] focus:outline-none focus:border-[#C4A576] focus:ring-3 focus:ring-[#C4A576]/15 transition disabled:opacity-60"
         />
@@ -478,7 +563,7 @@ export default function HilfePage() {
           type="submit"
           disabled={loading || (!input.trim() && !attached)}
           className="bg-[#C4A576] hover:bg-[#B5946A] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-5 rounded-xl text-[14px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
-          aria-label="Senden"
+          aria-label={t.send}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
@@ -492,8 +577,8 @@ export default function HilfePage() {
         >
           <span className="text-[20px] leading-none flex-shrink-0">📷</span>
           <span className="flex-1 text-[12.5px] text-[#5A4A3A] leading-snug">
-            <span className="inline-block bg-[#C4A576] text-white text-[9px] font-bold uppercase tracking-wider rounded px-1.5 py-0.5 mr-1.5 align-middle">Neu</span>
-            <strong className="text-[#1a1a1a]">Foto-Analyse:</strong> Zeig dem Trainer deinen Hund und erhalte sofort eine Einschätzung.
+            <span className="inline-block bg-[#C4A576] text-white text-[9px] font-bold uppercase tracking-wider rounded px-1.5 py-0.5 mr-1.5 align-middle">{t.badgeNew}</span>
+            <strong className="text-[#1a1a1a]">{t.teaserLabel}</strong> {t.teaserText}
           </span>
           <span className="text-[#C4A576] font-bold text-[16px] flex-shrink-0">→</span>
         </button>
@@ -504,23 +589,32 @@ export default function HilfePage() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={TRAINER_AVATAR}
-          alt="Pfoten-Plan Trainer-Team"
+          alt={t.teamAlt}
           className="w-7 h-7 rounded-full object-cover flex-shrink-0 opacity-80"
         />
         <p className="text-[10px] leading-snug">
-          KI trainiert vom echten Pfoten-Plan Trainer-Team
+          {t.teamHint}
         </p>
       </div>
 
       {usage && usage.remaining > 0 && (
         <p className="text-[11px] text-[#9CA3AF] text-center mt-2">
-          Noch {usage.remaining} von {usage.limit} kostenlosen Fragen.
-          Danach: Plan freischalten für unbegrenzten Chat.
+          {isPL ? (
+            <>
+              Jeszcze {usage.remaining} z {usage.limit} darmowych pytań.
+              Potem: odblokuj plan i korzystaj z czatu bez limitu.
+            </>
+          ) : (
+            <>
+              Noch {usage.remaining} von {usage.limit} kostenlosen Fragen.
+              Danach: Plan freischalten für unbegrenzten Chat.
+            </>
+          )}
         </p>
       )}
 
       {limitInfo && (
-        <LimitModal info={limitInfo} onClose={() => setLimitInfo(null)} />
+        <LimitModal info={limitInfo} onClose={() => setLimitInfo(null)} isPL={isPL} />
       )}
       {showPaywall && (
         <CoachPaywall
@@ -528,6 +622,7 @@ export default function HilfePage() {
           buying={buying}
           onBuy={buyCoachPremium}
           onClose={() => setShowPaywall(false)}
+          isPL={isPL}
         />
       )}
     </div>
@@ -539,13 +634,32 @@ function CoachPaywall({
   buying,
   onBuy,
   onClose,
+  isPL,
 }: {
   dogName: string | null;
   buying: boolean;
   onBuy: () => void;
   onClose: () => void;
+  isPL: boolean;
 }) {
-  const dog = dogName || "deinem Hund";
+  const dog = dogName || (isPL ? "Twoim psem" : "deinem Hund");
+  const c = isPL
+    ? {
+        alt: "Zespół trenerów ŁapaPlan",
+        heading: "Odblokuj analizę zdjęć",
+        bullet1: "Analiza zdjęć i filmów Twojego psa",
+        bullet2: "„Czy robię to dobrze?” — natychmiastowa odpowiedź, 24/7",
+        bullet3: "30 dni bez limitu, jednorazowo zamiast abonamentu",
+        later: "Później",
+      }
+    : {
+        alt: "Pfoten-Plan Trainer-Team",
+        heading: "Foto-Analyse freischalten",
+        bullet1: "Foto & Video deines Hundes analysieren lassen",
+        bullet2: `„Mach ich's richtig?" — sofortiges Feedback, 24/7`,
+        bullet3: "30 Tage unbegrenzt, einmalig statt Abo",
+        later: "Später",
+      };
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
@@ -559,16 +673,26 @@ function CoachPaywall({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={TRAINER_AVATAR}
-            alt="Pfoten-Plan Trainer-Team"
+            alt={c.alt}
             className="w-20 h-20 rounded-full object-cover border-3 border-[#C4A576] mx-auto mb-3 shadow-md"
           />
           <h2 className="text-[18px] font-extrabold text-[#1a1a1a] mb-1 leading-tight">
-            Foto-Analyse freischalten
+            {c.heading}
           </h2>
           <p className="text-[13px] text-[#6B7280] leading-relaxed">
-            Schick dem Trainer ein Foto oder Video von {dog} in der Situation und
-            erhalte sofort eine persönliche Einschätzung zur Körpersprache plus
-            konkrete Tipps. <strong>30 Tage, so oft du willst.</strong>
+            {isPL ? (
+              <>
+                Wyślij trenerowi zdjęcie lub film z {dog} w danej sytuacji i od razu
+                otrzymaj osobistą ocenę mowy ciała oraz konkretne wskazówki.{" "}
+                <strong>30 dni, tak często, jak chcesz.</strong>
+              </>
+            ) : (
+              <>
+                Schick dem Trainer ein Foto oder Video von {dog} in der Situation und
+                erhalte sofort eine persönliche Einschätzung zur Körpersprache plus
+                konkrete Tipps. <strong>30 Tage, so oft du willst.</strong>
+              </>
+            )}
           </p>
         </div>
 
@@ -576,22 +700,31 @@ function CoachPaywall({
           <ul className="space-y-1.5 text-[13px] text-[#1a1a1a]">
             <li className="flex gap-2 items-start">
               <span className="text-[#C4A576] flex-shrink-0">✓</span>
-              <span>Foto &amp; Video deines Hundes analysieren lassen</span>
+              <span>{c.bullet1}</span>
             </li>
             <li className="flex gap-2 items-start">
               <span className="text-[#C4A576] flex-shrink-0">✓</span>
-              <span>„Mach ich's richtig?" — sofortiges Feedback, 24/7</span>
+              <span>{c.bullet2}</span>
             </li>
             <li className="flex gap-2 items-start">
               <span className="text-[#C4A576] flex-shrink-0">✓</span>
-              <span>30 Tage unbegrenzt, einmalig statt Abo</span>
+              <span>{c.bullet3}</span>
             </li>
           </ul>
         </div>
 
         <p className="text-center text-[12px] text-[#9CA3AF] mb-3">
-          Eine einzige Hundestunde kostet 80&nbsp;€.{" "}
-          <span className="text-[#1a1a1a] font-semibold">Hier: 19&nbsp;€.</span>
+          {isPL ? (
+            <>
+              Jedna godzina z trenerem kosztuje 299&nbsp;zł.{" "}
+              <span className="text-[#1a1a1a] font-semibold">Tutaj: 79&nbsp;zł.</span>
+            </>
+          ) : (
+            <>
+              Eine einzige Hundestunde kostet 80&nbsp;€.{" "}
+              <span className="text-[#1a1a1a] font-semibold">Hier: 19&nbsp;€.</span>
+            </>
+          )}
         </p>
 
         <div className="flex flex-col gap-2">
@@ -600,13 +733,19 @@ function CoachPaywall({
             disabled={buying}
             className="block text-center bg-[#C4A576] hover:bg-[#B5946A] disabled:opacity-60 text-white font-semibold py-3 px-5 rounded-xl text-[14px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
           >
-            {buying ? "Wird geöffnet…" : "Foto-Analyse freischalten · 19 €"}
+            {buying
+              ? isPL
+                ? "Otwieram…"
+                : "Wird geöffnet…"
+              : isPL
+              ? "Odblokuj analizę zdjęć · 79 zł"
+              : "Foto-Analyse freischalten · 19 €"}
           </button>
           <button
             onClick={onClose}
             className="text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a] py-1"
           >
-            Später
+            {c.later}
           </button>
         </div>
       </div>
@@ -617,10 +756,33 @@ function CoachPaywall({
 function LimitModal({
   info,
   onClose,
+  isPL,
 }: {
   info: LimitInfo;
   onClose: () => void;
+  isPL: boolean;
 }) {
+  const l = isPL
+    ? {
+        alt: "Zespół trenerów ŁapaPlan",
+        heading: "Odblokuj Trenera AI",
+        included: "W planie zawarte",
+        bullet1: "Nieograniczone pytania do Trenera AI",
+        bullet2: "Wszystkie moduły treningowe krok po kroku",
+        bullet3: "Kup raz, korzystaj na stałe",
+        cta: "Odblokuj plan",
+        later: "Później",
+      }
+    : {
+        alt: "Pfoten-Plan Trainer-Team",
+        heading: "Schalte den KI-Trainer frei",
+        included: "Im Plan enthalten",
+        bullet1: "Unbegrenzte Fragen an den KI-Trainer",
+        bullet2: "Alle Trainings-Module Schritt für Schritt",
+        bullet3: "Einmal kaufen, dauerhaft nutzen",
+        cta: "Plan freischalten",
+        later: "Später",
+      };
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
@@ -634,35 +796,45 @@ function LimitModal({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={TRAINER_AVATAR}
-            alt="Pfoten-Plan Trainer-Team"
+            alt={l.alt}
             className="w-20 h-20 rounded-full object-cover border-3 border-[#C4A576] mx-auto mb-3 shadow-md"
           />
           <h2 className="text-[18px] font-extrabold text-[#1a1a1a] mb-1 leading-tight">
-            Schalte den KI-Trainer frei
+            {l.heading}
           </h2>
           <p className="text-[13px] text-[#6B7280] leading-relaxed">
-            Du hast deine {info.limit} kostenlosen Test-Fragen genutzt.
-            Mit einem Pfoten-Plan nutzt du unseren KI-Trainer{" "}
-            <strong>unbegrenzt</strong>, plus den vollen Trainings-Plan.
+            {isPL ? (
+              <>
+                Twoje {info.limit} darmowych pytań testowych zostało wykorzystane.
+                Z planem ŁapaPlan korzystasz z naszego Trenera AI{" "}
+                <strong>bez limitu</strong>, plus pełny plan treningowy.
+              </>
+            ) : (
+              <>
+                Du hast deine {info.limit} kostenlosen Test-Fragen genutzt.
+                Mit einem Pfoten-Plan nutzt du unseren KI-Trainer{" "}
+                <strong>unbegrenzt</strong>, plus den vollen Trainings-Plan.
+              </>
+            )}
           </p>
         </div>
 
         <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-xl p-4 mb-4">
           <p className="text-[11px] font-bold text-[#8B7355] uppercase tracking-wider mb-2">
-            Im Plan enthalten
+            {l.included}
           </p>
           <ul className="space-y-1.5 text-[13px] text-[#1a1a1a]">
             <li className="flex gap-2 items-start">
               <span className="text-[#C4A576] flex-shrink-0">✓</span>
-              <span>Unbegrenzte Fragen an den KI-Trainer</span>
+              <span>{l.bullet1}</span>
             </li>
             <li className="flex gap-2 items-start">
               <span className="text-[#C4A576] flex-shrink-0">✓</span>
-              <span>Alle Trainings-Module Schritt für Schritt</span>
+              <span>{l.bullet2}</span>
             </li>
             <li className="flex gap-2 items-start">
               <span className="text-[#C4A576] flex-shrink-0">✓</span>
-              <span>Einmal kaufen, dauerhaft nutzen</span>
+              <span>{l.bullet3}</span>
             </li>
           </ul>
         </div>
@@ -672,13 +844,13 @@ function LimitModal({
             href="/mitglieder/upgrade"
             className="block text-center bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-3 px-5 rounded-xl text-[14px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
           >
-            Plan freischalten
+            {l.cta}
           </a>
           <button
             onClick={onClose}
             className="text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a] py-1"
           >
-            Später
+            {l.later}
           </button>
         </div>
       </div>

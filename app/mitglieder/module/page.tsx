@@ -13,6 +13,7 @@ import { THEMEN_MODULES, sortByUserRelevance } from "@/lib/member-themen";
 import UpsellFlipCard from "@/components/mitglieder/UpsellFlipCard";
 import ClubAboCard from "@/components/mitglieder/ClubAboCard";
 import { getClubStateForEmail } from "@/lib/club";
+import { getMemberLang } from "@/lib/member-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -104,8 +105,53 @@ export default async function ModulShopPage() {
     email: user.email || "",
   });
 
+  const lang = await getMemberLang(user?.email ?? member?.email ?? null);
+  const tr =
+    lang === "pl"
+      ? {
+          eyebrow: "Przegląd modułów",
+          heading: "Wszystkie moduły dla",
+          subtitle: "Twój plan treningowy plus dodatkowe tematy specjalne.",
+          clubAllFree: "Wszystkie moduły są odblokowane 🎉",
+          themenTitle: "Moduły tematyczne",
+          themenAvail: "dostępnych · Dotknij karty, aby zobaczyć szczegóły",
+          howTitle: "Jak działają moduły tematyczne?",
+          howText:
+            "Treningi specjalne na wybrane tematy. Kupujesz raz, dostępne na zawsze — jako PDF w skrzynce i tutaj w strefie członkowskiej.",
+          stepChoose: "Wybierz moduł i kup",
+          stepPdf: "Od razu PDF w skrzynce",
+          stepForever: "Dostępne na zawsze",
+          unlocked: "✅ Odblokowane",
+          lockedSoon: "🔒 Wkrótce dostępne",
+          forYou: "Dla Ciebie",
+          moreTitle: "Więcej modułów",
+          moreSub: "Poradniki specjalne jako PDF",
+          trust: "🔒 Bezpieczna płatność przez Mollie · Od razu PDF w skrzynce",
+        }
+      : {
+          eyebrow: "Modul-Übersicht",
+          heading: "Alle Module für",
+          subtitle: "Dein Trainings-Plan plus zusätzliche Spezial-Themen.",
+          clubAllFree: "Alle Module sind freigeschaltet 🎉",
+          themenTitle: "Themen-Module",
+          themenAvail: "verfügbar · Tipp auf eine Karte für Details",
+          howTitle: "Wie funktionieren Themen-Module?",
+          howText:
+            "Spezial-Trainings zu einzelnen Themen. Einmal kaufen, dauerhaft verfügbar — als PDF im Postfach und hier im Mitgliederbereich.",
+          stepChoose: "Modul wählen & kaufen",
+          stepPdf: "Sofort PDF im Postfach",
+          stepForever: "Lebenslang abrufbar",
+          unlocked: "✅ Freigeschaltet",
+          lockedSoon: "🔒 Schaltet bald frei",
+          forYou: "Für dich",
+          moreTitle: "Weitere Module",
+          moreSub: "Spezial-Guides als PDF",
+          trust: "🔒 Sichere Zahlung über Mollie · Sofort als PDF im Postfach",
+        };
+
   const upsells = await listActiveUpsells();
-  const dog = member.dog_name?.trim() || "deinen Hund";
+  const dog =
+    member.dog_name?.trim() || (lang === "pl" ? "Twojego psa" : "deinen Hund");
 
   // Themen-Module sortiert nach User-Relevanz (eigenes Quiz-Problem zuerst)
   const userProblemKey =
@@ -136,13 +182,13 @@ export default async function ModulShopPage() {
       {/* Header */}
       <div className="mb-6">
         <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
-          Modul-Übersicht
+          {tr.eyebrow}
         </p>
         <h1 className="text-[22px] md:text-[28px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
-          Alle Module für {dog}
+          {tr.heading} {dog}
         </h1>
         <p className="text-[13px] text-[#4B5563] mt-1.5 leading-relaxed">
-          Dein Trainings-Plan plus zusätzliche Spezial-Themen.
+          {tr.subtitle}
         </p>
       </div>
 
@@ -162,12 +208,16 @@ export default async function ModulShopPage() {
           <span className="text-[26px]">⭐</span>
           <div>
             <p className="text-[13px] font-extrabold text-[#1a1a1a] leading-tight">
-              Dein Club ist aktiv — {clubUnlocked.size} von {themenModules.length} Modulen frei
+              {lang === "pl"
+                ? `Twój Klub jest aktywny — ${clubUnlocked.size} z ${themenModules.length} modułów odblokowanych`
+                : `Dein Club ist aktiv — ${clubUnlocked.size} von ${themenModules.length} Modulen frei`}
             </p>
             <p className="text-[12px] text-[#8B7355] mt-0.5">
               {clubNextUnlockAt
-                ? `Nächstes Modul schaltet sich am ${new Date(clubNextUnlockAt).toLocaleDateString("de-DE")} frei.`
-                : "Alle Module sind freigeschaltet 🎉"}
+                ? lang === "pl"
+                  ? `Następny moduł odblokuje się ${new Date(clubNextUnlockAt).toLocaleDateString("de-DE")}.`
+                  : `Nächstes Modul schaltet sich am ${new Date(clubNextUnlockAt).toLocaleDateString("de-DE")} frei.`
+                : tr.clubAllFree}
             </p>
           </div>
         </div>
@@ -180,10 +230,10 @@ export default async function ModulShopPage() {
       {/* ── Section 2: Themen-Module ───────────────────────────────── */}
       <section className="mb-10">
         <h2 className="text-[22px] md:text-[26px] font-extrabold text-[#1a1a1a] leading-tight">
-          Themen-Module
+          {tr.themenTitle}
         </h2>
         <p className="text-[12px] text-[#9CA3AF] mt-1 mb-3">
-          {themenModules.length} verfügbar · Tipp auf eine Karte für Details
+          {themenModules.length} {tr.themenAvail}
         </p>
 
         {/* Erklaer-Block: was sind die, wie laeufts ab */}
@@ -191,18 +241,17 @@ export default async function ModulShopPage() {
           <div className="flex items-center gap-2 mb-1.5">
             <span className="text-[18px]">💡</span>
             <p className="text-[13px] font-bold text-[#1a1a1a]">
-              Wie funktionieren Themen-Module?
+              {tr.howTitle}
             </p>
           </div>
           <p className="text-[12px] text-[#4B5563] leading-relaxed mb-3">
-            Spezial-Trainings zu einzelnen Themen. Einmal kaufen, dauerhaft
-            verfügbar — als PDF im Postfach und hier im Mitgliederbereich.
+            {tr.howText}
           </p>
           <div className="grid grid-cols-3 gap-2">
             {[
-              { icon: "🛒", text: "Modul wählen & kaufen" },
-              { icon: "📧", text: "Sofort PDF im Postfach" },
-              { icon: "♾️", text: "Lebenslang abrufbar" },
+              { icon: "🛒", text: tr.stepChoose },
+              { icon: "📧", text: tr.stepPdf },
+              { icon: "♾️", text: tr.stepForever },
             ].map((s) => (
               <div
                 key={s.text}
@@ -255,7 +304,7 @@ export default async function ModulShopPage() {
                         unlocked ? "text-[#16A34A]" : "text-[#9CA3AF]"
                       }`}
                     >
-                      {unlocked ? "✅ Freigeschaltet" : "🔒 Schaltet bald frei"}
+                      {unlocked ? tr.unlocked : tr.lockedSoon}
                     </p>
                   </div>
                 </div>
@@ -274,7 +323,7 @@ export default async function ModulShopPage() {
                   description: t.short,
                   badge_text:
                     t.problem_match === userProblemKey
-                      ? "Für dich"
+                      ? tr.forYou
                       : t.badge_text,
                   price_cents: t.price_cents,
                   image_url: t.image_url || null,
@@ -295,10 +344,10 @@ export default async function ModulShopPage() {
       {upsells.length > 0 && (
         <section className="mb-8">
           <h2 className="text-[20px] md:text-[22px] font-extrabold text-[#1a1a1a] leading-tight">
-            Weitere Module
+            {tr.moreTitle}
           </h2>
           <p className="text-[12px] text-[#9CA3AF] mt-1 mb-3">
-            Spezial-Guides als PDF
+            {tr.moreSub}
           </p>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -327,7 +376,7 @@ export default async function ModulShopPage() {
 
       {/* Trust-Hinweis */}
       <p className="text-[11px] text-[#9CA3AF] text-center mb-4">
-        🔒 Sichere Zahlung über Mollie · Sofort als PDF im Postfach
+        {tr.trust}
       </p>
     </>
   );

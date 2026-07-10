@@ -4,6 +4,7 @@
 // sofort eine erste Übung — kein "kauf jetzt" als erstes Bild.
 
 import Link from "next/link";
+import { getMemberLang } from "@/lib/member-lang";
 import { getCurrentMember } from "@/lib/member-auth-server";
 import {
   getOrCreateMemberProfile,
@@ -69,6 +70,8 @@ export default async function MitgliederDashboard({
     );
   }
 
+  const lang = await getMemberLang(user?.email ?? null);
+
   let member: MemberProfile;
   try {
     member = await getOrCreateMemberProfile({
@@ -78,7 +81,9 @@ export default async function MitgliederDashboard({
   } catch (e) {
     return (
       <div className="bg-[#FEF2F2] border border-[#FECACA] text-[#B91C1C] rounded-xl p-5 text-[14px]">
-        Profil konnte nicht geladen werden. Bitte später nochmal versuchen.
+        {lang === "pl"
+          ? "Nie udało się załadować profilu. Spróbuj ponownie później."
+          : "Profil konnte nicht geladen werden. Bitte später nochmal versuchen."}
       </div>
     );
   }
@@ -89,7 +94,7 @@ export default async function MitgliederDashboard({
     getLatestPlanContent(user.id, member.email, "trainingsplan"),
     listPurchasedZusatzmodule(member.email),
   ]);
-  const dog = member.dog_name || "deinem Hund";
+  const dog = member.dog_name || (lang === "pl" ? "Twojego psa" : "deinem Hund");
   // Test-Preview: zwingt Free-View auch fuer Paid-User. Production:
   // Recovery-Klick passiert i.d.R. von einem free User -> Free-View
   // wird automatisch genommen.
@@ -119,8 +124,10 @@ export default async function MitgliederDashboard({
   // irrefuehrend (Max ist meist der Hund, nicht der User).
   const dogNameTrimmed = member.dog_name?.trim() || null;
   const greeting = dogNameTrimmed
-    ? `Schön dass ${dogNameTrimmed} da ist`
-    : "Schön dass ihr da seid";
+    ? (lang === "pl"
+        ? `Miło, że ${dogNameTrimmed} jest z nami`
+        : `Schön dass ${dogNameTrimmed} da ist`)
+    : (lang === "pl" ? "Miło, że jesteście" : "Schön dass ihr da seid");
 
   // Problem-Label aus Quiz für Kontext
   const problemKey =
@@ -141,7 +148,8 @@ export default async function MitgliederDashboard({
       <>
         <Header
           greeting={greeting}
-          subtitle={`Hier ist euer Plan für die nächsten Wochen.`}
+          subtitle={lang === "pl" ? `Oto Wasz plan na najbliższe tygodnie.` : `Hier ist euer Plan für die nächsten Wochen.`}
+          lang={lang}
         />
 
         {justBought && <PurchaseSuccessBanner hasRichPlan={hasRichPlan} />}
@@ -166,7 +174,7 @@ export default async function MitgliederDashboard({
         {/* Wochen-Plan — bevorzugt personalisiert aus member_plan_content */}
         <div className="mb-8">
           <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-3">
-            Dein Trainings-Plan, Woche für Woche
+            {lang === "pl" ? "Twój plan treningowy, tydzień po tygodniu" : "Dein Trainings-Plan, Woche für Woche"}
           </h2>
           {hasRichPlan && richPlan ? (
             <div className="space-y-3">
@@ -203,9 +211,9 @@ export default async function MitgliederDashboard({
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355]">
-                          Woche {w.num}
+                          {lang === "pl" ? "Tydzień" : "Woche"} {w.num}
                           {isCurrent && (
-                            <span className="ml-2 normal-case font-bold text-[#C4A576]">· Aktuell</span>
+                            <span className="ml-2 normal-case font-bold text-[#C4A576]">{lang === "pl" ? "· Teraz" : "· Aktuell"}</span>
                           )}
                         </p>
                         <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight">
@@ -230,11 +238,11 @@ export default async function MitgliederDashboard({
                                   allFrei ? "text-[#1a1a1a]" : "text-[#6B7280]"
                                 }`}
                               >
-                                Übung {idx + 1}: {u.name}
+                                {lang === "pl" ? "Ćwiczenie" : "Übung"} {idx + 1}: {u.name}
                               </p>
                               {Array.isArray(u.schritte) && u.schritte.length > 0 && (
                                 <p className="text-[11px] text-[#9CA3AF] line-clamp-1 mt-0.5">
-                                  {u.schritte.length} Schritt-für-Schritt-Anweisungen
+                                  {u.schritte.length} {lang === "pl" ? "instrukcji krok po kroku" : "Schritt-für-Schritt-Anweisungen"}
                                 </p>
                               )}
                             </div>
@@ -243,7 +251,7 @@ export default async function MitgliederDashboard({
                                 href={`/mitglieder/erfolge/coaching#week-${w.num}`}
                                 className="flex-shrink-0 text-[11px] font-semibold text-[#1a1a1a] hover:text-[#8B7355]"
                               >
-                                Öffnen →
+                                {lang === "pl" ? "Otwórz →" : "Öffnen →"}
                               </Link>
                             ) : (
                               <span className="flex-shrink-0">
@@ -264,10 +272,10 @@ export default async function MitgliederDashboard({
         </div>
 
         {purchasedZusatzmodule.length > 0 && (
-          <PurchasedZusatzmoduleSection modules={purchasedZusatzmodule} />
+          <PurchasedZusatzmoduleSection modules={purchasedZusatzmodule} lang={lang} />
         )}
 
-        {upsells.length > 0 && <UpsellSection upsells={upsells} />}
+        {upsells.length > 0 && <UpsellSection upsells={upsells} lang={lang} />}
 
         {/* Onboarding-Tutorial fuer Erstbesucher (auch Paid) */}
         <OnboardingTutorial dogName={member.dog_name} />
@@ -293,7 +301,7 @@ export default async function MitgliederDashboard({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/Hero2Plan.png"
-          alt="Mit Freude zum besseren Hund"
+          alt={lang === "pl" ? "Z radością do lepszego psa" : "Mit Freude zum besseren Hund"}
           className="w-full aspect-[16/7] object-cover object-center"
         />
       </div>
@@ -335,16 +343,18 @@ export default async function MitgliederDashboard({
 
         {/* Erklaerung: was kommt unten */}
         <p className="text-[13px] text-[#4B5563] leading-relaxed mb-3">
-          Unten findest du die <strong className="text-[#1a1a1a]">erste Übung aus deinem Plan</strong>.
-          Es ist ein Wochen-Programm: jede Übung baut auf der vorherigen
-          auf, du machst sie in deinem eigenen Tempo.
+          {lang === "pl" ? "Poniżej znajdziesz " : "Unten findest du die "}
+          <strong className="text-[#1a1a1a]">{lang === "pl" ? "pierwsze ćwiczenie z Twojego planu" : "erste Übung aus deinem Plan"}</strong>
+          {lang === "pl"
+            ? ". To program tygodniowy: każde ćwiczenie opiera się na poprzednim, wykonujesz je we własnym tempie."
+            : ". Es ist ein Wochen-Programm: jede Übung baut auf der vorherigen auf, du machst sie in deinem eigenen Tempo."}
         </p>
 
         {/* Wochen-Position-Badge */}
         <div className="inline-flex items-center gap-2 bg-[#FFF9F0] border border-[#EADDC5] rounded-full px-3 py-1.5">
           <span className="text-[14px]">📍</span>
           <span className="text-[12px] font-bold text-[#8B7355] uppercase tracking-wider">
-            Woche 1 · Übung 1 von 4
+            {lang === "pl" ? "Tydzień 1 · Ćwiczenie 1 z 4" : "Woche 1 · Übung 1 von 4"}
           </span>
         </div>
       </div>
@@ -383,7 +393,7 @@ export default async function MitgliederDashboard({
       {modules.filter((m) => m.is_free).length > 1 && (
         <div className="mb-8">
           <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-3">
-            Mehr kostenlose Übungen
+            {lang === "pl" ? "Więcej darmowych ćwiczeń" : "Mehr kostenlose Übungen"}
           </h2>
           <ModuleGrid
             modules={modules.filter((m) => m.is_free && m.slug !== firstFree?.slug)}
@@ -395,27 +405,27 @@ export default async function MitgliederDashboard({
       {/* Soft-Bridge zum vollen Plan — kompakt */}
       <div className="bg-gradient-to-br from-[#FFF9F0] to-[#FAF4E8] border border-[#EADDC5] rounded-2xl p-5 mb-8">
         <h3 className="text-[18px] font-extrabold text-[#1a1a1a] mb-3 leading-tight">
-          {modules.length} Module für {dog} — der volle Plan
+          {lang === "pl" ? `${modules.length} modułów dla ${dog} — pełny plan` : `${modules.length} Module für ${dog} — der volle Plan`}
         </h3>
         <ul className="space-y-1.5 mb-4 text-[13px] text-[#1a1a1a]">
           <li className="flex gap-2 items-start">
             <span className="text-[#C4A576] flex-shrink-0">📚</span>
-            <span>Schritt-für-Schritt-Übungen</span>
+            <span>{lang === "pl" ? "Ćwiczenia krok po kroku" : "Schritt-für-Schritt-Übungen"}</span>
           </li>
           <li className="flex gap-2 items-start">
             <span className="text-[#C4A576] flex-shrink-0">🤖</span>
-            <span>KI-Trainer rund um die Uhr</span>
+            <span>{lang === "pl" ? "Trener AI przez całą dobę" : "KI-Trainer rund um die Uhr"}</span>
           </li>
           <li className="flex gap-2 items-start">
             <span className="text-[#C4A576] flex-shrink-0">🏆</span>
-            <span>Wöchentliche Herausforderungen &amp; Abzeichen</span>
+            <span>{lang === "pl" ? "Cotygodniowe wyzwania i odznaki" : "Wöchentliche Herausforderungen & Abzeichen"}</span>
           </li>
         </ul>
         <Link
           href={previewFreeView ? "/mitglieder/upgrade?preview=free" : "/mitglieder/upgrade"}
           className="inline-block bg-[#C4A576] hover:bg-[#B5946A] text-white font-semibold py-2.5 px-5 rounded-xl text-[13px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
         >
-          Plan ansehen
+          {lang === "pl" ? "Zobacz plan" : "Plan ansehen"}
         </Link>
       </div>
 
@@ -437,7 +447,7 @@ export default async function MitgliederDashboard({
             {breedNote && (
               <div className="bg-[#FFF9F0] border-l-4 border-[#C4A576] rounded-r-lg px-4 py-2.5 mb-4">
                 <p className="text-[12px] text-[#5A4A3A] leading-relaxed">
-                  <strong className="text-[#8B7355]">Zur Rasse:</strong>{" "}
+                  <strong className="text-[#8B7355]">{lang === "pl" ? "O rasie:" : "Zur Rasse:"}</strong>{" "}
                   {breedNote}
                 </p>
               </div>
@@ -475,15 +485,15 @@ export default async function MitgliederDashboard({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/TrainerPfoten-thumb.png"
-            alt="Pfoten-Plan Trainer-Team"
+            alt={lang === "pl" ? "Zespół trenerów ŁapaPlan" : "Pfoten-Plan Trainer-Team"}
             className="w-14 h-14 rounded-full object-cover border-2 border-[#C4A576] flex-shrink-0"
           />
           <div className="flex-1 min-w-0">
             <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight mb-0.5">
-              KI-Trainer · 24/7 verfügbar
+              {lang === "pl" ? "Trener AI · dostępny 24/7" : "KI-Trainer · 24/7 verfügbar"}
             </p>
             <p className="text-[12px] text-[#6B7280] leading-snug">
-              Trainiert mit dem Wissen unseres Hundetrainer-Teams
+              {lang === "pl" ? "Wyszkolony na wiedzy naszego zespołu trenerów psów" : "Trainiert mit dem Wissen unseres Hundetrainer-Teams"}
             </p>
           </div>
         </div>
@@ -505,11 +515,11 @@ export default async function MitgliederDashboard({
 
 // ── Komponenten (lokal) ─────────────────────────────────────────────
 
-function Header({ greeting, subtitle }: { greeting: string; subtitle: string }) {
+function Header({ greeting, subtitle, lang }: { greeting: string; subtitle: string; lang?: string }) {
   return (
     <div className="mb-6 md:mb-8">
       <p className="text-[12px] font-semibold text-[#8B7355] uppercase tracking-wider mb-1.5">
-        Übersicht
+        {lang === "pl" ? "Przegląd" : "Übersicht"}
       </p>
       <h1 className="text-[26px] md:text-[32px] font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
         {greeting}
@@ -519,10 +529,21 @@ function Header({ greeting, subtitle }: { greeting: string; subtitle: string }) 
   );
 }
 
-function PurchasedZusatzmoduleSection({ modules }: { modules: string[] }) {
+function PurchasedZusatzmoduleSection({ modules, lang }: { modules: string[]; lang?: string }) {
   const labels = TRAININGS_ZUSATZMODUL_LABELS as Record<string, string>;
   // Mini-Beschreibung pro Modul, damit die Card nicht nackt wirkt.
-  const descriptions: Record<string, string> = {
+  const descriptions: Record<string, string> = lang === "pl" ? {
+    pulling: "8 ćwiczeń na spokojne spacery bez ciągnięcia.",
+    energy: "8 ćwiczeń na więcej spokoju, kontrolę impulsów i „przycisk wyłączania”.",
+    anxiety: "8 ćwiczeń na bezpieczne zostawanie samemu, małymi krokami.",
+    aggression: "8 ćwiczeń poniżej progu pobudzenia, bez konfrontacji.",
+    mouthing: "8 ćwiczeń przeciw podnoszeniu rzeczy na spacerze, z komendami ZOSTAW i FUJ.",
+    recall: "8 ćwiczeń na niezawodne przywołanie w każdej sytuacji.",
+    barking: "8 ćwiczeń, które nagradzają ciszę zamiast walczyć ze szczekaniem.",
+    jumping: "8 ćwiczeń na spokojne powitania bez skakania.",
+    destructive: "8 ćwiczeń z lepszymi alternatywami zamiast zakazów.",
+    soiling: "8 ćwiczeń na jasną rutynę toaletową bez karania.",
+  } : {
     pulling: "8 Übungen für entspanntes Spazierengehen ohne Ziehen.",
     energy: "8 Übungen für mehr Ruhe, Impulskontrolle und den 'Aus-Knopf'.",
     anxiety: "8 Übungen für sicheres Alleinbleiben in kleinen Schritten.",
@@ -537,10 +558,10 @@ function PurchasedZusatzmoduleSection({ modules }: { modules: string[] }) {
   return (
     <div className="mb-6">
       <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-1">
-        Deine gekauften Zusatzmodule
+        {lang === "pl" ? "Twoje zakupione moduły dodatkowe" : "Deine gekauften Zusatzmodule"}
       </h2>
       <p className="text-[13px] text-[#6B7280] mb-4">
-        Hier kannst du deine Module jederzeit als PDF herunterladen.
+        {lang === "pl" ? "Tutaj możesz w każdej chwili pobrać swoje moduły jako PDF." : "Hier kannst du deine Module jederzeit als PDF herunterladen."}
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {modules.map((key) => (
@@ -553,7 +574,7 @@ function PurchasedZusatzmoduleSection({ modules }: { modules: string[] }) {
           >
             <div className="flex-1 min-w-0">
               <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-[#F0FDF4] text-[#166534] px-2 py-0.5 rounded-md mb-2">
-                Gekauft
+                {lang === "pl" ? "Kupione" : "Gekauft"}
               </span>
               <h4 className="text-[15px] font-bold text-[#1a1a1a] mb-1 leading-snug">
                 {labels[key] || key}
@@ -582,14 +603,14 @@ function PurchasedZusatzmoduleSection({ modules }: { modules: string[] }) {
   );
 }
 
-function UpsellSection({ upsells }: { upsells: any[] }) {
+function UpsellSection({ upsells, lang }: { upsells: any[]; lang?: string }) {
   return (
     <div>
       <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-1">
-        Zusätzliche Module aus der Modul-Übersicht
+        {lang === "pl" ? "Dodatkowe moduły z przeglądu modułów" : "Zusätzliche Module aus der Modul-Übersicht"}
       </h2>
       <p className="text-[13px] text-[#6B7280] mb-4">
-        Wenn dein Hund noch andere Themen hat — hier kannst du gezielt erweitern.
+        {lang === "pl" ? "Jeśli Twój pies ma jeszcze inne tematy — tutaj możesz celowo rozszerzyć plan." : "Wenn dein Hund noch andere Themen hat — hier kannst du gezielt erweitern."}
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {upsells.map((u: any) => (

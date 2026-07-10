@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 interface NavItem {
   href: string;
   label: string;
+  labelPl: string;
   icon: React.ReactNode;
 }
 
@@ -13,6 +14,7 @@ const NAV: NavItem[] = [
   {
     href: "/mitglieder",
     label: "Übersicht",
+    labelPl: "Przegląd",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
     ),
@@ -20,6 +22,7 @@ const NAV: NavItem[] = [
   {
     href: "/mitglieder/erfolge",
     label: "Erfolge",
+    labelPl: "Sukcesy",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
     ),
@@ -27,6 +30,7 @@ const NAV: NavItem[] = [
   {
     href: "/mitglieder/module",
     label: "Module",
+    labelPl: "Moduły",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
     ),
@@ -34,6 +38,7 @@ const NAV: NavItem[] = [
   {
     href: "/mitglieder/upgrade",
     label: "Upgrade",
+    labelPl: "Ulepszenie",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
     ),
@@ -41,6 +46,7 @@ const NAV: NavItem[] = [
   {
     href: "/mitglieder/hilfe",
     label: "Hilfe",
+    labelPl: "Pomoc",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     ),
@@ -50,11 +56,22 @@ const NAV: NavItem[] = [
 export default function SiteShell({
   children,
   email,
+  lang = "de",
 }: {
   children: React.ReactNode;
   email?: string;
+  lang?: "de" | "pl";
 }) {
   const pathname = usePathname();
+  const isPL = lang === "pl";
+  const brand = isPL ? "ŁapaPlan" : "Pfoten-Plan";
+  const t = {
+    area: isPL ? "Panel członkowski" : "Mitgliederbereich",
+    loggedInAs: isPL ? "Zalogowano jako" : "Eingeloggt als",
+    profil: "Profil",
+    logout: isPL ? "Wyloguj się" : "Abmelden",
+    profilAria: isPL ? "Profil i ustawienia" : "Profil & Einstellungen",
+  };
 
   const isActive = (href: string) => {
     if (href === "/mitglieder") return pathname === "/mitglieder";
@@ -68,15 +85,15 @@ export default function SiteShell({
         <div className="px-6 py-7 border-b border-[#F0EBE3] flex items-center gap-3">
           <img
             src="/logo.png"
-            alt="Pfoten-Plan"
+            alt={brand}
             className="w-9 h-9 rounded-md object-contain"
             onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
           />
           <div>
             <div className="text-[15px] font-bold tracking-tight text-[#1a1a1a]">
-              Pfoten-Plan
+              {brand}
             </div>
-            <div className="text-[11px] text-[#8B7355] font-medium">Mitgliederbereich</div>
+            <div className="text-[11px] text-[#8B7355] font-medium">{t.area}</div>
           </div>
         </div>
 
@@ -94,7 +111,7 @@ export default function SiteShell({
               <span className={isActive(item.href) ? "text-[#C4A576]" : "text-[#9CA3AF]"}>
                 {item.icon}
               </span>
-              {item.label}
+              {isPL ? item.labelPl : item.label}
             </Link>
           ))}
         </nav>
@@ -102,7 +119,7 @@ export default function SiteShell({
         {email && (
           <div className="px-4 py-4 border-t border-[#F0EBE3]">
             <div className="text-[11px] text-[#9CA3AF] font-medium uppercase tracking-wide mb-1">
-              Eingeloggt als
+              {t.loggedInAs}
             </div>
             <div className="text-[12px] text-[#4B5563] truncate">{email}</div>
             <div className="mt-2 flex items-center gap-3">
@@ -110,7 +127,7 @@ export default function SiteShell({
                 href="/mitglieder/profil"
                 className="text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a] underline underline-offset-2"
               >
-                Profil
+                {t.profil}
               </Link>
               <span className="text-[10px] text-[#D1D5DB]">·</span>
               <form action="/api/mitglieder/logout" method="POST">
@@ -118,7 +135,7 @@ export default function SiteShell({
                   type="submit"
                   className="text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a] underline underline-offset-2"
                 >
-                  Abmelden
+                  {t.logout}
                 </button>
               </form>
             </div>
@@ -131,17 +148,17 @@ export default function SiteShell({
         <div className="flex items-center gap-2">
           <img
             src="/logo.png"
-            alt="Pfoten-Plan"
+            alt={brand}
             className="w-8 h-8 rounded-md object-contain"
             onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
           />
-          <span className="text-[15px] font-bold tracking-tight">Pfoten-Plan</span>
+          <span className="text-[15px] font-bold tracking-tight">{brand}</span>
         </div>
         {email && (
           <div className="flex items-center gap-3">
             <Link
               href="/mitglieder/profil"
-              aria-label="Profil & Einstellungen"
+              aria-label={t.profilAria}
               className="text-[#6B7280] hover:text-[#1a1a1a] p-1"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
@@ -150,7 +167,7 @@ export default function SiteShell({
               <button
                 type="submit"
                 className="text-[#6B7280] hover:text-[#1a1a1a] p-1"
-                aria-label="Abmelden"
+                aria-label={t.logout}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
               </button>
@@ -180,7 +197,7 @@ export default function SiteShell({
               <span className={isActive(item.href) ? "text-[#C4A576]" : "text-[#9CA3AF]"}>
                 {item.icon}
               </span>
-              {item.label}
+              {isPL ? item.labelPl : item.label}
             </Link>
           ))}
         </div>

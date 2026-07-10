@@ -24,10 +24,47 @@ const fmt = (s: number) => {
   return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
 };
 
-export default function CoachPlayer({ content }: { content: CoachContent }) {
+export default function CoachPlayer({ content, lang = "de" }: { content: CoachContent; lang?: "de" | "pl" }) {
   const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
   const [activeId, setActiveId] = useState<string | null>(null);
   const [prog, setProg] = useState<Record<string, { cur: number; dur: number }>>({});
+
+  const isPL = lang === "pl";
+  const t = isPL
+    ? {
+        now: "▸ Gra teraz",
+        pause: "Pauza",
+        play: "Odtwórz",
+        rewind: "Cofnij 15 sekund",
+        sosRail: "Szybka pomoc · o każdej porze",
+        sosTitle: "🆘 Twój pies właśnie się nakręca?",
+        prewalkTitle: "🎧 Przed spacerem",
+        sessionsRail: "Twoje sesje · mówi Ben",
+        situ: "Co robić, gdy…?",
+        echeckHead: "✅ Sprawdzian sukcesu",
+        yes: "Tak →",
+        notYet: "Jeszcze nie →",
+        woche2Rail: "Gdy zapał opada",
+        woche2Title: "Nie odpuszczaj — krótko i szczerze",
+        bonusRail: "Tematy bonusowe",
+      }
+    : {
+        now: "▸ Läuft gerade",
+        pause: "Pause",
+        play: "Abspielen",
+        rewind: "15 Sekunden zurück",
+        sosRail: "Soforthilfe · jederzeit",
+        sosTitle: "🆘 Dein Hund dreht gerade auf?",
+        prewalkTitle: "🎧 Vor dem Spaziergang",
+        sessionsRail: "Deine Sessions · Ben spricht",
+        situ: "Was tun, wenn…?",
+        echeckHead: "✅ Erfolgs-Check",
+        yes: "Ja →",
+        notYet: "Noch nicht →",
+        woche2Rail: "Wenn die Luft rausgeht",
+        woche2Title: "Dranbleiben — kurz & ehrlich",
+        bonusRail: "Bonus-Themen",
+      };
 
   const onTime = (id: string) => {
     const a = audioRefs.current[id];
@@ -68,11 +105,11 @@ export default function CoachPlayer({ content }: { content: CoachContent }) {
         />
         <div className="pc-top">
           <div className="pc-txt">
-            {isPlaying && <div className="pc-now">▸ Läuft gerade</div>}
+            {isPlaying && <div className="pc-now">{t.now}</div>}
             <div className="pc-title">{title}</div>
             {cue && <div className="pc-cue">{cue}</div>}
           </div>
-          <button className="pc-play" onClick={() => toggle(id)} aria-label={isPlaying ? "Pause" : "Abspielen"}>
+          <button className="pc-play" onClick={() => toggle(id)} aria-label={isPlaying ? t.pause : t.play}>
             {isPlaying ? (
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z" /></svg>
             ) : (
@@ -81,7 +118,7 @@ export default function CoachPlayer({ content }: { content: CoachContent }) {
           </button>
         </div>
         <div className="pc-track">
-          <button className="pc-rw" onClick={() => rewind(id)} aria-label="15 Sekunden zurück" type="button">↺</button>
+          <button className="pc-rw" onClick={() => rewind(id)} aria-label={t.rewind} type="button">↺</button>
           <div
             className="pc-bar"
             onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); seek(id, (e.clientX - r.left) / r.width); }}
@@ -104,20 +141,20 @@ export default function CoachPlayer({ content }: { content: CoachContent }) {
 
       {(content.sos || content.prewalk) && (
         <>
-          <div className="pc-rail pc-rail-sos"><b>Soforthilfe · jederzeit</b></div>
-          {content.sos && <Item id="sos" sos title={content.sos.title || "🆘 Dein Hund dreht gerade auf?"} cue={content.sos.cue} audioUrl={content.sos.audioUrl} />}
-          {content.prewalk && <Item id="prewalk" title={content.prewalk.title || "🎧 Vor dem Spaziergang"} cue={content.prewalk.cue} audioUrl={content.prewalk.audioUrl} />}
+          <div className="pc-rail pc-rail-sos"><b>{t.sosRail}</b></div>
+          {content.sos && <Item id="sos" sos title={content.sos.title || t.sosTitle} cue={content.sos.cue} audioUrl={content.sos.audioUrl} />}
+          {content.prewalk && <Item id="prewalk" title={content.prewalk.title || t.prewalkTitle} cue={content.prewalk.cue} audioUrl={content.prewalk.audioUrl} />}
         </>
       )}
 
       {modules.length > 0 && (
         <>
-          <div className="pc-rail"><b>Deine Sessions · Ben spricht</b></div>
+          <div className="pc-rail"><b>{t.sessionsRail}</b></div>
           {modules.map((m, i) => (
             <Item key={"m" + i} id={"m" + i} title={`${i + 1}. ${m.title}`} cue={m.cue} audioUrl={m.audioUrl}>
               {m.situations && m.situations.length > 0 && (
                 <details className="pc-situ">
-                  <summary>Was tun, wenn…? <span className="pc-chev">+</span></summary>
+                  <summary>{t.situ} <span className="pc-chev">+</span></summary>
                   <ul>
                     {m.situations.map((s, j) => (
                       <li key={j}><span className="pc-emo">{s.emoji}</span><span>{s.text}</span></li>
@@ -127,9 +164,9 @@ export default function CoachPlayer({ content }: { content: CoachContent }) {
               )}
               {m.echeck && (
                 <div className="pc-echeck">
-                  <div className="pc-eh">✅ Erfolgs-Check</div>
+                  <div className="pc-eh">{t.echeckHead}</div>
                   <div className="pc-eq">{m.echeck.question}</div>
-                  <div className="pc-eb"><b>Ja →</b> {m.echeck.yes} &nbsp;<span className="pc-no">Noch nicht →</span> {m.echeck.no}</div>
+                  <div className="pc-eb"><b>{t.yes}</b> {m.echeck.yes} &nbsp;<span className="pc-no">{t.notYet}</span> {m.echeck.no}</div>
                 </div>
               )}
             </Item>
@@ -139,14 +176,14 @@ export default function CoachPlayer({ content }: { content: CoachContent }) {
 
       {content.woche2 && (
         <>
-          <div className="pc-rail"><b>Wenn die Luft rausgeht</b></div>
-          <Item id="woche2" title={content.woche2.title || "Dranbleiben — kurz & ehrlich"} cue={content.woche2.cue} audioUrl={content.woche2.audioUrl} />
+          <div className="pc-rail"><b>{t.woche2Rail}</b></div>
+          <Item id="woche2" title={content.woche2.title || t.woche2Title} cue={content.woche2.cue} audioUrl={content.woche2.audioUrl} />
         </>
       )}
 
       {bonus.length > 0 && (
         <>
-          <div className="pc-rail"><b>Bonus-Themen</b></div>
+          <div className="pc-rail"><b>{t.bonusRail}</b></div>
           {bonus.map((b, i) => (
             <Item key={"b" + i} id={"b" + i} title={b.title} cue={b.cue} audioUrl={b.audioUrl} />
           ))}
