@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/utm-tracking.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twój plan powstaje... | ŁapaPlan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','AW-17806525009');</script>
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','864109602683515');fbq('track','PageView');</script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAFAFA;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .header {
+            background: #fff;
+            padding: 16px 0;
+            border-bottom: 1px solid #E5E5E5;
+            text-align: center;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo img { width: 36px; height: 36px; border-radius: 8px; }
+        .logo span { font-size: 22px; font-weight: 800; color: #2C2C2E; }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px 40px;
+        }
+
+        .content {
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .hero {
+            margin-bottom: 15px;
+        }
+
+        .hero h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2C2C2E;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .hero p {
+            font-size: 14px;
+            color: #6B6B6B;
+        }
+
+        /* Selection Tags - oberhalb iPad */
+        .selection-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .selection-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #fff;
+            border: 1px solid #E5E5E5;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #6B6B6B;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .selection-tag.problem {
+            background: #FFF8F0;
+            border-color: #E8D5C0;
+            color: #8B7355;
+        }
+
+        .selection-tag.custom {
+            background: #F0F8FF;
+            border-color: #C0D8E8;
+            color: #5577AA;
+        }
+
+        /* iPad Frame */
+        .ipad-frame {
+            background: #1a1a1a;
+            border-radius: 28px;
+            padding: 12px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            margin-bottom: 25px;
+            opacity: 0;
+            transform: translateY(15px);
+            animation: fadeUp 0.6s ease 0.2s forwards;
+        }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ipad-screen {
+            background: #fff;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .screen-header {
+            background: linear-gradient(180deg, #F8F8F8, #F0F0F0);
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .screen-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .screen-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .screen-dot.red { background: #FF5F57; }
+        .screen-dot.yellow { background: #FFBD2E; }
+        .screen-dot.green { background: #28CA41; }
+
+        .screen-title {
+            font-size: 11px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .screen-spacer { width: 40px; }
+
+        .plan-content {
+            padding: 20px;
+            min-height: 320px;
+        }
+
+        .plan-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #F0F0F0;
+        }
+
+        .plan-logo {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #C4A576, #8B7355);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .plan-title-area { text-align: left; }
+
+        .plan-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2C2C2E;
+        }
+
+        .plan-subtitle {
+            font-size: 11px;
+            color: #999;
+        }
+
+        /* Animated Lines */
+        .plan-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .plan-line {
+            height: 10px;
+            background: #F0F0F0;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(196, 165, 118, 0.3), transparent);
+            animation: lineShimmer 1.5s ease-in-out infinite;
+        }
+
+        @keyframes lineShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .plan-line:nth-child(1) { width: 100%; }
+        .plan-line:nth-child(2) { width: 85%; }
+        .plan-line:nth-child(3) { width: 92%; }
+        .plan-line:nth-child(4) { width: 70%; }
+        .plan-line:nth-child(5) { width: 88%; }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid #F0F0F0;
+            border-bottom: 1px solid #F0F0F0;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            opacity: 0;
+        }
+
+        .stat-item.animate {
+            animation: statPop 0.4s ease forwards;
+        }
+
+        .stat-item:nth-child(1) { animation-delay: 1.5s; }
+        .stat-item:nth-child(2) { animation-delay: 1.7s; }
+        .stat-item:nth-child(3) { animation-delay: 1.9s; }
+
+        @keyframes statPop {
+            0% { opacity: 0; transform: scale(0.8); }
+            50% { transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .stat-number {
+            font-size: 22px;
+            font-weight: 800;
+            color: #C4A576;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Checklist */
+        .plan-checklist {
+            text-align: left;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 12px;
+            color: #6B6B6B;
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+
+        .check-item.animate {
+            animation: checkIn 0.3s ease forwards;
+        }
+
+        .check-item:nth-child(1) { animation-delay: 2.2s; }
+        .check-item:nth-child(2) { animation-delay: 2.4s; }
+        .check-item:nth-child(3) { animation-delay: 2.6s; }
+
+        @keyframes checkIn {
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .check-icon {
+            width: 18px;
+            height: 18px;
+            background: #C4A576;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            border: 1px solid #E8E4DF;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .progress-label {
+            font-size: 14px;
+            color: #2C2C2E;
+            font-weight: 600;
+        }
+
+        .progress-percent {
+            font-size: 14px;
+            font-weight: 700;
+            color: #C4A576;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #E8E4DF;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #C4A576, #D4B996);
+            border-radius: 4px;
+            transition: width 0.1s ease;
+        }
+
+        .progress-status {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #6B6B6B;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #E8E4DF;
+            border-top-color: #C4A576;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Vision Text */
+        .vision-text {
+            font-size: 15px;
+            color: #6B6B6B;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+
+        .vision-text strong {
+            color: #2C2C2E;
+        }
+
+        /* Continue Button */
+        .continue-btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: #C4A576;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .continue-btn.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .continue-btn:hover {
+            background: #8B7355;
+        }
+
+        .continue-btn .subtext {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-top: 3px;
+        }
+
+        @media (max-width: 380px) {
+            .ipad-frame { padding: 10px; border-radius: 22px; }
+            .ipad-screen { border-radius: 14px; }
+            .plan-content { padding: 15px; min-height: 280px; }
+            .stat-number { font-size: 18px; }
+            .selection-tags { gap: 6px; }
+            .selection-tag { font-size: 11px; padding: 5px 10px; }
+        }
+    </style>
+<script
+  defer
+  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+  data-domain="pfoten-plan.de"
+  src="https://datafa.st/js/script.js">
+</script>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="ŁapaPlan Logo">
+            <span>ŁapaPlan</span>
+        </a>
+    </header>
+
+    <div class="main-container">
+        <div class="content">
+            <!-- Hero -->
+            <div class="hero">
+                <h1>Twój plan dla <span id="dogNameTitle">Twojego psa</span> powstaje...</h1>
+                <p>Pierwsze 10 stron jest prawie gotowe</p>
+            </div>
+
+            <!-- Selection Tags -->
+            <div class="selection-tags" id="selectionTags"></div>
+
+            <!-- iPad Frame -->
+            <div class="ipad-frame">
+                <div class="ipad-screen">
+                    <div class="screen-header">
+                        <div class="screen-dots">
+                            <div class="screen-dot red"></div>
+                            <div class="screen-dot yellow"></div>
+                            <div class="screen-dot green"></div>
+                        </div>
+                        <div class="screen-title">PlanTreningowy.pdf</div>
+                        <div class="screen-spacer"></div>
+                    </div>
+                    <div class="plan-content">
+                        <div class="plan-header">
+                            <div class="plan-logo">🐕</div>
+                            <div class="plan-title-area">
+                                <div class="plan-title" id="planTitle">Plan treningowy</div>
+                                <div class="plan-subtitle" id="planSubtitle">Fokus: Korekta zachowania</div>
+                            </div>
+                        </div>
+
+                        <div class="plan-lines">
+                            <div class="plan-line"></div>
+                            <div class="plan-line"></div>
+                            <div class="plan-line"></div>
+                            <div class="plan-line"></div>
+                            <div class="plan-line"></div>
+                        </div>
+
+                        <div class="stats-row">
+                            <div class="stat-item animate">
+                                <div class="stat-number">10+</div>
+                                <div class="stat-label">Stron</div>
+                            </div>
+                            <div class="stat-item animate">
+                                <div class="stat-number">8</div>
+                                <div class="stat-label">pierwsze ćwiczenia</div>
+                            </div>
+                            <div class="stat-item animate">
+                                <div class="stat-number">2</div>
+                                <div class="stat-label">Tygodnie</div>
+                            </div>
+                        </div>
+
+                        <div class="plan-checklist">
+                            <div class="check-item animate">
+                                <div class="check-icon">✓</div>
+                                <span>Instrukcje krok po kroku</span>
+                            </div>
+                            <div class="check-item animate">
+                                <div class="check-icon">✓</div>
+                                <span>Codzienny plan treningowy</span>
+                            </div>
+                            <div class="check-item animate">
+                                <div class="check-icon">✓</div>
+                                <span>Pierwsze efekty w 2 tygodnie</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress -->
+            <div class="progress-section">
+                <div class="progress-header">
+                    <span class="progress-label" id="progressLabel">Plan powstaje...</span>
+                    <span class="progress-percent" id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-status" id="progressStatus">
+                    <div class="spinner"></div>
+                    <span id="statusText">Analizuję Twoje odpowiedzi...</span>
+                </div>
+            </div>
+
+            <!-- Vision -->
+            <p class="vision-text" id="visionText">
+                Większość właścicieli psów widzi <strong>w ciągu 2 tygodni</strong> wyraźne poprawy.
+            </p>
+
+            <!-- Continue Button -->
+            <button class="continue-btn" id="continueBtn">
+                Dalej
+                <span class="subtext">Jeszcze 4 krótkie pytania</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Daten aus localStorage
+        const dogName = localStorage.getItem('dogName') || '';
+        const dogBreed = localStorage.getItem('dogBreed') || '';
+        const dogAge = localStorage.getItem('dogAge') || '';
+        const dogGender = localStorage.getItem('dogGender') || '';
+        const dogBehaviors = JSON.parse(localStorage.getItem('dogBehaviors') || '[]');
+        const dogProblem = dogBehaviors[0] || localStorage.getItem('dogProblem') || '';
+        const customProblem = localStorage.getItem('customProblem') || '';
+        const customProblemKey = localStorage.getItem('customProblemKey') || '';
+
+        // Labels
+        const ageLabels = {
+            'puppy': 'Szczeniak',
+            'young': 'Młody pies',
+            'adult': 'Dorosły',
+            'senior': 'Senior'
+        };
+
+        const genderLabels = {
+            'male': 'Samiec',
+            'female': 'Samica'
+        };
+
+        const problemLabels = {
+            'pulling': 'Ciągnięcie na smyczy',
+            'barking': 'Szczekanie',
+            'aggression': 'Agresja',
+            'anxiety': 'Lęk separacyjny',
+            'energy': 'Nadpobudliwość',
+            'destructive': 'Niszczenie',
+            'soiling': 'Nieczystość',
+            'mouthing': 'Podnoszenie rzeczy',
+            'recall': 'Problemy z przywołaniem',
+            // Custom Problem Keys
+            'visitor-anxiety': 'Lęk przy gościach',
+            'thunder-anxiety': 'Lęk przed burzą',
+            'noise-sensitivity': 'Wrażliwość na hałas',
+            'general-anxiety': 'Lękliwe zachowanie',
+            'stranger-anxiety': 'Lęk przed obcymi',
+            'chasing': 'Zachowania łowieckie',
+            'chasing-movement': 'Gonienie za ruchem',
+            'prey-drive': 'Instynkt łowiecki',
+            'chasing-cars': 'Gonienie samochodów',
+            'eating-unwanted': 'Zjadanie niepożądanych rzeczy',
+            'eating-trash': 'Zjadanie śmieci',
+            'eating-objects': 'Zjadanie przedmiotów',
+            'postman-reactive': 'Reaktywność na listonosza',
+            'dog-reactive': 'Reaktywność na psy',
+            'leash-reactive': 'Reaktywność na smyczy',
+            'overreaction': 'Przesadna reakcja',
+            'anxious-overreaction': 'Lękliwa przesadna reakcja',
+            'separation': 'Stres separacyjny',
+            'vocalization': 'Wokalizacja',
+            'resource-guarding': 'Obrona zasobów',
+            'biting': 'Gryzienie',
+            'jumping': 'Skakanie na ludzi',
+            'digging': 'Kopanie',
+            'marking': 'Znakowanie',
+            'custom-other': 'Indywidualne zachowanie'
+        };
+
+        const problemData = {
+            'pulling': { label: 'Chodzenie na smyczy', vision: 'spokojniejszy na smyczy' },
+            'barking': { label: 'Kontrola szczekania', vision: 'znacznie spokojniejszy' },
+            'aggression': { label: 'Redukcja agresji', vision: 'spokojniejszy podczas spotkań' },
+            'anxiety': { label: 'Lęk separacyjny', vision: 'spokojniejszy sam' },
+            'energy': { label: 'Spokój i kontrola', vision: 'bardziej zrównoważony' },
+            'destructive': { label: 'Kontrola impulsów', vision: 'bardziej opanowany' },
+            'soiling': { label: 'Czystość w domu', vision: 'niezawodnie czysty w domu' },
+            'mouthing': { label: 'Kontrola impulsów', vision: 'zostawia rzeczy w spokoju' },
+            'recall': { label: 'Trening przywołania', vision: 'niezawodnie wraca na zawołanie' },
+            // Custom Problem Keys
+            'visitor-anxiety': { label: 'Trening na gości', vision: 'spokojniejszy przy gościach' },
+            'thunder-anxiety': { label: 'Trening na dźwięki', vision: 'spokojniejszy podczas burzy' },
+            'noise-sensitivity': { label: 'Odwrażliwianie', vision: 'spokojniejszy przy hałasach' },
+            'general-anxiety': { label: 'Budowanie pewności', vision: 'pewniejszy siebie' },
+            'stranger-anxiety': { label: 'Socjalizacja', vision: 'spokojniejszy przy obcych' },
+            'chasing': { label: 'Kontrola impulsów', vision: 'przywoływalny podczas gonienia' },
+            'chasing-movement': { label: 'Kontrola impulsów', vision: 'spokojniejszy przy ruchu' },
+            'prey-drive': { label: 'Kontrola instynktu łowieckiego', vision: 'kontrolowany instynkt łowiecki' },
+            'chasing-cars': { label: 'Trening antyłowiecki', vision: 'ignoruje samochody' },
+            'eating-unwanted': { label: 'Kontrola impulsów', vision: 'zostawia rzeczy w spokoju' },
+            'eating-trash': { label: 'Trening na trujące przynęty', vision: 'bezpieczny na spacerze' },
+            'eating-objects': { label: 'Kontrola impulsów', vision: 'zostawia przedmioty w spokoju' },
+            'postman-reactive': { label: 'Trening na gości', vision: 'spokojniejszy przy dostawcach' },
+            'dog-reactive': { label: 'Spotkania z psami', vision: 'spokojniejszy przy innych psach' },
+            'leash-reactive': { label: 'Trening na smyczy', vision: 'spokojniejszy na smyczy' },
+            'overreaction': { label: 'Kontrola impulsów', vision: 'bardziej zrównoważony' },
+            'anxious-overreaction': { label: 'Budowanie pewności', vision: 'spokojniejszy w stresie' },
+            'separation': { label: 'Zostawanie samemu', vision: 'spokojniejszy sam' },
+            'vocalization': { label: 'Trening spokoju', vision: 'mniej wokalizacji' },
+            'resource-guarding': { label: 'Trening zasobów', vision: 'spokojniejszy przy dzieleniu się' },
+            'biting': { label: 'Hamowanie gryzienia', vision: 'delikatniejsze zachowanie pyskiem' },
+            'jumping': { label: 'Trening powitań', vision: 'spokojniejsze powitanie' },
+            'digging': { label: 'Zachowanie alternatywne', vision: 'mniej kopania' },
+            'marking': { label: 'Czystość w domu', vision: 'kontrolowane znakowanie' },
+            'custom-other': { label: 'Trening indywidualny', vision: 'robić wyraźne postępy' }
+        };
+
+        // Determine focus label and vision text
+        let focusLabel = 'Korekta zachowania';
+        let visionOutcome = 'bardziej posłuszny';
+
+        // Erstes Problem (egal ob standard oder custom) für Focus verwenden
+        if (dogProblem && problemData[dogProblem]) {
+            focusLabel = problemData[dogProblem].label;
+            visionOutcome = problemData[dogProblem].vision;
+        } else if (customProblemKey && problemData[customProblemKey]) {
+            focusLabel = problemData[customProblemKey].label;
+            visionOutcome = problemData[customProblemKey].vision;
+        }
+
+        // Selection Tags erstellen
+        const selectionTags = document.getElementById('selectionTags');
+        let tagsHTML = '';
+
+        // Rasse
+        if (dogBreed && dogBreed !== 'Andere Rasse') {
+            tagsHTML += `<div class="selection-tag">🐕 ${dogBreed}</div>`;
+        }
+
+        // Alter
+        if (dogAge && ageLabels[dogAge]) {
+            tagsHTML += `<div class="selection-tag">📅 ${ageLabels[dogAge]}</div>`;
+        }
+
+        // Geschlecht
+        if (dogGender && genderLabels[dogGender]) {
+            tagsHTML += `<div class="selection-tag">${dogGender === 'male' ? '♂️' : '♀️'} ${genderLabels[dogGender]}</div>`;
+        }
+
+        // Standard-Probleme (max 2, ohne custom key)
+        const standardBehaviors = dogBehaviors.filter(b => b !== customProblemKey);
+
+        standardBehaviors.slice(0, 2).forEach(prob => {
+            if (problemLabels[prob]) {
+                tagsHTML += `<div class="selection-tag problem">⚡ ${problemLabels[prob]}</div>`;
+            }
+        });
+
+        // Custom Problem als eigenen Tag (mit Tooltip für vollen Text)
+        if (customProblem && customProblemKey) {
+            const label = problemLabels[customProblemKey] || 'Indywidualne zachowanie';
+            tagsHTML += `<div class="selection-tag custom" title="${customProblem}">✏️ ${label}</div>`;
+        }
+
+        selectionTags.innerHTML = tagsHTML;
+
+        // Titel personalisieren
+        let displayName = 'Twojego psa';
+        if (dogBreed && dogBreed !== 'Andere Rasse') {
+            displayName = 'Twojego ' + dogBreed;
+        }
+        document.getElementById('dogNameTitle').textContent = displayName;
+
+        // Plan-Titel im iPad
+        let planTitleText = 'Plan treningowy';
+        if (dogBreed && dogBreed !== 'Andere Rasse') {
+            planTitleText = 'Plan treningowy dla ' + dogBreed;
+        }
+        document.getElementById('planTitle').textContent = planTitleText;
+        document.getElementById('planSubtitle').textContent = 'Fokus: ' + focusLabel;
+
+        // Vision Text
+        let visionName = dogBreed && dogBreed !== 'Andere Rasse' ? 'Twój ' + dogBreed : 'Twój pies';
+        document.getElementById('visionText').innerHTML = `Większość właścicieli psów widzi <strong>w ciągu 2 tygodni</strong> wyraźne poprawy – ${visionName} będzie <strong>${visionOutcome}</strong>.`;
+
+        // Progress Animation
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressLabel = document.getElementById('progressLabel');
+        const statusText = document.getElementById('statusText');
+        const progressStatus = document.getElementById('progressStatus');
+        const continueBtn = document.getElementById('continueBtn');
+
+        let progress = 0;
+        const targetProgress = 60;
+
+        // Customize status messages if custom problem exists
+        let statusMessages = [
+            { at: 0, text: 'Analizuję Twoje odpowiedzi...' },
+            { at: 20, text: 'Tworzę ćwiczenia...' },
+            { at: 40, text: 'Generuję plan tygodniowy...' },
+            { at: 55, text: 'Prawie gotowe...' }
+        ];
+
+        if (customProblemKey) {
+            const customLabel = problemLabels[customProblemKey] || 'Twój szczególny problem';
+            statusMessages = [
+                { at: 0, text: 'Analizuję Twoje odpowiedzi...' },
+                { at: 15, text: `Uwzględniam: ${customLabel}...` },
+                { at: 35, text: 'Tworzę indywidualne ćwiczenia...' },
+                { at: 50, text: 'Generuję plan tygodniowy...' },
+                { at: 58, text: 'Prawie gotowe...' }
+            ];
+        }
+
+        function animateProgress() {
+            if (progress < targetProgress) {
+                progress += 1;
+                progressFill.style.width = progress + '%';
+                progressPercent.textContent = progress + '%';
+
+                const currentStatus = statusMessages.filter(s => s.at <= progress).pop();
+                if (currentStatus) {
+                    statusText.textContent = currentStatus.text;
+                }
+
+                setTimeout(animateProgress, 50);
+            } else {
+                showComplete();
+            }
+        }
+
+        function showComplete() {
+            progressLabel.textContent = 'Pierwsze 10 stron gotowe!';
+            progressStatus.innerHTML = `<span style="color: #C4A576;">✓</span><span>Szkielet planu gotowy</span>`;
+
+            setTimeout(() => {
+                continueBtn.classList.add('show');
+            }, 400);
+        }
+
+        let isNavigating = false;
+
+        // Sofort bei Touch reagieren, nicht auf click warten
+        continueBtn.addEventListener('touchstart', function(e) {
+            if (isNavigating) return;
+            isNavigating = true;
+
+            continueBtn.style.opacity = '0.5';
+            continueBtn.textContent = 'Ładuje...';
+
+            window.location.href = 'krok-6.html';
+        }, { passive: true });
+
+        // Fallback für Desktop
+        continueBtn.addEventListener('click', function(e) {
+            if (isNavigating) return;
+            isNavigating = true;
+
+            continueBtn.style.opacity = '0.5';
+            continueBtn.textContent = 'Ładuje...';
+
+            window.location.href = 'krok-6.html';
+        });
+
+        // Start
+        setTimeout(animateProgress, 600);
+    </script>
+</body>
+</html>
