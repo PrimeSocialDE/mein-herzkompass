@@ -15,6 +15,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createMemberAdminClient } from "@/lib/member-auth-server";
 import { sendCheckoutRecoveryMail } from "@/lib/member-mail";
+import { langFromLead } from "@/lib/lang";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -141,6 +142,7 @@ export async function GET(req: NextRequest) {
         // Test-Mode forciert Free-View im Dashboard. Production-Cron
         // (testMode=false): User ist sowieso non-paid → kein Override.
         previewFreeView: testMode,
+        lang: langFromLead(lead),
       });
       if (res.ok) {
         stats.sent++;

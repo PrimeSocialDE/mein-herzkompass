@@ -7,14 +7,14 @@
       "destination": "/magazin/:path*"
     },
     {
-      "source": "/:path*",
+      "source": "/:path((?!api/|api$|mitglieder/|mitglieder$|_next/).*)",
       "has": [{ "type": "host", "value": "lapaplan.pl" }],
-      "destination": "/pl/:path*"
+      "destination": "/pl/:path"
     },
     {
-      "source": "/:path*",
+      "source": "/:path((?!api/|api$|mitglieder/|mitglieder$|_next/).*)",
       "has": [{ "type": "host", "value": "www.lapaplan.pl" }],
-      "destination": "/pl/:path*"
+      "destination": "/pl/:path"
     }
   ],
   "functions": {

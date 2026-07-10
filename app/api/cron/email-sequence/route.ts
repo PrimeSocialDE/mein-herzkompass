@@ -22,6 +22,7 @@ import {
   sendSequenceMail,
   type SequenceLead,
 } from "@/lib/email-sequence";
+import { langFromLead } from "@/lib/lang";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -138,7 +139,7 @@ export async function GET(req: NextRequest) {
       selected_plan: lead.selected_plan,
       answers,
     };
-    const res = await sendSequenceMail(dueMailNum, seqLead);
+    const res = await sendSequenceMail(dueMailNum, seqLead, langFromLead(seqLead));
     if (!res.ok) {
       if (res.reason === "no_content_for_mail") {
         // z. B. Mail 9 Cross-Sell, aber User hat alle Bumps schon → Skip statt Fail

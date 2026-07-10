@@ -24,3 +24,25 @@ export function langFromHost(host?: string | null): Lang {
   if (!host) return "de";
   return /(^|\.)lapaplan\.pl$/i.test(host.split(":")[0]) ? "pl" : "de";
 }
+
+/**
+ * Schlaegt die Sprache eines Kunden per E-Mail im Lead nach (answers.lang).
+ * Fuer Kontexte, die nur die Member-/Email-Info haben (z. B. Member-/Club-Mails
+ * an member_users, wo kein lang-Feld existiert). `client` = Supabase-Client mit
+ * Lesezugriff auf wauwerk_leads. Default IMMER "de" (auch bei Fehler/kein Lead).
+ */
+export async function langFromEmailLookup(client: any, email: string): Promise<Lang> {
+  if (!email || !client) return DEFAULT_LANG;
+  try {
+    const { data } = await client
+      .from("wauwerk_leads")
+      .select("answers")
+      .ilike("email", email)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    return normalizeLang((data?.answers as any)?.lang);
+  } catch {
+    return DEFAULT_LANG;
+  }
+}

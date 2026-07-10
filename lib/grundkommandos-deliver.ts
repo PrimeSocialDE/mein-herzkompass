@@ -6,11 +6,6 @@
 // Wird von /api/grundkommandos/generate (manuell) UND vom Cron genutzt.
 
 import { supabase } from "@/lib/db";
-import {
-  generateGrundkommandosContent,
-  knownLabelsFromDogCommands,
-} from "./grundkommandos-content";
-import { buildGrundkommandosPDF } from "./grundkommandos-pdf";
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
 
@@ -27,6 +22,23 @@ function customerHtml(dog: string): string {
     </ul>
     <p style="font-size:14px;line-height:1.6;color:#42413f">Druck es aus oder hab es auf dem Handy dabei. Viel Freude beim Training mit ${dog}! 🐾</p>
     <p style="font-size:12.5px;color:#9aa2ad;margin-top:16px">Fragen? Antworte einfach auf diese Mail.</p>
+  </div>`;
+}
+
+// POLNISCHE Kunden-Mail (lang="pl")
+function customerHtmlPL(dog: string): string {
+  return `
+  <div style="font-family:-apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:auto;color:#1a1a1a">
+    <div style="text-align:center;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8B7355">🐾 ŁapaPlan</div>
+    <h1 style="font-size:23px;font-weight:800;margin:14px 0 10px">Plan podstawowych komend dla ${dog} jest gotowy! 🎯</h1>
+    <p style="font-size:15px;line-height:1.6;color:#42413f">Cześć,<br><br>w załączniku znajdziesz osobisty plan dla <b>${dog}</b> — krok po kroku: Siad, Waruj, Zostań i Do mnie tak zbudowane, żeby działały też tam, gdzie to się liczy (rowerzyści, biegacze, inne psy, goście).</p>
+    <ul style="font-size:14px;line-height:1.7;color:#333">
+      <li>Każda komenda jako prawdziwy samouczek: przygotowanie, kroki, „gdy nie współpracuje", realistyczne powtórzenia</li>
+      <li>Poradnik na co dzień: która komenda w jakiej sytuacji</li>
+      <li>7-dniowy plan startowy + check sukcesu</li>
+    </ul>
+    <p style="font-size:14px;line-height:1.6;color:#42413f">Wydrukuj go albo miej pod ręką w telefonie. Powodzenia w treningu z ${dog}! 🐾</p>
+    <p style="font-size:12.5px;color:#9aa2ad;margin-top:16px">Masz pytania? Po prostu odpowiedz na tego maila.</p>
   </div>`;
 }
 
@@ -85,9 +97,19 @@ export async function deliverGrundkommandosForLead(
       .eq("id", leadId);
   }
 
-  const dog = (lead.dog_name || a.dog_name || "dein Hund").toString();
+  // Sprach-Weiche: PL -> polnischer Opus-Prompt + Unicode-PDF (Arimo) + polnische
+  // Mail. Dynamische Imports, damit der deutsche Pfad byte-identisch bleibt.
+  const isPL = String((a as any).lang || "").toLowerCase() === "pl";
+  const { generateGrundkommandosContent, knownLabelsFromDogCommands } = isPL
+    ? await import("./grundkommandos-content.pl")
+    : await import("./grundkommandos-content");
+  const { buildGrundkommandosPDF } = isPL
+    ? await import("./grundkommandos-pdf.pl")
+    : await import("./grundkommandos-pdf");
+
+  const dog = (lead.dog_name || a.dog_name || (isPL ? "Twój pies" : "dein Hund")).toString();
   const breed = a.dog_breed ? String(a.dog_breed) : null;
-  const problem = a.dog_problem || a.custom_problem_text || "Unsicherheit";
+  const problem = a.dog_problem || a.custom_problem_text || (isPL ? "niepewność" : "Unsicherheit");
   const known = knownLabelsFromDogCommands(a.dog_commands);
 
   // 1) Content generieren (Opus, ~2-3 Min)
@@ -103,16 +125,22 @@ export async function deliverGrundkommandosForLead(
   const pdfBase64 = Buffer.from(pdfBytes).toString("base64");
 
   // 3) Brevo-Mail mit Anhang
-  const fileName = `Notfall-Grundkommando-Plan-${dog.replace(/[^a-zA-Z0-9]/g, "")}.pdf`;
+  const fileName = isPL
+    ? `Plan-komend-${dog.replace(/[^a-zA-Z0-9]/g, "")}.pdf`
+    : `Notfall-Grundkommando-Plan-${dog.replace(/[^a-zA-Z0-9]/g, "")}.pdf`;
   const r = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
     body: JSON.stringify({
-      sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
+      sender: isPL
+        ? { name: "ŁapaPlan", email: "support@pfoten-plan.de" }
+        : { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
       to: [{ email: lead.email }],
       cc: [{ email: "kontakt@primesocial.de" }],
-      subject: `🎯 Dein Notfall-Grundkommando-Plan für ${dog}`,
-      htmlContent: customerHtml(dog),
+      subject: isPL
+        ? `🎯 Plan podstawowych komend dla ${dog}`
+        : `🎯 Dein Notfall-Grundkommando-Plan für ${dog}`,
+      htmlContent: isPL ? customerHtmlPL(dog) : customerHtml(dog),
       attachment: [{ name: fileName, content: pdfBase64 }],
     }),
   });

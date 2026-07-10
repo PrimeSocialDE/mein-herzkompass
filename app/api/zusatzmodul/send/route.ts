@@ -169,6 +169,91 @@ const BONUS_CONFIG: Record<
   },
 };
 
+// ---- POLNISCHE Mail-Configs (lang="pl") — Keys identisch zur DE-Version ----
+const MODULE_CONFIG_PL: typeof MODULE_CONFIG = {
+  pulling: {
+    label: "Plan chodzenia na luźnej smyczy",
+    subject: "Twój plan chodzenia na smyczy dla {dogName} jest gotowy",
+    intro: "plan chodzenia na luźnej smyczy dla {dogName} jest już gotowy.",
+    body: "Plan został indywidualnie dopasowany do {dogName} i zbudowany tak, żebyście razem doszli do spokojnych spacerów. Osiem ćwiczeń logicznie się zazębia i pomoże wam zbudować spokojną orientację na Ciebie, łagodnie wygasić ciągnięcie i pewnie radzić sobie z rozproszeniami.",
+    closing: "Powodzenia we wdrażaniu i spokojnych spacerów z {dogName}!",
+  },
+  energy: {
+    label: "Plan energii i spokoju",
+    subject: "Twój plan energii i spokoju dla {dogName} jest gotowy",
+    intro: "plan energii i spokoju dla {dogName} jest już gotowy.",
+    body: "Plan został indywidualnie dopasowany do {dogName} i zbudowany tak, żebyście razem znaleźli „przycisk wyłączania”. Osiem ćwiczeń logicznie się zazębia i pomoże wam wzmocnić kontrolę impulsów, zbudować tolerancję na frustrację i znaleźć zdrową równowagę między aktywnością a cennym odpoczynkiem.",
+    closing: "Powodzenia we wdrażaniu i spokojnego czasu z {dogName}!",
+  },
+  anxiety: {
+    label: "Plan zostawania samemu",
+    subject: "Twój plan zostawania samemu dla {dogName} jest gotowy",
+    intro: "plan zostawania samemu dla {dogName} jest już gotowy.",
+    body: "Plan został indywidualnie dopasowany do {dogName} i zbudowany tak, żeby {dogName} krok po kroku uczył się, że Twoje wyjście jest bezpieczne i przewidywalne. Osiem ćwiczeń logicznie się zazębia i pomoże wam odczepić sygnały poprzedzające wyjście, łagodnie wydłużać czas samotności i wprowadzić przewidywalną strukturę dnia.",
+    closing: "Cierpliwości we wdrażaniu i spokojniejszych godzin dla was obojga!",
+  },
+  aggression: {
+    label: "Plan kontroli agresji",
+    subject: "Twój plan kontroli agresji dla {dogName} jest gotowy",
+    intro: "plan kontroli agresji dla {dogName} jest już gotowy.",
+    body: "Plan został indywidualnie dopasowany do {dogName} i konsekwentnie zbudowany poniżej progu pobudzenia, bez konfrontacji i presji. Osiem ćwiczeń logicznie się zazębia i pomoże wam stworzyć poczucie bezpieczeństwa, emocjonalnie przewarunkować bodźce i spokojniej kształtować spotkania.",
+    closing: "Cierpliwość szczególnie się tu opłaca — powodzenia z {dogName}!",
+  },
+  mouthing: {
+    label: "Plan przeciw podnoszeniu z ziemi",
+    subject: "Twój plan przeciw podnoszeniu z ziemi dla {dogName} jest gotowy",
+    intro: "plan przeciw podnoszeniu z ziemi dla {dogName} jest już gotowy.",
+    body: "Plan został indywidualnie dopasowany do {dogName} i zbudowany tak, żebyście razem osiągnęli bezpieczne spacery bez dramatu ze zbieraniem. Osiem ćwiczeń logicznie się zazębia i pomoże wam czysto uwarunkować PUŚĆ i FUJ, wprowadzić wymianę na coś lepszego i opanować trasy wysokiego ryzyka.",
+    closing: "Powodzenia we wdrażaniu i bezpiecznych spacerów z {dogName}!",
+  },
+  recall: {
+    label: "Plan przywołania",
+    subject: "Twój plan przywołania dla {dogName} jest gotowy",
+    intro: "plan przywołania dla {dogName} jest już gotowy.",
+    body: "Plan został indywidualnie dopasowany do {dogName} i zbudowany tak, żeby przywołanie stawało się niezawodne etapami. Osiem ćwiczeń logicznie się zazębia i pomoże wam pozytywnie naładować DO MNIE, utrwalić je na lince i pewnie radzić sobie z rozproszeniami.",
+    closing: "Powodzenia w budowaniu pewnego przywołania!",
+  },
+  barking: {
+    label: "Plan przeciw szczekaniu",
+    subject: "Twój plan przeciw szczekaniu dla {dogName} jest gotowy",
+    intro: "plan przeciw szczekaniu dla {dogName} jest już gotowy.",
+    body: "Plan został indywidualnie dopasowany do {dogName} i stawia na aktywne nagradzanie ciszy zamiast zwalczania szczekania. Osiem ćwiczeń logicznie się zazębia i pomoże wam zidentyfikować wyzwalacze, przeuczyć rytuał przy dzwonku i ograniczyć szczekanie z frustracji.",
+    closing: "Powodzenia we wdrażaniu i spokojniejszych godzin z {dogName}!",
+  },
+  jumping: {
+    label: "Plan przeciw skakaniu na ludzi",
+    subject: "Twój plan przeciw skakaniu dla {dogName} jest gotowy",
+    intro: "plan przeciw skakaniu dla {dogName} jest już gotowy.",
+    body: "Plan został indywidualnie dopasowany do {dogName} i zbudowany tak, żebyście mogli spokojnie kształtować powitania. Osiem ćwiczeń logicznie się zazębia i pomoże wam wprowadzić zasadę czterech łap na ziemi, utrwalić SIAD jako powitanie i stworzyć spokojne rytuały także z gośćmi.",
+    closing: "Powodzenia z {dogName} przy kolejnych spotkaniach!",
+  },
+  destructive: {
+    label: "Plan przeciw niszczeniu",
+    subject: "Twój plan przeciw niszczeniu dla {dogName} jest gotowy",
+    intro: "plan przeciw niszczeniu dla {dogName} jest już gotowy.",
+    body: "Plan został indywidualnie dopasowany do {dogName} i pracuje z lepszymi alternatywami zamiast zakazów. Osiem ćwiczeń logicznie się zazębia i pomoże wam rozpoznać przyczyny, zbudować atrakcyjny wybór gryzaków i zapewnić stymulację umysłową na co dzień.",
+    closing: "Powodzenia we wdrażaniu i spokojniejszego mieszkania!",
+  },
+  soiling: {
+    label: "Plan czystości w domu",
+    subject: "Twój plan czystości w domu dla {dogName} jest gotowy",
+    intro: "plan czystości w domu dla {dogName} jest już gotowy.",
+    body: "Plan został indywidualnie dopasowany do {dogName} i stawia na jasne rutyny i konsekwentne nagradzanie zamiast kary. Osiem ćwiczeń logicznie się zazębia i pomoże wam wprowadzić przewidywalną rutynę toaletową, odczytywać sygnały i czysto zarządzać wpadkami.",
+    closing: "Cierpliwość i rutyna się opłacają — powodzenia z {dogName}!",
+  },
+};
+
+const BONUS_CONFIG_PL: typeof BONUS_CONFIG = {
+  freilauf: {
+    pdfModuleKey: "recall",
+    label: "Plan doskonałego chodzenia bez smyczy",
+    subject: "🎁 Twój plan doskonałego luzu dla {dogName} jest gotowy",
+    intro: "Twój ekskluzywny plan doskonałego chodzenia bez smyczy dla {dogName} jest odblokowany — dziś w prezencie do Twojego planu treningowego.",
+    body: "Ten bonus przenosi {dogName} na wyższy poziom: niezawodne przychodzenie — nawet z zabawy, przy rozproszeniu czy na dystans — i spokojny luz, któremu naprawdę możesz zaufać. Osiem ćwiczeń logicznie buduje jedno na drugim: od pewnego DO MNIE przez etap linki po pewną rutynę bez smyczy.",
+    closing: "Powodzenia z nowym luzem — krok po kroku do perfekcji!",
+  },
+};
+
 function personalize(s: string, name: string): string {
   return String(s || "").replace(/\{dogName\}/g, name);
 }
@@ -207,10 +292,64 @@ function buildHtml(
 </body></html>`;
 }
 
+// POLNISCHE Mail-HTML (lang="pl")
+function buildHtmlPL(
+  cfg: { intro: string; body: string; closing: string },
+  dogName: string
+): string {
+  const intro = personalize(cfg.intro, dogName);
+  const body = personalize(cfg.body, dogName);
+  const closing = personalize(cfg.closing, dogName);
+
+  return `<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#FAF8F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;line-height:1.6;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAF8F5;">
+<tr><td align="center" style="padding:32px 16px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #EADDC5;border-radius:18px;overflow:hidden;">
+<tr><td style="padding:36px 36px 12px;">
+<p style="margin:0 0 18px;font-size:15px;color:#1a1a1a;">Cześć,</p>
+<p style="margin:0 0 16px;font-size:15px;color:#1a1a1a;">${intro}</p>
+<p style="margin:0 0 16px;font-size:15px;color:#1a1a1a;">${body}</p>
+<p style="margin:0 0 16px;font-size:15px;color:#1a1a1a;">Jeśli w trakcie treningu pojawią się pytania, śmiało napisz do nas w każdej chwili.</p>
+<p style="margin:0 0 8px;font-size:15px;color:#1a1a1a;">${closing}</p>
+</td></tr>
+<tr><td style="padding:8px 36px 32px;">
+<div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;padding:14px 16px;">
+<p style="margin:0;font-size:13px;color:#4B5563;line-height:1.5;">Pełny plan znajdziesz w załączniku jako PDF — do wydruku albo pod ręką w telefonie na spacerze.</p>
+</div>
+</td></tr>
+<tr><td style="padding:18px 32px;background:#FAFAFA;border-top:1px solid #F0EBE3;">
+<p style="margin:0;font-size:11px;color:#9CA3AF;text-align:center;">ŁapaPlan · Spersonalizowany trening psa</p>
+</td></tr>
+</table>
+</td></tr>
+</table>
+</body></html>`;
+}
+
+// Sprache des Leads (answers.lang) via Email nachschlagen — Default "de".
+async function langForEmail(email: string): Promise<string> {
+  if (!email) return "de";
+  try {
+    const admin = createMemberAdminClient();
+    const { data } = await admin
+      .from("wauwerk_leads")
+      .select("answers")
+      .ilike("email", email)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    const lang = (data?.answers as any)?.lang;
+    return String(lang || "").toLowerCase() === "pl" ? "pl" : "de";
+  } catch {
+    return "de";
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, dogName, moduleKey, bonusKey, force } = body || {};
+    const { email, dogName, moduleKey, bonusKey, force, lang } = body || {};
 
     if (!email) return NextResponse.json({ error: "email fehlt" }, { status: 400 });
 
@@ -232,7 +371,18 @@ export async function POST(request: Request) {
 
     // Effektive Werte: Bonus hat eigenen Track-Key + eigenen Mail-Text,
     // das PDF kommt aber aus pdfModuleKey (bestehender Modul-Inhalt).
-    const cfg = bonus ? bonus : MODULE_CONFIG[moduleKey];
+    // Sprache: explizit im Body ODER am Lead (answers.lang). PL -> polnische
+    // Mail-Config + polnischer PDF-Generator. Default "de" (unveraendert).
+    const isPL =
+      String(lang || "").toLowerCase() === "pl" ||
+      (await langForEmail(email)) === "pl";
+    const cfg = bonus
+      ? isPL
+        ? BONUS_CONFIG_PL[bonusKey]
+        : bonus
+      : isPL
+        ? MODULE_CONFIG_PL[moduleKey]
+        : MODULE_CONFIG[moduleKey];
     const pdfModuleKey: string = bonus ? bonus.pdfModuleKey : moduleKey;
     const trackKey: string = bonus ? bonusKey : moduleKey;
     if (!BREVO_API_KEY) {
@@ -254,20 +404,24 @@ export async function POST(request: Request) {
       }
     }
 
-    const name = (dogName || "deinen Hund").trim();
+    const name = (dogName || (isPL ? "Twojego psa" : "deinen Hund")).trim();
 
-    // PDF on-the-fly bauen — kein Vorab-File nötig.
-    const { buildPdf } = await import("@/generate-zusatzmodul-pdf.mjs");
+    // PDF on-the-fly bauen — kein Vorab-File nötig. PL nutzt den polnischen
+    // Generator (Arimo-Unicode-Font). Zwei statische import()-Zweige, damit der
+    // Bundler beide Module korrekt aufloest.
+    const { buildPdf } = isPL
+      ? await import("@/generate-zusatzmodul-pdf.pl.mjs")
+      : await import("@/generate-zusatzmodul-pdf.mjs");
     const pdfBytes = await buildPdf({
       dogName: name,
-      dogBreed: "Mischling",
+      dogBreed: isPL ? "kundelek" : "Mischling",
       moduleKey: pdfModuleKey,
       verbose: false,
     });
     const pdfBase64 = Buffer.from(pdfBytes).toString("base64");
 
     const subject = personalize(cfg.subject, name);
-    const html = buildHtml(cfg, name);
+    const html = isPL ? buildHtmlPL(cfg, name) : buildHtml(cfg, name);
     const filename = `Pfoten-Plan-${cfg.label.replace(/[^a-zA-Z0-9-]/g, "-")}-${name.replace(/[^a-zA-Z0-9-]/g, "")}.pdf`;
 
     const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
@@ -277,8 +431,12 @@ export async function POST(request: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
-        replyTo: { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" },
+        sender: isPL
+          ? { name: "ŁapaPlan", email: "support@pfoten-plan.de" }
+          : { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
+        replyTo: isPL
+          ? { email: "support@pfoten-plan.de", name: "ŁapaPlan" }
+          : { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" },
         to: [{ email }],
         cc: [{ email: "kontakt@primesocial.de" }],
         subject,

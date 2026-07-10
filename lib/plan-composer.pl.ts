@@ -14,11 +14,10 @@ import {
   EXERCISE_LIBRARY_PL,
   PROBLEM_LABELS_PL,
 } from "./exercise-library.pl";
-import type {
-  ProblemKey,
-  ExerciseTemplate,
-  Phase,
-} from "./exercise-library";
+import type { ProblemKey, Phase } from "./exercise-library";
+// ExerciseTemplate (mit `variants`) kommt aus der PL-Datei — entkoppelt die
+// polnische Seite von der uncommitteten deutschen variants-Rewrite.
+import type { ExerciseTemplate } from "./exercise-library.pl";
 import type { TrainingPlanContent } from "./member-plan-content";
 
 export interface DogProfile {

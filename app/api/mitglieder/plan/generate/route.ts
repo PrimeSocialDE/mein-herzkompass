@@ -371,6 +371,7 @@ export async function POST(req: NextRequest) {
               planLengthMonths,
               plan: result.plan,
               customerName: lead.customer_name || null,
+              lang: planLang,
             });
             emit(ctx, {
               event: "stage",

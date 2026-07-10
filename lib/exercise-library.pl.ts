@@ -13,7 +13,15 @@
 // Struktura danych (klucze, kolejność, wartości liczbowe, identyfikatory
 // kodowe jak "fundament"/"easy"/id ćwiczeń) jest identyczna z oryginałem.
 
-import type { ProblemKey, ExerciseTemplate } from "./exercise-library";
+import type { ProblemKey, ExerciseTemplate as BaseExerciseTemplate } from "./exercise-library";
+
+// PL-eigene Typ-Erweiterung: Das `variants`-Feld (stufenweise Übungs-
+// Progression) wird HIER definiert — so hängt die polnische Seite NICHT von
+// einer geänderten deutschen exercise-library.ts ab. PfotenPlan (DE) bleibt
+// dadurch komplett unangetastet; die DE-Rewrite muss nicht mitdeployt werden.
+export type ExerciseTemplate = BaseExerciseTemplate & {
+  variants?: Array<{ steps: string[]; titleSuffix?: string }>;
+};
 
 // ════════════════════════════════════════════════════════════════════
 // PULLING (Ciągnięcie smyczy) — 12 ćwiczeń + 12 tygodniowych szablonów
