@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-17806525009');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regulamin - ŁapaPlan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text-dark: #2C2C2E;
+            --text-medium: #6B6B6B;
+            --text-light: #999999;
+            --background: #FFFFFF;
+            --white: #FFFFFF;
+            --border-light: #E8E4DF;
+            --light-brown: #D4B996;
+            --warm-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --accent-brown: #D4B996;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAF8F5;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: var(--white);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-image {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--warm-brown);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: var(--light-brown);
+            color: var(--white);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .agb-card {
+            background: var(--white);
+            padding: 50px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-light);
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--dark-brown);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-brown);
+            margin-bottom: 20px;
+            margin-top: 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--warm-brown);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--warm-brown);
+            margin-bottom: 15px;
+            margin-top: 25px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.7;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
+            color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            margin: 25px 0;
+        }
+
+        .highlight-box h3 {
+            color: white;
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .highlight-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .highlight-box li::before {
+            content: "🐕 ";
+            margin-right: 8px;
+        }
+
+        .info-box {
+            background: #FAF8F5;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--warm-brown);
+            margin: 20px 0;
+        }
+
+        .info-box h3 {
+            color: var(--dark-brown);
+            margin-top: 0;
+        }
+
+        .warning-box {
+            background: #F8F8F8;
+            border-left: 4px solid var(--text-light);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+        }
+
+        .warning-box h3 {
+            color: var(--text-dark);
+            margin-top: 0;
+        }
+
+        .wauwerk-notice {
+            background: #FAF8F5;
+            border-left: 4px solid var(--warm-brown);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 25px 0;
+        }
+
+        .wauwerk-notice h3 {
+            color: var(--dark-brown);
+            margin-top: 0;
+        }
+
+        .danger-box {
+            background: #FFF5F5;
+            border-left: 4px solid #dc3545;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin: 20px 0;
+        }
+
+        .danger-box h3 {
+            color: #dc3545;
+            margin-top: 0;
+        }
+
+        .danger-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .danger-box li::before {
+            content: "⚠️ ";
+            margin-right: 8px;
+        }
+
+        .contact-section {
+            background: linear-gradient(135deg, var(--warm-brown), var(--dark-brown));
+            color: white;
+            padding: 35px;
+            border-radius: var(--border-radius);
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .contact-section h3 {
+            color: white;
+            margin-top: 0;
+            font-size: 22px;
+        }
+
+        .contact-section a {
+            color: #F5E6D3;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .contact-section a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .footer-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-light);
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            background: var(--white);
+            border: 2px solid var(--warm-brown);
+            color: var(--warm-brown);
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            background: var(--warm-brown);
+            color: var(--white);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .back-link a {
+            display: inline-block;
+            background: var(--warm-brown);
+            color: white;
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .back-link a:hover {
+            background: var(--dark-brown);
+            transform: translateY(-2px);
+        }
+
+        a {
+            color: var(--warm-brown);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--text-light);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .agb-card {
+                padding: 25px 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            h2 {
+                font-size: 20px;
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .footer-navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-link {
+                width: 100%;
+                max-width: 250px;
+                text-align: center;
+            }
+        }
+    </style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ufxcf43805");
+</script>
+<script
+  defer
+  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+  data-domain="pfoten-plan.de"
+  src="https://datafa.st/js/script.js">
+</script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="ŁapaPlan Logo" class="logo-image">
+                <span class="logo-text">ŁapaPlan</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Strona główna</a>
+                <a href="polityka-prywatnosci.html">Polityka prywatności</a>
+                <a href="impressum.html">Impressum</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="agb-card">
+            <h1>Regulamin</h1>
+
+            <div class="wauwerk-notice">
+                <h3>🐕 O ŁapaPlan</h3>
+                <p>ŁapaPlan oferuje spersonalizowane plany szkolenia psów oparte na naukowo potwierdzonych metodach pozytywnego wzmocnienia. Wszystkie usługi świadczone są przez Debkowski & Moritz GbR.</p>
+                <p><em>Za wszystkie treści, usługi oraz kwestie prawne odpowiada wyłącznie wskazana w Impressum spółka Debkowski & Moritz GbR.</em></p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>Stan na:</strong> styczeń 2025<br>
+                <strong>Obowiązuje dla:</strong> Debkowski & Moritz GbR, Maximilian Debowski<br>
+                <strong>Marka:</strong> ŁapaPlan</p>
+            </div>
+
+            <h2>
+                <div class="section-icon">🏢</div>
+                Część 1. Sprzedawca i zakres obowiązywania
+            </h2>
+
+            <h3>§ 1 Sprzedawca</h3>
+            <div class="info-box">
+                <p><strong>Debkowski & Moritz GbR</strong><br>
+                Właściciel: Maximilian Debowski<br>
+                Rosenbohmsweg 28a<br>
+                26135 Oldenburg<br>
+                Deutschland<br>
+                E-mail: support@pfoten-plan.de<br>
+                Wsparcie: support@pfoten-plan.de</p>
+                <p><strong>NIP UE (USt-IdNr.):</strong> DE353303833</p>
+            </div>
+
+            <h3>§ 2 Zakres obowiązywania</h3>
+            <p>Niniejszy Regulamin obowiązuje dla wszystkich umów zawieranych między Sprzedawcą a klientami dotyczących usług szkolenia psów oferowanych na stronie pfoten-plan.de lub na powiązanych stronach płatności. Miarodajna jest wersja niniejszego Regulaminu opublikowana w chwili zawarcia umowy.</p>
+
+            <h3>§ 3 Definicje</h3>
+            <!-- REVIEW: prawnik — definicje "Konsument"/"Przedsiębiorca" przejęto z niemieckiego BGB; zweryfikować zgodność z polskim Kodeksem cywilnym (art. 22[1] i 43[1] k.c.) oraz definicją konsumenta w prawie polskim -->
+            <p><strong>Konsumentem</strong> jest każda osoba fizyczna, która dokonuje czynności prawnej w celach, które w przeważającej mierze nie mogą być przypisane ani jej działalności gospodarczej, ani jej samodzielnej działalności zawodowej.</p>
+            <p><strong>Przedsiębiorcą</strong> jest osoba fizyczna lub prawna albo jednostka organizacyjna posiadająca zdolność prawną, która przy zawieraniu czynności prawnej działa w ramach wykonywania swojej działalności gospodarczej lub samodzielnej działalności zawodowej.</p>
+
+            <div class="warning-box">
+                <h3>§ 4 Minimalny wiek i zdolność do czynności prawnych</h3>
+                <!-- REVIEW: prawnik — klauzula o zdolności do czynności prawnych oparta na prawie niemieckim; dostosować do polskich przepisów o pełnej zdolności do czynności prawnych -->
+                <p>Nasze plany szkolenia psów skierowane są wyłącznie do osób pełnoletnich. Składając zamówienie, klient potwierdza, że ukończył 18. rok życia i posiada pełną zdolność do czynności prawnych. W przypadku powzięcia wiedzy o niepełnoletności możemy wypowiedzieć umowę i zwrócić już otrzymane płatności.</p>
+            </div>
+
+            <h3>§ 5 Odmienne warunki</h3>
+            <p>Odmienne warunki umowne klienta nie stają się częścią umowy. Inaczej jest tylko wtedy, gdy wyraźnie w formie pisemnej wyrazimy zgodę na ich obowiązywanie.</p>
+
+            <h2>
+                <div class="section-icon">🐕</div>
+                Część 2. Przedmiot umowy i zawarcie umowy
+            </h2>
+
+            <h3>§ 6 Przedmiot umowy</h3>
+
+            <div class="highlight-box">
+                <h3>To oferujemy</h3>
+                <ul>
+                    <li><strong>Spersonalizowany plan treningowy</strong> oparty na Twoich odpowiedziach w quizie</li>
+                    <li><strong>Indywidualne ćwiczenia</strong> dopasowane do wieku, rasy i problemów behawioralnych Twojego psa</li>
+                    <li><strong>Instrukcje krok po kroku</strong> dla skutecznego treningu</li>
+                    <li><strong>Wskazówki dotyczące pozytywnego wzmocnienia</strong> dla silnej więzi</li>
+                    <li><strong>Ponad 50 gier</strong> dla zdrowia psychicznego Twojego psa</li>
+                    <li><strong>Dostawa cyfrowa</strong> pocztą e-mail</li>
+                    <li><strong>30-dniowa gwarancja zwrotu pieniędzy</strong> w razie niezadowolenia</li>
+                </ul>
+            </div>
+
+            <div class="danger-box">
+                <h3>Tym NIE jest</h3>
+                <ul>
+                    <li><strong>Brak osobistego doradztwa na miejscu przez trenera psów</strong></li>
+                    <li><strong>Brak gwarancji określonych wyników treningowych</strong></li>
+                    <li><strong>Brak porad weterynaryjnych ani medycznych</strong></li>
+                    <li><strong>Brak zastępstwa dla profesjonalnej terapii behawioralnej przy poważnych zaburzeniach zachowania</strong></li>
+                    <li><strong>Brak odpowiedzialności za urazy powstałe podczas treningu</strong></li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <h3>Ważna informacja</h3>
+                <p>Nasze plany treningowe opierają się na sprawdzonych metodach pozytywnego wzmocnienia. Każdy pies jest inny – sukcesy treningowe zależą od wielu czynników, w tym od konsekwentnego wdrażania przez opiekuna. W przypadku poważnych problemów behawioralnych, agresji lub ograniczeń zdrowotnych zalecamy konsultację z certyfikowanym trenerem psów lub lekarzem weterynarii.</p>
+            </div>
+
+            <h3>§ 7 Zawarcie umowy</h3>
+            <ol>
+                <li>Prezentacja naszych usług stanowi niewiążące zaproszenie do złożenia zamówienia.</li>
+                <li>Klient wypełnia quiz dla psa, wybiera pożądany plan i poprzez kliknięcie „Zamów plan teraz" składa wiążące zamówienie.</li>
+                <li>Płatność realizowana jest za pośrednictwem dostawcy usług płatniczych Stripe. Z chwilą pomyślnego zaksięgowania płatności dochodzi do zawarcia umowy.</li>
+                <li>Treść umowy jest zapisywana. Postanowienia umowne wraz z niniejszym Regulaminem są przekazywane klientowi pocztą e-mail.</li>
+            </ol>
+
+            <h3>§ 8 Korekta i wymagania techniczne</h3>
+            <p>Przed wysłaniem zamówienia klient może w każdej chwili sprawdzić i zmienić wprowadzone dane. Do zawarcia umowy i świadczenia usługi wymagane są: ważny adres e-mail, możliwość odbierania i otwierania plików PDF, dostęp do internetu oraz akceptowany przez Stripe środek płatniczy. Klient zapewnia, że wiadomości e-mail Sprzedawcy nie są blokowane przez filtry antyspamowe.</p>
+
+            <h2>
+                <div class="section-icon">💰</div>
+                Część 3. Ceny, płatność, dostawa, odstąpienie od umowy
+            </h2>
+
+            <h3>§ 9 Ceny i płatność</h3>
+            <ol>
+                <li>Obowiązują ceny końcowe wyświetlane w chwili składania zamówienia, zawierające ustawowy podatek od towarów i usług (VAT).</li>
+                <li>Płatność realizowana jest wyłącznie za pośrednictwem Stripe. Dane płatnicze są bezpiecznie przetwarzane w systemach Stripe.</li>
+                <li>Cena zakupu jest wymagalna natychmiast. Świadczenie usługi rozpoczyna się dopiero po pomyślnym zaksięgowaniu płatności.</li>
+                <li>W przypadku nieudanej płatności lub nieuzasadnionego chargebacku jesteśmy uprawnieni do odmowy świadczenia usługi oraz do naliczenia powstałych dodatkowych kosztów.</li>
+                <li><strong>Jest to płatność jednorazowa. Nie ma abonamentu ani żadnych kosztów cyklicznych.</strong></li>
+            </ol>
+
+            <div class="info-box">
+                <h3>💳 Akceptowane środki płatnicze (za pośrednictwem Stripe)</h3>
+                <ul>
+                    <li>Karta kredytowa (Visa, Mastercard, American Express)</li>
+                    <li>PayPal</li>
+                    <li>Polecenie zapłaty SEPA</li>
+                    <li>Klarna</li>
+                    <li>Apple Pay / Google Pay</li>
+                </ul>
+            </div>
+
+            <h3>§ 10 Dostawa i świadczenie usługi</h3>
+            <ol>
+                <li>Udostępnienie następuje wyłącznie cyfrowo, pocztą e-mail. Klient otrzymuje swój spersonalizowany plan treningowy pocztą e-mail.</li>
+                <li><strong>Dostawa w ciągu 24 godzin</strong> od zaksięgowania płatności w dni robocze.</li>
+                <li>Z chwilą wysyłki na podany adres e-mail usługę uważa się za w pełni wykonaną. Sprzedawca dokumentuje wysyłkę technicznie.</li>
+                <li>W przypadku niedostarczenia klient sprawdza folder spam oraz ustawienia filtrów i kontaktuje się ze wsparciem. Po wykazaniu niedostarczenia następuje ponowna wysyłka.</li>
+            </ol>
+
+            <h3>§ 11 Prawo odstąpienia od umowy i gwarancja zwrotu pieniędzy</h3>
+
+            <h4>🔄 Pouczenie o prawie odstąpienia od umowy dla konsumentów</h4>
+            <!-- REVIEW: prawnik — pouczenie o odstąpieniu przejęto z prawa niemieckiego; dostosować do ustawy o prawach konsumenta z 30 maja 2014 r. (14-dniowy termin, wzór pouczenia i formularza odstąpienia) -->
+            <div class="info-box">
+                <p><strong>Prawo odstąpienia:</strong> Masz prawo odstąpić od niniejszej umowy w terminie czternastu dni bez podania jakiejkolwiek przyczyny.</p>
+                <p><strong>Termin odstąpienia:</strong> Termin rozpoczyna się z chwilą zawarcia umowy.</p>
+                <p><strong>Forma odstąpienia:</strong> Do wykonania prawa wystarczy jednoznaczne oświadczenie przesłane pocztą e-mail na adres support@pfoten-plan.de</p>
+            </div>
+
+            <div class="warning-box">
+                <h3>⏰ Wcześniejsze wygaśnięcie prawa odstąpienia</h3>
+                <!-- REVIEW: prawnik — utrata prawa odstąpienia dla treści cyfrowych; zweryfikować zgodność z art. 38 pkt 13 ustawy o prawach konsumenta oraz wymogami dot. wyraźnej zgody i potwierdzenia (art. 15 ust. 3) -->
+                <p>Prawo odstąpienia wygasa w przypadku umowy o dostarczanie treści cyfrowych, które nie są dostarczane na nośniku materialnym, jeżeli rozpoczęliśmy spełnianie świadczenia po tym, jak konsument wyraźnie wyraził zgodę na to, abyśmy rozpoczęli spełnianie świadczenia przed upływem terminu do odstąpienia od umowy, oraz przyjął do wiadomości, że w ten sposób utraci prawo odstąpienia od umowy.</p>
+            </div>
+
+            <div class="highlight-box">
+                <h3>🐕 30-dniowa gwarancja zwrotu pieniędzy</h3>
+                <p>Niezależnie od praw ustawowych udzielamy w terminie 30 dni od udostępnienia planu treningowego kulancyjnego zwrotu ceny zakupu w razie niezadowolenia. Aby z niego skorzystać, wystarczy wiadomość e-mail na adres support@pfoten-plan.de. Zwrot następuje z reguły w ciągu 5-7 dni roboczych na pierwotny środek płatniczy.</p>
+                <p><strong>Uwaga:</strong> Gwarancja ta jest dobrowolna i nie narusza praw ustawowych.</p>
+            </div>
+
+            <h2>
+                <div class="section-icon">📄</div>
+                Część 4. Prawa do treści i korzystanie
+            </h2>
+
+            <h3>§ 12 Prawa do treści</h3>
+            <ol>
+                <li>Wszystkie treści utworzone w ramach planu treningowego, w tym ćwiczenia, instrukcje i zalecenia, stanowią własność intelektualną Sprzedawcy.</li>
+                <li>Klient otrzymuje niewyłączne, nieprzenoszalne prawo do korzystania z jego spersonalizowanego planu treningowego do celów prywatnych.</li>
+                <li><strong>Niedozwolone są:</strong> korzystanie komercyjne, odsprzedaż, publiczne udostępnianie, przesyłanie na platformy oraz przypisywanie sobie autorstwa.</li>
+                <li>Przy podobnych odpowiedziach w quizie mogą powstać podobne zalecenia. Absolutna niepowtarzalność nie jest gwarantowana.</li>
+            </ol>
+
+            <h2>
+                <div class="section-icon">⚖️</div>
+                Część 5. Obowiązki, odpowiedzialność, ochrona danych
+            </h2>
+
+            <h3>§ 13 Obowiązki klienta</h3>
+            <p>Klient podaje w quizie zgodne z prawdą informacje, utrzymuje swój adres e-mail w aktualnym stanie, korzysta z treści w sposób odpowiedzialny wyłącznie do celów prywatnych oraz nie nadużywa gwarancji zwrotu pieniędzy.</p>
+
+            <h3>§ 14 Odpowiedzialność</h3>
+            <!-- REVIEW: prawnik — cały reżim ograniczenia odpowiedzialności (wina umyślna/rażące niedbalstwo, istotne obowiązki umowne, roczny termin przedawnienia) oparty jest na prawie niemieckim; zweryfikować dopuszczalność wobec konsumenta w świetle polskiego prawa (m.in. art. 385[3] k.c. – klauzule niedozwolone, art. 558 k.c. i ustawowe terminy przedawnienia) -->
+
+            <div class="danger-box">
+                <h3>🚫 Wyłączenie odpowiedzialności</h3>
+                <p>Nie przejmujemy odpowiedzialności za określone wyniki treningowe, zmiany zachowania psa ani za urazy powstałe podczas treningu. Plany treningowe opierają się na ogólnych zasadach i nie zastępują profesjonalnego doradztwa behawioralnego.</p>
+            </div>
+
+            <ol>
+                <li><strong>Nieograniczona odpowiedzialność:</strong> Odpowiadamy bez ograniczeń w przypadku winy umyślnej, rażącego niedbalstwa, naruszenia życia, ciała lub zdrowia, a także w przypadku udzielonej gwarancji.</li>
+                <li><strong>Ograniczona odpowiedzialność:</strong> W przypadku zwykłego niedbalstwa odpowiadamy tylko za naruszenie istotnych obowiązków umownych, z ograniczeniem do typowej dla umowy, przewidywalnej szkody.</li>
+                <li><strong>Wyłączone:</strong> Odpowiedzialność za zakłócenia u dostawców usług płatniczych, dostawców poczty e-mail lub w wyniku siły wyższej.</li>
+                <li><strong>Przedawnienie:</strong> Roszczenia odszkodowawcze przedawniają się w ciągu jednego roku, o ile nie zachodzi wina umyślna.</li>
+            </ol>
+
+            <h3>§ 15 Ochrona danych</h3>
+            <ol>
+                <li>Dane osobowe przetwarzane są zgodnie z RODO. Szczegóły w <a href="polityka-prywatnosci.html">Polityce prywatności</a>.</li>
+                <li>Przetwarzane są odpowiedzi z quizu, dane psa, dane transakcyjne oraz techniczne dane dotyczące korzystania.</li>
+                <li>Korzystamy z narzędzi analitycznych i marketingowych (Meta Pixel, Google Ads, Microsoft Clarity) wyłącznie za wyraźną zgodą klienta.</li>
+                <li>Klientowi przysługują pełne prawa osoby, której dane dotyczą, zgodnie z RODO.</li>
+                <li><strong>Kontakt w sprawie ochrony danych:</strong> support@pfoten-plan.de</li>
+            </ol>
+
+            <h2>
+                <div class="section-icon">🚨</div>
+                Część 6. Rozstrzyganie sporów i postanowienia końcowe
+            </h2>
+
+            <h3>§ 16 Rozstrzyganie sporów</h3>
+            <!-- REVIEW: prawnik — platforma ODR UE została wygaszona (zakończenie działania w 2025 r.); zweryfikować i zaktualizować odesłanie oraz obowiązki informacyjne wobec konsumentów w Polsce (np. UOKIK, Inspekcja Handlowa, rzecznicy konsumentów) -->
+            <p>Konsumenci mogą skorzystać z unijnej platformy ODR: <a href="https://ec.europa.eu/odr" target="_blank">https://ec.europa.eu/odr</a></p>
+            <p>Nie jesteśmy zobowiązani ani gotowi do udziału w postępowaniu w sprawie rozstrzygania sporów przed konsumencką jednostką rozjemczą. Preferujemy bezpośrednie wyjaśnienie za pośrednictwem obsługi klienta.</p>
+
+            <h3>§ 18 Prawo właściwe i zmiany</h3>
+            <!-- REVIEW: prawnik — wybór prawa niemieckiego i języka niemieckiego jako języka umowy; wobec konsumenta w Polsce nie może pozbawiać go ochrony bezwzględnie obowiązujących przepisów polskich (art. 6 rozporządzenia Rzym I); zweryfikować -->
+            <p>Obowiązuje prawo Republiki Federalnej Niemiec. Językiem umowy jest język niemiecki. Zmiany niniejszego Regulaminu są komunikowane pocztą e-mail. Do już zawartych umów obowiązuje Regulamin miarodajny w chwili zawarcia umowy.</p>
+
+            <h3>§ 19 Klauzula salwatoryjna</h3>
+            <p>Jeżeli poszczególne postanowienia okazałyby się nieważne, ważność pozostałych postanowień pozostaje nienaruszona. Klient nie może bez naszej zgody przenosić praw i obowiązków wynikających z niniejszej umowy.</p>
+
+            <div class="contact-section">
+                <h3>📧 Pytania dotyczące Regulaminu?</h3>
+                <p>Skontaktuj się z nami:</p>
+                <p><a href="mailto:support@pfoten-plan.de">support@pfoten-plan.de</a></p>
+            </div>
+
+            <div class="footer-navigation">
+                <a href="polityka-prywatnosci.html" class="footer-link">📋 Polityka prywatności</a>
+                <a href="impressum.html" class="footer-link">🏢 Impressum</a>
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">🐕 Powrót do ŁapaPlan</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 ŁapaPlan. Wszelkie prawa zastrzeżone.</p>
+        <p><a href="polityka-prywatnosci.html">Polityka prywatności</a> • <a href="impressum.html">Impressum</a> • <a href="regulamin.html">Regulamin</a></p>
+    </footer>
+</body>
+</html>
