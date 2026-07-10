@@ -123,12 +123,28 @@ export async function POST(req: NextRequest) {
 
     // Lead in Supabase speichern/updaten falls noch nicht vorhanden
     if (leadId) {
+      const updateData: Record<string, any> = {
+        stripe_payment_intent: paymentIntent.id,
+        status: 'checkout_started',
+      };
+      // PL: Sprache am Lead vermerken (answers.lang), damit die Plan-
+      // Generierung spaeter den polnischen Composer/Intro waehlt. Read-
+      // modify-write, um bestehende answers nicht zu ueberschreiben.
+      if (isPL) {
+        const { data: leadRow } = await supabase
+          .from('wauwerk_leads')
+          .select('answers')
+          .eq('id', leadId)
+          .maybeSingle();
+        const ans =
+          leadRow?.answers && typeof leadRow.answers === 'object'
+            ? (leadRow.answers as Record<string, any>)
+            : {};
+        updateData.answers = { ...ans, lang: 'pl' };
+      }
       await supabase
         .from('wauwerk_leads')
-        .update({ 
-          stripe_payment_intent: paymentIntent.id,
-          status: 'checkout_started'
-        })
+        .update(updateData)
         .eq('id', leadId);
     }
 
