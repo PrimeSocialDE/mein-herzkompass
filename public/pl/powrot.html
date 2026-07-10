@@ -1,0 +1,2570 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/utm-tracking.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+    <title>ŁapaPlan - Twój plan treningowy</title>
+    
+    <!-- Google tag -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+    
+    <!-- Meta Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+        (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ufxcf43805");
+    </script>
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-brown: #C4A576;
+            --dark-brown: #8B7355;
+            --text-dark: #1a1a1a;
+            --text-medium: #555;
+            --text-light: #888;
+            --background: #FAF8F5;
+            --white: #FFFFFF;
+            --border-light: #E8E8E8;
+            --success-green: #22C55E;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: var(--white);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            text-align: center;
+        }
+        
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+        
+        .logo-image {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        .logo-text {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        /* Hero Section - Emotional */
+        .hero {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FEF3E7, #FFF9F0);
+            color: var(--dark-brown);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(196, 165, 118, 0.3);
+        }
+        
+        .hero h1 {
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.35;
+            margin-bottom: 16px;
+            color: var(--text-dark);
+        }
+        
+        .hero h1 .highlight {
+            color: var(--primary-brown);
+        }
+        
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--text-medium);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        /* Proof Slider */
+        .proof-slider {
+            margin: -10px 0 20px;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        .proof-track {
+            display: flex;
+            animation: proofSlide 10s ease-in-out infinite;
+        }
+        .proof-track img {
+            min-width: 100%;
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+        @keyframes proofSlide {
+            0%, 16% { transform: translateX(0); }
+            20%, 36% { transform: translateX(-100%); }
+            40%, 56% { transform: translateX(-200%); }
+            60%, 76% { transform: translateX(-300%); }
+            80%, 96% { transform: translateX(-400%); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Analyse Section */
+        .analyse-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .analyse-title span { color: var(--primary-brown); }
+        .analyse-subtitle {
+            text-align: center;
+            color: var(--text-medium);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .analyse-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .analyse-card {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 14px;
+        }
+        .analyse-card-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .analyse-card-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .analyse-card.full-width { grid-column: 1 / -1; }
+        .obedience-bar {
+            display: flex;
+            gap: 4px;
+            margin-top: 6px;
+        }
+        .obedience-segment {
+            flex: 1;
+            height: 7px;
+            border-radius: 4px;
+            background: var(--border-light);
+        }
+        .obedience-segment.filled { background: var(--primary-brown); }
+        .obedience-segment.filled-red { background: #E8A598; }
+        .urgency-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .urgency-high { background: #FEE2E2; color: #DC2626; }
+        .urgency-medium { background: #FEF3C7; color: #D97706; }
+        .urgency-low { background: #DCFCE7; color: #16A34A; }
+        .command-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .command-tag {
+            background: var(--background);
+            border: 1px solid var(--border-light);
+            padding: 3px 9px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-medium);
+        }
+        .command-tag.known { background: #DCFCE7; border-color: #BBF7D0; color: #166534; }
+        .analyse-hope {
+            background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
+            border: 1px solid #BBF7D0;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .analyse-hope-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #166534;
+            margin-bottom: 4px;
+        }
+        .analyse-hope-text {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.1;
+        }
+
+        /* Insight Section */
+        .insight-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        
+        .insight-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 18px;
+        }
+        
+        .insight-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .insight-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .insight-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #FEF3E7, #FFF9F0);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .insight-text {
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+        
+        .insight-text strong {
+            color: var(--dark-brown);
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            margin-bottom: 20px;
+        }
+
+        .pricing-question {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 18px;
+        }
+        
+        .pricing-card {
+            background: var(--white);
+            border: 2px solid var(--border-light);
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .pricing-card:hover {
+            border-color: var(--primary-brown);
+        }
+        
+        .pricing-card.selected {
+            border-color: var(--primary-brown);
+            background: linear-gradient(135deg, #FFFBF5 0%, var(--white) 100%);
+        }
+        
+        .pricing-card.popular {
+            border-color: var(--primary-brown);
+        }
+        
+        .popular-badge {
+            position: absolute;
+            top: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary-brown), var(--dark-brown));
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+        
+        .pricing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .pricing-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .pricing-radio {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .pricing-card.selected .pricing-radio {
+            border-color: var(--primary-brown);
+            background: var(--primary-brown);
+        }
+        
+        .pricing-card.selected .pricing-radio::after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        
+        .pricing-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .pricing-total {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-top: 2px;
+        }
+
+        .pricing-right {
+            text-align: right;
+        }
+
+        .pricing-price {
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-end;
+            gap: 2px;
+        }
+
+        .price-currency {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-brown);
+        }
+
+        .price-amount {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary-brown);
+            line-height: 1;
+        }
+
+        .price-cents {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-brown);
+        }
+
+        .price-period {
+            font-size: 12px;
+            color: var(--text-medium);
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-medium);
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        .disclaimer a {
+            color: var(--primary-brown);
+            text-decoration: none;
+        }
+        
+        /* CTA Button */
+        .cta-button {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-brown), var(--dark-brown));
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 18px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(196, 165, 118, 0.4);
+            margin-bottom: 16px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(196, 165, 118, 0.5);
+        }
+        
+        .cta-subtext {
+            display: block;
+            font-size: 13px;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        /* Payment Logos */
+        .payment-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: nowrap;
+            margin-bottom: 30px;
+        }
+
+        .payment-logos img {
+            height: 24px;
+            opacity: 0.7;
+        }
+
+        /* Guarantee Badge */
+        .guarantee {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: var(--text-dark);
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 35px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .guarantee svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--success-green);
+            flex-shrink: 0;
+            margin-bottom: 4px;
+        }
+        
+        /* Benefits Section */
+        .benefits-box {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        
+        .benefits-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        
+        .benefits-list {
+            list-style: none;
+        }
+        
+        .benefits-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+        
+        .benefits-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Soft CTA - dezent */
+        .soft-cta {
+            text-align: center;
+            margin-bottom: 35px;
+            padding: 20px;
+        }
+
+        .soft-cta-text {
+            font-size: 15px;
+            color: var(--text-medium);
+            margin-bottom: 12px;
+        }
+
+        .soft-cta-button {
+            background: none;
+            border: 2px solid var(--primary-brown);
+            color: var(--primary-brown);
+            font-size: 15px;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .soft-cta-button:hover {
+            background: var(--primary-brown);
+            color: white;
+        }
+
+        /* Testimonials Section */
+        .testimonials-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .testimonials-rating {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .rating-stars svg {
+            width: 24px;
+            height: 24px;
+            fill: #00B67A;
+        }
+
+        .rating-text {
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        }
+
+        .testimonial-text {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.5;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .testimonial-name {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        /* Trustpilot Slider */
+        .trustpilot-slider {
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .trustpilot-track {
+            display: flex;
+            gap: 14px;
+            animation: scroll 20s linear infinite;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .trustpilot-review {
+            flex-shrink: 0;
+            background: var(--white);
+            padding: 14px 18px;
+            border-radius: 10px;
+            min-width: 240px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .tp-stars {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 6px;
+        }
+
+        .tp-stars svg {
+            width: 14px;
+            height: 14px;
+            fill: #00B67A;
+        }
+
+        .tp-text {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-bottom: 6px;
+        }
+
+        .tp-name {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        /* Guarantee Box */
+        .guarantee-box {
+            background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .guarantee-box-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .guarantee-box-text {
+            font-size: 14px;
+            color: var(--text-medium);
+            line-height: 1.6;
+        }
+
+        .guarantee-box-badge {
+            position: absolute;
+            top: -14px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--success-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .guarantee-box-badge svg {
+            width: 26px;
+            height: 26px;
+            fill: white;
+        }
+        
+        /* FAQ Section */
+        .faq-section {
+            margin-bottom: 30px;
+        }
+        
+        .faq-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        
+        .faq-item {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        
+        .faq-question {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .faq-icon {
+            width: 22px;
+            height: 22px;
+            background: var(--success-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .faq-icon svg {
+            width: 12px;
+            height: 12px;
+            fill: white;
+        }
+        
+        .faq-question-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .faq-answer {
+            font-size: 13px;
+            color: var(--text-medium);
+            line-height: 1.5;
+            padding-left: 34px;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        .final-cta-text {
+            font-size: 15px;
+            color: var(--text-medium);
+            margin-bottom: 16px;
+        }
+
+        .final-cta-text strong {
+            color: var(--text-dark);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 12px;
+            color: var(--text-light);
+            border-top: 1px solid var(--border-light);
+            margin-top: 20px;
+        }
+
+        .footer a {
+            color: var(--text-light);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: var(--primary-brown);
+        }
+
+        /* Checkout Overlay */
+        .checkout-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .checkout-overlay.active {
+            display: flex;
+        }
+
+        .checkout-popup {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 440px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .checkout-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .checkout-title {
+            font-size: 18px;
+            font-weight: 700;
+            flex: 1;
+            text-align: center;
+        }
+
+        .checkout-close {
+            position: absolute;
+            left: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 0;
+            line-height: 1;
+        }
+
+        .checkout-body {
+            padding: 24px 20px;
+        }
+
+        .checkout-plan-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            background: #FAFAFA;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .checkout-plan-image {
+            font-size: 32px;
+        }
+
+        .checkout-plan-info {
+            flex: 1;
+        }
+
+        .checkout-plan-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .checkout-plan-duration {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .checkout-plan-price-box {
+            text-align: right;
+        }
+
+        .checkout-plan-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-brown);
+        }
+
+        .checkout-plan-access {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .checkout-features-compact {
+            margin-bottom: 12px;
+        }
+
+        .checkout-feature-row {
+            font-size: 13px;
+            color: var(--text-medium);
+            padding: 6px 0;
+        }
+
+        .checkout-guarantee-compact {
+            text-align: center;
+            font-size: 13px;
+            color: var(--success-green);
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #F0FDF4;
+            border-radius: 8px;
+        }
+
+        .checkout-payment-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #6B6B6B;
+            font-weight: 600;
+        }
+
+        .checkout-error {
+            background: #FEF2F2;
+            color: #DC2626;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .checkout-error.visible {
+            display: block;
+        }
+
+        #payment-element {
+            margin-bottom: 20px;
+        }
+
+        .checkout-pay-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-brown), var(--dark-brown));
+            color: white;
+            font-size: 17px;
+            font-weight: 700;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .checkout-pay-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .checkout-pay-btn .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .payment-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+            padding: 12px;
+            background: #FAFAFA;
+            border-radius: 10px;
+        }
+
+        .payment-icons img {
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        .checkout-back {
+            display: block;
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text-medium);
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 16px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .checkout-back:hover {
+            color: var(--primary-brown);
+        }
+        
+        /* Mobile */
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 16px;
+            }
+            
+            .hero h1 {
+                font-size: 22px;
+            }
+            
+            .hero-subtitle {
+                font-size: 15px;
+            }
+
+            .price-amount {
+                font-size: 24px;
+            }
+
+            .testimonial-card {
+                padding: 16px;
+            }
+
+            .analyse-grid {
+                gap: 8px;
+            }
+
+            .analyse-card {
+                padding: 12px;
+            }
+
+            .analyse-title {
+                font-size: 19px;
+            }
+        }
+    </style>
+<script
+  defer
+  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+  data-domain="pfoten-plan.de"
+  src="https://datafa.st/js/script.js">
+</script>
+</head>
+<body>
+    <!-- Banner oben (nicht sticky): Sommer-Motivation -->
+    <div id="bonusBanner" style="background: linear-gradient(135deg, #C4A576, #8B7355); color: white; padding: 10px 16px; text-align: center; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
+        <span>Lato to idealny czas, żeby razem z <strong id="dogNameTopBanner">Twoim psem</strong> naprawdę wystartować.</span>
+    </div>
+
+    <header class="header">
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="ŁapaPlan Logo" class="logo-image">
+            <span class="logo-text">ŁapaPlan</span>
+        </a>
+    </header>
+    
+    <div class="container">
+        <!-- Hero - Emotional -->
+        <div class="hero">
+            <span class="hero-badge">📋 Twoja analiza jest zapisana</span>
+            <h1 id="heroTitle">Wyobraź sobie, że <span class="highlight" id="dogNameHero">Twój pies</span> to już żaden problem.</h1>
+            <p class="hero-subtitle" id="heroSubtitle">Spokojne spacery. Koniec z szarpaniną. Pies, z którego jesteś dumny. To możliwe – w kilka tygodni.</p>
+        </div>
+
+        <!-- Proof Slider -->
+        <div class="proof-slider">
+            <div class="proof-track">
+                <img src="proof3-sm.jpg" alt="Klientka z ŁapaPlan na tablecie" loading="eager">
+                <img src="proof4-sm.jpg" alt="Właścicielka psa czyta ŁapaPlan z psem" loading="lazy">
+                <img src="proof5-sm.jpg" alt="Właścicielka psa z planem w parku" loading="lazy">
+                <img src="proof6-sm.jpg" alt="Klientka pokazuje plan 6-miesięczny" loading="lazy">
+                <img src="proof7-sm.jpg" alt="Właścicielka psa ze szczeniakiem" loading="lazy">
+            </div>
+        </div>
+
+        <!-- Trust Stats -->
+        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; text-align: center;">
+            <div>
+                <div style="font-size: 22px; font-weight: 800; color: #C4A576;">3.447+</div>
+                <div style="font-size: 11px; color: #888;">wytrenowanych psów</div>
+            </div>
+            <div style="width: 1px; background: #E8E8E8;"></div>
+            <div>
+                <div style="font-size: 22px; font-weight: 800; color: #22C55E;">94%</div>
+                <div style="font-size: 11px; color: #888;">widzi postępy</div>
+            </div>
+            <div style="width: 1px; background: #E8E8E8;"></div>
+            <div>
+                <div style="font-size: 22px; font-weight: 800; color: #C4A576;">4.9★</div>
+                <div style="font-size: 11px; color: #888;">ocena</div>
+            </div>
+        </div>
+
+        <!-- ===== PERSÖNLICHE ANALYSE-ZUSAMMENFASSUNG ===== -->
+        <div style="margin-bottom: 30px;">
+            <h2 class="analyse-title">Analiza <span id="analyseNameTitle">Twojego psa</span></h2>
+            <p class="analyse-subtitle">Na podstawie Twoich zapisanych odpowiedzi z quizu</p>
+
+            <div class="analyse-grid">
+                <div class="analyse-card">
+                    <div class="analyse-card-label">Wykryty problem</div>
+                    <div class="analyse-card-value" id="analyseProblem">Ciągnięcie na smyczy</div>
+                </div>
+                <div class="analyse-card">
+                    <div class="analyse-card-label">Pilność działania</div>
+                    <div id="analyseUrgency"><span class="urgency-badge urgency-high">Wysoka</span></div>
+                </div>
+                <div class="analyse-card" id="analyseBreedCard">
+                    <div class="analyse-card-label">Rasa</div>
+                    <div class="analyse-card-value" id="analyseBreed">–</div>
+                </div>
+                <div class="analyse-card" id="analyseAgeCard">
+                    <div class="analyse-card-label">Wiek</div>
+                    <div class="analyse-card-value" id="analyseAge">–</div>
+                </div>
+                <div class="analyse-card" id="analyseObedienceCard">
+                    <div class="analyse-card-label">Poziom posłuszeństwa</div>
+                    <div class="analyse-card-value"><span id="analyseObedienceText">– z 10</span></div>
+                    <div class="obedience-bar" id="analyseObedienceBar">
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                        <div class="obedience-segment"></div>
+                    </div>
+                </div>
+                <div class="analyse-card">
+                    <div class="analyse-card-label">Zalecany czas</div>
+                    <div class="analyse-card-value" id="analyseDuration">4–6 tygodni</div>
+                </div>
+                <div class="analyse-card full-width" id="analyseCommandsCard" style="display: none;">
+                    <div class="analyse-card-label">Znane komendy</div>
+                    <div class="command-tags" id="analyseCommandTags"></div>
+                </div>
+            </div>
+
+            <!-- Hoffnungs-Message -->
+            <div class="analyse-hope">
+                <div class="analyse-hope-title" id="analyseHopeTitle">To da się skutecznie oduczyć</div>
+                <div class="analyse-hope-text" id="analyseHopeText">Przy konsekwentnym treningu pierwsze efekty widać już po 1–2 tygodniach. W 4–6 tygodni problem można znacznie zredukować.</div>
+            </div>
+        </div>
+
+        <!-- Personalized Insights -->
+        <div class="insight-section">
+            <div class="insight-title">Co warto wiedzieć</div>
+            
+            <div class="insight-item">
+                <div class="insight-icon">🎯</div>
+                <div class="insight-text" id="insight1">
+                    <strong id="dogNameInsight1">Twój pies</strong> potrzebuje jasnych, spójnych sygnałów – nie kary.
+                </div>
+            </div>
+            
+            <div class="insight-item">
+                <div class="insight-icon">📅</div>
+                <div class="insight-text" id="insight2">
+                    Pierwsze zmiany widać często już po <strong>2-3 tygodniach</strong>. Trwałe efekty po 4-6 tygodniach.
+                </div>
+            </div>
+            
+            <div class="insight-item">
+                <div class="insight-icon">⚠️</div>
+                <div class="insight-text" id="insight3">
+                    Bez uporządkowanego treningu zachowanie staje się utrwalonym nawykiem – i <strong>coraz trudniej je zmienić</strong>.
+                </div>
+            </div>
+
+            <!-- Saved-Data Hinweis -->
+            <div style="background: #F0FDF4; border-radius: 10px; padding: 14px 16px; margin-top: 16px; display: flex; align-items: center; gap: 10px;">
+                <span style="color: #22C55E; font-size: 18px;">✓</span>
+                <span style="font-size: 14px; color: #166534; font-weight: 500;">Twoje odpowiedzi dla <strong id="dogNameBanner">Twojego psa</strong> są zapisane</span>
+            </div>
+        </div>
+
+        <!-- Plan-Inhalt iPad -->
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 18px; font-weight: 700; color: var(--text-dark); text-align: center; margin-bottom: 16px;">Co czeka Cię w planie dla <span id="planSliderDogName">Twojego psa</span></h2>
+
+            <!-- iPad Frame -->
+            <div style="background: #1a1a1a; border-radius: 24px; padding: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+                <div style="background: #fff; border-radius: 16px; overflow: hidden;">
+                    <!-- iPad Header -->
+                    <div style="background: linear-gradient(180deg, #F8F8F8, #F0F0F0); padding: 8px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E0E0E0;">
+                        <div style="display: flex; gap: 5px;">
+                            <div style="width: 7px; height: 7px; border-radius: 50%; background: #FF5F57;"></div>
+                            <div style="width: 7px; height: 7px; border-radius: 50%; background: #FFBD2E;"></div>
+                            <div style="width: 7px; height: 7px; border-radius: 50%; background: #28CA41;"></div>
+                        </div>
+                        <div style="font-size: 11px; color: #999; font-weight: 500;">PlanTreningowy.pdf</div>
+                        <div style="width: 40px;"></div>
+                    </div>
+
+                    <!-- iPad Body -->
+                    <div style="padding: 18px;">
+                        <!-- Plan Header -->
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #F0F0F0;">
+                            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #C4A576, #8B7355); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🐕</div>
+                            <div>
+                                <div style="font-size: 14px; font-weight: 700; color: #2C2C2E;" id="ipadPlanTitle">Plan treningowy</div>
+                                <div style="font-size: 11px; color: #C4A576; font-weight: 500;" id="ipadPlanFocus">Spersonalizowany dla Twojego psa</div>
+                            </div>
+                        </div>
+
+                        <!-- Plan Tabs -->
+                        <div style="display: flex; gap: 4px; margin-bottom: 18px; background: #F0F0F0; border-radius: 10px; padding: 3px;">
+                            <button onclick="selectIpadTab('1month')" id="ipadTab1" class="ipad-plan-tab" style="flex: 1; padding: 8px 4px; border-radius: 8px; border: none; background: transparent; color: #888; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s;">4 tygodnie</button>
+                            <button onclick="selectIpadTab('3month')" id="ipadTab3" class="ipad-plan-tab" style="flex: 1; padding: 8px 4px; border-radius: 8px; border: none; background: #C4A576; color: white; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s;">12 tygodni</button>
+                            <button onclick="selectIpadTab('6month')" id="ipadTab6" class="ipad-plan-tab" style="flex: 1; padding: 8px 4px; border-radius: 8px; border: none; background: transparent; color: #888; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s;">6 miesięcy</button>
+                        </div>
+
+                        <!-- Fortschritts-Chart -->
+                        <div style="margin-bottom: 16px;">
+                            <div style="font-size: 12px; font-weight: 600; color: #2C2C2E; margin-bottom: 12px; text-align: center;" id="ipadChartTitle">Oczekiwany postęp w ciągu 12 tygodni</div>
+                            <div style="display: flex; align-items: flex-end; justify-content: center; gap: 6px; height: 110px; margin-bottom: 10px;" id="ipadChartBars">
+                                <!-- Bars per JS -->
+                            </div>
+                            <div style="display: flex; justify-content: center; gap: 16px; font-size: 10px; color: #888;">
+                                <span><span style="display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: linear-gradient(180deg, #C4A576, #D4B996); margin-right: 4px; vertical-align: middle;"></span>Z planem</span>
+                                <span><span style="display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: #E0E0E0; margin-right: 4px; vertical-align: middle;"></span>Bez planu</span>
+                            </div>
+                        </div>
+
+                        <!-- Plan Features -->
+                        <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px;" id="ipadPlanFeatures">
+                            <!-- Per JS -->
+                        </div>
+
+                        <!-- Stats -->
+                        <div style="display: flex; justify-content: space-around; padding-top: 14px; border-top: 1px solid #F0F0F0;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 20px; font-weight: 800; color: #C4A576;" id="ipadStatExercises">20+</div>
+                                <div style="font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Ćwiczenia</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 20px; font-weight: 800; color: #C4A576;" id="ipadStatWeeks">12</div>
+                                <div style="font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Tygodnie</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 20px; font-weight: 800; color: #C4A576;">✓</div>
+                                <div style="font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Wsparcie</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Übungs-Preview -->
+        <div style="background: white; border-radius: 16px; padding: 24px 20px; margin-bottom: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
+            <div style="text-align: center; margin-bottom: 18px;">
+                <span style="display: inline-block; background: linear-gradient(135deg, #FEF3E7, #FFF9F0); color: #8B7355; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 12px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Podgląd z Twojego planu</span>
+                <h2 style="font-size: 18px; font-weight: 700; color: #1a1a1a; line-height: 1.3;" id="exercisePreviewTitle">Tak wygląda ćwiczenie</h2>
+            </div>
+
+            <!-- Übungs-Card -->
+            <div style="border: 1px solid #E8E8E8; border-radius: 12px; overflow: hidden;">
+                <!-- Übungs-Header -->
+                <div style="background: linear-gradient(135deg, #C4A576, #8B7355); padding: 14px 16px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 22px;" id="exerciseIcon">🦮</span>
+                    <div>
+                        <div style="font-size: 15px; font-weight: 700; color: white;" id="exerciseName">Ładowanie ćwiczenia...</div>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.8);" id="exerciseMeta">Czas: 10 min · Trudność: Łatwa</div>
+                    </div>
+                </div>
+
+                <!-- Sichtbare Schritte -->
+                <div style="padding: 16px;" id="exerciseStepsVisible">
+                    <!-- Per JS -->
+                </div>
+
+                <!-- Geblurrte Schritte -->
+                <div style="position: relative; padding: 0 16px 16px;">
+                    <div id="exerciseStepsBlurred" style="filter: blur(5px); pointer-events: none; user-select: none; opacity: 0.6;">
+                        <!-- Per JS -->
+                    </div>
+                    <!-- Overlay -->
+                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.95) 60%);">
+                        <div style="font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px;" id="exerciseBlurText">+ 3 kolejne kroki</div>
+                        <div style="font-size: 12px; color: #888; margin-bottom: 12px;">Odblokuj wszystkie kroki w planie</div>
+                        <button onclick="document.getElementById('pricingSection').scrollIntoView({behavior: 'smooth'})" style="background: linear-gradient(135deg, #C4A576, #8B7355); color: white; border: none; padding: 10px 24px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">
+                            Odblokuj plan
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 12px; font-size: 12px; color: #888;">
+                To ćwiczenie to jedno z <strong id="exerciseTotal">20+</strong> w Twoim spersonalizowanym planie
+            </div>
+        </div>
+
+        <!-- Soft CTA - dezent -->
+        <div class="soft-cta">
+            <p class="soft-cta-text">Gotowy na pierwszy krok?</p>
+            <button class="soft-cta-button" onclick="document.getElementById('pricingSection').scrollIntoView({behavior: 'smooth'})">
+                Do planu treningowego →
+            </button>
+        </div>
+
+        <!-- Testimonials Slider -->
+        <div class="testimonials-section">
+            <h2 class="section-title">Tak mówią inni właściciele psów</h2>
+
+            <div class="testimonials-rating">
+                <div class="rating-stars">
+                    <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                    <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                    <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                    <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                    <svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+                </div>
+                <div class="rating-text">4,9 na 5 gwiazdek</div>
+            </div>
+
+            <div class="trustpilot-slider">
+                <div class="trustpilot-track" id="tpTrackTop">
+                    <div class="trustpilot-review">
+                        <div class="tp-stars"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
+                        <p class="tp-text">Bardzo dobrze wytłumaczone i szybkie do wdrożenia!</p>
+                        <p class="tp-name">Sandra M.</p>
+                    </div>
+                    <div class="trustpilot-review">
+                        <div class="tp-stars"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
+                        <p class="tp-text">Wreszcie plan, który działa.</p>
+                        <p class="tp-name">Thomas K.</p>
+                    </div>
+                    <div class="trustpilot-review">
+                        <div class="tp-stars"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
+                        <p class="tp-text">Proste instrukcje, szybkie efekty!</p>
+                        <p class="tp-name">Julia R.</p>
+                    </div>
+                    <div class="trustpilot-review">
+                        <div class="tp-stars"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
+                        <p class="tp-text">Mój pies jest jak odmieniony!</p>
+                        <p class="tp-name">Michael S.</p>
+                    </div>
+                    <div class="trustpilot-review">
+                        <div class="tp-stars"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
+                        <p class="tp-text">Po 2 tygodniach już duże postępy!</p>
+                        <p class="tp-name">Lisa H.</p>
+                    </div>
+                    <div class="trustpilot-review">
+                        <div class="tp-stars"><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg><svg viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></div>
+                        <p class="tp-text">Najlepsza inwestycja dla mojego psa!</p>
+                        <p class="tp-name">Peter M.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guarantee Box - vor Pricing -->
+        <div class="guarantee-box">
+            <div class="guarantee-box-badge">
+                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+            </div>
+            <h3 class="guarantee-box-title">Zero ryzyka dla Ciebie. Bez abonamentu.</h3>
+            <p class="guarantee-box-text">Jeśli nie zauważysz poprawy, zwrócimy Ci pełną kwotę – bez żadnych „ale". Przez 30 dni.</p>
+        </div>
+
+
+        <!-- Pricing Section -->
+        <div id="pricingSection">
+            <p class="pricing-question">Wybierz swój plan:</p>
+
+            <!-- Trust-Anker: 4,9/5 Sterne (Trustpilot-Stil) direkt ueber den Plan-Karten -->
+            <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin:0 0 18px;flex-wrap:wrap;">
+                <div style="display:flex;gap:2px;">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#00B67A;border-radius:2px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#00B67A;border-radius:2px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#00B67A;border-radius:2px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#00B67A;border-radius:2px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:#00B67A;border-radius:2px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="#fff"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span>
+                </div>
+                <span style="font-size:13px;color:#1a1a1a;font-weight:700;">4,9 na 5</span>
+                <span style="font-size:13px;color:#666;">· 847 opinii</span>
+            </div>
+
+        <div class="pricing-section">
+            <div class="pricing-card" data-plan="1month" data-price="29.99">
+                <div class="pricing-header">
+                    <div class="pricing-left">
+                        <div class="pricing-radio"></div>
+                        <div>
+                            <div class="pricing-name">Twój plan 4-tygodniowy</div>
+                            <div class="pricing-total" style="font-size:12px;color:#666;margin-top:3px;">Intensywny i skoncentrowany — najszybsza droga do efektu</div>
+                        </div>
+                    </div>
+                    <div class="pricing-right" style="text-align:right;">
+                        <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">€29,99</div>
+                        <div style="font-size:11px;color:#999;margin-top:2px;">jednorazowo</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pricing-card popular selected" data-plan="3month" data-price="39.99">
+                <div class="popular-badge">Na trwałą zmianę</div>
+                <div class="pricing-header">
+                    <div class="pricing-left">
+                        <div class="pricing-radio"></div>
+                        <div>
+                            <div class="pricing-name">Twój plan 12-tygodniowy</div>
+                            <div class="pricing-total" style="font-size:12px;color:#666;margin-top:3px;">Intensywnie przez 12 tygodni — dla trwałej zmiany</div>
+                        </div>
+                    </div>
+                    <div class="pricing-right" style="text-align:right;">
+                        <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">€39,99</div>
+                        <div style="font-size:11px;color:#999;margin-top:2px;">jednorazowo</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pricing-card" data-plan="6month" data-price="59.99">
+                <div class="pricing-header">
+                    <div class="pricing-left">
+                        <div class="pricing-radio"></div>
+                        <div>
+                            <div class="pricing-name">Twój plan 6-miesięczny</div>
+                            <div class="pricing-total" style="font-size:12px;color:#666;margin-top:3px;">Łagodnie i trwale — zbudowany w Twoim tempie</div>
+                        </div>
+                    </div>
+                    <div class="pricing-right" style="text-align:right;">
+                        <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">€59,99</div>
+                        <div style="font-size:11px;color:#999;margin-top:2px;">jednorazowo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order-Bump: Anti-Giftköder-Trainingsplan +€9,99 (Text identisch zu deinplan3) -->
+        <label for="antigiftBump" id="antigiftBumpBox" style="display:flex;gap:12px;background:#FFFBF5;border:2px solid #E6D5B3;border-radius:12px;padding:14px 16px;margin:0 0 25px;cursor:pointer;align-items:flex-start;transition:border-color 0.2s ease;">
+            <input type="checkbox" id="antigiftBump" onchange="toggleAntigiftBump()" style="margin-top:3px;width:22px;height:22px;cursor:pointer;accent-color:#C4A576;flex-shrink:0;">
+            <div style="flex:1;">
+                <div style="display:inline-block;background:#8B7355;color:#fff;padding:2px 8px;border-radius:12px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">KOMENDY PODSTAWOWE</div>
+                <div style="font-size:14.5px;font-weight:800;color:#1a1a1a;margin-bottom:4px;line-height:1.3;">
+                    Awaryjny plan komend podstawowych w pakiecie
+                </div>
+                <div style="font-size:12.5px;color:#555;line-height:1.55;margin-bottom:8px;">
+                    Krok po kroku do Siad, Waruj, Zostań i Do mnie — żeby słuchał też przy rowerzystach, biegaczach, innych psach czy gościach. Komendy kontrolne dla Twojego psa.
+                </div>
+                <div style="font-size:12.5px;">
+                    <span style="color:#999;text-decoration:line-through;">€19,99</span>
+                    <span style="color:#E67946;font-weight:800;margin-left:6px;">tylko +€9,99 jednorazowo</span>
+                </div>
+            </div>
+        </label>
+
+        <div class="disclaimer">
+            ✓ <strong style="color: #166534;">Płatność jednorazowa</strong> – bez abonamentu, <strong style="color: #166534;">dożywotni dostęp</strong> • <strong style="color: #166534;">Wsparcie 24/7</strong> • Nie działa? Zwrot co do grosza. • <a href="regulamin.html">Regulamin</a>
+        </div>
+
+        <!-- Mini-Testimonial vor CTA (dynamisch basierend auf Problem) -->
+        <div style="text-align: center; margin: 15px 0; padding: 12px 16px; background: #f9f7f5; border-radius: 8px; border-left: 3px solid #00B67A;">
+            <p id="miniTestimonialText" style="font-size: 14px; color: #2C2C2E; margin: 0; font-style: italic;">"Plan przyszedł od razu mailem – po 2 tygodniach Luna już nie ciągnie!"</p>
+            <p style="font-size: 12px; color: #6B6B6B; margin: 4px 0 0 0;">– <span id="miniTestimonialAuthor">Sandra M.</span> <span style="display: inline-flex; gap: 1px; vertical-align: middle; margin-left: 6px;"><span style="display: inline-flex; width: 14px; height: 14px; background: #00B67A; align-items: center; justify-content: center;"><svg viewBox="0 0 24 24" style="width: 10px; height: 10px; fill: white;"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span style="display: inline-flex; width: 14px; height: 14px; background: #00B67A; align-items: center; justify-content: center;"><svg viewBox="0 0 24 24" style="width: 10px; height: 10px; fill: white;"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span style="display: inline-flex; width: 14px; height: 14px; background: #00B67A; align-items: center; justify-content: center;"><svg viewBox="0 0 24 24" style="width: 10px; height: 10px; fill: white;"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span style="display: inline-flex; width: 14px; height: 14px; background: #00B67A; align-items: center; justify-content: center;"><svg viewBox="0 0 24 24" style="width: 10px; height: 10px; fill: white;"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span style="display: inline-flex; width: 14px; height: 14px; background: #00B67A; align-items: center; justify-content: center;"><svg viewBox="0 0 24 24" style="width: 10px; height: 10px; fill: white;"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span></p>
+        </div>
+
+        <!-- "Du bist nicht allein" – kompakter Reassurance-Block -->
+        <div style="background:#FFFBF5; border:1px solid #E8DCC8; border-radius:14px; padding:14px 16px; margin:16px 0;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <img src="team.png" alt="Trainer-Team" style="width:38px; height:38px; border-radius:50%; object-fit:cover; border:2px solid #C4A576; flex-shrink:0;">
+                <div style="font-size:15px; font-weight:800; color:#2C2C2E; line-height:1.2;">Nie jesteś sam – jesteśmy z Tobą</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <div style="font-size:13px; color:#2C2C2E; line-height:1.45;"><span style="color:#C4A576; font-weight:800;">✓</span> Przy każdym pytaniu Twój czat z trenerem odpowiada całą dobę – możesz mu nawet pokazać <strong>zdjęcie swojego psa</strong>.</div>
+                <div style="font-size:13px; color:#2C2C2E; line-height:1.45;"><span style="color:#C4A576; font-weight:800;">✓</span> Wykonalne dla <strong>każdego psa</strong> – w każdym wieku, każdej rasy, już od 5–10 min dziennie.</div>
+                <div style="font-size:13px; color:#166534; line-height:1.45;">🛡️ <strong>30-dniowa gwarancja zwrotu pieniędzy</strong> – nie ryzykujesz nic.</div>
+            </div>
+        </div>
+
+        <button class="cta-button" id="ctaButton" onclick="openCheckout()">
+            Odblokuj plan treningowy
+            <span class="cta-subtext">Zapłać bezpiecznie i zacznij od razu</span>
+        </button>
+
+        <!-- Payment Logos -->
+        <div class="payment-logos">
+            <img src="sepa-logo.png" alt="SEPA">
+            <img src="visa-logo.png" alt="Visa">
+            <img src="paypal-logo.png" alt="PayPal">
+            
+            <img src="mastercard-logo.png" alt="Mastercard">
+            <img src="applepay.png" alt="Apple Pay">
+            <img src="googlepay.png" alt="Google Pay">
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2 class="faq-title">Najczęstsze pytania</h2>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Czy to abonament?</span>
+                </div>
+                <p class="faq-answer"><strong>Nie, to nie jest abonament.</strong> Uważamy, że pobieranie opłaty co miesiąc jest nie w porządku. Plan jest jednorazowy i masz do niego dostęp na zawsze.</p>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Jak otrzymam swój plan?</span>
+                </div>
+                <p class="faq-answer">Swój spersonalizowany plan treningowy otrzymasz od razu mailem. W kilka minut możesz zaczynać!</p>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Ile czasu potrzebuję dziennie?</span>
+                </div>
+                <p class="faq-answer">Tylko 10-15 minut dziennie. Ćwiczenia są krótkie, skuteczne i pasują do każdego dnia.</p>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <div class="faq-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <span class="faq-question-text">Czy to zadziała też u mojego psa?</span>
+                </div>
+                <p class="faq-answer">Tak! Plan jest dopasowany do wieku, rasy i problemu Twojego psa. Jeśli nie zauważysz poprawy, otrzymasz zwrot pieniędzy.</p>
+            </div>
+        </div>
+
+        <!-- Final CTA -->
+        <div class="final-cta">
+            <p class="final-cta-text">Gotowy, żeby zacząć trening z <strong id="dogNameFinal">Twoim psem</strong>?</p>
+            <button class="cta-button" onclick="openCheckout()">
+                Odblokuj plan treningowy
+                <span class="cta-subtext">30-dniowa gwarancja zwrotu pieniędzy</span>
+            </button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 ŁapaPlan. Wszelkie prawa zastrzeżone.</p>
+        <p><a href="polityka-prywatnosci.html">Polityka prywatności</a> • <a href="impressum.html">Nota prawna</a> • <a href="regulamin.html">Regulamin</a></p>
+    </footer>
+
+    <!-- Checkout Popup -->
+    <div class="checkout-overlay" id="checkoutOverlay">
+        <div class="checkout-popup">
+            <div class="checkout-header">
+                <button class="checkout-close" onclick="closeCheckout()">×</button>
+                <h2 class="checkout-title">Twój plan dla <span id="checkoutDogName">Twojego psa</span></h2>
+            </div>
+            <div class="checkout-body">
+                <!-- Plan Card oben -->
+                <div class="checkout-plan-card">
+                    <div class="checkout-plan-image">🐕</div>
+                    <div class="checkout-plan-info">
+                        <div class="checkout-plan-name">Spersonalizowany plan treningowy</div>
+                        <div class="checkout-plan-duration" id="checkoutPlanDuration">Plan 12-tygodniowy</div>
+                    </div>
+                    <div class="checkout-plan-price-box">
+                        <div class="checkout-plan-price" id="checkoutPrice">€39,99</div>
+                        <div class="checkout-plan-access">Pełny dostęp</div>
+                    </div>
+                </div>
+
+                <!-- Quiz-Daten gespeichert -->
+                <div id="quizDataSaved" style="background: linear-gradient(135deg, #FEF3E7, #FFF9F0); border: 1px solid rgba(196, 165, 118, 0.3); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 32px; height: 32px; background: #22C55E; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg style="width: 16px; height: 16px; fill: white;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                    <div>
+                        <div style="font-size: 13px; font-weight: 600; color: #1a1a1a;">Twoje dane z quizu są zapisane</div>
+                        <div style="font-size: 11px; color: #8B7355;">Twój spersonalizowany plan dla <strong id="checkoutDogNameFomo">Twojego psa</strong> jest gotowy</div>
+                    </div>
+                </div>
+
+                <!-- Features kompakt -->
+                <div class="checkout-features-compact">
+                    <div class="checkout-feature-row">✓ 20+ ćwiczeń na <span id="checkoutDogProblem">Twój problem</span></div>
+                    <div class="checkout-feature-row">✓ Osobisty plan tygodniowy</div>
+                    <div class="checkout-feature-row">✓ Instrukcje krok po kroku</div>
+                    <div class="checkout-feature-row">✓ <span id="checkoutPlanBenefit">Plan treningowy zoptymalizowany na 12 tygodni</span></div>
+                </div>
+
+                <!-- 30 Tage Garantie -->
+                <div class="checkout-guarantee-compact">🛡️ 30-dniowa gwarancja zwrotu pieniędzy</div>
+
+                <div style="text-align: center; padding: 6px 10px; background: #f0fdf4; border-radius: 6px; font-size: 11px; color: #166534; margin-bottom: 8px; font-weight: 500;">
+                    ✓ Płatność jednorazowa – bez abonamentu · ✓ Dożywotni dostęp
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #FFFBF5; border: 1px solid #E8DCC8; border-radius: 8px; margin-bottom: 10px;">
+                    <img src="team.png" alt="Trainer" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+                    <p style="font-size: 11px; color: #5C4A2A; margin: 0; line-height: 1.3;">Osobista pomoc naszych <strong>trenerów psów</strong> jest w cenie</p>
+                </div>
+
+                <h3 class="checkout-payment-title">Wybierz metodę płatności</h3>
+
+                <div class="checkout-error" id="checkoutError"></div>
+
+                <div id="payment-element"></div>
+
+                <button class="checkout-pay-btn" id="checkoutPayBtn" onclick="submitPayment()">
+                    🔒 Zapłać teraz
+                </button>
+
+                <div class="payment-icons">
+                    <img src="visa-logo.png" alt="Visa">
+                    <img src="mastercard-logo.png" alt="Mastercard">
+                    <img src="paypal-logo.png" alt="PayPal">
+            
+                </div>
+
+                <button class="checkout-back" onclick="closeCheckout()">← Wstecz</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Config
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+        
+        const STRIPE_PUBLIC_KEY = 'pk_live_51R4LfjAI8IbKLr6RO63Mf5cZmwW8GZCV8fveuqas0sQU8tVtGGISXj1WxQBN5LjUu7IMt0swCgIp8XEFDFZKqgSI00N5iaRkiy';
+
+        let stripe = null;
+        let elements = null;
+        let paymentElement = null;
+        let selectedPlan = '3month';
+        let userEmail = '';
+        let leadId = '';
+        let dogName = 'Twojego psa';
+        let dogProblem = '';
+        let dogBreed = '';
+        let dogAge = '';
+        let dogCommands = [];
+
+        // Problem-spezifische Inhalte
+        const problemContent = {
+            'pulling': {
+                name: 'Ciągnięcie na smyczy',
+                subtitle: 'Wyobraź sobie: spokojne spacery, podczas których cieszysz się naturą zamiast się szarpać. To możliwe w 4 tygodnie.',
+                insights: [
+                    '{dogName} potrzebuje podczas spaceru jasnych sygnałów, kiedy idziemy dalej, a kiedy nie.',
+                    'Większość psów naprawdę rozumie "Przy nodze" dopiero po 3-4 tygodniach konsekwentnego treningu.',
+                    'Bez jasnego treningu ciągnięcie staje się nawykiem – a ten trudno przełamać.'
+                ],
+                benefits: [
+                    '✓ Krok po kroku oducz {dogName} ciągnięcia na smyczy',
+                    '✓ Spokojne spacery bez szarpania',
+                    '✓ Jasne komendy, które {dogName} rozumie',
+                    '✓ Technika zmiany kierunku dla natychmiastowego efektu',
+                    '✓ 20+ ćwiczeń specjalnie dla {dogName}',
+                    '✓ Wreszcie spacery bez stresu'
+                ]
+            },
+            'barking': {
+                name: 'Szczekanie',
+                subtitle: 'Wyobraź sobie: przychodzą goście – a Twój pies pozostaje spokojny. Koniec z zirytowanymi sąsiadami. To możliwe.',
+                insights: [
+                    '{dogName} często szczeka z niepewności lub podekscytowania, nie z agresji.',
+                    'Komenda "Cisza" potrzebuje ok. 4-6 tygodni, zanim zadziała też w emocjonujących sytuacjach.',
+                    'Błędna reakcja na szczekanie (krzyk, uwaga) często wzmacnia to zachowanie.'
+                ],
+                benefits: [
+                    '✓ Zatrzymaj nadmierne szczekanie {dogName}',
+                    '✓ Zbuduj komendę "Cisza"',
+                    '✓ Zrozum i unikaj bodźców wyzwalających',
+                    '✓ Spokojna reakcja na gości',
+                    '✓ 20+ ćwiczeń specjalnie dla {dogName}',
+                    '✓ Wreszcie spokój dla Ciebie i sąsiadów'
+                ]
+            },
+            'aggression': {
+                name: 'Agresja',
+                subtitle: 'Wyobraź sobie: spokojne spotkania z innymi psami. Koniec ze strachem, że coś się stanie. To osiągalne.',
+                insights: [
+                    '{dogName} prawdopodobnie okazuje agresję ze strachu lub przeciążenia.',
+                    'Zmiana zachowania przy agresji wymaga czasu – pierwsze sukcesy często dopiero po 6-8 tygodniach.',
+                    'Bez profesjonalnego prowadzenia błędny trening może wzmocnić agresję.'
+                ],
+                benefits: [
+                    '✓ Zrozum i rozwiąż agresywne zachowanie {dogName}',
+                    '✓ Rozpoznawaj sygnały ostrzegawcze wcześnie',
+                    '✓ Umożliw bezpieczne spotkania',
+                    '✓ Opanuj stresujące sytuacje z pewnością',
+                    '✓ 20+ ćwiczeń specjalnie dla {dogName}',
+                    '✓ Spokojne współżycie bez strachu'
+                ]
+            },
+            'anxiety': {
+                name: 'Lęk separacyjny',
+                subtitle: 'Wyobraź sobie: wychodzisz z domu – a Twój pies pozostaje spokojny. Bez stresu, bez wycia. To możesz osiągnąć.',
+                insights: [
+                    '{dogName} potrzebuje stopniowego treningu, by nauczyć się, że samotność jest bezpieczna.',
+                    'Trening lęku separacyjnego to maraton, nie sprint – zaplanuj co najmniej 8 tygodni.',
+                    'Zbyt szybkie tempo lub kara prawie zawsze pogłębiają lęk.'
+                ],
+                benefits: [
+                    '✓ Krok po kroku zmniejsz lęk separacyjny {dogName}',
+                    '✓ {dogName} uczy się zostawać sam',
+                    '✓ Zatrzymaj destrukcyjne zachowanie',
+                    '✓ Wzmocnij pewność siebie {dogName}',
+                    '✓ 20+ ćwiczeń specjalnie dla {dogName}',
+                    '✓ Wreszcie wychodź z domu bez zmartwień'
+                ]
+            },
+            'recall': {
+                name: 'Przywołanie',
+                subtitle: 'Wyobraź sobie: wołasz – a Twój pies natychmiast przybiega. Swoboda bez zmartwień. To możliwe w kilka tygodni.',
+                insights: [
+                    '{dogName} nie ignoruje przywołania celowo – inne bodźce są po prostu ciekawsze.',
+                    'Niezawodne przywołanie wymaga 4-8 tygodni treningu z rosnącym rozproszeniem.',
+                    'Przywołanie, które nie jest konsekwentnie nagradzane, szybko traci skuteczność.'
+                ],
+                benefits: [
+                    '✓ Zbuduj niezawodne przywołanie u {dogName}',
+                    '✓ Umożliw swobodę bez zmartwień',
+                    '✓ {dogName} ignoruje rozpraszacze',
+                    '✓ Natychmiastowa reakcja na Twoje wołanie',
+                    '✓ 20+ ćwiczeń specjalnie dla {dogName}',
+                    '✓ Wreszcie spokojna swoboda'
+                ]
+            },
+            'jumping': {
+                name: 'Skakanie na ludzi',
+                subtitle: 'Wyobraź sobie: przychodzą goście – a Twój pies wita wszystkich z czterema łapami na ziemi. To da się wytrenować.',
+                insights: [
+                    '{dogName} skacze, bo to działa – dostaje uwagę (nawet negatywną).',
+                    'Alternatywne rytuały powitania wymagają ok. 3-4 tygodni konsekwentnego treningu.',
+                    'Brak konsekwencji to najczęstszy powód, dla którego trening skakania nie działa.'
+                ],
+                benefits: [
+                    '✓ Oducz {dogName} skakania na ludzi',
+                    '✓ Naucz spokojnego powitania',
+                    '✓ Zbuduj samokontrolę w emocjach',
+                    '✓ Witaj gości na spokojnie',
+                    '✓ 20+ ćwiczeń specjalnie dla {dogName}',
+                    '✓ Koniec z krępującymi momentami'
+                ]
+            },
+            'energy': {
+                name: 'Nadpobudliwość',
+                subtitle: 'Wyobraź sobie: pies, który potrafi się też wyciszyć. Zrównoważony i zadowolony. To możliwe.',
+                insights: [
+                    '{dogName} jest może fizycznie zmęczony, ale umysłowo niedociążony.',
+                    'Trening spokoju i obciążenie umysłowe często dają pierwsze efekty już po 2-3 tygodniach.',
+                    'Więcej ruchu często prowadzi do większej wytrzymałości – a nie do większego spokoju.'
+                ],
+                benefits: [
+                    '✓ Rozładuj nadmiar energii {dogName}',
+                    '✓ Obciążenie umysłowe dla {dogName}',
+                    '✓ {dogName} uczy się spokoju i relaksu',
+                    '✓ Opanuj nadpobudliwość',
+                    '✓ 20+ ćwiczeń specjalnie dla {dogName}',
+                    '✓ {dogName} staje się spokojniejszy i szczęśliwszy'
+                ]
+            },
+            'destructive': {
+                name: 'Niszczenie',
+                subtitle: 'Wyobraź sobie: Twoje buty, meble i rzeczy pozostają całe. Twój pies nauczył się, co wolno mu gryźć.',
+                insights: [
+                    '{dogName} niszczy rzeczy nie ze złości, lecz dlatego, że potrzebuje ujścia.',
+                    'Alternatywne zajęcia trzeba oferować konsekwentnie przez 3-4 tygodnie.',
+                    'Kara po fakcie nic nie daje – Twój pies nie rozumie związku.'
+                ],
+                benefits: [
+                    '✓ Zatrzymaj destrukcyjne zachowanie {dogName}',
+                    '✓ Sensownie zwalczaj nudę',
+                    '✓ Przekieruj gryzienie na dozwolone przedmioty',
+                    '✓ Chroń swoje meble i buty',
+                    '✓ 20+ ćwiczeń specjalnie dla {dogName}',
+                    '✓ Wreszcie koniec ze zniszczonymi rzeczami'
+                ]
+            },
+            'mouthing': {
+                name: 'Podnoszenie rzeczy z ziemi',
+                subtitle: 'Wyobraź sobie: spacery bez obaw, że Twój pies zje coś niebezpiecznego. To da się wytrenować.',
+                insights: [
+                    '{dogName} poznaje świat pyskiem – to normalne, ale można to wytrenować.',
+                    'Pewna komenda "Zostaw" wymaga ok. 3-4 tygodni konsekwentnego treningu.',
+                    'Bez jasnego treningu to zachowanie staje się niebezpiecznym nawykiem.'
+                ],
+                benefits: [
+                    '✓ {dogName} uczy się zostawiać rzeczy',
+                    '✓ Zbuduj pewną komendę "Zostaw"',
+                    '✓ Niebezpieczne przedmioty są ignorowane',
+                    '✓ Koniec z jedzeniem z ziemi',
+                    '✓ 20+ ćwiczeń specjalnie dla {dogName}',
+                    '✓ Spokojne spacery bez zmartwień'
+                ]
+            }
+        };
+
+        // Default content
+        const defaultContent = {
+            name: 'Problemy z zachowaniem',
+            subtitle: 'Spokojne spacery. Koniec z szarpaniną. Pies, z którego jesteś dumny. To możliwe – w kilka tygodni.',
+            insights: [
+                '{dogName} potrzebuje jasnych, spójnych sygnałów i dużo cierpliwości.',
+                'Większość zmian w zachowaniu utrwala się naprawdę dopiero po 4-6 tygodniach.',
+                'Bez uporządkowanego treningu stare wzorce często wracają.'
+            ],
+            benefits: [
+                '✓ Celowo popraw zachowanie {dogName}',
+                '✓ Jasna struktura treningu na każdy dzień',
+                '✓ Nowe techniki treningowe dla {dogName}',
+                '✓ Zbuduj silniejszą więź z {dogName}',
+                '✓ 20+ ćwiczeń specjalnie dla {dogName}',
+                '✓ Osiągnij trwale dobre zachowanie'
+            ]
+        };
+
+        // Plan-Daten
+        const planData = {
+            '1month': { name: 'Plan 4-tygodniowy', price: '29,99', priceNum: 29.99 },
+            '3month': { name: 'Plan 12-tygodniowy', price: '39,99', priceNum: 39.99 },
+            '6month': { name: 'Plan 6-miesięczny', price: '59,99', priceNum: 59.99 }
+        };
+
+        // Daten laden und Seite personalisieren
+        async function loadAndPersonalize() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const leadIdParam = urlParams.get('lead_id');
+            const emailParam = urlParams.get('email');
+
+            // UTM-Parameter aus URL in localStorage speichern
+            ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(param => {
+                const val = urlParams.get(param);
+                if (val) localStorage.setItem(param, val);
+            });
+            // Click IDs
+            ['fbclid', 'gclid', 'ttclid'].forEach(param => {
+                const val = urlParams.get(param);
+                if (val) localStorage.setItem(param, val);
+            });
+            
+            dogName = localStorage.getItem('dogName') || 'Twojego psa';
+            dogProblem = localStorage.getItem('dogProblem') || '';
+            dogBreed = localStorage.getItem('dogBreed') || '';
+            dogAge = localStorage.getItem('dogAge') || '';
+            try { dogCommands = JSON.parse(localStorage.getItem('dogCommands') || '[]'); } catch(e) { dogCommands = []; }
+            leadId = leadIdParam || localStorage.getItem('leadId') || '';
+            userEmail = localStorage.getItem('userEmail') || '';
+            
+            // Aus Supabase laden wenn Parameter vorhanden
+            if (leadIdParam || emailParam) {
+                let queryParam = '';
+                if (leadIdParam) {
+                    queryParam = 'id=eq.' + leadIdParam;
+                } else if (emailParam) {
+                    const decodedEmail = decodeURIComponent(emailParam);
+                    queryParam = 'email=eq.' + encodeURIComponent(decodedEmail);
+                }
+                
+                try {
+                    const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?' + queryParam + '&select=*&order=created_at.desc&limit=1', {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data[0]) {
+                            const lead = data[0];
+                            const answers = lead.answers || {};
+                            
+                            // Top-Level-Spalten haben Vorrang vor answers-JSONB (wo answers oft leer ist)
+                            const resolvedDogName = lead.dog_name || answers.dog_name;
+                            const resolvedDogProblem = lead.dog_problem || answers.dog_problem;
+                            const resolvedDogBreed = lead.dog_breed || answers.dog_breed;
+                            const resolvedDogAge = lead.dog_age || answers.dog_age;
+                            if (resolvedDogName) dogName = resolvedDogName;
+                            if (resolvedDogProblem) dogProblem = resolvedDogProblem;
+                            if (resolvedDogBreed) dogBreed = resolvedDogBreed;
+                            if (resolvedDogAge) dogAge = resolvedDogAge;
+                            if (answers.dog_commands && Array.isArray(answers.dog_commands)) dogCommands = answers.dog_commands;
+                            if (lead.id) leadId = lead.id;
+                            if (lead.email) userEmail = lead.email;
+
+                            // In localStorage speichern
+                            localStorage.setItem('dogName', dogName);
+                            localStorage.setItem('dogProblem', dogProblem);
+                            localStorage.setItem('dogBreed', dogBreed);
+                            localStorage.setItem('dogAge', dogAge);
+                            localStorage.setItem('dogCommands', JSON.stringify(dogCommands));
+                            localStorage.setItem('leadId', leadId);
+                            localStorage.setItem('userEmail', userEmail);
+
+                            console.log('✅ Daten aus Supabase geladen:', { dogName, dogProblem, dogBreed, dogAge, leadId });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Supabase error:', error);
+                }
+            }
+            
+            // Content basierend auf Problem
+            const content = problemContent[dogProblem] || defaultContent;
+
+            // ==================== MINI-TESTIMONIAL basierend auf Problem ====================
+            const miniTestimonials = {
+                'pulling': { text: '"Plan przyszedł od razu mailem – po 2 tygodniach Luna już nie ciągnie!"', author: 'Sandra M.' },
+                'barking': { text: '"Przyszedł od razu mailem, po 10 dniach Max prawie nie szczeka!"', author: 'Thomas K.' },
+                'aggression': { text: '"Plan dostałam od razu – Bella po 3 tygodniach jest dużo spokojniejsza!"', author: 'Julia R.' },
+                'recall': { text: '"Przyszedł mailem, mogliśmy od razu zacząć – przywołanie teraz działa!"', author: 'Michael S.' },
+                'jumping': { text: '"Plan dostałem od razu – po tygodniu Balu już na nikogo nie skacze!"', author: 'Anna K.' },
+                'leash-aggression': { text: '"Dostałam od razu mailem – wreszcie spokojne spacery!"', author: 'Peter M.' },
+                'hyperactivity': { text: '"Plan przyszedł od razu – po 2 tygodniach Charly jest dużo spokojniejszy!"', author: 'Lisa H.' },
+                'anxiety': { text: '"Przyszedł mailem, mogliśmy od razu zacząć – Rocky teraz zostaje sam!"', author: 'Petra S.' },
+                'separation': { text: '"Przyszedł mailem, mogliśmy od razu zacząć – Rocky teraz zostaje sam!"', author: 'Petra S.' },
+                'destructive': { text: '"Plan dostałam od razu – koniec ze zniszczonymi butami!"', author: 'Frank B.' },
+                'mouthing': { text: '"Od razu mailem – podnoszenie rzeczy z ziemi ustało po 10 dniach!"', author: 'Nina W.' },
+                'default': { text: '"Plan przyszedł od razu mailem – odmienił nasze życie!"', author: 'Maria K.' }
+            };
+
+            const testimonial = miniTestimonials[dogProblem] || miniTestimonials['default'];
+            document.getElementById('miniTestimonialText').textContent = testimonial.text;
+            document.getElementById('miniTestimonialAuthor').textContent = testimonial.author;
+
+            // Hero personalisieren
+            document.getElementById('dogNameHero').textContent = dogName;
+            document.getElementById('heroSubtitle').textContent = content.subtitle;
+
+            // Banner personalisieren
+            document.getElementById('dogNameBanner').textContent = dogName;
+            const dogNameTopBannerEl = document.getElementById('dogNameTopBanner');
+            if (dogNameTopBannerEl) dogNameTopBannerEl.textContent = dogName;
+
+            // Dog names überall ersetzen
+            document.getElementById('dogNameFinal').textContent = dogName;
+            
+            // Insights personalisieren
+            const insightTexts = document.querySelectorAll('.insight-text');
+            content.insights.forEach((insight, i) => {
+                if (insightTexts[i]) {
+                    insightTexts[i].innerHTML = insight.replace('{dogName}', '<strong>' + dogName + '</strong>');
+                }
+            });
+            
+            // ==================== ANALYSE-SECTION BEFÜLLEN ====================
+            // Analyse-Titel
+            document.getElementById('analyseNameTitle').textContent = dogName;
+
+            // Problem
+            const problemLabels = {
+                'pulling': 'Ciągnięcie na smyczy', 'barking': 'Nadmierne szczekanie', 'aggression': 'Agresja',
+                'anxiety': 'Lęk separacyjny', 'jumping': 'Skakanie na ludzi', 'recall': 'Nie wraca na przywołanie',
+                'energy': 'Nadmiar energii', 'destructive': 'Destrukcyjne zachowanie',
+                'soiling': 'Załatwianie się w domu', 'mouthing': 'Podnoszenie rzeczy z ziemi',
+                'chasing': 'Instynkt łowiecki', 'separation': 'Lęk separacyjny',
+                'dog-reactive': 'Reaktywność na inne psy', 'leash-reactive': 'Reaktywność na smyczy',
+                'resource-guarding': 'Obrona zasobów', 'biting': 'Gryzienie/kłapanie'
+            };
+            document.getElementById('analyseProblem').textContent = problemLabels[dogProblem] || dogProblem || '–';
+
+            // Rasse – ausblenden wenn kein Wert
+            const breedLabels = {
+                'labrador': 'Labrador', 'german_shepherd': 'Owczarek niemiecki',
+                'golden_retriever': 'Golden Retriever', 'french_bulldog': 'Buldog francuski',
+                'chihuahua': 'Chihuahua', 'poodle': 'Pudel', 'dachshund': 'Jamnik',
+                'beagle': 'Beagle', 'husky': 'Husky', 'border_collie': 'Border Collie',
+                'mixed': 'Mieszaniec', 'other': 'Inna rasa'
+            };
+            const breedValue = breedLabels[dogBreed] || dogBreed;
+            if (breedValue) {
+                document.getElementById('analyseBreed').textContent = breedValue;
+            } else {
+                document.getElementById('analyseBreedCard').style.display = 'none';
+            }
+
+            // Alter – ausblenden wenn kein Wert
+            const ageLabels = {
+                'puppy': 'Szczeniak (poniżej 6 miesięcy)', 'young': '6–12 miesięcy',
+                'adult': '1–3 lata', 'mature': '3–7 lat', 'senior': 'Powyżej 7 lat'
+            };
+            const ageValue = ageLabels[dogAge] || dogAge;
+            if (ageValue) {
+                document.getElementById('analyseAge').textContent = ageValue;
+            } else {
+                document.getElementById('analyseAgeCard').style.display = 'none';
+            }
+
+            // Gehorsamkeit – ausblenden wenn keine Kommandos
+            const knownCount = dogCommands.length;
+            if (knownCount > 0) {
+                const obedienceScore = Math.min(10, Math.max(1, knownCount + 1));
+                document.getElementById('analyseObedienceText').textContent = obedienceScore + ' von 10';
+                const barSegments = document.querySelectorAll('#analyseObedienceBar .obedience-segment');
+                barSegments.forEach((seg, i) => {
+                    seg.classList.remove('filled', 'filled-red');
+                    if (i < obedienceScore) {
+                        seg.classList.add(obedienceScore <= 3 ? 'filled-red' : 'filled');
+                    }
+                });
+            } else {
+                document.getElementById('analyseObedienceCard').style.display = 'none';
+            }
+
+            // Handlungsbedarf
+            const highUrgency = ['aggression', 'anxiety', 'separation', 'biting', 'resource-guarding', 'dog-reactive'];
+            const lowUrgency = ['jumping', 'energy'];
+            let urgency = 'medium';
+            if (highUrgency.includes(dogProblem)) urgency = 'high';
+            else if (lowUrgency.includes(dogProblem)) urgency = 'low';
+            const urgencyLabels = { high: 'Wysoka', medium: 'Średnia', low: 'Niska' };
+            document.getElementById('analyseUrgency').innerHTML =
+                '<span class="urgency-badge urgency-' + urgency + '">' + urgencyLabels[urgency] + '</span>';
+
+            // Empfohlene Dauer
+            const durationMap = { 'high': '6–10 tygodni', 'medium': '4–8 tygodni', 'low': '4–6 tygodni' };
+            document.getElementById('analyseDuration').textContent = durationMap[urgency];
+
+            // Kommandos
+            if (dogCommands.length > 0) {
+                const allCmds = ['sitz', 'platz', 'bleib', 'hier', 'aus', 'nein', 'fuss'];
+                const cmdLabels = { 'sitz': 'Siad', 'platz': 'Waruj', 'bleib': 'Zostań', 'hier': 'Do mnie', 'aus': 'Zostaw', 'nein': 'Nie', 'fuss': 'Przy nodze' };
+                const tagsHtml = allCmds.map(cmd => {
+                    const isKnown = dogCommands.includes(cmd);
+                    return '<span class="command-tag' + (isKnown ? ' known' : '') + '">' + (cmdLabels[cmd] || cmd) + '</span>';
+                }).join('');
+                document.getElementById('analyseCommandTags').innerHTML = tagsHtml;
+                document.getElementById('analyseCommandsCard').style.display = '';
+            }
+
+            // Hoffnungs-Message
+            const hopeTexts = {
+                'pulling': { title: 'Ciągnięcie na smyczy da się skutecznie oduczyć w 4–8 tygodni', text: 'Przy zaledwie 15–20 minutach dziennie większość psów po 2–3 tygodniach pokazuje wyraźną poprawę. W 4–8 tygodni spokojne spacery są realne.' },
+                'barking': { title: 'Nadmierne szczekanie da się wytrenować w 4–8 tygodni', text: 'Przy zaledwie 15–20 minutach dziennie pierwsze sukcesy widać po 2 tygodniach. W 4–8 tygodni Twój pies reaguje znacznie spokojniej.' },
+                'aggression': { title: 'Agresję da się opanować w 6–10 tygodni', text: 'Przy zaledwie 15–20 minutach dziennie pierwsze poprawy pojawiają się po 3–4 tygodniach. W 6–10 tygodni trwałe efekty są realne.' },
+                'anxiety': { title: 'Lęk separacyjny da się rozwiązać w 6–10 tygodni', text: 'Przy zaledwie 15–20 minutach dziennie pierwsze postępy są możliwe po 2 tygodniach. W 6–10 tygodni Twój pies zostaje sam znacznie spokojniej.' },
+                'jumping': { title: 'Skakanie na ludzi da się oduczyć w 4–6 tygodni', text: 'Przy zaledwie 15–20 minutach dziennie zasada czterech łap często działa już po kilku dniach. W 4–6 tygodni Twój pies wita gości spokojnie.' },
+                'recall': { title: 'Niezawodne przywołanie da się wytrenować w 4–8 tygodni', text: 'Przy zaledwie 15–20 minutach dziennie pierwsze sukcesy widać po 2–3 tygodniach. W 4–8 tygodni Twój pies przybiega nawet przy rozproszeniu.' },
+                'energy': { title: 'Nadpobudliwość da się ukierunkować w 4–6 tygodni', text: 'Przy zaledwie 15–20 minutach dziennie ukierunkowane obciążenie umysłowe często działa już po 1–2 tygodniach. W 4–6 tygodni Twój pies jest znacznie bardziej zrównoważony.' },
+                'destructive': { title: 'Destrukcyjne zachowanie da się rozwiązać w 4–8 tygodni', text: 'Przy zaledwie 15–20 minutach dziennie szybkie poprawy są możliwe. W 4–8 tygodni Twoje rzeczy pozostają całe.' }
+            };
+            const defaultHope = { title: 'To da się skutecznie oduczyć w 4–8 tygodni', text: 'Przy zaledwie 15–20 minutach dziennie pierwsze efekty widać po 1–2 tygodniach. W 4–8 tygodni problem można znacznie zredukować.' };
+            const hope = hopeTexts[dogProblem] || defaultHope;
+            document.getElementById('analyseHopeTitle').textContent = hope.title;
+            document.getElementById('analyseHopeText').textContent = hope.text;
+
+            // ==================== iPad PLAN-INHALT ====================
+            document.getElementById('planSliderDogName').textContent = dogName;
+            document.getElementById('ipadPlanTitle').textContent = 'Plan treningowy dla ' + dogName;
+
+            const ipadTabData = {
+                '1month': {
+                    chartTitle: 'Oczekiwany postęp w ciągu 4 tygodni',
+                    weeks: 4, exercises: '10+',
+                    bars: [
+                        { plan: 30, selbst: 10 },
+                        { plan: 55, selbst: 15 },
+                        { plan: 75, selbst: 18 },
+                        { plan: 85, selbst: 20 }
+                    ],
+                    features: [
+                        { icon: '📋', text: 'Trening podstaw dla szybkich efektów' },
+                        { icon: '🎯', text: 'Skupienie na Twoim głównym problemie' },
+                        { icon: '📅', text: 'Codzienny plan krok po kroku' },
+                        { icon: '🖨️', text: 'PDF do wydruku lub czytania na telefonie' },
+                        { icon: '✓', text: '34 strony · 10 ćwiczeń · gry bonusowe' }
+                    ]
+                },
+                '3month': {
+                    chartTitle: 'Oczekiwany postęp w ciągu 12 tygodni',
+                    weeks: 12, exercises: '20+',
+                    barStep: 2,
+                    bars: [
+                        { plan: 30, selbst: 8 },
+                        { plan: 55, selbst: 12 },
+                        { plan: 75, selbst: 16 },
+                        { plan: 88, selbst: 18 },
+                        { plan: 95, selbst: 20 },
+                        { plan: 99, selbst: 22 }
+                    ],
+                    features: [
+                        { icon: '📋', text: 'Pełny trening z fazami budowania' },
+                        { icon: '🎯', text: 'Główny problem + dodatkowe zachowania' },
+                        { icon: '📅', text: 'Plan treningowy tydzień po tygodniu' },
+                        { icon: '🔄', text: 'Utrwalanie i zapobieganie nawrotom' },
+                        { icon: '🖨️', text: 'PDF do wydruku lub czytania na telefonie' },
+                        { icon: '✓', text: '45 stron · 20 ćwiczeń · gry bonusowe' }
+                    ]
+                },
+                '6month': {
+                    chartTitle: 'Oczekiwany postęp w ciągu 24 tygodni',
+                    weeks: 24, exercises: '30+',
+                    barStep: 4,
+                    bars: [
+                        { plan: 20, selbst: 5 },
+                        { plan: 40, selbst: 9 },
+                        { plan: 58, selbst: 12 },
+                        { plan: 72, selbst: 14 },
+                        { plan: 84, selbst: 16 },
+                        { plan: 93, selbst: 18 }
+                    ],
+                    features: [
+                        { icon: '📋', text: 'Kompleksowy trening' },
+                        { icon: '🎯', text: 'Systematyczne rozwiązanie wszystkich problemów' },
+                        { icon: '📅', text: 'Plan długoterminowy z kamieniami milowymi' },
+                        { icon: '🔄', text: 'Zaawansowane ćwiczenia i perfekcja' },
+                        { icon: '🏆', text: 'Bonus: nauka sztuczek i zajęcia' },
+                        { icon: '🖨️', text: 'PDF do wydruku lub czytania na telefonie' },
+                        { icon: '✓', text: '57 stron · 30 ćwiczeń · gry bonusowe' }
+                    ]
+                }
+            };
+
+            // CSS für Feature-Animation
+            const ipadAnimStyle = document.createElement('style');
+            ipadAnimStyle.textContent = '@keyframes ipadFeatureIn { to { opacity: 1; transform: translateX(0); } }';
+            document.head.appendChild(ipadAnimStyle);
+
+            window.selectIpadTab = function(planKey) {
+                const data = ipadTabData[planKey];
+                if (!data) return;
+
+                // Tabs stylen
+                document.querySelectorAll('.ipad-plan-tab').forEach(t => {
+                    t.style.background = 'transparent';
+                    t.style.color = '#888';
+                    t.style.fontWeight = '600';
+                });
+                const tabId = 'ipadTab' + planKey.replace('month', '');
+                const activeTab = document.getElementById(tabId);
+                if (activeTab) {
+                    activeTab.style.background = '#C4A576';
+                    activeTab.style.color = 'white';
+                    activeTab.style.fontWeight = '700';
+                }
+
+                // Chart
+                document.getElementById('ipadChartTitle').textContent = data.chartTitle;
+
+                const barsContainer = document.getElementById('ipadChartBars');
+                const bars = data.bars;
+                const step = data.barStep || 1;
+                const barWidth = bars.length > 8 ? 12 : 18;
+                const barGap = bars.length > 8 ? 3 : 6;
+
+                let barsHtml = '';
+                bars.forEach((bar, i) => {
+                    const weekNum = (i + 1) * step;
+                    const showLabel = true;
+                    barsHtml += '<div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">' +
+                        '<div style="display: flex; gap: ' + barGap + 'px; align-items: flex-end; height: 90px;">' +
+                            '<div class="ipad-bar-anim" style="width: ' + barWidth + 'px; height: 0; border-radius: 3px 3px 0 0; background: linear-gradient(180deg, #C4A576, #D4B996); transition: height 0.6s ease ' + (i * 0.06) + 's;" data-h="' + bar.plan + '"></div>' +
+                            '<div class="ipad-bar-anim" style="width: ' + barWidth + 'px; height: 0; border-radius: 3px 3px 0 0; background: #E0E0E0; transition: height 0.6s ease ' + (i * 0.06) + 's;" data-h="' + bar.selbst + '"></div>' +
+                        '</div>' +
+                        '<div style="font-size: 9px; color: #999;">' + (showLabel ? 'T' + weekNum : '') + '</div>' +
+                    '</div>';
+                });
+                barsContainer.innerHTML = barsHtml;
+
+                // Bars animieren
+                setTimeout(() => {
+                    barsContainer.querySelectorAll('.ipad-bar-anim').forEach(b => {
+                        b.style.height = b.dataset.h + '%';
+                    });
+                }, 50);
+
+                // Features
+                document.getElementById('ipadPlanFeatures').innerHTML = data.features.map((f, i) =>
+                    '<div style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #FAFAFA; border-radius: 8px; opacity: 0; transform: translateX(-8px); animation: ipadFeatureIn 0.3s ease ' + (i * 0.08) + 's forwards;">' +
+                        '<span style="font-size: 14px; width: 20px; text-align: center;">' + f.icon + '</span>' +
+                        '<span style="font-size: 13px; color: #2C2C2E; font-weight: 500;">' + f.text + '</span>' +
+                    '</div>'
+                ).join('');
+
+                // Stats
+                document.getElementById('ipadStatExercises').textContent = data.exercises;
+                document.getElementById('ipadStatWeeks').textContent = data.weeks;
+            };
+
+            // Initial laden
+            selectIpadTab('3month');
+
+            // ==================== ÜBUNGS-PREVIEW ====================
+            const exerciseData = {
+                'pulling': {
+                    icon: '🦮',
+                    name: 'Technika zmiany kierunku',
+                    meta: 'Czas: 10 min · Trudność: Łatwa · Na zewnątrz',
+                    title: 'Tak wygląda ćwiczenie treningu na smyczy dla ' + dogName,
+                    steps: [
+                        { num: 1, title: 'Zajmij pozycję startową', desc: 'Ustaw się z ' + dogName + ' w spokojnym miejscu. Trzymaj smycz luźno, nie owijaj. ' + dogName + ' ma stać obok Ciebie.' },
+                        { num: 2, title: 'Ruszaj i obserwuj', desc: 'Idź powoli. Gdy tylko ' + dogName + ' zacznie ciągnąć i smycz się napnie – natychmiast się zatrzymaj.' },
+                        { num: 3, title: 'Zmień kierunek', desc: 'Obróć się o 180° i idź w drugą stronę. Bez komentarza, bez szarpnięcia. Po prostu się odwróć.' },
+                        { num: 4, title: 'Zaznacz i nagródź', desc: 'Gdy tylko ' + dogName + ' znów idzie obok Ciebie, a smycz jest luźna: od razu smakołyk + "Super!".' },
+                        { num: 5, title: 'Powtarzaj i zwiększaj', desc: 'Całość 5-8x na spacer. Po 3-4 dniach zauważysz: ' + dogName + ' częściej patrzy na Ciebie, zanim smycz się napnie.' }
+                    ]
+                },
+                'barking': {
+                    icon: '🔇',
+                    name: 'Budowanie sygnału ciszy',
+                    meta: 'Czas: 8 min · Trudność: Łatwa · W domu',
+                    title: 'Tak wygląda ćwiczenie treningu przeciw szczekaniu dla ' + dogName,
+                    steps: [
+                        { num: 1, title: 'Rozpoznaj bodźce', desc: 'Obserwuj, kiedy ' + dogName + ' szczeka. Dzwonek do drzwi? Inne psy? Dźwięki? Zapisz 3 najczęstsze bodźce.' },
+                        { num: 2, title: 'Wprowadź słowo "Cisza"', desc: 'Wybierz słowo jak "Cisza" lub "Spokój". Mów je spokojnym, niskim tonem – nigdy nie krzycz.' },
+                        { num: 3, title: 'Wykorzystaj moment', desc: 'Poczekaj na naturalną przerwę w szczekaniu. Dokładnie w tej sekundzie: powiedz "Cisza" + od razu smakołyk.' },
+                        { num: 4, title: 'Wzmocnij skojarzenie', desc: dogName + ' uczy się: gdy przestanę szczekać i pada "Cisza", dostaję coś dobrego.' },
+                        { num: 5, title: 'Zwiększ trudność', desc: 'Po 5-7 dniach: ćwicz z cichymi bodźcami (odtwórz cicho nagranie dzwonka). Zwiększaj powoli.' }
+                    ]
+                },
+                'aggression': {
+                    icon: '🛡️',
+                    name: 'Metoda bezpiecznego dystansu',
+                    meta: 'Czas: 15 min · Trudność: Średnia · Na zewnątrz',
+                    title: 'Tak wygląda ćwiczenie treningu na agresję dla ' + dogName,
+                    steps: [
+                        { num: 1, title: 'Znajdź bezpieczny dystans', desc: 'Idź z ' + dogName + ' na spacer. Gdy tylko zobaczycie innego psa: jak duży musi być dystans, żeby ' + dogName + ' pozostał spokojny? To Twój dystans startowy.' },
+                        { num: 2, title: 'Obserwuj i nagradzaj', desc: 'Zatrzymaj się na tym dystansie. Dopóki ' + dogName + ' pozostaje spokojny i tylko patrzy na drugiego psa: dawaj smakołyki bez przerwy.' },
+                        { num: 3, title: 'Ćwicz przekierowanie uwagi', desc: 'Powiedz imię ' + dogName + '. Patrzy na Ciebie? Od razu 3 smakołyki pod rząd + wielka pochwała.' },
+                        { num: 4, title: 'Idź łukiem', desc: 'Przejdź szerokim łukiem obok drugiego psa. Nie na wprost. ' + dogName + ' uczy się: przechodzimy obok, nie ma powodu do emocji.' },
+                        { num: 5, title: 'Skróć dystans', desc: 'Dopiero po 7-10 udanych podejściach: podejdź 2 metry bliżej. Nigdy więcej naraz.' }
+                    ]
+                },
+                'anxiety': {
+                    icon: '🏠',
+                    name: 'Ćwiczenie mini-rozstań',
+                    meta: 'Czas: 10 min · Trudność: Łatwa · W domu',
+                    title: 'Tak wygląda ćwiczenie treningu separacji dla ' + dogName,
+                    steps: [
+                        { num: 1, title: 'Urządź miejsce wypoczynku', desc: 'Połóż ulubiony kocyk ' + dogName + ' w spokojnym miejscu. Połóż na nim smakołyk. ' + dogName + ' ma się nauczyć: to miejsce jest bezpieczne i pozytywne.' },
+                        { num: 2, title: 'Wyjdź na chwilę z pokoju', desc: 'Wyjdź na 3 sekundy do przedpokoju. Zostaw otwarte drzwi. Wróć, zanim ' + dogName + ' się zaniepokoi. Smakołyk.' },
+                        { num: 3, title: 'Wydłużaj czas', desc: '5 sekund. Potem 10. Potem 20. Zwiększaj tylko wtedy, gdy ' + dogName + ' za ostatnim razem pozostał spokojny.' },
+                        { num: 4, title: 'Zamknij drzwi', desc: 'Dopiero gdy 30 sekund bez stresu się uda: zamknij na chwilę drzwi. 5 sekund. Powrót. Nagroda.' },
+                        { num: 5, title: 'Zmień codzienne rytuały', desc: 'Włóż buty, weź klucze – ale NIE wychodź. ' + dogName + ' uczy się: te sygnały nie zawsze oznaczają rozstanie.' }
+                    ]
+                },
+                'energy': {
+                    icon: '🧘',
+                    name: 'Kocyk relaksacyjny',
+                    meta: 'Czas: 10 min · Trudność: Łatwa · W domu',
+                    title: 'Tak wygląda ćwiczenie treningu spokoju dla ' + dogName,
+                    steps: [
+                        { num: 1, title: 'Rozłóż kocyk', desc: 'Połóż konkretny kocyk w ulubionym miejscu ' + dogName + '. Ten kocyk będzie odtąd "sygnałem spokoju" – tylko do relaksu.' },
+                        { num: 2, title: 'Nagradzaj każdy spokój', desc: 'Gdy tylko ' + dogName + ' położy się na kocyku: cicho połóż smakołyk obok pyska. Bez pochwał, bez zamieszania. Tylko cicha nagroda.' },
+                        { num: 3, title: 'Buduj czas trwania', desc: 'Najpierw nagradzaj 10 sekund spokoju. Potem 30. Potem 1 minutę. Zwiększaj tylko wtedy, gdy ' + dogName + ' daje radę.' },
+                        { num: 4, title: 'Wprowadź rozproszenie', desc: 'Po 5-7 dniach: ćwicz, gdy ktoś przechodzi. ' + dogName + ' zostaje na kocyku? Jackpot – 5 smakołyków pod rząd.' },
+                        { num: 5, title: 'Zabieraj kocyk ze sobą', desc: 'Kocyk działa teraz jak mobilny sygnał spokoju. W kawiarni, u gości, w aucie. ' + dogName + ' wie: kocyk = relaks.' }
+                    ]
+                },
+                'recall': {
+                    icon: '📣',
+                    name: 'Budowanie przywołania',
+                    meta: 'Czas: 10 min · Trudność: Łatwa · W domu → Na zewnątrz',
+                    title: 'Tak wygląda ćwiczenie treningu przywołania dla ' + dogName,
+                    steps: [
+                        { num: 1, title: 'Wybierz nowe słowo przywołania', desc: 'Wybierz świeże słowo, którego nigdy nie używałeś (np. "Do mnie!" lub "Cyk!"). Stare "Chodź" jest prawdopodobnie już spalone.' },
+                        { num: 2, title: 'Zacznij w domu', desc: 'Powiedz słowo wesołym tonem. Gdy tylko ' + dogName + ' do Ciebie przyjdzie: impreza! 5 smakołyków, pochwała, radość. Każde przywołanie = jackpot.' },
+                        { num: 3, title: 'Buduj dystans', desc: 'Ćwicz z różnych pokoi. ' + dogName + ' w salonie, Ty w kuchni. Słowo przywołania → nagroda.' },
+                        { num: 4, title: 'Wyjście na zewnątrz', desc: 'Najpierw w ogrodzie lub na lince treningowej. Nigdy bez zabezpieczenia przez pierwsze 3 tygodnie.' },
+                        { num: 5, title: 'Zasada: nigdy nie karz', desc: 'Nieważne, jak długo ' + dogName + ' zwleka – gdy przyjdzie, ZAWSZE jest nagroda. Nigdy nie karz po przywołaniu.' }
+                    ]
+                },
+                'jumping': {
+                    icon: '🐕',
+                    name: 'Zasada czterech łap',
+                    meta: 'Czas: 8 min · Trudność: Łatwa · W domu',
+                    title: 'Tak wygląda ćwiczenie treningu przeciw skakaniu dla ' + dogName,
+                    steps: [
+                        { num: 1, title: 'Ustal zasadę podstawową', desc: dogName + ' dostaje odtąd uwagę TYLKO, gdy wszystkie cztery łapy są na ziemi. Skacze? Natychmiast się odwróć, żaden kontakt wzrokowy.' },
+                        { num: 2, title: 'Nagradzaj właściwe zachowanie', desc: 'Gdy tylko ' + dogName + ' stoi na wszystkich czterech łapach lub siedzi: od razu smakołyk + spokojne "Super".' },
+                        { num: 3, title: 'Ćwicz powitanie', desc: 'Wejdź przez drzwi. ' + dogName + ' skacze? Odwróć się, wyjdź ponownie. Powtarzaj, aż pozostanie spokojny.' },
+                        { num: 4, title: 'Siad jako alternatywa', desc: 'Trenuj "Siad" przy powitaniu. ' + dogName + ' siada? Dopiero wtedy głaskanie. Uczy się: siadanie przynosi uwagę.' },
+                        { num: 5, title: 'Wtajemnicz gości', desc: 'Wszyscy w domu muszą się przyłączyć. Jedna osoba, która nagradza skakanie, niszczy cały postęp.' }
+                    ]
+                },
+                'destructive': {
+                    icon: '🧸',
+                    name: 'Zajęcie alternatywne',
+                    meta: 'Czas: 10 min · Trudność: Łatwa · W domu',
+                    title: 'Tak wygląda ćwiczenie treningu przeciw niszczeniu dla ' + dogName,
+                    steps: [
+                        { num: 1, title: 'Przygotuj dozwolone gryzaki', desc: 'Połóż 2-3 różne gryzaki w miejscu ' + dogName + '. Kongi, kości do gryzienia, maty do lizania. Pokaż mu: TO wolno ci gryźć.' },
+                        { num: 2, title: 'Nagradzaj podczas gryzienia', desc: 'Gryzie ' + dogName + ' zabawkę? Ciche pochwały + od czasu do czasu dołóż dodatkowy smakołyk. Skojarzenie: gryzienie zabawki = dobrze.' },
+                        { num: 3, title: 'Wymieniaj to, co zakazane', desc: 'Bierze ' + dogName + ' but? Nie karz. Spokojnie powiedz słowo "Wymiana" i zaproponuj gryzak. Od razu nagródź przy wymianie.' },
+                        { num: 4, title: 'Rozpoznaj bodźce', desc: 'Kiedy ' + dogName + ' niszczy rzeczy? Nuda? Stres? Samotność? Zapisz wzorce – to pokaże Ci prawdziwą przyczynę.' },
+                        { num: 5, title: 'Wprowadź pracę umysłową', desc: 'Gry węchowe, szukanie jedzenia w ogrodzie, mata węchowa. 15 minut pracy umysłowej męczy bardziej niż godzina spaceru.' }
+                    ]
+                },
+                'dog-reactive': {
+                    icon: '🐕‍🦺',
+                    name: 'Prowadzenie łukiem',
+                    meta: 'Czas: 15 min · Trudność: Średnia · Na zewnątrz',
+                    title: 'Tak wygląda ćwiczenie treningu spotkań z psami dla ' + dogName,
+                    steps: [
+                        { num: 1, title: 'Sprawdź dystans', desc: 'Inny pies w zasięgu wzroku? Stop. Czy ' + dogName + ' nadal reaguje na Ciebie? Jeśli tak: idealny dystans. Jeśli nie: większy dystans.' },
+                        { num: 2, title: 'Zdobądź uwagę', desc: 'Powiedz imię ' + dogName + '. Patrzy na Ciebie zamiast na drugiego psa? Od razu 3 smakołyki + spokojna pochwała.' },
+                        { num: 3, title: 'Idź łukiem', desc: 'Przejdź szerokim łukiem obok drugiego psa. Nigdy na wprost. To od razu obniża poziom stresu ' + dogName + '.' },
+                        { num: 4, title: 'Świętuj sukcesy', desc: 'Minęliście psa bez wybuchu? Nagroda jackpot: 5 smakołyków, głos, impreza. ' + dogName + ' ma pomyśleć: to było świetne!' },
+                        { num: 5, title: 'Powoli skracaj dystans', desc: 'Dopiero po 10+ bezstresowych spotkaniach: 2 metry bliżej. Nigdy nie zwiększaj za szybko. Cierpliwość to klucz.' }
+                    ]
+                }
+            };
+
+            // Default-Übung falls Problem nicht gemappt
+            const defaultExercise = exerciseData['pulling'];
+
+            // Übung rendern
+            const exercise = exerciseData[dogProblem] || defaultExercise;
+
+            document.getElementById('exercisePreviewTitle').textContent = exercise.title;
+            document.getElementById('exerciseIcon').textContent = exercise.icon;
+            document.getElementById('exerciseName').textContent = exercise.name;
+            document.getElementById('exerciseMeta').textContent = exercise.meta;
+
+            // Sichtbare Schritte (1-2)
+            const visibleSteps = exercise.steps.slice(0, 2);
+            const blurredSteps = exercise.steps.slice(2);
+
+            function renderStep(step) {
+                return '<div style="display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid #F0F0F0;">' +
+                    '<div style="width: 28px; height: 28px; background: linear-gradient(135deg, #C4A576, #8B7355); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700; flex-shrink: 0;">' + step.num + '</div>' +
+                    '<div style="flex: 1;">' +
+                        '<div style="font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px;">' + step.title + '</div>' +
+                        '<div style="font-size: 13px; color: #666; line-height: 1.5;">' + step.desc + '</div>' +
+                    '</div>' +
+                '</div>';
+            }
+
+            document.getElementById('exerciseStepsVisible').innerHTML = visibleSteps.map(renderStep).join('');
+            document.getElementById('exerciseStepsBlurred').innerHTML = blurredSteps.map(renderStep).join('');
+            document.getElementById('exerciseBlurText').textContent = '+ ' + blurredSteps.length + ' kolejne kroki';
+        }
+
+        // Pricing Selection
+        const pricingCards = document.querySelectorAll('.pricing-card');
+        pricingCards.forEach(card => {
+            card.addEventListener('click', () => {
+                pricingCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedPlan = card.dataset.plan;
+            });
+        });
+
+        // Helper: Cookie lesen
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return '';
+        }
+
+        // Loading-Overlay anzeigen waehrend Mollie-Checkout-URL geholt wird.
+        // Verhindert dass das alte Stripe-Inline-Overlay aufgeht (zeigt sonst
+        // kurz das 'Zahlung fehlgeschlagen'-Banner waehrend Stripe ohne
+        // clientSecret hochfaehrt).
+        function showRueckholLoadingOverlay() {
+            let overlay = document.getElementById('rueckholLoadingOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'rueckholLoadingOverlay';
+                overlay.style.cssText = 'position:fixed;inset:0;background:rgba(255,255,255,0.96);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;backdrop-filter:blur(4px);';
+                overlay.innerHTML = `
+                    <div style="width:48px;height:48px;border:4px solid #EADDC5;border-top-color:#C4A576;border-radius:50%;animation:rhSpin 0.9s linear infinite;"></div>
+                    <p style="font-size:15px;font-weight:600;color:#1a1a1a;margin:0;">Przekierowujemy Cię do płatności…</p>
+                    <p style="font-size:12px;color:#6B7280;margin:0;">Chwileczkę cierpliwości</p>
+                    <style>@keyframes rhSpin{to{transform:rotate(360deg);}}</style>`;
+                document.body.appendChild(overlay);
+            }
+            overlay.style.display = 'flex';
+        }
+        function hideRueckholLoadingOverlay() {
+            const overlay = document.getElementById('rueckholLoadingOverlay');
+            if (overlay) overlay.style.display = 'none';
+        }
+
+        // Order-Bump Anti-Giftköder-Plan (+9,99 €)
+        let antigiftBumpSelected = false;
+        function toggleAntigiftBump() {
+            const cb = document.getElementById('antigiftBump');
+            antigiftBumpSelected = !!(cb && cb.checked);
+            const box = document.getElementById('antigiftBumpBox');
+            if (box) box.style.borderColor = antigiftBumpSelected ? '#C4A576' : '#E6D5B3';
+        }
+
+        // Checkout öffnen — direkt Loading + Mollie-Redirect, kein
+        // Stripe-Overlay mehr (Legacy-Code unten bleibt im DOM aber
+        // wird nicht mehr aktiviert).
+        async function openCheckout() {
+            // Plan im localStorage speichern
+            localStorage.setItem('selectedPlan', selectedPlan);
+
+            // Loading sofort sichtbar — User sieht dass es laeuft
+            showRueckholLoadingOverlay();
+
+            // Mollie: Direkter Redirect (kein PaymentIntent + Inline-Form)
+            try {
+                const response = await fetch('/api/mollie/wauwerk-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plan: selectedPlan,
+                        timerExpired: false,
+                        dogName: dogName,
+                        leadId: leadId,
+                        email: userEmail || localStorage.getItem('userEmail') || '',
+                        cancelPath: '/powrot.html',
+                        source_page: 'rueckhol',
+                        orderBump: antigiftBumpSelected,
+                        bumpType: 'sommer',
+                        utm_source: localStorage.getItem('utm_source') || '',
+                        utm_medium: localStorage.getItem('utm_medium') || '',
+                        utm_campaign: localStorage.getItem('utm_campaign') || '',
+                        utm_content: localStorage.getItem('utm_content') || '',
+                        fbclid: localStorage.getItem('fbclid') || '',
+                        fbp: getCookie('_fbp') || '',
+                        fbc: getCookie('_fbc') || '',
+                        fb_event_id: localStorage.getItem('fb_event_id') || '',
+                        ttclid: localStorage.getItem('ttclid') || ''
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error || !data.url) {
+                    hideRueckholLoadingOverlay();
+                    alert(data.error || 'Nie udało się rozpocząć płatności — spróbuj jeszcze raz.');
+                    return;
+                }
+
+                if (data.paymentId) {
+                    localStorage.setItem('mollie_payment_id', data.paymentId);
+                }
+
+                window.location.href = data.url;
+
+            } catch (error) {
+                console.error('Checkout error:', error);
+                hideRueckholLoadingOverlay();
+                alert('Błąd połączenia. Spróbuj ponownie.');
+            }
+        }
+
+        // Checkout schließen
+        function closeCheckout() {
+            document.getElementById('checkoutOverlay').classList.remove('active');
+        }
+
+        // Zahlung absenden
+        async function submitPayment() {
+            const btn = document.getElementById('checkoutPayBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Przetwarzanie...';
+            hideError();
+            
+            try {
+                const { error } = await stripe.confirmPayment({
+                    elements,
+                    confirmParams: {
+                        return_url: window.location.origin + '/potwierdzenie.html?lead_id=' + leadId
+                    }
+                });
+                
+                if (error) {
+                    showError(error.message);
+                    btn.disabled = false;
+                    btn.innerHTML = '🔒 Zapłać teraz';
+                }
+                // Bei Erfolg wird automatisch weitergeleitet
+                
+            } catch (err) {
+                showError('Płatność nie powiodła się. Spróbuj ponownie.');
+                btn.disabled = false;
+                btn.innerHTML = '🔒 Zapłać teraz';
+            }
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('checkoutError');
+            errorEl.textContent = message;
+            errorEl.classList.add('visible');
+        }
+
+        function hideError() {
+            document.getElementById('checkoutError').classList.remove('visible');
+        }
+
+        // Escape-Taste schließt Checkout
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeCheckout();
+        });
+
+
+        // Beim Laden ausführen
+        loadAndPersonalize();
+
+    </script>
+</body>
+</html>
