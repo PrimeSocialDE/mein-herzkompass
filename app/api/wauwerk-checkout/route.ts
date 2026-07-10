@@ -9,11 +9,18 @@ const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null;
 
-// Preise in Cent
+// Preise in Cent (DE / EUR)
 const PRICES = {
   '1month': { discount: 2999, normal: 4999 },
   '3month': { discount: 3999, normal: 7999 },
   '6month': { discount: 5999, normal: 11999 }
+};
+// Preise in Grosze (PLN-Cent) fuer den polnischen Markt (lang="pl")
+// 109/199 · 149/259 · 229/389 zl
+const PRICES_PL = {
+  '1month': { discount: 10900, normal: 19900 },
+  '3month': { discount: 14900, normal: 25900 },
+  '6month': { discount: 22900, normal: 38900 }
 };
 
 export async function POST(req: NextRequest) {
@@ -41,19 +48,26 @@ export async function POST(req: NextRequest) {
       fbc,
       fb_event_id,
       ttclid,
-      orderBump      // NEU: Order-Bump Flag (Antizieh-Modul +€12)
+      orderBump,     // NEU: Order-Bump Flag (Antizieh-Modul +€12)
+      lang           // "de" (Default) | "pl"
     } = body;
+
+    // Markt/Sprache: Default "de" (EUR). "pl" -> PLN; Stripe zeigt via
+    // automatic_payment_methods automatisch BLIK/Przelewy24 fuer PLN.
+    const isPL = lang === "pl";
+    const currency = isPL ? "pln" : "eur";
 
     // DataFast Cookies aus Request lesen
     const datafastVisitorId = req.cookies.get('datafast_visitor_id')?.value || '';
     const datafastSessionId = req.cookies.get('datafast_session_id')?.value || '';
 
-    // Preis ermitteln
-    const priceData = PRICES[plan as keyof typeof PRICES] || PRICES['1month'];
+    // Preis ermitteln (markt-abhaengig)
+    const priceTable = isPL ? PRICES_PL : PRICES;
+    const priceData = priceTable[plan as keyof typeof priceTable] || priceTable['1month'];
     let amount = timerExpired ? priceData.normal : priceData.discount;
 
-    // Order-Bump: Problem-Intensiv-Modul +€19 (1900 cents)
-    const ORDER_BUMP_PRICE_CENTS = 1900;
+    // Order-Bump: Problem-Intensiv-Modul (DE +€19 / PL +89 zl)
+    const ORDER_BUMP_PRICE_CENTS = isPL ? 8900 : 1900;
     // Dog-Problem aus body lesen (für dynamisches Bump-Modul)
     const bumpProblem = body.bumpProblem || 'default';
     const ORDER_BUMP_ID = `intensiv_${bumpProblem}`;
@@ -63,26 +77,29 @@ export async function POST(req: NextRequest) {
       orderBumpApplied = true;
     }
 
-    // Plan-Namen
-    const planNames: Record<string, string> = {
-      '1month': '1-Monats-Plan',
-      '3month': '3-Monats-Plan',
-      '6month': '6-Monats-Plan'
-    };
-    const planName = planNames[plan] || '1-Monats-Plan';
+    // Plan-Namen + Beschreibung markt-abhaengig
+    const planNames: Record<string, string> = isPL
+      ? { '1month': 'Plan 1-miesięczny', '3month': 'Plan 3-miesięczny', '6month': 'Plan 6-miesięczny' }
+      : { '1month': '1-Monats-Plan', '3month': '3-Monats-Plan', '6month': '6-Monats-Plan' };
+    const planName = planNames[plan] || planNames['1month'];
+    const brand = isPL ? 'ŁapaPlan' : 'Pfoten-Plan';
+    const forWord = isPL ? 'dla' : 'für';
+    const dog = dogName || (isPL ? 'psa' : 'Hund');
+    const bumpWord = isPL ? 'Moduł intensywny' : 'Intensiv-Modul';
     const description = orderBumpApplied
-      ? `Pfoten-Plan ${planName} + Intensiv-Modul für ${dogName || 'Hund'}`
-      : `Pfoten-Plan ${planName} für ${dogName || 'Hund'}`;
+      ? `${brand} ${planName} + ${bumpWord} ${forWord} ${dog}`
+      : `${brand} ${planName} ${forWord} ${dog}`;
 
     // PaymentIntent erstellen
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
-      currency: 'eur',
+      currency,
       automatic_payment_methods: {
         enabled: true,
       },
       metadata: {
         lead_id: leadId || '',
+        lang: isPL ? 'pl' : 'de',
         plan: plan,
         dog_name: dogName || '',
         timer_expired: timerExpired ? 'true' : 'false',
