@@ -15,9 +15,9 @@ const PRICES = {
 // PL-Preise in Groszy (PLN-Cent) — lapaplan.pl. Rabatt 109/149/229 zł,
 // Normal 199/259/389 zł. Order-Bump 89 zł (siehe unten).
 const PRICES_PL = {
-  "1month": { discount: 10900, normal: 19900 },
-  "3month": { discount: 14900, normal: 25900 },
-  "6month": { discount: 22900, normal: 38900 },
+  "1month": { discount: 7999, normal: 12999 },
+  "3month": { discount: 9999, normal: 19999 },
+  "6month": { discount: 13999, normal: 29999 },
 };
 
 export async function POST(req: NextRequest) {
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
       entry_page,
     } = body;
 
-    const ORDER_BUMP_PRICE_CENTS = isPL ? 8900 : 999;
+    const ORDER_BUMP_PRICE_CENTS = isPL ? 3900 : 999;
     const bumpApplied = orderBump === true || orderBump === "true";
     const effectiveBumpType = (bumpType || "tagebuch").toLowerCase();
     const planDaysMap: Record<string, number> = {
