@@ -37,10 +37,16 @@ interface NurtureArgs {
   leadId?: string | null;
 }
 
-function planUrl(leadId?: string | null): string {
-  return leadId
-    ? `${PL_BASE}/plan?lead_id=${encodeURIComponent(leadId)}`
-    : `${PL_BASE}/plan`;
+function planUrl(leadId: string | null | undefined, stage: PlNurtureStage): string {
+  // Attribution: Kauf lässt sich später als "aus Nurture-Mail Stufe N" erkennen
+  // (utm landet via Checkout am Lead). utm_content = stage-N.
+  const p = new URLSearchParams();
+  if (leadId) p.set("lead_id", leadId);
+  p.set("utm_source", "email");
+  p.set("utm_medium", "email");
+  p.set("utm_campaign", "pl-nurture");
+  p.set("utm_content", `stage-${stage}`);
+  return `${PL_BASE}/plan?${p.toString()}`;
 }
 
 // Kleines Bild-Snippet (zentriert, abgerundet, max 260px) fuer Mail 4/5/6.
@@ -62,7 +68,7 @@ export function buildPlNurture(
   const dog = (args.dogName || "").trim() || "Twojego psa";
   const dogCap = (args.dogName || "").trim() || "Twój pies";
   const problem = PROBLEM_PL[String(args.dogProblem || "")] || "zachowania";
-  const cta = planUrl(args.leadId);
+  const cta = planUrl(args.leadId, stage);
 
   const common = { ctaUrl: cta, unsubscribe: true, lang: "pl" as const };
 
