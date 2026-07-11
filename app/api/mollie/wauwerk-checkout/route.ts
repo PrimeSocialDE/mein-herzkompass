@@ -15,9 +15,9 @@ const PRICES = {
 // PL-Preise in Groszy (PLN-Cent) — lapaplan.pl. Rabatt 109/149/229 zł,
 // Normal 199/259/389 zł. Order-Bump 89 zł (siehe unten).
 const PRICES_PL = {
-  "1month": { discount: 5900, normal: 10900 },
-  "3month": { discount: 8900, normal: 15900 },
-  "6month": { discount: 12900, normal: 21900 },
+  "1month": { discount: 7999, normal: 12999 },
+  "3month": { discount: 9999, normal: 19999 },
+  "6month": { discount: 13999, normal: 29999 },
 };
 
 export async function POST(req: NextRequest) {
