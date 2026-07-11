@@ -5337,15 +5337,12 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     <button id="googlePayBtn" class="hybrid-express-btn hybrid-express-btn--googlepay" onclick="payWithMethod('googlepay')" aria-label="Zapłać przez Google Pay">
                         <img src="googlepay.png" alt="GooglePay">
                     </button>
-                    <button class="hybrid-express-btn" onclick="payWithMethod('banktransfer')" aria-label="Przelewem SEPA">
-                        <img src="blik-logo.svg" alt="BLIK">
+                    <button class="hybrid-express-btn" onclick="payWithMethod('blik')" aria-label="Zapłać przez BLIK" style="background:#000000;">
+                        <span style="color:#ffffff;font-weight:800;font-size:20px;letter-spacing:0.6px;line-height:1;">BLIK</span>
                     </button>
                 </div>
 
-                <!-- Klarna: öffnet Adress-Modal → danach direkt zu Klarna (pay.klarna.com) -->
-                <button type="button" class="hybrid-klarna-small" onclick="openKlarnaAddress()" aria-label="Zapłać później z Klarna">
-                    <span class="hybrid-klarna-small-text">Zapłać później z <strong>Klarna.</strong></span>
-                </button>
+                <!-- Klarna in PL nicht verfuegbar -> Button entfernt. -->
 
                 <div class="hybrid-divider">lub kartą</div>
 
