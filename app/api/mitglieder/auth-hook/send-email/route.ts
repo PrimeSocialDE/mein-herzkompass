@@ -329,7 +329,7 @@ To takie proste:
 
 Link do logowania działa przez kilka dni — możesz spokojnie otworzyć maila później. Kod 6-cyfrowy jest ważny krócej. Oba tylko dla Ciebie; jeśli to nie Ty, po prostu zignoruj.
 
-Masz pytania? support@pfoten-plan.de
+Masz pytania? pomoc@lapaplan.pl
 
 Pozdrawiamy serdecznie,
 zespół ŁapaPlan`;
@@ -462,11 +462,11 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         sender:
           lang === "pl"
-            ? { name: "ŁapaPlan", email: "support@pfoten-plan.de" }
+            ? { name: "ŁapaPlan", email: "pomoc@lapaplan.pl" }
             : { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
         replyTo:
           lang === "pl"
-            ? { email: "support@pfoten-plan.de", name: "ŁapaPlan" }
+            ? { email: "pomoc@lapaplan.pl", name: "ŁapaPlan" }
             : { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" },
         to: [{ email: payload.user.email }],
         subject,

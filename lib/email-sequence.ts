@@ -547,7 +547,7 @@ export async function sendSequenceMail(
         name:
           def.senderName ||
           (lang === "pl" ? "Max z ŁapaPlan" : "Max von Pfoten-Plan"),
-        email: "support@pfoten-plan.de",
+        email: lang === "pl" ? "pomoc@lapaplan.pl" : "support@pfoten-plan.de",
       },
       to: [{ email: lead.email }],
       subject: def.subject,

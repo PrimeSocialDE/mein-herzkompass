@@ -20,6 +20,7 @@ interface PlanPdfFromContentParams {
   mainProblem: string;
   planLengthMonths: 1 | 3 | 6;
   verbose?: boolean;
+  lang?: "de" | "pl";
 }
 
 // ECHTE PERSONALISIERUNG: rendert den AI-erzeugten Plan-JSON.
@@ -35,6 +36,7 @@ export async function buildPlanPdfFromContent(
     mainProblem: params.mainProblem,
     planLengthMonths: params.planLengthMonths,
     verbose: params.verbose !== false,
+    lang: params.lang || "de",
   });
 }
 

@@ -491,6 +491,7 @@ export async function sendWarmRecoveryMail(
     subject: stageContent.subject,
     html,
     tags: ["warm-recovery", `stage-${stage}`],
+    lang,
   });
 
   return { ok: res.ok, reason: res.reason, aiUsed };

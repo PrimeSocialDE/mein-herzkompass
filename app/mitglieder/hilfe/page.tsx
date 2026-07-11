@@ -48,6 +48,10 @@ const SUGGESTED_QUESTIONS_PL = [
 ];
 
 const TRAINER_AVATAR = "/TrainerPfoten-thumb.png";
+// PL zeigt das Team-Foto mit "ŁapaPlan"-Shirts; DE bleibt unveraendert.
+function trainerAvatar(isPL: boolean) {
+  return isPL ? "/TrainerPfoten-thumb.pl.png" : TRAINER_AVATAR;
+}
 
 // Fallback-Cleanup auf Client-Seite (falls API-Cleanup mal ausfällt).
 function stripMarkdown(text: string): string {
@@ -397,7 +401,7 @@ export default function HilfePage() {
             <div className="flex gap-2 items-end">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={TRAINER_AVATAR}
+                src={trainerAvatar(isPL)}
                 alt=""
                 className="w-7 h-7 rounded-full object-cover flex-shrink-0"
               />
@@ -430,7 +434,7 @@ export default function HilfePage() {
 
         {messages.map((m, i) => (
           <div key={i}>
-            <ChatBubble message={m} />
+            <ChatBubble message={m} isPL={isPL} />
             {m.suggestedModule && !dismissedModule && (
               <div className="ml-9 mt-2 mb-1 bg-[#FFF9F0] border border-[#EADDC5] rounded-2xl px-4 py-3">
                 <button
@@ -488,7 +492,7 @@ export default function HilfePage() {
           <div className="flex gap-2 items-end">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={TRAINER_AVATAR}
+              src={trainerAvatar(isPL)}
               alt=""
               className="w-7 h-7 rounded-full object-cover flex-shrink-0"
             />
@@ -588,7 +592,7 @@ export default function HilfePage() {
       <div className="flex items-center gap-2 mt-2 mb-1 text-[#9CA3AF]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={TRAINER_AVATAR}
+          src={trainerAvatar(isPL)}
           alt={t.teamAlt}
           className="w-7 h-7 rounded-full object-cover flex-shrink-0 opacity-80"
         />
@@ -672,7 +676,7 @@ function CoachPaywall({
         <div className="text-center mb-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={TRAINER_AVATAR}
+            src={trainerAvatar(isPL)}
             alt={c.alt}
             className="w-20 h-20 rounded-full object-cover border-3 border-[#C4A576] mx-auto mb-3 shadow-md"
           />
@@ -795,7 +799,7 @@ function LimitModal({
         <div className="text-center mb-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={TRAINER_AVATAR}
+            src={trainerAvatar(isPL)}
             alt={l.alt}
             className="w-20 h-20 rounded-full object-cover border-3 border-[#C4A576] mx-auto mb-3 shadow-md"
           />
@@ -858,7 +862,7 @@ function LimitModal({
   );
 }
 
-function ChatBubble({ message }: { message: Message }) {
+function ChatBubble({ message, isPL }: { message: Message; isPL: boolean }) {
   const isUser = message.role === "user";
   if (isUser) {
     return (
@@ -874,7 +878,7 @@ function ChatBubble({ message }: { message: Message }) {
     <div className="flex gap-2 items-end justify-start">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={TRAINER_AVATAR}
+        src={trainerAvatar(isPL)}
         alt=""
         className="w-7 h-7 rounded-full object-cover flex-shrink-0"
       />

@@ -86,9 +86,23 @@ interface SendArgs {
   tags?: string[];
   attachments?: Array<{ name: string; contentBase64: string }>;
   cc?: string | string[];
+  lang?: Lang;
 }
 
-export async function sendBrevoMail({ to, subject, html, tags, attachments, cc }: SendArgs) {
+// Absender sprachabhaengig: PL-Mails kommen von pomoc@lapaplan.pl (in Brevo
+// verifiziert), DE bleibt exakt wie bisher (support@pfoten-plan.de).
+export function mailSender(lang: Lang = "de") {
+  return lang === "pl"
+    ? { name: "ŁapaPlan", email: "pomoc@lapaplan.pl" }
+    : { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" };
+}
+export function mailReplyTo(lang: Lang = "de") {
+  return lang === "pl"
+    ? { email: "pomoc@lapaplan.pl", name: "ŁapaPlan" }
+    : { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" };
+}
+
+export async function sendBrevoMail({ to, subject, html, tags, attachments, cc, lang }: SendArgs) {
   if (!BREVO_API_KEY) {
     console.warn("[member-mail] BREVO_API_KEY fehlt — skipping send to", to);
     return { ok: false, reason: "no_api_key" };
@@ -98,11 +112,8 @@ export async function sendBrevoMail({ to, subject, html, tags, attachments, cc }
   }
   try {
     const payload: Record<string, unknown> = {
-      sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
-      replyTo: {
-        email: "support@pfoten-plan.de",
-        name: "Pfoten-Plan Support",
-      },
+      sender: mailSender(lang),
+      replyTo: mailReplyTo(lang),
       to: [{ email: to }],
       subject,
       htmlContent: html,
@@ -280,6 +291,7 @@ export async function sendWelcomeChallengesMail(
     });
 
     return sendBrevoMail({
+    lang,
       to: member.email,
       subject: `🐾 Zadania tygodnia dla ${
         member.dog_name || "Twojego psa"
@@ -306,6 +318,7 @@ export async function sendWelcomeChallengesMail(
   });
 
   return sendBrevoMail({
+    lang,
     to: member.email,
     subject: `🐾 Deine Wochen-Aufgaben für ${
       member.dog_name || "deinen Hund"
@@ -570,6 +583,7 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
       mainProblem: mainProblem || "Verhaltens-Themen im Alltag",
       planLengthMonths,
       verbose: false,
+      lang,
     });
     const buf =
       pdfBytes instanceof Buffer
@@ -595,6 +609,7 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
   }
 
   return sendBrevoMail({
+    lang,
     to,
     subject,
     html,
@@ -635,11 +650,12 @@ export async function sendWeeklyChallengesMail(
       bodyHtml: `<p style="margin:16px 0 8px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">W tym tygodniu:</p>${challengesHtml}`,
       ctaText: "Zobacz zadania",
       ctaUrl,
-      footerHint: `Jeśli nie chcesz już tego przypomnienia, napisz do nas krótko na support@pfoten-plan.de.`,
+      footerHint: `Jeśli nie chcesz już tego przypomnienia, napisz do nas krótko na pomoc@lapaplan.pl.`,
       lang: "pl",
     });
 
     return sendBrevoMail({
+    lang,
       to: member.email,
       subject: `🐾 Nowe zadania tygodnia dla ${
         member.dog_name || "Twojego psa"
@@ -664,6 +680,7 @@ export async function sendWeeklyChallengesMail(
   });
 
   return sendBrevoMail({
+    lang,
     to: member.email,
     subject: `🐾 Neue Wochen-Aufgaben für ${
       member.dog_name || "deinen Hund"
@@ -698,11 +715,12 @@ export async function sendMidweekReminderMail(
       bodyHtml: `<p style="margin:16px 0 8px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">Jeszcze dziś do zrobienia:</p>${challengesHtml}<p style="margin:14px 0 0;font-size:13px;color:#6B7280;line-height:1.55;">Wskazówka: Jedna sesja = krótki zestaw ćwiczeń albo spacer ze skupieniem na zadaniu. Odhacz w panelu członkowskim i gotowe.</p>`,
       ctaText: "Ostatnia szansa - zaczynaj teraz",
       ctaUrl,
-      footerHint: `Nie chcesz więcej przypomnień? Napisz do nas krótko na support@pfoten-plan.de.`,
+      footerHint: `Nie chcesz więcej przypomnień? Napisz do nas krótko na pomoc@lapaplan.pl.`,
       lang: "pl",
     });
 
     return sendBrevoMail({
+    lang,
       to: member.email,
       subject: `🐾 Ostatni dzień: ${dog} jest o jedną sesję od odznaki`,
       html,
@@ -726,6 +744,7 @@ export async function sendMidweekReminderMail(
   });
 
   return sendBrevoMail({
+    lang,
     to: member.email,
     subject: `🐾 Letzter Tag: ${dog} ist eine Session vom Badge entfernt`,
     html,
@@ -794,7 +813,7 @@ export async function sendCheckoutRecoveryMail(args: {
     <div style="background:#FAFAFA;border-radius:10px;padding:14px 16px;margin:12px 0 4px;border-left:3px solid #C4A576;">
       <p style="margin:0;font-size:13px;color:#4B5563;line-height:1.6;">
         Wiemy, jak frustrujące bywa, gdy porady z internetu po prostu nie działają — i na końcu znów masz frustrację zamiast postępu. Właśnie dlatego stworzyliśmy ŁapaPlan: zespół wykształconych trenerów psów, który krok po kroku jest przy Tobie.<br><br>
-        W razie pytań napisz po prostu na <a href="mailto:support@pfoten-plan.de" style="color:#8B7355;">support@pfoten-plan.de</a> — odpowiadamy osobiście.
+        W razie pytań napisz po prostu na <a href="mailto:pomoc@lapaplan.pl" style="color:#8B7355;">pomoc@lapaplan.pl</a> — odpowiadamy osobiście.
       </p>
     </div>`;
 
@@ -825,6 +844,7 @@ export async function sendCheckoutRecoveryMail(args: {
     });
 
     return sendBrevoMail({
+    lang,
       to,
       subject: hasName
         ? `5-minutowe ćwiczenie dla ${dogPl} — do zrobienia już dziś`
@@ -889,6 +909,7 @@ export async function sendCheckoutRecoveryMail(args: {
   });
 
   return sendBrevoMail({
+    lang,
     to,
     subject: hasName
       ? `5-Min-Übung für ${dog} — heute schon machbar`
