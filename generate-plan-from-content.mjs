@@ -683,9 +683,16 @@ export async function buildPdfFromContent(params = {}) {
     const rightW = A4_W - leftW;
 
     // Titel dynamisch je nach Plan-Länge
-    const titleStr = t(`${planLengthMonths}-Monatsplan für`, `Plan ${planLengthMonths}-miesięczny dla`);
+    // PL-Titel ist länger ("Plan 3-miesięczny") + eigene Namenszeile "dla X";
+    // damit er nicht hinter das rechte Foto läuft, wird er bei PL auf die
+    // linke Spalte begrenzt (auto-shrink). DE bleibt exakt bei Größe 46.
+    const titleStr = t(`${planLengthMonths}-Monatsplan für`, `Plan ${planLengthMonths}-miesięczny`);
+    const maxTitleW = leftW - MARGIN - 24;
     let y = A4_H - BANNER_H - 90;
-    const titleSize = 46;
+    let titleSize = 46;
+    if (isPl) {
+      while (titleSize > 28 && fontBold.widthOfTextAtSize(titleStr, titleSize) > maxTitleW) titleSize -= 1;
+    }
     p.drawText(titleStr, {
       x: MARGIN,
       y,
@@ -701,12 +708,17 @@ export async function buildPdfFromContent(params = {}) {
       height: 3,
       color: GOLD,
     });
-    // Hundenamen
+    // Hundenamen (PL: "dla X")
     y -= 70;
-    p.drawText(DOG_NAME, {
+    const nameStr = t(DOG_NAME, `dla ${DOG_NAME}`);
+    let nameSize = 36;
+    if (isPl) {
+      while (nameSize > 24 && fontReg.widthOfTextAtSize(nameStr, nameSize) > maxTitleW) nameSize -= 1;
+    }
+    p.drawText(nameStr, {
       x: MARGIN,
       y,
-      size: 36,
+      size: nameSize,
       font: fontReg,
       color: DARK_BROWN,
     });
