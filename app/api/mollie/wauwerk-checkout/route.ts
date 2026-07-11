@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
-import { getMollie, formatAmountEUR, Locale } from "@/lib/mollie";
+import { getMollie, getMolliePL, formatAmountEUR, formatAmount, Locale } from "@/lib/mollie";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,17 +12,32 @@ const PRICES = {
   "6month": { discount: 5999, normal: 11999 },
 };
 
-export async function POST(req: NextRequest) {
-  const mollie = getMollie();
-  if (!mollie) {
-    return NextResponse.json(
-      { error: "Mollie nicht konfiguriert" },
-      { status: 500 }
-    );
-  }
+// PL-Preise in Groszy (PLN-Cent) — lapaplan.pl. Rabatt 109/149/229 zł,
+// Normal 199/259/389 zł. Order-Bump 89 zł (siehe unten).
+const PRICES_PL = {
+  "1month": { discount: 10900, normal: 19900 },
+  "3month": { discount: 14900, normal: 25900 },
+  "6month": { discount: 22900, normal: 38900 },
+};
 
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    // PL-Markt (lapaplan.pl): eigener Mollie-Account (PLN). Erkennung ueber
+    // expliziten body.market ODER den Origin-Host. DE-Flow bleibt unveraendert.
+    const isPL =
+      body?.market === "pl" ||
+      body?.lang === "pl" ||
+      /(^|\.)lapaplan\.pl/i.test(req.headers.get("origin") || "");
+    const mollie = isPL ? getMolliePL() : getMollie();
+    if (!mollie) {
+      return NextResponse.json(
+        { error: "Mollie nicht konfiguriert" },
+        { status: 500 }
+      );
+    }
+    const CURRENCY = isPL ? "PLN" : "EUR";
+    const fmtAmt = isPL ? formatAmount : formatAmountEUR;
     const {
       plan,
       timerExpired,
@@ -66,7 +81,7 @@ export async function POST(req: NextRequest) {
       entry_page,
     } = body;
 
-    const ORDER_BUMP_PRICE_CENTS = 999;
+    const ORDER_BUMP_PRICE_CENTS = isPL ? 8900 : 999;
     const bumpApplied = orderBump === true || orderBump === "true";
     const effectiveBumpType = (bumpType || "tagebuch").toLowerCase();
     const planDaysMap: Record<string, number> = {
@@ -136,7 +151,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Preis ermitteln (identisch zu Stripe-Logik)
-    const priceData = PRICES[plan as keyof typeof PRICES] || PRICES["1month"];
+    const priceTable = isPL ? PRICES_PL : PRICES;
+    const priceData = priceTable[plan as keyof typeof priceTable] || priceTable["1month"];
     const baseAmount = timerExpired ? priceData.normal : priceData.discount;
     const planAmountCents = exitDiscountApplied
       ? Math.round(baseAmount * 0.85)
@@ -189,7 +205,7 @@ export async function POST(req: NextRequest) {
       cancelPath.startsWith("/") &&
       !cancelPath.includes("://")
         ? cancelPath
-        : "/deinplan3.html";
+        : isPL ? "/plan" : "/deinplan3.html";
     const cancelJoiner = safeCancelPath.includes("?") ? "&" : "?";
 
     // Mollie redirected nach Abschluss IMMER auf redirectUrl — egal ob paid/canceled/failed.
@@ -213,7 +229,8 @@ export async function POST(req: NextRequest) {
       `&cancel=${encodeURIComponent(cancelUrl)}` +
       (safeSuccessPath
         ? `&success=${encodeURIComponent(safeSuccessPath)}`
-        : "");
+        : "") +
+      (isPL ? "&acct=pl" : "");
 
     // Payment-Parameter zusammenbauen — Mollie metadata-Limit ist ~1024 bytes.
     // Vorher haben wir leere Felder + ungekuerzte FB-Tracking-IDs reingeschoben
@@ -323,16 +340,19 @@ export async function POST(req: NextRequest) {
           : Locale.de_DE;
 
     const paymentParams: any = {
-      amount: { currency: "EUR", value: formatAmountEUR(totalCents) },
+      amount: { currency: CURRENCY, value: fmtAmt(totalCents) },
       description: description.slice(0, 255),
       redirectUrl: returnUrl,
-      webhookUrl: `${webhookBase}/api/mollie/webhook`,
-      locale: paymentLocale,
+      // PL-Zahlungen -> Webhook nutzt den PL-Key (acct=pl).
+      webhookUrl: `${webhookBase}/api/mollie/webhook${isPL ? "?acct=pl" : ""}`,
+      locale: isPL ? Locale.pl_PL : paymentLocale,
       metadata: meta,
     };
 
     // Hybrid: spezifische Methode + ggf. cardToken.
-    if (method) {
+    // PL: method IGNORIEREN -> immer Mollie-Hosted-Checkout, der genau die im
+    // PL-Account aktivierten Methoden (Google Pay / Apple Pay …) anzeigt.
+    if (method && !isPL) {
       paymentParams.method = method;
       if (method === "creditcard" && cardToken) {
         paymentParams.cardToken = cardToken;
@@ -354,7 +374,9 @@ export async function POST(req: NextRequest) {
       "bancontact",
       "ideal",
     ]);
-    const supportsMandate = !method || RECURRING_METHODS.has(method);
+    // PL: keine Mandate/Recurring (Hosted-Checkout mit ApplePay/GooglePay,
+    // kein One-Click-Upsell-Flow) — sonst wie DE.
+    const supportsMandate = !isPL && (!method || RECURRING_METHODS.has(method));
     let createdCustomerId: string | null = null;
     if (supportsMandate && resolvedEmail) {
       try {
@@ -395,7 +417,7 @@ export async function POST(req: NextRequest) {
     // Klarna (Pay later) verlangt zwingend Order-Lines mit MwSt — ohne lines
     // gibt Mollie 422 "lines required". Preise sind brutto inkl. 19% USt
     // (AGB: "inklusive der gesetzlichen Umsatzsteuer"). Summe der Zeilen = totalCents.
-    if (method === "klarna") {
+    if (!isPL && method === "klarna") {
       const vat19 = (grossCents: number) =>
         formatAmountEUR(Math.round((grossCents * 19) / 119));
       const lines: any[] = [

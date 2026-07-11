@@ -4447,7 +4447,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         // PL: Zahlungen vorübergehend deaktiviert, bis der Mollie-PLN-Account steht.
         // Alle Zahl-Funktionen zeigen stattdessen einen Hinweis (kein EUR-Charge).
         // Der deutsche Funnel (pfoten-plan.de) ist davon NICHT betroffen.
-        const PL_PAYMENTS_OFF = true;
+        const PL_PAYMENTS_OFF = false;
         function plPaymentPlaceholder() {
             try { document.getElementById('paymentLoadingOverlay')?.remove(); } catch (e) {}
             alert('Płatności będą wkrótce dostępne — pracujemy nad tym! Dziękujemy za cierpliwość. 🐾');
@@ -4730,14 +4730,14 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     ? _bcb.checked
                     : localStorage.getItem('order_bump_antigift_checked') === 'true';
                 if (_bch) {
-                    val += _ed ? (Math.round(999 * 0.85) / 100) : 9.99;
+                    val += _ed ? (Math.round(8900 * 0.85) / 100) : 89;
                     val = Math.round(val * 100) / 100;
                 }
                 const eventId = 'ic_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
                 localStorage.setItem('fb_event_id_ic', eventId);
                 if (typeof fbq !== 'undefined') {
                     fbq('track', 'InitiateCheckout', {
-                        value: val, currency: 'EUR',
+                        value: val, currency: 'PLN',
                         content_name: selectedPlan, content_category: 'Trainingsplan',
                         num_items: _bch ? 2 : 1
                     }, { eventID: eventId });
