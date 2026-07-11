@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { after } from "next/server";
 import { supabase } from "@/lib/db";
-import { getMollie } from "@/lib/mollie";
+import { getMollie, getMolliePL } from "@/lib/mollie";
 import { generateRedeemCode } from "@/lib/referral";
 import {
   activateClubForLead,
@@ -20,7 +20,9 @@ export const maxDuration = 60;
 // Idempotenz: wir bauen alle Updates so, dass sie mehrfach auslösbar sind ohne Schaden.
 
 export async function POST(req: NextRequest) {
-  const mollie = getMollie();
+  // PL-Zahlungen (Webhook-URL mit ?acct=pl) mit dem PL-Mollie-Key abholen.
+  const mollie =
+    req.nextUrl.searchParams.get("acct") === "pl" ? getMolliePL() : getMollie();
   if (!mollie) {
     console.error("[mollie-webhook] Mollie nicht konfiguriert");
     // 200 zurückgeben damit Mollie nicht endlos retried bei Konfig-Fehler

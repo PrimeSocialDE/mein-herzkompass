@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
-import { getMollie } from "@/lib/mollie";
+import { getMollie, getMolliePL } from "@/lib/mollie";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,7 +25,9 @@ export async function GET(req: NextRequest) {
       ? successPathRaw
       : "";
 
-  const mollie = getMollie();
+  // PL-Zahlungen (acct=pl) mit dem PL-Mollie-Key pruefen.
+  const isPL = url.searchParams.get("acct") === "pl";
+  const mollie = isPL ? getMolliePL() : getMollie();
   if (!mollie || !leadId) {
     return NextResponse.redirect(cancelUrl, { status: 303 });
   }
@@ -201,7 +203,7 @@ export async function GET(req: NextRequest) {
       ? `${url.origin}${successPath}${successPath.includes("?") ? "&" : "?"}` +
         `lead_id=${encodeURIComponent(leadId)}` +
         `&redirect_status=succeeded`
-      : `${url.origin}/zusatz.html` +
+      : `${url.origin}/${isPL ? "dziekujemy.html" : "zusatz.html"}` +
         `?lead_id=${encodeURIComponent(leadId)}` +
         `&redirect_status=succeeded` +
         `&mollie_payment_id=${encodeURIComponent(lead.mollie_payment_id)}`;
