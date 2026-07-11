@@ -484,7 +484,7 @@ export default async function MitgliederDashboard({
         <div className="flex items-center gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/TrainerPfoten-thumb.png"
+            src={lang === "pl" ? "/TrainerPfoten-thumb.pl.png" : "/TrainerPfoten-thumb.png"}
             alt={lang === "pl" ? "Zespół trenerów ŁapaPlan" : "Pfoten-Plan Trainer-Team"}
             className="w-14 h-14 rounded-full object-cover border-2 border-[#C4A576] flex-shrink-0"
           />
