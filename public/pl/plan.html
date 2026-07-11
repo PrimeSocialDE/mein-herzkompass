@@ -2609,7 +2609,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
                 <div style="width: 1px; height: 36px; background: var(--border-light);"></div>
                 <div style="flex: 1.2; padding: 8px 4px; background: var(--white); border-radius: 10px; border: 2px solid var(--warm-brown); margin: -4px 0;">
-                    <span style="font-size: 16px; font-weight: 800; color: var(--warm-brown);">od 109 zł</span>
+                    <span style="font-size: 16px; font-weight: 800; color: var(--warm-brown);">od 59 zł</span>
                     <p style="font-size: 10px; color: var(--warm-brown); font-weight: 600; margin: 4px 0 0;">ŁapaPlan · jednorazowo</p>
                 </div>
             </div>
@@ -3841,20 +3841,20 @@ if (popularBadge) {
 
         const planDetails = {
             '1month': {
-                price: '109 zł',
-                priceNormal: '199 zł',
+                price: '59 zł',
+                priceNormal: '109 zł',
                 name: 'Plan 1-miesięczny',
                 interval: 'miesięcznie'
             },
             '3month': {
-                price: '149 zł',
-                priceNormal: '259 zł',
+                price: '89 zł',
+                priceNormal: '159 zł',
                 name: 'Plan 3-miesięczny',
                 interval: 'co 3 miesiące'
             },
             '6month': {
-                price: '229 zł',
-                priceNormal: '389 zł',
+                price: '129 zł',
+                priceNormal: '219 zł',
                 name: 'Plan 6-miesięczny',
                 interval: 'co 6 miesięcy'
             }
@@ -3864,19 +3864,19 @@ if (popularBadge) {
     const cards = document.querySelectorAll('.pricing-card');
 
     // cards[0] = 1-Monat, cards[1] = 3-Monat, cards[2] = 6-Monat
-    // 1-Monat: 199 zł jednorazowo (≈6,63 zł/Tag)
+    // 1-Monat: 109 zł jednorazowo (≈6,63 zł/Tag)
     cards[0].querySelector('.price-amount').textContent = '199';
     cards[0].querySelector('.price-cents').textContent = ' zł';
     cards[0].querySelector('.pricing-total').textContent = '6,63 zł dziennie';
     cards[0].dataset.price = '199';
 
-    // 3-Monat: 259 zł jednorazowo (≈2,88 zł/Tag)
+    // 3-Monat: 159 zł jednorazowo (≈2,88 zł/Tag)
     cards[1].querySelector('.price-amount').textContent = '259';
     cards[1].querySelector('.price-cents').textContent = ' zł';
     cards[1].querySelector('.pricing-total').textContent = '2,88 zł dziennie';
     cards[1].dataset.price = '259';
 
-    // 6-Monat: 389 zł jednorazowo (≈2,16 zł/Tag)
+    // 6-Monat: 219 zł jednorazowo (≈2,16 zł/Tag)
     cards[2].querySelector('.price-amount').textContent = '389';
     cards[2].querySelector('.price-cents').textContent = ' zł';
     cards[2].querySelector('.pricing-total').textContent = '2,16 zł dziennie';
@@ -4689,9 +4689,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         // Formel wie getMyPlan (priceMap/timer/exit-discount/Bump-Aufschlag).
         function refreshHybridPrice() {
             const priceMap = {
-                '1month': { d: 109, n: 199, name: 'Twój 4-tygodniowy plan treningowy' },
-                '3month': { d: 149, n: 259, name: 'Twój 12-tygodniowy plan treningowy' },
-                '6month': { d: 229, n: 389, name: 'Twój 6-miesięczny plan treningowy' }
+                '1month': { d: 59, n: 109, name: 'Twój 4-tygodniowy plan treningowy' },
+                '3month': { d: 89, n: 159, name: 'Twój 12-tygodniowy plan treningowy' },
+                '6month': { d: 129, n: 219, name: 'Twój 6-miesięczny plan treningowy' }
             };
             const info = priceMap[selectedPlan] || priceMap['3month'];
             const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
@@ -4723,9 +4723,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             // Meta Pixel: InitiateCheckout event
             try {
                 const priceMap = {
-                    '1month': { d: 29.99, n: 49.99 },
-                    '3month': { d: 39.99, n: 79.99 },
-                    '6month': { d: 59.99, n: 119.99 }
+                    '1month': { d: 59, n: 109 },
+                    '3month': { d: 89, n: 159 },
+                    '6month': { d: 129, n: 219 }
                 };
                 let val = timerExpired ? priceMap[selectedPlan].n : priceMap[selectedPlan].d;
                 const _ed = localStorage.getItem('exit_discount_15') === 'true';
@@ -4735,7 +4735,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     ? _bcb.checked
                     : localStorage.getItem('order_bump_antigift_checked') === 'true';
                 if (_bch) {
-                    val += _ed ? (Math.round(8900 * 0.85) / 100) : 89;
+                    val += _ed ? (Math.round(3900 * 0.85) / 100) : 39;
                     val = Math.round(val * 100) / 100;
                 }
                 const eventId = 'ic_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
@@ -4758,9 +4758,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             // Plan-Info merken für späteren Submit (Preis, Name, etc.)
             // name wird im hybrid-modal als Untertitel angezeigt ("Dein X-Plan für Bruno").
             const priceMap = {
-                '1month': { d: 109, n: 199, name: 'Twój 4-tygodniowy plan treningowy' },
-                '3month': { d: 149, n: 259, name: 'Twój 12-tygodniowy plan treningowy' },
-                '6month': { d: 229, n: 389, name: 'Twój 6-miesięczny plan treningowy' }
+                '1month': { d: 59, n: 109, name: 'Twój 4-tygodniowy plan treningowy' },
+                '3month': { d: 89, n: 159, name: 'Twój 12-tygodniowy plan treningowy' },
+                '6month': { d: 129, n: 219, name: 'Twój 6-miesięczny plan treningowy' }
             };
             const planInfo = priceMap[selectedPlan] || priceMap['3month'];
             const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
@@ -5151,7 +5151,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                             <div class="checkout-plan-personalized" id="checkoutPersonalized">Stworzony indywidualnie dla <span id="checkoutDogNamePlan">Twojego psa</span></div>
                         </div>
                         <div class="checkout-plan-price-box">
-                            <div class="checkout-plan-price" id="checkoutPlanPrice">229 zł</div>
+                            <div class="checkout-plan-price" id="checkoutPlanPrice">129 zł</div>
                             <div class="checkout-plan-price-sub">jednorazowo</div>
                             <div class="checkout-plan-daily" id="checkoutDailyPrice">≈ 1,27 zł dziennie</div>
                         </div>
@@ -5294,7 +5294,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             </div>
             <div class="hybrid-header">
                 <div>
-                    <h2>Płatność · <span id="hybridPriceLabel">149 zł</span></h2>
+                    <h2>Płatność · <span id="hybridPriceLabel">89 zł</span></h2>
                     <div class="sub" id="hybridPlanName">Plan 3-miesięczny</div>
                 </div>
                 <span class="hybrid-no-abo-badge" aria-label="Płatność jednorazowa, bez abonamentu">
@@ -5391,7 +5391,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                         </div>
                     </div>
                     <button class="hybrid-card-submit" id="hybridCardSubmitBtn" onclick="submitHybridCard()">
-                        🔒 Bezpieczna płatność · 149 zł
+                        🔒 Bezpieczna płatność · 89 zł
                     </button>
                 </div>
             </div>
