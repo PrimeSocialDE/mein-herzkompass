@@ -2336,6 +2336,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         background: #fff; border-color: #E5E7EB;
     }
     .hybrid-express-btn--googlepay img { max-height: 46px; }
+    /* BLIK + Przelewy24: echte Mollie-Badges, prominent */
+    .hybrid-express-btn--blik img,
+    .hybrid-express-btn--p24 img { max-height: 44px; }
     /* SEPA-Logo: Untertitel-Detail braucht etwas mehr Höhe */
     .hybrid-express-btn img[alt="SEPA"] { max-height: 44px; }
 
@@ -5337,8 +5340,14 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     <button id="googlePayBtn" class="hybrid-express-btn hybrid-express-btn--googlepay" onclick="payWithMethod('googlepay')" aria-label="Zapłać przez Google Pay">
                         <img src="googlepay.png" alt="GooglePay">
                     </button>
-                    <button class="hybrid-express-btn" onclick="payWithMethod('blik')" aria-label="Zapłać przez BLIK" style="background:#000000;">
-                        <span style="color:#ffffff;font-weight:800;font-size:20px;letter-spacing:0.6px;line-height:1;">BLIK</span>
+                </div>
+                <!-- Polnische Methoden: BLIK + Przelewy24 nebeneinander (echte Logos) -->
+                <div class="hybrid-express-grid" style="grid-template-columns:1fr 1fr;margin-top:10px;">
+                    <button class="hybrid-express-btn hybrid-express-btn--blik" onclick="payWithMethod('blik')" aria-label="Zapłać przez BLIK">
+                        <img src="blik-logo.svg" alt="BLIK">
+                    </button>
+                    <button class="hybrid-express-btn hybrid-express-btn--p24" onclick="payWithMethod('przelewy24')" aria-label="Zapłać przez Przelewy24">
+                        <img src="przelewy24-logo.svg" alt="Przelewy24">
                     </button>
                 </div>
 
