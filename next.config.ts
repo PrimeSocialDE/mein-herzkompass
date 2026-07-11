@@ -75,14 +75,34 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   async rewrites() {
-    return [
-      // alle Step-Seiten ohne .html erreichbar machen
-      { source: '/:step(step\\d+)', destination: '/:step.html' },
-
-      // Einzelmappings für weitere Seiten ohne .html
-      { source: '/ergebnis', destination: '/ergebnis.html' },
-      { source: '/geld-zurueck', destination: '/geld-zurueck.html' }
-    ];
+    return {
+      // beforeFiles laufen VOR den statischen Dateien. Noetig, damit der
+      // lapaplan.pl-Host-Rewrite auch Pfade nach /pl umschreibt, die im
+      // deutschen public/ als Datei existieren ("/" -> index.html, "/plan",
+      // "/opinie" etc.). WICHTIG: host-gebunden auf lapaplan.pl — bei einem
+      // pfoten-plan.de-Request greift KEINE dieser Regeln (DE unberuehrt).
+      beforeFiles: [
+        { source: '/', has: [{ type: 'host', value: 'lapaplan.pl' }], destination: '/pl' },
+        { source: '/', has: [{ type: 'host', value: 'www.lapaplan.pl' }], destination: '/pl' },
+        {
+          source: '/:path((?!api/|api$|mitglieder|_next|pl/|pl$).*)',
+          has: [{ type: 'host', value: 'lapaplan.pl' }],
+          destination: '/pl/:path',
+        },
+        {
+          source: '/:path((?!api/|api$|mitglieder|_next|pl/|pl$).*)',
+          has: [{ type: 'host', value: 'www.lapaplan.pl' }],
+          destination: '/pl/:path',
+        },
+      ],
+      afterFiles: [
+        // alle Step-Seiten ohne .html erreichbar machen
+        { source: '/:step(step\\d+)', destination: '/:step.html' },
+        // Einzelmappings für weitere Seiten ohne .html
+        { source: '/ergebnis', destination: '/ergebnis.html' },
+        { source: '/geld-zurueck', destination: '/geld-zurueck.html' },
+      ],
+    };
   }
 };
 
