@@ -583,6 +583,7 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
       mainProblem: mainProblem || "Verhaltens-Themen im Alltag",
       planLengthMonths,
       verbose: false,
+      lang,
     });
     const buf =
       pdfBytes instanceof Buffer

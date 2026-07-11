@@ -618,9 +618,22 @@ export async function buildPdfFromContent(params = {}) {
   }
 
   const doc = await PDFDocument.create();
-  const fontReg = await doc.embedFont(StandardFonts.Helvetica);
-  const fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
-  const fontItalic = await doc.embedFont(StandardFonts.HelveticaOblique);
+  // Font-Weiche: PL braucht einen Unicode-Font (Arimo) fuer ł/ą/ę/ś/ż/ć/ń/ź —
+  // sonst crasht pdf-lib (Helvetica = WinAnsi, "cannot encode"). DE bleibt
+  // EXAKT bei Helvetica (kein fontkit, keine Aenderung am deutschen Output).
+  const lang = params.lang === "pl" ? "pl" : "de";
+  let fontReg, fontBold, fontItalic;
+  if (lang === "pl") {
+    const fontkit = (await import("@pdf-lib/fontkit")).default;
+    doc.registerFontkit(fontkit);
+    fontReg = await doc.embedFont(readFileSync(PUBLIC("fonts/Arimo-Regular.ttf")), { subset: true });
+    fontBold = await doc.embedFont(readFileSync(PUBLIC("fonts/Arimo-Bold.ttf")), { subset: true });
+    fontItalic = await doc.embedFont(readFileSync(PUBLIC("fonts/Arimo-Italic.ttf")), { subset: true });
+  } else {
+    fontReg = await doc.embedFont(StandardFonts.Helvetica);
+    fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
+    fontItalic = await doc.embedFont(StandardFonts.HelveticaOblique);
+  }
 
   // Echtes Pfoten-Logo aus public/ einbetten
   const logoBytes = readFileSync(PDF_ASSETS("logo.png"));
