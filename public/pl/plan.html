@@ -2921,24 +2921,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 <p class="section-subtitle">z naszym planem treningowym</p>
             </div>
 
-            <!-- ========== VIDEO TESTIMONIAL ========== -->
-            <div class="video-testimonial">
-                <div class="video-testimonial-container">
-                    <video id="testimonialVideo" playsinline preload="metadata" poster="video-thumbnail.png">
-                        <source src="luna-testimonial.mp4" type="video/mp4">
-                    </video>
-                    <div class="video-testimonial-badge">Opinia klienta</div>
-                    <div class="video-play-overlay" id="videoPlayOverlay" onclick="playTestimonialVideo()">
-                        <div class="video-play-button">
-                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="video-testimonial-caption">
-                    <strong>Luna już nie ciągnie na smyczy</strong>
-                    <span>Już po 3 tygodniach treningu – bez drogiej szkoły dla psów</span>
-                </div>
-            </div>
+            <!-- VIDEO TESTIMONIAL (DE, deutsch gesprochen) fuer PL entfernt — spaeter poln. Video ergaenzen -->
 
             <div class="testimonial-card">
                 <div class="testimonial-image-single">
@@ -3109,33 +3092,8 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
 
-        // Video Testimonial Play/Pause Toggle
-        function playTestimonialVideo() {
-            const video = document.getElementById('testimonialVideo');
-            const overlay = document.getElementById('videoPlayOverlay');
-            
-            if (video.paused) {
-                video.play();
-                overlay.classList.add('hidden');
-            } else {
-                video.pause();
-                overlay.classList.remove('hidden');
-            }
-        }
-        
-        // Video Click Handler (für Pause wenn Video läuft)
-        document.getElementById('testimonialVideo').addEventListener('click', function() {
-            const overlay = document.getElementById('videoPlayOverlay');
-            if (!this.paused) {
-                this.pause();
-                overlay.classList.remove('hidden');
-            }
-        });
-        
-        // Overlay wieder zeigen wenn Video endet
-        document.getElementById('testimonialVideo').addEventListener('ended', function() {
-            document.getElementById('videoPlayOverlay').classList.remove('hidden');
-        });
+        // Video-Testimonial (DE) fuer PL entfernt — zugehoeriges JS ebenfalls entfernt,
+        // damit kein null-Zugriff das restliche Script (Supabase/Checkout) abbricht.
 
         // ==================== REFERRAL-CODE AUS URL (?ref=PFOTE-XXXXXX) ====================
         (function() {
