@@ -367,7 +367,7 @@ export async function POST(req: NextRequest) {
               dogName,
               dogBreed: answers.dog_breed || null,
               dogAge: answers.dog_age || null,
-              mainProblem: PROBLEM_LABELS[dogProblem] || dogProblem || null,
+              mainProblem: (planLang === "pl" ? problemLabel : PROBLEM_LABELS[dogProblem]) || dogProblem || null,
               planLengthMonths,
               plan: result.plan,
               customerName: lead.customer_name || null,
