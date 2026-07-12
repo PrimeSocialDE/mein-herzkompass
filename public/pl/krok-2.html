@@ -288,7 +288,9 @@
                 e.preventDefault();
                 if (isNavigating) return;
                 this.classList.add('clicked');
-                selectBreed(this.dataset.breed);
+                // Polnischen Anzeige-Namen speichern (nicht den deutschen data-breed-Wert),
+                // damit die Rasse in Folge-Fragen und im Plan auf Polnisch erscheint.
+                selectBreed(this.textContent.trim());
             });
         });
 
