@@ -350,11 +350,17 @@ export async function POST(req: NextRequest) {
     };
 
     // Hybrid: spezifische Methode + ggf. cardToken.
-    // PL: method IGNORIEREN -> immer Mollie-Hosted-Checkout, der genau die im
-    // PL-Account aktivierten Methoden (Google Pay / Apple Pay …) anzeigt.
-    if (method && !isPL) {
+    // Die gewaehlte Methode wird an Mollie durchgereicht -> Mollie leitet direkt
+    // zur jeweiligen Methode weiter (PayPal/BLIK/Przelewy24/Apple/Google) statt
+    // die Methoden-Uebersicht anzuzeigen. Gilt jetzt auch fuer PL.
+    if (method) {
       paymentParams.method = method;
-      if (method === "creditcard" && cardToken) {
+      // Karten-Token nur fuer DE anhaengen: die PL-Karten-Components laufen noch
+      // ueber das DE-Profil (pfl_...), der Token ist auf dem PL-Account nicht
+      // gueltig. Fuer PL wird method=creditcard ohne Token gesetzt -> Mollie
+      // hostet die Kartenseite auf dem PL-Account (direkt zur Karte, keine
+      // Methoden-Uebersicht).
+      if (method === "creditcard" && cardToken && !isPL) {
         paymentParams.cardToken = cardToken;
       }
     }
