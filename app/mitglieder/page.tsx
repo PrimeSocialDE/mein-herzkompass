@@ -107,9 +107,13 @@ export default async function MitgliederDashboard({
     ? (trainingPlan!.content as TrainingPlanContent)
     : null;
   const richTotalWeeks = richPlan?.weeks.length || 0;
+  // Plan-Woche ab KAUFDATUM rechnen, nicht ab Konto-Anlage: Quiz/Registrierung
+  // (created_at) kann Wochen vor dem Kauf liegen -> sonst startet der Plan
+  // scheinbar mitten drin (z.B. "Woche 5" am ersten Tag). Fallback created_at.
+  const planStartDate = member.purchased_at || member.created_at;
   const richCurrentWeek =
     richTotalWeeks > 0
-      ? getCurrentPlanWeek(member.created_at, richTotalWeeks)
+      ? getCurrentPlanWeek(planStartDate, richTotalWeeks)
       : 0;
 
   // Erste Free-Übung mit Content holen (für Hero-Card)
@@ -137,7 +141,7 @@ export default async function MitgliederDashboard({
   // Aktuelle Plan-Woche fuer die Hundekarte
   const planIntroForCard = getPlanIntro(problemKey, member.dog_name || "deinem Hund");
   const cardTotalWeeks = planIntroForCard?.weeks.length || 4;
-  const cardCurrentWeek = getCurrentPlanWeek(member.created_at, cardTotalWeeks);
+  const cardCurrentWeek = getCurrentPlanWeek(planStartDate, cardTotalWeeks);
 
   // ───────────────────────────────────────────────────────────────────
   // PAID — Module + Fortschritt + Upsells
