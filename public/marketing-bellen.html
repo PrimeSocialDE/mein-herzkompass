@@ -66,7 +66,18 @@
   .result .summary{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0;font-size:15px;color:#4B4335;}
   .result .summary b{color:var(--ink);}
   .result-img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:14px;display:block;margin:4px 0 6px;}
-  .mockup-cap{text-align:center;font-size:13px;color:var(--muted);margin:-2px 0 6px;}
+  /* "Das ist drin"-Karte */
+  .inside-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:16px 0;background:var(--card);}
+  .inside-head{display:flex;align-items:center;gap:9px;background:var(--soft);border-bottom:1px solid var(--line);
+    padding:12px 15px;font-weight:800;font-size:15px;color:var(--ink);}
+  .pdf-tag{background:var(--gold-dk);color:#fff;font-size:11px;font-weight:800;letter-spacing:.5px;padding:3px 8px;border-radius:6px;flex:0 0 auto;}
+  .inside-list{list-style:none;padding:13px 15px;margin:0;display:flex;flex-direction:column;gap:10px;}
+  .inside-list li{display:flex;gap:10px;align-items:flex-start;font-size:15px;color:#3a342b;line-height:1.45;}
+  .inside-list li .c{color:var(--green);font-weight:800;flex:0 0 auto;}
+  .inside-list li b{color:var(--ink);}
+  /* Zahlungs-Logos (wie deinplan3) */
+  .payment-logos{display:flex;align-items:center;justify-content:center;gap:9px;margin:14px 0 2px;flex-wrap:wrap;}
+  .payment-logos img{height:24px;width:auto;opacity:.7;border-radius:6px;}
   /* Diagnose-Karte */
   .diag{border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;margin:14px 0;background:var(--card);}
   .diag-label{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);}
@@ -157,18 +168,31 @@
       <ol class="diag-steps" id="diagSteps"></ol>
     </div>
 
-    <div class="feat"><span class="c">✓</span><span>Ein Bellen-Plan genau für <b id="dogNameFeat">deinen Hund</b> — auf Auslöser &amp; Grund zugeschnitten</span></div>
-    <div class="feat"><span class="c">✓</span><span>Schritt für Schritt erklärt, ohne Fachjargon — in ganz entspanntem Tempo</span></div>
-    <div class="feat"><span class="c">✓</span><span>Kommt sofort per E-Mail nach dem Kauf</span></div>
-
-    <img class="result-img" src="/bellen-mockup.jpg" alt="Dein Bellen-Plan als PDF zum Ausdrucken">
-    <div class="mockup-cap"><b>Als PDF – zum Ausdrucken</b> und an den Kühlschrank hängen.</div>
+    <div class="inside-card">
+      <div class="inside-head"><span class="pdf-tag">PDF</span> <span id="insideHead">Dein Bellen-Plan enthält:</span></div>
+      <ul class="inside-list">
+        <li><span class="c">✓</span><span>Warum <b id="dogNameFeat">dein Hund</b> bellt — deine persönliche Einordnung</span></li>
+        <li><span class="c">✓</span><span>Dein <b>3-Schritte-Trainingsweg</b>, auf euren Grund zugeschnitten</span></li>
+        <li><span class="c">✓</span><span>Übungen <b>Schritt für Schritt</b> erklärt — ohne Fachjargon</span></li>
+        <li><span class="c">✓</span><span><b>Soforthilfe</b> für den Moment, wenn es losgeht</span></li>
+        <li><span class="c">✓</span><span>Als <b>PDF zum Ausdrucken</b> — sofort per E-Mail nach dem Kauf</span></li>
+      </ul>
+    </div>
 
     <div class="price-row"><span class="price">12&nbsp;€</span><span class="price-old">19&nbsp;€</span></div>
     <button class="cta" id="ctaBtn" onclick="buyBellenPlan()">
       <span id="ctaMain">Bellen-Plan freischalten</span>
       <span class="sub">Einmalzahlung · kein Abo · 30 Tage Geld-zurück-Garantie</span>
     </button>
+    <div class="payment-logos">
+      <img src="/visa-logo.png" alt="Visa">
+      <img src="/mastercard-logo.png" alt="Mastercard">
+      <img src="/paypal-logo.png" alt="PayPal">
+      <img src="/klarna-logo.png" alt="Klarna">
+      <img src="/applepay.png" alt="Apple Pay">
+      <img src="/googlepay.png" alt="Google Pay">
+      <img src="/sepa-logo.png" alt="SEPA">
+    </div>
     <p class="trust">🔒 Sichere Zahlung über Mollie · Plan direkt per E-Mail</p>
   </section>
 </div>
@@ -321,6 +345,8 @@
     diag.steps.forEach(s => { const li=document.createElement('li'); li.innerHTML = fill(s); ol.appendChild(li); });
     document.getElementById('dogNameResult').textContent = dogName;
     document.getElementById('dogNameFeat').textContent = dogName;
+    document.getElementById('insideHead').textContent =
+      (dogName==='dein Hund') ? 'Dein Bellen-Plan enthält:' : (dogName+'s Bellen-Plan enthält:');
     scrollToStep('resultStep');
   }
 
