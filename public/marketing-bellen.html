@@ -62,9 +62,24 @@
   .btn-ghost{flex:0 0 auto;background:transparent;color:var(--muted);border:1.5px solid var(--line);padding:15px 18px;}
   .progress{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:18px 0 2px;}
   .progress > i{display:block;height:100%;background:var(--gold);transition:width .3s ease;border-radius:99px;}
-  .result h2{font-size:23px;font-weight:800;margin-bottom:6px;line-height:1.25;}
+  .result h2{font-size:23px;font-weight:800;margin-bottom:10px;line-height:1.25;}
   .result .summary{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0;font-size:15px;color:#4B4335;}
   .result .summary b{color:var(--ink);}
+  .result-img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:14px;display:block;margin:4px 0 6px;}
+  .mockup-cap{text-align:center;font-size:13px;color:var(--muted);margin:-2px 0 6px;}
+  /* Diagnose-Karte */
+  .diag{border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;margin:14px 0;background:var(--card);}
+  .diag-label{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);}
+  .diag-term{display:inline-block;background:var(--soft);border:1px solid var(--gold);color:var(--gold-dk);
+    font-weight:800;font-size:16px;padding:6px 12px;border-radius:9px;margin:6px 0 10px;}
+  .diag-why{font-size:15px;color:#3a342b;line-height:1.55;margin-bottom:12px;}
+  .diag-why b{color:var(--ink);}
+  .approach-title{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:6px;}
+  .diag-steps{list-style:none;counter-reset:st;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;}
+  .diag-steps li{counter-increment:st;position:relative;padding-left:34px;font-size:14.5px;color:#3a342b;line-height:1.45;}
+  .diag-steps li::before{content:counter(st);position:absolute;left:0;top:-1px;width:24px;height:24px;
+    background:var(--gold-dk);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:800;}
   .feat{display:flex;align-items:flex-start;gap:10px;margin:9px 0;font-size:16px;}
   .feat .c{color:var(--green);font-weight:800;flex:0 0 auto;}
   .price-row{display:flex;align-items:baseline;gap:10px;justify-content:center;margin:16px 0 4px;}
@@ -129,13 +144,26 @@
 
   <!-- RESULT / CTA -->
   <section class="step result hidden" id="resultStep">
-    <div class="eyebrow">Fertig — dein Ergebnis</div>
-    <h2 id="resultTitle">Wir haben verstanden, warum <span id="dogNameResult">dein Hund</span> bellt.</h2>
+    <div class="eyebrow">Deine persönliche Einschätzung</div>
+    <h2>Das steckt hinter <span id="dogNameResult">dein Hund</span>s Bellen</h2>
+    <img class="result-img" src="/bellen-calm.jpg" alt="Ruhiger, entspannter Hund zuhause">
     <div class="summary" id="resultSummary"></div>
-    <div class="feat"><span class="c">✓</span><span id="feat1">Ein Bellen-Plan genau für <b id="dogNameFeat">deinen Hund</b> — auf euren Auslöser zugeschnitten</span></div>
-    <div class="feat"><span class="c">✓</span><span>Schritt für Schritt erklärt, ohne Fachjargon — auch für ganz entspanntes Tempo</span></div>
-    <div class="feat"><span class="c">✓</span><span><b>Als PDF – zum Ausdrucken</b> und an den Kühlschrank hängen</span></div>
+
+    <div class="diag">
+      <div class="diag-label">Fachliche Einordnung</div>
+      <span class="diag-term" id="diagTerm">—</span>
+      <p class="diag-why" id="diagWhy"></p>
+      <div class="approach-title">So gehen wir vor:</div>
+      <ol class="diag-steps" id="diagSteps"></ol>
+    </div>
+
+    <div class="feat"><span class="c">✓</span><span>Ein Bellen-Plan genau für <b id="dogNameFeat">deinen Hund</b> — auf Auslöser &amp; Grund zugeschnitten</span></div>
+    <div class="feat"><span class="c">✓</span><span>Schritt für Schritt erklärt, ohne Fachjargon — in ganz entspanntem Tempo</span></div>
     <div class="feat"><span class="c">✓</span><span>Kommt sofort per E-Mail nach dem Kauf</span></div>
+
+    <img class="result-img" src="/bellen-mockup.jpg" alt="Dein Bellen-Plan als PDF zum Ausdrucken">
+    <div class="mockup-cap"><b>Als PDF – zum Ausdrucken</b> und an den Kühlschrank hängen.</div>
+
     <div class="price-row"><span class="price">12&nbsp;€</span><span class="price-old">19&nbsp;€</span></div>
     <button class="cta" id="ctaBtn" onclick="buyBellenPlan()">
       <span id="ctaMain">Bellen-Plan freischalten</span>
@@ -249,17 +277,48 @@
     'other-dogs':'bei anderen Hunden','door':'an der Tür & bei Besuch','people':'bei vorbeigehenden Menschen',
     'noises':'bei Geräuschen','home':'am Fenster / im Garten','alone':'beim Alleinsein'
   };
+  // Fachliche Einordnung je Funktion (geschlechtsneutral)
+  const MOOD_DIAG = {
+    fear: { term:'Unsicherheitsbedingtes Bellen',
+      why:'{dog} bellt hier nicht aus Frechheit, sondern aus <b>Unsicherheit</b> — Bellen schafft Abstand zu etwas, das sich unheimlich anfühlt. Deshalb hilft Schimpfen nicht, es verstärkt die Anspannung nur.',
+      steps:['Genug Abstand schaffen, damit {dog} unter der Reizschwelle bleibt und lernfähig ist.','Den Auslöser Schritt für Schritt <b>positiv verknüpfen</b>, statt ihn nur auszuhalten.','Dich als <b>ruhigen Anker</b> etablieren, an dem {dog} sich orientieren kann.'] },
+    guard: { term:'Territoriales Meldebellen',
+      why:'{dog} meldet und bewacht — das ist für {dog} ein <b>Job</b>. Ziel ist nicht, das abzustellen, sondern zu zeigen: „Danke, ich übernehme."',
+      steps:['Den Reiz <b>früh ankündigen</b> und {dog} abholen, bevor es losgeht.','Ein klares <b>Alternativverhalten</b> aufbauen (z. B. auf die Decke gehen).','Den Zugang zum „Wachposten" (Fenster/Tür) gezielt <b>managen</b>.'] },
+    excited: { term:'Erregungsbedingtes Bellen',
+      why:'{dog} bellt aus <b>Aufregung</b> und kommt nicht schnell genug wieder runter. Der Schlüssel: die Erregung früh auffangen, bevor sie überkocht.',
+      steps:['Die Erregung <b>früh erkennen</b>, bevor {dog} hochdreht.','<b>Impulskontrolle</b> und ein Ruhe-Signal etablieren.','Begegnungen <b>kontrolliert</b> und in kleinen Schritten üben.'] },
+    frustrated: { term:'Frustbedingtes Bellen (Barrierefrust)',
+      why:'{dog} will <b>hin</b>, und die Leine hält zurück — dieser Frust entlädt sich im Bellen. Das ist kein Ungehorsam, sondern eine Blockade.',
+      steps:['<b>Abstand & Sichtblocker</b> nutzen, damit {dog} nicht „festhängt".','Den <b>Fokus auf dich</b> umlenken statt auf den Reiz.','Klare <b>Begegnungs- und Begrüßungsregeln</b> aufbauen.'] }
+  };
+  const BREED_WHY = {
+    'Australian Shepherd':'Als Hütehund reagiert {dog} besonders stark auf Bewegung und Reize — Bellen ist da schnell dabei.',
+    'Border Collie':'Hütehunde wie {dog} nehmen jede Kleinigkeit wahr; ohne Ventil wird daraus schnell Bellen.',
+    'Dackel':'Dackel sind wachsam und meldefreudig gezüchtet — bei {dog} liegt Bellen sozusagen in den Genen.',
+    'Deutscher Schäferhund':'Schäferhunde bewachen von Natur aus; {dog} nimmt diese „Aufgabe" ernst.',
+    'Chihuahua':'Kleine Hunde wie {dog} fühlen sich schneller bedroht — Bellen ist oft Selbstschutz.',
+    'Labrador Retriever':'Labradore wie {dog} bellen selten aus Härte, meist aus Freude oder Aufregung.',
+    'Golden Retriever':'Golden Retriever wie {dog} bellen meist aus Aufregung, selten aus Aggression.'
+  };
 
   function showResult(){
     document.getElementById('questionStep').classList.add('hidden');
     document.querySelector('.progress').classList.add('hidden');
-    const r = document.getElementById('resultStep');
-    r.classList.remove('hidden');
+    document.getElementById('resultStep').classList.remove('hidden');
     const reason = MOOD_REASON[answers.mood] || '';
     const trig = TRIGGER_LABEL[answers.trigger] || '';
     document.getElementById('resultSummary').innerHTML =
       '<b>'+dogName+'</b> bellt vor allem <b>'+trig+'</b> — und zwar <b>'+reason+'</b>. '+
       'Genau darauf ist der Plan zugeschnitten: nicht „Bellen verbieten", sondern den <b>Grund</b> auflösen.';
+    // Diagnose-Karte füllen
+    const diag = MOOD_DIAG[answers.mood] || MOOD_DIAG.excited;
+    document.getElementById('diagTerm').textContent = diag.term;
+    let why = fill(diag.why);
+    const bw = BREED_WHY[dogBreed]; if(bw) why += ' ' + fill(bw);
+    document.getElementById('diagWhy').innerHTML = why;
+    const ol = document.getElementById('diagSteps'); ol.innerHTML = '';
+    diag.steps.forEach(s => { const li=document.createElement('li'); li.innerHTML = fill(s); ol.appendChild(li); });
     document.getElementById('dogNameResult').textContent = dogName;
     document.getElementById('dogNameFeat').textContent = dogName;
     scrollToStep('resultStep');
