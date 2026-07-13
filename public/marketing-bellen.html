@@ -218,7 +218,13 @@
       const d = document.createElement('div');
       d.className = 'opt' + (answers[q.key]===o.v ? ' sel':'');
       d.innerHTML = '<span class="dot"></span><span class="emo">'+o.emo+'</span><span>'+fill(o.label)+'</span>';
-      d.onclick = () => { answers[q.key]=o.v; renderQ(); };
+      d.onclick = () => {
+        // KEIN Full-Rerender (das würde nach oben springen) — nur Markierung umschalten
+        answers[q.key] = o.v;
+        box.querySelectorAll('.opt').forEach(el => el.classList.remove('sel'));
+        d.classList.add('sel');
+        document.getElementById('nextBtn').disabled = false;
+      };
       box.appendChild(d);
     });
     document.getElementById('backBtn').classList.toggle('hidden', qi===0);
