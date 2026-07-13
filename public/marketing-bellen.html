@@ -231,12 +231,16 @@
     document.getElementById('nextBtn').disabled = !answers[q.key];
     document.getElementById('nextBtn').textContent = qi===2 ? 'Ergebnis anzeigen' : 'Weiter';
   }
+  function scrollToStep(id){
+    const el = document.getElementById(id);
+    if(el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
   function nextQ(){
     if(!answers[QUESTIONS[qi].key]) return;
-    if(qi<2){ qi++; renderQ(); window.scrollTo({top:0,behavior:'smooth'}); }
+    if(qi<2){ qi++; renderQ(); scrollToStep('questionStep'); }
     else showResult();
   }
-  function prevQ(){ if(qi>0){ qi--; renderQ(); window.scrollTo({top:0,behavior:'smooth'}); } }
+  function prevQ(){ if(qi>0){ qi--; renderQ(); scrollToStep('questionStep'); } }
 
   const MOOD_REASON = {
     excited:'aus Aufregung', fear:'aus Unsicherheit', guard:'aus Wachsamkeit', frustrated:'aus Frust an der Leine'
@@ -258,7 +262,7 @@
       'Genau darauf ist der Plan zugeschnitten: nicht „Bellen verbieten", sondern den <b>Grund</b> auflösen.';
     document.getElementById('dogNameResult').textContent = dogName;
     document.getElementById('dogNameFeat').textContent = dogName;
-    window.scrollTo({top:0,behavior:'smooth'});
+    scrollToStep('resultStep');
   }
 
   // ---- Lead laden (read-only, wie Rückhol-Seite) ----
