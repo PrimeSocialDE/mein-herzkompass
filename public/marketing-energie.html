@@ -65,6 +65,11 @@
   .result .summary{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0;font-size:15px;color:#4B4335;}
   .result .summary b{color:var(--ink);}
   .result-img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:14px;display:block;margin:4px 0 6px;}
+  .dogchips{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 14px;}
+  .chip{display:inline-flex;align-items:center;gap:8px;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:8px 13px;box-shadow:0 2px 6px rgba(31,27,22,.04);}
+  .chip .ic{font-size:17px;flex:0 0 auto;}
+  .chip .lb{display:block;font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);line-height:1.1;}
+  .chip .vl{display:block;font-size:13.5px;font-weight:800;color:var(--ink);line-height:1.2;}
   .inside-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:16px 0;background:var(--card);}
   .inside-head{display:flex;align-items:center;gap:9px;background:var(--soft);border-bottom:1px solid var(--line);
     padding:12px 15px;font-weight:800;font-size:15px;color:var(--ink);}
@@ -161,6 +166,7 @@
   <section class="step result hidden" id="resultStep">
     <div class="eyebrow">Deine persönliche Einschätzung</div>
     <h2>Das steckt hinter <span id="dogNameResult">dein Hund</span>s Energie</h2>
+    <div class="dogchips" id="dogChips"></div>
     <img class="result-img" src="/energie-uebungen/09-go-3.jpg" alt="Entspannter Hund schläft ruhig">
     <div class="summary" id="resultSummary"></div>
 
@@ -333,10 +339,22 @@
     'Deutscher Schäferhund':'Arbeitshunde wie {dog} wollen gefordert werden, sonst suchen sie sich selbst Beschäftigung.'
   };
 
+  function renderChips(){
+    const chips = [];
+    if(dogBreed) chips.push(['🐕','Rasse', dogBreed]);
+    if(dogAge){ const am={puppy:'Welpe',young:'Junghund',adult:'Erwachsen',senior:'Senior'}; chips.push(['🎂','Alter', am[dogAge]||dogAge]); }
+    const focus = (answers.trigger==='outside'||answers.where==='leash') ? 'Draußen / Leine'
+      : ({underworked:'Unterforderung',overaroused:'Übererregung',norest:'Abschalten',young:'Energierasse'}[answers.style] || 'Auslastung');
+    chips.push(['🎯','Fokus', focus]);
+    document.getElementById('dogChips').innerHTML = chips.map(([ic,lb,vl])=>
+      '<span class="chip"><span class="ic">'+ic+'</span><span><span class="lb">'+lb+'</span><span class="vl">'+vl+'</span></span></span>').join('');
+  }
+
   function showResult(){
     document.getElementById('questionStep').classList.add('hidden');
     document.querySelector('.progress').classList.add('hidden');
     document.getElementById('resultStep').classList.remove('hidden');
+    renderChips();
     const reason = STYLE_REASON[answers.style] || '';
     const trig = TRIGGER_LABEL[answers.trigger] || '';
     const outdoor = (answers.trigger==='outside' || answers.where==='leash');
