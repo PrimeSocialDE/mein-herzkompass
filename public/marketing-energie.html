@@ -122,9 +122,9 @@
   <section class="hero">
     <img class="hero-img" src="/energie-hero.jpg" alt="Überdrehter Hund springt wild durchs Wohnzimmer">
     <div class="hero-body">
-      <div class="eyebrow">Auslastung &amp; Ruhe verstehen</div>
+      <div class="eyebrow">Energie kanalisieren — drinnen &amp; draußen</div>
       <h1>Warum kommt <span class="hl" id="dogNameHero">dein Hund</span> nicht zur Ruhe — und was in <span class="hl">eurer</span> Situation wirklich hilft.</h1>
-      <p class="lead">Zu viel Energie ist selten ein Bewegungsproblem. Ein Hund, der aus <b>Unterforderung</b> aufdreht, braucht das Gegenteil von noch mehr Auspowern. Beantworte 3 kurze Fragen — dann bekommst du <span id="dogNamePlan">deinen</span> passenden Energie-Plan.</p>
+      <p class="lead">Zu viel Energie ist selten ein Bewegungsproblem — egal ob dein Hund <b>zuhause nicht abschaltet</b> oder <b>draußen an der Leine völlig aufdreht</b>. Dahinter steckt meist <b>Unterforderung</b>, nicht zu wenig Auslauf. Beantworte 3 kurze Fragen — dann bekommst du <span id="dogNamePlan">deinen</span> passenden Energie-Plan.</p>
       <div class="known" id="knownBox">
         <span class="chk">✓</span>
         <span id="knownText">Deine Angaben sind gespeichert.</span>
@@ -236,6 +236,7 @@
       hint: 'Wähle die Situation, die am häufigsten vorkommt.',
       opts: [
         { v:'evening', emo:'🌙', label:'Abends / nach dem Spaziergang' },
+        { v:'outside', emo:'🌳', label:'Draußen unterwegs / an der Leine' },
         { v:'visitors', emo:'🔔', label:'Bei Besuch oder Reizen' },
         { v:'allday', emo:'🔄', label:'Eigentlich den ganzen Tag' },
         { v:'alone', emo:'🥱', label:'Wenn ihm langweilig ist' },
@@ -248,6 +249,7 @@
       hint: 'Das hilft uns, die richtigen Übungen zu wählen.',
       opts: [
         { v:'run', emo:'🏃', label:'Rennt & springt wie wild' },
+        { v:'leash', emo:'🐎', label:'Draußen an der Leine kaum zu bändigen' },
         { v:'chew', emo:'🦴', label:'Kaut & zerstört Sachen' },
         { v:'vocal', emo:'🔊', label:'Bellt oder fiept viel' },
         { v:'pacing', emo:'👣', label:'Kann nicht liegen bleiben, läuft umher' }
@@ -307,7 +309,7 @@
   };
   const TRIGGER_LABEL = {
     evening:'abends & nach dem Spaziergang', visitors:'bei Besuch & Reizen', allday:'den ganzen Tag',
-    alone:'bei Langeweile', play:'beim Spielen'
+    outside:'draußen unterwegs & an der Leine', alone:'bei Langeweile', play:'beim Spielen'
   };
   const STYLE_DIAG = {
     underworked: { term:'Unterforderung - zu wenig Kopfarbeit',
@@ -337,9 +339,11 @@
     document.getElementById('resultStep').classList.remove('hidden');
     const reason = STYLE_REASON[answers.style] || '';
     const trig = TRIGGER_LABEL[answers.trigger] || '';
+    const outdoor = (answers.trigger==='outside' || answers.where==='leash');
     document.getElementById('resultSummary').innerHTML =
       '<b>'+dogName+'</b> dreht vor allem <b>'+trig+'</b> auf — und zwar <b>'+reason+'</b>. '+
-      'Genau darauf ist der Plan zugeschnitten: nicht mehr Auspowern, sondern {dog} clever auslasten und Ruhe beibringen.'.replace(/\{dog\}/g,dogName);
+      'Genau darauf ist der Plan zugeschnitten: nicht mehr Auspowern, sondern {dog} clever auslasten und Ruhe beibringen.'.replace(/\{dog\}/g,dogName) +
+      (outdoor ? ' Gerade <b>draußen an der Leine</b> zeigt sich das am deutlichsten — mit Impulskontrolle und echter Auslastung wird {dog} auch unterwegs deutlich entspannter.'.replace(/\{dog\}/g,dogName) : '');
     const diag = STYLE_DIAG[answers.style] || STYLE_DIAG.underworked;
     document.getElementById('diagTerm').textContent = diag.term;
     let why = fill(diag.why);
