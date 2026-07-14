@@ -25,8 +25,9 @@
   .eyebrow{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold-dk);}
   .proof{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
     border-radius:14px;padding:14px 16px;margin-top:14px;box-shadow:0 4px 16px rgba(31,27,22,.05);}
-  .proof .ava{width:44px;height:44px;border-radius:50%;flex:0 0 auto;background:var(--soft);border:1px solid var(--line);
-    display:flex;align-items:center;justify-content:center;font-size:20px;}
+  .proof .ava{width:52px;height:52px;border-radius:50%;flex:0 0 auto;background:var(--soft);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;}
+  .proof .ava img{width:100%;height:100%;object-fit:cover;display:block;}
   .proof .stars{color:#E0A93C;font-size:14px;letter-spacing:1px;}
   .proof .q{font-size:15px;color:#3a342b;font-style:italic;margin:2px 0 3px;line-height:1.45;}
   .proof .who{font-size:13px;color:var(--muted);font-weight:600;}
@@ -110,6 +111,10 @@
   .cta:hover{background:#96773F;}
   .cta .sub{display:block;font-size:13px;font-weight:600;opacity:.9;margin-top:3px;}
   .trust{text-align:center;font-size:13px;color:var(--muted);margin-top:12px;line-height:1.5;}
+  .reassure{background:#F0FDF4;border:1px solid #D5EAD9;border-radius:12px;padding:13px 15px;margin:14px 0 2px;display:flex;flex-direction:column;gap:8px;}
+  .reassure > div{display:flex;gap:9px;align-items:flex-start;font-size:14px;color:#2f5233;line-height:1.45;}
+  .reassure .c{color:#166534;font-weight:800;flex:0 0 auto;}
+  .reassure b{color:#14532d;}
   .hidden{display:none;}
   .overlay{position:fixed;inset:0;background:rgba(251,248,242,.94);display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:99;}
   .overlay.show{display:flex;}
@@ -139,11 +144,11 @@
 
   <!-- MINI-PROOF -->
   <div class="proof">
-    <div class="ava">🐶</div>
+    <div class="ava"><img src="/testimonial-sabine.jpg" alt="Sabine"></div>
     <div>
       <div class="stars">★★★★★</div>
-      <div class="q">„Rocky war ein einziges Energiebündel — abends unmöglich. Mit Nasenarbeit und Ruhe-Training schläft er jetzt entspannt. Endlich Ruhe am Abend."</div>
-      <div class="who">Sabine, 54 – mit Border Collie Rocky</div>
+      <div class="q">„Sam war ein einziges Energiebündel — abends unmöglich. Mit Nasenarbeit und Ruhe-Training schläft er jetzt entspannt. Endlich Ruhe am Abend."</div>
+      <div class="who">Sabine, 58 – mit Border Collie Sam</div>
     </div>
   </div>
   <div class="proof-count">Über <b>2.000 Halter</b> trainieren schon mit Pfoten-Plan.</div>
@@ -202,10 +207,16 @@
       </div>
     </div>
     <div class="price-row"><span class="price" id="mainPrice">19,99&nbsp;€</span><span class="price-old" id="mainPriceOld">29,99&nbsp;€</span></div>
+    <p style="text-align:center;font-size:13.5px;color:var(--muted);margin:2px 0 0;">Weniger als eine einzige Stunde beim Hundetrainer — dafür ein kompletter Plan.</p>
     <button class="cta" id="ctaBtn" onclick="buyEnergiePlan()">
       <span id="ctaMain">Energie-Plan freischalten</span>
       <span class="sub">Einmalzahlung · kein Abo · 30 Tage Geld-zurück-Garantie</span>
     </button>
+    <div class="reassure">
+      <div><span class="c">✓</span><span><b>30 Tage Geld-zurück-Garantie</b> — ohne Wenn und Aber. Gefällt dir dein Plan nicht, schreib uns kurz und du bekommst dein Geld zurück. Du gehst kein Risiko ein.</span></div>
+      <div><span class="c">✓</span><span><b>Einmalzahlung, kein Abo</b> — nichts läuft weiter, keine versteckten Kosten.</span></div>
+      <div><span class="c">✓</span><span><b>Sofort nach dem Kauf per E-Mail</b> — dein fertiger Plan als PDF zum Ausdrucken.</span></div>
+    </div>
     <div class="payment-logos">
       <img src="/visa-logo.png" alt="Visa">
       <img src="/mastercard-logo.png" alt="Mastercard">
