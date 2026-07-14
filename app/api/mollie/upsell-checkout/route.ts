@@ -25,6 +25,12 @@ const moduleNames: Record<string, string> = {
   "anti-giftkoeder": "Anti-Giftköder-Trainingsplan",
   "coach-foto": "KI-Trainer Foto-Analyse (30 Tage)",
   "hund-verstehen": "Dein Hund verstehen — persönliches Profil",
+  // Eigenständige Themen-Pläne aus den Marketing-Funnels (per E-Mail ausgeliefert)
+  "bellen-plan": "Bellen-Plan", "bellen-plan-bild": "Bellen-Plan (mit Bildern)",
+  "leinen-plan": "Leinen-Plan", "leinen-plan-bild": "Leinen-Plan (mit Bildern)",
+  "energie-plan": "Energie-Plan", "energie-plan-bild": "Energie-Plan (mit Bildern)",
+  "aggression-plan": "Aggressions-Plan",
+  "rueckruf-plan": "Rückruf-Plan",
 };
 
 export async function POST(req: NextRequest) {

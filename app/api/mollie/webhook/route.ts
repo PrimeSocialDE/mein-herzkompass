@@ -748,6 +748,39 @@ async function handleUpsellPaid(payment: any) {
     });
   }
 
+  // Themen-Pläne aus den Marketing-Funnels (bellen-plan, leinen-plan-bild,
+  // energie-plan, aggression-plan, rueckruf-plan, ...). Auslieferung per Mail
+  // über /api/themenplan/generate. In after(), damit Mollie sofort 200 bekommt;
+  // Idempotenz im generate-Endpoint verhindert Doppel-Mails.
+  const themenplanModules = (module ? String(module).split("+") : [])
+    .map((k) => k.trim())
+    .filter((k) => /^(bellen|leinen|energie|aggression|rueckruf)-plan(-bild)?$/.test(k));
+  if (themenplanModules.length > 0 && (email || leadData.email)) {
+    const targetEmail = email || leadData.email;
+    const dogName = meta.dog_name || leadData.dog_name || "deinen Hund";
+    const baseUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+      "https://www.pfoten-plan.de";
+    after(async () => {
+      for (const mod of themenplanModules) {
+        try {
+          const res = await fetch(`${baseUrl}/api/themenplan/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: targetEmail, dogName, module: mod, leadId: leadData.id }),
+          });
+          const data = await res.json().catch(() => ({}));
+          console.log(
+            `[mollie-webhook] themenplan "${mod}" -> ${res.status} ok=${data?.ok}${data?.skipped ? " (skipped)" : ""}`
+          );
+        } catch (e: any) {
+          console.error(`[mollie-webhook] Themenplan "${mod}" Delivery Error:`, e?.message);
+        }
+      }
+    });
+  }
+
   await notifyMake(leadData.id, {
     source: "mollie.upsell",
     type: isPremium ? "premium" : "upsell",
