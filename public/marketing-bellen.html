@@ -78,6 +78,17 @@
   /* Zahlungs-Logos (wie deinplan3) */
   .payment-logos{display:flex;align-items:center;justify-content:center;gap:9px;margin:14px 0 2px;flex-wrap:wrap;}
   .payment-logos img{height:24px;width:auto;opacity:.7;border-radius:6px;}
+  /* Versions-Auswahl (Text vs. bebildert +5 €) */
+  .ver-chooser{display:flex;flex-direction:column;gap:10px;margin:16px 0 10px;}
+  .ver-opt{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;cursor:pointer;background:#fff;transition:all .15s ease;}
+  .ver-opt.sel{border-color:var(--gold-dk);background:var(--soft);box-shadow:0 2px 8px rgba(196,165,118,.2);}
+  .ver-radio{width:20px;height:20px;border-radius:50%;border:2px solid #D6CDBD;flex:0 0 auto;background:#fff;}
+  .ver-opt.sel .ver-radio{border-color:var(--gold-dk);background:var(--gold-dk);box-shadow:inset 0 0 0 3px #fff;}
+  .ver-info{flex:1 1 auto;display:flex;flex-direction:column;line-height:1.25;text-align:left;}
+  .ver-info b{font-size:15px;color:var(--ink);}
+  .ver-info small{font-size:12px;color:var(--muted);}
+  .ver-price{font-size:17px;font-weight:800;color:var(--ink);flex:0 0 auto;}
+  .ver-tag{display:inline-block;background:var(--gold-dk);color:#fff;font-size:10px;font-weight:800;letter-spacing:.3px;padding:2px 6px;border-radius:5px;margin-left:6px;vertical-align:middle;}
   /* Diagnose-Karte */
   .diag{border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;margin:14px 0;background:var(--card);}
   .diag-label{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);}
@@ -179,7 +190,19 @@
       </ul>
     </div>
 
-    <div class="price-row"><span class="price">15&nbsp;€</span><span class="price-old">24&nbsp;€</span></div>
+    <div class="ver-chooser">
+      <div class="ver-opt" id="verText" onclick="selectVersion('text')">
+        <span class="ver-radio"></span>
+        <span class="ver-info"><b>Text-Plan</b><small>Jede Übung Schritt für Schritt erklärt</small></span>
+        <span class="ver-price">14,99&nbsp;€</span>
+      </div>
+      <div class="ver-opt sel" id="verIllu" onclick="selectVersion('illu')">
+        <span class="ver-radio"></span>
+        <span class="ver-info"><b>Mit Bildern<span class="ver-tag">Beliebt</span></b><small>Jeder Schritt zusätzlich als Bild gezeigt</small></span>
+        <span class="ver-price">19,99&nbsp;€</span>
+      </div>
+    </div>
+    <div class="price-row"><span class="price" id="mainPrice">19,99&nbsp;€</span><span class="price-old" id="mainPriceOld">29,99&nbsp;€</span></div>
     <button class="cta" id="ctaBtn" onclick="buyBellenPlan()">
       <span id="ctaMain">Bellen-Plan freischalten</span>
       <span class="sub">Einmalzahlung · kein Abo · 30 Tage Geld-zurück-Garantie</span>
@@ -391,6 +414,16 @@
     }
   }
 
+  // ---- Versions-Auswahl: Text (15 €) vs. bebildert (20 €) ----
+  let bellenIllustrated = true; // Default: mit Bildern
+  function selectVersion(v){
+    bellenIllustrated = (v === 'illu');
+    document.getElementById('verIllu').classList.toggle('sel', bellenIllustrated);
+    document.getElementById('verText').classList.toggle('sel', !bellenIllustrated);
+    document.getElementById('mainPrice').innerHTML = bellenIllustrated ? '19,99&nbsp;€' : '14,99&nbsp;€';
+    document.getElementById('mainPriceOld').innerHTML = bellenIllustrated ? '29,99&nbsp;€' : '24,99&nbsp;€';
+  }
+
   // ---- Kauf: separater Modul-Checkout (Haupt-Plan-Flow unberührt) ----
   async function buyBellenPlan(){
     const ov = document.getElementById('loadingOverlay');
@@ -400,16 +433,17 @@
       const res = await fetch('/api/mollie/upsell-checkout', {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
-          module: 'bellen-plan',
-          price: 1500,              // 15,00 €
+          module: bellenIllustrated ? 'bellen-plan-bild' : 'bellen-plan',
+          price: bellenIllustrated ? 1999 : 1499,   // 19,99 € (bebildert) / 14,99 € (Text)
           leadId: leadId,
           email: userEmail || '',
           dogName: dogName,
           returnUrl: '/danke-final.html?bellen=1',
-          // die 3 Antworten fuer die spaetere Plan-Generierung mitgeben
+          // die 3 Antworten + Version fuer die spaetere Plan-Generierung mitgeben
           bellen_trigger: answers.trigger,
           bellen_where: answers.where,
           bellen_mood: answers.mood,
+          bellen_illustrated: bellenIllustrated ? '1' : '0',
           source_page: 'marketing-bellen'
         })
       });
