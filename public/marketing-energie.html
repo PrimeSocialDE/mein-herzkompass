@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Warum kommt dein Hund nicht zur Ruhe? · Pfoten-Plan</title>
+<style>
+  :root{
+    --cream:#FBF8F2; --card:#FFFFFF; --ink:#1F1B16; --muted:#6E655A;
+    --line:#ECE3D5; --gold:#C4A576; --gold-dk:#A9884F; --green:#166534; --soft:#FFF9F0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--cream);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;font-size:18px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:600px;margin:0 auto;padding:0 18px 60px;}
+  header{text-align:center;padding:22px 0 10px;}
+  .brand{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:19px;letter-spacing:-.2px;}
+  .paw{font-size:22px;}
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:0 0 24px;margin-top:14px;box-shadow:0 6px 24px rgba(31,27,22,.06);overflow:hidden;}
+  .hero-img{width:100%;aspect-ratio:3/2;object-fit:cover;display:block;}
+  .hero-body{padding:22px 22px 0;}
+  .eyebrow{font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold-dk);}
+  .proof{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:14px 16px;margin-top:14px;box-shadow:0 4px 16px rgba(31,27,22,.05);}
+  .proof .ava{width:44px;height:44px;border-radius:50%;flex:0 0 auto;background:var(--soft);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:20px;}
+  .proof .stars{color:#E0A93C;font-size:14px;letter-spacing:1px;}
+  .proof .q{font-size:15px;color:#3a342b;font-style:italic;margin:2px 0 3px;line-height:1.45;}
+  .proof .who{font-size:13px;color:var(--muted);font-weight:600;}
+  .proof-count{text-align:center;font-size:14px;color:var(--muted);margin-top:10px;}
+  .proof-count b{color:var(--ink);}
+  h1{font-size:27px;line-height:1.22;font-weight:800;letter-spacing:-.4px;margin:8px 0 12px;text-wrap:balance;}
+  h1 .hl{color:var(--gold-dk);}
+  .lead{font-size:18px;color:var(--ink);}
+  .known{display:flex;align-items:center;gap:10px;background:var(--soft);border:1px solid var(--line);
+    border-radius:12px;padding:11px 14px;margin:16px 0 4px;font-size:15px;color:#4B4335;}
+  .known b{color:var(--ink);}
+  .known .chk{color:var(--green);font-size:18px;flex:0 0 auto;}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 20px;
+    margin-top:16px;box-shadow:0 6px 24px rgba(31,27,22,.05);}
+  .qnum{font-size:13px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--gold-dk);}
+  .qtitle{font-size:21px;font-weight:800;margin:4px 0 4px;line-height:1.25;}
+  .qhint{font-size:14px;color:var(--muted);margin-bottom:14px;}
+  .opts{display:flex;flex-direction:column;gap:10px;}
+  .opt{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:12px;
+    padding:14px 16px;cursor:pointer;background:#fff;transition:all .15s ease;font-size:17px;font-weight:600;}
+  .opt:hover{border-color:var(--gold);background:#FFFDF9;}
+  .opt.sel{border-color:var(--gold-dk);background:var(--soft);box-shadow:0 2px 8px rgba(196,165,118,.2);}
+  .opt .dot{width:20px;height:20px;border-radius:50%;border:2px solid #D6CDBD;flex:0 0 auto;}
+  .opt.sel .dot{border-color:var(--gold-dk);background:var(--gold-dk);box-shadow:inset 0 0 0 3px #fff;}
+  .opt .emo{font-size:22px;flex:0 0 auto;}
+  .nav{display:flex;gap:10px;margin-top:18px;}
+  .btn{flex:1;border:none;border-radius:12px;padding:15px;font-size:17px;font-weight:800;cursor:pointer;
+    font-family:inherit;transition:all .15s ease;}
+  .btn-primary{background:var(--gold-dk);color:#fff;box-shadow:0 4px 14px rgba(169,136,79,.35);}
+  .btn-primary:hover{background:#96773F;}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;}
+  .btn-ghost{flex:0 0 auto;background:transparent;color:var(--muted);border:1.5px solid var(--line);padding:15px 18px;}
+  .progress{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:18px 0 2px;}
+  .progress > i{display:block;height:100%;background:var(--gold);transition:width .3s ease;border-radius:99px;}
+  .result h2{font-size:23px;font-weight:800;margin-bottom:10px;line-height:1.25;}
+  .result .summary{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0;font-size:15px;color:#4B4335;}
+  .result .summary b{color:var(--ink);}
+  .result-img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:14px;display:block;margin:4px 0 6px;}
+  .inside-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:16px 0;background:var(--card);}
+  .inside-head{display:flex;align-items:center;gap:9px;background:var(--soft);border-bottom:1px solid var(--line);
+    padding:12px 15px;font-weight:800;font-size:15px;color:var(--ink);}
+  .pdf-tag{background:var(--gold-dk);color:#fff;font-size:11px;font-weight:800;letter-spacing:.5px;padding:3px 8px;border-radius:6px;flex:0 0 auto;}
+  .inside-list{list-style:none;padding:13px 15px;margin:0;display:flex;flex-direction:column;gap:10px;}
+  .inside-list li{display:flex;gap:10px;align-items:flex-start;font-size:15px;color:#3a342b;line-height:1.45;}
+  .inside-list li .c{color:var(--green);font-weight:800;flex:0 0 auto;}
+  .inside-list li b{color:var(--ink);}
+  .payment-logos{display:flex;align-items:center;justify-content:center;gap:9px;margin:14px 0 2px;flex-wrap:wrap;}
+  .payment-logos img{height:24px;width:auto;opacity:.7;border-radius:6px;}
+  .ver-chooser{display:flex;flex-direction:column;gap:10px;margin:16px 0 10px;}
+  .ver-opt{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;cursor:pointer;background:#fff;transition:all .15s ease;}
+  .ver-opt.sel{border-color:var(--gold-dk);background:var(--soft);box-shadow:0 2px 8px rgba(196,165,118,.2);}
+  .ver-radio{width:20px;height:20px;border-radius:50%;border:2px solid #D6CDBD;flex:0 0 auto;background:#fff;}
+  .ver-opt.sel .ver-radio{border-color:var(--gold-dk);background:var(--gold-dk);box-shadow:inset 0 0 0 3px #fff;}
+  .ver-info{flex:1 1 auto;display:flex;flex-direction:column;line-height:1.25;text-align:left;}
+  .ver-info b{font-size:15px;color:var(--ink);}
+  .ver-info small{font-size:12px;color:var(--muted);}
+  .ver-price{font-size:17px;font-weight:800;color:var(--ink);flex:0 0 auto;}
+  .ver-tag{display:inline-block;background:var(--gold-dk);color:#fff;font-size:10px;font-weight:800;letter-spacing:.3px;padding:2px 6px;border-radius:5px;margin-left:6px;vertical-align:middle;}
+  .diag{border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;margin:14px 0;background:var(--card);}
+  .diag-label{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);}
+  .diag-term{display:inline-block;background:var(--soft);border:1px solid var(--gold);color:var(--gold-dk);
+    font-weight:800;font-size:16px;padding:6px 12px;border-radius:9px;margin:6px 0 10px;}
+  .diag-why{font-size:15px;color:#3a342b;line-height:1.55;margin-bottom:12px;}
+  .diag-why b{color:var(--ink);}
+  .approach-title{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:6px;}
+  .diag-steps{list-style:none;counter-reset:st;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;}
+  .diag-steps li{counter-increment:st;position:relative;padding-left:34px;font-size:14.5px;color:#3a342b;line-height:1.45;}
+  .diag-steps li::before{content:counter(st);position:absolute;left:0;top:-1px;width:24px;height:24px;
+    background:var(--gold-dk);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:800;}
+  .price-row{display:flex;align-items:baseline;gap:10px;justify-content:center;margin:16px 0 4px;}
+  .price{font-size:34px;font-weight:800;color:var(--ink);}
+  .price-old{font-size:18px;color:var(--muted);text-decoration:line-through;}
+  .cta{width:100%;border:none;border-radius:14px;padding:18px;font-size:19px;font-weight:800;cursor:pointer;
+    background:var(--gold-dk);color:#fff;font-family:inherit;box-shadow:0 6px 20px rgba(169,136,79,.4);margin-top:8px;}
+  .cta:hover{background:#96773F;}
+  .cta .sub{display:block;font-size:13px;font-weight:600;opacity:.9;margin-top:3px;}
+  .trust{text-align:center;font-size:13px;color:var(--muted);margin-top:12px;line-height:1.5;}
+  .hidden{display:none;}
+  .overlay{position:fixed;inset:0;background:rgba(251,248,242,.94);display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:99;}
+  .overlay.show{display:flex;}
+  .spin{width:44px;height:44px;border:4px solid var(--line);border-top-color:var(--gold-dk);border-radius:50%;animation:sp 1s linear infinite;}
+  @keyframes sp{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="overlay" id="loadingOverlay"><div class="spin"></div><div id="loadingText" style="font-weight:700;color:var(--gold-dk);">Einen Moment…</div></div>
+
+<div class="wrap">
+  <header><span class="brand"><span class="paw">🐾</span> Pfoten-Plan</span></header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <img class="hero-img" src="/energie-hero.jpg" alt="Überdrehter Hund springt wild durchs Wohnzimmer">
+    <div class="hero-body">
+      <div class="eyebrow">Auslastung &amp; Ruhe verstehen</div>
+      <h1>Warum kommt <span class="hl" id="dogNameHero">dein Hund</span> nicht zur Ruhe — und was in <span class="hl">eurer</span> Situation wirklich hilft.</h1>
+      <p class="lead">Zu viel Energie ist selten ein Bewegungsproblem. Ein Hund, der aus <b>Unterforderung</b> aufdreht, braucht das Gegenteil von noch mehr Auspowern. Beantworte 3 kurze Fragen — dann bekommst du <span id="dogNamePlan">deinen</span> passenden Energie-Plan.</p>
+      <div class="known" id="knownBox">
+        <span class="chk">✓</span>
+        <span id="knownText">Deine Angaben sind gespeichert.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MINI-PROOF -->
+  <div class="proof">
+    <div class="ava">🐶</div>
+    <div>
+      <div class="stars">★★★★★</div>
+      <div class="q">„Rocky war ein einziges Energiebündel — abends unmöglich. Mit Nasenarbeit und Ruhe-Training schläft er jetzt entspannt. Endlich Ruhe am Abend."</div>
+      <div class="who">Sabine, 54 – mit Border Collie Rocky</div>
+    </div>
+  </div>
+  <div class="proof-count">Über <b>2.000 Halter</b> trainieren schon mit Pfoten-Plan.</div>
+
+  <!-- QUESTIONS -->
+  <div class="progress"><i id="progBar" style="width:33%"></i></div>
+
+  <section class="step" id="questionStep">
+    <div class="qnum" id="qNum">Frage 1 von 3</div>
+    <div class="qtitle" id="qTitle"></div>
+    <div class="qhint" id="qHint"></div>
+    <div class="opts" id="qOpts"></div>
+    <div class="nav">
+      <button class="btn btn-ghost hidden" id="backBtn" onclick="prevQ()">Zurück</button>
+      <button class="btn btn-primary" id="nextBtn" onclick="nextQ()" disabled>Weiter</button>
+    </div>
+  </section>
+
+  <!-- RESULT / CTA -->
+  <section class="step result hidden" id="resultStep">
+    <div class="eyebrow">Deine persönliche Einschätzung</div>
+    <h2>Das steckt hinter <span id="dogNameResult">dein Hund</span>s Energie</h2>
+    <img class="result-img" src="/energie-uebungen/09-go-3.jpg" alt="Entspannter Hund schläft ruhig">
+    <div class="summary" id="resultSummary"></div>
+
+    <div class="diag">
+      <div class="diag-label">Fachliche Einordnung</div>
+      <span class="diag-term" id="diagTerm">—</span>
+      <p class="diag-why" id="diagWhy"></p>
+      <div class="approach-title">So gehen wir vor:</div>
+      <ol class="diag-steps" id="diagSteps"></ol>
+    </div>
+
+    <div class="inside-card">
+      <div class="inside-head"><span class="pdf-tag">PDF</span> <span id="insideHead">Dein Energie-Plan enthält:</span></div>
+      <ul class="inside-list">
+        <li><span class="c">✓</span><span>Warum <b id="dogNameFeat">dein Hund</b> aufdreht — deine persönliche Einordnung</span></li>
+        <li><span class="c">✓</span><span>Dein <b>8-Wochen-Plan</b> mit 8 Auslastungs- &amp; Ruhe-Übungen</span></li>
+        <li><span class="c">✓</span><span><b>Nasenarbeit, Kopfspiele &amp; Ruhe-Training</b> — Schritt für Schritt</span></li>
+        <li><span class="c">✓</span><span>Die Formel gegen Überdrehtheit: <b>Kopf + Ruhe statt nur Rennen</b></span></li>
+        <li><span class="c">✓</span><span>Als <b>PDF zum Ausdrucken</b> — sofort per E-Mail nach dem Kauf</span></li>
+      </ul>
+    </div>
+
+    <div class="ver-chooser">
+      <div class="ver-opt" id="verText" onclick="selectVersion('text')">
+        <span class="ver-radio"></span>
+        <span class="ver-info"><b>Text-Plan</b><small>Jede Übung Schritt für Schritt erklärt</small></span>
+        <span class="ver-price">14,99&nbsp;€</span>
+      </div>
+      <div class="ver-opt sel" id="verIllu" onclick="selectVersion('illu')">
+        <span class="ver-radio"></span>
+        <span class="ver-info"><b>Mit Bildern<span class="ver-tag">Beliebt</span></b><small>Jeder Schritt zusätzlich als Bild gezeigt</small></span>
+        <span class="ver-price">19,99&nbsp;€</span>
+      </div>
+    </div>
+    <div class="price-row"><span class="price" id="mainPrice">19,99&nbsp;€</span><span class="price-old" id="mainPriceOld">29,99&nbsp;€</span></div>
+    <button class="cta" id="ctaBtn" onclick="buyEnergiePlan()">
+      <span id="ctaMain">Energie-Plan freischalten</span>
+      <span class="sub">Einmalzahlung · kein Abo · 30 Tage Geld-zurück-Garantie</span>
+    </button>
+    <div class="payment-logos">
+      <img src="/visa-logo.png" alt="Visa">
+      <img src="/mastercard-logo.png" alt="Mastercard">
+      <img src="/paypal-logo.png" alt="PayPal">
+      <img src="/klarna-logo.png" alt="Klarna">
+      <img src="/applepay.png" alt="Apple Pay">
+      <img src="/googlepay.png" alt="Google Pay">
+      <img src="/sepa-logo.png" alt="SEPA">
+    </div>
+    <p class="trust">🔒 Sichere Zahlung über Mollie · Plan direkt per E-Mail</p>
+  </section>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+  let leadId = '', userEmail = '', dogName = 'dein Hund', dogBreed = '', dogAge = '';
+
+  const BREED_HINT = {
+    'Border Collie':'Hütehunde wie deiner sind echte Arbeitstiere - ohne Kopfaufgabe drehen sie auf.',
+    'Australian Shepherd':'Als Hütehund braucht deiner eine Aufgabe für den Kopf, nicht nur Bewegung.',
+    'Jack Russell Terrier':'Terrier sind kleine Energiebündel mit viel Köpfchen - Beschäftigung ist Pflicht.',
+    'Labrador Retriever':'Labradore stecken voller Energie und Lebensfreude - die kanalisieren wir clever.',
+    'Golden Retriever':'Golden Retriever sind verspielt und energiegeladen - Kopfarbeit macht sie zufrieden.',
+    'Deutscher Schäferhund':'Arbeitshunde wie deiner wollen gefordert werden - sonst suchen sie sich selbst Beschäftigung.',
+    'Mischling':'Bei Mischlingen entscheidet der Typ - wir finden die richtige Auslastung.'
+  };
+
+  const QUESTIONS = [
+    {
+      key: 'trigger',
+      title: 'Wann dreht {dog} am meisten auf?',
+      hint: 'Wähle die Situation, die am häufigsten vorkommt.',
+      opts: [
+        { v:'evening', emo:'🌙', label:'Abends / nach dem Spaziergang' },
+        { v:'visitors', emo:'🔔', label:'Bei Besuch oder Reizen' },
+        { v:'allday', emo:'🔄', label:'Eigentlich den ganzen Tag' },
+        { v:'alone', emo:'🥱', label:'Wenn ihm langweilig ist' },
+        { v:'play', emo:'🎾', label:'Beim Spielen - kommt nicht mehr runter' }
+      ]
+    },
+    {
+      key: 'where',
+      title: 'Wie zeigt sich die Energie bei {dog}?',
+      hint: 'Das hilft uns, die richtigen Übungen zu wählen.',
+      opts: [
+        { v:'run', emo:'🏃', label:'Rennt & springt wie wild' },
+        { v:'chew', emo:'🦴', label:'Kaut & zerstört Sachen' },
+        { v:'vocal', emo:'🔊', label:'Bellt oder fiept viel' },
+        { v:'pacing', emo:'👣', label:'Kann nicht liegen bleiben, läuft umher' }
+      ]
+    },
+    {
+      key: 'style',
+      title: 'Was trifft auf {dog} am ehesten zu?',
+      hint: 'Das ist das Wichtigste — es verrät den echten Grund.',
+      opts: [
+        { v:'underworked', emo:'🧠', label:'Ist unterfordert, langweilt sich schnell' },
+        { v:'overaroused', emo:'⚡', label:'Dreht schnell auf, kommt nicht runter' },
+        { v:'norest', emo:'😮‍💨', label:'Kann einfach nicht abschalten / liegen bleiben' },
+        { v:'young', emo:'🐕', label:'Ist noch jung oder eine echte Energierasse' }
+      ]
+    }
+  ];
+
+  const answers = {};
+  let qi = 0;
+  function fill(str){ return (str||'').replace(/\{dog\}/g, dogName); }
+
+  function renderQ(){
+    const q = QUESTIONS[qi];
+    document.getElementById('qNum').textContent = 'Frage ' + (qi+1) + ' von 3';
+    document.getElementById('qTitle').innerHTML = fill(q.title);
+    document.getElementById('qHint').textContent = fill(q.hint);
+    document.getElementById('progBar').style.width = ((qi+1)/3*100) + '%';
+    const box = document.getElementById('qOpts'); box.innerHTML = '';
+    q.opts.forEach(o => {
+      const d = document.createElement('div');
+      d.className = 'opt' + (answers[q.key]===o.v ? ' sel':'');
+      d.innerHTML = '<span class="dot"></span><span class="emo">'+o.emo+'</span><span>'+fill(o.label)+'</span>';
+      d.onclick = () => {
+        answers[q.key] = o.v;
+        box.querySelectorAll('.opt').forEach(el => el.classList.remove('sel'));
+        d.classList.add('sel');
+        document.getElementById('nextBtn').disabled = false;
+      };
+      box.appendChild(d);
+    });
+    document.getElementById('backBtn').classList.toggle('hidden', qi===0);
+    document.getElementById('nextBtn').disabled = !answers[q.key];
+    document.getElementById('nextBtn').textContent = qi===2 ? 'Ergebnis anzeigen' : 'Weiter';
+  }
+  function scrollToStep(id){ const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
+  function nextQ(){
+    if(!answers[QUESTIONS[qi].key]) return;
+    if(qi<2){ qi++; renderQ(); scrollToStep('questionStep'); }
+    else showResult();
+  }
+  function prevQ(){ if(qi>0){ qi--; renderQ(); scrollToStep('questionStep'); } }
+
+  const STYLE_REASON = {
+    underworked:'aus Unterforderung', overaroused:'aus Übererregung',
+    norest:'weil ihm das Abschalten fehlt', young:'aus jugendlichem Energie-Überschuss'
+  };
+  const TRIGGER_LABEL = {
+    evening:'abends & nach dem Spaziergang', visitors:'bei Besuch & Reizen', allday:'den ganzen Tag',
+    alone:'bei Langeweile', play:'beim Spielen'
+  };
+  const STYLE_DIAG = {
+    underworked: { term:'Unterforderung - zu wenig Kopfarbeit',
+      why:'{dog} ist klug und langweilt sich - überschüssige Energie sucht sich ein Ventil. Nicht mehr Bewegung ist die Lösung, sondern <b>Kopfarbeit</b>, die wirklich müde macht.',
+      steps:['Nasen- und Denksport statt Dauer-Toben.','Das Futter zur Beschäftigung machen (Suchen, Kong).','Kurze, intensive Kopf-Einheiten in den Tag einbauen.'] },
+    overaroused: { term:'Übererregung - fehlendes Abschalten',
+      why:'{dog} fährt schnell hoch und kommt nicht mehr runter - der Körper ist schneller als der Kopf. Wir üben gezielt das <b>Runterkommen</b>. Abschalten ist trainierbar.',
+      steps:['Ein Ruhe-Wort konditionieren (An-/Aus-Schalter).','Das "Stopp-Spiel": hochfahren und wieder runterkommen.','Cool-Down-Routinen nach jeder Aufregung.'] },
+    norest: { term:'Fehlende Ruhe-Fähigkeit',
+      why:'{dog} weiß gar nicht, wie Abschalten geht - Ruhe kommt nicht von allein, sie muss <b>geübt</b> werden. Ein Hund, der nie richtig schläft, ist chronisch überdreht.',
+      steps:['Aktives Ruhe-Training auf der Decke.','Echte Schlaf-Auszeiten ermöglichen (17-20 Std/Tag).','Impulskontrolle aufbauen, damit {dog} nicht bei jedem Reiz hochfährt.'] },
+    young: { term:'Rassetypischer Energie-Überschuss',
+      why:'Als junge oder arbeitsfreudige Rasse bringt {dog} enorm viel Energie mit. Das ist völlig normal - wir <b>kanalisieren</b> sie clever in Kopfarbeit und Ruhe, statt nur auszupowern.',
+      steps:['Sinnvolle Kopf- und Nasenarbeit statt reinem Auspowern.','Ruhe genauso trainieren wie Beschäftigung.','Impulskontrolle als Basis für den Alltag.'] }
+  };
+  const BREED_WHY = {
+    'Border Collie':'Als Hütehund ist {dog} ein Arbeitstier - ohne Kopfaufgabe entlädt sich die Energie irgendwo.',
+    'Australian Shepherd':'Hütehunde wie {dog} brauchen eine Aufgabe für den Kopf, sonst drehen sie auf.',
+    'Jack Russell Terrier':'Terrier wie {dog} sind kleine Energiebündel - Kopfarbeit ist bei ihnen Pflicht.',
+    'Labrador Retriever':'Labradore wie {dog} stecken voller Energie - richtig kanalisiert wird daraus Zufriedenheit.',
+    'Deutscher Schäferhund':'Arbeitshunde wie {dog} wollen gefordert werden, sonst suchen sie sich selbst Beschäftigung.'
+  };
+
+  function showResult(){
+    document.getElementById('questionStep').classList.add('hidden');
+    document.querySelector('.progress').classList.add('hidden');
+    document.getElementById('resultStep').classList.remove('hidden');
+    const reason = STYLE_REASON[answers.style] || '';
+    const trig = TRIGGER_LABEL[answers.trigger] || '';
+    document.getElementById('resultSummary').innerHTML =
+      '<b>'+dogName+'</b> dreht vor allem <b>'+trig+'</b> auf — und zwar <b>'+reason+'</b>. '+
+      'Genau darauf ist der Plan zugeschnitten: nicht mehr Auspowern, sondern {dog} clever auslasten und Ruhe beibringen.'.replace(/\{dog\}/g,dogName);
+    const diag = STYLE_DIAG[answers.style] || STYLE_DIAG.underworked;
+    document.getElementById('diagTerm').textContent = diag.term;
+    let why = fill(diag.why);
+    const bw = BREED_WHY[dogBreed]; if(bw) why += ' ' + fill(bw);
+    document.getElementById('diagWhy').innerHTML = why;
+    const ol = document.getElementById('diagSteps'); ol.innerHTML = '';
+    diag.steps.forEach(s => { const li=document.createElement('li'); li.innerHTML = fill(s); ol.appendChild(li); });
+    document.getElementById('dogNameResult').textContent = dogName;
+    document.getElementById('dogNameFeat').textContent = dogName;
+    document.getElementById('insideHead').textContent =
+      (dogName==='dein Hund') ? 'Dein Energie-Plan enthält:' : (dogName+'s Energie-Plan enthält:');
+    scrollToStep('resultStep');
+  }
+
+  // ---- UTM-Erfassung (fuer Kampagnen-Attribution) ----
+  function getUTM(){
+    const p = new URLSearchParams(location.search);
+    const o = {};
+    ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(k=>{ const v=p.get(k); if(v) o[k]=v; });
+    return o;
+  }
+
+  // ---- Lead laden (read-only) — spiegelt Name + Rasse aus wauwerk_leads ----
+  async function loadLead(){
+    const p = new URLSearchParams(location.search);
+    const leadIdParam = p.get('lead_id');
+    const emailParam = p.get('email');
+    leadId = leadIdParam || '';
+    if(!leadIdParam && !emailParam) return;
+    let qp = leadIdParam ? ('id=eq.'+leadIdParam) : ('email=eq.'+encodeURIComponent(decodeURIComponent(emailParam)));
+    try{
+      const res = await fetch(SUPABASE_URL+'/rest/v1/wauwerk_leads?'+qp+'&select=*&order=created_at.desc&limit=1',
+        { headers:{ apikey:SUPABASE_ANON_KEY, Authorization:'Bearer '+SUPABASE_ANON_KEY } });
+      if(!res.ok) return;
+      const data = await res.json();
+      const lead = data[0]; if(!lead) return;
+      const a = lead.answers || {};
+      dogName  = lead.dog_name || a.dog_name || dogName;
+      dogBreed = lead.dog_breed || a.dog_breed || '';
+      dogAge   = lead.dog_age || a.dog_age || '';
+      leadId   = lead.id || leadId;
+      userEmail= lead.email || '';
+    }catch(e){ /* funktioniert generisch weiter */ }
+  }
+
+  function reflect(){
+    document.getElementById('dogNameHero').textContent = dogName;
+    document.getElementById('dogNamePlan').textContent = dogName==='dein Hund' ? 'deinen' : (dogName+'s');
+    const parts = [];
+    if(dogBreed) parts.push('<b>'+dogBreed+'</b>');
+    if(dogAge){ const ageMap={puppy:'Welpe',young:'Junghund',adult:'erwachsen',senior:'Senior'}; parts.push(ageMap[dogAge]||dogAge); }
+    const kt = document.getElementById('knownText');
+    if(dogName!=='dein Hund' && parts.length){
+      let hint = BREED_HINT[dogBreed] || '';
+      kt.innerHTML = 'Wir kennen <b>'+dogName+'</b> ('+parts.join(' · ')+').' + (hint? ' '+hint : '');
+    } else if(dogName!=='dein Hund'){
+      kt.innerHTML = 'Schön, dass <b>'+dogName+'</b> da ist. Beantworte kurz die 3 Fragen.';
+    } else {
+      document.getElementById('knownBox').style.display='none';
+    }
+  }
+
+  // ---- Versions-Auswahl: Text (14,99) vs. bebildert (19,99) ----
+  let energieIllustrated = true;
+  function selectVersion(v){
+    energieIllustrated = (v === 'illu');
+    document.getElementById('verIllu').classList.toggle('sel', energieIllustrated);
+    document.getElementById('verText').classList.toggle('sel', !energieIllustrated);
+    document.getElementById('mainPrice').innerHTML = energieIllustrated ? '19,99&nbsp;€' : '14,99&nbsp;€';
+    document.getElementById('mainPriceOld').innerHTML = energieIllustrated ? '29,99&nbsp;€' : '24,99&nbsp;€';
+  }
+
+  // ---- Kauf: separater Modul-Checkout (Haupt-Plan-Flow unberührt) ----
+  async function buyEnergiePlan(){
+    const ov = document.getElementById('loadingOverlay');
+    document.getElementById('loadingText').textContent = 'Zahlung wird vorbereitet…';
+    ov.classList.add('show');
+    try{
+      const res = await fetch('/api/mollie/upsell-checkout', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(Object.assign({
+          module: energieIllustrated ? 'energie-plan-bild' : 'energie-plan',
+          price: energieIllustrated ? 1999 : 1499,
+          leadId: leadId,
+          email: userEmail || '',
+          dogName: dogName,
+          returnUrl: '/danke-final.html?energie=1',
+          energie_trigger: answers.trigger,
+          energie_where: answers.where,
+          energie_style: answers.style,
+          energie_illustrated: energieIllustrated ? '1' : '0',
+          source_page: 'marketing-energie'
+        }, getUTM()))
+      });
+      const data = await res.json();
+      if(data.error || !data.url){ ov.classList.remove('show'); alert(data.error || 'Zahlung konnte nicht gestartet werden — bitte nochmal versuchen.'); return; }
+      window.location.href = data.url;
+    }catch(e){ ov.classList.remove('show'); alert('Verbindungsfehler. Bitte nochmal versuchen.'); }
+  }
+
+  (async function init(){ await loadLead(); reflect(); renderQ(); })();
+</script>
+</body>
+</html>
