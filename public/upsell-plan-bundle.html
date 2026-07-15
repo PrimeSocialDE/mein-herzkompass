@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Ein letzter Gedanke für deinen Hund · Pfoten-Plan</title>
+<style>
+  :root{ --cream:#FBF8F2; --card:#FFFFFF; --ink:#1F1B16; --muted:#6E655A; --line:#ECE3D5; --gold:#C4A576; --gold-dk:#A9884F; --green:#166534; --soft:#FFF9F0; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:600px;margin:0 auto;padding:0 18px 48px;}
+  .confirm{display:flex;align-items:center;justify-content:center;gap:9px;background:#F0FDF4;border-bottom:1px solid #D5EAD9;color:#166534;font-size:14px;font-weight:700;padding:12px;text-align:center;}
+  header{text-align:center;padding:20px 0 6px;}
+  .brand{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:18px;}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold-dk);text-align:center;margin-top:8px;}
+  h1{font-size:26px;line-height:1.22;font-weight:800;letter-spacing:-.3px;margin:8px 0 10px;text-wrap:balance;text-align:center;}
+  h1 .hl{color:var(--gold-dk);}
+  .intro{font-size:16px;color:#3a342b;text-align:center;margin:0 auto 20px;max-width:520px;}
+  .opt{display:flex;gap:11px;align-items:center;border:2px solid var(--line);border-radius:13px;padding:12px 13px;margin-bottom:9px;cursor:pointer;background:#fff;transition:all .15s ease;box-shadow:0 2px 8px rgba(31,27,22,.04);}
+  .opt:hover{border-color:var(--gold);}
+  .opt.sel{border-color:var(--gold-dk);background:var(--soft);box-shadow:0 3px 12px rgba(196,165,118,.2);}
+  .opt .box{width:22px;height:22px;border-radius:6px;border:2px solid #D6CDBD;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:#fff;transition:all .15s;}
+  .opt.sel .box{border-color:var(--gold-dk);background:var(--gold-dk);}
+  .opt.sel .box::after{content:"✓";color:#fff;font-size:14px;font-weight:900;}
+  .opt .emo{font-size:23px;flex:0 0 auto;}
+  .opt .body{flex:1 1 auto;min-width:0;}
+  .opt .t{font-size:15.5px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:7px;flex-wrap:wrap;line-height:1.25;}
+  .opt .tag{display:inline-block;background:var(--gold-dk);color:#fff;font-size:9px;font-weight:800;letter-spacing:.3px;padding:2px 6px;border-radius:5px;}
+  .opt .line{font-size:12.5px;color:var(--muted);line-height:1.35;margin-top:2px;}
+  .opt .inc{display:flex;flex-wrap:wrap;gap:2px 12px;font-size:12px;color:#3a342b;margin-top:5px;}
+  .opt .inc b{color:var(--green);}
+  .opt .pr{font-size:11.5px;color:var(--gold-dk);font-weight:800;flex:0 0 auto;align-self:center;}
+  .opt .bonus{display:inline-block;margin-top:7px;background:#FFF4E0;border:1px dashed #E3C99A;color:#8B7355;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:7px;}
+  .summary{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0 4px;text-align:center;}
+  .price-row{display:flex;align-items:baseline;gap:10px;justify-content:center;}
+  .price{font-size:32px;font-weight:800;}
+  .price-old{font-size:17px;color:var(--muted);text-decoration:line-through;}
+  .save{display:inline-block;background:#F0FDF4;color:#166534;font-weight:800;font-size:13px;padding:3px 10px;border-radius:8px;margin-top:6px;}
+  .cta{width:100%;border:none;border-radius:14px;padding:17px;font-size:18px;font-weight:800;cursor:pointer;background:var(--gold-dk);color:#fff;font-family:inherit;box-shadow:0 6px 20px rgba(169,136,79,.4);margin-top:12px;}
+  .cta:hover{background:#96773F;} .cta:disabled{opacity:.5;cursor:not-allowed;}
+  .cta .sub{display:block;font-size:12.5px;font-weight:600;opacity:.9;margin-top:3px;}
+  .skip{display:block;width:100%;text-align:center;background:none;border:none;color:var(--muted);font-size:14px;padding:14px;margin-top:6px;cursor:pointer;font-family:inherit;}
+  .skip:hover{color:var(--ink);}
+  .trust{text-align:center;font-size:12.5px;color:var(--muted);margin-top:8px;}
+  .spinner{display:inline-block;width:16px;height:16px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-3px;}
+  @keyframes sp{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="confirm">✓ Bestellung bestätigt — ein letzter Gedanke</div>
+<div class="wrap">
+  <header><span class="brand">🐾 Pfoten-Plan</span></header>
+  <div class="eyebrow">Für die Zukunft von <span class="dog-name">deinem Hund</span></div>
+  <h1 id="headline">Die Themen, auf die du <span class="hl dog-name">deinen Hund</span> jetzt schon vorbereiten kannst</h1>
+  <p class="intro" id="intro">Viele Themen entwickeln sich erst mit der Zeit — Pubertät, ein Schreckmoment, mehr Selbstbewusstsein. Wer früh die Basis legt, muss später kein Problem mehr lösen. Und falls <span class="dog-name">dein Hund</span> schon Anzeichen zeigt, sicherst du es jetzt ab.</p>
+
+  <div id="options"></div>
+
+  <div class="summary">
+    <div class="price-row"><span class="price" id="price">14,99&nbsp;€</span><span class="price-old" id="priceOld">14,99&nbsp;€</span></div>
+    <div class="save" id="save" style="display:none;"></div>
+  </div>
+  <button class="cta" id="ctaBtn" onclick="buy()"><span id="ctaMain">Jetzt dazu sichern</span><span class="sub">Sofort per E-Mail · 30 Tage Geld-zurück-Garantie</span></button>
+  <button class="skip" onclick="skip()">Nein danke, weiter →</button>
+  <p class="trust">🔒 Kein erneutes Bezahlen nötig · deine Pläne kommen sofort per E-Mail</p>
+</div>
+
+<script>
+  const dogName = localStorage.getItem('dogName') || 'deinen Hund';
+  const userEmail = localStorage.getItem('userEmail') || '';
+  const urlParams = new URLSearchParams(location.search);
+  const leadId = urlParams.get('lead_id') || localStorage.getItem('leadId') || '';
+  const dogProblem = (localStorage.getItem('dogProblem') || localStorage.getItem('customProblem') || '').toLowerCase();
+  document.querySelectorAll('.dog-name').forEach(el => el.textContent = dogName);
+
+  // Themen (nach Verkaufsstärke geordnet). module = Text-Plan, wird per Webhook ausgeliefert.
+  const THEMES = {
+    rueckruf:   { emo:'🎯', title:'Kommt zuverlässig zurück', module:'rueckruf-plan',
+      line:'Nie wieder Herzklopfen im Freilauf.', inc:['Rückruf-Wort, das sitzt','auch bei Wild &amp; Ablenkung'] },
+    leinen:     { emo:'🦮', title:'Entspannt an der Leine', module:'leinen-plan',
+      line:'Schluss mit Ziehen – bevor es zur Gewohnheit wird.', inc:['Ziehen sanft abgewöhnt','lockere Leine im Alltag'] },
+    aggression: { emo:'🛡️', title:'Ruhig bei anderen Hunden', module:'aggression-plan',
+      line:'Damit Begegnungen entspannt bleiben statt zu eskalieren.', inc:['ruhig vorbeigehen','Sicherheit statt Pöbeln'] },
+    energie:    { emo:'😌', title:'Endlich Ruhe zuhause', module:'energie-plan',
+      line:'Ein ausgelasteter Hund statt Dauer-Action.', inc:['Kopfarbeit, die müde macht','Abschalten lernen'] },
+  };
+  // Reihenfolge nach Verkaufsstärke
+  const POOL = ['rueckruf','leinen','aggression','energie'];
+  // Hauptproblem -> gehört schon zum Hauptplan, also raus
+  const PROBLEM_TO_THEME = { pulling:'leinen', recall:'rueckruf', aggression:'aggression', 'dog-reactive':'aggression', 'leash-reactive':'aggression', energy:'energie' };
+  const own = PROBLEM_TO_THEME[dogProblem] || null;
+  const show = POOL.filter(t => t !== own).slice(0,3);
+
+  const selected = new Set([show[0]]); // erster (stärkster) vorausgewählt
+  const PRICE = { 1:1499, 2:1999, 3:2499 };
+  const fmt = c => (c/100).toFixed(2).replace('.',',') + ' €';
+
+  function render(){
+    const box = document.getElementById('options'); box.innerHTML='';
+    show.forEach((t,i) => {
+      const th = THEMES[t]; const sel = selected.has(t);
+      const d = document.createElement('div');
+      d.className = 'opt' + (sel?' sel':'');
+      d.innerHTML = `<span class="box"></span><span class="emo">${th.emo}</span><div class="body">
+        <div class="t">${th.title}${i===0?' <span class="tag">Empfohlen</span>':''}</div>
+        <div class="line">${th.line}</div>
+        <div class="inc">${th.inc.map(x=>`<span><b>✓</b> ${x}</span>`).join('')}</div>
+        <div class="bonus"><b style="color:#166534">✓</b> 8 starke Übungen – Schritt für Schritt</div>
+      </div><span class="pr">${i===0?'14,99&nbsp;€':'+5&nbsp;€'}</span>`;
+      d.onclick = () => { if(selected.has(t)) selected.delete(t); else selected.add(t); if(selected.size===0) selected.add(t); update(); };
+      box.appendChild(d);
+    });
+  }
+  function update(){
+    document.querySelectorAll('.opt').forEach((el,i)=>el.classList.toggle('sel', selected.has(show[i])));
+    const n = Math.max(1, selected.size);
+    const cents = PRICE[n] || 1499;
+    document.getElementById('price').innerHTML = fmt(cents);
+    const oldC = n*1499;
+    document.getElementById('priceOld').innerHTML = fmt(oldC);
+    document.getElementById('priceOld').style.display = n>1 ? '' : 'none';
+    const save = document.getElementById('save');
+    if(n>1){ save.style.display='inline-block'; save.textContent = `Du sparst ${fmt(oldC-cents)}`; } else save.style.display='none';
+    document.getElementById('ctaMain').textContent = `Für ${fmt(cents)} dazu sichern`;
+  }
+  function headline(){
+    if(own){
+      const map = { leinen:'Leine', rueckruf:'Rückruf', aggression:'Reaktivität', energie:'Energie' };
+      document.getElementById('headline').innerHTML = `Der nächste Schritt für <span class="hl">${dogName}</span> — jetzt, wo ${map[own]||'das Thema'} sitzt`;
+    }
+  }
+
+  function skip(){ location.href = 'danke-final.html?lead_id=' + encodeURIComponent(leadId||''); }
+
+  function track(cents){ try{
+    const eid='bundle_'+(leadId||userEmail||Date.now());
+    if(typeof fbq!=='undefined') fbq('track','Purchase',{value:cents/100,currency:'EUR',content_name:'Themen-Plan Bundle',content_type:'product'},{eventID:eid});
+    if(typeof gtag!=='undefined') gtag('event','conversion',{value:cents/100,currency:'EUR',transaction_id:eid});
+  }catch(e){} }
+
+  function showSuccess(){
+    const o=document.createElement('div');
+    o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    o.innerHTML=`<div style="background:#fff;border-radius:16px;padding:32px 28px;max-width:380px;text-align:center;box-shadow:0 24px 48px rgba(0,0,0,.22);"><div style="width:64px;height:64px;background:#DCFCE7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;">✓</div><h3 style="font-size:18px;font-weight:800;margin:0 0 8px;">Perfekt!</h3><p style="font-size:14px;color:#4B5563;margin:0;">${dogName}s Pläne kommen in wenigen Minuten per E-Mail.</p></div>`;
+    document.body.appendChild(o);
+    setTimeout(()=>{ location.href='danke-final.html?upsell2=true&lead_id='+encodeURIComponent(leadId||''); },2600);
+  }
+
+  async function buy(){
+    const btn=document.getElementById('ctaBtn'); const orig=btn.innerHTML;
+    btn.innerHTML='<span class="spinner"></span> Lädt...'; btn.disabled=true;
+    if(!userEmail){ alert('Fehler: Keine E-Mail gefunden.'); btn.innerHTML=orig; btn.disabled=false; return; }
+    const mods = [...selected].map(t=>THEMES[t].module).join('+');
+    const n = Math.max(1, selected.size); const price = PRICE[n]||1499;
+    // 1-Click via Mandate (kein erneutes Bezahlen)
+    try{
+      const r=await fetch('/api/mollie/upsell-recurring',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({module:mods,leadId,email:userEmail,dogName,price})});
+      const j=await r.json();
+      if(j.ok){ track(price); showSuccess(); return; }
+    }catch(e){ console.warn('1-Click:',e); }
+    // Fallback: Redirect-Checkout
+    try{
+      const returnUrl=location.origin+'/danke-final.html?upsell2=true&lead_id='+encodeURIComponent(leadId||'');
+      const resp=await fetch('/api/mollie/upsell-checkout',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({module:mods,leadId,email:userEmail,dogName,price,bundle:selected.size>1,returnUrl})});
+      const res=await resp.json();
+      if(res.error||!res.url){ alert('Fehler beim Laden. Bitte erneut versuchen.'); btn.innerHTML=orig; btn.disabled=false; return; }
+      location.href=res.url;
+    }catch(err){ alert('Fehler beim Laden.'); btn.innerHTML=orig; btn.disabled=false; }
+  }
+
+  headline(); render(); update();
+</script>
+</body>
+</html>

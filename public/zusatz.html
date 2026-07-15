@@ -492,7 +492,7 @@
             document.body.appendChild(overlay);
             setTimeout(() => {
                 // Nach dem Karten-Kauf: Folge-Angebot "Dein Hund verstehen" (14,99€)
-                window.location.href = 'hund-verstehen-angebot.html?lead_id=' + encodeURIComponent(leadId || '');
+                window.location.href = 'upsell-plan-bundle.html?lead_id=' + encodeURIComponent(leadId || '');
             }, 2500);
         }
 
@@ -522,7 +522,7 @@
             // Fallback: klassischer Mollie-Redirect-Flow
             try {
                 // Nach erfolgreichem Karten-Kauf zurueck aufs Folge-Angebot (Hund verstehen)
-                const returnUrl = window.location.origin + '/hund-verstehen-angebot.html?lead_id=' + encodeURIComponent(leadId || '');
+                const returnUrl = window.location.origin + '/upsell-plan-bundle.html?lead_id=' + encodeURIComponent(leadId || '');
                 const response = await fetch('/api/mollie/upsell-checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
