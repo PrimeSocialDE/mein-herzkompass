@@ -244,6 +244,36 @@ async function handlePaid(payment: any) {
     ).toISOString();
   }
 
+  // ── Beleg (Kleinbetragsrechnung) für DE-Verkäufe erzeugen ──────────
+  // Bewusst VOR dem status='paid'-Write: der pg_net-Trigger löst danach die
+  // Plan-Mail aus, die den Beleg-Footer anzeigen soll → Beleg muss vorher da
+  // sein. Idempotent (create_beleg prüft mollie_payment_id) + failure-isoliert
+  // (ein Beleg-Fehler darf Zahlung/Plan NIE blockieren). Nur DE, nicht PL.
+  if (table === "wauwerk_leads" && customerEmail) {
+    const isPlSale = (prevAnswers as any)?.lang === "pl";
+    const bruttoCents = Math.round(
+      parseFloat(payment.amount?.value || "0") * 100
+    );
+    if (!isPlSale && bruttoCents > 0) {
+      try {
+        const { belegDescription } = await import("@/lib/beleg");
+        await supabase.rpc("create_beleg", {
+          p_mollie_payment_id: payment.id,
+          p_lead_id: referenceId,
+          p_email: customerEmail,
+          p_beschreibung: belegDescription(meta),
+          p_brutto_cents: bruttoCents,
+          p_leistungsdatum: new Date().toISOString(),
+        });
+      } catch (e: any) {
+        console.error(
+          "[mollie-webhook] Beleg-Erstellung fehlgeschlagen (Zahlung läuft weiter):",
+          e?.message
+        );
+      }
+    }
+  }
+
   const { error } = await supabase
     .from(table)
     .update(updateData)

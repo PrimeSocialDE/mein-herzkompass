@@ -9,6 +9,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { UserChallenge } from "./member-challenges";
 import type { MemberProfile } from "./member-db";
 import type { Lang } from "./lang";
+import { renderBelegFooterHtml, type BelegRow } from "./beleg";
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
 const SITE_URL =
@@ -163,6 +164,8 @@ export function wrapTemplate(opts: {
   unsubscribe?: boolean;
   /** Sprache: "pl" schaltet Marken-Label + Footer auf Polnisch. Default "de". */
   lang?: Lang;
+  /** Optional: Beleg-/Kleinbetragsrechnung-Footer (nur DE-Plan-Mail). */
+  belegHtml?: string;
 }): string {
   const {
     preheader,
@@ -174,6 +177,7 @@ export function wrapTemplate(opts: {
     footerHint,
     unsubscribe,
     lang = "de",
+    belegHtml,
   } = opts;
   const isPl = lang === "pl";
   const htmlLang = isPl ? "pl" : "de";
@@ -222,6 +226,11 @@ export function wrapTemplate(opts: {
         ${
           footerHint
             ? `<tr><td style="padding:0 28px 24px;"><p style="margin:0;font-size:12px;line-height:1.5;color:#9CA3AF;text-align:center;">${footerHint}</p></td></tr>`
+            : ""
+        }
+        ${
+          belegHtml
+            ? `<tr><td style="padding:0 28px 22px;">${belegHtml}</td></tr>`
             : ""
         }
         <tr>
@@ -341,12 +350,17 @@ interface PlanReadyArgs {
   plan: TrainingPlanContent;
   customerName?: string | null;
   lang?: Lang;
+  beleg?: BelegRow | null;
 }
 
 export async function sendPlanReadyEmail(args: PlanReadyArgs) {
   const { to, dogName, dogBreed, dogAge, mainProblem, planLengthMonths, plan, customerName } = args;
   const lang = args.lang ?? "de";
   if (!to) return { ok: false, reason: "no_email" };
+
+  // Beleg-Footer (Kleinbetragsrechnung) — nur DE, nur wenn ein Beleg vorliegt.
+  const belegHtml =
+    lang !== "pl" && args.beleg ? renderBelegFooterHtml(args.beleg) : undefined;
 
   // Auto-Login-Link: User landet direkt eingeloggt auf der Coaching-Seite
   const ctaUrl = await buildAutoLoginUrl(to, "/mitglieder/erfolge/coaching");
@@ -563,6 +577,7 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
     ctaText: "Mitglieder-Bereich öffnen →",
     ctaUrl,
     footerHint: `Der Button enthält einen Einmal-Login — du landest direkt eingeloggt im Mitglieder-Bereich. Der Link gilt 1 Stunde und ist nur für dich.`,
+    belegHtml,
   });
   subject = `🐾 Dein ${monthsLabel} für ${dogName} ist da`;
   }
