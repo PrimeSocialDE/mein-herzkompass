@@ -1215,7 +1215,7 @@
         </div>
 
         <!-- Personalized Insights -->
-        <div class="insight-section">
+        <div class="insight-section" id="rhInsight">
             <div class="insight-title">Was du wissen solltest</div>
             
             <div class="insight-item">
@@ -1249,6 +1249,23 @@
         <!-- Plan-Inhalt iPad -->
         <div style="margin-bottom: 30px;">
             <h2 style="font-size: 18px; font-weight: 700; color: var(--text-dark); text-align: center; margin-bottom: 16px;">Was dich in <span id="planSliderDogName">deinem</span> Plan erwartet</h2>
+
+            <!-- A/B Variante B: echter Plan-Mockup (zeigt, wie der Plan wirklich aussieht) -->
+            <div id="rhMockup" style="display:none; border-radius: 16px; overflow: hidden; margin-bottom: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.10);">
+                <img src="PfotenPlanMockup.jpg" alt="So sieht dein persönlicher Trainingsplan aus" style="width: 100%; height: auto; display: block;" loading="lazy">
+            </div>
+            <script>
+                (function(){
+                    var force = new URLSearchParams(location.search).get('rhv');
+                    var ab = (force==='A'||force==='B') ? force : localStorage.getItem('ab_rueckhol_v');
+                    if(ab!=='A' && ab!=='B'){ ab = Math.random()<0.5?'A':'B'; localStorage.setItem('ab_rueckhol_v', ab); }
+                    window.__rhVariant = ab;
+                    if(ab==='B'){
+                        var m=document.getElementById('rhMockup'); if(m) m.style.display='block';
+                        var ins=document.getElementById('rhInsight'); if(ins) ins.style.display='none';
+                    }
+                })();
+            </script>
 
             <!-- iPad Frame -->
             <div style="background: #1a1a1a; border-radius: 24px; padding: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
@@ -1348,7 +1365,7 @@
                         <!-- Per JS -->
                     </div>
                     <!-- Overlay -->
-                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.95) 60%);">
+                    <div id="exerciseBlurOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.95) 60%);">
                         <div style="font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px;" id="exerciseBlurText">+ 3 weitere Schritte</div>
                         <div style="font-size: 12px; color: #888; margin-bottom: 12px;">Alle Schritte im Plan freischalten</div>
                         <button onclick="document.getElementById('pricingSection').scrollIntoView({behavior: 'smooth'})" style="background: linear-gradient(135deg, #C4A576, #8B7355); color: white; border: none; padding: 10px 24px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">
@@ -1358,10 +1375,41 @@
                 </div>
             </div>
 
+            <!-- A/B Variante B: Go's & No-Go's — warm, auf 50+ zugeschnitten -->
+            <div id="rhExerciseTips" style="display:none; margin-top:16px;">
+                <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:12px; padding:13px 15px; margin-bottom:10px;">
+                    <div style="font-size:12px; font-weight:800; color:#166534; text-transform:uppercase; letter-spacing:.4px; margin-bottom:8px;">✓ Das hilft dir</div>
+                    <ul style="margin:0; padding-left:18px; font-size:13px; color:#3a3a3a; line-height:1.6;">
+                        <li>Bleib ruhig – deine Gelassenheit überträgt sich auf deinen Hund.</li>
+                        <li>Lieber kurz: 5 Minuten mit Freude bringen mehr als 20 mit Frust.</li>
+                        <li>Im richtigen Moment loben – das Timing zählt mehr als die Menge Leckerli.</li>
+                    </ul>
+                </div>
+                <div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:12px; padding:13px 15px;">
+                    <div style="font-size:12px; font-weight:800; color:#B91C1C; text-transform:uppercase; letter-spacing:.4px; margin-bottom:8px;">✕ Das vermeidest du besser</div>
+                    <ul style="margin:0; padding-left:18px; font-size:13px; color:#3a3a3a; line-height:1.6;">
+                        <li>Nicht schimpfen oder an der Leine rucken – das verunsichert nur.</li>
+                        <li>Nicht zu lange üben – hör auf, solange es noch Spaß macht.</li>
+                        <li>Nicht aufgeben nach einem schwachen Tag – kleine Rückschritte sind ganz normal.</li>
+                    </ul>
+                </div>
+                <div style="text-align:center; font-size:12.5px; color:#888; margin-top:10px;">Kein Druck – jeder Hund lernt in seinem Tempo. Du machst das gut. 🐾</div>
+            </div>
+
             <div style="text-align: center; margin-top: 12px; font-size: 12px; color: #888;">
                 Diese Übung ist eine von <strong id="exerciseTotal">20+</strong> aus deinem personalisierten Plan
             </div>
         </div>
+        <script>
+            // A/B Variante B: komplette Übung zeigen (Blur raus, Freischalt-Overlay weg). Die "eine von 20+"-Zeile bleibt.
+            (function(){
+                if(window.__rhVariant !== 'B') return;
+                var bl=document.getElementById('exerciseStepsBlurred');
+                if(bl){ bl.style.filter='none'; bl.style.opacity='1'; bl.style.pointerEvents='auto'; bl.style.userSelect='auto'; }
+                var ov=document.getElementById('exerciseBlurOverlay'); if(ov) ov.style.display='none';
+                var tips=document.getElementById('rhExerciseTips'); if(tips) tips.style.display='block';
+            })();
+        </script>
 
         <!-- Soft CTA - dezent -->
         <div class="soft-cta">
@@ -1431,6 +1479,14 @@
             <p class="guarantee-box-text">Falls du keine Verbesserung siehst, erstatten wir dir den vollen Betrag zurück – ohne Wenn und Aber. 30 Tage lang.</p>
         </div>
 
+
+        <!-- A/B Variante B: Support/Trust-Bild (echtes Team, Antwort in 24h) -->
+        <div id="rhSupport" style="display:none; margin-bottom:26px; border-radius:16px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.06);">
+            <img src="support-team.jpg" alt="Fragen zum Plan? Wir antworten direkt – Antwort innerhalb von 24 Stunden" style="width:100%; height:auto; display:block;" loading="lazy">
+        </div>
+        <script>
+            (function(){ if(window.__rhVariant==='B'){ var s=document.getElementById('rhSupport'); if(s) s.style.display='block'; } })();
+        </script>
 
         <!-- Pricing Section -->
         <div id="pricingSection">
@@ -1555,6 +1611,7 @@
             <img src="mastercard-logo.png" alt="Mastercard">
             <img src="applepay.png" alt="Apple Pay">
             <img src="googlepay.png" alt="Google Pay">
+            <img src="klarna-logo.png" alt="Klarna">
         </div>
 
         <!-- FAQ Section -->
@@ -1683,7 +1740,8 @@
                     <img src="visa-logo.png" alt="Visa">
                     <img src="mastercard-logo.png" alt="Mastercard">
                     <img src="paypal-logo.png" alt="PayPal">
-            
+                    <img src="klarna-logo.png" alt="Klarna">
+
                 </div>
 
                 <button class="checkout-back" onclick="closeCheckout()">← Zurück</button>
@@ -2487,7 +2545,8 @@
                         fbp: getCookie('_fbp') || '',
                         fbc: getCookie('_fbc') || '',
                         fb_event_id: localStorage.getItem('fb_event_id') || '',
-                        ttclid: localStorage.getItem('ttclid') || ''
+                        ttclid: localStorage.getItem('ttclid') || '',
+                        ab_variant: (window.__rhVariant === 'B' ? 'rueckhol-mockup' : 'rueckhol-control')
                     })
                 });
 
