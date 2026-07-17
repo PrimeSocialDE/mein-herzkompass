@@ -1146,7 +1146,8 @@
         </div>
         <script>
             (function(){
-                var ab = localStorage.getItem('ab_rueckhol_v');
+                var force = new URLSearchParams(location.search).get('rhv');
+                var ab = (force==='A'||force==='B') ? force : localStorage.getItem('ab_rueckhol_v');
                 if(ab!=='A' && ab!=='B'){ ab = Math.random()<0.5?'A':'B'; localStorage.setItem('ab_rueckhol_v', ab); }
                 window.__rhVariant = ab;
                 var a=document.getElementById('rhVariantA'), b=document.getElementById('rhVariantB');
