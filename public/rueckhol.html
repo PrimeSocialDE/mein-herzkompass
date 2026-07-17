@@ -1215,7 +1215,7 @@
         </div>
 
         <!-- Personalized Insights -->
-        <div class="insight-section">
+        <div class="insight-section" id="rhInsight">
             <div class="insight-title">Was du wissen solltest</div>
             
             <div class="insight-item">
@@ -1250,10 +1250,22 @@
         <div style="margin-bottom: 30px;">
             <h2 style="font-size: 18px; font-weight: 700; color: var(--text-dark); text-align: center; margin-bottom: 16px;">Was dich in <span id="planSliderDogName">deinem</span> Plan erwartet</h2>
 
-            <!-- Echter Plan-Mockup: zeigt, wie der Plan wirklich aussieht -->
-            <div style="border-radius: 16px; overflow: hidden; margin-bottom: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.10);">
+            <!-- A/B Variante B: echter Plan-Mockup (zeigt, wie der Plan wirklich aussieht) -->
+            <div id="rhMockup" style="display:none; border-radius: 16px; overflow: hidden; margin-bottom: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.10);">
                 <img src="PfotenPlanMockup.jpg" alt="So sieht dein persönlicher Trainingsplan aus" style="width: 100%; height: auto; display: block;" loading="lazy">
             </div>
+            <script>
+                (function(){
+                    var force = new URLSearchParams(location.search).get('rhv');
+                    var ab = (force==='A'||force==='B') ? force : localStorage.getItem('ab_rueckhol_v');
+                    if(ab!=='A' && ab!=='B'){ ab = Math.random()<0.5?'A':'B'; localStorage.setItem('ab_rueckhol_v', ab); }
+                    window.__rhVariant = ab;
+                    if(ab==='B'){
+                        var m=document.getElementById('rhMockup'); if(m) m.style.display='block';
+                        var ins=document.getElementById('rhInsight'); if(ins) ins.style.display='none';
+                    }
+                })();
+            </script>
 
             <!-- iPad Frame -->
             <div style="background: #1a1a1a; border-radius: 24px; padding: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
@@ -2492,7 +2504,8 @@
                         fbp: getCookie('_fbp') || '',
                         fbc: getCookie('_fbc') || '',
                         fb_event_id: localStorage.getItem('fb_event_id') || '',
-                        ttclid: localStorage.getItem('ttclid') || ''
+                        ttclid: localStorage.getItem('ttclid') || '',
+                        ab_variant: (window.__rhVariant === 'B' ? 'rueckhol-mockup' : 'rueckhol-control')
                     })
                 });
 
