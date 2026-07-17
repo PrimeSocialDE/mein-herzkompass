@@ -1131,8 +1131,7 @@
         </div>
 
         <!-- Proof Slider -->
-        <!-- A/B-Test: Variante A = Foto-Slider (Kontrolle) · Variante B = iPad-Plan-Mockup -->
-        <div class="proof-slider" id="rhVariantA">
+        <div class="proof-slider">
             <div class="proof-track">
                 <img src="proof3-sm.jpg" alt="Kundin mit PfotenPlan auf Tablet" loading="eager">
                 <img src="proof4-sm.jpg" alt="Hundebesitzerin liest PfotenPlan mit Hund" loading="lazy">
@@ -1141,19 +1140,6 @@
                 <img src="proof7-sm.jpg" alt="Hundebesitzerin mit Welpe" loading="lazy">
             </div>
         </div>
-        <div id="rhVariantB" style="display:none; margin:-10px 0 20px; border-radius:12px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.08);">
-            <img src="PfotenPlanMockup.jpg" alt="So sieht dein persönlicher Trainingsplan aus" style="width:100%; height:auto; display:block;" loading="eager">
-        </div>
-        <script>
-            (function(){
-                var force = new URLSearchParams(location.search).get('rhv');
-                var ab = (force==='A'||force==='B') ? force : localStorage.getItem('ab_rueckhol_v');
-                if(ab!=='A' && ab!=='B'){ ab = Math.random()<0.5?'A':'B'; localStorage.setItem('ab_rueckhol_v', ab); }
-                window.__rhVariant = ab;
-                var a=document.getElementById('rhVariantA'), b=document.getElementById('rhVariantB');
-                if(ab==='B'){ if(a)a.style.display='none'; if(b)b.style.display='block'; }
-            })();
-        </script>
 
         <!-- Trust Stats -->
         <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; text-align: center;">
@@ -1263,6 +1249,11 @@
         <!-- Plan-Inhalt iPad -->
         <div style="margin-bottom: 30px;">
             <h2 style="font-size: 18px; font-weight: 700; color: var(--text-dark); text-align: center; margin-bottom: 16px;">Was dich in <span id="planSliderDogName">deinem</span> Plan erwartet</h2>
+
+            <!-- Echter Plan-Mockup: zeigt, wie der Plan wirklich aussieht -->
+            <div style="border-radius: 16px; overflow: hidden; margin-bottom: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.10);">
+                <img src="PfotenPlanMockup.jpg" alt="So sieht dein persönlicher Trainingsplan aus" style="width: 100%; height: auto; display: block;" loading="lazy">
+            </div>
 
             <!-- iPad Frame -->
             <div style="background: #1a1a1a; border-radius: 24px; padding: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
@@ -2501,8 +2492,7 @@
                         fbp: getCookie('_fbp') || '',
                         fbc: getCookie('_fbc') || '',
                         fb_event_id: localStorage.getItem('fb_event_id') || '',
-                        ttclid: localStorage.getItem('ttclid') || '',
-                        ab_variant: (window.__rhVariant === 'B' ? 'rueckhol-mockup' : 'rueckhol-control')
+                        ttclid: localStorage.getItem('ttclid') || ''
                     })
                 });
 
