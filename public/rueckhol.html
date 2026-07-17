@@ -1365,7 +1365,7 @@
                         <!-- Per JS -->
                     </div>
                     <!-- Overlay -->
-                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.95) 60%);">
+                    <div id="exerciseBlurOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.95) 60%);">
                         <div style="font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px;" id="exerciseBlurText">+ 3 weitere Schritte</div>
                         <div style="font-size: 12px; color: #888; margin-bottom: 12px;">Alle Schritte im Plan freischalten</div>
                         <button onclick="document.getElementById('pricingSection').scrollIntoView({behavior: 'smooth'})" style="background: linear-gradient(135deg, #C4A576, #8B7355); color: white; border: none; padding: 10px 24px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">
@@ -1379,6 +1379,15 @@
                 Diese Übung ist eine von <strong id="exerciseTotal">20+</strong> aus deinem personalisierten Plan
             </div>
         </div>
+        <script>
+            // A/B Variante B: komplette Übung zeigen (Blur raus, Freischalt-Overlay weg). Die "eine von 20+"-Zeile bleibt.
+            (function(){
+                if(window.__rhVariant !== 'B') return;
+                var bl=document.getElementById('exerciseStepsBlurred');
+                if(bl){ bl.style.filter='none'; bl.style.opacity='1'; bl.style.pointerEvents='auto'; bl.style.userSelect='auto'; }
+                var ov=document.getElementById('exerciseBlurOverlay'); if(ov) ov.style.display='none';
+            })();
+        </script>
 
         <!-- Soft CTA - dezent -->
         <div class="soft-cta">
