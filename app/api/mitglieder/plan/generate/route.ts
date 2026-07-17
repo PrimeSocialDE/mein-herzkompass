@@ -362,6 +362,23 @@ export async function POST(req: NextRequest) {
           emit(ctx, { event: "stage", stage: "sending_mail" });
           try {
             const { sendPlanReadyEmail } = await import("@/lib/member-mail");
+            // Beleg (Kleinbetragsrechnung) für die DE-Plan-Mail — im Mollie-Webhook
+            // bereits erzeugt (vor status='paid'), hier per lead_id nachgeladen.
+            let beleg: any = null;
+            if (planLang !== "pl" && lead?.id) {
+              try {
+                const { data: b } = await admin
+                  .from("belege")
+                  .select(
+                    "belegnummer,beschreibung,brutto_cents,ust_cents,netto_cents,ust_satz,leistungsdatum"
+                  )
+                  .eq("lead_id", lead.id)
+                  .order("created_at", { ascending: false })
+                  .limit(1)
+                  .maybeSingle();
+                beleg = b || null;
+              } catch {}
+            }
             const mailRes = await sendPlanReadyEmail({
               to: recipientOverride || targetEmail,
               dogName,
@@ -372,6 +389,7 @@ export async function POST(req: NextRequest) {
               plan: result.plan,
               customerName: lead.customer_name || null,
               lang: planLang,
+              beleg,
             });
             emit(ctx, {
               event: "stage",
