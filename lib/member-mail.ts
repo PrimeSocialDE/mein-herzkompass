@@ -88,6 +88,11 @@ interface SendArgs {
   attachments?: Array<{ name: string; contentBase64: string }>;
   cc?: string | string[];
   lang?: Lang;
+  /** Transaktionale DE-Mail (Plan/Zusatzmodul/Login/Beleg — alles Bezahlte):
+   *  primär über Google Workspace SMTP verschicken (bessere Zustellung bei
+   *  web.de/GMX), Brevo nur als Fallback. Marketing lässt das Flag weg → Brevo.
+   *  PL wird ignoriert (Google kann nicht als lapaplan.pl senden). */
+  transactional?: boolean;
 }
 
 // Absender sprachabhaengig: PL-Mails kommen von pomoc@lapaplan.pl (in Brevo
@@ -103,13 +108,37 @@ export function mailReplyTo(lang: Lang = "de") {
     : { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" };
 }
 
-export async function sendBrevoMail({ to, subject, html, tags, attachments, cc, lang }: SendArgs) {
+export async function sendBrevoMail({ to, subject, html, tags, attachments, cc, lang, transactional }: SendArgs) {
+  if (!to) {
+    return { ok: false, reason: "no_recipient" };
+  }
+  // Bezahlte/transaktionale DE-Mails primär über Google Workspace SMTP —
+  // Brevo bleibt automatischer Fallback (siehe lib/google-smtp.ts).
+  if (transactional && lang !== "pl") {
+    try {
+      const { googleSmtpConfigured, sendViaGoogleSmtp } = await import("./google-smtp");
+      if (googleSmtpConfigured()) {
+        await sendViaGoogleSmtp({
+          to,
+          subject,
+          html,
+          attachments,
+          cc,
+          fromName: mailSender(lang).name,
+          replyTo: mailReplyTo(lang).email,
+        });
+        return { ok: true, via: "google" as const };
+      }
+    } catch (e: any) {
+      console.error(
+        "[member-mail] Google-SMTP fehlgeschlagen → Fallback Brevo:",
+        e?.message
+      );
+    }
+  }
   if (!BREVO_API_KEY) {
     console.warn("[member-mail] BREVO_API_KEY fehlt — skipping send to", to);
     return { ok: false, reason: "no_api_key" };
-  }
-  if (!to) {
-    return { ok: false, reason: "no_recipient" };
   }
   try {
     const payload: Record<string, unknown> = {
@@ -631,6 +660,7 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
     tags: ["mitglieder", "plan-ready"],
     attachments,
     cc: "kontakt@primesocial.de",
+    transactional: true,
   });
 }
 

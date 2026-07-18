@@ -452,6 +452,39 @@ export async function POST(req: NextRequest) {
   const html = buildHtml(payload, ctaUrl, code, lang);
   const text = buildPlainText(payload, ctaUrl, code, lang);
 
+  // DE-Login-Mails primär über Google Workspace SMTP — deutlich bessere
+  // Zustellung bei web.de/GMX/t-online (genau die Adressen, die Codes/Links
+  // bisher nicht bekamen). PL bleibt auf Brevo (lapaplan.pl). Brevo = Fallback.
+  if (lang !== "pl") {
+    try {
+      const { googleSmtpConfigured, sendViaGoogleSmtp } = await import(
+        "@/lib/google-smtp"
+      );
+      if (googleSmtpConfigured()) {
+        await sendViaGoogleSmtp({
+          to: payload.user.email,
+          subject,
+          html,
+          text,
+          extraHeaders: {
+            "X-Pfoten-Plan-Auth-Type": payload.email_data.email_action_type,
+            "List-Unsubscribe": `<mailto:unsubscribe@pfoten-plan.de?subject=Unsubscribe>`,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+          },
+        });
+        console.log(
+          `[auth-hook] ${payload.email_data.email_action_type} via Google an ${payload.user.email}`
+        );
+        return NextResponse.json({});
+      }
+    } catch (e: any) {
+      console.error(
+        "[auth-hook] Google-SMTP fehlgeschlagen → Fallback Brevo:",
+        e?.message
+      );
+    }
+  }
+
   try {
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",

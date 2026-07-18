@@ -314,6 +314,36 @@ ${SCHEMA}`;
     const pdfBase64 = Buffer.from(pdfBytes).toString("base64");
 
     const fileName = `Analyse-${dogName.replace(/\s+/g, "-")}.pdf`;
+
+    // Bezahlte Auslieferung (Premium-Analyse): primär über Google Workspace
+    // SMTP (bessere Zustellung bei web.de/GMX), Brevo als Fallback.
+    try {
+      const { googleSmtpConfigured, sendViaGoogleSmtp } = await import(
+        "@/lib/google-smtp"
+      );
+      if (googleSmtpConfigured()) {
+        await sendViaGoogleSmtp({
+          to: email,
+          subject: `Deine persönliche Analyse für ${dogName}`,
+          html: htmlBody(dogName),
+          cc: "kontakt@primesocial.de",
+          attachments: [{ name: fileName, contentBase64: pdfBase64 }],
+        });
+        console.log(`[premium-analyse] PDF via Google an ${email} (${dogName})`);
+        return NextResponse.json({
+          ok: true,
+          pdf_bytes: pdfBytes.length,
+          with_media: hasMedia,
+          via: "google",
+        });
+      }
+    } catch (e: any) {
+      console.error(
+        "[premium-analyse] Google-SMTP fehlgeschlagen → Fallback Brevo:",
+        e?.message
+      );
+    }
+
     const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },

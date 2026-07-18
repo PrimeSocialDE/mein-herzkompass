@@ -424,36 +424,69 @@ export async function POST(request: Request) {
     const html = isPL ? buildHtmlPL(cfg, name) : buildHtml(cfg, name);
     const filename = `Pfoten-Plan-${cfg.label.replace(/[^a-zA-Z0-9-]/g, "-")}-${name.replace(/[^a-zA-Z0-9-]/g, "")}.pdf`;
 
-    const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
-      method: "POST",
-      headers: {
-        "api-key": BREVO_API_KEY,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        sender: isPL
-          ? { name: "ŁapaPlan", email: "support@pfoten-plan.de" }
-          : { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
-        replyTo: isPL
-          ? { email: "support@pfoten-plan.de", name: "ŁapaPlan" }
-          : { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" },
-        to: [{ email }],
-        cc: [{ email: "kontakt@primesocial.de" }],
-        subject,
-        htmlContent: html,
-        attachment: [{ name: filename, content: pdfBase64 }],
-        tags: [`zusatzmodul-${trackKey}`, "auto-trigger"],
-      }),
-    });
-
-    if (!brevoRes.ok) {
-      const txt = await brevoRes.text();
-      return NextResponse.json(
-        { error: `Brevo ${brevoRes.status}: ${txt.slice(0, 200)}` },
-        { status: 500 }
-      );
+    // Bezahlte Auslieferung: DE primär über Google Workspace SMTP (bessere
+    // Zustellung bei web.de/GMX), Brevo als automatischer Fallback. PL bleibt
+    // auf Brevo.
+    let sentVia: "google" | "brevo" | null = null;
+    let brevoMessageId: string | null = null;
+    if (!isPL) {
+      try {
+        const { googleSmtpConfigured, sendViaGoogleSmtp } = await import(
+          "@/lib/google-smtp"
+        );
+        if (googleSmtpConfigured()) {
+          await sendViaGoogleSmtp({
+            to: email,
+            subject,
+            html,
+            cc: "kontakt@primesocial.de",
+            attachments: [{ name: filename, contentBase64: pdfBase64 }],
+          });
+          sentVia = "google";
+        }
+      } catch (e: any) {
+        console.error(
+          "[zusatzmodul/send] Google-SMTP fehlgeschlagen → Fallback Brevo:",
+          e?.message
+        );
+      }
     }
-    const data = await brevoRes.json();
+
+    if (!sentVia) {
+      const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          "api-key": BREVO_API_KEY,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sender: isPL
+            ? { name: "ŁapaPlan", email: "support@pfoten-plan.de" }
+            : { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
+          replyTo: isPL
+            ? { email: "support@pfoten-plan.de", name: "ŁapaPlan" }
+            : { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" },
+          to: [{ email }],
+          cc: [{ email: "kontakt@primesocial.de" }],
+          subject,
+          htmlContent: html,
+          attachment: [{ name: filename, content: pdfBase64 }],
+          tags: [`zusatzmodul-${trackKey}`, "auto-trigger"],
+        }),
+      });
+
+      if (!brevoRes.ok) {
+        const txt = await brevoRes.text();
+        return NextResponse.json(
+          { error: `Brevo ${brevoRes.status}: ${txt.slice(0, 200)}` },
+          { status: 500 }
+        );
+      }
+      const data = await brevoRes.json();
+      brevoMessageId = data.messageId || null;
+      sentVia = "brevo";
+    }
+
     // Idempotenz-Marker setzen (best-effort, blockiert die Response nicht)
     try {
       await markAsSent(email, trackKey);
@@ -464,7 +497,8 @@ export async function POST(request: Request) {
       ok: true,
       moduleKey: trackKey,
       email,
-      brevoMessageId: data.messageId || null,
+      via: sentVia,
+      brevoMessageId,
     });
   } catch (e: any) {
     console.error("[zusatzmodul/send] error:", e);

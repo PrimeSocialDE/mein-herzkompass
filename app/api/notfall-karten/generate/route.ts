@@ -22,18 +22,9 @@ export async function POST(request: Request) {
     const pdfBase64 = pdfBuffer.toString("base64");
 
     // Per Brevo senden
-    const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
-      method: "POST",
-      headers: {
-        "api-key": BREVO_API_KEY,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
-        to: [{ email }],
-        cc: [{ email: "kontakt@primesocial.de" }],
-        subject: `Hier sind deine 10 Notfall-Karten für ${name}`,
-        htmlContent: `
+    const nkSubject = `Hier sind deine 10 Notfall-Karten für ${name}`;
+    const nkFile = `Notfall-Karten-${name.replace(/\s+/g, "-")}.pdf`;
+    const nkHtml = `
           <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:500px;margin:0 auto;padding:20px;color:#1a1a1a;">
             <div style="text-align:center;margin-bottom:24px;">
               <h1 style="font-size:24px;margin:0 0 8px;">Hier sind deine Notfall-Karten für ${name}!</h1>
@@ -56,13 +47,48 @@ export async function POST(request: Request) {
               Liebe Grüße, dein Pfoten-Plan Team
             </p>
           </div>
-        `,
-        attachment: [
-          {
-            name: `Notfall-Karten-${name.replace(/\s+/g, "-")}.pdf`,
-            content: pdfBase64,
-          },
-        ],
+        `;
+
+    // Bezahlte Auslieferung: primär über Google Workspace SMTP, Brevo Fallback.
+    try {
+      const { googleSmtpConfigured, sendViaGoogleSmtp } = await import(
+        "@/lib/google-smtp"
+      );
+      if (googleSmtpConfigured()) {
+        await sendViaGoogleSmtp({
+          to: email,
+          subject: nkSubject,
+          html: nkHtml,
+          cc: "kontakt@primesocial.de",
+          attachments: [{ name: nkFile, contentBase64: pdfBase64 }],
+        });
+        console.log(`Notfall-Karten via Google an ${email} gesendet`);
+        return NextResponse.json({
+          success: true,
+          message: `Notfall-Karten an ${email} gesendet`,
+          via: "google",
+        });
+      }
+    } catch (e: any) {
+      console.error(
+        "[notfall-karten] Google-SMTP fehlgeschlagen → Fallback Brevo:",
+        e?.message
+      );
+    }
+
+    const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        "api-key": BREVO_API_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
+        to: [{ email }],
+        cc: [{ email: "kontakt@primesocial.de" }],
+        subject: nkSubject,
+        htmlContent: nkHtml,
+        attachment: [{ name: nkFile, content: pdfBase64 }],
       }),
     });
 
