@@ -40,107 +40,65 @@ export interface ComposeArgs {
 }
 
 // ── Personalisierungs-Helper ───────────────────────────────────────
-// Pronomen-Mapping: die Texte sind standardmäßig mit weiblichen Pronomen
-// (sie/ihr/ihre) geschrieben. Bei männlichem Hund swappen wir auf er/ihm/seine.
-// Best-effort: deckt die häufigsten Fälle ab, einzelne Deklinations-Ecken
-// können leicht holprig bleiben.
+// Pronomen-Mapping: die Texte sind standardmaessig mit weiblichen Pronomen
+// (sie/ihr/ihre) geschrieben. Bei maennlichem Hund swappen wir auf er/ihm/seine.
+// Best-effort: deckt die haeufigsten Faelle ab, einzelne Deklinations-Ecken
+// koennen leicht holprig bleiben.
 function isMale(gender?: string): boolean {
   if (!gender) return false;
   const g = gender.toLowerCase();
-  return (
-    g === "m" ||
-    g === "male" ||
-    g === "rüde" ||
-    g === "ruede" ||
-    g === "männlich" ||
-    g === "maennlich"
-  );
+  return g === "m" || g === "male" || g === "ruede" || g === "rüde" || g === "männlich" || g === "maennlich";
 }
 
 function personalize(text: string, dog: DogProfile): string {
   let out = text.replace(/\{dogName\}/g, dog.dogName || "deinem Hund");
 
   if (isMale(dog.dogGender)) {
-    // Pronomen-Swap "sie"→"er" / "ihr"→"ihm" / "ihre/ihren"→"seine/seinen".
-    // Wir matchen nach Satz-Kontext (vorangehendes Wort), damit wir nur den Hund
-    // erwischen und nicht z.B. eine Person ("die Familie hat sie eingeladen").
-    const sieToEr: Array<[RegExp, string]> = [
-      // Konjunktionen + Verb-Trigger (Hund als Subjekt)
-      [/\b(wenn|Wenn) sie\b/g, "$1 er"],
-      [/\b(sobald|Sobald) sie\b/g, "$1 er"],
-      [/\b(bis|Bis) sie\b/g, "$1 er"],
-      [/\b(dass|Dass) sie\b/g, "$1 er"],
-      [/\b(damit|Damit) sie\b/g, "$1 er"],
-      [/\b(weil|Weil) sie\b/g, "$1 er"],
-      [/\b(ob|Ob) sie\b/g, "$1 er"],
-      [/\b(als|Als) sie\b/g, "$1 er"],
-      [/\b(wo|Wo) sie\b/g, "$1 er"],
-      [/\b(falls|Falls) sie\b/g, "$1 er"],
-      [/\b(während|Während) sie\b/g, "$1 er"],
-      [/\b(bevor|Bevor) sie\b/g, "$1 er"],
-      [/\b(nachdem|Nachdem) sie\b/g, "$1 er"],
-      // Häufige Verb-Phrasen mit Hund als Subjekt (Subjekt-Verb) — sehr breit
-      [/\bsie (ist|war|hat|hatte|wird|wurde|kann|konnte|soll|sollte|muss|musste|darf|durfte|mag|mochte|will|wollte|liegt|sitzt|steht|läuft|kommt|geht|bleibt|schläft|frisst|trinkt|sucht|reagiert|braucht|zeigt|lernt|versteht|kennt|merkt|fühlt|sieht|hört|schaut|blickt|wirkt|scheint|sich|springt|hüpft|rennt|spielt|schluckt|kotet|pinkelt|hebt|schnüffelt|wittert|akzeptiert|verweigert|verteidigt|trägt|probiert|bellt|knurrt|jault|hechelt|wedelt|atmet|folgt|findet|fasst|erkennt|versucht|schafft|macht|nimmt|gibt|reicht|legt|setzt|stellt|wendet|dreht|wartet|achtet|ignoriert|verfolgt|fixiert|orientiert|verliert|gewinnt|holt|bringt|kaut|tappt|winselt|reagiert)\b/g, "er $1"],
-      [/\bSie (ist|war|hat|hatte|wird|wurde|kann|konnte|soll|sollte|muss|musste|darf|durfte|mag|mochte|will|wollte|liegt|sitzt|steht|läuft|kommt|geht|bleibt|schläft|frisst|trinkt|sucht|reagiert|braucht|zeigt|lernt|versteht|kennt|merkt|fühlt|sieht|hört|schaut|blickt|wirkt|scheint|sich|springt|hüpft|rennt|spielt|schluckt|kotet|pinkelt|hebt|schnüffelt|wittert|akzeptiert|verweigert|verteidigt|trägt|probiert|bellt|knurrt|jault|hechelt|wedelt|atmet|folgt|findet|fasst|erkennt|versucht|schafft|macht|nimmt|gibt|reicht|legt|setzt|stellt|wendet|dreht|wartet|achtet|ignoriert|verfolgt|fixiert|orientiert|verliert|gewinnt|holt|bringt|kaut|tappt|winselt|reagiert)\b/g, "Er $1"],
-      // Verb-Subjekt-Inversion (nach Frage-/Adverbien): "wann schläft sie",
-      // "wo läuft sie", "oft braucht sie", "schon kommt sie", "verliert sie Interesse"
-      [/\b(schläft|läuft|kommt|geht|bleibt|sitzt|steht|liegt|frisst|trinkt|sucht|reagiert|braucht|zeigt|lernt|versteht|kennt|merkt|fühlt|sieht|hört|schaut|blickt|wirkt|scheint|kaut|wedelt|atmet|bellt|knurrt|jault|winselt|hechelt|tappt|hüpft|springt|rennt|spielt|schluckt|kotet|pinkelt|hebt|schnüffelt|wittert|akzeptiert|verweigert|verteidigt|trägt|bringt|holt|nimmt|gibt|reicht|legt|setzt|stellt|wendet|dreht|wartet|achtet|ignoriert|verfolgt|fixiert|orientiert|verliert|gewinnt|findet|fasst|erkennt|versucht|schafft|macht|hat|ist|war|wird|wurde|kann|konnte|soll|muss|darf|mag) sie\b/g, "$1 er"],
-      [/\b(braucht|zeigt|lernt|kennt|reagiert|sucht|frisst|läuft|kommt|geht|verliert|findet|hat|ist|kann|will|soll|muss|darf|mag) sie (das|den|die|ein|einen|eine|genau|wieder|nicht|schon|noch|jetzt|heute|kurz|Interesse|Lust|Energie|Mühe|Spaß|Zeit|Geduld|Hunger|Durst)\b/g, "$1 er $2"],
-      // Imperative + Hund-Akkusativ (inkl. konjugierte Formen "lässt sie")
-      [/\b(lass|Lass|lasse|Lasse|lässt|Lässt|lassen|Lassen) sie\b/g, "$1 ihn"],
-      [/\b(führe|Führe|fuehre|Fuehre|führst|Führst|führt|Führt|führen|Führen) sie\b/g, "$1 ihn"],
-      [/\b(bring|Bring|bringe|Bringe|bringst|Bringst|bringt|Bringt|bringen|Bringen) sie\b/g, "$1 ihn"],
-      [/\b(locke|Locke|lockst|Lockst|lockt|Lockt|locken|Locken) sie\b/g, "$1 ihn"],
-      [/\b(belohne|Belohne|belohnst|belohnt|belohnen) sie\b/g, "$1 ihn"],
-      [/\b(lobe|Lobe|lobst|Lobst|lobt|Lobt|loben|Loben) sie\b/g, "$1 ihn"],
-      [/\b(rufe|Rufe|rufst|Rufst|ruft|Ruft|rufen|Rufen) sie\b/g, "$1 ihn"],
-      [/\b(hole|Hole|hol|Hol|holst|Holst|holt|Holt|holen|Holen) sie\b/g, "$1 ihn"],
-      [/\b(nimm|Nimm|nehme|Nehme|nimmst|Nimmst|nimmt|Nimmt|nehmen|Nehmen) sie\b/g, "$1 ihn"],
-      [/\b(setze|Setze|setz|Setz|setzt|Setzt|setzen|Setzen) sie\b/g, "$1 ihn"],
-      [/\b(streichle|Streichle|streichele|Streichele|streichelst|streichelt|streicheln) sie\b/g, "$1 ihn"],
-      [/\b(beobachte|Beobachte|beobachtest|beobachtet|beobachten) sie\b/g, "$1 ihn"],
-      [/\b(siehst|sieht|sehen|seht) sie\b/g, "$1 ihn"],
-      [/\b(hörst|hört|hören) sie\b/g, "$1 ihn"],
-      [/\b(forderst|fordert|fordern) sie\b/g, "$1 ihn"],
-      [/\b(lädst|lade|lädt|laden|Lade) sie\b/g, "$1 ihn"],
-      [/\b(hältst|hält|halten|haltest) sie\b/g, "$1 ihn"],
-      [/\b(weckst|weckt|wecken) sie\b/g, "$1 ihn"],
-      [/\b(ignoriere|Ignoriere|ignorierst|ignoriert|ignorieren) sie\b/g, "$1 ihn"],
-      [/\b(belohne|belohnst|belohnt|belohnen) sie\b/g, "$1 ihn"],
-      [/\b(siehst|sieht|sehen|seht) sie\b/g, "$1 ihn"],
-      [/\b(trainier|Trainier|trainiere|Trainiere|trainierst|trainiert|trainieren) sie\b/g, "$1 ihn"],
-      [/\b(kennst|kennt|kennen) sie\b/g, "$1 ihn"],
-      [/\b(verstehst|versteht|verstehen) sie\b/g, "$1 ihn"],
-      [/\b(brauchst|brauchen) sie\b/g, "$1 ihn"],
-      [/\b(zeigst|zeigt|zeigen) sie\b/g, "$1 ihm"],
-      [/\b(\w+st) sie (zuverlässig|sicher|stabil|locker|ruhig|entspannt|gezielt|aktiv)\b/g, "$1 er $2"],
+    out = out
+      // Verb-nahe Pronomen (Nominativ/Akkusativ-Mischung)
+      .replace(/\bwenn sie\b/g, "wenn er")
+      .replace(/\bWenn sie\b/g, "Wenn er")
+      .replace(/\bSobald sie\b/g, "Sobald er")
+      .replace(/\bsobald sie\b/g, "sobald er")
+      .replace(/\bbis sie\b/g, "bis er")
+      .replace(/\bdass sie\b/g, "dass er")
+      .replace(/\bdamit sie\b/g, "damit er")
+      .replace(/\bweil sie\b/g, "weil er")
+      .replace(/\bob sie\b/g, "ob er")
+      .replace(/\bals sie\b/g, "als er")
+      .replace(/\bwo sie\b/g, "wo er")
+      // Imperative + Hund-Akkusativ
+      .replace(/\blass sie\b/g, "lass ihn")
+      .replace(/\bLass sie\b/g, "Lass ihn")
+      .replace(/\blasse sie\b/g, "lasse ihn")
+      .replace(/\bfuehre sie\b/g, "führe ihn")
+      .replace(/\bführe sie\b/g, "führe ihn")
+      .replace(/\bFuehre sie\b/g, "Führe ihn")
+      .replace(/\bFühre sie\b/g, "Führe ihn")
+      .replace(/\bbringe sie\b/g, "bringe ihn")
+      .replace(/\bbring sie\b/g, "bring ihn")
+      .replace(/\blocke sie\b/g, "locke ihn")
+      .replace(/\bLocke sie\b/g, "Locke ihn")
+      .replace(/\bBelohne sie\b/g, "Belohne ihn")
+      .replace(/\bbelohne sie\b/g, "belohne ihn")
+      .replace(/\bLobe sie\b/g, "Lobe ihn")
+      .replace(/\blobe sie\b/g, "lobe ihn")
+      .replace(/\bRufe sie\b/g, "Rufe ihn")
+      .replace(/\brufe sie\b/g, "rufe ihn")
       // Dativ
-      [/\b(mit|zu|von|bei|nach|vor|aus|seit|gegenüber|hinter|neben|unter|über|an|auf) ihr\b/g, "$1 ihm"],
-      // Possessiv: "ihr/ihre/ihren/ihrer/ihrem" → "sein/seine/seinen/seiner/seinem"
-      [/\bihren\b/g, "seinen"],
-      [/\bihrem\b/g, "seinem"],
-      [/\bihrer\b/g, "seiner"],
-      [/\bihres\b/g, "seines"],
-      [/\bihre\b/g, "seine"],
-      [/\bIhren\b/g, "Seinen"],
-      [/\bIhrem\b/g, "Seinem"],
-      [/\bIhrer\b/g, "Seiner"],
-      [/\bIhres\b/g, "Seines"],
-      [/\bIhre\b/g, "Seine"],
-      // "ihr" als Possessiv vor Nomen: alle Faelle catchen AUSSER 2.-Person-
-      // Plural ("ihr seid", "ihr habt", "ihr werdet"). Negativ-Lookahead.
-      [/\bihr (?!(seid|seiet|sei|wart|werdet|werden|werdend|habt|hattet|haben|hattest|gewesen|wurdet|euch|untereinander)\b)([A-ZÄÖÜ][a-zäöüßA-ZÄÖÜ-]*)/g, "sein $2"],
-      [/\bIhr (?!(seid|seiet|sei|wart|werdet|werden|werdend|habt|hattet|haben|hattest|gewesen|wurdet|euch|untereinander)\b)([A-ZÄÖÜ][a-zäöüßA-ZÄÖÜ-]*)/g, "Sein $2"],
-      // "ihr" mit kleinem Anfangsbuchstaben — Spezialfall ohne Substantiv-Großschreibung
-      // (z.B. "ihr eigenes", "ihr eigenes Komfort-Niveau")
-      [/\bihr (eigenes|eigenen|eigener|eigene)\b/g, "sein $1"],
-      // Reflexiv-Genitiv: "ihres", "ihrer Sache" etc. werden oben schon abgedeckt
-      // Demonstrativ: "ihretwegen" → "seinetwegen"
-      [/\bihretwegen\b/g, "seinetwegen"],
-    ];
-    for (const [re, repl] of sieToEr) {
-      out = out.replace(re, repl);
-    }
+      .replace(/\bmit ihr\b/g, "mit ihm")
+      .replace(/\bzu ihr\b/g, "zu ihm")
+      .replace(/\bvon ihr\b/g, "von ihm")
+      .replace(/\bbei ihr\b/g, "bei ihm")
+      .replace(/\bnach ihr\b/g, "nach ihm")
+      .replace(/\bvor ihr\b/g, "vor ihm")
+      // Possessiv (sehr grob — sicherer Best-effort)
+      .replace(/\bihrer Pfote\b/g, "seiner Pfote")
+      .replace(/\bihre Pfote\b/g, "seine Pfote")
+      .replace(/\bihr Bein\b/g, "sein Bein")
+      .replace(/\bihren Kopf\b/g, "seinen Kopf")
+      .replace(/\bihre Schulter\b/g, "seine Schulter")
+      .replace(/\bihrer Schulter\b/g, "seiner Schulter");
   }
 
   return out;
@@ -175,7 +133,7 @@ interface WeekTemplate {
 }
 
 // ── PULLING-spezifische Wochen-Templates ────────────────────────────
-// Aufgebaut wie ein Hundetrainer einen Leinenführigkeits-Plan strukturiert:
+// Aufgebaut wie ein Hundetrainer einen Leinenfuehrigkeits-Plan strukturiert:
 // erst Werkzeuge (Marker, Belohnungskommunikation), dann KERNTECHNIK
 // (Sei-ein-Baum), dann Anwendung im Alltag, dann Generalisierung.
 const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
@@ -252,7 +210,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Die Tür wird nur bei lockerer Leine geöffnet.",
         "Die Decke wird zum klar erkennbaren Ruhe-Ort.",
       ],
-      tagesplan: "Tür-Routine bei jedem Spaziergang. Zusätzlich 2x täglich 5 Minuten Decken-Training, idealerweise nach dem Hauptspaziergang oder in einer ruhigen Tageszeit. Die Decke bleibt fest an einem Ort liegen — als zuverlässiger Rückzugsort auch zwischen den Trainings-Einheiten. Ruhige Stimme bei Decken-Belohnung, KEIN aufgeregtes Loben.",
+      tagesplan: "Tür-Routine bei jedem Spaziergang. Zusätzlich 2x täglich 5 Minuten Decken-Training, idealerweise nach dem Hauptspaziergang oder in einer ruhigen Tageszeit. Die Decke bleibt fest an einem Ort liegen, damit {dogName} sie auch zwischendurch aufsuchen kann. Ruhige Stimme bei Decken-Belohnung, KEIN aufgeregtes Loben.",
       no_gos: [
         "Leine anlegen wenn {dogName} springt, das verstärkt Vorfreude-Hyperaktivität.",
         "Aus Zeitdruck einfach loslaufen, das wirft die ganze Woche zurück.",
@@ -327,7 +285,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Die Bein-Position bleibt während der Wechsel stabil.",
         "{dogName} schaut häufiger zu dir hoch, weil dein Tempo unberechenbar geworden ist.",
       ],
-      exerciseIds: ["p-tempo-wechsel", "p-schau"],
+      exerciseIds: ["p-tempo-wechsel", "p-bei-fuss-belohnen"],
     },
     {
       title: "Fundament-Check & Übergang vorbereiten",
@@ -340,7 +298,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
       tagesplan: "Tag 1+2: Sei-ein-Baum + Bei-Fuß kombiniert in einer 10-Min-Session. Tag 3+4: Tempo-Wechsel + Tür-Routine. Tag 5: Marker-Refresh + lockere Leine drinnen. Tag 6+7: Decken-Sessions verlängert. Mache am Wochenende eine ehrliche Bilanz.",
       no_gos: [
         "Schon mit echten Außen-Reizen arbeiten, Phase 2 ist NÄCHSTE Woche.",
-        "Schwachstellen ignorieren — draußen zeigen sie sich sofort.",
+        "Schwachstellen ignorieren, sie zeigen sich draußen sofort.",
         "Aus Ungeduld in die nächste Phase springen. Lieber 1 Woche dranhängen wenn nötig.",
       ],
       fortschritt: [
@@ -371,7 +329,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} sucht von selbst Blickkontakt nach 2-3 Stopps.",
         "Du fühlst dich beim Stoppen ruhiger und geübter als in den ersten Versuchen.",
       ],
-      exerciseIds: ["p-baum-draussen", "p-bei-fuss-belohnen"],
+      exerciseIds: ["p-baum-draußen", "p-bei-fuss-belohnen"],
     },
     {
       title: "Penalty Yards: Wenn Stoppen nicht reicht",
@@ -413,7 +371,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du musst nicht mehr aktiv anlocken, die Position ist eine Gewohnheit.",
         "Auch ohne Leckerli-Sichtkontakt orientiert sich {dogName} an dir.",
       ],
-      exerciseIds: ["p-bei-fuss-belohnen", "p-baum-draussen"],
+      exerciseIds: ["p-bei-fuss-belohnen", "p-baum-draußen"],
     },
     {
       title: "Tempo-Wechsel & Richtungswechsel draußen",
@@ -434,7 +392,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Spaziergänge fühlen sich kommunikativer und weniger zäh an.",
         "Du nutzt Wechsel intuitiv als Aufmerksamkeits-Reset.",
       ],
-      exerciseIds: ["p-tempo-wechsel", "p-richtungswechsel-aussen"],
+      exerciseIds: ["p-tempo-wechsel", "p-richtungswechsel-außen"],
     },
     {
       title: "Begegnungen aus Distanz arbeiten",
@@ -455,7 +413,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Stress-Anzeichen werden seltener und kürzer.",
         "Begegnungen werden ohne Bellen oder starkes Ziehen gemeistert.",
       ],
-      exerciseIds: ["p-gegenkonditionierung", "p-baum-draussen"],
+      exerciseIds: ["p-gegenkonditionierung", "p-baum-draußen"],
     },
     {
       title: "Bogen für enge Begegnungen",
@@ -497,7 +455,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Pausen werden aktiv zur Erholung genutzt, nicht zur Aufregung.",
         "Die Belohnungs-Frequenz kann in der mittleren Phase reduziert werden.",
       ],
-      exerciseIds: ["p-baum-draussen", "p-tempo-wechsel"],
+      exerciseIds: ["p-baum-draußen", "p-tempo-wechsel"],
     },
     {
       title: "Festigung Steigerung",
@@ -518,7 +476,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du musst weniger eingreifen, {dogName} reguliert sich häufiger selbst.",
         "Spaziergänge fühlen sich erkennbar entspannter an als vor 8 Wochen.",
       ],
-      exerciseIds: ["p-schau", "p-penalty-yards"],
+      exerciseIds: ["p-baum-draußen", "p-penalty-yards"],
     },
   ],
   generalisierung: [
@@ -541,7 +499,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} sucht von selbst die Bein-Position an unsicheren Stellen.",
         "Du nutzt Schnüffel-Pausen intuitiv als Belohnungs-Instrument.",
       ],
-      exerciseIds: ["p-lockere-leine-aussen", "p-penalty-yards"],
+      exerciseIds: ["p-lockere-leine-außen", "p-penalty-yards"],
     },
     {
       title: "Verschiedene Strecken: Generalisierung",
@@ -562,7 +520,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du fühlst dich auch auf unbekannten Wegen handlungsfähig.",
         "Zieh-Pattern reduziert sich strecken-übergreifend.",
       ],
-      exerciseIds: ["p-schau", "p-richtungswechsel-aussen"],
+      exerciseIds: ["p-lockere-leine-außen", "p-richtungswechsel-außen"],
     },
     {
       title: "Vorbeigehen an Menschen ohne Bogen",
@@ -583,7 +541,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du musst während der Passage nicht mehr ständig Strategie wechseln.",
         "Begegnungen werden zur normalen Spaziergangs-Routine.",
       ],
-      exerciseIds: ["p-vorbeigang", "p-lockere-leine-aussen"],
+      exerciseIds: ["p-vorbeigang", "p-lockere-leine-außen"],
     },
     {
       title: "Belohnungs-Reduktion bewusst",
@@ -646,7 +604,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Geräusche und Bewegung um euch herum stören kaum.",
         "Du kannst entspannt einen Kaffee trinken, ohne ständig zu kontrollieren.",
       ],
-      exerciseIds: ["p-schau", "p-decke-drinnen"],
+      exerciseIds: ["p-cafe", "p-decke-drinnen"],
     },
     {
       title: "Stadtbummel als finale Königsdisziplin",
@@ -667,7 +625,7 @@ const PULLING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du fühlst dich vorbereitet auch auf unvorhersehbare Reize.",
         "Stadt-Bummel werden zur möglichen Routine, nicht zur Sondernutzung.",
       ],
-      exerciseIds: ["p-stadt-spaziergang", "p-lockere-leine-aussen"],
+      exerciseIds: ["p-stadt-spaziergang", "p-lockere-leine-außen"],
     },
     {
       title: "Übergang in den Wartungsmodus",
@@ -713,10 +671,10 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Mehrere aufregende Reize hintereinander stapeln (Spielen + Spaziergang + Besuch am selben Tag).",
       ],
       fortschritt: [
-        "Du hast ein 7-Tage-Protokoll mit allen Schlaf- und Aktiv-Phasen vorliegen.",
-        "{dogName} schläft mindestens 14 Stunden pro Tag, davon 4-6 Stunden am Stück tagsüber.",
-        "Du erkennst übermüdete und unterstimulierte Phasen an mindestens 2 Anzeichen (z.B. Hecheln ohne Hitze, Zappeln, Maulen).",
-        "{dogName} hält WARTE bei Futter oder Tür mindestens 5 Sekunden in 8 von 10 Versuchen.",
+        "Du hast einen klaren Überblick über {dogName}s Tagesrhythmus.",
+        "Bewusste Ruhe-Phasen sind im Tagesablauf etabliert.",
+        "Du erkennst übermüdete und unterstimulierte Phasen.",
+        "{dogName} bringt die WARTE-Geduld bei Futter oder Tür stabil über 5 Sekunden.",
       ],
       exerciseIds: ["e-entspannungs-marker", "e-warte-impuls"],
     },
@@ -735,9 +693,9 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Schnüffelmatte oder Kong nutzen wenn {dogName} schon hyperaktiv ist, lieber in moderaten Phasen.",
       ],
       fortschritt: [
-        "{dogName} arbeitet 20-30 Minuten konzentriert am Suchspiel oder Kong, statt nach 30 Sekunden zu schlingen.",
-        "Innerhalb von 10 Minuten nach Suchspiel/Kong legt sich {dogName} freiwillig hin (statt aufgeregt zu fordern).",
-        "Du fütterst seit 5 Tagen keine Mahlzeit mehr direkt aus der Schüssel.",
+        "{dogName} fragt selbst nach der Mahlzeit-Routine.",
+        "Nach Suchspiel oder Kong ist {dogName} ruhiger als vorher.",
+        "Du hast die Schüssel-Fütterung aus dem Alltag eliminiert.",
       ],
       exerciseIds: ["e-such-drinnen", "e-kong-mahlzeit"],
     },
@@ -756,9 +714,9 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "WARTE wenn {dogName} schon im Hyper-Modus ist — erst herunterkommen lassen.",
       ],
       fortschritt: [
-        "{dogName} hält 10 Sekunden WARTE vor dem Futternapf in 8 von 10 Versuchen ohne aufzustehen.",
-        "Frust-Verhalten (Winseln, Springen, Maulen) tritt am Tag 7 erkennbar weniger oft auf als an Tag 1 — schätze: höchstens halb so oft.",
-        "Du setzt WARTE jeden Tag in mindestens 3 verschiedenen Situationen ein.",
+        "{dogName} bleibt 10 Sek ruhig vor dem Futternapf sitzen.",
+        "Frust-Verhalten (Winseln, Springen) reduziert sich von Tag 1 zu Tag 7 deutlich.",
+        "Du nutzt WARTE intuitiv in Alltags-Situationen.",
       ],
       exerciseIds: ["e-warte-impuls", "e-entspannungs-marker"],
     },
@@ -777,11 +735,11 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Hochwertige Leckerlis nutzen — bei Ruhe-Konditionierung passen ruhige weiche Leckerlis besser.",
       ],
       fortschritt: [
-        "Du hast WUNDERBAR diese Woche mindestens 35-mal mit echten Ruhe-Momenten verknüpft (5 pro Tag).",
-        "Bei WUNDERBAR in einem ruhigen Moment wendet {dogName} innerhalb von 2 Sekunden den Kopf zu dir, in 7 von 10 Versuchen.",
-        "{dogName} bleibt bei WUNDERBAR liegen, statt aufzustehen — der Marker triggert keine Erwartungs-Aufregung.",
+        "Bei WUNDERBAR wendet {dogName} den Kopf, ist aufmerksam ohne hochzufahren.",
+        "Die Verknüpfung Ruhe + Wort beginnt zu greifen.",
+        "Du nutzt den Marker intuitiv in passenden Momenten.",
       ],
-      exerciseIds: ["e-entspannungs-marker", "e-shape-trick"],
+      exerciseIds: ["e-entspannungs-marker", "e-warte-impuls"],
     },
     // 6-Monats: Vertiefungen
     {
@@ -800,7 +758,7 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       fortschritt: [
         "{dogName} versteht das Klicker-Prinzip: kleine Bewegungen führen zur Belohnung.",
-        "{dogName} probiert aktiv Verhaltensweisen aus.",
+        "Sie probiert aktiv Verhaltensweisen aus.",
         "Nach Shape-Session ist {dogName} sichtbar müder als nach körperlicher Aktivität.",
       ],
       exerciseIds: ["e-shape-trick", "e-warte-impuls"],
@@ -845,7 +803,7 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Nach Runterkommen findet {dogName} schnell in Ruhe.",
         "Spaziergänge fühlen sich erfüllend an, nicht wie eine Pflicht.",
       ],
-      exerciseIds: ["e-warte-impuls", "e-shape-trick"],
+      exerciseIds: ["e-such-drinnen", "e-shape-trick"],
     },
     {
       title: "Fundament-Check",
@@ -885,10 +843,10 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Spur zu lang machen am Anfang — überfordert.",
       ],
       fortschritt: [
-        "{dogName} folgt einer 20m Futter-Spur selbstständig, ohne dass du sie zeigen musst.",
-        "Innerhalb von 10 Minuten nach einer Spuren-Such-Einheit (15-20 Min) legt sich {dogName} freiwillig hin.",
-        "Beim Stopp-Spiel mitten in der Aufregung kommt {dogName} innerhalb von 3 Sekunden ohne Wiederholung des Signals zur Ruhe.",
-        "Du planst pro Spaziergang mindestens 1 Such-Einheit fest ein.",
+        "{dogName} folgt einer 20m Spur selbstständig.",
+        "Spuren-Suche wird zur Favoriten-Aktivität.",
+        "Nach Spuren-Suche ist {dogName} ruhig und zufrieden.",
+        "Beim Stopp-Spiel kommt {dogName} innerhalb von 3 Sekunden zur Ruhe.",
       ],
       exerciseIds: ["e-mantrailing-basis", "e-stop-spiel"],
     },
@@ -911,7 +869,7 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Spaziergänge werden ruhiger und kommunikativer.",
         "Stumpfes Ziehen reduziert sich erkennbar.",
       ],
-      exerciseIds: ["e-such-drinnen", "e-shape-trick"],
+      exerciseIds: ["e-mantrailing-basis", "e-shape-trick"],
     },
     {
       title: "Stopp-Spiel: Aufregung unterbrechen lernen",
@@ -953,7 +911,7 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Runterkommen dauert kürzer, weil schon ankommt.",
         "Spaziergänge enden in Ruhe, nicht im Chaos.",
       ],
-      exerciseIds: ["e-such-drinnen", "e-entspannungs-marker"],
+      exerciseIds: ["e-cool-down-decke", "e-entspannungs-marker"],
     },
     {
       title: "Längere Kopfarbeits-Sessions",
@@ -995,7 +953,7 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Sozial-Kontakte sind erfüllend, nicht reizüberflutend.",
         "Ihr habt eine klare Sozial-Routine pro Woche.",
       ],
-      exerciseIds: ["e-such-drinnen", "e-cool-down-decke"],
+      exerciseIds: ["e-stop-spiel", "e-cool-down-decke"],
     },
     {
       title: "Frust-Toleranz aktiv erweitern",
@@ -1056,10 +1014,10 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Plan ohne explizite Ruhe-Phasen — die sind aktiv eingeplant.",
       ],
       fortschritt: [
-        "Du hast einen 7-Tage-Plan sichtbar an der Wand und setzt täglich 3 von 3 Auslastungs-Arten um (Bewegung + Nase + Kopf).",
-        "An mindestens 5 von 7 Tagen erreicht {dogName} 14+ Stunden Ruhe.",
-        "Bei aufkommender Übererregung führst du die 3 Schritte (Reize raus, Decke, Marker) ohne nachzudenken aus — und {dogName} ist in 10-15 Minuten ruhig.",
-        "Abends ist {dogName} in 6 von 7 Tagen freiwillig im Korb statt aufgedreht.",
+        "{dogName} kennt die Tagesroutine.",
+        "Auslastungs-Lücken zeigen sich am Verhalten — du erkennst das schnell.",
+        "Du planst flexibel, aber mit klarer Struktur.",
+        "Die 3-Schritt-Anti-Übererregung-Routine sitzt: Reize raus, Decke, Marker.",
       ],
       exerciseIds: ["e-auslastungs-plan", "e-anti-hyperarousal"],
     },
@@ -1074,7 +1032,7 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
       tagesplan: "Mache dir bewusst: aktive Phasen sind 2-4 mal pro Tag, jeweils 30-60 Min. Dazwischen IST Ruhe. Nicht 'leider Pause', sondern 'aktive Ruhe-Phase'. {dogName} liegt im Korb oder auf der Decke, du arbeitest, ihr seid gemeinsam still im Raum.",
       no_gos: [
         "Schlechtes Gewissen wegen 'zu wenig Action'.",
-        "{dogName} ständig ansprechen oder streicheln in Ruhe-Phasen.",
+        "{dogName} ständig ansprechen oder streichheln in Ruhe-Phasen.",
         "Ruhe als 'Leerlauf' sehen — sie ist aktiver Bestandteil der Regeneration.",
       ],
       fortschritt: [
@@ -1124,7 +1082,7 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du genießt eigene Zeit ohne Schuldgefühle.",
         "Eure Beziehung wird gesünder durch gemeinsame Freizeit UND Trennzeit.",
       ],
-      exerciseIds: ["e-warte-impuls", "e-shape-trick"],
+      exerciseIds: ["e-kong-mahlzeit", "e-such-drinnen"],
     },
     {
       title: "Schwierige Auslöser gezielt arbeiten",
@@ -1166,14 +1124,14 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Überlastungs-Anzeichen werden früh erkannt.",
         "Park wird zur möglichen Aktivität, nicht zur Pflicht.",
       ],
-      exerciseIds: ["e-cool-down-decke", "e-such-drinnen"],
+      exerciseIds: ["e-cool-down-decke", "e-anti-hyperarousal"],
     },
     {
       title: "Anti-Übererregung-Routine etablieren",
-      schwerpunkt: "Manche Tage gehen schief. {dogName} kommt nicht runter. Diese Woche festigst du eine klare Drei-Schritt-Routine (Reize raus, auf die Decke, Entspannungs-Marker), die du in solchen Momenten reflexartig einsetzen kannst.",
+      schwerpunkt: "Manche Tage gehen schief. {dogName} kommt nicht runter. Diese Woche festigst du eine klare 3-Schritt-Routine, die du in solchen Momenten reflexartig einsetzen kannst.",
       wochenziele: [
         "Die Anti-Übererregung-Routine sitzt: Reize raus, Decke, Marker.",
-        "Du wendest die Routine reflexartig an, ohne nachzudenken.",
+        "Du nutzt sie reflexartig, ohne nachzudenken.",
         "{dogName} kommt nach 10-15 Min auch aus stärkerem Übererregung runter.",
       ],
       tagesplan: "Übe die Routine bewusst 2-3 mal in dieser Woche: erzeuge leichte Aufregung (Tür-Klopfen simulieren, kurzes Spiel), dann sofort Routine: Reize reduzieren, auf Decke führen, WUNDERBAR und 10-15 Min daneben sitzen. {dogName} lernt: Aufregung kann immer aktiv beendet werden.",
@@ -1187,7 +1145,7 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} reagiert vorhersehbar auf jeden Schritt.",
         "Du fühlst dich auch in hektischen Momenten handlungsfähig.",
       ],
-      exerciseIds: ["e-anti-hyperarousal", "e-kong-mahlzeit"],
+      exerciseIds: ["e-anti-hyperarousal", "e-cool-down-decke"],
     },
     {
       title: "Übergang in den Wartungsmodus",
@@ -1208,7 +1166,7 @@ const ENERGY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Ihr habt eine gemeinsame Routine, die sich selbstverständlich anfühlt.",
         "Übererregung ist Ausnahme, Ruhe ist Standard.",
       ],
-      exerciseIds: ["e-auslastungs-plan", "e-such-drinnen"],
+      exerciseIds: ["e-auslastungs-plan", "e-anti-hyperarousal"],
     },
   ],
 };
@@ -1259,7 +1217,7 @@ const AGGRESSION_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Tragezeit klappt entspannt.",
         "Du hast ein Sicherheits-Werkzeug für Notfälle.",
       ],
-      exerciseIds: ["a-maulkorb-positiv", "a-bogen-aktiv"],
+      exerciseIds: ["a-maulkorb-positiv", "a-schwellenwert-finden"],
     },
     {
       title: "Reiz-Anschauen (Schau-Hin-Spiel) drinnen aufbauen",
@@ -1363,9 +1321,9 @@ const AGGRESSION_WEEKS: Record<Phase, WeekTemplate[]> = {
       fortschritt: [
         "Du erkennst {dogName}s frühe Signale zuverlässig.",
         "Du reagierst proaktiv mit Distanz.",
-        "Eskalationen werden seltener, weil du Stress-Signale früh kappst.",
+        "Eskalationen werden seltener, weil du sie früh kappst.",
       ],
-      exerciseIds: ["a-schwellenwert-finden", "a-maulkorb-positiv"],
+      exerciseIds: ["a-schwellenwert-finden", "a-lat"],
     },
     {
       title: "Fundament-Check vor Phase 2",
@@ -1386,7 +1344,7 @@ const AGGRESSION_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Werkzeuge sitzen klar.",
         "{dogName} kennt die Bausteine.",
       ],
-      exerciseIds: ["a-lat", "a-engage-disengage"],
+      exerciseIds: ["a-lat", "a-schwellenwert-finden"],
     },
   ],
   steigerung: [
@@ -1431,7 +1389,7 @@ const AGGRESSION_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Selbst-Regulation entsteht.",
         "Du musst weniger lenken.",
       ],
-      exerciseIds: ["a-maulkorb-positiv", "a-schwellenwert-finden"],
+      exerciseIds: ["a-engage-disengage", "a-lat"],
     },
     {
       title: "BOGEN als aktive Strategie",
@@ -1473,7 +1431,7 @@ const AGGRESSION_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Stress-Anzeichen werden kürzer und seltener.",
         "Auslöser lösen positive statt negative Erwartung aus.",
       ],
-      exerciseIds: ["a-maulkorb-positiv", "a-engage-disengage"],
+      exerciseIds: ["a-lat", "a-engage-disengage"],
     },
     {
       title: "Distanz schrittweise reduzieren",
@@ -1497,7 +1455,7 @@ const AGGRESSION_WEEKS: Record<Phase, WeekTemplate[]> = {
       exerciseIds: ["a-schwellenwert-finden", "a-lat"],
     },
     {
-      title: "Verhaltens-Anpassungs-Training Einstieg",
+      title: "Verhaltens-Anpassungs-Training (Verhaltens-Anpassungs-Training) Einstieg",
       schwerpunkt: "Verhaltens-Anpassungs-Training ist die Königs-Methode bei reaktiven Hunden. {dogName} hat eine Schleppleine, mehr Bewegungsfreiheit, und du belohnst SELBSTSTÄNDIGE Stress-Lösungs-Bewegungen mit Distanz. {dogName} bekommt Kontrolle zurück.",
       wochenziele: [
         "{dogName} versteht das Verhaltens-Anpassungs-Training-Prinzip: stress-Lösung = Distanz wird größer.",
@@ -1557,7 +1515,7 @@ const AGGRESSION_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du fühlst dich kompetent und handlungsfähig.",
         "Reaktivität ist erkennbar reduziert.",
       ],
-      exerciseIds: ["a-bat-distanz", "a-maulkorb-positiv"],
+      exerciseIds: ["a-bat-distanz", "a-lat"],
     },
   ],
   generalisierung: [
@@ -1623,7 +1581,7 @@ const AGGRESSION_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Begegnungen verlaufen kontrolliert.",
         "Du nutzt die Strategie reflexartig.",
       ],
-      exerciseIds: ["a-bogen-aktiv", "a-maulkorb-positiv"],
+      exerciseIds: ["a-bogen-aktiv", "a-lat"],
     },
     {
       title: "Stress-Erholung aktiv steuern",
@@ -1665,7 +1623,7 @@ const AGGRESSION_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Die Beziehung wird wertvoller als das Leckerli.",
         "Du steckst weniger Hosentaschen-Hand-Manöver.",
       ],
-      exerciseIds: ["a-maulkorb-positiv", "a-lat"],
+      exerciseIds: ["a-bat-distanz", "a-lat"],
     },
     {
       title: "Schwierige Orte gezielt",
@@ -1707,7 +1665,7 @@ const AGGRESSION_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du fühlst dich auf Multi-Wegen sicher.",
         "Bewegte Reize verlieren ihren Schreck.",
       ],
-      exerciseIds: ["a-lat", "a-maulkorb-positiv"],
+      exerciseIds: ["a-lat", "a-bogen-aktiv"],
     },
     {
       title: "Übergang in Wartungsmodus",
@@ -1778,7 +1736,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Tausch ist Standard-Reaktion in Aufhebe-Situationen.",
         "Du fühlst dich nicht mehr machtlos.",
       ],
-      exerciseIds: ["m-tausch-protokoll", "m-leinen-management"],
+      exerciseIds: ["m-tausch-protokoll", "m-aus-aufbauen"],
     },
     {
       title: "PFUI als Stop-Signal konditionieren",
@@ -1799,7 +1757,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Reaktionszeit ist unter 2 Sek.",
         "Du bist bereit für die Übertragung nach draußen.",
       ],
-      exerciseIds: ["m-pfui-konditionieren", "m-aus-aufbauen"],
+      exerciseIds: ["m-pfui-konditionieren", "m-tausch-protokoll"],
     },
     {
       title: "Leinen-Management lernen",
@@ -1820,7 +1778,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Aufhebe-Frequenz an bekannten Stellen reduziert sich.",
         "Du bist proaktiv statt reaktiv.",
       ],
-      exerciseIds: ["m-leinen-management", "m-maulkorb-uebergang"],
+      exerciseIds: ["m-leinen-management", "m-pfui-konditionieren"],
     },
     // Vertiefungen
     {
@@ -1884,7 +1842,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Such-Trieb ist produktiv ausgelastet.",
         "Aufhebe-Verhalten reduziert sich teilweise.",
       ],
-      exerciseIds: ["m-belohnungs-suche", "m-pfui-konditionieren"],
+      exerciseIds: ["m-belohnungs-suche", "m-leinen-management"],
     },
     {
       title: "Fundament-Check",
@@ -1949,7 +1907,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du erkennst Anzeichen früh.",
         "Aufhebe-Versuche reduzieren sich.",
       ],
-      exerciseIds: ["m-aus-aufbauen", "m-maulkorb-uebergang"],
+      exerciseIds: ["m-pfui-konditionieren", "m-tausch-protokoll"],
     },
     {
       title: "Leinen-Management an Hotspots",
@@ -1991,7 +1949,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} arbeitet aktiv mit der Nase.",
         "Aufhebe-Verhalten reduziert sich.",
       ],
-      exerciseIds: ["m-belohnungs-suche", "m-maulkorb-uebergang"],
+      exerciseIds: ["m-belohnungs-suche", "m-leinen-management"],
     },
     // 6-Monats-Vertiefungen
     {
@@ -2120,7 +2078,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du fühlst dich flexibel.",
         "Aufhebe-Verhalten ist generalisiert reduziert.",
       ],
-      exerciseIds: ["m-aus-aufbauen", "m-pfui-konditionieren"],
+      exerciseIds: ["m-leinen-management", "m-pfui-konditionieren"],
     },
     {
       title: "Hot-Spots durchspielen",
@@ -2162,7 +2120,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Aufhebe-Verhalten ist deutlich reduziert.",
         "Spaziergänge sind erfüllend.",
       ],
-      exerciseIds: ["m-belohnungs-suche", "m-tausch-protokoll"],
+      exerciseIds: ["m-belohnungs-suche", "m-leinen-management"],
     },
     {
       title: "Schwierige Tageszeiten",
@@ -2204,7 +2162,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Werkzeuge sind zuverlässig.",
         "Sicherheit ist gewährleistet.",
       ],
-      exerciseIds: ["m-maulkorb-uebergang", "m-tausch-protokoll"],
+      exerciseIds: ["m-maulkorb-uebergang", "m-aus-aufbauen"],
     },
     {
       title: "Wartung & Reizüberflutungs-Notfall",
@@ -2225,7 +2183,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Notfall-Protokoll sitzt.",
         "Du fühlst dich langfristig kompetent.",
       ],
-      exerciseIds: ["m-aus-aufbauen", "m-pfui-konditionieren"],
+      exerciseIds: ["m-aus-aufbauen", "m-maulkorb-uebergang"],
     },
     {
       title: "Übergang in Wartungsmodus",
@@ -2246,7 +2204,7 @@ const MOUTHING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du fühlst dich kompetent.",
         "Aufhebe-Verhalten ist Ausnahme, nicht Normalfall.",
       ],
-      exerciseIds: ["m-tausch-protokoll", "m-leinen-management"],
+      exerciseIds: ["m-aus-aufbauen", "m-leinen-management"],
     },
   ],
 };
@@ -2297,7 +2255,7 @@ const RECALL_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Distanz auf 30-50m gesteigert.",
         "Motivation ist hoch.",
       ],
-      exerciseIds: ["r-restraint-recall", "r-hier-mit-ablenkung"],
+      exerciseIds: ["r-restraint-recall", "r-hier-laden"],
     },
     {
       title: "Schleppleinen-Arbeit beginnen",
@@ -2339,7 +2297,7 @@ const RECALL_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du hast ein Backup für Stimm-Probleme.",
         "Pfeife wird zur Garantie.",
       ],
-      exerciseIds: ["r-pfeife-aufbauen", "r-restraint-recall"],
+      exerciseIds: ["r-pfeife-aufbauen", "r-hier-laden"],
     },
     // 6-Monats-Vertiefungen
     {
@@ -2382,7 +2340,7 @@ const RECALL_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} versteht: KOMM-HER lohnt sich immer.",
         "Du bist bereit für Phase 2.",
       ],
-      exerciseIds: ["r-hier-mit-ablenkung", "r-pfeife-aufbauen"],
+      exerciseIds: ["r-hier-mit-ablenkung", "r-schleppleine"],
     },
     {
       title: "Wann KOMM-HER NICHT nutzen",
@@ -2424,7 +2382,7 @@ const RECALL_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Werkzeuge sitzen.",
         "Phase 2 ist greifbar.",
       ],
-      exerciseIds: ["r-schleppleine", "r-pfeife-aufbauen"],
+      exerciseIds: ["r-hier-laden", "r-pfeife-aufbauen"],
     },
   ],
   steigerung: [
@@ -2465,7 +2423,7 @@ const RECALL_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       fortschritt: [
         "Pfeife ist zuverlässiges Backup.",
-        "Du setzt die Pfeife strategisch ein, nicht inflationär.",
+        "Du nutzt sie strategisch.",
         "{dogName} reagiert vorhersehbar.",
       ],
       exerciseIds: ["r-pfeife-aufbauen", "r-hier-laden"],
@@ -2561,7 +2519,7 @@ const RECALL_WEEKS: Record<Phase, WeekTemplate[]> = {
       wochenziele: [
         "Du hast 3 unterschiedliche Rückruf-Stufen klar.",
         "{dogName} versteht die unterschiedlichen Signale.",
-        "Du setzt die Stufen situativ ein.",
+        "Du nutzt sie situativ.",
       ],
       tagesplan: "Trockenübungen pro Stufe: ALLTAG-Rückruf mit normaler Belohnung, JACKPOT-Rückruf mit großer Belohnung, NOTFALL mit MEGA-Belohnung. Pro Spaziergang ein paar von jeder Stufe.",
       no_gos: [
@@ -2574,7 +2532,7 @@ const RECALL_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} reagiert situativ unterschiedlich.",
         "Du hast ein abgestuftes Rückruf-System.",
       ],
-      exerciseIds: ["r-schleppleine", "r-emergency-recall"],
+      exerciseIds: ["r-hier-laden", "r-emergency-recall"],
     },
     {
       title: "Festigung Steigerung",
@@ -2607,7 +2565,7 @@ const RECALL_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} reagiert auf KOMM-HER in Freilauf.",
         "Du hast ein Sicherheits-Setting etabliert.",
       ],
-      tagesplan: "Wähle die sicherste Zone (eingezäunte Hundewiese, Wald-Lichtung weit weg von Straße). Schleppleine bleibt am Geschirr, aber 5-10m Spielraum sind erlaubt. KOMM-HER alle 5 Min. Bei zuverlässigem Rückruf: weiter machen.",
+      tagesplan: "Wähle die sicherste Zone (eingezäunte Hundewiese, Wald-Lichtung weit weg von Straße). Schleppleine bleibt am Geschirr, aber {dogName} darf sie 5-10m ziehen. KOMM-HER alle 5 Min. Bei zuverlässigem Rückruf: weiter machen.",
       no_gos: [
         "Freilauf an Hochrisiko-Orten — Eskalations-Gefahr.",
         "Schleppleine komplett abnehmen — Sicherheits-Verlust.",
@@ -2640,7 +2598,7 @@ const RECALL_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} reagiert zuverlässig.",
         "Spaziergänge sind erfüllend.",
       ],
-      exerciseIds: ["r-schleppleine", "r-hier-laden"],
+      exerciseIds: ["r-freilauf-erste", "r-hier-laden"],
     },
     {
       title: "Wartungs-Training in Freilauf",
@@ -2661,7 +2619,7 @@ const RECALL_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} bleibt motiviert.",
         "Du wartest das System aktiv.",
       ],
-      exerciseIds: ["r-hier-mit-ablenkung", "r-restraint-recall"],
+      exerciseIds: ["r-hier-laden", "r-restraint-recall"],
     },
     {
       title: "Belohnungs-Reduktion vorsichtig",
@@ -2682,7 +2640,7 @@ const RECALL_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Rückruf ist stabilisiert.",
         "Du steckst seltener in die Hosentasche.",
       ],
-      exerciseIds: ["r-hier-laden", "r-schleppleine"],
+      exerciseIds: ["r-hier-laden", "r-restraint-recall"],
     },
     {
       title: "Schwierige Situationen meistern",
@@ -2724,7 +2682,7 @@ const RECALL_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du hast Vertrauen in das Backup.",
         "Echte Notfälle sind beherrschbar.",
       ],
-      exerciseIds: ["r-emergency-recall", "r-restraint-recall"],
+      exerciseIds: ["r-emergency-recall", "r-pfeife-aufbauen"],
     },
     {
       title: "Rückruf-Spaziergänge ohne Schleppleine",
@@ -2766,13 +2724,13 @@ const RECALL_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du fühlst dich kompetent.",
         "{dogName} ist sicherer im Freilauf.",
       ],
-      exerciseIds: ["r-restraint-recall", "r-emergency-recall"],
+      exerciseIds: ["r-hier-laden", "r-emergency-recall"],
     },
   ],
 };
 
 // ────────────────────────────────────────────────────────────────────
-// BARKING (übermäßiges Bellen) — Auslöser entkoppeln + Ruhe belohnen
+// BARKING (übermaessiges Bellen) — Auslöser entkoppeln + Ruhe belohnen
 // ────────────────────────────────────────────────────────────────────
 const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
   fundament: [
@@ -2787,8 +2745,8 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
       tagesplan: "Notizheft dabei. Bei jedem Bell-Vorfall: Uhrzeit, Ort, Auslöser, Dauer + deine Reaktion. Am Ende der Woche siehst du Muster: Klingel? Hund vorbei? Frust? Aufmerksamkeit? Pro Auslöser eigene Strategie ab Woche 2.",
       no_gos: [
         "Schon trainieren ohne zu wissen WAS du angehst.",
-        "Schimpfen während du dokumentierst — versaut die Daten.",
-        "Auslöser relativieren ('das ist halt seine Art') — ohne Analyse keine Lösung.",
+        "Schimpfen waehrend du dokumentierst — versaut die Daten.",
+        "Auslöser relativieren ('das ist halt seine Art') — ohne Analyse keine Loesung.",
       ],
       fortschritt: [
         "Du hast eine klare Liste der Auslöser.",
@@ -2804,7 +2762,7 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
       wochenziele: [
         "8-10 Stille-Belohnungen pro Tag.",
         "{dogName} merkt: ruhig sein bringt was.",
-        "Du selbst reagierst nicht mehr auf Bellen mit Lautstärke.",
+        "Du selbst reagierst nicht mehr auf Bellen mit Lautstaerke.",
       ],
       tagesplan: "Beobachte aktiv. Sobald 5 Sek Stille: leise FEIN + Leckerli. Erst 5 Sek, dann 10, 20, 30, 1 Min. Belohnung kommt LEISE und RUHIG. Bei Bellen selbst: nicht anschreien, nicht hinschauen, neutral bleiben.",
       no_gos: [
@@ -2817,17 +2775,17 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} sucht aktiv Stille-Phasen.",
         "Bell-Frequenz reduziert sich erkennbar.",
       ],
-      exerciseIds: ["b-tuerklingel-decke", "b-tuerklingel-decke"],
+      exerciseIds: ["b-ruhe-marker", "b-tuerklingel-decke"],
     },
     {
       title: "Türklingel = Decke-Routine",
       schwerpunkt: "Falls Klingelbellen Thema ist, etablieren wir eine konkrete Alternative: bei Klingel rennt {dogName} nicht zur Tür, sondern auf die Decke. Pavlow-Klassiker.",
       wochenziele: [
         "{dogName} reagiert auf Klingel-Aufnahme mit Bewegung zur Decke.",
-        "Lautstärke der Klingel kann gesteigert werden ohne Eskalation.",
+        "Lautstaerke der Klingel kann gesteigert werden ohne Eskalation.",
         "Die Klingel-Decke-Verknüpfung sitzt.",
       ],
-      tagesplan: "Klingel-Aufnahme leise vom Handy, sofort PLATZ + Decke + Leckerli. 10 Wiederholungen pro Session, 2 Sessions täglich. Steigere Lautstärke über die Woche. Echte Klingel-Tests in Phase 2 mit Helfer.",
+      tagesplan: "Klingel-Aufnahme leise vom Handy, sofort PLATZ + Decke + Leckerli. 10 Wiederholungen pro Session, 2 Sessions taeglich. Steigere Lautstaerke über die Woche. Echte Klingel-Tests in Phase 2 mit Helfer.",
       no_gos: [
         "Echte Klingel-Tests ohne Vorarbeit — zu schwer.",
         "Decke ohne vorherige Entspannungsdecke-Übung — Decke muss positiv besetzt sein.",
@@ -2838,17 +2796,17 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Bewegung zur Decke wird automatisch.",
         "Du bist bereit für echte Klingel-Situation.",
       ],
-      exerciseIds: ["b-trigger-tagebuch", "b-ruhe-marker"],
+      exerciseIds: ["b-tuerklingel-decke", "b-ruhe-marker"],
     },
     {
       title: "Frust-Toleranz aufbauen",
-      schwerpunkt: "Falls {dogName} aus Frust bellt (Eichhörnchen, was nicht erreichbar ist): wir bauen Frust-Toleranz auf. WARTE-Signal bei Futter und Spielzeug ist das Werkzeug.",
+      schwerpunkt: "Falls {dogName} aus Frust bellt (Eichhoernchen, was nicht erreichbar ist): wir bauen Frust-Toleranz auf. WARTE-Signal bei Futter und Spielzeug ist das Werkzeug.",
       wochenziele: [
-        "{dogName} hält 10 Sek WARTE vor Futter.",
+        "{dogName} haelt 10 Sek WARTE vor Futter.",
         "Frust-Anzeichen werden seltener.",
-        "Du nutzt WARTE in alltäglichen Frust-Mini-Situationen.",
+        "Du nutzt WARTE in alltaeglichen Frust-Mini-Situationen.",
       ],
-      tagesplan: "3-4 WARTE-Situationen pro Tag: vor Futter, Spielzeug, Tür. Steigere von 1 Sek zu 10 Sek über die Woche. Bei Bellen während WARTE: Hand zurückziehen, nicht auflöesen. Erst bei 3 Sek Stille: Auflöesung.",
+      tagesplan: "3-4 WARTE-Situationen pro Tag: vor Futter, Spielzeug, Tür. Steigere von 1 Sek zu 10 Sek über die Woche. Bei Bellen waehrend WARTE: Hand zurueckziehen, nicht auflöesen. Erst bei 3 Sek Stille: Auflöesung.",
       no_gos: [
         "Bei Bellen auflöesen — verstärkt Frust-Bellen.",
         "Wartezeiten zu schnell verlängern — Frust eskaliert.",
@@ -2859,7 +2817,7 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Frust-Bellen reduziert sich.",
         "Du hast ein Werkzeug für Mini-Frust-Situationen.",
       ],
-      exerciseIds: ["b-frust-management", "b-tuerklingel-decke"],
+      exerciseIds: ["b-frust-management", "b-ruhe-marker"],
     },
     // 6-Monats-Vertiefungen
     {
@@ -2868,9 +2826,9 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
       wochenziele: [
         "{dogName} schaut bei Außenreizen zu dir.",
         "Bell-Reaktion auf Reize reduziert sich.",
-        "Die emotionale Verknüpfung ändert sich.",
+        "Die emotionale Verknüpfung aendert sich.",
       ],
-      tagesplan: "An typischer Bell-Position (Fenster, Garten). Sobald Reiz auftaucht VOR dem Bellen: SCHAU + Leckerli durchgehend solange Reiz sichtbar. Reiz weg: Leckerli weg. Falls {dogName} schon bellt: zu spät, Distanz erhöhen.",
+      tagesplan: "An typischer Bell-Position (Fenster, Garten). Sobald Reiz auftaucht VOR dem Bellen: SCHAU + Leckerli durchgehend solange Reiz sichtbar. Reiz weg: Leckerli weg. Falls {dogName} schon bellt: zu spät, Distanz erhoehen.",
       no_gos: [
         "Erst belohnen wenn {dogName} schon bellt — falsche Verknüpfung.",
         "Reize provozieren — kontraproduktiv.",
@@ -2887,14 +2845,14 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
       title: "Aufmerksamkeits-Bellen aushungern",
       schwerpunkt: "Falls {dogName} dich anbellt um was zu kriegen: konsequent ignorieren. Aushungerung über 2-3 Wochen. Erfordert eiserne Konsequenz von allen Familienmitgliedern.",
       wochenziele: [
-        "Bei Aufmerksamkeits-Bellen drehst du konsequent den Rücken zu.",
+        "Bei Aufmerksamkeits-Bellen drehst du konsequent den Ruecken zu.",
         "Familienmitglieder ziehen mit.",
         "Aufmerksamkeits-Bellen reduziert sich nach Verstärkungs-Spitze.",
       ],
-      tagesplan: "Bei Aufmerksamkeits-Bellen sofort Rücken zudrehen, Raum verlassen wenn möglich. Komm zurück wenn 30 Sek ruhig. Erwarte Verstärkungs-Spitze in Tag 3-7: Bellen wird erstmal intensiver, dann verschwindet es. Halte aus.",
+      tagesplan: "Bei Aufmerksamkeits-Bellen sofort Ruecken zudrehen, Raum verlassen wenn möglich. Komm zurueck wenn 30 Sek ruhig. Erwarte Verstärkungs-Spitze in Tag 3-7: Bellen wird erstmal intensiver, dann verschwindet es. Halte aus.",
       no_gos: [
-        "Nachgeben während Verstärkungs-Spitze — sabotiert die Arbeit komplett.",
-        "Familienmitglieder die nicht mitziehen — 1 Inkonsistenz = 1 Woche zurück.",
+        "Nachgeben waehrend Verstärkungs-Spitze — sabotiert die Arbeit komplett.",
+        "Familienmitglieder die nicht mitziehen — 1 Inkonsistenz = 1 Woche zurueck.",
         "Bei Bellen schimpfen — auch Aufmerksamkeit.",
       ],
       fortschritt: [
@@ -2902,7 +2860,7 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} sucht andere Wege für Aufmerksamkeit (still kommen).",
         "Du wirst innerlich entspannter.",
       ],
-      exerciseIds: ["b-aufmerksamkeits-bellen", "b-trigger-tagebuch"],
+      exerciseIds: ["b-aufmerksamkeits-bellen", "b-ruhe-marker"],
     },
     {
       title: "Auslöser-Distanz schrittweise reduzieren",
@@ -2915,8 +2873,8 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
       tagesplan: "Bewusste Sessions an Auslöser-Quellen mit kontrollierbarer Distanz. Gegenkonditionierung bei jedem Reiz. Distanz nur dann reduzieren wenn {dogName} über mehrere Tage stabil ist. Niemals an einem Tag radikal reduzieren.",
       no_gos: [
         "Distanz zu schnell reduzieren — Eskalation.",
-        "An schlechten Tagen Druck erhöhen.",
-        "Schwellenwert ignorieren wenn er sich ändert.",
+        "An schlechten Tagen Druck erhoehen.",
+        "Schwellenwert ignorieren wenn er sich aendert.",
       ],
       fortschritt: [
         "Schwellenwert reduziert sich messbar.",
@@ -2933,10 +2891,10 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Bell-Frequenz ist messbar reduziert.",
         "Du bist auf Phase 2 vorbereitet.",
       ],
-      tagesplan: "Bilanz: was sitzt, was wackelt? Falls Schwäche: 1 Extra-Woche dranhängen. Bei Aufmerksamkeits-Bellen besonders konsequent bleiben.",
+      tagesplan: "Bilanz: was sitzt, was wackelt? Falls Schwaeche: 1 Extra-Woche dranhaengen. Bei Aufmerksamkeits-Bellen besonders konsequent bleiben.",
       no_gos: [
         "Aus Ungeduld in Phase 2 springen.",
-        "Mehrere Schwächen ignorieren.",
+        "Mehrere Schwaechen ignorieren.",
         "Plan aufgeben weil 1 Woche schiefging.",
       ],
       fortschritt: [
@@ -2944,7 +2902,7 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Werkzeuge sitzen.",
         "Phase 2 ist greifbar.",
       ],
-      exerciseIds: ["b-trigger-tagebuch", "b-tuerklingel-decke"],
+      exerciseIds: ["b-ruhe-marker", "b-tuerklingel-decke"],
     },
   ],
   steigerung: [
@@ -2954,12 +2912,12 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
       wochenziele: [
         "{dogName} läuft bei echter Klingel zur Decke.",
         "Verhalten ist auch mit echtem Gast stabil.",
-        "Tür kann geöffnet werden, Hund bleibt liegen.",
+        "Tür kann geoeffnet werden, Hund bleibt liegen.",
       ],
-      tagesplan: "Vorher: Helfer kommt zu Besuch, Decke vorbereitet. Klingel: {dogName} zur Decke führen (oder von selbst). Tür öffnen, Gast hereinbitten, {dogName} ignorieren. Bleibt auf Decke: alle 30 Sek Leckerli. Nach 5 Min: OK-Signal.",
+      tagesplan: "Vorher: Helfer kommt zu Besuch, Decke vorbereitet. Klingel: {dogName} zur Decke fuehren (oder von selbst). Tür oeffnen, Gast hereinbitten, {dogName} ignorieren. Bleibt auf Decke: alle 30 Sek Leckerli. Nach 5 Min: OK-Signal.",
       no_gos: [
         "Echte Klingel-Tests ohne saubere Vorarbeit drinnen — Frust.",
-        "Gast streichhelt während Bellen — sabotiert.",
+        "Gast streichhelt waehrend Bellen — sabotiert.",
         "Bei Bellen reflexartig zur Tür rennen — verstärkt.",
       ],
       fortschritt: [
@@ -2968,7 +2926,7 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du fühlst dich vorbereitet.",
         "Bei Außenreizen schaut {dogName} häufiger zu dir statt sofort zu bellen.",
       ],
-      exerciseIds: ["b-läuten-routine", "b-counter-cond-aussen"],
+      exerciseIds: ["b-laeuten-routine", "b-counter-cond-aussen"],
     },
     {
       title: "Außenreize aktiv arbeiten",
@@ -2978,7 +2936,7 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} schaut von selbst zu dir bei Reizen.",
         "Belohnungs-Dichte ist hoch.",
       ],
-      tagesplan: "An Fenster oder im Garten aktiv arbeiten. Wenn du Reiz früher siehst als {dogName}: SCHAU + Leckerli durchgehend. Falls {dogName} schon bellt: Distanz schaffen (anderer Raum), nicht durchziehen.",
+      tagesplan: "An Fenster oder im Garten aktiv arbeiten. Wenn du Reiz frueher siehst als {dogName}: SCHAU + Leckerli durchgehend. Falls {dogName} schon bellt: Distanz schaffen (anderer Raum), nicht durchziehen.",
       no_gos: [
         "Bei Stress weitermachen.",
         "Belohnungs-Dichte reduzieren.",
@@ -2989,17 +2947,17 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} sucht aktiv Augenkontakt.",
         "Du fühlst dich handlungsfähiger.",
       ],
-      exerciseIds: ["b-trigger-tagebuch", "b-ruhe-marker"],
+      exerciseIds: ["b-counter-cond-aussen", "b-ruhe-marker"],
     },
     {
       title: "Aufmerksamkeits-Bellen aushungern",
-      schwerpunkt: "Konsequente Aushungerung über 2-3 Wochen. Rücken zudrehen, ignorieren, nicht nachgeben. Wer hier inkonsistent ist, sabotiert die ganze Arbeit.",
+      schwerpunkt: "Konsequente Aushungerung über 2-3 Wochen. Ruecken zudrehen, ignorieren, nicht nachgeben. Wer hier inkonsistent ist, sabotiert die ganze Arbeit.",
       wochenziele: [
         "Aufmerksamkeits-Bellen reduziert sich um 70%+.",
         "Familienkonsistenz steht.",
         "Du wirst innerlich ruhiger und konsequenter.",
       ],
-      tagesplan: "Jeden Bell-Versuch nach Aufmerksamkeit konsequent ignorieren. Rücken zudrehen, Raum verlassen. Komm zurück nach 30 Sek Stille. Bei Familienmitgliedern: gemeinsame Regel-Konsistenz besprechen.",
+      tagesplan: "Jeden Bell-Versuch nach Aufmerksamkeit konsequent ignorieren. Ruecken zudrehen, Raum verlassen. Komm zurueck nach 30 Sek Stille. Bei Familienmitgliedern: gemeinsame Regel-Konsistenz besprechen.",
       no_gos: [
         "Inkonsistenz — sabotiert die Arbeit.",
         "Bei Verstärkungs-Spitze nachgeben — perfektioniert das Bellen.",
@@ -3010,24 +2968,24 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du wirst konsequenter.",
         "Familienkonsistenz steht.",
       ],
-      exerciseIds: ["b-aufmerksamkeits-bellen", "b-tuerklingel-decke"],
+      exerciseIds: ["b-aufmerksamkeits-bellen", "b-ruhe-marker"],
     },
     {
       title: "Frust-Bellen reduzieren",
-      schwerpunkt: "WARTE-Signal wird in mehr Situationen eingesetzt. Frust-Toleranz wächst, Frust-Bellen reduziert sich. Geduldige Arbeit.",
+      schwerpunkt: "WARTE-Signal wird in mehr Situationen eingesetzt. Frust-Toleranz waechst, Frust-Bellen reduziert sich. Geduldige Arbeit.",
       wochenziele: [
-        "{dogName} hält 30 Sek WARTE in verschiedenen Situationen.",
+        "{dogName} haelt 30 Sek WARTE in verschiedenen Situationen.",
         "Frust-Bellen reduziert sich erkennbar.",
         "Du nutzt WARTE intuitiv.",
       ],
-      tagesplan: "5-7 WARTE-Situationen pro Tag. Steigere von 10 auf 30 Sek. Bei Bellen während WARTE: nicht auflöesen. Erst bei 3 Sek Stille: Auflöesung + Belohnung.",
+      tagesplan: "5-7 WARTE-Situationen pro Tag. Steigere von 10 auf 30 Sek. Bei Bellen waehrend WARTE: nicht auflöesen. Erst bei 3 Sek Stille: Auflöesung + Belohnung.",
       no_gos: [
         "Bei Bellen auflöesen.",
         "Wartezeiten radikal steigern.",
         "Laut werden bei Frust-Bellen.",
       ],
       fortschritt: [
-        "Frust-Toleranz wächst.",
+        "Frust-Toleranz waechst.",
         "Frust-Bellen reduziert sich.",
         "{dogName} bleibt länger ruhig in Wartesituationen.",
       ],
@@ -3053,7 +3011,7 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du reagierst situativ richtig.",
         "Bell-Frequenz übergreifend reduziert.",
       ],
-      exerciseIds: ["b-counter-cond-aussen", "b-trigger-tagebuch"],
+      exerciseIds: ["b-counter-cond-aussen", "b-ruhe-marker"],
     },
     {
       title: "Stress-Bellen vs. Bedarfs-Bellen",
@@ -3074,11 +3032,11 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Reaktionen werden situativ richtig.",
         "Bellen reduziert sich übergreifend.",
       ],
-      exerciseIds: ["b-ruhe-marker", "b-tuerklingel-decke"],
+      exerciseIds: ["b-ruhe-marker", "b-counter-cond-aussen"],
     },
     {
       title: "Belohnungs-Reduktion vorsichtig",
-      schwerpunkt: "Wenn RUHE-Marker und Gegenkonditionierung sitzen, reduzierst du langsam die Belohnungs-Dichte. Aber: nicht komplett weglassen. Variable Verstärkung hält das Verhalten stabiler.",
+      schwerpunkt: "Wenn RUHE-Marker und Gegenkonditionierung sitzen, reduzierst du langsam die Belohnungs-Dichte. Aber: nicht komplett weglassen. Variable Verstaerkung haelt das Verhalten stabiler.",
       wochenziele: [
         "Belohnungs-Frequenz wird auf ~50% reduziert.",
         "{dogName} reagiert auch mit weniger Belohnung.",
@@ -3086,7 +3044,7 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       tagesplan: "Bei einfachen Situationen: nicht jede Stille belohnen. Bei schwierigen (Auslöser): weiterhin volle Belohnung. {dogName} merkt: das System bleibt, aber unvorhersehbar.",
       no_gos: [
-        "Belohnung komplett streichhen — Rückfall.",
+        "Belohnung komplett streichhen — Rueckfall.",
         "Reduktion an schwierigen Strecken.",
         "Radikale Veränderung.",
       ],
@@ -3095,26 +3053,26 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du steckst weniger Leckerlis ein.",
         "Bell-Frequenz bleibt niedrig.",
       ],
-      exerciseIds: ["b-trigger-tagebuch", "b-tuerklingel-decke"],
+      exerciseIds: ["b-ruhe-marker", "b-tuerklingel-decke"],
     },
     {
       title: "Festigung Steigerung",
       schwerpunkt: "Letzte Steigerungs-Woche. Alle Werkzeuge sitzen, Auslöser werden flexibel gehandhabt. Phase 3 = Langzeit-Anwendung und Stabilisierung.",
       wochenziele: [
-        "Alle Werkzeuge laufen flüssig.",
+        "Alle Werkzeuge laufen fluessig.",
         "Bell-Frequenz ist deutlich reduziert.",
         "Du bist auf Phase 3 vorbereitet.",
       ],
       tagesplan: "Bilanz-Woche: was funktioniert super, was wackelt? Notiere {dogName}s verbleibende Auslöser. Plane für Phase 3 Wartungs-Routine.",
       no_gos: [
-        "Erfolge als Selbstverständlichkeit.",
+        "Erfolge als Selbstverstaendlichkeit.",
         "Belohnungs-Dichte radikal reduzieren.",
         "Familienkonsistenz aufweichen.",
       ],
       fortschritt: [
         "Bellen ist messbar reduziert.",
         "Du fühlst dich kompetent.",
-        "Werkzeuge sitzen flüssig.",
+        "Werkzeuge sitzen fluessig.",
       ],
       exerciseIds: ["b-counter-cond-aussen", "b-aufmerksamkeits-bellen"],
     },
@@ -3139,7 +3097,7 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Bellen ist Ausnahme.",
         "Du wirst innerlich ruhiger.",
       ],
-      exerciseIds: ["b-läuten-routine", "b-ruhe-marker"],
+      exerciseIds: ["b-laeuten-routine", "b-ruhe-marker"],
     },
     {
       title: "Schwierige Tageszeiten meistern",
@@ -3149,7 +3107,7 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Auslöser-Stack-Effekt wird vermieden.",
         "Du planst flexibel.",
       ],
-      tagesplan: "Plane bewusst 1-2 schwierige Tageszeit-Sessions. Vorher Auslastung, dann gezielt Auslöser-Situation, Runterkommen danach. Belohnungs-Dichte in diesen Phasen höher.",
+      tagesplan: "Plane bewusst 1-2 schwierige Tageszeit-Sessions. Vorher Auslastung, dann gezielt Auslöser-Situation, Runterkommen danach. Belohnungs-Dichte in diesen Phasen hoeher.",
       no_gos: [
         "Mehrere schwierige Phasen pro Tag.",
         "Bei Stress weitermachen.",
@@ -3160,32 +3118,32 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du planst strukturiert.",
         "Bellen bleibt unter Kontrolle.",
       ],
-      exerciseIds: ["b-counter-cond-aussen", "b-trigger-tagebuch"],
+      exerciseIds: ["b-counter-cond-aussen", "b-ruhe-marker"],
     },
     {
       title: "Gäste-Empfang routinieren",
-      schwerpunkt: "Wenn Decke-Routine bei Klingel sitzt, etablieren wir den ganzen Gäste-Empfang als feste Sequenz. Klingel → Decke → Tür → Begrüßung mit Konditionen.",
+      schwerpunkt: "Wenn Decke-Routine bei Klingel sitzt, etablieren wir den ganzen Gäste-Empfang als feste Sequenz. Klingel → Decke → Tür → Begruessung mit Konditionen.",
       wochenziele: [
         "Gäste-Empfang läuft als feste Sequenz.",
         "Gäste werden vorab instruiert.",
-        "{dogName} bleibt während des Empfangs ruhig.",
+        "{dogName} bleibt waehrend des Empfangs ruhig.",
       ],
-      tagesplan: "Gäste vorab informieren: 'Bitte ignoriere ihn die ersten 5 Min, er muss auf der Decke bleiben.' Klingel: Decke. Tür: Gast rein. Begrüßung beider Menschen erstmal ohne Hund. Nach 5 Min: OK-Signal, {dogName} darf vorsichtig hallo sagen.",
+      tagesplan: "Gäste vorab informieren: 'Bitte ignoriere ihn die ersten 5 Min, er muss auf der Decke bleiben.' Klingel: Decke. Tür: Gast rein. Begruessung beider Menschen erstmal ohne Hund. Nach 5 Min: OK-Signal, {dogName} darf vorsichtig hallo sagen.",
       no_gos: [
-        "Gäste nicht informieren — sie streicheln den bellenden Hund.",
-        "OK-Signal zu früh.",
-        "{dogName} an die Tür lassen während Gast reinkommt.",
+        "Gäste nicht informieren — sie streichheln den bellenden Hund.",
+        "OK-Signal zu frueh.",
+        "{dogName} an die Tür lassen waehrend Gast reinkommt.",
       ],
       fortschritt: [
         "Gäste-Empfang ist Routine.",
-        "{dogName} bleibt ruhig während Klingel + Eingang.",
+        "{dogName} bleibt ruhig waehrend Klingel + Eingang.",
         "Du fühlst dich entspannter mit Gästen.",
       ],
-      exerciseIds: ["b-läuten-routine", "b-tuerklingel-decke"],
+      exerciseIds: ["b-laeuten-routine", "b-counter-cond-aussen"],
     },
     {
       title: "Belohnungs-Reduktion stabil halten",
-      schwerpunkt: "Belohnungs-Dichte wird weiter reduziert, aber stabilisiert. {dogName} reagiert auf RUHE-Marker auch ohne ständige Leckerlis. Aber: Jackpot bei Spitzenleistung bleibt.",
+      schwerpunkt: "Belohnungs-Dichte wird weiter reduziert, aber stabilisiert. {dogName} reagiert auf RUHE-Marker auch ohne staendige Leckerlis. Aber: Jackpot bei Spitzenleistung bleibt.",
       wochenziele: [
         "Belohnungs-Frequenz ist auf ~30% reduziert.",
         "{dogName} reagiert auch mit weniger Belohnung.",
@@ -3206,24 +3164,24 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
     },
     {
       title: "Konsistenz langfristig halten",
-      schwerpunkt: "Bellen kann zurückkommen wenn Konsistenz nachlässt. Diese Woche festigst du Familien-Konsistenz und Routinen für die nächsten Monate.",
+      schwerpunkt: "Bellen kann zurueckkommen wenn Konsistenz nachlässt. Diese Woche festigst du Familien-Konsistenz und Routinen für die nächsten Monate.",
       wochenziele: [
         "Familienmitglieder bleiben konsequent.",
         "Routinen sind etabliert.",
-        "Du erkennst kleine Rückfälle früh.",
+        "Du erkennst kleine Rueckfaelle frueh.",
       ],
-      tagesplan: "Familien-Briefing: kurze Erinnerung an alle Regeln. Schreibe sie an einen Zettel. Beobachte: gibt es kleine Rückfälle? Gegen-Steuerung sofort. Routinen wie Klingel-Decke nicht aufweichen.",
+      tagesplan: "Familien-Briefing: kurze Erinnerung an alle Regeln. Schreibe sie an einen Zettel. Beobachte: gibt es kleine Rueckfaelle? Gegen-Steuerung sofort. Routinen wie Klingel-Decke nicht aufweichen.",
       no_gos: [
-        "Konsistenz aufweichen — Bellen kommt zurück.",
-        "Rückfälle ignorieren.",
+        "Konsistenz aufweichen — Bellen kommt zurueck.",
+        "Rueckfaelle ignorieren.",
         "Routinen schleifen lassen.",
       ],
       fortschritt: [
         "Familienkonsistenz steht.",
         "Routinen sind etabliert.",
-        "Rückfälle werden früh erkannt.",
+        "Rueckfaelle werden frueh erkannt.",
       ],
-      exerciseIds: ["b-aufmerksamkeits-bellen", "b-läuten-routine"],
+      exerciseIds: ["b-aufmerksamkeits-bellen", "b-laeuten-routine"],
     },
     {
       title: "Stress-Reduktion im Tagesablauf",
@@ -3237,7 +3195,7 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
       no_gos: [
         "Stress ignorieren.",
         "Reizüberflutung als 'normal' sehen.",
-        "Hund ständig stimulieren.",
+        "Hund staendig stimulieren.",
       ],
       fortschritt: [
         "Stress-Level sinkt.",
@@ -3247,31 +3205,31 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
       exerciseIds: ["b-ruhe-marker", "b-tuerklingel-decke"],
     },
     {
-      title: "Notfall-Strategien für Rückfälle",
-      schwerpunkt: "Falls Bellen plötzlich zunimmt: was tun? Diese Woche etablierst du eine klare Notfall-Sequenz. Früh erkennen, gegen-steuern, eskalierende Phasen vermeiden.",
+      title: "Notfall-Strategien für Rueckfaelle",
+      schwerpunkt: "Falls Bellen plötzlich zunimmt: was tun? Diese Woche etablierst du eine klare Notfall-Sequenz. Frueh erkennen, gegen-steuern, eskalierende Phasen vermeiden.",
       wochenziele: [
-        "Du hast einen klaren Notfall-Plan bei Rückfällen.",
-        "Früh-Anzeichen werden erkannt.",
-        "Rückfälle werden in 1 Woche aufgefangen.",
+        "Du hast einen klaren Notfall-Plan bei Rueckfaellen.",
+        "Frueh-Anzeichen werden erkannt.",
+        "Rueckfaelle werden in 1 Woche aufgefangen.",
       ],
-      tagesplan: "Notfall-Plan: 1) sofort 1 Woche extra-konsequent. 2) Belohnungs-Dichte wieder hoch. 3) Auslöser reduzieren (mehr Management). 4) Auslastung erhöhen. 5) Beobachten was sich geändert hat (neue Wohnung, andere Routine, neue Auslöser).",
+      tagesplan: "Notfall-Plan: 1) sofort 1 Woche extra-konsequent. 2) Belohnungs-Dichte wieder hoch. 3) Auslöser reduzieren (mehr Management). 4) Auslastung erhoehen. 5) Beobachten was sich geaendert hat (neue Wohnung, andere Routine, neue Auslöser).",
       no_gos: [
-        "Rückfälle ignorieren — werden schlimmer.",
+        "Rueckfaelle ignorieren — werden schlimmer.",
         "In Panik geraten — übertraegt sich.",
         "Routinen schlagartig ändern.",
       ],
       fortschritt: [
         "Notfall-Plan sitzt.",
-        "Rückfälle werden früh aufgefangen.",
+        "Rueckfaelle werden frueh aufgefangen.",
         "Du fühlst dich langfristig kompetent.",
       ],
-      exerciseIds: ["b-trigger-tagebuch", "b-counter-cond-aussen"],
+      exerciseIds: ["b-ruhe-marker", "b-counter-cond-aussen"],
     },
     {
       title: "Übergang in Wartungsmodus",
       schwerpunkt: "Letzte Woche. Bellen ist stark reduziert, Auslöser werden gehandhabt, Familienkonsistenz steht. Wartung für die kommenden Monate steht.",
       wochenziele: [
-        "Alle Routinen laufen selbstständig.",
+        "Alle Routinen laufen selbststaendig.",
         "Wartungs-Rhythmus ist klar.",
         "{dogName} ist langfristig ruhiger.",
       ],
@@ -3279,14 +3237,14 @@ const BARKING_WEEKS: Record<Phase, WeekTemplate[]> = {
       no_gos: [
         "Alle Routinen schlagartig weglassen.",
         "Familienkonsistenz aufweichen.",
-        "Beobachten aufhören.",
+        "Beobachten aufhoeren.",
       ],
       fortschritt: [
         "{dogName} ist langfristig ruhiger.",
         "Bellen ist Ausnahme, nicht Normalfall.",
         "Du fühlst dich kompetent.",
       ],
-      exerciseIds: ["b-ruhe-marker", "b-läuten-routine"],
+      exerciseIds: ["b-ruhe-marker", "b-laeuten-routine"],
     },
   ],
 };
@@ -3298,13 +3256,13 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
   fundament: [
     {
       title: "Abschieds-Auslöser identifizieren",
-      schwerpunkt: "Hunde mit Trennungsangst stressen oft schon BEVOR du gehst. Sie lesen Auslöser wie Schlüssel, Schuhe, Jacke. Diese Woche identifizierst du den vollständigen Auslöser-Stack.",
+      schwerpunkt: "Hunde mit Trennungsangst stressen oft schon BEVOR du gehst. Sie lesen Auslöser wie Schlüssel, Schuhe, Jacke. Diese Woche identifizierst du den vollstaendigen Auslöser-Stack.",
       wochenziele: [
         "Du kennst {dogName}s individuellen Auslöser-Stack.",
-        "Du erkennst die ersten Stress-Anzeichen früh.",
+        "Du erkennst die ersten Stress-Anzeichen frueh.",
         "Du verstehst, wie der Angst-Prozess abläuft.",
       ],
-      tagesplan: "3-5 Tage genau beobachten beim Verlassen. Notiere: ab welchem Moment verändert sich das Verhalten? Atmung? Lecken? Hecheln? Pacing? Identifiziere den Stack: oft Schlüssel + Schuhe + Tasche + Jacke + Tür-Hand.",
+      tagesplan: "3-5 Tage genau beobachten beim Verlassen. Notiere: ab welchem Moment veraendert sich das Verhalten? Atmung? Lecken? Hecheln? Pacing? Identifiziere den Stack: oft Schlüssel + Schuhe + Tasche + Jacke + Tür-Hand.",
       no_gos: [
         "Schon trainieren ohne den Auslöser-Stack zu kennen.",
         "Auslöser nur einzeln betrachten — sie wirken oft kombiniert.",
@@ -3326,9 +3284,9 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Auslöser sind entkoppelt vom Gehen.",
         "Du baust beilaufig in den Tag ein.",
       ],
-      tagesplan: "10x am Tag verschiedene Auslöser ohne Konsequenz: Schlüssel nehmen, hinlegen. Schuhe anziehen, ausziehen. Türklinke berühren, loslassen. {dogName} schaut erst interessiert, dann verliert sie Interesse. Genau das ist der Lerneffekt.",
+      tagesplan: "10x am Tag verschiedene Auslöser ohne Konsequenz: Schlüssel nehmen, hinlegen. Schuhe anziehen, ausziehen. Türklinke beruehren, loslassen. {dogName} schaut erst interessiert, dann verliert sie Interesse. Genau das ist der Lerneffekt.",
       no_gos: [
-        "Trainings-ähnlich machen — beilaufig ist besser.",
+        "Trainings-aehnlich machen — beilaufig ist besser.",
         "Erwarten dass es in 3 Tagen klappt — Wochen-Arbeit.",
         "Bei Stress-Anzeichen weitermachen.",
       ],
@@ -3348,39 +3306,39 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du gehst und kommst ohne Drama.",
         "Stress-Anzeichen reduzieren sich.",
       ],
-      tagesplan: "Tag 1: 2 Sek allein, 10 Wiederholungen. Tag 2: 5 Sek. Tag 3: 10 Sek. Tag 4: 30 Sek. Tag 5: 1 Min. Tag 6-7: 2-3 Min. Komm zurück wenn {dogName} ruhig ist, NICHT auf Stress-Reaktion.",
+      tagesplan: "Tag 1: 2 Sek allein, 10 Wiederholungen. Tag 2: 5 Sek. Tag 3: 10 Sek. Tag 4: 30 Sek. Tag 5: 1 Min. Tag 6-7: 2-3 Min. Komm zurueck wenn {dogName} ruhig ist, NICHT auf Stress-Reaktion.",
       no_gos: [
-        "Bei Stress-Reaktion zurückkommen — lehrt 'jaulen = Halter kommt'.",
+        "Bei Stress-Reaktion zurueckkommen — lehrt 'jaulen = Halter kommt'.",
         "Zu schnell steigern — Angst eskaliert.",
-        "Drama bei Begrüßung/Verabschiedung.",
+        "Drama bei Begruessung/Verabschiedung.",
       ],
       fortschritt: [
-        "Allein-Zeit wächst messbar.",
+        "Allein-Zeit waechst messbar.",
         "Stress-Anzeichen reduzieren sich.",
         "Du arbeitest geduldig.",
       ],
-      exerciseIds: ["ax-mini-sekunden", "ax-trigger-stack"],
+      exerciseIds: ["ax-mini-sekunden", "ax-kong-beim-gehen"],
     },
     {
       title: "Kong als positive Verknüpfung",
       schwerpunkt: "Der Lieblings-Kong kommt NUR wenn du gehst. Damit wird Gehen positiv verknüpft. {dogName} freut sich aufs Allein-Sein statt davor Angst zu haben.",
       wochenziele: [
-        "{dogName} startet Kong-Beschäftigung wenn du gehst.",
+        "{dogName} startet Kong-Beschaeftigung wenn du gehst.",
         "Verknüpfung Kong + Abwesenheit ist etabliert.",
         "Stress-Anzeichen beim Gehen reduzieren sich.",
       ],
-      tagesplan: "Stopfe Kong sehr gut mit Nassfutter, einfrieren = schwerer. Kurz vor dem Gehen: Kong an festem Platz geben. Geh ohne Drama. Komm zurück. Kong wegnehmen — er ist NUR für Abwesenheit reserviert.",
+      tagesplan: "Stopfe Kong sehr gut mit Nassfutter, einfrieren = schwerer. Kurz vor dem Gehen: Kong an festem Platz geben. Geh ohne Drama. Komm zurueck. Kong wegnehmen — er ist NUR für Abwesenheit reserviert.",
       no_gos: [
         "Kong auch ausserhalb Abwesenheit geben — verliert die Magie.",
         "Bei Stress weitermachen — {dogName} ist noch nicht bereit.",
-        "Dramatische Verabschiedung während Kong-Übergabe.",
+        "Dramatische Verabschiedung waehrend Kong-Übergabe.",
       ],
       fortschritt: [
         "{dogName} freut sich auf Kong-Zeit.",
         "Stress-Anzeichen reduzieren sich.",
         "Du baust positive Verknüpfung erfolgreich auf.",
       ],
-      exerciseIds: ["ax-kong-beim-gehen", "ax-trigger-entkoppeln"],
+      exerciseIds: ["ax-kong-beim-gehen", "ax-mini-sekunden"],
     },
     // 6-Monats-Vertiefungen
     {
@@ -3391,7 +3349,7 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} sucht die Decke auch ausserhalb von Training auf.",
         "Allein-Zeit auf Decke wird Routine.",
       ],
-      tagesplan: "Decke an festem Platz, idealerweise mit Sichtschutz (Korb, Hundesofa). Beim Verlassen: {dogName} auf Decke, Kong dazu. Wenn sie hochsteht: ruhig zurückführen. Über Wochen wird Decke zur Allein-Zeit-Insel.",
+      tagesplan: "Decke an festem Platz, idealerweise mit Sichtschutz (Korb, Hundesofa). Beim Verlassen: {dogName} auf Decke, Kong dazu. Wenn sie hochsteht: ruhig zurueckfuehren. Über Wochen wird Decke zur Allein-Zeit-Insel.",
       no_gos: [
         "Decke für Strafe nutzen.",
         "Decke nur in Stress-Phasen nutzen.",
@@ -3402,24 +3360,24 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Decke wird emotional positiv besetzt.",
         "Allein-Zeit-Stress reduziert sich.",
       ],
-      exerciseIds: ["ax-sicherheits-decke", "ax-trigger-stack"],
+      exerciseIds: ["ax-sicherheits-decke", "ax-kong-beim-gehen"],
     },
     {
       title: "Stunden-Aufbau mit Video-Beobachtung",
-      schwerpunkt: "Wenn kurze Phasen sitzen, baust du langsam Stunden auf. Smartphone als Kamera, damit du genau weißt was {dogName} macht während du weg bist. Nicht raten.",
+      schwerpunkt: "Wenn kurze Phasen sitzen, baust du langsam Stunden auf. Smartphone als Kamera, damit du genau weisst was {dogName} macht waehrend du weg bist. Nicht raten.",
       wochenziele: [
         "{dogName} bleibt 30-60 Min entspannt allein.",
         "Du beobachtest per Video, was wirklich passiert.",
         "Du erkennst Stress vs Entspannung sicher.",
       ],
-      tagesplan: "Installiere Smartphone-Camera oder Smart-Camera mit Live-Stream. Tag 1-3: 30 Min Abwesenheit, beobachten. Tag 4-7: bei Erfolg auf 45 Min, dann 60 Min steigern. Bei Stress: zurück zur letzten stabilen Stufe.",
+      tagesplan: "Installiere Smartphone-Camera oder Smart-Camera mit Live-Stream. Tag 1-3: 30 Min Abwesenheit, beobachten. Tag 4-7: bei Erfolg auf 45 Min, dann 60 Min steigern. Bei Stress: zurueck zur letzten stabilen Stufe.",
       no_gos: [
         "Ohne Video raten was passiert.",
         "Zu schnell steigern.",
         "Bei Stress weitermachen.",
       ],
       fortschritt: [
-        "Allein-Zeit wächst stabil.",
+        "Allein-Zeit waechst stabil.",
         "Du hast Daten, nicht nur Annahmen.",
         "{dogName}s Stress reduziert sich messbar.",
       ],
@@ -3427,13 +3385,13 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
     },
     {
       title: "Berechenbare Tagesroutine",
-      schwerpunkt: "Hunde mit Trennungsangst profitieren massiv von vorhersehbaren Tagesabläufen. Gleichte Zeiten für Spaziergang, Fütterung, Beschäftigung, Allein-Zeit.",
+      schwerpunkt: "Hunde mit Trennungsangst profitieren massiv von vorhersehbaren Tagesabläufen. Gleichte Zeiten für Spaziergang, Fuetterung, Beschaeftigung, Allein-Zeit.",
       wochenziele: [
         "Tagesroutine ist etabliert und schriftlich.",
         "Auch am Wochenende werden die Zeiten gehalten.",
         "Berechenbarkeit reduziert Angst.",
       ],
-      tagesplan: "Schreibe feste Zeiten an den Kühlschrank: Aufstehen, erste Toilette, Fütterung, Spaziergang, Allein-Zeit, nächster Spaziergang, Abendessen, Schlafen. Auch am Wochenende einhalten.",
+      tagesplan: "Schreibe feste Zeiten an den Kuehlschrank: Aufstehen, erste Toilette, Fuetterung, Spaziergang, Allein-Zeit, nächster Spaziergang, Abendessen, Schlafen. Auch am Wochenende einhalten.",
       no_gos: [
         "Zeiten am Wochenende anders machen — verwirrt.",
         "Auslastung vor Allein-Zeit weglassen.",
@@ -3444,7 +3402,7 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Unsicherheit reduziert sich.",
         "Trennungsangst sinkt mit Berechenbarkeit.",
       ],
-      exerciseIds: ["ax-trigger-stack", "ax-kong-beim-gehen"],
+      exerciseIds: ["ax-tagesroutine", "ax-kong-beim-gehen"],
     },
     {
       title: "Fundament-Check",
@@ -3465,7 +3423,7 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Werkzeuge sitzen.",
         "Phase 2 ist greifbar.",
       ],
-      exerciseIds: ["ax-mini-sekunden", "ax-trigger-entkoppeln"],
+      exerciseIds: ["ax-mini-sekunden", "ax-kong-beim-gehen"],
     },
   ],
   steigerung: [
@@ -3477,14 +3435,14 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Kong wird ruhig verarbeitet.",
         "Stress-Anzeichen treten nicht mehr auf.",
       ],
-      tagesplan: "Tag 1: 5 Min. Tag 2: 10. Tag 3: 15. Tag 4: 20. Tag 5: 30. Falls Stress an einem Tag: zurück zur letzten stabilen Stufe, dort 2-3 Tage bleiben.",
+      tagesplan: "Tag 1: 5 Min. Tag 2: 10. Tag 3: 15. Tag 4: 20. Tag 5: 30. Falls Stress an einem Tag: zurueck zur letzten stabilen Stufe, dort 2-3 Tage bleiben.",
       no_gos: [
         "Zu schnell steigern.",
         "Bei Stress durchziehen.",
-        "Drama bei Verabschiedung/Begrüßung.",
+        "Drama bei Verabschiedung/Begruessung.",
       ],
       fortschritt: [
-        "Allein-Zeit wächst stabil.",
+        "Allein-Zeit waechst stabil.",
         "Kong-Verknüpfung sitzt.",
         "Stress reduziert sich.",
       ],
@@ -3495,10 +3453,10 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
       schwerpunkt: "Die Magie-Schwelle: 1 Stunde alleine. Wenn das sitzt, ist die meiste Trennungsangst-Arbeit getan. Vorsichtig und mit Video.",
       wochenziele: [
         "{dogName} schafft 1 Stunde entspannt allein.",
-        "Video zeigt Ruhephasen während Abwesenheit.",
+        "Video zeigt Ruhephasen waehrend Abwesenheit.",
         "Du fühlst dich erleichtert.",
       ],
-      tagesplan: "Tag 1-2: 45 Min. Tag 3-4: 50 Min. Tag 5-7: 60 Min. Video beobachten. Bei Stress: zurück. Bei Erfolg: vorsichtig weiter.",
+      tagesplan: "Tag 1-2: 45 Min. Tag 3-4: 50 Min. Tag 5-7: 60 Min. Video beobachten. Bei Stress: zurueck. Bei Erfolg: vorsichtig weiter.",
       no_gos: [
         "Erwarten dass 1h sofort klappt.",
         "Mehrere Stunden parallel testen.",
@@ -3512,14 +3470,14 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
       exerciseIds: ["ax-langzeit-aufbau", "ax-tagesroutine"],
     },
     {
-      title: "Außenreize während Allein-Zeit",
-      schwerpunkt: "{dogName} muss auch mit Außenreizen während der Allein-Zeit klarkommen. Straßenlärm, Klingel, andere Hunde bellen — all das soll {dogName} ruhig aushalten.",
+      title: "Außenreize waehrend Allein-Zeit",
+      schwerpunkt: "{dogName} muss auch mit Außenreizen wahrend Allein-Zeit klarkommen. Straßenlaerm, Klingel, andere Hunde bellen — alles soll sie ruhig aushalten.",
       wochenziele: [
-        "{dogName} bleibt bei Außenreizen während Allein-Zeit ruhig.",
+        "{dogName} bleibt bei Außenreizen waehrend Allein-Zeit ruhig.",
         "Decke bleibt Anker auch unter Reizen.",
         "Stress-Anzeichen treten nicht mehr auf.",
       ],
-      tagesplan: "Plane Allein-Zeiten zu Zeiten mit normalem Außenlärm. Beobachte per Video. Falls {dogName} reagiert auf Außenreize: 1) Sichtschutz an Fenstern, 2) leise Hintergrundmusik (Adagio-Klassik), 3) Decke wegführer von Geräuschquellen.",
+      tagesplan: "Plane Allein-Zeiten zu Zeiten mit normalem Aussenlaerm. Beobachte per Video. Falls {dogName} reagiert auf Außenreize: 1) Sichtschutz an Fenstern, 2) leise Hintergrundmusik (Adagio-Klassik), 3) Decke wegfueher von Geräuschquellen.",
       no_gos: [
         "Allein-Zeit bei Gewitter testen — zu schwer.",
         "Bei Reiz-Bellen reinkommen — verstärkt.",
@@ -3537,21 +3495,21 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
       schwerpunkt: "Auch nach 4 Wochen weiter Auslöser entkoppeln. Schlüssel, Schuhe, Jacke ohne Bedeutung. {dogName} darf NICHT mehr auf einzelne Auslöser reagieren.",
       wochenziele: [
         "Alle ehemaligen Auslöser sind bedeutungslos.",
-        "{dogName} reagiert nur noch beim tatsächlichen Gehen.",
+        "{dogName} reagiert nur noch beim tatsaechlichen Gehen.",
         "Stress-Aufbau beim Vorbereiten ist eliminiert.",
       ],
       tagesplan: "Weiterhin 10x am Tag verschiedene Auslöser ohne Konsequenz. Steigere die Inkonsequenz: manchmal nimmst du Schlüssel UND Schuhe an, gehst aber NICHT. Variabilität ist Schlssel.",
       no_gos: [
         "Auslöser-Entkopplung weglassen.",
         "Nur einzelne Auslöser entkoppeln.",
-        "Erwarten dass es ohne weitere Arbeit hält.",
+        "Erwarten dass es ohne weitere Arbeit haelt.",
       ],
       fortschritt: [
         "Auslöser sind dauerhaft entkoppelt.",
         "Stress-Vorbereitung ist eliminiert.",
         "Du arbeitest entspannt im Alltag.",
       ],
-      exerciseIds: ["ax-trigger-entkoppeln", "ax-trigger-stack"],
+      exerciseIds: ["ax-trigger-entkoppeln", "ax-kong-beim-gehen"],
     },
     // Vertiefungen
     {
@@ -3560,9 +3518,9 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
       wochenziele: [
         "{dogName} schafft 2 Stunden ruhig allein.",
         "Video zeigt Schlaf-Phasen.",
-        "Du gewinnst Alltagsfreiheit zurück.",
+        "Du gewinnst Alltagsfreiheit zurueck.",
       ],
-      tagesplan: "Tag 1-2: 90 Min. Tag 3-4: 100 Min. Tag 5-7: 2 Stunden. Belohnung mit Kong + Decke. Falls Stress: zurück zur stabilen Stufe.",
+      tagesplan: "Tag 1-2: 90 Min. Tag 3-4: 100 Min. Tag 5-7: 2 Stunden. Belohnung mit Kong + Decke. Falls Stress: zurueck zur stabilen Stufe.",
       no_gos: [
         "Erwarten dass 2h sofort klappt.",
         "Ohne Video raten.",
@@ -3579,26 +3537,26 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
       title: "Variable Allein-Zeiten",
       schwerpunkt: "Bisher hattest du feste Allein-Zeiten. Jetzt variierst du: mal 30 Min, mal 2h, mal 90 Min. {dogName} lernt: Allein-Zeit ist unvorhersehbar, aber immer vorübergehend.",
       wochenziele: [
-        "{dogName} bleibt unabhängig von Zeit-Dauer ruhig.",
+        "{dogName} bleibt unabhaengig von Zeit-Dauer ruhig.",
         "Variabilität ist eingespielt.",
         "Du planst flexibel.",
       ],
-      tagesplan: "Pro Tag 2-3 verschiedene Allein-Zeit-Dauer: morgens 30 Min, nachmittags 2h, abends 45 Min. {dogName} lernt: ich weiß nie genau wie lang, also bleibe ich ruhig.",
+      tagesplan: "Pro Tag 2-3 verschiedene Allein-Zeit-Dauer: morgens 30 Min, nachmittags 2h, abends 45 Min. {dogName} lernt: ich weiss nie genau wie lang, also bleibe ich ruhig.",
       no_gos: [
-        "Mehr als 3h am Stück — zu lang für diese Phase.",
+        "Mehr als 3h am Stueck — zu lang für diese Phase.",
         "Zu starke Unterschiede an einem Tag.",
-        "Bei Stress nicht zurückschalten.",
+        "Bei Stress nicht zurueckschalten.",
       ],
       fortschritt: [
         "Variabilität wird akzeptiert.",
-        "{dogName} bleibt unabhängig von Dauer ruhig.",
+        "{dogName} bleibt unabhaengig von Dauer ruhig.",
         "Du planst flexibler.",
       ],
-      exerciseIds: ["ax-trigger-stack", "ax-kong-beim-gehen"],
+      exerciseIds: ["ax-langzeit-aufbau", "ax-kong-beim-gehen"],
     },
     {
       title: "Sozial-Kontakt als Stress-Reducer",
-      schwerpunkt: "Mehr Sozial-Kontakte mit anderen Hunden während du da bist reduzieren oft Trennungsangst. {dogName} ist weniger fixiert auf dich allein.",
+      schwerpunkt: "Mehr Sozial-Kontakte mit anderen Hunden waehrend du da bist reduzieren oft Trennungsangst. {dogName} ist weniger fixiert auf dich allein.",
       wochenziele: [
         "{dogName} hat 2-3 berechenbare Hundefreunde.",
         "Sozial-Termine pro Woche sind etabliert.",
@@ -3615,7 +3573,7 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Fixierung auf dich reduziert sich.",
         "Trennungsangst sinkt.",
       ],
-      exerciseIds: ["ax-tagesroutine", "ax-trigger-entkoppeln"],
+      exerciseIds: ["ax-tagesroutine", "ax-kong-beim-gehen"],
     },
     {
       title: "Festigung Steigerung",
@@ -3625,11 +3583,11 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Allein-Zeit bis 2-3h ist machbar.",
         "Du bist auf Phase 3 vorbereitet.",
       ],
-      tagesplan: "Bilanz: wo stehst du? Was wackelt? Plane Phase 3: berechenbare Tagesroutine, regelmäßige Refresher, Stress-Reduktion langfristig.",
+      tagesplan: "Bilanz: wo stehst du? Was wackelt? Plane Phase 3: berechenbare Tagesroutine, regelmaessige Refresher, Stress-Reduktion langfristig.",
       no_gos: [
         "Schon 4h+ Allein-Zeit forcieren.",
         "Routinen aufweichen.",
-        "Erfolge als selbstverständlich nehmen.",
+        "Erfolge als selbstverstaendlich nehmen.",
       ],
       fortschritt: [
         "Du fühlst dich erleichtert.",
@@ -3646,7 +3604,7 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
       wochenziele: [
         "{dogName} bleibt 3-4h ruhig allein.",
         "Alltagsleben (Arbeit, Einkauf) ist machbar.",
-        "Du fühlst dich nicht mehr eingeschränkt.",
+        "Du fühlst dich nicht mehr eingeschraenkt.",
       ],
       tagesplan: "Bewusst 3-4h Allein-Zeit testen. Video. Mehrere Tage stabil halten, bevor du länger gehst. Kong + Decke + ruhige Vorbereitung.",
       no_gos: [
@@ -3664,13 +3622,13 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
     },
     {
       title: "Berechenbare Tagesstruktur halten",
-      schwerpunkt: "Auch nach Erfolg: Tagesroutine bleibt. Hunde mit (ehemaliger) Trennungsangst sind anfällig für Rückschritte bei Unregelmäßigkeit.",
+      schwerpunkt: "Auch nach Erfolg: Tagesroutine bleibt. Hunde mit (ehemaliger) Trennungsangst sind anfaellig für Rueckschritte bei Unregelmaessigkeit.",
       wochenziele: [
         "Tagesroutine wird konsequent gehalten.",
         "Auch am Wochenende keine Abweichungen.",
         "Berechenbarkeit ist langfristig etabliert.",
       ],
-      tagesplan: "Halte den Routine-Zettel hoch. Wochenenden: gleichte Zeiten wie Wochentage. Spontane Änderungen vermeiden. Bei wirklich nötigen Änderungen: vorher schon angleichten.",
+      tagesplan: "Halte den Routine-Zettel hoch. Wochenenden: gleichte Zeiten wie Wochentage. Spontane Änderungen vermeiden. Bei wirklich noetigen Änderungen: vorher schon angleichten.",
       no_gos: [
         "Wochenend-Schlaraffia ohne Routine.",
         "Spontane Plan-Änderungen.",
@@ -3681,17 +3639,17 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} bleibt stabil.",
         "Du planst strukturiert.",
       ],
-      exerciseIds: ["ax-trigger-stack", "ax-kong-beim-gehen"],
+      exerciseIds: ["ax-tagesroutine", "ax-kong-beim-gehen"],
     },
     {
       title: "Stress-Reduktion langfristig",
-      schwerpunkt: "Stress an anderen Stellen kann Trennungsangst zurückbringen. Lebenslange Stress-Hygiene: genug Schlaf, gute Auslastung, soziale Kontakte, ruhige Umgebung.",
+      schwerpunkt: "Stress an anderen Stellen kann Trennungsangst zurueckbringen. Lebenslange Stress-Hygiene: genug Schlaf, gute Auslastung, soziale Kontakte, ruhige Umgebung.",
       wochenziele: [
         "{dogName} hat 16-20h Schlaf pro Tag.",
         "Stress-Faktoren werden aktiv reduziert.",
-        "Trennungsangst-Rückschritte werden vermieden.",
+        "Trennungsangst-Rueckschritte werden vermieden.",
       ],
-      tagesplan: "Prüfe regelmäßig: Schlaf-Hygiene? Auslastung? Soziale Kontakte? Ruhe-Phasen? Bei Stress an anderer Stelle: reduzieren bevor Trennungsangst zurückkommt.",
+      tagesplan: "Prüfe regelmaessig: Schlaf-Hygiene? Auslastung? Soziale Kontakte? Ruhe-Phasen? Bei Stress an anderer Stelle: reduzieren bevor Trennungsangst zurueckkommt.",
       no_gos: [
         "Stress an anderer Stelle ignorieren.",
         "Reizüberflutung zulassen.",
@@ -3699,7 +3657,7 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       fortschritt: [
         "{dogName} bleibt langfristig ausgeglichen.",
-        "Rückschritte werden vermieden.",
+        "Rueckschritte werden vermieden.",
         "Du achtest auf Stress-Hygiene.",
       ],
       exerciseIds: ["ax-tagesroutine", "ax-sicherheits-decke"],
@@ -3712,7 +3670,7 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Inhalt variiert genug für Abwechslung.",
         "Kong bleibt magischer Allein-Zeit-Snack.",
       ],
-      tagesplan: "Bei jeder Allein-Zeit Kong. Variation: heute Nassfutter+Käse, morgen Trockenfutter+Wurst, übermorgen Erdnussmus (sparsam). Eingefroren = schwerer. Nach Allein-Zeit: Kong weg.",
+      tagesplan: "Bei jeder Allein-Zeit Kong. Variation: heute Nassfutter+Kaese, morgen Trockenfutter+Wurst, übermorgen Erdnussmus (sparsam). Eingefroren = schwerer. Nach Allein-Zeit: Kong weg.",
       no_gos: [
         "Kong auch ausserhalb Allein-Zeit geben.",
         "Immer derselbe Inhalt — langweilig.",
@@ -3721,27 +3679,27 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
       fortschritt: [
         "Kong bleibt positiv besetzt.",
         "{dogName} freut sich aufs Allein-Sein.",
-        "Verknüpfung hält langfristig.",
+        "Verknüpfung haelt langfristig.",
       ],
       exerciseIds: ["ax-kong-beim-gehen", "ax-mini-sekunden"],
     },
     {
       title: "Beobachtungs-Routine",
-      schwerpunkt: "Auch nach Erfolg regelmäßig per Video kontrollieren, was {dogName} während Allein-Zeit macht. Rückschritte werden so früh erkannt.",
+      schwerpunkt: "Auch nach Erfolg regelmaessig per Video kontrollieren, was {dogName} waehrend Allein-Zeit macht. Rueckschritte werden so frueh erkannt.",
       wochenziele: [
         "Du beobachtest alle 2-3 Wochen per Video.",
-        "Rückschritte werden früh erkannt.",
+        "Rueckschritte werden frueh erkannt.",
         "Du hast Daten, nicht nur Annahmen.",
       ],
       tagesplan: "Alle 2-3 Wochen: 1 Allein-Zeit mit Video aufzeichnen. Anschauen: was hat {dogName} gemacht? Geschlafen? Gekaut? Gepacing? Trends erkennen.",
       no_gos: [
         "Annehmen statt beobachten.",
-        "Rückschritte ignorieren.",
+        "Rueckschritte ignorieren.",
         "Video-Routine schleifen lassen.",
       ],
       fortschritt: [
         "Daten-basierte Sicherheit.",
-        "Rückschritte werden früh erkannt.",
+        "Rueckschritte werden frueh erkannt.",
         "Du fühlst dich kompetenter.",
       ],
       exerciseIds: ["ax-langzeit-aufbau", "ax-tagesroutine"],
@@ -3754,7 +3712,7 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} bleibt auch bei längeren Phasen ruhig.",
         "Du fühlst dich vorbereitet.",
       ],
-      tagesplan: "Bevor schwierige Anlässe anstehen: 1 Woche vorher 1-2 ungewohnt lange Allein-Zeiten üben. Kong-Inhalt aufwerten. Tagesroutine möglichst ähnlich halten. Ggf. Hundesitter im Notfall.",
+      tagesplan: "Bevor schwierige Anlässe anstehen: 1 Woche vorher 1-2 ungewohnt lange Allein-Zeiten üben. Kong-Inhalt aufwerten. Tagesroutine möglichst aehnlich halten. Ggf. Hundesitter im Notfall.",
       no_gos: [
         "Spontane Verlängerung ohne Vorbereitung.",
         "Hundesitter ohne vorherige Bekanntschaft.",
@@ -3765,25 +3723,25 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du planst strukturiert.",
         "{dogName} bleibt stabil.",
       ],
-      exerciseIds: ["ax-trigger-stack", "ax-trigger-entkoppeln"],
+      exerciseIds: ["ax-langzeit-aufbau", "ax-tagesroutine"],
     },
     {
-      title: "Rückschritts-Notfall-Protokoll",
-      schwerpunkt: "Falls Trennungsangst zurückkommt (neue Wohnung, Änderungen): klare Notfall-Sequenz. Früh-Erkennung, gegen-Steuerung, Wochen extra-Konsequenz.",
+      title: "Rueckschritts-Notfall-Protokoll",
+      schwerpunkt: "Falls Trennungsangst zurueckkommt (neue Wohnung, Änderungen): klare Notfall-Sequenz. Frueh-Erkennung, gegen-Steuerung, Wochen extra-Konsequenz.",
       wochenziele: [
         "Du hast einen Notfall-Plan.",
-        "Früh-Anzeichen werden erkannt.",
-        "Rückschritte werden in 2-3 Wochen aufgefangen.",
+        "Frueh-Anzeichen werden erkannt.",
+        "Rueckschritte werden in 2-3 Wochen aufgefangen.",
       ],
-      tagesplan: "Notfall-Plan: 1) zurück zu kürzeren Allein-Zeiten. 2) Kong-Verknüpfung verstärken. 3) Tagesroutine streng halten. 4) Stress-Faktoren reduzieren. 5) Tierarzt-Check ausschließen Medizinisches.",
+      tagesplan: "Notfall-Plan: 1) zurueck zu kuerzeren Allein-Zeiten. 2) Kong-Verknüpfung verstärken. 3) Tagesroutine streng halten. 4) Stress-Faktoren reduzieren. 5) Tierarzt-Check ausschließen Medizinisches.",
       no_gos: [
-        "Rückschritte ignorieren.",
-        "Bei Rückschritt mit gewohnter Allein-Zeit weitermachen.",
-        "Druck erhöhen.",
+        "Rueckschritte ignorieren.",
+        "Bei Rueckschritt mit gewohnter Allein-Zeit weitermachen.",
+        "Druck erhoehen.",
       ],
       fortschritt: [
         "Notfall-Plan sitzt.",
-        "Rückschritte werden gemanagt.",
+        "Rueckschritte werden gemanagt.",
         "Du fühlst dich langfristig kompetent.",
       ],
       exerciseIds: ["ax-mini-sekunden", "ax-kong-beim-gehen"],
@@ -3800,14 +3758,14 @@ const ANXIETY_WEEKS: Record<Phase, WeekTemplate[]> = {
       no_gos: [
         "Routinen schlagartig weglassen.",
         "Bei Veränderungen nicht anpassen.",
-        "Beobachten aufhören.",
+        "Beobachten aufhoeren.",
       ],
       fortschritt: [
         "{dogName} ist langfristig ausgeglichen.",
         "Du fühlst dich frei.",
         "Trennungsangst ist Geschichte.",
       ],
-      exerciseIds: ["ax-tagesroutine", "ax-trigger-stack"],
+      exerciseIds: ["ax-tagesroutine", "ax-kong-beim-gehen"],
     },
   ],
 };
@@ -3821,11 +3779,11 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
       title: "4 Pfoten am Boden = Belohnung",
       schwerpunkt: "Das wichtigste Prinzip: nur ruhiges Stehen kriegt Aufmerksamkeit. Beim Springen wird {dogName} konsequent ignoriert. Über 2-3 Wochen Konsequenz verschwindet das Anspringen.",
       wochenziele: [
-        "Bei 4 Pfoten am Boden: ruhig hallo sagen, streicheln.",
-        "Bei Springen: Rücken zudrehen, ignorieren.",
+        "Bei 4 Pfoten am Boden: ruhig hallo sagen, streichheln.",
+        "Bei Springen: Ruecken zudrehen, ignorieren.",
         "{dogName} merkt: Springen = du gehst weg.",
       ],
-      tagesplan: "Bei jedem Wiedersehen aktiv anwenden: 4 Pfoten am Boden = ruhig hallo. Springt? Rücken zudrehen, kein Augenkontakt. 4 Pfoten zurück am Boden: wieder zuwenden. Konsistenz mit allen Familienmitgliedern.",
+      tagesplan: "Bei jedem Wiedersehen aktiv anwenden: 4 Pfoten am Boden = ruhig hallo. Springt? Ruecken zudrehen, kein Augenkontakt. 4 Pfoten zurueck am Boden: wieder zuwenden. Konsistenz mit allen Familienmitgliedern.",
       no_gos: [
         "Beim Springen schimpfen — Aufmerksamkeit ist auch Belohnung.",
         "Familienmitglieder die einmal nachgeben — sabotiert die Arbeit.",
@@ -3840,17 +3798,17 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
       exerciseIds: ["j-vier-pfoten-belohnen", "j-sitz-als-gruess"],
     },
     {
-      title: "SITZ als Begrüßungs-Alternative",
-      schwerpunkt: "Statt nur Springen zu unterbinden, geben wir {dogName} eine Alternative: SITZ ist die neue Begrüßung. Bei Begegnung sitzt sie, kriegt dafür Aufmerksamkeit.",
+      title: "SITZ als Begruessungs-Alternative",
+      schwerpunkt: "Statt nur Springen zu unterbinden, geben wir {dogName} eine Alternative: SITZ ist die neue Begruessung. Bei Begegnung sitzt sie, kriegt dafür Aufmerksamkeit.",
       wochenziele: [
-        "{dogName} setzt sich auf SITZ vor Begrüßung.",
+        "{dogName} setzt sich auf SITZ vor Begruessung.",
         "Aufmerksamkeit kommt NUR wenn sie sitzt.",
-        "SITZ wird zur automatischen Begrüßung.",
+        "SITZ wird zur automatischen Begruessung.",
       ],
-      tagesplan: "Bei Begegnungen (Familie, Gäste): SITZ sagen. Sie sitzt: streicheln + Leckerli. Sie steht auf zum Springen: Streicheln stop. Wieder SITZ: zuwenden. Auch Gäste anweisen: 'Nur bei SITZ.'",
+      tagesplan: "Bei Begegnungen (Familie, Gäste): SITZ sagen. Sie sitzt: streichheln + Leckerli. Sie steht auf zum Springen: Streicheln stop. Wieder SITZ: zuwenden. Auch Gäste anweisen: 'Nur bei SITZ.'",
       no_gos: [
-        "Beim Stehen auch streicheln — falsche Verknüpfung.",
-        "Gäste nicht informieren — sie streicheln den springenden Hund.",
+        "Beim Stehen auch streichheln — falsche Verknüpfung.",
+        "Gäste nicht informieren — sie streichheln den springenden Hund.",
         "SITZ nicht zuvor konditionieren.",
       ],
       fortschritt: [
@@ -3859,7 +3817,7 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du fühlst dich vorbereitet.",
         "Familien-Konsistenz steht und alle Hausbewohner ziehen mit.",
       ],
-      exerciseIds: ["j-tuergaeste-routine", "j-konsistenz-familie"],
+      exerciseIds: ["j-sitz-als-gruess", "j-konsistenz-familie"],
     },
     {
       title: "Familien-Konsistenz etablieren",
@@ -3880,33 +3838,33 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Gäste werden informiert.",
         "Inkonsistenz ist eliminiert.",
       ],
-      exerciseIds: ["j-spazier-vorbeigaenger", "j-vier-pfoten-belohnen"],
+      exerciseIds: ["j-konsistenz-familie", "j-vier-pfoten-belohnen"],
     },
     {
       title: "Wieder-Sehens-Routine",
-      schwerpunkt: "Heimkommen ist oft der größte Spring-Anlass. Diese Woche etablieren wir eine ruhige Wieder-Sehens-Routine: kein Drama, kein Anspringen, ruhiges Hallo.",
+      schwerpunkt: "Heimkommen ist oft der groesste Spring-Anlass. Diese Woche etablieren wir eine ruhige Wieder-Sehens-Routine: kein Drama, kein Anspringen, ruhiges Hallo.",
       wochenziele: [
         "{dogName} kommt ruhig zur Tür, ohne zu springen.",
-        "Begrüßung ist ruhig und kontrolliert.",
+        "Begruessung ist ruhig und kontrolliert.",
         "Aufregung beim Wieder-Sehen reduziert sich.",
       ],
-      tagesplan: "Kommst nach Hause: wenn {dogName} hochspringt, ignoriere sie 30 Sek. 4 Pfoten am Boden: ruhig hallo. Niemals dramatisch begrüßen. Schuhe ausziehen, dann erst zuwenden.",
+      tagesplan: "Kommst nach Hause: wenn {dogName} hochspringt, ignoriere sie 30 Sek. 4 Pfoten am Boden: ruhig hallo. Niemals dramatisch begruessen. Schuhe ausziehen, dann erst zuwenden.",
       no_gos: [
         "Dramatisches 'Hallo mein Schatz!' — verstärkt Aufregung.",
-        "Sofort streicheln während Hund springt.",
-        "Erwarten dass ruhige Begrüßung sofort klappt.",
+        "Sofort streichheln waehrend Hund springt.",
+        "Erwarten dass ruhige Begruessung sofort klappt.",
       ],
       fortschritt: [
         "Wieder-Sehens-Routine wird ruhig.",
         "Aufregung reduziert sich.",
         "Du wirst entspannter beim Heimkommen.",
       ],
-      exerciseIds: ["j-tuergaeste-routine", "j-sitz-als-gruess"],
+      exerciseIds: ["j-vier-pfoten-belohnen", "j-sitz-als-gruess"],
     },
     // 6-Monats-Vertiefungen
     {
       title: "Begegnungen bei Gästen",
-      schwerpunkt: "Aufbauend: bei Gästen anwenden, was bei Familie sitzt. Gäste werden ausführlich instruiert, {dogName} muss SITZEN während Gast hereinkommt.",
+      schwerpunkt: "Aufbauend: bei Gästen anwenden, was bei Familie sitzt. Gäste werden ausfuehrlich instruiert, {dogName} muss SITZEN waehrend Gast hereinkommt.",
       wochenziele: [
         "{dogName} bleibt bei Gäste-Empfang ruhig.",
         "Gäste sind informiert und ziehen mit.",
@@ -3915,46 +3873,46 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
       tagesplan: "Vor Gäste-Empfang: Gäste vorab per Nachricht informieren: 'Bitte ignoriere ihn die ersten 5 Min, er muss sitzen lernen.' Klingel: Decke oder SITZ. Gast kommt rein, achtet Hund nicht. Nach 3-5 Min ruhig: OK-Signal.",
       no_gos: [
         "Gäste nicht informieren.",
-        "Erwarten dass alle Gäste mitziehen ohne Erklärung.",
-        "OK-Signal zu früh geben.",
+        "Erwarten dass alle Gäste mitziehen ohne Erklaerung.",
+        "OK-Signal zu frueh geben.",
       ],
       fortschritt: [
         "Gäste-Empfang wird routiniert.",
         "{dogName} bleibt beim Empfang ruhig.",
         "Du fühlst dich entspannter.",
       ],
-      exerciseIds: ["j-tuergaeste-routine", "j-vier-pfoten-belohnen"],
+      exerciseIds: ["j-tuergaeste-routine", "j-sitz-als-gruess"],
     },
     {
       title: "Spaziergangs-Begegnungen meistern",
-      schwerpunkt: "Anspringen draußen ist heikel: nicht jeder Mensch will hochgesprungen werden. Wir etablieren SITZ an der Bein-Position bei Vorbeigängern.",
+      schwerpunkt: "Anspringen draußen ist heikel: nicht jeder Mensch will hochgesprungen werden. Wir etablieren SITZ an der Bein-Position bei Vorbeigaengern.",
       wochenziele: [
-        "{dogName} setzt sich bei Vorbeigängern an Bein-Position.",
-        "Vorbeigänger werden nicht angesprungen.",
+        "{dogName} setzt sich bei Vorbeigaengern an Bein-Position.",
+        "Vorbeigaenger werden nicht angesprungen.",
         "Du fühlst dich vorbereitet auf Spaziergangs-Begegnungen.",
       ],
-      tagesplan: "Spaziergänge mit Vorbeigänger-Erwartung. Bei Sicht eines Menschen (15m+): SITZ neben deinem Bein. Belohnung während Vorbeigang. Vorbeigänger gehen vorbei, NICHT mit Hund interagieren.",
+      tagesplan: "Spaziergaenge mit Vorbeigaenger-Erwartung. Bei Sicht eines Menschen (15m+): SITZ neben deinem Bein. Belohnung waehrend Vorbeigang. Vorbeigaenger gehen vorbei, NICHT mit Hund interagieren.",
       no_gos: [
-        "Vorbeigänger das Hund streicheln lassen während Springen.",
-        "Erwarten dass Vorbeigänger sich darauf einlassen.",
+        "Vorbeigaenger das Hund streichheln lassen waehrend Springen.",
+        "Erwarten dass Vorbeigaenger sich darauf einlassen.",
         "Bei Stress weitermachen.",
       ],
       fortschritt: [
-        "SITZ bei Vorbeigängern wird Routine.",
+        "SITZ bei Vorbeigaengern wird Routine.",
         "Springen draußen reduziert sich.",
-        "Spaziergänge fühlen sich kontrollierter an.",
+        "Spaziergaenge fühlen sich kontrollierter an.",
       ],
       exerciseIds: ["j-spazier-vorbeigaenger", "j-sitz-als-gruess"],
     },
     {
       title: "Decke für schwierige Gäste",
-      schwerpunkt: "Bei schwierigen Gästen (Kinder, Ängstliche, alte Menschen) gehört {dogName} auf die Decke. Klare Trennung, kein Risiko.",
+      schwerpunkt: "Bei schwierigen Gästen (Kinder, Ängstliche, alte Menschen) gehoert {dogName} auf die Decke. Klare Trennung, kein Risiko.",
       wochenziele: [
         "{dogName} bleibt bei schwierigen Gästen auf der Decke.",
         "Risikoreiche Begegnungen werden vermieden.",
         "Du fühlst dich verantwortungsvoll vorbereitet.",
       ],
-      tagesplan: "Bei Kindern, ängstlichen Gästen oder alten Menschen: {dogName} direkt zur Decke führen. Auch während des Besuchs auf der Decke lassen. Belohnung mit Kong. Bei Bedarf: Boxen-Trennung in anderem Raum.",
+      tagesplan: "Bei Kindern, ängstlichen Gästen oder alten Menschen: {dogName} direkt zur Decke fuehren. Auch waehrend des Besuchs auf der Decke lassen. Belohnung mit Kong. Bei Bedarf: Boxen-Trennung in anderem Raum.",
       no_gos: [
         "Erwarten dass alle Gäste den Hund vertragen.",
         "Riskante Begegnungen erzwingen.",
@@ -3965,21 +3923,21 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Decken-Routine ist robust.",
         "Du handelst verantwortungsvoll.",
       ],
-      exerciseIds: ["j-tuergaeste-routine", "j-tuergaeste-routine"],
+      exerciseIds: ["j-tuergaeste-routine", "j-sitz-als-gruess"],
     },
     {
       title: "Fundament-Festigung",
-      schwerpunkt: "Letzte Fundament-Woche. 4-Pfoten-Routine sitzt, SITZ als Begrüßung, Familien-Konsistenz, Gäste-Empfang. Phase 2 = mehr Anwendung.",
+      schwerpunkt: "Letzte Fundament-Woche. 4-Pfoten-Routine sitzt, SITZ als Begruessung, Familien-Konsistenz, Gäste-Empfang. Phase 2 = mehr Anwendung.",
       wochenziele: [
         "Alle Bausteine sitzen.",
         "Springen ist deutlich reduziert.",
         "Du fühlst dich kompetent.",
       ],
-      tagesplan: "Bilanz: was sitzt, was wackelt? Falls Schwäche: 1 Extra-Woche. Phase 2 = noch mehr Anwendung in echten Situationen.",
+      tagesplan: "Bilanz: was sitzt, was wackelt? Falls Schwaeche: 1 Extra-Woche. Phase 2 = noch mehr Anwendung in echten Situationen.",
       no_gos: [
         "Konsistenz aufweichen.",
-        "Schwächen ignorieren.",
-        "Erfolge als selbstverständlich nehmen.",
+        "Schwaechen ignorieren.",
+        "Erfolge als selbstverstaendlich nehmen.",
       ],
       fortschritt: [
         "Du fühlst dich kompetent.",
@@ -3992,13 +3950,13 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
   steigerung: [
     {
       title: "Konsistenz in mehr Situationen",
-      schwerpunkt: "Diese Woche wendest du die Regeln in noch mehr Situationen an: morgens beim Aufstehen, beim Füttern, beim Spielen. Springen kommt von alleinen.",
+      schwerpunkt: "Diese Woche wendest du die Regeln in noch mehr Situationen an: morgens beim Aufstehen, beim Fuettern, beim Spielen. Springen kommt von alleinen.",
       wochenziele: [
         "4-Pfoten-Regel in 5+ Situationen pro Tag.",
         "Springen reduziert sich übergreifend.",
         "Du wirst reflexartig konsequent.",
       ],
-      tagesplan: "Aktiv anwenden: morgens beim Aufstehen, vor Spaziergang, vor Füttern, beim Spielen, beim Heimkommen. Jeder Sprung wird ignoriert, jedes 4-Pfoten-Stehen wird belohnt.",
+      tagesplan: "Aktiv anwenden: morgens beim Aufstehen, vor Spaziergang, vor Fuettern, beim Spielen, beim Heimkommen. Jeder Sprung wird ignoriert, jedes 4-Pfoten-Stehen wird belohnt.",
       no_gos: [
         "Regel situativ aufweichen.",
         "Sich rechtfertigen ('ist halt aufgeregt').",
@@ -4020,10 +3978,10 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Decke ist Anker auch bei Aufregung.",
         "Du planst strukturiert.",
       ],
-      tagesplan: "Plane Gruppen-Besuche bewusst (3-4 Personen). {dogName} sofort auf Decke. Alle Gäste sind informiert. Begrüßungs-Phase 5-10 Min, in der {dogName} auf Decke bleibt. Erst danach OK-Signal.",
+      tagesplan: "Plane Gruppen-Besuche bewusst (3-4 Personen). {dogName} sofort auf Decke. Alle Gäste sind informiert. Begruessungs-Phase 5-10 Min, in der {dogName} auf Decke bleibt. Erst danach OK-Signal.",
       no_gos: [
         "Mehrere unbekannte Personen ohne Vorinfo.",
-        "OK-Signal zu früh.",
+        "OK-Signal zu frueh.",
         "Decke ohne vorherige Konditionierung.",
       ],
       fortschritt: [
@@ -4035,36 +3993,36 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
     },
     {
       title: "Sit-on-Cue im echten Setting",
-      schwerpunkt: "SITZ als Standard-Begrüßung wird nicht mehr abgesagt — {dogName} bietet es automatisch an. Belohnungs-Frequenz kann reduziert werden.",
+      schwerpunkt: "SITZ als Standard-Begruessung wird nicht mehr abgesagt — {dogName} bietet es automatisch an. Belohnungs-Frequenz kann reduziert werden.",
       wochenziele: [
-        "{dogName} setzt sich automatisch bei Begrüßungen.",
+        "{dogName} setzt sich automatisch bei Begruessungen.",
         "Du musst nicht mehr aktiv SITZ sagen.",
         "Belohnungs-Frequenz reduziert sich.",
       ],
-      tagesplan: "Bei Begrüßungen 2-3 Sek warten — bietet {dogName} SITZ an? Wenn ja: sofort streicheln, gelegentlich Leckerli. Wenn nein: SITZ sagen. Über Wochen wird Automatik etabliert.",
+      tagesplan: "Bei Begruessungen 2-3 Sek warten — bietet {dogName} SITZ an? Wenn ja: sofort streichheln, gelegentlich Leckerli. Wenn nein: SITZ sagen. Über Wochen wird Automatik etabliert.",
       no_gos: [
-        "Bei Stehenbleiben streicheln.",
+        "Bei Stehenbleiben streichheln.",
         "Belohnungs-Frequenz zu schnell reduzieren.",
-        "Erwarten dass es ohne Auffrischung hält.",
+        "Erwarten dass es ohne Auffrischung haelt.",
       ],
       fortschritt: [
         "SITZ wird automatisch angeboten.",
         "Belohnungs-Frequenz sinkt.",
         "Du fühlst dich entspannter.",
       ],
-      exerciseIds: ["j-vier-pfoten-belohnen", "j-konsistenz-familie"],
+      exerciseIds: ["j-sitz-als-gruess", "j-konsistenz-familie"],
     },
     {
       title: "Spaziergangs-Begegnungen festigen",
-      schwerpunkt: "SITZ bei Vorbeigängern wird Routine. {dogName} setzt sich automatisch, wenn Menschen nahen.",
+      schwerpunkt: "SITZ bei Vorbeigaengern wird Routine. {dogName} setzt sich automatisch, wenn Menschen nahen.",
       wochenziele: [
-        "Automatisches SITZ bei Vorbeigängern.",
+        "Automatisches SITZ bei Vorbeigaengern.",
         "Springen draußen ist nahezu eliminiert.",
-        "Spaziergänge sind entspannter.",
+        "Spaziergaenge sind entspannter.",
       ],
       tagesplan: "Pro Spaziergang aktiv SITZ-Sequenzen bei jeder Begegnung. Belohnung. Bei nicht-automatischem SITZ: Signal geben. Wenn automatisch: SUPER-Belohnung.",
       no_gos: [
-        "Vorbeigänger Hund streicheln lassen während Stehen.",
+        "Vorbeigaenger Hund streichheln lassen waehrend Stehen.",
         "Erwarten dass alle mitziehen.",
         "Bei Stress weitermachen.",
       ],
@@ -4078,16 +4036,16 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
     // Vertiefungen
     {
       title: "Spielen kontrolliert",
-      schwerpunkt: "Beim Spielen ist Anspringen oft erlaubt (oder erwünscht). Diese Woche differenzieren wir: Spielen = darf, Begrüßung = darf nicht. Klare Signale.",
+      schwerpunkt: "Beim Spielen ist Anspringen oft erlaubt (oder erwuenscht). Diese Woche differenzieren wir: Spielen = darf, Begruessung = darf nicht. Klare Signale.",
       wochenziele: [
-        "{dogName} unterscheidet Spiel-Anspringen von Begrüßungs-Anspringen.",
+        "{dogName} unterscheidet Spiel-Anspringen von Begruessungs-Anspringen.",
         "Klare Signale für beide Modi.",
-        "Spielen bleibt erlaubt, Begrüßungs-Springen wird unterbunden.",
+        "Spielen bleibt erlaubt, Begruessungs-Springen wird unterbunden.",
       ],
-      tagesplan: "Vor Spiel: klares Signal 'LAUF' oder 'SPIEL' — jetzt darf gesprungen werden. Vor Begrüßung: klares Signal 'RUHIG' — jetzt nicht. Konsequenz mit beiden Signalen.",
+      tagesplan: "Vor Spiel: klares Signal 'LAUF' oder 'SPIEL' — jetzt darf gesprungen werden. Vor Begruessung: klares Signal 'RUHIG' — jetzt nicht. Konsequenz mit beiden Signalen.",
       no_gos: [
         "Signale inkonsistent geben.",
-        "Spielen während Begrüßungs-Situation.",
+        "Spielen waehrend Begruessungs-Situation.",
         "Erwarten dass Hund selbst differenziert ohne Signal.",
       ],
       fortschritt: [
@@ -4095,11 +4053,11 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Spielen bleibt erlaubt.",
         "Du hast klare Signale etabliert.",
       ],
-      exerciseIds: ["j-vier-pfoten-belohnen", "j-tuergaeste-routine"],
+      exerciseIds: ["j-vier-pfoten-belohnen", "j-sitz-als-gruess"],
     },
     {
-      title: "Begrüßungs-Routine perfektionieren",
-      schwerpunkt: "Wieder-Sehens-Routine wird zur festen Sequenz. Tür auf, Schuhe ausziehen, ruhig hallo. {dogName} weiß genau was kommt.",
+      title: "Begruessungs-Routine perfektionieren",
+      schwerpunkt: "Wieder-Sehens-Routine wird zur festen Sequenz. Tür auf, Schuhe ausziehen, ruhig hallo. {dogName} weiss genau was kommt.",
       wochenziele: [
         "Wieder-Sehens-Routine ist eingespielt.",
         "Aufregung beim Heimkommen ist minimal.",
@@ -4116,7 +4074,7 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du wirst ruhiger beim Heimkommen.",
         "{dogName} bleibt entspannt.",
       ],
-      exerciseIds: ["j-spazier-vorbeigaenger", "j-sitz-als-gruess"],
+      exerciseIds: ["j-vier-pfoten-belohnen", "j-sitz-als-gruess"],
     },
     {
       title: "Decken-Anker für Stress-Situationen",
@@ -4126,7 +4084,7 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} sucht Decke aktiv auf.",
         "Stress-Begegnungen werden entschärft.",
       ],
-      tagesplan: "Bei Stress-Begegnung: {dogName} aktiv zur Decke führen mit Kong. Sie bleibt dort während der schwierigen Phase. Belohnung mit Beruhigungs-Marker.",
+      tagesplan: "Bei Stress-Begegnung: {dogName} aktiv zur Decke fuehren mit Kong. Sie bleibt dort waehrend der schwierigen Phase. Belohnung mit Beruhigungs-Marker.",
       no_gos: [
         "Stress-Begegnungen ohne Vorbereitung.",
         "Decke ohne vorherige positive Konditionierung.",
@@ -4137,19 +4095,19 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Stress-Begegnungen sind entschärft.",
         "{dogName} reguliert sich selbst.",
       ],
-      exerciseIds: ["j-tuergaeste-routine", "j-vier-pfoten-belohnen"],
+      exerciseIds: ["j-tuergaeste-routine", "j-sitz-als-gruess"],
     },
     {
       title: "Festigung Steigerung",
-      schwerpunkt: "Letzte Steigerungs-Woche. Springen ist deutlich reduziert, Begrüßungs-Routinen sitzen. Phase 3 = Langzeit-Anwendung und Stabilisierung.",
+      schwerpunkt: "Letzte Steigerungs-Woche. Springen ist deutlich reduziert, Begruessungs-Routinen sitzen. Phase 3 = Langzeit-Anwendung und Stabilisierung.",
       wochenziele: [
         "Springen ist deutlich reduziert.",
-        "Begrüßungs-Routinen sitzen flussig.",
+        "Begruessungs-Routinen sitzen flussig.",
         "Du fühlst dich kompetent.",
       ],
-      tagesplan: "Bilanz: was funktioniert super? Wo gibt es noch Rückfälle? Notiere für Phase 3 Wartungs-Strategien.",
+      tagesplan: "Bilanz: was funktioniert super? Wo gibt es noch Rueckfaelle? Notiere für Phase 3 Wartungs-Strategien.",
       no_gos: [
-        "Erfolge als selbstverständlich.",
+        "Erfolge als selbstverstaendlich.",
         "Konsistenz aufweichen.",
         "Familienkonsistenz schleifen lassen.",
       ],
@@ -4164,16 +4122,16 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
   generalisierung: [
     {
       title: "Wartungs-Routine etablieren",
-      schwerpunkt: "Anspringen kann zurückkommen wenn Konsistenz nachlässt. Wartungs-Routine für die nächsten Monate: 1x täglich bewusst Begrüßungen üben.",
+      schwerpunkt: "Anspringen kann zurueckkommen wenn Konsistenz nachlässt. Wartungs-Routine für die nächsten Monate: 1x taeglich bewusst Begruessungen üben.",
       wochenziele: [
-        "Du hast eine tägliche Wartungs-Routine.",
-        "Wieder-Sehens-Übung wird regelmäßig gemacht.",
-        "Du erkennst Rückschritte früh.",
+        "Du hast eine taegliche Wartungs-Routine.",
+        "Wieder-Sehens-Übung wird regelmaessig gemacht.",
+        "Du erkennst Rueckschritte frueh.",
       ],
-      tagesplan: "Pro Tag 1 bewusste Begrüßungs-Übung: aus dem Raum gehen, ruhig zurückkommen. SITZ + Streicheln + Leckerli. Bei Springen: 30 Sek ignorieren. Aktiv halten statt zu hoffen.",
+      tagesplan: "Pro Tag 1 bewusste Begruessungs-Übung: aus dem Raum gehen, ruhig zurueckkommen. SITZ + Streicheln + Leckerli. Bei Springen: 30 Sek ignorieren. Aktiv halten statt zu hoffen.",
       no_gos: [
         "Routine schleifen lassen.",
-        "Rückschritte ignorieren.",
+        "Rueckschritte ignorieren.",
         "Familienkonsistenz aufweichen.",
       ],
       fortschritt: [
@@ -4189,25 +4147,25 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
       schwerpunkt: "Alle 2-3 Wochen: bewusster Stress-Test mit neuen Personen. Wie reagiert {dogName}? Bleibt SITZ-Routine stabil oder springt sie wieder?",
       wochenziele: [
         "{dogName} bewältigt Stress-Tests.",
-        "Du erkennst Schwachstellen früh.",
+        "Du erkennst Schwachstellen frueh.",
         "Du justierst nach bei Bedarf.",
       ],
       tagesplan: "Plane 1-2 mal pro Monat einen Stress-Test: Lieferdienst, unbekannter Gast, mehrere Personen gleichzeitig. Beobachte. Bei Springen: 1 Woche extra-konsequent.",
       no_gos: [
         "Stress-Tests vermeiden — wirkliche Reaktivität bleibt verborgen.",
-        "Bei Rückfall ignorieren.",
+        "Bei Rueckfall ignorieren.",
         "Stress-Tests zu schwer machen.",
       ],
       fortschritt: [
         "Du hast Daten zur Robustheit.",
-        "Rückfälle werden erkannt.",
+        "Rueckfaelle werden erkannt.",
         "{dogName}s Verhalten ist getestet stabil.",
       ],
       exerciseIds: ["j-tuergaeste-routine", "j-sitz-als-gruess"],
     },
     {
       title: "Familien-Konsistenz langfristig",
-      schwerpunkt: "Familien-Konsistenz braucht regelmäßige Erinnerung. Diese Woche frischst du die Regeln auf, sprichst sie an, achtest auf neue Inkonsistenz.",
+      schwerpunkt: "Familien-Konsistenz braucht regelmaessige Erinnerung. Diese Woche frischst du die Regeln auf, sprichst sie an, achtest auf neue Inkonsistenz.",
       wochenziele: [
         "Familie ist auf dem aktuellen Stand.",
         "Neue Inkonsistenz wird vermieden.",
@@ -4221,7 +4179,7 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       fortschritt: [
         "Familienkonsistenz bleibt hoch.",
-        "Neue Inkonsistenzen werden früh erkannt.",
+        "Neue Inkonsistenzen werden frueh erkannt.",
         "{dogName} bleibt stabil.",
       ],
       exerciseIds: ["j-konsistenz-familie", "j-vier-pfoten-belohnen"],
@@ -4249,13 +4207,13 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
     },
     {
       title: "Belohnungs-Reduktion vorsichtig",
-      schwerpunkt: "SITZ-Begrüßung wird so selbstverständlich, dass Belohnungs-Dichte reduziert werden kann. Aber: variable Verstärkung hält das Verhalten stabiler.",
+      schwerpunkt: "SITZ-Begruessung wird so selbstverstaendlich, dass Belohnungs-Dichte reduziert werden kann. Aber: variable Verstaerkung haelt das Verhalten stabiler.",
       wochenziele: [
         "Belohnungs-Frequenz auf ~50% reduziert.",
         "{dogName} setzt sich auch mit weniger Belohnung.",
         "Spitzenleistungen werden weiter mit Jackpot belohnt.",
       ],
-      tagesplan: "Bei Familienbegrüßungen: alle 2-3 Mal Leckerli statt jedes Mal. Bei Gästen: weiterhin jedes Mal Belohnung. {dogName} merkt: das System bleibt, aber unvorhersehbar.",
+      tagesplan: "Bei Familienbegruessungen: alle 2-3 Mal Leckerli statt jedes Mal. Bei Gästen: weiterhin jedes Mal Belohnung. {dogName} merkt: das System bleibt, aber unvorhersehbar.",
       no_gos: [
         "Belohnung komplett streichhen.",
         "Bei Gästen Belohnung reduzieren.",
@@ -4266,20 +4224,20 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "SITZ ist automatisch.",
         "Du steckst weniger Leckerlis ein.",
       ],
-      exerciseIds: ["j-vier-pfoten-belohnen", "j-konsistenz-familie"],
+      exerciseIds: ["j-sitz-als-gruess", "j-konsistenz-familie"],
     },
     {
       title: "Spaziergangs-Routine festigen",
-      schwerpunkt: "SITZ bei Vorbeigängern wird Standard. Du musst nicht mehr aktiv SITZ sagen — {dogName} bietet es an, wenn Menschen nahen.",
+      schwerpunkt: "SITZ bei Vorbeigaengern wird Standard. Du musst nicht mehr aktiv SITZ sagen — {dogName} bietet es an, wenn Menschen nahen.",
       wochenziele: [
         "{dogName} bietet SITZ automatisch an.",
-        "Vorbeigänger werden ruhig passiert.",
-        "Spaziergänge fühlen sich kontrolliert an.",
+        "Vorbeigaenger werden ruhig passiert.",
+        "Spaziergaenge fühlen sich kontrolliert an.",
       ],
       tagesplan: "Pro Spaziergang aktiv beobachten: bietet {dogName} SITZ automatisch an? Bei automatischem SITZ: SUPER-Belohnung. Bei Stehen: SITZ-Signal geben.",
       no_gos: [
-        "Vorbeigänger streicheln lassen während Stehen.",
-        "Spaziergänge ohne Beobachtung.",
+        "Vorbeigaenger streichheln lassen waehrend Stehen.",
+        "Spaziergaenge ohne Beobachtung.",
         "Automatik-Erwartung ohne weitere Belohnung.",
       ],
       fortschritt: [
@@ -4290,22 +4248,22 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
       exerciseIds: ["j-spazier-vorbeigaenger", "j-sitz-als-gruess"],
     },
     {
-      title: "Notfall-Plan bei Rückfällen",
-      schwerpunkt: "Falls Springen zurückkommt: klare Notfall-Sequenz. 1 Woche extra-konsequent, Familien-Briefing, Belohnungs-Dichte wieder hoch.",
+      title: "Notfall-Plan bei Rueckfaellen",
+      schwerpunkt: "Falls Springen zurueckkommt: klare Notfall-Sequenz. 1 Woche extra-konsequent, Familien-Briefing, Belohnungs-Dichte wieder hoch.",
       wochenziele: [
         "Du hast Notfall-Plan.",
-        "Rückschritte werden früh erkannt.",
-        "Rückfälle werden in 1-2 Wochen aufgefangen.",
+        "Rueckschritte werden frueh erkannt.",
+        "Rueckfaelle werden in 1-2 Wochen aufgefangen.",
       ],
-      tagesplan: "Notfall-Plan: 1) 1 Woche extra-konsequent mit Ignorieren. 2) Familien-Briefing wiederholen. 3) Belohnungs-Dichte wieder hoch. 4) Beobachten was sich geändert hat.",
+      tagesplan: "Notfall-Plan: 1) 1 Woche extra-konsequent mit Ignorieren. 2) Familien-Briefing wiederholen. 3) Belohnungs-Dichte wieder hoch. 4) Beobachten was sich geaendert hat.",
       no_gos: [
-        "Rückschritte ignorieren.",
+        "Rueckschritte ignorieren.",
         "In Panik geraten.",
         "Routinen radikal ändern.",
       ],
       fortschritt: [
         "Notfall-Plan sitzt.",
-        "Rückfälle werden gemanagt.",
+        "Rueckfaelle werden gemanagt.",
         "Du fühlst dich langfristig kompetent.",
       ],
       exerciseIds: ["j-vier-pfoten-belohnen", "j-konsistenz-familie"],
@@ -4318,7 +4276,7 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Wartungs-Rhythmus ist klar.",
         "{dogName} ist langfristig stabil.",
       ],
-      tagesplan: "Reduziere aktives Training auf Minimum. Wartungs-Routine 1x täglich. Familien-Briefing alle 3 Monate. Stress-Tests alle 4-6 Wochen. Bei Rückfällen: Notfall-Plan einsetzen.",
+      tagesplan: "Reduziere aktives Training auf Minimum. Wartungs-Routine 1x taeglich. Familien-Briefing alle 3 Monate. Stress-Tests alle 4-6 Wochen. Bei Rueckfaellen: Notfall-Plan einsetzen.",
       no_gos: [
         "Alle Routinen schlagartig weglassen.",
         "Familienkonsistenz aufweichen.",
@@ -4335,23 +4293,23 @@ const JUMPING_WEEKS: Record<Phase, WeekTemplate[]> = {
 };
 
 // ────────────────────────────────────────────────────────────────────
-// DESTRUCTIVE (Zerstörungsverhalten) — Ursache + Kau-Objekte + Management
+// DESTRUCTIVE (Zerstoerungsverhalten) — Ursache + Kau-Objekte + Management
 // ────────────────────────────────────────────────────────────────────
 const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
   fundament: [
     {
       title: "Ursachen-Analyse: warum zerstört {dogName}?",
-      schwerpunkt: "Zerstörung hat verschiedene Ursachen, die unterschiedliche Lösungen brauchen. Diese Woche identifizierst du den Hauptgrund: Langeweile, Trennungsangst, Beißbedürfnis oder Zahnwechsel.",
+      schwerpunkt: "Zerstoerung hat verschiedene Ursachen, die unterschiedliche Loesungen brauchen. Diese Woche identifizierst du den Hauptgrund: Langeweile, Trennungsangst, Beissduerfnis oder Zahnwechsel.",
       wochenziele: [
         "Du kennst den Hauptgrund für das Zerstören.",
         "Du verstehst, was Hilfsmittel und was Symptom ist.",
         "Du hast den Trainings-Schwerpunkt klar.",
       ],
-      tagesplan: "Eine Woche lang dokumentieren: was wird zerstört? Wann? Wie alt ist {dogName}? Welche Auslastung? Welche Allein-Zeit-Verhalten? Identifiziere: Langeweile, Trennungsangst, oder Beißbedürfnis als Hauptursache.",
+      tagesplan: "Eine Woche lang dokumentieren: was wird zerstört? Wann? Wie alt ist {dogName}? Welche Auslastung? Welche Allein-Zeit-Verhalten? Identifiziere: Langeweile, Trennungsangst, oder Beissduerfnis als Hauptursache.",
       no_gos: [
         "Schon trainieren ohne Ursache zu kennen.",
         "Ursachen vermischen.",
-        "Symptome bekämpfen statt Ursachen.",
+        "Symptome bekaempfen statt Ursachen.",
       ],
       fortschritt: [
         "Du kennst die Ursache.",
@@ -4363,16 +4321,16 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
     },
     {
       title: "Erlaubte Kau-Objekte etablieren",
-      schwerpunkt: "{dogName} hat Beißbedürfnis, das gestillt werden muss. Statt es zu unterdrücken, kanalisieren wir es in ERLAUBTE Objekte. 4-5 verschiedene, in Rotation.",
+      schwerpunkt: "{dogName} hat Beissduerfnis, das gestillt werden muss. Statt es zu unterdruecken, kanalisieren wir es in ERLAUBTE Objekte. 4-5 verschiedene, in Rotation.",
       wochenziele: [
-        "4-5 verschiedene Kau-Objekte sind verfügbar.",
+        "4-5 verschiedene Kau-Objekte sind verfuegbar.",
         "Rotation ist etabliert.",
         "{dogName} hat klare Erlaubt-Liste.",
       ],
-      tagesplan: "Investiere in 4-5 Kau-Objekte: Naturkauartikel (Büffelhaut, Ochsenziemer), Kong, Schnüffelmatte, Holzknochen, Geweih. Pro Tag 1-2 verschiedene, Rotation. Lange Kau-Sessions etablieren.",
+      tagesplan: "Investiere in 4-5 Kau-Objekte: Naturkauartikel (Bueffelhaut, Ochsenziemer), Kong, Schnüffelmatte, Holzknochen, Geweih. Pro Tag 1-2 verschiedene, Rotation. Lange Kau-Sessions etablieren.",
       no_gos: [
         "Nur 1 Kau-Objekt — wird langweilig.",
-        "Alle Objekte gleichzeitig verfügbar — keine Spannung.",
+        "Alle Objekte gleichzeitig verfuegbar — keine Spannung.",
         "Billige Kauknochen (Rohhaut) — Verletzungsgefahr.",
       ],
       fortschritt: [
@@ -4381,28 +4339,28 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Zerstörung reduziert sich.",
         "Sichere Management-Zonen für Abwesenheit sind eingerichtet.",
       ],
-      exerciseIds: ["d-langeweile-auslasten", "d-management-zonen"],
+      exerciseIds: ["d-kauobjekte-etablieren", "d-management-zonen"],
     },
     {
       title: "Management-Zonen einrichten",
-      schwerpunkt: "Solange das Training nicht steht, hilft Management. {dogName} hat keine Möglichkeit, Schuhe oder Möbel zu zerstören — weil sie nicht erreichbar sind.",
+      schwerpunkt: "Solange das Training nicht steht, hilft Management. {dogName} hat keine Moeglichkeit, Schuhe oder Moebel zu zerstören — weil sie nicht erreichbar sind.",
       wochenziele: [
         "Sichere Zonen sind eingerichtet.",
         "Risiko-Bereiche sind blockiert.",
         "{dogName} ist bei Abwesenheit nicht in Risiko-Zonen.",
       ],
-      tagesplan: "Identifiziere Risiko-Zonen. Bei Abwesenheit oder Unbeobachtetheit: {dogName} in sicherer Zone (Box, Küche mit Babyschutz). In dieser Zone: erlaubte Kau-Objekte + Wasser. Niemals als Strafe.",
+      tagesplan: "Identifiziere Risiko-Zonen. Bei Abwesenheit oder Unbeobachtetheit: {dogName} in sicherer Zone (Box, Kueche mit Babyschutz). In dieser Zone: erlaubte Kau-Objekte + Wasser. Niemals als Strafe.",
       no_gos: [
-        "Sichere Zone als Gefängnis.",
+        "Sichere Zone als Gefaengnis.",
         "Risiko-Zonen offen lassen aus Bequemlichkeit.",
         "Hund frei lassen wenn Risiko unkalkulierbar.",
       ],
       fortschritt: [
         "Sichere Zone ist etabliert.",
-        "Zerstörung wird verhindert.",
+        "Zerstoerung wird verhindert.",
         "Du handelst verantwortungsvoll.",
       ],
-      exerciseIds: ["d-ursachen-analyse", "d-kauobjekte-etablieren"],
+      exerciseIds: ["d-management-zonen", "d-kauobjekte-etablieren"],
     },
     {
       title: "Tausch statt Strafe etablieren",
@@ -4412,18 +4370,18 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Konflikt-Eskalationen werden vermieden.",
         "Du wirst innerlich ruhiger.",
       ],
-      tagesplan: "{dogName} hat verbotenes Objekt: NICHT schreien, NICHT hinterherrennen. Ruhig nähern, AUS, hochwertiges Leckerli. Tausch. Erlaubtes Kau-Objekt anbieten. Niemals verbotenes Objekt zurückgeben.",
+      tagesplan: "{dogName} hat verbotenes Objekt: NICHT schreien, NICHT hinterherrennen. Ruhig nähern, AUS, hochwertiges Leckerli. Tausch. Erlaubtes Kau-Objekt anbieten. Niemals verbotenes Objekt zurueckgeben.",
       no_gos: [
         "Schimpfen — kontraproduktiv.",
-        "Hinterherrennen — Spiel-Verstärkung.",
-        "Verbotenes Objekt zurückgeben.",
+        "Hinterherrennen — Spiel-Verstaerkung.",
+        "Verbotenes Objekt zurueckgeben.",
       ],
       fortschritt: [
         "{dogName} gibt verbotene Objekte freiwillig her.",
         "Du wirst innerlich ruhiger.",
         "Konflikte werden vermieden.",
       ],
-      exerciseIds: ["d-tausch-statt-strafe", "d-management-zonen"],
+      exerciseIds: ["d-tausch-statt-strafe", "d-kauobjekte-etablieren"],
     },
     // 6-Monats-Vertiefungen
     {
@@ -4436,7 +4394,7 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       tagesplan: "Pro Tag: 1 Spaziergang (30-60 Min mit Tempo-Wechseln), 1 Nasenarbeit (Suchspiel), 1 Kopfarbeit (Trick, Kong). Falls jung: weniger stumpfes Toben, mehr Kopfarbeit. Falls erwachsen: mehr Spuren-Suche.",
       no_gos: [
-        "Nur Bewegung als Auslastung — führt zu Übererregung.",
+        "Nur Bewegung als Auslastung — fuehrt zu Übererregung.",
         "Stundenlange Tobereien — kontraproduktiv.",
         "Nasenarbeit/Kopfarbeit als 'optional'.",
       ],
@@ -4446,70 +4404,70 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du hast eine Auslastungs-Routine.",
         "Beim Bemerken verbotener Gegenstände reagierst du mit ruhigem Tausch statt Konflikt.",
       ],
-      exerciseIds: ["d-langeweile-auslasten", "d-ursachen-analyse"],
+      exerciseIds: ["d-langeweile-auslasten", "d-tausch-statt-strafe"],
     },
     {
       title: "Lange Liege-Phasen",
-      schwerpunkt: "Manche Zerstörung kommt vom Nicht-Stillsitzen-Können. {dogName} muss lernen, lange Ruhe-Phasen aktiv zu halten — auch wenn nichts passiert.",
+      schwerpunkt: "Manche Zerstoerung kommt vom Nicht-Stillsitzen-Koennen. {dogName} muss lernen, lange Ruhe-Phasen aktiv zu halten — auch wenn nichts passiert.",
       wochenziele: [
         "{dogName} bleibt 30-60 Min entspannt auf der Decke.",
         "Stillsitzen wird trainiert.",
         "Allein-mit-sich-selbst-Sein wird gelernt.",
       ],
-      tagesplan: "Pro Tag 1-2 Decke-Sessions: 30-60 Min auf der Decke, du arbeitest nebenan. {dogName} darf nicht aufstehen, kriegt Kong als Beschäftigung. Belohnung beim ruhigen Liegen.",
+      tagesplan: "Pro Tag 1-2 Decke-Sessions: 30-60 Min auf der Decke, du arbeitest nebenan. {dogName} darf nicht aufstehen, kriegt Kong als Beschaeftigung. Belohnung beim ruhigen Liegen.",
       no_gos: [
-        "{dogName} bei Decke-Session ständig stimulieren.",
+        "{dogName} bei Decke-Session staendig stimulieren.",
         "Decke ohne vorherige Konditionierung.",
         "Sessions zu kurz — wirken nicht.",
       ],
       fortschritt: [
         "{dogName} bleibt länger ruhig.",
-        "Stillsitzen wird selbstverständlich.",
-        "Zerstörung aus Langeweile reduziert sich.",
+        "Stillsitzen wird selbstverstaendlich.",
+        "Zerstoerung aus Langeweile reduziert sich.",
       ],
-      exerciseIds: ["d-management-zonen", "d-allein-zeit-kong"],
+      exerciseIds: ["d-langeweile-auslasten", "d-allein-zeit-kong"],
     },
     {
-      title: "Allein-Zeit-Kong für Trennungsangst-Fälle",
-      schwerpunkt: "Falls Trennungsangst Mit-Ursache ist: gut gestopfter Kong vor jeder Abwesenheit. 30 Min Beschäftigung überbrueckt die kritische Phase.",
+      title: "Allein-Zeit-Kong für Trennungsangst-Faelle",
+      schwerpunkt: "Falls Trennungsangst Mit-Ursache ist: gut gestopfter Kong vor jeder Abwesenheit. 30 Min Beschaeftigung überbrueckt die kritische Phase.",
       wochenziele: [
-        "{dogName} startet Kong-Beschäftigung beim Gehen.",
-        "Allein-Zeit-Zerstörung reduziert sich.",
+        "{dogName} startet Kong-Beschaeftigung beim Gehen.",
+        "Allein-Zeit-Zerstoerung reduziert sich.",
         "Positive Verknüpfung Abwesenheit-Kong.",
       ],
-      tagesplan: "Vor jeder Abwesenheit: gut gestopfter Kong (eingefroren = schwerer). Geh ohne Drama. Kong wegnehmen bei Rückkehr. Variation: Schnüffelmatte mit Trockenfutter.",
+      tagesplan: "Vor jeder Abwesenheit: gut gestopfter Kong (eingefroren = schwerer). Geh ohne Drama. Kong wegnehmen bei Rueckkehr. Variation: Schnüffelmatte mit Trockenfutter.",
       no_gos: [
         "Kong auch in Anwesenheit geben.",
         "Kong nicht eingefroren — zu schnell fertig.",
-        "Dramatisches Abschied/Begrüßung.",
+        "Dramatisches Abschied/Begruessung.",
       ],
       fortschritt: [
-        "Allein-Zeit-Zerstörung reduziert sich.",
+        "Allein-Zeit-Zerstoerung reduziert sich.",
         "Positive Verknüpfung steht.",
         "Du fühlst dich entspannter beim Gehen.",
       ],
-      exerciseIds: ["d-ursachen-analyse", "d-kauobjekte-etablieren"],
+      exerciseIds: ["d-allein-zeit-kong", "d-kauobjekte-etablieren"],
     },
     {
       title: "Fundament-Check",
       schwerpunkt: "Letzte Fundament-Woche. Ursache klar, Kau-Objekte etabliert, Management-Zonen sicher, Tausch-Routine sitzt. Phase 2 = mehr Auslastung und Routinen.",
       wochenziele: [
         "Alle Bausteine sitzen.",
-        "Zerstörung ist messbar reduziert.",
+        "Zerstoerung ist messbar reduziert.",
         "Du fühlst dich kompetent.",
       ],
-      tagesplan: "Bilanz: was funktioniert super, was wackelt? Falls Schwäche: 1 Extra-Woche. Phase 2 = noch mehr Auslastung und Routinen-Festigung.",
+      tagesplan: "Bilanz: was funktioniert super, was wackelt? Falls Schwaeche: 1 Extra-Woche. Phase 2 = noch mehr Auslastung und Routinen-Festigung.",
       no_gos: [
         "Aus Ungeduld in Phase 2 springen.",
-        "Schwächen ignorieren.",
+        "Schwaechen ignorieren.",
         "Management aufweichen.",
       ],
       fortschritt: [
         "Du fühlst dich kompetent.",
         "Werkzeuge sitzen.",
-        "Zerstörung ist seltener.",
+        "Zerstoerung ist seltener.",
       ],
-      exerciseIds: ["d-management-zonen", "d-tausch-statt-strafe"],
+      exerciseIds: ["d-kauobjekte-etablieren", "d-tausch-statt-strafe"],
     },
   ],
   steigerung: [
@@ -4518,7 +4476,7 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
       schwerpunkt: "Strukturierter Tagesplan mit gemischter Auslastung wird zur Routine. Bewegung + Nasenarbeit + Kopfarbeit + Ruhe in klarer Verteilung.",
       wochenziele: [
         "Auslastungs-Plan steht schriftlich.",
-        "Plan wird täglich umgesetzt.",
+        "Plan wird taeglich umgesetzt.",
         "{dogName} ist ausgeglichener.",
       ],
       tagesplan: "Schreibe einen 7-Tage-Plan: pro Tag 1 Bewegung, 1 Nasenarbeit, 1 Kopfarbeit. Mehr-Auslastung an problematischen Tagen. Schlaf-Hygiene 16-20h. Sozialer Kontakt 2-3x pro Woche.",
@@ -4529,56 +4487,56 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       fortschritt: [
         "{dogName} ist ausgeglichener.",
-        "Zerstörung reduziert sich weiter.",
+        "Zerstoerung reduziert sich weiter.",
         "Du planst strukturiert.",
       ],
       exerciseIds: ["d-langeweile-auslasten", "d-kauobjekte-etablieren"],
     },
     {
       title: "Kau-Objekt-Rotation perfektionieren",
-      schwerpunkt: "Rotation der Kau-Objekte wird zur täglichen Routine. {dogName} ist immer beschäftigt, Beißbedürfnis stets befriedigt.",
+      schwerpunkt: "Rotation der Kau-Objekte wird zur taeglichen Routine. {dogName} ist immer beschaeftigt, Beissduerfnis stets befriedigt.",
       wochenziele: [
         "Kau-Objekt-Rotation läuft automatisch.",
-        "{dogName} hat immer ein Lieblings-Kau-Objekt verfügbar.",
-        "Beißbedürfnis ist befriedigt.",
+        "{dogName} hat immer ein Lieblings-Kau-Objekt verfuegbar.",
+        "Beissduerfnis ist befriedigt.",
       ],
-      tagesplan: "Täglich 1-2 Kau-Objekte verfügbar, rotieren. Pro Woche 1 neues Objekt testen. Lange Kau-Sessions (15-30 Min) bewusst etablieren — Schlafvorbereitung.",
+      tagesplan: "Taeglich 1-2 Kau-Objekte verfuegbar, rotieren. Pro Woche 1 neues Objekt testen. Lange Kau-Sessions (15-30 Min) bewusst etablieren — Schlafvorbereitung.",
       no_gos: [
         "Rotation vergessen.",
-        "Schlechte Qualität Kau-Objekte.",
+        "Schlechte Qualitaet Kau-Objekte.",
         "Lange Sessions als 'verschwendet' sehen.",
       ],
       fortschritt: [
         "{dogName} hat Lieblings-Sortiment.",
-        "Beißbedürfnis ist abgedeckt.",
-        "Zerstörung an Möbeln reduziert sich.",
+        "Beissduerfnis ist abgedeckt.",
+        "Zerstoerung an Moebeln reduziert sich.",
       ],
-      exerciseIds: ["d-ursachen-analyse", "d-management-zonen"],
+      exerciseIds: ["d-kauobjekte-etablieren", "d-management-zonen"],
     },
     {
       title: "Management langsam reduzieren",
-      schwerpunkt: "Wenn 4 Wochen lang keine Zerstörung passiert: Management vorsichtig reduzieren. Erst 1 Risiko-Zone, beobachten, dann nächste.",
+      schwerpunkt: "Wenn 4 Wochen lang keine Zerstoerung passiert: Management vorsichtig reduzieren. Erst 1 Risiko-Zone, beobachten, dann nächste.",
       wochenziele: [
-        "Eine Risiko-Zone wird wieder zugänglich.",
-        "{dogName} bewährt sich oder du justierst nach.",
-        "Du erkennst, wo Management nötig bleibt.",
+        "Eine Risiko-Zone wird wieder zugaenglich.",
+        "{dogName} bewaehrt sich oder du justierst nach.",
+        "Du erkennst, wo Management noetig bleibt.",
       ],
-      tagesplan: "Tag 1-2: 1 zuvor gesperrte Zone wird wieder zugänglich (nur in Anwesenheit). Beobachten. Tag 3-4: bei Erfolg 1-2 Stunden mit Zugang. Tag 5-7: bei Erfolg auch länger.",
+      tagesplan: "Tag 1-2: 1 zuvor gesperrte Zone wird wieder zugaenglich (nur in Anwesenheit). Beobachten. Tag 3-4: bei Erfolg 1-2 Stunden mit Zugang. Tag 5-7: bei Erfolg auch länger.",
       no_gos: [
-        "Alle Risiko-Zonen sofort öffnen.",
-        "Bei Zerstörung weitermachen.",
+        "Alle Risiko-Zonen sofort oeffnen.",
+        "Bei Zerstoerung weitermachen.",
         "Management komplett aufgeben.",
       ],
       fortschritt: [
         "Sichere Zonen erweitern sich.",
-        "{dogName} bewährt sich.",
+        "{dogName} bewaehrt sich.",
         "Alltag wird flexibler.",
       ],
-      exerciseIds: ["d-langeweile-auslasten", "d-kauobjekte-etablieren"],
+      exerciseIds: ["d-management-zonen", "d-kauobjekte-etablieren"],
     },
     {
       title: "Tausch-Routine perfektionieren",
-      schwerpunkt: "Tausch-Geschäft sitzt automatisch. {dogName} gibt verbotene Objekte freiwillig her. Du reagierst ruhig und entspannt.",
+      schwerpunkt: "Tausch-Geschaeft sitzt automatisch. {dogName} gibt verbotene Objekte freiwillig her. Du reagierst ruhig und entspannt.",
       wochenziele: [
         "Tausch klappt zu 90%+ zuverlässig.",
         "Du reagierst ruhig auf verbotene Objekte.",
@@ -4587,7 +4545,7 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
       tagesplan: "Beim Bemerken eines verbotenen Objekts: ruhig nähern, AUS, Leckerli, Tausch. Kein Drama. Routine wird zur Reflex-Reaktion.",
       no_gos: [
         "Schimpfen aus Frust.",
-        "Verbotenes Objekt zurückgeben.",
+        "Verbotenes Objekt zurueckgeben.",
         "Hand-ins-Maul greifen.",
       ],
       fortschritt: [
@@ -4595,7 +4553,7 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du wirst innerlich ruhig.",
         "Konflikte sind selten.",
       ],
-      exerciseIds: ["d-tausch-statt-strafe", "d-ursachen-analyse"],
+      exerciseIds: ["d-tausch-statt-strafe", "d-kauobjekte-etablieren"],
     },
     // Vertiefungen
     {
@@ -4606,7 +4564,7 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Neue Shape-Tricks werden gelernt.",
         "Mentale Auslastung ist hoch.",
       ],
-      tagesplan: "Bei Welpen/Junghunden: lange Kau-Sessions mit Naturkauartikeln 2x täglich. Bei Erwachsenen: 10 Min Frei-Form-Training mit neuem Trick pro Tag. Mentale Erschöpfung als Ziel.",
+      tagesplan: "Bei Welpen/Junghunden: lange Kau-Sessions mit Naturkauartikeln 2x taeglich. Bei Erwachsenen: 10 Min Frei-Form-Training mit neuem Trick pro Tag. Mentale Erschoepfung als Ziel.",
       no_gos: [
         "Kau-Sessions zu kurz machen.",
         "Frei-Form-Training in Stress-Phasen.",
@@ -4614,43 +4572,43 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       fortschritt: [
         "{dogName} ist mental ausgelastet.",
-        "Zerstörung reduziert sich weiter.",
+        "Zerstoerung reduziert sich weiter.",
         "Du erkennst müde Phasen.",
       ],
       exerciseIds: ["d-langeweile-auslasten", "d-kauobjekte-etablieren"],
     },
     {
       title: "Stress-Faktoren reduzieren",
-      schwerpunkt: "Zerstörung kann Stress-Symptom sein. Identifiziere Stress-Faktoren und reduziere sie aktiv: zu wenig Schlaf, Reizüberflutung, unklare Routinen.",
+      schwerpunkt: "Zerstoerung kann Stress-Symptom sein. Identifiziere Stress-Faktoren und reduziere sie aktiv: zu wenig Schlaf, Reizüberflutung, unklare Routinen.",
       wochenziele: [
         "Stress-Faktoren sind identifiziert und reduziert.",
         "{dogName} hat genug Schlaf (16-20h).",
         "Reizüberflutung wird vermieden.",
       ],
-      tagesplan: "Prüfe Tagesablauf: genug Schlaf? Berechenbare Routinen? Reizüberflutung an Wochenenden? Änderungen kürzlich (Umzug, neuer Mitbewohner)? Aktiv reduzieren.",
+      tagesplan: "Prüfe Tagesablauf: genug Schlaf? Berechenbare Routinen? Reizüberflutung an Wochenenden? Änderungen kuerzlich (Umzug, neuer Mitbewohner)? Aktiv reduzieren.",
       no_gos: [
         "Stress ignorieren.",
-        "Hund ständig stimulieren.",
-        "Veränderungen radikal einführen.",
+        "Hund staendig stimulieren.",
+        "Veränderungen radikal einfuehren.",
       ],
       fortschritt: [
         "Stress-Level sinkt.",
-        "Zerstörung reduziert sich weiter.",
+        "Zerstoerung reduziert sich weiter.",
         "Du wirst aufmerksamer für Stress-Anzeichen.",
       ],
-      exerciseIds: ["d-ursachen-analyse", "d-management-zonen"],
+      exerciseIds: ["d-langeweile-auslasten", "d-kauobjekte-etablieren"],
     },
     {
       title: "Allein-Zeit-Routine festigen",
-      schwerpunkt: "Allein-Zeit-Kong-Routine wird langfristig etabliert. {dogName} verbindet Abwesenheit mit positivem Snack, nicht mit Zerstörung.",
+      schwerpunkt: "Allein-Zeit-Kong-Routine wird langfristig etabliert. {dogName} verbindet Abwesenheit mit positivem Snack, nicht mit Zerstoerung.",
       wochenziele: [
         "Allein-Zeit-Routine ist stabil.",
         "Kong wird vor jeder Abwesenheit gegeben.",
-        "Zerstörung während Abwesenheit ist eliminiert.",
+        "Zerstoerung waehrend Abwesenheit ist eliminiert.",
       ],
-      tagesplan: "Bei jeder Abwesenheit Kong. Variation des Inhalts. Eingefroren = schwerer. Geh ruhig, komm ruhig wieder. {dogName} bleibt währenddessen beschäftigt.",
+      tagesplan: "Bei jeder Abwesenheit Kong. Variation des Inhalts. Eingefroren = schwerer. Geh ruhig, komm ruhig wieder. {dogName} bleibt waehrenddessen beschaeftigt.",
       no_gos: [
-        "Kong vergessen — Allein-Zeit ohne Beschäftigung.",
+        "Kong vergessen — Allein-Zeit ohne Beschaeftigung.",
         "Inhalt immer gleich — wird langweilig.",
         "Drama bei Verabschiedung.",
       ],
@@ -4665,22 +4623,22 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
       title: "Festigung Steigerung",
       schwerpunkt: "Letzte Steigerungs-Woche. Auslastung sitzt, Kau-Routine etabliert, Management gelockert. Phase 3 = Langzeit-Wartung.",
       wochenziele: [
-        "Alle Werkzeuge laufen flüssig.",
-        "Zerstörung ist deutlich reduziert.",
+        "Alle Werkzeuge laufen fluessig.",
+        "Zerstoerung ist deutlich reduziert.",
         "Du fühlst dich kompetent.",
       ],
       tagesplan: "Bilanz-Woche: was funktioniert super, was wackelt? Plane Phase 3: Wartungs-Routinen, Stress-Hygiene, weiterhin Auslastungs-Plan.",
       no_gos: [
-        "Erfolge als selbstverständlich.",
+        "Erfolge als selbstverstaendlich.",
         "Management ganz aufgeben.",
         "Auslastungs-Plan aufweichen.",
       ],
       fortschritt: [
-        "Zerstörung ist messbar reduziert.",
+        "Zerstoerung ist messbar reduziert.",
         "Du fühlst dich kompetent.",
         "Werkzeuge sitzen.",
       ],
-      exerciseIds: ["d-langeweile-auslasten", "d-ursachen-analyse"],
+      exerciseIds: ["d-langeweile-auslasten", "d-kauobjekte-etablieren"],
     },
   ],
   generalisierung: [
@@ -4692,7 +4650,7 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Wartungs-Tage sind eingeplant.",
         "{dogName} bleibt langfristig ausgeglichen.",
       ],
-      tagesplan: "Pro Tag Standard-Auslastung (Bewegung + Nase + Kopf). 1x pro Woche 'Special-Tag' mit neuem Trick oder neuer Beschäftigung. Schlaf-Hygiene konstant halten.",
+      tagesplan: "Pro Tag Standard-Auslastung (Bewegung + Nase + Kopf). 1x pro Woche 'Special-Tag' mit neuem Trick oder neuer Beschaeftigung. Schlaf-Hygiene konstant halten.",
       no_gos: [
         "Plan aufweichen.",
         "Special-Tage vergessen.",
@@ -4708,13 +4666,13 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
     },
     {
       title: "Kau-Objekt-Wartung",
-      schwerpunkt: "Kau-Objekt-Sortiment wird gewartet: alte ersetzen, neue ausprobieren, Rotation halten. Beißbedürfnis bleibt befriedigt.",
+      schwerpunkt: "Kau-Objekt-Sortiment wird gewartet: alte ersetzen, neue ausprobieren, Rotation halten. Beissduerfnis bleibt befriedigt.",
       wochenziele: [
         "Sortiment ist aktuell.",
         "{dogName} hat immer Lieblings-Optionen.",
-        "Beißbedürfnis bleibt abgedeckt.",
+        "Beissduerfnis bleibt abgedeckt.",
       ],
-      tagesplan: "Prüfe wöchentlich: welche Objekte werden noch gerne genutzt? Welche sind kaputt oder verbraucht? Ersetze. Probiere alle 4-6 Wochen 1 neues Objekt aus.",
+      tagesplan: "Prüfe woechentlich: welche Objekte werden noch gerne genutzt? Welche sind kaputt oder verbraucht? Ersetze. Probiere alle 4-6 Wochen 1 neues Objekt aus.",
       no_gos: [
         "Sortiment veralten lassen.",
         "Defekte Objekte weiter nutzen.",
@@ -4722,7 +4680,7 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       fortschritt: [
         "Sortiment ist aktuell.",
-        "Beißbedürfnis bleibt abgedeckt.",
+        "Beissduerfnis bleibt abgedeckt.",
         "{dogName} hat immer was.",
       ],
       exerciseIds: ["d-kauobjekte-etablieren", "d-management-zonen"],
@@ -4738,7 +4696,7 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
       tagesplan: "Prüfe: welche Zonen sind dauerhaft offen ok? Welche brauchen Sperrung bei Abwesenheit? Welche sind generell off-limits? Schreibe es auf.",
       no_gos: [
         "Management ganz weglassen.",
-        "Risiko-Bereiche unterschätzen.",
+        "Risiko-Bereiche unterschaetzen.",
         "Vergleichten mit anderen Hunden.",
       ],
       fortschritt: [
@@ -4746,17 +4704,17 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Risiko ist minimiert.",
         "Alltag läuft entspannt.",
       ],
-      exerciseIds: ["d-ursachen-analyse", "d-tausch-statt-strafe"],
+      exerciseIds: ["d-management-zonen", "d-kauobjekte-etablieren"],
     },
     {
       title: "Schwierige Phasen meistern",
-      schwerpunkt: "Hochstresszeiten (Weihnachten, Urlaub, neue Mitbewohner) sind Risiko für Zerstörungs-Rückfälle. Diese Woche planst du für schwierige Phasen.",
+      schwerpunkt: "Hochstresszeiten (Weihnachten, Urlaub, neue Mitbewohner) sind Risiko für Zerstoerungs-Rueckfaelle. Diese Woche planst du für schwierige Phasen.",
       wochenziele: [
         "Du hast Strategien für schwierige Phasen.",
         "Risiko-Phasen sind vorgeplant.",
         "Du fühlst dich vorbereitet.",
       ],
-      tagesplan: "Identifiziere kommende Stress-Phasen. Plane vor: mehr Management, mehr Auslastung, mehr Kau-Objekte. Bei Änderungen: graduell einführen.",
+      tagesplan: "Identifiziere kommende Stress-Phasen. Plane vor: mehr Management, mehr Auslastung, mehr Kau-Objekte. Bei Änderungen: graduell einfuehren.",
       no_gos: [
         "Schwierige Phasen ignorieren.",
         "Spontane Änderungen.",
@@ -4771,7 +4729,7 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
     },
     {
       title: "Sozial- und Allein-Balance",
-      schwerpunkt: "Hunde mit Trennungsangst-bedingter Zerstörung profitieren von ausreichend Sozial-Kontakten. Aber: Allein-Zeit muss auch geübt bleiben.",
+      schwerpunkt: "Hunde mit Trennungsangst-bedingter Zerstoerung profitieren von ausreichend Sozial-Kontakten. Aber: Allein-Zeit muss auch geübt bleiben.",
       wochenziele: [
         "Sozial-Termine 2-3x pro Woche.",
         "Allein-Zeit-Routine bleibt etabliert.",
@@ -4785,7 +4743,7 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       fortschritt: [
         "Balance ist etabliert.",
-        "{dogName} ist sozial und unabhängig.",
+        "{dogName} ist sozial und unabhaengig.",
         "Du planst strukturiert.",
       ],
       exerciseIds: ["d-allein-zeit-kong", "d-kauobjekte-etablieren"],
@@ -4800,7 +4758,7 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       tagesplan: "Bei seltenen verbotenen-Objekt-Situationen: ruhig nähern, AUS, Leckerli, Tausch. Bleibe in der Routine, auch wenn {dogName} mostly brav ist.",
       no_gos: [
-        "Bei seltenen Vorfällen überreagieren.",
+        "Bei seltenen Vorfaellen überreagieren.",
         "Tausch-Routine verlernen.",
         "Hand-ins-Maul greifen.",
       ],
@@ -4809,32 +4767,32 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du wirst innerlich ruhig.",
         "Konflikte sind eliminiert.",
       ],
-      exerciseIds: ["d-tausch-statt-strafe", "d-ursachen-analyse"],
+      exerciseIds: ["d-tausch-statt-strafe", "d-kauobjekte-etablieren"],
     },
     {
-      title: "Notfall-Plan bei Rückfällen",
-      schwerpunkt: "Falls Zerstörung zurückkommt: klare Notfall-Sequenz. Ursachen-Check, Management wieder enger, Auslastung erhöhen.",
+      title: "Notfall-Plan bei Rueckfaellen",
+      schwerpunkt: "Falls Zerstoerung zurueckkommt: klare Notfall-Sequenz. Ursachen-Check, Management wieder enger, Auslastung erhoehen.",
       wochenziele: [
         "Du hast einen Notfall-Plan.",
-        "Rückfälle werden früh erkannt.",
+        "Rueckfaelle werden frueh erkannt.",
         "Aufgefangen in 1-2 Wochen.",
       ],
-      tagesplan: "Notfall-Plan: 1) Ursachen-Check (was hat sich geändert?). 2) Management wieder enger. 3) Auslastung erhöhen. 4) Kau-Sortiment refreshen. 5) Stress-Faktoren reduzieren.",
+      tagesplan: "Notfall-Plan: 1) Ursachen-Check (was hat sich geaendert?). 2) Management wieder enger. 3) Auslastung erhoehen. 4) Kau-Sortiment refreshen. 5) Stress-Faktoren reduzieren.",
       no_gos: [
-        "Rückfälle ignorieren.",
+        "Rueckfaelle ignorieren.",
         "In Panik geraten.",
         "Strafe als Reaktion.",
       ],
       fortschritt: [
         "Notfall-Plan sitzt.",
-        "Rückfälle werden gemanagt.",
+        "Rueckfaelle werden gemanagt.",
         "Du fühlst dich kompetent.",
       ],
       exerciseIds: ["d-langeweile-auslasten", "d-management-zonen"],
     },
     {
       title: "Übergang in Wartungsmodus",
-      schwerpunkt: "Letzte Woche. Zerstörung ist stark reduziert, Routinen sitzen, Auslastung ist etabliert. Wartung für die kommenden Monate.",
+      schwerpunkt: "Letzte Woche. Zerstoerung ist stark reduziert, Routinen sitzen, Auslastung ist etabliert. Wartung für die kommenden Monate.",
       wochenziele: [
         "Alle Routinen laufen langfristig.",
         "Wartungs-Rhythmus ist klar.",
@@ -4848,10 +4806,10 @@ const DESTRUCTIVE_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       fortschritt: [
         "{dogName} bleibt langfristig stabil.",
-        "Zerstörung ist Ausnahme.",
+        "Zerstoerung ist Ausnahme.",
         "Du fühlst dich kompetent.",
       ],
-      exerciseIds: ["d-ursachen-analyse", "d-kauobjekte-etablieren"],
+      exerciseIds: ["d-langeweile-auslasten", "d-kauobjekte-etablieren"],
     },
   ],
 };
@@ -4884,7 +4842,7 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
     },
     {
       title: "Belohnen am richtigen Platz",
-      schwerpunkt: "Belohnung muss DIREKT am richtigen Platz und SOFORT nach dem Loslassen kommen. Timing ist alles — Verzögerung von 5+ Sek bringt nichts.",
+      schwerpunkt: "Belohnung muss DIREKT am richtigen Platz und SOFORT nach dem Loslassen kommen. Timing ist alles — Verzoegerung von 5+ Sek bringt nichts.",
       wochenziele: [
         "Belohnung erfolgt zeitnah am Toiletten-Platz.",
         "{dogName} verknüpft Platz mit Belohnung.",
@@ -4901,7 +4859,7 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Verknüpfung Platz-Belohnung steht.",
         "Du hast immer Leckerlis dabei.",
       ],
-      exerciseIds: ["s-unfaelle-managen", "s-trigger-lesen"],
+      exerciseIds: ["s-belohnen-am-platz", "s-trigger-lesen"],
     },
     {
       title: "Auslöser-Lesen lernen",
@@ -4909,38 +4867,38 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
       wochenziele: [
         "Du erkennst {dogName}s Auslöser-Anzeichen.",
         "Reaktionszeit ist unter 30 Sek.",
-        "Unfälle in der Wohnung reduzieren sich.",
+        "Unfaelle in der Wohnung reduzieren sich.",
       ],
-      tagesplan: "Beobachte aktiv: am Boden schnüffeln, im Kreis drehen, plötzlich aufstehen, zur Tür schauen. Sobald du eines siehst: SOFORT rausgehen, KEIN Verzögern. An gewohnten Platz führen.",
+      tagesplan: "Beobachte aktiv: am Boden schnüffeln, im Kreis drehen, plötzlich aufstehen, zur Tür schauen. Sobald du eines siehst: SOFORT rausgehen, KEIN Verzoegern. An gewohnten Platz fuehren.",
       no_gos: [
         "Auslöser-Anzeichen ignorieren.",
-        "Erst Schuhe anziehen mit langer Verzögerung.",
+        "Erst Schuhe anziehen mit langer Verzoegerung.",
         "{dogName} 'später rausnehmen'.",
       ],
       fortschritt: [
         "Du erkennst Auslöser sicher.",
         "Reaktionszeit ist kurz.",
-        "Unfälle werden seltener.",
+        "Unfaelle werden seltener.",
       ],
-      exerciseIds: ["s-stress-reduktion", "s-toiletten-routine"],
+      exerciseIds: ["s-trigger-lesen", "s-toiletten-routine"],
     },
     {
-      title: "Unfälle managen ohne Strafe",
-      schwerpunkt: "Unfälle gehören zum Lernprozess. Wer schimpft, macht alles schlimmer — {dogName} versteckt sich beim nächsten Mal. Sauber Reinigen + Enzym-Reiniger + Geduld.",
+      title: "Unfaelle managen ohne Strafe",
+      schwerpunkt: "Unfaelle gehoeren zum Lernprozess. Wer schimpft, macht alles schlimmer — {dogName} versteckt sich beim nächsten Mal. Sauber Reinigen + Enzym-Reiniger + Geduld.",
       wochenziele: [
-        "Bei Unfällen reagierst du ruhig.",
-        "Enzym-Reiniger ist verfügbar.",
+        "Bei Unfaellen reagierst du ruhig.",
+        "Enzym-Reiniger ist verfuegbar.",
         "{dogName} entwickelt kein Versteckverhalten.",
       ],
-      tagesplan: "Bei Unfall: ruhig saubermachen mit Enzym-Reiniger (Tierhandlung). KEIN Schimpfen, KEIN Nase-rein-drücken. Bringe {dogName} raus, vielleicht kommt noch was. Notiere den Vorfall: wann, was?",
+      tagesplan: "Bei Unfall: ruhig saubermachen mit Enzym-Reiniger (Tierhandlung). KEIN Schimpfen, KEIN Nase-rein-druecken. Bringe {dogName} raus, vielleicht kommt noch was. Notiere den Vorfall: wann, was?",
       no_gos: [
         "Schimpfen oder Strafe — kontraproduktiv.",
         "Normaler Reiniger ohne Enzym — Geruch bleibt für Hund.",
-        "Hund stehen lassen während du sauber machst — verstärkt Stress.",
+        "Hund stehen lassen waehrend du sauber machst — verstärkt Stress.",
       ],
       fortschritt: [
         "Du reagierst ruhig.",
-        "Reinigung ist gründlich.",
+        "Reinigung ist gruendlich.",
         "{dogName} versteckt sich nicht.",
       ],
       exerciseIds: ["s-unfaelle-managen", "s-belohnen-am-platz"],
@@ -4948,13 +4906,13 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
     // 6-Monats-Vertiefungen
     {
       title: "Toilettenrunden engmaschiger",
-      schwerpunkt: "Falls Unfälle häufig: Toilettenrunden engmaschiger. Bei jungen Hunden alle 1-2h, bei älteren unreinen alle 2-3h. Prävention statt Reaktion.",
+      schwerpunkt: "Falls Unfaelle häufig: Toilettenrunden engmaschiger. Bei jungen Hunden alle 1-2h, bei aelteren unreinen alle 2-3h. Praevention statt Reaktion.",
       wochenziele: [
         "Toilettenrunden in passender Frequenz.",
-        "Unfälle reduzieren sich messbar.",
+        "Unfaelle reduzieren sich messbar.",
         "Du erkennst die optimale Frequenz.",
       ],
-      tagesplan: "Bei jungen Welpen (8-16 Wochen): alle 1-2h raus. Bei älteren unreinen: alle 2-3h. Reduziere Frequenz über Wochen, wenn keine Unfälle. Bei Unfall: wieder enger.",
+      tagesplan: "Bei jungen Welpen (8-16 Wochen): alle 1-2h raus. Bei aelteren unreinen: alle 2-3h. Reduziere Frequenz über Wochen, wenn keine Unfaelle. Bei Unfall: wieder enger.",
       no_gos: [
         "Frequenz zu schnell reduzieren.",
         "Bei Eile Runden auslassen.",
@@ -4962,14 +4920,14 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       fortschritt: [
         "Optimale Frequenz ist gefunden.",
-        "Unfälle werden selten.",
+        "Unfaelle werden selten.",
         "{dogName} entwickelt Blase.",
       ],
-      exerciseIds: ["s-toiletten-routine", "s-trigger-lesen"],
+      exerciseIds: ["s-toiletten-routine", "s-belohnen-am-platz"],
     },
     {
       title: "Stress-Reduktion bei stress-bedingtem Soiling",
-      schwerpunkt: "Manche Hunde machen unter Stress in die Wohnung — Gewitter, neue Menschen, Veränderungen. Lösung: Stress aktiv reduzieren.",
+      schwerpunkt: "Manche Hunde machen unter Stress in die Wohnung — Gewitter, neue Menschen, Veränderungen. Loesung: Stress aktiv reduzieren.",
       wochenziele: [
         "Stress-Auslöser sind identifiziert.",
         "Stress wird aktiv reduziert.",
@@ -4978,7 +4936,7 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
       tagesplan: "Identifiziere: was stresst {dogName}? Gewitter? Neue Menschen? Änderungen? Reduziere aktiv. Vor erwartetem Stress: extra Toilettenrunde. Bei Stress: ruhig bleiben.",
       no_gos: [
         "Stress ignorieren.",
-        "Stress-Soiling als Verhalten 'bekämpfen' — es ist Symptom.",
+        "Stress-Soiling als Verhalten 'bekaempfen' — es ist Symptom.",
         "Bei stress-bedingtem Soiling Tierarzt-Check vergessen.",
       ],
       fortschritt: [
@@ -4986,38 +4944,38 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} ist ruhiger.",
         "Stress-Soiling reduziert sich.",
       ],
-      exerciseIds: ["s-stress-reduktion", "s-belohnen-am-platz"],
+      exerciseIds: ["s-stress-reduktion", "s-toiletten-routine"],
     },
     {
-      title: "Nächtliche Stubenreinheit aufbauen",
-      schwerpunkt: "Welpen und unreine Hunde brauchen oft eine nächtliche Toilettenrunde. Diese Woche baust du die nächtliche Routine auf.",
+      title: "Naechtliche Stubenreinheit aufbauen",
+      schwerpunkt: "Welpen und unreine Hunde brauchen oft eine naechtliche Toilettenrunde. Diese Woche baust du die naechtliche Routine auf.",
       wochenziele: [
-        "Nächtliche Routine ist etabliert.",
-        "Nächtliche Unfälle reduzieren sich.",
-        "Blase wird langsam stärker.",
+        "Naechtliche Routine ist etabliert.",
+        "Naechtliche Unfaelle reduzieren sich.",
+        "Blase wird langsam staerker.",
       ],
-      tagesplan: "Letzte Toilettenrunde direkt vor dem Schlafen. Bei jungen Welpen (8-16 Wochen): einmal nachts raus. Bei älteren unreinen Hunden: zunächst alle 4-5h, dann reduzieren. Nächtliche Runde: ruhig, kein Spiel.",
+      tagesplan: "Letzte Toilettenrunde direkt vor dem Schlafen. Bei jungen Welpen (8-16 Wochen): einmal nachts raus. Bei aelteren unreinen Hunden: zunächst alle 4-5h, dann reduzieren. Naechtliche Runde: ruhig, kein Spiel.",
       no_gos: [
-        "Nächtliche Routine vergessen.",
+        "Naechtliche Routine vergessen.",
         "Bei Unfall nachts schimpfen.",
         "Zu lange Phasen erwarten.",
       ],
       fortschritt: [
-        "Nächtliche Routine ist eingespielt.",
-        "Blase wird stärker.",
-        "Nächtliche Unfälle reduzieren sich.",
+        "Naechtliche Routine ist eingespielt.",
+        "Blase wird staerker.",
+        "Naechtliche Unfaelle reduzieren sich.",
       ],
-      exerciseIds: ["s-nächtliche-blase", "s-toiletten-routine"],
+      exerciseIds: ["s-naechtliche-blase", "s-toiletten-routine"],
     },
     {
       title: "Fundament-Check",
       schwerpunkt: "Letzte Fundament-Woche. Routine, Belohnung, Auslöser-Lesen, Unfall-Management — alle Bausteine. Phase 2 = mehr Generalisierung und Festigung.",
       wochenziele: [
         "Alle Bausteine sitzen.",
-        "Unfälle sind deutlich reduziert.",
+        "Unfaelle sind deutlich reduziert.",
         "Du fühlst dich kompetent.",
       ],
-      tagesplan: "Bilanz: was funktioniert super, was wackelt? Falls Schwäche: 1 Extra-Woche. Bei häufigen Unfällen: Tierarzt-Check (Blasenentzündung etc. ausschließen).",
+      tagesplan: "Bilanz: was funktioniert super, was wackelt? Falls Schwaeche: 1 Extra-Woche. Bei haufigen Unfaellen: Tierarzt-Check (Blasenentzuendung etc. ausschließen).",
       no_gos: [
         "Aus Ungeduld zu schnell weitergehen.",
         "Medizinische Ursachen ignorieren.",
@@ -5026,21 +4984,21 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
       fortschritt: [
         "Du fühlst dich kompetent.",
         "Routine sitzt.",
-        "Unfälle sind seltener.",
+        "Unfaelle sind seltener.",
       ],
-      exerciseIds: ["s-trigger-lesen", "s-belohnen-am-platz"],
+      exerciseIds: ["s-toiletten-routine", "s-belohnen-am-platz"],
     },
   ],
   steigerung: [
     {
       title: "Frequenz reduzieren bei Erfolg",
-      schwerpunkt: "Wenn Unfälle seltener werden, reduzierst du langsam die Toiletten-Frequenz. {dogName} entwickelt Blase und Kontrolle.",
+      schwerpunkt: "Wenn Unfaelle seltener werden, reduzierst du langsam die Toiletten-Frequenz. {dogName} entwickelt Blase und Kontrolle.",
       wochenziele: [
         "Toiletten-Frequenz wird langsam reduziert.",
         "{dogName} entwickelt Blase und Kontrolle.",
         "Du hast eine nachhaltige Routine.",
       ],
-      tagesplan: "Tag 1-3: 1 Toilettenrunde pro Tag weglassen (z.B. die überzählige am Vormittag). Tag 4-7: bei Erfolg eine weitere weglassen. Bei Unfall: zurück zur engeren Frequenz.",
+      tagesplan: "Tag 1-3: 1 Toilettenrunde pro Tag weglassen (z.B. die überzaehlige am Vormittag). Tag 4-7: bei Erfolg eine weitere weglassen. Bei Unfall: zurueck zur engeren Frequenz.",
       no_gos: [
         "Mehrere Toilettenrunden gleichzeitig weglassen.",
         "Bei Unfall durchziehen.",
@@ -5048,7 +5006,7 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
       ],
       fortschritt: [
         "Frequenz wird reduziert.",
-        "Blase wird stärker.",
+        "Blase wird staerker.",
         "Alltag wird flexibler.",
       ],
       exerciseIds: ["s-toiletten-routine", "s-belohnen-am-platz"],
@@ -5059,24 +5017,24 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
       wochenziele: [
         "Auslöser-Lesen ist reflexartig.",
         "Reaktionszeit ist sehr kurz.",
-        "Unfälle werden vermieden.",
+        "Unfaelle werden vermieden.",
       ],
-      tagesplan: "Aktive Beobachtung während {dogName} wach ist. Auch subtile Anzeichen erkennen: kurz unruhig werden, kurz schnüffeln, kurz wegschauen. Sofort handeln.",
+      tagesplan: "Aktive Beobachtung waehrend {dogName} wach ist. Auch subtile Anzeichen erkennen: kurz unruhig werden, kurz schnüffeln, kurz wegschauen. Sofort handeln.",
       no_gos: [
-        "Auslöser-Anzeichen unterschätzen.",
+        "Auslöser-Anzeichen unterschaetzen.",
         "Bei Eile Anzeichen ignorieren.",
         "{dogName} nicht im Blick haben.",
       ],
       fortschritt: [
         "Auslöser-Lesen ist reflexartig.",
-        "Unfälle werden eliminiert.",
+        "Unfaelle werden eliminiert.",
         "Du bist aufmerksam.",
       ],
-      exerciseIds: ["s-trigger-lesen", "s-unfaelle-managen"],
+      exerciseIds: ["s-trigger-lesen", "s-toiletten-routine"],
     },
     {
       title: "Belohnung schrittweise reduzieren",
-      schwerpunkt: "Wenn Stubenreinheit sitzt, kannst du Belohnung langsam reduzieren. Aber: NIEMALS komplett weglassen. Variable Verstärkung hält Verhalten stabil.",
+      schwerpunkt: "Wenn Stubenreinheit sitzt, kannst du Belohnung langsam reduzieren. Aber: NIEMALS komplett weglassen. Variable Verstaerkung haelt Verhalten stabil.",
       wochenziele: [
         "Belohnungs-Frequenz wird auf ~60% reduziert.",
         "{dogName} bleibt zuverlässig.",
@@ -5085,15 +5043,15 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
       tagesplan: "Bei normalen Toilettenrunden: nicht jedes Mal Leckerli. Bei besonderen Erfolgen (an neuem Ort, nach langer Zeit): Jackpot. {dogName} merkt: das System bleibt, aber unvorhersehbar.",
       no_gos: [
         "Belohnung komplett streichhen.",
-        "Reduktion bei häufigen Unfällen.",
+        "Reduktion bei häufigen Unfaellen.",
         "Variabilität aufweichen.",
       ],
       fortschritt: [
         "{dogName} bleibt zuverlässig.",
         "Du steckst weniger Leckerlis ein.",
-        "Variable Verstärkung sitzt.",
+        "Variable Verstaerkung sitzt.",
       ],
-      exerciseIds: ["s-belohnen-am-platz", "s-stress-reduktion"],
+      exerciseIds: ["s-belohnen-am-platz", "s-trigger-lesen"],
     },
     {
       title: "Verschiedene Strecken generalisieren",
@@ -5103,7 +5061,7 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Generalisierung der Stubenreinheit.",
         "Du bist flexibler im Alltag.",
       ],
-      tagesplan: "Spaziergänge an neuen Strecken. Wenn {dogName} an einem neuen Ort erledigt: SUPER-Belohnung. Generalisierung ist der echte Lerneffekt.",
+      tagesplan: "Spaziergaenge an neuen Strecken. Wenn {dogName} an einem neuen Ort erledigt: SUPER-Belohnung. Generalisierung ist der echte Lerneffekt.",
       no_gos: [
         "Nur an einem Ort als Toilette akzeptieren.",
         "Erwarten dass es überall klappt sofort.",
@@ -5114,7 +5072,7 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du bist flexibler.",
         "Generalisierung sitzt.",
       ],
-      exerciseIds: ["s-toiletten-routine", "s-trigger-lesen"],
+      exerciseIds: ["s-toiletten-routine", "s-belohnen-am-platz"],
     },
     // Vertiefungen
     {
@@ -5122,52 +5080,52 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
       schwerpunkt: "Bei stress-bedingtem Soiling: Stress-Toleranz aktiv aufbauen. Mini-Stress-Situationen üben, {dogName} bleibt ruhig.",
       wochenziele: [
         "{dogName} bewältigt Mini-Stress-Situationen ohne Soiling.",
-        "Stress-Toleranz wächst.",
+        "Stress-Toleranz waechst.",
         "Du erkennst die Schwellenwerte.",
       ],
-      tagesplan: "Plane Mini-Stress-Situationen: kurzer Besuch, neues Geräusch, kurze Veränderung. {dogName} bleibt währenddessen ruhig (Decke + Kong). Belohnung für Ruhe.",
+      tagesplan: "Plane Mini-Stress-Situationen: kurzer Besuch, neues Geräusch, kurze Veränderung. {dogName} bleibt waehrenddessen ruhig (Decke + Kong). Belohnung für Ruhe.",
       no_gos: [
         "Stress-Toleranz erzwingen — Eskalation.",
         "Zu starke Stressoren am Anfang.",
         "Bei Stress nichts tun.",
       ],
       fortschritt: [
-        "Stress-Toleranz wächst.",
+        "Stress-Toleranz waechst.",
         "Stress-Soiling reduziert sich.",
         "Du fühlst dich vorbereitet.",
       ],
-      exerciseIds: ["s-stress-reduktion", "s-belohnen-am-platz"],
+      exerciseIds: ["s-stress-reduktion", "s-toiletten-routine"],
     },
     {
-      title: "Nächtliche Schlafzeit verlängern",
-      schwerpunkt: "Nächtliche Toilettenrunden werden langsam reduziert. Bei jungen Hunden: erst 1x nachts, dann durchschlafen. Bei älteren unreinen: 4h, dann 6h, dann 8h.",
+      title: "Naechtliche Schlafzeit verlängern",
+      schwerpunkt: "Naechtliche Toilettenrunden werden langsam reduziert. Bei jungen Hunden: erst 1x nachts, dann durchschlafen. Bei aelteren unreinen: 4h, dann 6h, dann 8h.",
       wochenziele: [
-        "Nächtliche Schlafzeit wächst.",
-        "Nächtliche Unfälle reduzieren sich auf 0.",
-        "Blase wird langfristig stärker.",
+        "Naechtliche Schlafzeit waechst.",
+        "Naechtliche Unfaelle reduzieren sich auf 0.",
+        "Blase wird langfristig staerker.",
       ],
-      tagesplan: "Verlängere die nächtliche Phase um 30 Min pro Woche. Bei Unfall: zurück zur kürzeren Phase. Letzte Toilettenrunde abends so spät wie möglich. Morgens so früh wie nötig.",
+      tagesplan: "Verlängere die naechtliche Phase um 30 Min pro Woche. Bei Unfall: zurueck zur kuerzeren Phase. Letzte Toilettenrunde abends so spät wie möglich. Morgens so frueh wie noetig.",
       no_gos: [
         "Zu schnell verlängern.",
         "Bei Unfall durchziehen.",
-        "Späte Mahlzeiten — fülle Blase.",
+        "Späte Mahlzeiten — fuelle Blase.",
       ],
       fortschritt: [
-        "Nächtliche Schlafzeit wächst.",
-        "Blase wird stärker.",
-        "Du schläfst besser.",
+        "Naechtliche Schlafzeit waechst.",
+        "Blase wird staerker.",
+        "Du schlaefst besser.",
       ],
-      exerciseIds: ["s-nächtliche-blase", "s-toiletten-routine"],
+      exerciseIds: ["s-naechtliche-blase", "s-toiletten-routine"],
     },
     {
-      title: "Unfälle managen routiniert",
-      schwerpunkt: "Bei seltenen Unfällen reagierst du routiniert. Ruhig, Enzym-Reiniger, ohne Drama. Notieren was passiert ist.",
+      title: "Unfaelle managen routiniert",
+      schwerpunkt: "Bei seltenen Unfaellen reagierst du routiniert. Ruhig, Enzym-Reiniger, ohne Drama. Notieren was passiert ist.",
       wochenziele: [
-        "Bei Unfällen reagierst du reflexartig ruhig.",
+        "Bei Unfaellen reagierst du reflexartig ruhig.",
         "Enzym-Reiniger ist immer parat.",
-        "Du führst weiter Tagebuch.",
+        "Du fuehrst weiter Tagebuch.",
       ],
-      tagesplan: "Bei seltenem Unfall: ruhig handhaben. Enzym-Reiniger nutzen. Notiere im Tagebuch: wann, was, vorheriger Toilettengang? Patterns früh erkennen.",
+      tagesplan: "Bei seltenem Unfall: ruhig handhaben. Enzym-Reiniger nutzen. Notiere im Tagebuch: wann, was, vorheriger Toilettengang? Patterns frueh erkennen.",
       no_gos: [
         "Bei Unfall schimpfen oder Strafe.",
         "Normaler Reiniger nutzen.",
@@ -5182,17 +5140,17 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
     },
     {
       title: "Festigung Steigerung",
-      schwerpunkt: "Letzte Steigerungs-Woche. Routine sitzt, Frequenz ist optimal, Generalisierung klappt. Phase 3 = Langzeit-Stabilität.",
+      schwerpunkt: "Letzte Steigerungs-Woche. Routine sitzt, Frequenz ist optimal, Generalisierung klappt. Phase 3 = Langzeit-Stabilitaet.",
       wochenziele: [
-        "Alle Werkzeuge sitzen flüssig.",
-        "Unfälle sind sehr selten.",
+        "Alle Werkzeuge sitzen fluessig.",
+        "Unfaelle sind sehr selten.",
         "Du fühlst dich kompetent.",
       ],
       tagesplan: "Bilanz: was funktioniert super, was wackelt noch? Plane Phase 3 mit Langzeit-Routine und Wartung.",
       no_gos: [
         "Routine aufweichen.",
-        "Beobachten aufhören.",
-        "Erfolge als selbstverständlich.",
+        "Beobachten aufhoeren.",
+        "Erfolge als selbstverstaendlich.",
       ],
       fortschritt: [
         "Werkzeuge sitzen.",
@@ -5205,13 +5163,13 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
   generalisierung: [
     {
       title: "Langfristige Routine",
-      schwerpunkt: "Routine wird langfristig etabliert. Pro Tag 3-4 Toilettenrunden in regelmäßigen Abständen. Auch im Alter hält das die Stubenreinheit.",
+      schwerpunkt: "Routine wird langfristig etabliert. Pro Tag 3-4 Toilettenrunden in regelmaessigen Abstaenden. Auch im Alter haelt das die Stubenreinheit.",
       wochenziele: [
         "Routine ist langfristig stabil.",
         "{dogName} hat berechenbare Zeiten.",
-        "Stubenreinheit ist selbstverständlich.",
+        "Stubenreinheit ist selbstverstaendlich.",
       ],
-      tagesplan: "Pro Tag 3-4 feste Toilettenrunden: morgens, mittags, nachmittags, abends. Vor dem Schlafen ist optional je nach Hund. Routine wird zur Normalität.",
+      tagesplan: "Pro Tag 3-4 feste Toilettenrunden: morgens, mittags, nachmittags, abends. Vor dem Schlafen ist optional je nach Hund. Routine wird zur Normalitaet.",
       no_gos: [
         "Routine inkonsistent halten.",
         "Bei Eile auslassen.",
@@ -5243,20 +5201,20 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Du planst Reisen entspannter.",
         "Generalisierung ist langfristig.",
       ],
-      exerciseIds: ["s-trigger-lesen", "s-unfaelle-managen"],
+      exerciseIds: ["s-toiletten-routine", "s-belohnen-am-platz"],
     },
     {
       title: "Alters-Anpassung",
-      schwerpunkt: "Mit dem Alter braucht {dogName} eventuell wieder öftere Toilettenrunden. Beobachte Veränderungen, passe Routine an.",
+      schwerpunkt: "Mit dem Alter braucht {dogName} eventuell wieder oeftere Toilettenrunden. Beobachte Veränderungen, passe Routine an.",
       wochenziele: [
         "Du erkennst altersbedingte Veränderungen.",
         "Routine wird angepasst bei Bedarf.",
         "Senior bleibt stubenrein.",
       ],
-      tagesplan: "Beobachte: braucht {dogName} öftere Runden? Blasenkapazität verändert? Tierarzt-Check bei deutlichen Veränderungen. Routine flexibel anpassen.",
+      tagesplan: "Beobachte: braucht {dogName} oeftere Runden? Blasenkapazitaet veraendert? Tierarzt-Check bei deutlichen Veränderungen. Routine flexibel anpassen.",
       no_gos: [
         "Alterungs-Veränderungen ignorieren.",
-        "Bei älterem Hund alte Frequenz erwarten.",
+        "Bei aelterem Hund alte Frequenz erwarten.",
         "Tierarzt-Check vergessen.",
       ],
       fortschritt: [
@@ -5267,77 +5225,77 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
       exerciseIds: ["s-toiletten-routine", "s-belohnen-am-platz"],
     },
     {
-      title: "Stress-Soiling-Rückfall managen",
-      schwerpunkt: "Falls Stress-Soiling zurückkommt (Umzug, neue Mitbewohner, Lebensveränderungen): Stress aktiv reduzieren, Routine engmaschiger.",
+      title: "Stress-Soiling-Rueckfall managen",
+      schwerpunkt: "Falls Stress-Soiling zurueckkommt (Umzug, neue Mitbewohner, Lebensveränderungen): Stress aktiv reduzieren, Routine engmaschiger.",
       wochenziele: [
-        "Du erkennst Stress-Rückfall-Anzeichen.",
+        "Du erkennst Stress-Rueckfall-Anzeichen.",
         "Stress wird aktiv reduziert.",
         "Routine wird angepasst.",
       ],
-      tagesplan: "Bei Stress-Symptomen: Frequenz wieder enger, Stress-Faktoren reduzieren, Decke als Anker nutzen. Bei stärkerem Stress: Tierarzt-Check ausschließen Medizinisches.",
+      tagesplan: "Bei Stress-Symptomen: Frequenz wieder enger, Stress-Faktoren reduzieren, Decke als Anker nutzen. Bei staerkerem Stress: Tierarzt-Check ausschließen Medizinisches.",
       no_gos: [
-        "Stress-Rückfall als Verhaltensproblem behandeln.",
-        "Schimpfen bei stress-bedingten Unfällen.",
+        "Stress-Rueckfall als Verhaltensproblem behandeln.",
+        "Schimpfen bei stress-bedingten Unfaellen.",
         "Tierarzt-Check vergessen.",
       ],
       fortschritt: [
-        "Stress-Rückfall wird gemanagt.",
+        "Stress-Rueckfall wird gemanagt.",
         "Routine ist robust.",
-        "Du erkennst Anzeichen früh.",
+        "Du erkennst Anzeichen frueh.",
       ],
-      exerciseIds: ["s-stress-reduktion", "s-unfaelle-managen"],
+      exerciseIds: ["s-stress-reduktion", "s-toiletten-routine"],
     },
     {
       title: "Belohnungs-Reduktion stabilisieren",
-      schwerpunkt: "Belohnung wird langfristig variabel. {dogName} bleibt stubenrein, auch ohne ständige Leckerli. Aber: gelegentlich Jackpot belohnen.",
+      schwerpunkt: "Belohnung wird langfristig variabel. {dogName} bleibt stubenrein, auch ohne staendige Leckerli. Aber: gelegentlich Jackpot belohnen.",
       wochenziele: [
         "Belohnungs-Frequenz ist auf ~30% stabilisiert.",
         "{dogName} bleibt zuverlässig.",
         "Spitzenleistungen werden belohnt.",
       ],
-      tagesplan: "Bei normalen Runden: gelegentlich Leckerli, gelegentlich nicht. Bei besonderen Situationen (neue Umgebung, lange Zeit): immer Jackpot. Variable Verstärkung.",
+      tagesplan: "Bei normalen Runden: gelegentlich Leckerli, gelegentlich nicht. Bei besonderen Situationen (neue Umgebung, lange Zeit): immer Jackpot. Variable Verstaerkung.",
       no_gos: [
         "Belohnung komplett streichhen.",
         "Bei besonderen Situationen knausern.",
         "Variabilität aufweichen.",
       ],
       fortschritt: [
-        "Variable Verstärkung sitzt.",
+        "Variable Verstaerkung sitzt.",
         "{dogName} bleibt zuverlässig.",
         "Du planst entspannt.",
       ],
       exerciseIds: ["s-belohnen-am-platz", "s-trigger-lesen"],
     },
     {
-      title: "Notfall-Plan bei Rückfällen",
+      title: "Notfall-Plan bei Rueckfaellen",
       schwerpunkt: "Falls Stubenreinheit plötzlich nachlässt: Notfall-Plan. Tierarzt-Check, Routine enger, Stress-Faktoren prüfen.",
       wochenziele: [
         "Du hast einen Notfall-Plan.",
-        "Rückschritte werden früh erkannt.",
+        "Rueckschritte werden frueh erkannt.",
         "Aufgefangen in 1-2 Wochen.",
       ],
-      tagesplan: "Notfall-Plan: 1) Tierarzt-Check (Blasenentzündung etc.). 2) Routine enger machen. 3) Stress-Faktoren prüfen. 4) Belohnungs-Dichte wieder hoch. 5) Tagebuch führen um Patterns zu finden.",
+      tagesplan: "Notfall-Plan: 1) Tierarzt-Check (Blasenentzuendung etc.). 2) Routine enger machen. 3) Stress-Faktoren prüfen. 4) Belohnungs-Dichte wieder hoch. 5) Tagebuch fuehren um Patterns zu finden.",
       no_gos: [
-        "Rückschritte ignorieren.",
+        "Rueckschritte ignorieren.",
         "Medizinische Ursachen vergessen.",
         "Schimpfen aus Frust.",
       ],
       fortschritt: [
         "Notfall-Plan sitzt.",
-        "Rückschritte werden gemanagt.",
+        "Rueckschritte werden gemanagt.",
         "Du fühlst dich kompetent.",
       ],
       exerciseIds: ["s-unfaelle-managen", "s-stress-reduktion"],
     },
     {
       title: "Lebenslange Stress-Hygiene",
-      schwerpunkt: "Stubenreinheit hängt langfristig auch von Stress ab. Gute Stress-Hygiene = stabile Stubenreinheit. Schlaf, Routine, Auslastung.",
+      schwerpunkt: "Stubenreinheit haengt langfristig auch von Stress ab. Gute Stress-Hygiene = stabile Stubenreinheit. Schlaf, Routine, Auslastung.",
       wochenziele: [
         "Stress-Hygiene ist Routine.",
         "{dogName} ist langfristig ausgeglichen.",
         "Stubenreinheit bleibt stabil.",
       ],
-      tagesplan: "Prüfe regelmäßig: Schlaf? Routine? Auslastung? Soziale Kontakte? Bei Stress an anderer Stelle: aktiv reduzieren, bevor Stubenreinheit leidet.",
+      tagesplan: "Prüfe regelmaessig: Schlaf? Routine? Auslastung? Soziale Kontakte? Bei Stress an anderer Stelle: aktiv reduzieren, bevor Stubenreinheit leidet.",
       no_gos: [
         "Stress an anderer Stelle ignorieren.",
         "Routine schleifen lassen.",
@@ -5348,7 +5306,7 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "{dogName} bleibt ausgeglichen.",
         "Stubenreinheit ist stabil.",
       ],
-      exerciseIds: ["s-trigger-lesen", "s-toiletten-routine"],
+      exerciseIds: ["s-stress-reduktion", "s-toiletten-routine"],
     },
     {
       title: "Übergang in Wartungsmodus",
@@ -5358,18 +5316,18 @@ const SOILING_WEEKS: Record<Phase, WeekTemplate[]> = {
         "Wartungs-Rhythmus ist klar.",
         "{dogName} bleibt stubenrein.",
       ],
-      tagesplan: "Reduziere aktives Training auf Minimum. Routine bleibt: 3-4 Toilettenrunden pro Tag. Tagebuch bei Rückfällen wieder führen. Bei Veränderungen: vorsichtig anpassen.",
+      tagesplan: "Reduziere aktives Training auf Minimum. Routine bleibt: 3-4 Toilettenrunden pro Tag. Tagebuch bei Rueckfaellen wieder fuehren. Bei Veränderungen: vorsichtig anpassen.",
       no_gos: [
         "Alle Routinen schlagartig weglassen.",
-        "Bei Rückfall in Panik.",
-        "Beobachten aufhören.",
+        "Bei Rueckfall in Panik.",
+        "Beobachten aufhoeren.",
       ],
       fortschritt: [
         "{dogName} ist langfristig stubenrein.",
         "Du fühlst dich kompetent.",
-        "Unfälle sind Ausnahme.",
+        "Unfaelle sind Ausnahme.",
       ],
-      exerciseIds: ["s-unfaelle-managen", "s-belohnen-am-platz"],
+      exerciseIds: ["s-toiletten-routine", "s-belohnen-am-platz"],
     },
   ],
 };
@@ -5408,115 +5366,115 @@ const PHASE_TEXTE: Record<ProblemKey, Record<Phase, PhaseDaten>> = {
   pulling: {
     fundament: {
       bausteine: "Markerwort FEIN und SCHAU-Signal, Sei-ein-Baum-Mechanik drinnen, Bei-Fuss-Position als Belohnungs-Goldzone, ruhige Tür-Routine und die Entspannungsdecke als Anker",
-      schon_merken: "{dogName} reagiert in der Wohnung in unter 2 Sekunden auf SCHAU. Bei einer straffen Leine drinnen dreht {dogName} sich nach 5-10 Sekunden zu dir um, die Stopps pro Session sinken von 20+ auf unter 10. Die Tür wird ohne Drängeln geöffnet, du steckst Hosentaschen-Hand weniger oft ein als zu Plan-Start. {dogName} hat die Decke als ruhigen Ort erkannt.",
-      jetzt_anpassen: "Wenn Sei-ein-Baum drinnen noch nicht ohne deine Hilfe klappt, hänge eine Woche dran und üb gezielt mit niedrigerer Reiz-Lage. Wenn dagegen schon der Garten oder Hausflur entspannt klappt, kannst du in Phase 2 mutiger werden. Notier dir, welcher der vier Bausteine am schwächsten sitzt, das wird der Schwerpunkt in Phase 2.",
-      stolperfallen: "Viele wollen aus Ungeduld schon in Woche 4 echte Außen-Reize einbauen. Das zerstört das Fundament. Auch klassisch: Belohnung vor dem Körper statt an der Bein-Naht geben, damit lockst du {dogName} nach vorne und förderst Ziehen. Halt die Belohnung konsequent neben deinem Knie.",
-      vermeidet: "Schon volle Alltags-Spaziergänge mit der Erwartung dass es funktioniert. Phase 1 ist drinnen-Arbeit. Phase 2 macht den Übergang."
+      schon_merken: "{dogName} reagiert in der Wohnung in unter 2 Sekunden auf SCHAU. Bei einer straffen Leine drinnen dreht {dogName} sich nach 5-10 Sekunden zu dir um, die Stopps pro Session sinken von 20+ auf unter 10. Die Tür wird ohne Drängeln geoeffnet, du steckst Hosentaschen-Hand weniger oft ein als zu Plan-Start. {dogName} hat die Decke als ruhigen Ort erkannt.",
+      jetzt_anpassen: "Wenn Sei-ein-Baum drinnen noch nicht ohne deine Hilfe klappt, haenge eine Woche dran und ueb gezielt mit niedrigerer Reiz-Lage. Wenn dagegen schon der Garten oder Hausflur entspannt klappt, kannst du in Phase 2 mutiger werden. Notier dir, welcher der vier Bausteine am schwaechsten sitzt, das wird der Schwerpunkt in Phase 2.",
+      stolperfallen: "Viele wollen aus Ungeduld schon in Woche 4 echte Außen-Reize einbauen. Das zerstört das Fundament. Auch klassisch: Belohnung vor dem Koerper statt an der Bein-Naht geben, damit lockst du {dogName} nach vorne und foerderst Ziehen. Halt die Belohnung konsequent neben deinem Knie.",
+      vermeidet: "Schon volle Alltags-Spaziergaenge mit der Erwartung dass es funktioniert. Phase 1 ist drinnen-Arbeit. Phase 2 macht den Übergang."
     },
     steigerung: {
-      bausteine: "Sei-ein-Baum draußen mit echten Reizen, Gegenrichtung als Konsequenz bei hartnäckigem Ziehen, Bei-Fuss-Belohnen im echten Alltag, Tempo- und Richtungswechsel als Aufmerksamkeits-Werkzeug",
+      bausteine: "Sei-ein-Baum draußen mit echten Reizen, Gegenrichtung als Konsequenz bei hartnaeckigem Ziehen, Bei-Fuss-Belohnen im echten Alltag, Tempo- und Richtungswechsel als Aufmerksamkeits-Werkzeug",
       schon_merken: "{dogName} bleibt bei einem ersten echten Spaziergang nach ein paar Stopps stehen wenn die Leine straff wird, statt durchzuziehen. Du brauchst die Gegenrichtung-Konsequenz seltener als in der ersten Woche dieser Phase. Stopps pro Spaziergang sind im einstelligen Bereich, und {dogName} sucht von selbst die Bein-Position an Kreuzungen oder unsicheren Stellen.",
-      jetzt_anpassen: "Wenn {dogName} draußen noch viele Stopps hat, geh zurück auf eine ruhigere Strecke und arbeite dort sauber. Distanz und Reiz-Lage sind dein Stellrad, nicht Druck oder lautere Stimme. Wenn dagegen schon ruhige Strecken sehr gut laufen: vorsichtig in dichtere Bereiche, aber immer mit Sei-ein-Baum als Anker.",
-      stolperfallen: "Die Belohnungs-Dichte zu schnell reduzieren weil es gerade so gut läuft. Phase 2 ist Investitions-Phase, jede gute Leinen-Phase wird belohnt. Auch verbreitet: bei Stress eines Tages weitermachen, statt eine ruhigere Strecke zu wählen.",
-      vermeidet: "In Stress-Lage durchziehen mit dem Gedanken 'wir sind doch fast da'. Plateaus sind normal. Wer jetzt sauber arbeitet, hat in Phase 3 die deutlichsten Sprünge."
+      jetzt_anpassen: "Wenn {dogName} draußen noch viele Stopps hat, geh zurueck auf eine ruhigere Strecke und arbeite dort sauber. Distanz und Reiz-Lage sind dein Stellrad, nicht Druck oder lautere Stimme. Wenn dagegen schon ruhige Strecken sehr gut laufen: vorsichtig in dichtere Bereiche, aber immer mit Sei-ein-Baum als Anker.",
+      stolperfallen: "Die Belohnungs-Dichte zu schnell reduzieren weil es gerade so gut läuft. Phase 2 ist Investitions-Phase, jede gute Leinen-Phase wird belohnt. Auch verbreitet: bei Stress eines Tages weitermachen, statt eine ruhigere Strecke zu waehlen.",
+      vermeidet: "In Stress-Lage durchziehen mit dem Gedanken 'wir sind doch fast da'. Plateaus sind normal. Wer jetzt sauber arbeitet, hat in Phase 3 die deutlichsten Spruenge."
     },
     generalisierung: {
       bausteine: "Lockere Leine im echten Alltagsspaziergang, verschiedene Strecken bewältigen, Schnüffel-Pausen als Belohnung für ruhige Phasen, schrittweise Belohnungs-Reduktion",
-      schon_merken: "{dogName} bewältigt einen 20-30 Minuten Alltagsspaziergang mit weniger als 5 echten Zieh-Episoden. Du nutzt Werkzeuge wie Sei-ein-Baum und Bei-Fuss-Belohnen ohne darüber nachzudenken. Auch auf einer neuen Strecke bleibt {dogName} überwiegend ruhig. Schnüffel-Pausen sind aktive Belohnung statt 'Stör-Moment' wie früher.",
-      jetzt_anpassen: "Reduziere die Belohnungs-Frequenz weiter, aber niemals komplett. Bei Spitzenleistungen weiterhin großzügig belohnen. Wenn {dogName} ohne Belohnung deutlich nachlässt: einen Schritt zurück zur höheren Dichte. Plane einen Wartungs-Rhythmus: alle 3-4 Monate ein bewusster Übungs-Spaziergang an einem schwierigen Ort.",
-      stolperfallen: "Komplette Belohnungs-Streichung. Verstärkung bleibt wichtig, nur Frequenz und Vorhersehbarkeit ändern sich. Auch klassisch: Erfolge als selbstverständlich nehmen und nicht mehr beobachten. Kleine Rückfälle gibt es, früh bemerkt sind sie schnell behoben.",
+      schon_merken: "{dogName} bewältigt einen 20-30 Minuten Alltagsspaziergang mit weniger als 5 echten Zieh-Episoden. Du nutzt Werkzeuge wie Sei-ein-Baum und Bei-Fuss-Belohnen ohne darüber nachzudenken. Auch auf einer neuen Strecke bleibt {dogName} überwiegend ruhig. Schnüffel-Pausen sind aktive Belohnung statt 'Stör-Moment' wie frueher.",
+      jetzt_anpassen: "Reduziere die Belohnungs-Frequenz weiter, aber niemals komplett. Bei Spitzenleistungen weiterhin großzuegig belohnen. Wenn {dogName} ohne Belohnung deutlich nachlässt: einen Schritt zurueck zur hoeheren Dichte. Plane einen Wartungs-Rhythmus: alle 3-4 Monate ein bewusster Übungs-Spaziergang an einem schwierigen Ort.",
+      stolperfallen: "Komplette Belohnungs-Streichung. Verstaerkung bleibt wichtig, nur Frequenz und Vorhersehbarkeit ändern sich. Auch klassisch: Erfolge als selbstverstaendlich nehmen und nicht mehr beobachten. Kleine Rueckfaelle gibt es, frueh bemerkt sind sie schnell behoben.",
       vermeidet: "Den Plan komplett ablegen und denken 'das ist jetzt für immer gefestigt'. Die guten Routinen bleiben nur wenn du sie weiter pflegst."
     }
   },
   energy: {
     fundament: {
-      bausteine: "Schlaf- und Tagesrhythmus-Inventur, Futter als Beschäftigung statt Schüssel-Fressen, WARTE-Signal als Frust-Toleranz, der Entspannungs-Marker (z.B. WUNDERBAR)",
-      schon_merken: "{dogName} arbeitet 20-30 Minuten am Suchspiel oder Kong statt 30 Sekunden zu schlingen. Nach diesen Beschäftigungen kommt {dogName} ruhig zur Ruhe statt weiter aufgedreht zu sein. WARTE vor dem Futternapf klappt mit 5-10 Sekunden ohne Frust-Bellen. Der Entspannungs-Marker wird beobachtbar mit ruhigen Phasen verknüpft.",
-      jetzt_anpassen: "Wenn {dogName} abends weiter aufgedreht ist, prüf den Schlaf: erwachsene Hunde brauchen 16-20 Stunden Ruhe pro Tag. Viele hyperaktive Hunde schlafen zu wenig. Wenn das Suchspiel zu schnell vorbei ist, mach es schwerer (höhere Verstecke, Kong einfrieren). Wenn WARTE noch wackelt: Wartezeit nochmal verkürzen.",
+      bausteine: "Schlaf- und Tagesrhythmus-Inventur, Futter als Beschaeftigung statt Schuessel-Fressen, WARTE-Signal als Frust-Toleranz, der Entspannungs-Marker (z.B. WUNDERBAR)",
+      schon_merken: "{dogName} arbeitet 20-30 Minuten am Suchspiel oder Kong statt 30 Sekunden zu schlingen. Nach diesen Beschaeftigungen kommt {dogName} ruhig zur Ruhe statt weiter aufgedreht zu sein. WARTE vor dem Futternapf klappt mit 5-10 Sekunden ohne Frust-Bellen. Der Entspannungs-Marker wird beobachtbar mit ruhigen Phasen verknüpft.",
+      jetzt_anpassen: "Wenn {dogName} abends weiter aufgedreht ist, prüf den Schlaf: erwachsene Hunde brauchen 16-20 Stunden Ruhe pro Tag. Viele hyperaktive Hunde schlafen zu wenig. Wenn das Suchspiel zu schnell vorbei ist, mach es schwerer (hoehere Verstecke, Kong einfrieren). Wenn WARTE noch wackelt: Wartezeit nochmal verkuerzen.",
       stolperfallen: "Mehr Action liefern weil {dogName} so aufgedreht ist. Das ist genau der Fehler. Übererregung braucht weniger Reize, nicht mehr. Auch klassisch: Kopfarbeit als 'optional' sehen. Suchspiel und Kong ersetzen Tobereien nicht, sie sind die wichtigere Auslastung.",
       vermeidet: "Stundenlange Tobereien oder lange Hunde-Begegnungen. Beides verstärkt Übererregung. Phase 1 ist Innen-Beruhigung-Aufbau."
     },
     steigerung: {
-      bausteine: "Nasenarbeit draußen (Spur folgen, gestaffeltes Suchen), strukturierte Spaziergänge mit Such-Aufgaben, Stopp-Spiel als Aufregung-Schalter, Runterkommen-Routine auf der Decke nach jeder Aufregung",
-      schon_merken: "{dogName} folgt einer 20m Futter-Spur konzentriert und ist danach sichtbar müde. Beim Stopp-Spiel kommt {dogName} innerhalb von 3 Sekunden zur Ruhe. Nach Spaziergängen findet {dogName} dank der Runterkommen-Routine schneller in Ruhe als zu Plan-Start. Die Konzentrations-Spanne wächst erkennbar.",
-      jetzt_anpassen: "Wenn {dogName} nach Nasenarbeit noch hochfährt, mach die Such-Aufgaben schwerer (komplexer, mehr Verstecke) statt länger. Mehr Schwierigkeit ermüdet mehr als längere stumpfe Bewegung. Wenn das Runterkommen nicht greift: vor jeder Sitzung 10 Minuten ruhige Vorbereitung einbauen.",
-      stolperfallen: "Mehrere aufregende Aktivitäten am selben Tag stapeln. Park am Vormittag, Tobereien nachmittags, Besuch abends - das ist Reizflut, nicht Auslastung. Auch verbreitet: das Runterkommen weglassen weil 'der Hund schläft ja schon'. Aktive Erholung ist Teil der Routine.",
+      bausteine: "Nasenarbeit draußen (Spur folgen, gestaffeltes Suchen), strukturierte Spaziergaenge mit Such-Aufgaben, Stopp-Spiel als Aufregung-Schalter, Runterkommen-Routine auf der Decke nach jeder Aufregung",
+      schon_merken: "{dogName} folgt einer 20m Futter-Spur konzentriert und ist danach sichtbar müde. Beim Stopp-Spiel kommt {dogName} innerhalb von 3 Sekunden zur Ruhe. Nach Spaziergaengen findet {dogName} dank der Runterkommen-Routine schneller in Ruhe als zu Plan-Start. Die Konzentrations-Spanne waechst erkennbar.",
+      jetzt_anpassen: "Wenn {dogName} nach Nasenarbeit noch hochfaehrt, mach die Such-Aufgaben schwerer (komplexer, mehr Verstecke) statt länger. Mehr Schwierigkeit ermüdet mehr als längere stumpfe Bewegung. Wenn das Runterkommen nicht greift: vor jeder Sitzung 10 Minuten ruhige Vorbereitung einbauen.",
+      stolperfallen: "Mehrere aufregende Aktivitäten am selben Tag stapeln. Park am Vormittag, Tobereien nachmittags, Besuch abends - das ist Reizflut, nicht Auslastung. Auch verbreitet: das Runterkommen weglassen weil 'der Hund schlaeft ja schon'. Aktive Erholung ist Teil der Routine.",
       vermeidet: "Stundenlange Tobereien mit anderen Hunden. Übererregung wird damit verstärkt, nicht abgebaut."
     },
     generalisierung: {
       bausteine: "Auslastungs-Wochenplan mit klarer Mischung aus Bewegung, Nase, Kopf und Sozial-Kontakt, Ruhe als Default-Modus im Alltag, eine klare Anti-Übererregung-Routine für schwere Tage",
-      schon_merken: "{dogName} ist mindestens 60% des Tages in Ruhe-Phase. Du musst nicht mehr ständig für Beschäftigung sorgen, {dogName} entspannt sich auch von selbst. Bei aufkommender Übererregung hilft dir die Anti-Übererregungs-Routine (Reize raus, auf die Decke, Entspannungs-Marker setzen) zuverlässig. Spaziergänge sind nicht mehr Pflicht, sondern echte Bereicherung.",
-      jetzt_anpassen: "Prüf regelmäßig deinen Wochenplan: bekommt {dogName} täglich Bewegung plus Nase plus Kopf? Falls eine Säule fehlt, das ist meist die Quelle erneuter Unruhe. Bei Stress-Phasen (Umzug, Besuch, Änderungen) den Plan engmaschiger machen.",
-      stolperfallen: "Den Plan ablegen weil 'jetzt läuft es ja'. Übererregung kann sehr schnell zurückkommen sobald die Struktur weg ist. Auch klassisch: Ruhe-Phasen mit Streicheln oder Ansprechen unterbrechen. Lass {dogName} schlafen.",
+      schon_merken: "{dogName} ist mindestens 60% des Tages in Ruhe-Phase. Du musst nicht mehr staendig für Beschaeftigung sorgen, {dogName} entspannt sich auch von selbst. Bei aufkommendem Übererregung hilft dir die 3-Schritt-Routine zuverlässig. Spaziergaenge sind nicht mehr Pflicht, sondern echte Bereicherung.",
+      jetzt_anpassen: "Prüf regelmaessig deinen Wochenplan: bekommt {dogName} taeglich Bewegung plus Nase plus Kopf? Falls eine Saeule fehlt, das ist meist die Quelle erneuter Unruhe. Bei Stress-Phasen (Umzug, Besuch, Änderungen) den Plan engmaschiger machen.",
+      stolperfallen: "Den Plan ablegen weil 'jetzt läuft es ja'. Übererregung kann sehr schnell zurueckkommen sobald die Struktur weg ist. Auch klassisch: Ruhe-Phasen mit Streicheln oder Ansprechen unterbrechen. Lass {dogName} schlafen.",
       vermeidet: "Schlaf-Hygiene aufzuweichen. 16-20 Stunden Ruhe sind nicht verhandelbar, auch bei jungen Hunden."
     }
   },
   aggression: {
     fundament: {
-      bausteine: "Schwellenwert-Karte für alle Auslöser-Typen, Markerwort SCHAU und Belohnungs-Kommunikation, Maulkorb positiv konditioniert, Reiz-Anschauen-und-zurück (Schau-Hin) drinnen mit gestellten Reizen, ein klares Notfall-Protokoll bei Eskalation",
-      schon_merken: "Du kennst die Distanz, ab der jeder Auslöser bei {dogName} Stress erzeugt, und du erkennst früh die Stress-Signale (Mimik, Atmung, Schwanz). {dogName} steckt freiwillig die Schnauze in den Maulkorb und akzeptiert kurze Tragezeiten. Drinnen reagiert {dogName} auf das Markerwort SCHAU in unter 2 Sekunden. Die Notfall-Sequenz hast du trocken durchgespielt, du weißt was du tust.",
-      jetzt_anpassen: "Wenn die Schwellenwert-Karte noch wackelt, geh nochmal raus und beobachte gezielt. Ohne dieses Wissen ist Phase 2 sinnlos. Wenn der Maulkorb noch zu Frust führt, geh zurück zu kurzen Tragezeiten mit positiver Beschäftigung. Geduld zahlt sich hier mehr aus als irgendwo sonst.",
+      bausteine: "Schwellenwert-Karte für alle Auslöser-Typen, Markerwort SCHAU und Belohnungs-Kommunikation, Maulkorb positiv konditioniert, Reiz-Anschauen-und-zurueck (Schau-Hin) drinnen mit gestellten Reizen, ein klares Notfall-Protokoll bei Eskalation",
+      schon_merken: "Du kennst die Distanz, ab der jeder Auslöser bei {dogName} Stress erzeugt, und du erkennst frueh die Stress-Signale (Mimik, Atmung, Schwanz). {dogName} steckt freiwillig die Schnauze in den Maulkorb und akzeptiert kurze Tragezeiten. Drinnen reagiert {dogName} auf das Markerwort SCHAU in unter 2 Sekunden. Die Notfall-Sequenz hast du trocken durchgespielt, du weisst was du tust.",
+      jetzt_anpassen: "Wenn die Schwellenwert-Karte noch wackelt, geh nochmal raus und beobachte gezielt. Ohne dieses Wissen ist Phase 2 sinnlos. Wenn der Maulkorb noch zu Frust fuehrt, geh zurueck zu kurzen Tragezeiten mit positiver Beschaeftigung. Geduld zahlt sich hier mehr aus als irgendwo sonst.",
       stolperfallen: "Schon in Phase 1 mit echten Auslösern arbeiten weil 'das muss ja gehen'. Das eskaliert. Auch klassisch: den Maulkorb erst in einer Stress-Situation aufsetzen. Niemals. Er muss vorher 100% positiv besetzt sein. Sonst ist die Verknüpfung lebenslang vergiftet.",
       vermeidet: "Auslöser provozieren oder enge Begegnungen suchen. Phase 1 ist Vorbereitung. Phase 2 ist Anwendung mit großer Distanz."
     },
     steigerung: {
-      bausteine: "Reiz-Anschauen-und-zurück (Schau-Hin) draußen mit echten Auslösern aus 50m+ Distanz, aktive Reiz-Abwendung (das Anschauen-und-Abwenden-Prinzip), Bogen als Ausweich-Strategie und Verhaltens-Anpassungs-Training im Distanz-Setup",
-      schon_merken: "{dogName} bleibt bei Auslösern aus großer Distanz unter dem Schwellenwert und schaut zu dir, statt sich auf den Reiz zu fokussieren. Stress-Anzeichen werden kürzer und seltener. {dogName} folgt dem Bogen-Signal ohne Widerstand. Beim Verhaltens-Anpassungs-Training zeigt {dogName} eigene Stress-Lösungs-Bewegungen (wegschauen, sich abwenden, schnüffeln), die du mit Distanz belohnst.",
+      bausteine: "Reiz-Anschauen-und-zurueck (Schau-Hin) draußen mit echten Auslösern aus 50m+ Distanz, aktive Reiz-Abwendung (das Anschauen-und-Abwenden-Prinzip), Bogen als Ausweich-Strategie und Verhaltens-Anpassungs-Training (Verhaltens-Anpassungs-Training) im Distanz-Setup",
+      schon_merken: "{dogName} bleibt bei Auslösern aus großer Distanz unter dem Schwellenwert und schaut zu dir, statt sich auf den Reiz zu fokussieren. Stress-Anzeichen werden kuerzer und seltener. {dogName} folgt dem Bogen-Signal ohne Widerstand. Beim Verhaltens-Anpassungs-Training zeigt {dogName} eigene Stress-Loesungs-Bewegungen (wegschauen, sich abwenden, schnüffeln), die du mit Distanz belohnst.",
       jetzt_anpassen: "Wenn die Schwellenwert-Distanz noch sehr groß bleibt, ist das in Ordnung. Reduktion erfolgt langsam, 2-5m pro Woche, nicht radikal. Wenn dagegen {dogName} schon bei 10m ruhig ist, geh vorsichtig näher ran, aber nur an einem Auslöser-Typ gleichzeitig.",
-      stolperfallen: "Mehrere Auslöser-Typen pro Spaziergang stapeln. Hund + Jogger + Radler in einer Session ist Reizflut. Auch klassisch: Belohnung erst nach der Reaktion geben statt während der Reiz sichtbar ist. Dann verändert sich die emotionale Verknüpfung nicht.",
+      stolperfallen: "Mehrere Auslöser-Typen pro Spaziergang stapeln. Hund + Jogger + Radler in einer Session ist Reizflut. Auch klassisch: Belohnung erst nach der Reaktion geben statt waehrend der Reiz sichtbar ist. Dann veraendert sich die emotionale Verknüpfung nicht.",
       vermeidet: "An den Schwellenwert kratzen oder ihn überschreiten, weil 'einmal probieren'. Jede Eskalation kostet 2 Wochen Lerngewinn."
     },
     generalisierung: {
-      bausteine: "Verhaltens-Anpassungs-Training im Alltag, klare Auslöser-Hierarchie mit bewusstem Management, eine Konfrontations-Pufferzone vor erwarteten Begegnungen und die 72-Stunden-Stress-Erholungs-Regel",
-      schon_merken: "{dogName} reguliert sich in vielen Situationen selbst, du musst seltener eingreifen. Bei erwarteten Begegnungen wendest du die Pufferzone-Routine reflexartig an. Du planst Spaziergänge bewusst nach Auslöser-Hierarchie und vermeidest kumulativen Stress. Eskalationen werden selten und kurz, weil du sie früh siehst.",
-      jetzt_anpassen: "Reduziere die Belohnungs-Dichte langsam, aber niemals komplett. Bei neuen oder schwierigen Auslösern weiterhin volle Belohnung. Plane regelmäßige Refresher-Tage an einem mittel-schwierigen Auslöser, das hält die Strategien frisch.",
-      stolperfallen: "Den Maulkorb komplett ablegen weil 'es geht ja jetzt'. Bei reaktiven Hunden bleibt er Werkzeug für Hochrisiko-Situationen. Auch klassisch: die 72-Stunden-Regel ignorieren. Stresshormone bauen sich erst nach 3 Tagen vollständig ab.",
-      vermeidet: "Auslöser-Vermeidung komplett aufgeben mit der Erwartung 'wir trainieren das durch'. Klares Management ist Teil der Lösung, nicht Versagen."
+      bausteine: "Verhaltens-Anpassungs-Training (Verhaltens-Anpassungs-Training) im Alltag, klare Auslöser-Hierarchie mit bewusstem Management, eine Konfrontations-Pufferzone vor erwarteten Begegnungen und die 72-Stunden-Stress-Erholungs-Regel",
+      schon_merken: "{dogName} reguliert sich in vielen Situationen selbst, du musst seltener eingreifen. Bei erwarteten Begegnungen wendest du die Pufferzone-Routine reflexartig an. Du planst Spaziergaenge bewusst nach Auslöser-Hierarchie und vermeidest kumulativen Stress. Eskalationen werden selten und kurz, weil du sie frueh siehst.",
+      jetzt_anpassen: "Reduziere die Belohnungs-Dichte langsam, aber niemals komplett. Bei neuen oder schwierigen Auslösern weiterhin volle Belohnung. Plane regelmaessige Refresher-Tage an einem mittel-schwierigen Auslöser, das haelt die Strategien frisch.",
+      stolperfallen: "Den Maulkorb komplett ablegen weil 'es geht ja jetzt'. Bei reaktiven Hunden bleibt er Werkzeug für Hochrisiko-Situationen. Auch klassisch: die 72-Stunden-Regel ignorieren. Stresshormone bauen sich erst nach 3 Tagen vollstaendig ab.",
+      vermeidet: "Auslöser-Vermeidung komplett aufgeben mit der Erwartung 'wir trainieren das durch'. Klares Management ist Teil der Loesung, nicht Versagen."
     }
   },
   mouthing: {
     fundament: {
-      bausteine: "AUS-Signal sauber aufgebaut mit positivem Tausch, das Tausch-Geschäft als Reflex-Reaktion bei Aufnahme, PFUI als Stopp-Signal drinnen mit alternativer Belohnung, Leinen-Management an euren Aufnahme-Hotspots",
-      schon_merken: "{dogName} gibt einfache Gegenstände auf AUS freiwillig her, du musst nicht hinterherrennen oder ins Maul greifen. Bei PFUI hält {dogName} drinnen inne und sucht dich. An bekannten Hotspots im Spaziergang sucht {dogName} schon die Bein-Position. Du hast immer hochwertige Tausch-Belohnung griffbereit.",
-      jetzt_anpassen: "Wenn AUS bei hochwertigen Objekten noch nicht klappt, geh zurück zu niedrigwertigen Sachen drinnen. Wertigkeit langsam steigern. Wenn PFUI inflationär wird (du nutzt es 20-mal am Tag), reduzier auf 3-5 wirklich wichtige Situationen.",
-      stolperfallen: "Hinterherrennen wenn {dogName} ein verbotenes Objekt hat. Das ist für den Hund Spielspass und verstärkt das Aufheben. Auch klassisch: das aufgenommene Objekt nach AUS zurückgeben. Dann ist der Tausch nicht echt und die Bereitschaft sinkt.",
-      vermeidet: "An Hochrisiko-Strecken (viele Müllecken, Giftköder-Bereiche) ohne Maulkorb gehen, solange die Werkzeuge noch nicht draußen funktionieren. Sicherheit zuerst."
+      bausteine: "AUS-Signal sauber aufgebaut mit positivem Tausch, das Tausch-Geschaeft als Reflex-Reaktion bei Aufnahme, PFUI als Stopp-Signal drinnen mit alternativer Belohnung, Leinen-Management an euren Aufnahme-Hotspots",
+      schon_merken: "{dogName} gibt einfache Gegenstaende auf AUS freiwillig her, du musst nicht hinterherrennen oder ins Maul greifen. Bei PFUI haelt {dogName} drinnen inne und sucht dich. An bekannten Hotspots im Spaziergang sucht {dogName} schon die Bein-Position. Du hast immer hochwertige Tausch-Belohnung griffbereit.",
+      jetzt_anpassen: "Wenn AUS bei hochwertigen Objekten noch nicht klappt, geh zurueck zu niedrigwertigen Sachen drinnen. Wertigkeit langsam steigern. Wenn PFUI inflationaer wird (du nutzt es 20-mal am Tag), reduzier auf 3-5 wirklich wichtige Situationen.",
+      stolperfallen: "Hinterherrennen wenn {dogName} ein verbotenes Objekt hat. Das ist für den Hund Spielspass und verstärkt das Aufheben. Auch klassisch: das aufgenommene Objekt nach AUS zurueckgeben. Dann ist der Tausch nicht echt und die Bereitschaft sinkt.",
+      vermeidet: "An Hochrisiko-Strecken (viele Müllecken, Giftkoeder-Bereiche) ohne Maulkorb gehen, solange die Werkzeuge noch nicht draußen funktionieren. Sicherheit zuerst."
     },
     steigerung: {
-      bausteine: "AUS im echten Spaziergang bei niedrig- bis mittelwertigen Funden, PFUI als Präventions-Signal vor dem Aufheben, Belohnungs-Suche als Alternativ-Beschäftigung für den Such-Trieb, Maulkorb als Sicherheits-Standard für Hochrisiko-Strecken",
-      schon_merken: "{dogName} reagiert draußen auf PFUI in unter 2 Sekunden und wendet sich dir zu. AUS klappt bei einfachen Funden ohne Drama, du bleibst innerlich ruhig. Auf der Belohnungs-Suche sucht {dogName} aktiv mit der Nase nach geworfenen Leckerli, statt zufällig aufzuheben.",
-      jetzt_anpassen: "Wenn AUS bei mittelwertigen Funden noch nicht klappt, ist die Belohnung wahrscheinlich zu niedrig. Steig auf Hühnchen oder Wurst. Wenn der Such-Trieb auch nach mehr Auslastung weiter zum Aufheben führt, intensivier die Nasenarbeit-Phasen.",
-      stolperfallen: "Den Maulkorb als 'Eingeständnis' sehen. Er ist Werkzeug, keine Strafe. Auch klassisch: PFUI als Schimpf-Wort nutzen. Es muss ein klares Stopp-Signal mit Alternativ-Belohnung bleiben.",
-      vermeidet: "An kritischen Strecken (vor Schulen, an Mülltagen) ohne Maulkorb gehen. Prävention ist hier wertvoller als Training nach dem Vorfall."
+      bausteine: "AUS im echten Spaziergang bei niedrig- bis mittelwertigen Funden, PFUI als Praeventions-Signal vor dem Aufheben, Belohnungs-Suche als Alternativ-Beschaeftigung für den Such-Trieb, Maulkorb als Sicherheits-Standard für Hochrisiko-Strecken",
+      schon_merken: "{dogName} reagiert draußen auf PFUI in unter 2 Sekunden und wendet sich dir zu. AUS klappt bei einfachen Funden ohne Drama, du bleibst innerlich ruhig. Auf der Belohnungs-Suche sucht {dogName} aktiv mit der Nase nach geworfenen Leckerli, statt zufaellig aufzuheben.",
+      jetzt_anpassen: "Wenn AUS bei mittelwertigen Funden noch nicht klappt, ist die Belohnung wahrscheinlich zu niedrig. Steig auf Hühnchen oder Wurst. Wenn der Such-Trieb auch nach mehr Auslastung weiter zum Aufheben fuehrt, intensivier die Nasenarbeit-Phasen.",
+      stolperfallen: "Den Maulkorb als 'Eingestaendnis' sehen. Er ist Werkzeug, keine Strafe. Auch klassisch: PFUI als Schimpf-Wort nutzen. Es muss ein klares Stopp-Signal mit Alternativ-Belohnung bleiben.",
+      vermeidet: "An kritischen Strecken (vor Schulen, an Mülltagen) ohne Maulkorb gehen. Praevention ist hier wertvoller als Training nach dem Vorfall."
     },
     generalisierung: {
-      bausteine: "Belohnungs-Reduktion auf variable Verstärkung, AUS bei hochwertigen Funden mit MEGA-Belohnung, Nasenarbeit als Hauptauslastung statt Nebenfach, klare Hot-Spot-Strategien für eure schwierigsten Orte",
-      schon_merken: "{dogName} bewältigt Hochrisiko-Strecken ohne Drama, du planst sie bewusst statt sie zu meiden. AUS bei seltenen hochwertigen Funden funktioniert mit MEGA-Belohnung. Du steckst Hosentaschen-Hand seltener ein, weil {dogName} auch ohne dauernde Verstärkung verlässlich gibt.",
-      jetzt_anpassen: "Prüf die Maulkorb-Notwendigkeit pro Strecke einzeln. Bekannte ruhige Strecken: ohne. Hochrisiko: weiter mit. Bei Rückfällen wieder enger führen. Der Such-Trieb braucht lebenslange Befriedigung, plane Nasenarbeit fest in den Wochenplan ein.",
-      stolperfallen: "Die Belohnungs-Frequenz komplett auf null reduzieren. Variable Verstärkung bedeutet 'manchmal', nicht 'nie'. Auch klassisch: an einem schlechten Tag in eine Hochrisiko-Zone gehen weil 'eigentlich klappt's ja'. Ego kostet im Notfall sehr.",
+      bausteine: "Belohnungs-Reduktion auf variable Verstaerkung, AUS bei hochwertigen Funden mit MEGA-Belohnung, Nasenarbeit als Hauptauslastung statt Nebenfach, klare Hot-Spot-Strategien für eure schwierigsten Orte",
+      schon_merken: "{dogName} bewältigt Hochrisiko-Strecken ohne Drama, du planst sie bewusst statt sie zu meiden. AUS bei seltenen hochwertigen Funden funktioniert mit MEGA-Belohnung. Du steckst Hosentaschen-Hand seltener ein, weil {dogName} auch ohne dauernde Verstaerkung verlässlich gibt.",
+      jetzt_anpassen: "Prüf die Maulkorb-Notwendigkeit pro Strecke einzeln. Bekannte ruhige Strecken: ohne. Hochrisiko: weiter mit. Bei Rueckfaellen wieder enger fuehren. Der Such-Trieb braucht lebenslange Befriedigung, plane Nasenarbeit fest in den Wochenplan ein.",
+      stolperfallen: "Die Belohnungs-Frequenz komplett auf null reduzieren. Variable Verstaerkung bedeutet 'manchmal', nicht 'nie'. Auch klassisch: an einem schlechten Tag in eine Hochrisiko-Zone gehen weil 'eigentlich klappt's ja'. Ego kostet im Notfall sehr.",
       vermeidet: "Maulkorb wegen Wahrnehmung weglassen. Er ist verantwortliches Equipment, keine Schande."
     }
   },
   recall: {
     fundament: {
-      bausteine: "Das Rückruf-Wort KOMM-HER neu positiv geladen mit Top-Belohnungen, der Festhalte-Rückruf mit Helfer für hohe Motivation, Schleppleinen-Arbeit als Sicherheits-Brücke und die Hundepfeife als zweites Signal-Backup",
+      bausteine: "Das Rueckruf-Wort KOMM-HER neu positiv geladen mit Top-Belohnungen, der Festhalte-Rueckruf mit Helfer für hohe Motivation, Schleppleinen-Arbeit als Sicherheits-Bruecke und die Hundepfeife als zweites Signal-Backup",
       schon_merken: "{dogName} reagiert drinnen blitzschnell auf KOMM-HER und kommt sichtbar begeistert. Beim Festhalte-Spiel sprintet {dogName} mit hoher Energie zu dir. Die Schleppleine ist eine ruhige Routine, kein Drama. Die Hundepfeife ist drinnen sauber konditioniert mit Belohnung.",
-      jetzt_anpassen: "Wenn KOMM-HER drinnen noch nicht 100% klappt, ist die Belohnung wahrscheinlich zu niedrig. Geh auf Hühnchen oder Käse, nicht Trockenfutter. Wenn die Schleppleine zu Verwirrung führt, üb zuerst nur Tragen ohne Rückrufe, damit {dogName} sich an das Material gewöhnt.",
-      stolperfallen: "Das Rückruf-Wort für negative Dinge nutzen (Bad, Tierarzt, Anleinen am Spaziergang-Ende). Damit vergiftest du das Signal lebenslang. Nimm für Negatives ein anderes Wort. Auch klassisch: das Signal mehrfach rufen wenn {dogName} nicht kommt. Damit lernt {dogName} dass das erste Mal optional ist.",
+      jetzt_anpassen: "Wenn KOMM-HER drinnen noch nicht 100% klappt, ist die Belohnung wahrscheinlich zu niedrig. Geh auf Hühnchen oder Kaese, nicht Trockenfutter. Wenn die Schleppleine zu Verwirrung fuehrt, ueb zuerst nur Tragen ohne Rueckrufe, damit {dogName} sich an das Material gewoehnt.",
+      stolperfallen: "Das Rueckruf-Wort für negative Dinge nutzen (Bad, Tierarzt, Anleinen am Spaziergang-Ende). Damit vergiftest du das Signal lebenslang. Nimm für Negatives ein anderes Wort. Auch klassisch: das Signal mehrfach rufen wenn {dogName} nicht kommt. Damit lernt {dogName} dass das erste Mal optional ist.",
       vermeidet: "Schon in Phase 1 echten Freilauf riskieren. Erst muss das Wort 100% sitzen, dann die Schleppleine, dann die Pfeife. Phase 2 macht den Übergang."
     },
     steigerung: {
-      bausteine: "KOMM-HER unter moderater Ablenkung mit Schleppleine, die Hundepfeife in echten Situationen draußen, das Notfall-Rückruf-Wort für echte Krisen (nur in Notfall verwendet, MEGA-Belohnung), drei klare Belohnungs-Stufen",
-      schon_merken: "Bei moderater Ablenkung kommt {dogName} zuverlässig (80% oder mehr). Du erkennst sicher, wann die Ablenkung zu groß für einen Rückruf ist, und überlistest deine eigene Stimme nicht. Die Pfeife funktioniert outdoor genauso zuverlässig wie das Wort. Das Notfall-Signal ist konditioniert und ungenutzt.",
-      jetzt_anpassen: "Wenn die Erfolgsrate unter 70% sinkt, ist die Ablenkung zu groß. Reduzier sie statt Druck zu erhöhen. Wenn dagegen alles bei 90% läuft: schwierigere Ablenkungen, aber nur eine Stufe pro Woche.",
-      stolperfallen: "Das Notfall-Signal für normale Rückrufe nutzen. Damit verliert es seine Magie. Auch klassisch: Belohnung skimpen bei schwierigen Rückrufen. Spitzenleistung kostet, gerade in Phase 2.",
-      vermeidet: "Ohne Schleppleine in unbekannten Bereichen. Die Schleppleine bleibt bis Phase 3 die Sicherheits-Brücke."
+      bausteine: "KOMM-HER unter moderater Ablenkung mit Schleppleine, die Hundepfeife in echten Situationen draußen, das Notfall-Rueckruf-Wort für echte Krisen (nur in Notfall verwendet, MEGA-Belohnung), drei klare Belohnungs-Stufen",
+      schon_merken: "Bei moderater Ablenkung kommt {dogName} zuverlässig (80% oder mehr). Du erkennst sicher, wann die Ablenkung zu groß für einen Rueckruf ist, und überlistest deine eigene Stimme nicht. Die Pfeife funktioniert outdoor genauso zuverlässig wie das Wort. Das Notfall-Signal ist konditioniert und ungenutzt.",
+      jetzt_anpassen: "Wenn die Erfolgsrate unter 70% sinkt, ist die Ablenkung zu groß. Reduzier sie statt Druck zu erhoehen. Wenn dagegen alles bei 90% läuft: schwierigere Ablenkungen, aber nur eine Stufe pro Woche.",
+      stolperfallen: "Das Notfall-Signal für normale Rueckrufe nutzen. Damit verliert es seine Magie. Auch klassisch: Belohnung skimpen bei schwierigen Rueckrufen. Spitzenleistung kostet, gerade in Phase 2.",
+      vermeidet: "Ohne Schleppleine in unbekannten Bereichen. Die Schleppleine bleibt bis Phase 3 die Sicherheits-Bruecke."
     },
     generalisierung: {
-      bausteine: "Erste kontrollierte Freilauf-Phasen in sicheren Zonen, Wartungs-Routine für KOMM-HER und Pfeife, Festhalte-Spiel als regelmäßiger Auffrischer, abgestufte Belohnungs-Stufen je nach Schwierigkeit",
+      bausteine: "Erste kontrollierte Freilauf-Phasen in sicheren Zonen, Wartungs-Routine für KOMM-HER und Pfeife, Festhalte-Spiel als regelmaessiger Auffrischer, abgestufte Belohnungs-Stufen je nach Schwierigkeit",
       schon_merken: "{dogName} bewältigt einen Freilauf in sicherer Zone und kommt auf das Signal in unter 5 Sekunden. Du nutzt die Schleppleine gezielt statt automatisch. Das Notfall-Signal hast du eingesetzt und es hat funktioniert, du hast Vertrauen in das System.",
       jetzt_anpassen: "Prüf pro Strecke einzeln: Schleppleine ja oder nein? Bei Zweifel: Schleppleine. Auch nach Monaten ohne Vorfall bleibt das Notfall-Signal das exklusive Mega-Belohnung-Wort, niemals für Routine nutzen.",
-      stolperfallen: "Den Rückruf 'schleifen lassen' weil er ja sitzt. Ohne regelmäßige Wartung verblasst die Verknüpfung. Plane 2-3 KOMM-HER-Momente pro Spaziergang mit Jackpot ein.",
+      stolperfallen: "Den Rueckruf 'schleifen lassen' weil er ja sitzt. Ohne regelmaessige Wartung verblasst die Verknüpfung. Plane 2-3 KOMM-HER-Momente pro Spaziergang mit Jackpot ein.",
       vermeidet: "Freilauf an Strecken mit Straßen-Nähe oder hoher Wildlauf-Wahrscheinlichkeit. Sicherheit geht immer vor Komfort."
     }
   },
@@ -5524,115 +5482,115 @@ const PHASE_TEXTE: Record<ProblemKey, Record<Phase, PhaseDaten>> = {
     fundament: {
       bausteine: "Auslöser-Tagebuch mit den Top-3-Bell-Auslösern, der RUHE-Marker als Belohnung für Schweigen, die Klingel-Decke-Routine als konkrete Alternative, Frust-Toleranz-Aufbau über WARTE-Signale",
       schon_merken: "Du kennst die wichtigsten Bell-Auslöser bei {dogName} und reagierst nicht mehr reflexartig. {dogName} bekommt pro Tag 8-10 Belohnungen für Schweige-Phasen. Bei der Klingel-Aufnahme rennt {dogName} schon Richtung Decke. WARTE klappt in 3-4 Alltags-Situationen.",
-      jetzt_anpassen: "Wenn ein Auslöser-Typ noch stärker bellt als andere, fokussier diesen Schwerpunkt für Phase 2. Wenn der RUHE-Marker noch nicht greift, ist die Belohnungs-Dichte wahrscheinlich zu niedrig. Geh für 1 Woche zurück auf 10+ Belohnungen pro Tag.",
-      stolperfallen: "Anschreien wenn {dogName} bellt. Damit gibt's Aufmerksamkeit für das Bellen, also wird es häufiger. Auch klassisch: die Klingel-Decke-Routine nur drinnen üben, dann mit echtem Besuch überfordert sein. Realistische Tests müssen schrittweise kommen.",
-      vermeidet: "Den Hund 'durchbellen lassen' mit der Idee 'irgendwann hört es schon auf'. Aufmerksamkeits-Bellen wird durch konsequentes Wegdrehen extinkter, nicht durch Aushalten."
+      jetzt_anpassen: "Wenn ein Auslöser-Typ noch staerker bellt als andere, fokussier diesen Schwerpunkt für Phase 2. Wenn der RUHE-Marker noch nicht greift, ist die Belohnungs-Dichte wahrscheinlich zu niedrig. Geh für 1 Woche zurueck auf 10+ Belohnungen pro Tag.",
+      stolperfallen: "Anschreien wenn {dogName} bellt. Damit gibt's Aufmerksamkeit für das Bellen, also wird es häufiger. Auch klassisch: die Klingel-Decke-Routine nur drinnen üben, dann mit echtem Besuch überfordert sein. Realistische Tests muessen schrittweise kommen.",
+      vermeidet: "Den Hund 'durchbellen lassen' mit der Idee 'irgendwann hoert es schon auf'. Aufmerksamkeits-Bellen wird durch konsequentes Wegdrehen extinkter, nicht durch Aushalten."
     },
     steigerung: {
       bausteine: "Echte Klingel-Tests mit Helfer und Gast, Gegenkonditionierung bei Außenreizen, konsequente Aufmerksamkeits-Bell-Aushungerung über 2-3 Wochen, vertiefte Frust-Toleranz",
-      schon_merken: "Bei echter Klingel läuft {dogName} schon zur Decke statt zur Tür. Außenreize führen zu Blick zu dir statt zu Bellen. Aufmerksamkeits-Bellen ist erkennbar seltener geworden, der Aushungerungs-Höhepunkt liegt hinter euch. WARTE klappt mit 20+ Sekunden ohne Bellen.",
-      jetzt_anpassen: "Wenn der Aushungerungs-Höhepunkt noch nicht abgeebt ist, durchhalten. Ein Familienmitglied das nachgibt sabotiert 2 Wochen Arbeit, daher Familien-Briefing wichtig. Wenn die Decken-Routine bei realer Klingel wackelt, geh zurück zu Aufnahme + Helfer.",
-      stolperfallen: "Mehrere Auslöser-Typen gleichzeitig angehen. Konzentrier dich auf einen Schwerpunkt pro Woche. Auch klassisch: Belohnungs-Dichte zu schnell reduzieren weil 'er bellt ja kaum noch'. Phase 2 braucht weiter hohe Verstärkung.",
+      schon_merken: "Bei echter Klingel läuft {dogName} schon zur Decke statt zur Tür. Außenreize fuehren zu Blick zu dir statt zu Bellen. Aufmerksamkeits-Bellen ist erkennbar seltener geworden, der Aushungerungs-Höhepunkt liegt hinter euch. WARTE klappt mit 20+ Sekunden ohne Bellen.",
+      jetzt_anpassen: "Wenn der Aushungerungs-Höhepunkt noch nicht abgeebt ist, durchhalten. Ein Familienmitglied das nachgibt sabotiert 2 Wochen Arbeit, daher Familien-Briefing wichtig. Wenn die Decken-Routine bei realer Klingel wackelt, geh zurueck zu Aufnahme + Helfer.",
+      stolperfallen: "Mehrere Auslöser-Typen gleichzeitig angehen. Konzentrier dich auf einen Schwerpunkt pro Woche. Auch klassisch: Belohnungs-Dichte zu schnell reduzieren weil 'er bellt ja kaum noch'. Phase 2 braucht weiter hohe Verstaerkung.",
       vermeidet: "An schwierigen Tagen (Gewitter, Feuerwerk, Stress) die Routine durchziehen. Lieber Reize reduzieren und nächsten Tag normal weitermachen."
     },
     generalisierung: {
-      bausteine: "Klingel-Decke-Routine im Alltag mit echten Gästen, klare Stress-Hygiene um Bell-Rückfälle zu vermeiden, Wartungs-Refresher alle 4-6 Wochen, Notfall-Strategie bei plötzlichem Bell-Schub",
-      schon_merken: "Bei Klingel oder Außenreizen reagiert {dogName} ruhig und planbar. Gäste-Empfang ist Routine, nicht Drama. Du erkennst früh kleine Rückfälle und steuerst gegen, bevor sie größer werden.",
-      jetzt_anpassen: "Prüf die Familien-Konsistenz alle paar Wochen. Inkonsistente Reaktionen einzelner Personen sind die häufigste Rückfall-Quelle. Bei Rückfällen: 1 Woche extra-konsequent mit erhöhter Belohnung.",
-      stolperfallen: "Die Strategien als 'erledigt' abhaken. Bellen kann sehr schnell zurückkommen sobald Konsistenz nachlässt. Auch klassisch: Stress an anderer Stelle (Umzug, neues Familienmitglied) ignorieren, dann bellt {dogName} wieder.",
+      bausteine: "Klingel-Decke-Routine im Alltag mit echten Gästen, klare Stress-Hygiene um Bell-Rueckfaelle zu vermeiden, Wartungs-Refresher alle 4-6 Wochen, Notfall-Strategie bei plötzlichem Bell-Schub",
+      schon_merken: "Bei Klingel oder Außenreizen reagiert {dogName} ruhig und planbar. Gäste-Empfang ist Routine, nicht Drama. Du erkennst frueh kleine Rueckfaelle und steuerst gegen, bevor sie groesser werden.",
+      jetzt_anpassen: "Prüf die Familien-Konsistenz alle paar Wochen. Inkonsistente Reaktionen einzelner Personen sind die häufigste Rueckfall-Quelle. Bei Rueckfaellen: 1 Woche extra-konsequent mit erhoehter Belohnung.",
+      stolperfallen: "Die Strategien als 'erledigt' abhaken. Bellen kann sehr schnell zurueckkommen sobald Konsistenz nachlässt. Auch klassisch: Stress an anderer Stelle (Umzug, neues Familienmitglied) ignorieren, dann bellt {dogName} wieder.",
       vermeidet: "Sich entspannen und Bellen-Auslöser absichtlich provozieren um zu testen. Gute Hunde sind nicht 'geprüfte Hunde', sondern stabil-trainierte Hunde."
     }
   },
   anxiety: {
     fundament: {
       bausteine: "Den Abschieds-Auslöser-Stack erkennen, einzelne Auslöser entkoppeln (Schlüssel ohne Gehen, Schuhe ohne Gehen), Allein-Sein in Sekunden bis Minuten aufgebaut, der Lieblings-Kong als positive Verknüpfung mit dem Gehen",
-      schon_merken: "Du kennst die Abschieds-Auslöser von {dogName} (Schlüssel, Schuhe, Jacke, Türklinke) und arbeitest beiläufig daran sie zu entkoppeln. Allein-Zeit von 1-3 Minuten wird ohne Stress-Anzeichen bewältigt. {dogName} startet die Kong-Beschäftigung wenn du gehst, statt schon zu zittern.",
-      jetzt_anpassen: "Wenn die Sekunden-Phasen noch wackeln, geh zurück und arbeite kürzer. Bei Trennungsangst ist Geduld das ganze Spiel, wer zu schnell steigert baut die Angst wieder auf. Wenn der Kong unbenutzt liegen bleibt, ist die Allein-Zeit zu lang für den aktuellen Stand.",
-      stolperfallen: "Dramatisches Verabschieden oder Begrüßen. Beides färbt den Akt 'allein' negativ. Auch klassisch: bei einem Jaul-Moment zurückkommen. Damit lernt {dogName}, dass Jaulen den Halter zurückholt, das verfestigt die Angst.",
+      schon_merken: "Du kennst die Abschieds-Auslöser von {dogName} (Schlüssel, Schuhe, Jacke, Türklinke) und arbeitest beiläufig daran sie zu entkoppeln. Allein-Zeit von 1-3 Minuten wird ohne Stress-Anzeichen bewältigt. {dogName} startet die Kong-Beschaeftigung wenn du gehst, statt schon zu zittern.",
+      jetzt_anpassen: "Wenn die Sekunden-Phasen noch wackeln, geh zurueck und arbeite kuerzer. Bei Trennungsangst ist Geduld das ganze Spiel, wer zu schnell steigert baut die Angst wieder auf. Wenn der Kong unbenutzt liegen bleibt, ist die Allein-Zeit zu lang für den aktuellen Stand.",
+      stolperfallen: "Dramatisches Verabschieden oder Begruessen. Beides faerbt den Akt 'allein' negativ. Auch klassisch: bei einem Jaul-Moment zurueckkommen. Damit lernt {dogName}, dass Jaulen den Halter zurueckholt, das verfestigt die Angst.",
       vermeidet: "Stunden allein lassen weil ein Termin ansteht. Auch nicht im Auto, auch nicht beim Nachbarn. Phase 1 ist Sekunden- und Minuten-Arbeit. Wenn etwas dazwischen kommt, Hundesitter."
     },
     steigerung: {
-      bausteine: "Minuten-Phasen ausgedehnt bis 30-60 Minuten, die Sicherheits-Decke als mobiler Anker, die erste Stunde allein als Meilenstein, regelmäßige Beobachtung per Smartphone-Kamera",
+      bausteine: "Minuten-Phasen ausgedehnt bis 30-60 Minuten, die Sicherheits-Decke als mobiler Anker, die erste Stunde allein als Meilenstein, regelmaessige Beobachtung per Smartphone-Kamera",
       schon_merken: "{dogName} bleibt 30-60 Minuten allein und ist auf der Decke entspannt, nicht angespannt. Die Auslöser sind weitgehend entkoppelt, Vorbereitungs-Routinen erzeugen keine Stress-Spitzen mehr. Auf dem Video siehst du Ruhephasen statt Pacing oder Bellen.",
-      jetzt_anpassen: "Wenn die Stunde noch nicht klappt, bleib bei kürzeren Phasen und üb sie stabil. Wenn dagegen alles ruhig ist, kannst du langsam auf 90 Minuten und 2 Stunden gehen. Die Video-Beobachtung ist hier wichtiger als Bauchgefühl, weil Hunde oft erst nach Minuten Stress zeigen.",
-      stolperfallen: "Den Verlauf zu spät kontrollieren. Ohne Video rätst du, ob die Allein-Zeit gut war oder nicht. Auch klassisch: an einem Tag radikal verlängern weil 'heute scheint's gut zu sein'. Geduld macht den Unterschied.",
+      jetzt_anpassen: "Wenn die Stunde noch nicht klappt, bleib bei kuerzeren Phasen und ueb sie stabil. Wenn dagegen alles ruhig ist, kannst du langsam auf 90 Minuten und 2 Stunden gehen. Die Video-Beobachtung ist hier wichtiger als Bauchgefühl, weil Hunde oft erst nach Minuten Stress zeigen.",
+      stolperfallen: "Den Verlauf zu spät kontrollieren. Ohne Video raetst du, ob die Allein-Zeit gut war oder nicht. Auch klassisch: an einem Tag radikal verlängern weil 'heute scheint's gut zu sein'. Geduld macht den Unterschied.",
       vermeidet: "Lange Phasen testen wenn außen Stress ist (Gewitter, Straßenarbeiten, Feiertage). Phase 2 braucht stabile Randbedingungen."
     },
     generalisierung: {
-      bausteine: "3-4 Stunden Allein-Zeit als Alltagstauglichkeit, eine berechenbare Tagesroutine die {dogName} kennt, Stress-Hygiene für langfristige Stabilität, regelmäßige Video-Kontrolle als Früherkennung von Rückfällen",
-      schon_merken: "Du kannst arbeiten oder einkaufen und {dogName} bleibt ruhig. Die Tagesroutine ist fest und vorhersehbar. Auf dem Video schläft oder ruht {dogName} die meiste Zeit, die Kong-Routine ist eingespielt. Du fühlst dich alltagsfähig.",
-      jetzt_anpassen: "Halte die Routine streng, auch am Wochenende. Hunde unterscheiden nicht zwischen Werktag und Sonntag. Bei Lebensänderungen (Umzug, neuer Mitbewohner) erhöh kurz die Frequenz der kurzen Allein-Phasen wieder.",
-      stolperfallen: "Stundenlange Abwesenheit wagen weil 'es läuft ja'. Auch ein stabiler Hund braucht zwischendurch Sozial-Kontakt. Auch klassisch: Stress an anderer Stelle ignorieren, dann kommt Trennungsangst zurück als Symptom.",
-      vermeidet: "Mehr als 4-5 Stunden am Stück ohne Toiletten-Pause oder Bewegung. Auch ohne Trennungsangst ist das für Hunde zu lang."
+      bausteine: "3-4 Stunden Allein-Zeit als Alltagstauglichkeit, eine berechenbare Tagesroutine die {dogName} kennt, Stress-Hygiene für langfristige Stabilitaet, regelmaessige Video-Kontrolle als Frueherkennung von Rueckfaellen",
+      schon_merken: "Du kannst arbeiten oder einkaufen und {dogName} bleibt ruhig. Die Tagesroutine ist fest und vorhersehbar. Auf dem Video schlaeft oder ruht {dogName} die meiste Zeit, die Kong-Routine ist eingespielt. Du fühlst dich alltagsfähig.",
+      jetzt_anpassen: "Halte die Routine streng, auch am Wochenende. Hunde unterscheiden nicht zwischen Werktag und Sonntag. Bei Lebensänderungen (Umzug, neuer Mitbewohner) erhoeh kurz die Frequenz der kurzen Allein-Phasen wieder.",
+      stolperfallen: "Stundenlange Abwesenheit wagen weil 'es läuft ja'. Auch ein stabiler Hund braucht zwischendurch Sozial-Kontakt. Auch klassisch: Stress an anderer Stelle ignorieren, dann kommt Trennungsangst zurueck als Symptom.",
+      vermeidet: "Mehr als 4-5 Stunden am Stueck ohne Toiletten-Pause oder Bewegung. Auch ohne Trennungsangst ist das für Hunde zu lang."
     }
   },
   jumping: {
     fundament: {
-      bausteine: "Die Vier-Pfoten-am-Boden-Regel als zentrales Prinzip, das SITZ-Signal als Begrüßungs-Alternative, Familien-Konsistenz mit allen Hausbewohnern, eine ruhige Wieder-Sehens-Routine ohne Aufregung",
-      schon_merken: "{dogName} sucht aktiv die SITZ-Position bei deiner Begrüßung. Anspringen ist seltener geworden, die Familie zieht die Regel konsequent durch. Auch deine eigenen Wieder-Sehens-Reaktionen sind ruhiger geworden, ohne dramatisches Hallo.",
-      jetzt_anpassen: "Wenn ein Familienmitglied noch nachgibt, ist das die wichtigste Baustelle. Eine Inkonsequenz pro Woche kostet eine Woche Lernfortschritt. Wenn SITZ als Begrüßung noch nicht von selbst kommt, üb es nochmal aktiv in 10 Begrüßungen täglich.",
+      bausteine: "Die Vier-Pfoten-am-Boden-Regel als zentrales Prinzip, das SITZ-Signal als Begruessungs-Alternative, Familien-Konsistenz mit allen Hausbewohnern, eine ruhige Wieder-Sehens-Routine ohne Aufregung",
+      schon_merken: "{dogName} sucht aktiv die SITZ-Position bei deiner Begruessung. Anspringen ist seltener geworden, die Familie zieht die Regel konsequent durch. Auch deine eigenen Wieder-Sehens-Reaktionen sind ruhiger geworden, ohne dramatisches Hallo.",
+      jetzt_anpassen: "Wenn ein Familienmitglied noch nachgibt, ist das die wichtigste Baustelle. Eine Inkonsequenz pro Woche kostet eine Woche Lernfortschritt. Wenn SITZ als Begruessung noch nicht von selbst kommt, ueb es nochmal aktiv in 10 Begruessungen taeglich.",
       stolperfallen: "Den Hund mit dem Knie wegstossen oder anschreien. Beides ist Aufmerksamkeit für das Anspringen, also Belohnung. Auch klassisch: bei Eile das Anspringen 'einmal durchgehen lassen'. Daraus wird sehr schnell ein wiederholtes Muster.",
       vermeidet: "Schon mit komplizierten Gäste-Szenarien arbeiten bevor Familien-Konsistenz steht. Erst Heim, dann Gäste."
     },
     steigerung: {
-      bausteine: "Erweiterte Gäste-Sequenz mit Klingel und Decke, SITZ als automatische Begrüßungs-Reaktion ohne Signal, die Konsequenz in mehr Alltags-Situationen (Aufstehen, Spaziergang-Start, Spielzeit), kontrollierte Vorbeigänger-Begegnungen draußen",
-      schon_merken: "Bei Klingel läuft {dogName} zur Decke. Gäste sind vorab informiert und werden korrekt eingewiesen. SITZ wird in mehreren Tages-Situationen automatisch angeboten, ohne dass du es ansagen musst. Auch beim Spaziergang setzt sich {dogName} bei Vorbeigängern.",
-      jetzt_anpassen: "Bei schwierigen Gästen (Kinder, ängstliche Menschen) {dogName} auf die Decke führen und dort lassen. Erst nach klarem OK-Signal hallo. Wenn Vorbeigänger-SITZ noch wackelt, geh zurück zu größerer Distanz und üb mit weniger Reizflut.",
-      stolperfallen: "Gäste nicht informieren mit der Annahme 'das wird schon'. Sie werden den hochspringenden Hund streicheln und damit das Verhalten verstärken. Auch klassisch: bei sich selbst inkonsequent werden weil 'der hat sich ja gefreut'.",
+      bausteine: "Erweiterte Gäste-Sequenz mit Klingel und Decke, SITZ als automatische Begruessungs-Reaktion ohne Signal, die Konsequenz in mehr Alltags-Situationen (Aufstehen, Spaziergang-Start, Spielzeit), kontrollierte Vorbeigaenger-Begegnungen draußen",
+      schon_merken: "Bei Klingel läuft {dogName} zur Decke. Gäste sind vorab informiert und werden korrekt eingewiesen. SITZ wird in mehreren Tages-Situationen automatisch angeboten, ohne dass du es ansagen musst. Auch beim Spaziergang setzt sich {dogName} bei Vorbeigaengern.",
+      jetzt_anpassen: "Bei schwierigen Gästen (Kinder, ängstliche Menschen) {dogName} auf die Decke fuehren und dort lassen. Erst nach klarem OK-Signal hallo. Wenn Vorbeigaenger-SITZ noch wackelt, geh zurueck zu groesserer Distanz und ueb mit weniger Reizflut.",
+      stolperfallen: "Gäste nicht informieren mit der Annahme 'das wird schon'. Sie werden den hochspringenden Hund streichheln und damit das Verhalten verstärken. Auch klassisch: bei sich selbst inkonsequent werden weil 'der hat sich ja gefreut'.",
       vermeidet: "Gruppen-Besuche ohne Vorbereitung. Mehr Personen heisst mehr potenzielle Inkonsistenz."
     },
     generalisierung: {
-      bausteine: "Wartungs-Routine mit täglicher Begrüßungs-Übung, regelmäßige Stress-Tests mit neuen Gästen, langfristige Familien-Konsistenz, Notfall-Plan bei Rückfällen",
+      bausteine: "Wartungs-Routine mit taeglicher Begruessungs-Übung, regelmaessige Stress-Tests mit neuen Gästen, langfristige Familien-Konsistenz, Notfall-Plan bei Rueckfaellen",
       schon_merken: "Anspringen ist Ausnahme, nicht Norm. Du fühlst dich vorbereitet auf neue Personen oder Gruppen-Besuche. Die Wartungs-Routine läuft beiläufig. Stress-Tests zeigen stabile Reaktionen.",
-      jetzt_anpassen: "Bei Rückfällen: 1 Woche extra-konsequent, Familien-Briefing wiederholen, Belohnungs-Frequenz wieder hoch. Bei neuen Familienmitgliedern (Partner, Mitbewohner) gleich einbeziehen, sonst kommt das Anspringen über sie zurück.",
+      jetzt_anpassen: "Bei Rueckfaellen: 1 Woche extra-konsequent, Familien-Briefing wiederholen, Belohnungs-Frequenz wieder hoch. Bei neuen Familienmitgliedern (Partner, Mitbewohner) gleich einbeziehen, sonst kommt das Anspringen über sie zurueck.",
       stolperfallen: "Konsistenz im Alltag schleifen lassen weil 'der ist ja brav geworden'. Anspringen ist immer 1 Inkonsequenz vom Comeback entfernt. Auch klassisch: bei eigener Aufregung (Feiertag, Geburtstag) dem Hund zu erlauben hochzuspringen weil 'heute ist ja was Besonderes'.",
-      vermeidet: "Stress-Tests ganz auslassen weil 'es geht ja'. Ohne Stress-Test merkst du Rückfälle erst wenn sie schon in der Routine sind."
+      vermeidet: "Stress-Tests ganz auslassen weil 'es geht ja'. Ohne Stress-Test merkst du Rueckfaelle erst wenn sie schon in der Routine sind."
     }
   },
   destructive: {
     fundament: {
-      bausteine: "Ursachen-Analyse abgeschlossen (Langeweile vs Trennungsangst vs Beißbedürfnis), 4-5 erlaubte Kau-Objekte in Rotation etabliert, Management-Zonen für Abwesenheit eingerichtet, das Tausch-Geschäft statt Strafe bei verbotenen Objekten",
-      schon_merken: "Du weißt, ob die Zerstörung aus Langeweile, Angst oder Beißbedürfnis kommt, und der Trainings-Schwerpunkt ist klar. {dogName} hat Lieblings-Kau-Objekte und nutzt sie länger als nur ein paar Minuten. Bei verbotenen Objekten reagierst du mit Tausch, nicht mit Schimpfen.",
+      bausteine: "Ursachen-Analyse abgeschlossen (Langeweile vs Trennungsangst vs Beissduerfnis), 4-5 erlaubte Kau-Objekte in Rotation etabliert, Management-Zonen für Abwesenheit eingerichtet, das Tausch-Geschaeft statt Strafe bei verbotenen Objekten",
+      schon_merken: "Du weisst, ob die Zerstoerung aus Langeweile, Angst oder Beissduerfnis kommt, und der Trainings-Schwerpunkt ist klar. {dogName} hat Lieblings-Kau-Objekte und nutzt sie länger als nur ein paar Minuten. Bei verbotenen Objekten reagierst du mit Tausch, nicht mit Schimpfen.",
       jetzt_anpassen: "Wenn ein Kau-Objekt schnell langweilig wird, rotier es weg für 1-2 Wochen, dann ist es wieder interessant. Wenn die Management-Zone nicht akzeptiert wird, baue sie als Lieblings-Ort auf mit positiver Verknüpfung.",
-      stolperfallen: "Mit dem Hund schimpfen wenn du ein zerstörtes Objekt findest. {dogName} kann das nicht mit der Tat verknüpfen, der Stress bleibt aber. Auch klassisch: dem Hund hinterherrennen wenn er was im Maul hat. Reines Spielvergnügen für den Hund.",
-      vermeidet: "Das aufgenommene verbotene Objekt nach Tausch zurückgeben. Dann ist der Tausch nicht echt und die Bereitschaft sinkt."
+      stolperfallen: "Mit dem Hund schimpfen wenn du ein zerstörtes Objekt findest. {dogName} kann das nicht mit der Tat verknüpfen, der Stress bleibt aber. Auch klassisch: dem Hund hinterherrennen wenn er was im Maul hat. Reines Spielvergnuegen für den Hund.",
+      vermeidet: "Das aufgenommene verbotene Objekt nach Tausch zurueckgeben. Dann ist der Tausch nicht echt und die Bereitschaft sinkt."
     },
     steigerung: {
       bausteine: "Strukturierter Auslastungs-Plan implementiert mit Mischung aus Bewegung, Nase und Kopf, Kau-Objekte rotieren routiniert, Management vorsichtig gelockert wo es sicher ist, lange Liege-Phasen bewusst trainiert",
-      schon_merken: "{dogName} ist abends erschöpft, nicht aufgedreht. Die Auslastungs-Mischung greift, Zerstörung in Anwesenheit ist deutlich seltener. Lange Decken-Phasen werden ruhig durchgehalten. Erste freigegebene Zonen werden ohne Zerstörung akzeptiert.",
-      jetzt_anpassen: "Bei jungen Hunden (4-9 Monate): mehr Kopfarbeit, weniger stumpfes Toben. Bei Erwachsenen: mehr Nasenarbeit. Wenn lange Liege-Phasen noch wackeln, geh zurück zu kürzeren mit Kong-Beschäftigung.",
+      schon_merken: "{dogName} ist abends erschöpft, nicht aufgedreht. Die Auslastungs-Mischung greift, Zerstoerung in Anwesenheit ist deutlich seltener. Lange Decken-Phasen werden ruhig durchgehalten. Erste freigegebene Zonen werden ohne Zerstoerung akzeptiert.",
+      jetzt_anpassen: "Bei jungen Hunden (4-9 Monate): mehr Kopfarbeit, weniger stumpfes Toben. Bei Erwachsenen: mehr Nasenarbeit. Wenn lange Liege-Phasen noch wackeln, geh zurueck zu kuerzeren mit Kong-Beschaeftigung.",
       stolperfallen: "Management komplett aufzugeben weil 'eine Woche ist nix passiert'. Risiko-Bereiche bleiben Risiko-Bereiche. Auch klassisch: Kau-Sessions zu kurz machen. 15-30 Minuten ist die Wirkdauer, nicht 5 Minuten.",
-      vermeidet: "Mehrere aufregende Aktivitäten am selben Tag stapeln. Wenn Zerstörung Stress-Symptom ist, verschärft Stress sie weiter."
+      vermeidet: "Mehrere aufregende Aktivitäten am selben Tag stapeln. Wenn Zerstoerung Stress-Symptom ist, verschärft Stress sie weiter."
     },
     generalisierung: {
-      bausteine: "Langfristiger Auslastungs-Wochenplan etabliert, Kau-Objekt-Sortiment regelmäßig gewartet und erweitert, Management-Balance gefunden mit klaren sicheren und off-limits Bereichen, Notfall-Plan bei Stress-Phasen",
-      schon_merken: "{dogName} ist langfristig ausgeglichen, Zerstörung ist Ausnahme. Du hast eine klare Vorstellung, welche Zonen sicher sind und welche nicht. Bei Stress-Phasen (Weihnachten, Urlaub, Änderungen) hast du eine Strategie.",
-      jetzt_anpassen: "Halte den Auslastungs-Plan auch am Wochenende. Bei neuen Lebenssituationen (Umzug, Familien-Veränderung) erhöh kurz wieder Management und Auslastung. Prüf alle paar Wochen das Kau-Sortiment auf Verschleiss.",
+      bausteine: "Langfristiger Auslastungs-Wochenplan etabliert, Kau-Objekt-Sortiment regelmaessig gewartet und erweitert, Management-Balance gefunden mit klaren sicheren und off-limits Bereichen, Notfall-Plan bei Stress-Phasen",
+      schon_merken: "{dogName} ist langfristig ausgeglichen, Zerstoerung ist Ausnahme. Du hast eine klare Vorstellung, welche Zonen sicher sind und welche nicht. Bei Stress-Phasen (Weihnachten, Urlaub, Änderungen) hast du eine Strategie.",
+      jetzt_anpassen: "Halte den Auslastungs-Plan auch am Wochenende. Bei neuen Lebenssituationen (Umzug, Familien-Veränderung) erhoeh kurz wieder Management und Auslastung. Prüf alle paar Wochen das Kau-Sortiment auf Verschleiss.",
       stolperfallen: "Den Auslastungs-Plan aufweichen weil 'er ist ja ruhig geworden'. Die Ruhe kommt vom Plan, nicht aus dem Nichts. Auch klassisch: an stressigen Tagen weniger auslasten weil keine Zeit. Dann zerstört {dogName} aus Frust.",
-      vermeidet: "Risiko-Bereiche komplett öffnen mit der Erwartung 'es klappt jetzt'. Vorsicht ist günstiger als zerstörtes Sofa."
+      vermeidet: "Risiko-Bereiche komplett oeffnen mit der Erwartung 'es klappt jetzt'. Vorsicht ist guenstiger als zerstörtes Sofa."
     }
   },
   soiling: {
     fundament: {
-      bausteine: "Berechenbare Toiletten-Routine mit 5-7 festen Runden pro Tag, Belohnung direkt am Platz und im richtigen Moment, Auslöser-Lesen lernen (Schnüffeln, Drehen, Unruhe), ruhiger Umgang mit Unfällen ohne Strafe",
-      schon_merken: "Du kennst {dogName}s Toiletten-Muster und gehst proaktiv raus, nicht reaktiv. Bei den meisten Runden klappt es am gewohnten Platz. Unfälle sind seltener geworden, und wenn doch, bleibst du ruhig und nutzt Enzym-Reiniger. Auslöser-Anzeichen erkennst du schneller als zu Plan-Start.",
-      jetzt_anpassen: "Wenn Unfälle weiter häufig sind, lass den Tierarzt ausschließen dass es eine Blasenentzündung oder andere medizinische Ursache ist. Bei jungen Hunden: Frequenz nochmal erhöhen auf alle 1-2 Stunden. Bei stress-bedingtem Soiling: Stress-Faktoren reduzieren.",
-      stolperfallen: "Schimpfen oder Nase-rein-drücken bei einem Unfall. Damit lernt {dogName} sich zu verstecken, nicht stubenreiner zu werden. Auch klassisch: nur an einem Platz draußen akzeptieren statt zu generalisieren. Später ist {dogName} dann an anderen Orten verunsichert.",
+      bausteine: "Berechenbare Toiletten-Routine mit 5-7 festen Runden pro Tag, Belohnung direkt am Platz und im richtigen Moment, Auslöser-Lesen lernen (Schnüffeln, Drehen, Unruhe), ruhiger Umgang mit Unfaellen ohne Strafe",
+      schon_merken: "Du kennst {dogName}s Toiletten-Muster und gehst proaktiv raus, nicht reaktiv. Bei den meisten Runden klappt es am gewohnten Platz. Unfaelle sind seltener geworden, und wenn doch, bleibst du ruhig und nutzt Enzym-Reiniger. Auslöser-Anzeichen erkennst du schneller als zu Plan-Start.",
+      jetzt_anpassen: "Wenn Unfaelle weiter häufig sind, lass den Tierarzt ausschließen dass es eine Blasenentzuendung oder andere medizinische Ursache ist. Bei jungen Hunden: Frequenz nochmal erhoehen auf alle 1-2 Stunden. Bei stress-bedingtem Soiling: Stress-Faktoren reduzieren.",
+      stolperfallen: "Schimpfen oder Nase-rein-druecken bei einem Unfall. Damit lernt {dogName} sich zu verstecken, nicht stubenreiner zu werden. Auch klassisch: nur an einem Platz draußen akzeptieren statt zu generalisieren. Später ist {dogName} dann an anderen Orten verunsichert.",
       vermeidet: "Erwarten dass sich Stubenreinheit von alleine entwickelt. Sie braucht aktive Belohnung und Routine."
     },
     steigerung: {
       bausteine: "Toiletten-Frequenz schrittweise reduziert bei Erfolg, Auslöser-Lesen automatisiert, Belohnung schrittweise variiert, Generalisierung auf verschiedene Strecken",
-      schon_merken: "{dogName} schafft längere Phasen ohne Toilettendrang, du planst mit klar mehr Spielraum. An neuen Orten klappt es nach kurzer Eingewöhnung. Auslöser-Anzeichen sind nahezu reflexartig erkannt und beantwortet.",
-      jetzt_anpassen: "Wenn die reduzierte Frequenz Unfälle bringt, geh zurück zur engeren Routine. Bei stress-bedingtem Soiling: arbeite an Stress-Toleranz mit Mini-Stressoren. Bei älteren Hunden: Tierarzt-Check wenn die Frequenz wieder steigt.",
-      stolperfallen: "Belohnung komplett weglassen weil es klappt. Variable Verstärkung bleibt wichtig, sonst kann das Verhalten erodieren. Auch klassisch: bei neuen Strecken zu wenig Geduld haben.",
+      schon_merken: "{dogName} schafft längere Phasen ohne Toilettendrang, du planst mit klar mehr Spielraum. An neuen Orten klappt es nach kurzer Eingewoehnung. Auslöser-Anzeichen sind nahezu reflexartig erkannt und beantwortet.",
+      jetzt_anpassen: "Wenn die reduzierte Frequenz Unfaelle bringt, geh zurueck zur engeren Routine. Bei stress-bedingtem Soiling: arbeite an Stress-Toleranz mit Mini-Stressoren. Bei aelteren Hunden: Tierarzt-Check wenn die Frequenz wieder steigt.",
+      stolperfallen: "Belohnung komplett weglassen weil es klappt. Variable Verstaerkung bleibt wichtig, sonst kann das Verhalten erodieren. Auch klassisch: bei neuen Strecken zu wenig Geduld haben.",
       vermeidet: "Lange Phasen ohne Toilettenrunde wagen in stressigen Tagen oder neuen Umgebungen. Sicherheit zuerst."
     },
     generalisierung: {
-      bausteine: "Langfristige Routine mit 3-4 festen Runden pro Tag, Stubenreinheit auch in neuen Umgebungen, lebenslange Stress-Hygiene, Alters-Anpassung bei älteren Hunden",
-      schon_merken: "{dogName} ist langfristig stubenrein, auch bei Reisen oder Besuchen. Du hast eine klare Routine die sich anfühlt wie selbstverständlich. Stress an anderen Stellen erkennst du früh, bevor er Stubenreinheit beeinflusst.",
-      jetzt_anpassen: "Mit dem Alter braucht {dogName} eventuell wieder öftere Runden, beobachte aktiv. Bei älteren Hunden mit Frequenz-Steigerung: Tierarzt-Check. Bei stress-bedingten Rückfällen: kurz die Routine engmaschiger machen.",
-      stolperfallen: "Die Routine in der eigenen Hektik vergessen. Stubenreinheit braucht weiter aktive Pflege. Auch klassisch: Alters-Veränderungen ignorieren mit dem Gedanken 'der ist doch stubenrein'. Ältere Hunde brauchen Anpassungen.",
-      vermeidet: "Bei Unfällen mit dem Schimpfen wieder anfangen. Auch nach Jahren der Stubenreinheit ist Strafe falsch."
+      bausteine: "Langfristige Routine mit 3-4 festen Runden pro Tag, Stubenreinheit auch in neuen Umgebungen, lebenslange Stress-Hygiene, Alters-Anpassung bei aelteren Hunden",
+      schon_merken: "{dogName} ist langfristig stubenrein, auch bei Reisen oder Besuchen. Du hast eine klare Routine die sich anfühlt wie selbstverstaendlich. Stress an anderen Stellen erkennst du frueh, bevor er Stubenreinheit beeinflusst.",
+      jetzt_anpassen: "Mit dem Alter braucht {dogName} eventuell wieder oeftere Runden, beobachte aktiv. Bei aelteren Hunden mit Frequenz-Steigerung: Tierarzt-Check. Bei stress-bedingten Rueckfaellen: kurz die Routine engmaschiger machen.",
+      stolperfallen: "Die Routine in der eigenen Hektik vergessen. Stubenreinheit braucht weiter aktive Pflege. Auch klassisch: Alters-Veränderungen ignorieren mit dem Gedanken 'der ist doch stubenrein'. Aeltere Hunde brauchen Anpassungen.",
+      vermeidet: "Bei Unfaellen mit dem Schimpfen wieder anfangen. Auch nach Jahren der Stubenreinheit ist Strafe falsch."
     }
   }
 };
@@ -5674,13 +5632,13 @@ function buildMonatsUebersichten(
 
     const text = `${phaseHeader}
 
-Was du jetzt schon merken solltest: ${personalize(daten.schon_merken, dog)}
+Was du jetzt schon merken solltest: ${daten.schon_merken.replace(/\{dogName\}/g, dogName)}
 
-Was du jetzt anpassen kannst: ${personalize(daten.jetzt_anpassen, dog)}
+Was du jetzt anpassen kannst: ${daten.jetzt_anpassen.replace(/\{dogName\}/g, dogName)}
 
-Häufige Stolperfallen jetzt: ${personalize(daten.stolperfallen, dog)}
+Häufige Stolperfallen jetzt: ${daten.stolperfallen.replace(/\{dogName\}/g, dogName)}
 
-Was du jetzt vermeidest: ${personalize(daten.vermeidet, dog)}${customRef}`;
+Was vermeidet jetzt: ${daten.vermeidet.replace(/\{dogName\}/g, dogName)}${customRef}`;
 
     out.push({ monat: m, text });
   }
@@ -5688,407 +5646,55 @@ Was du jetzt vermeidest: ${personalize(daten.vermeidet, dog)}${customRef}`;
   return out;
 }
 
-// ── Zusatz-Spiele: 3 problem-spezifische Bonus-Übungen pro Problem ───
-// Diese ergänzen die Wochen-Pläne und sind bewusst KEINE Kopien der
-// Kern-Übungen. Sie passen aufs gleiche Skill-Set, bieten aber Varianz
-// für Halter, denen die Wochen-Aufgaben zu wenig sind oder die ein Spiel
-// für zwischendurch suchen.
-type BonusSpiel = {
-  nummer: number;
-  name: string;
-  ziel: string;
-  schritte: string[];
-  warum: string;
-};
-
-const BONUS_BY_PROBLEM: Record<ProblemKey, BonusSpiel[]> = {
-  pulling: [
-    {
-      nummer: 1,
-      name: "Kontaktblick-Lotterie",
-      ziel: "Freiwilligen Blickkontakt im Spaziergang verstärken",
-      schritte: [
-        "Beim Gehen: jedes Mal wenn {dogName} dich anschaut, FEIN + Leckerli an der Bein-Naht",
-        "Wichtig: nicht rufen, nicht klopfen — nur den freiwilligen Blick belohnen",
-        "Drei Tage lang konsequent, dann reicht jede 3. Belohnung",
-        "Nach 7 Tagen: {dogName} schaut bei Unsicherheit von selbst zu dir",
-      ],
-      warum: "Verlässlicher Blickkontakt ist die Basis für jede Leinen-Korrektur. {dogName} lernt: ich bin der Bezugspunkt, nicht die Umwelt.",
-    },
-    {
-      nummer: 2,
-      name: "Slalom durch die Beine",
-      ziel: "Aufmerksamkeit + Tempo-Bindung drinnen aufbauen",
-      schritte: [
-        "Steh entspannt, Beine schulterbreit auseinander",
-        "Locke {dogName} mit Leckerli durch dein linkes Bein nach hinten, dann durch rechtes Bein wieder nach vorn",
-        "5 Slalom-Runden, dann Jackpot von 3 Leckerlis",
-        "Steigerung: Tempo, dann ohne Leckerli-Locke, nur mit Handzeichen",
-      ],
-      warum: "Schult Tempo-Anschluss + Beobachtung — exakt die Skills, die bei der Leinenführigkeit später greifen.",
-    },
-    {
-      nummer: 3,
-      name: "Stand-Sitz-Wechsel auf Distanz",
-      ziel: "Impuls-Bremse + Hör-Sensibilität verfeinern",
-      schritte: [
-        "{dogName} steht 2m vor dir, ohne Leine drinnen",
-        "Sage ruhig SITZ — sobald gesessen: FEIN, dann gleich STEH",
-        "Wechsle 6-8 mal, niemals lockend, immer nur über die Stimme",
-        "Steigerung: 5m Distanz, dann mit kurzer Ablenkung (Tür offen, Geräusch)",
-      ],
-      warum: "Stimm-Signale auf Distanz sind ein zuverlässiger Test, wie sicher die Grundlagen wirklich sitzen.",
-    },
-  ],
-  energy: [
-    {
-      nummer: 1,
-      name: "Drei-Becher-Wahl",
-      ziel: "Mentale Kopfarbeit, 5 Minuten Konzentration",
-      schritte: [
-        "3 umgedrehte Becher auf den Boden, in einem ein Leckerli — {dogName} sieht zu wie du es darunter legst",
-        "Mische die Becher langsam, sage WAHL — {dogName} tippt mit Pfote oder Nase",
-        "Richtig: FEIN + Leckerli, neuer Durchgang. Falsch: keine Reaktion, nochmal mischen",
-        "Pro Session 5-7 Durchgänge, dann beenden — Konzentration ermüdet schneller als Bewegung",
-        "Steigerung nach 1 Woche: 4 oder 5 Becher, oder du wechselst die Becher beim Mischen",
-      ],
-      warum: "Mentale Arbeit kostet messbar mehr Energie als körperliche. Fünf Minuten Becher-Spiel sind anstrengender als eine halbe Stunde Apportieren.",
-    },
-    {
-      nummer: 2,
-      name: "Eiswürfel-Kong fürs Sofa",
-      ziel: "Lange Selbstbeschäftigung bei abendlicher Unruhe",
-      schritte: [
-        "Kong mit Nassfutter und einer dünnen Schicht Joghurt füllen, 4 Stunden einfrieren",
-        "{dogName} bekommt ihn auf seiner Decke neben dem Sofa, am Abend",
-        "Du schaust währenddessen entspannt Fernsehen, bewusst keine Aufmerksamkeit zu {dogName}",
-        "{dogName} arbeitet 40-60 Minuten konzentriert und schläft danach meistens ein",
-        "Wenn nach 30 Minuten Frust aufkommt: einen Eiswürfel daraus ist zu hart — beim nächsten Mal weniger Joghurt",
-      ],
-      warum: "Eis verlängert die Beschäftigung um Faktor 3 und kühlt nebenbei. Perfekt für die Abend-Phase, in der {dogName} sonst hochfährt.",
-    },
-    {
-      nummer: 3,
-      name: "Ruhiges Zerrspiel mit Stopp",
-      ziel: "Erregung kontrolliert hoch- und wieder runterfahren",
-      schritte: [
-        "Nimm ein weiches Spielzeug, lade {dogName} freundlich zum Ziehen ein",
-        "Spiele 30-60 Sekunden langsam und kontrolliert, du hältst das Tempo",
-        "Sage plötzlich STOPP und friere ein — keine Bewegung, keine Wiederholung des Wortes",
-        "Sobald {dogName} loslässt oder still wird: FEIN, Leckerli, kurze Pause",
-        "Spiel geht erst nach 5-10 Sekunden Ruhe wieder los — Pro Session 4-6 Wechsel",
-        "Steigerung: STOPP mitten in einer Drehung statt nur beim Ziehen",
-      ],
-      warum: "{dogName} lernt mitten im aufregenden Spiel runterzukommen. Off-Schalter im Kopf, der vielen hyperaktiven Hunden fehlt — bewegungsbasiert, nicht nur über Nase.",
-    },
-  ],
-  aggression: [
-    {
-      nummer: 1,
-      name: "Decke-als-Insel-Spiel",
-      ziel: "Decke wird zum sicheren Rückzugsort in Stress-Situationen",
-      schritte: [
-        "Decke liegt fest an einem ruhigen Ort, niemals woanders hin",
-        "5x täglich: Decke betreten = FEIN + Leckerli + ruhiges Streicheln",
-        "Nach 7 Tagen: bei kleiner Unruhe DECKE sagen, {dogName} geht hin",
-        "Bei echtem Stress später: Decke ist der Anker, dort wird er ruhig",
-      ],
-      warum: "Du brauchst einen Notfall-Ort, der NICHT die Leine ist. Decke wird über Wochen zum konditionierten Sicherheits-Trigger.",
-    },
-    {
-      nummer: 2,
-      name: "Schau-Hin auf alles",
-      ziel: "Reiz anschauen ohne aufzuregen — das Kern-Verhalten",
-      schritte: [
-        "Drinnen mit harmlosen Objekten: Spielzeug, Kissen, Schuh",
-        "Stell das Objekt vor {dogName}: sobald er hinschaut, FEIN + Leckerli",
-        "Steigern: bewegliche Objekte, dann mit leichtem Geräusch",
-        "Ziel: Reiz anschauen = Belohnung erwarten, statt Aufregung aufbauen",
-      ],
-      warum: "Trainiert das emotionale Muster, das später draußen mit echten Auslösern greift. Reine drinnen-Vorarbeit, keine Eskalations-Gefahr.",
-    },
-    {
-      nummer: 3,
-      name: "Atmung-Synchron auf der Decke",
-      ziel: "Stress-Abbau über deine eigene Ruhe transportieren",
-      schritte: [
-        "{dogName} auf die Decke, du setzt dich daneben",
-        "Atme bewusst tief und langsam, Hand ruhig auf seinem Brustkorb",
-        "{dogName} synchronisiert nach 2-3 Min die Atmung",
-        "5-10 Min halten — funktioniert auch nach einem schwierigen Spaziergang",
-      ],
-      warum: "Hunde lesen deinen Stress-Level. Wer selber ruhig wird, beruhigt seinen Hund. Wissenschaftlich gut belegt.",
-    },
-  ],
-  mouthing: [
-    {
-      nummer: 1,
-      name: "Tausch-Pyramide drinnen",
-      ziel: "AUS bei steigender Wertigkeit ohne Stress aufbauen",
-      schritte: [
-        "Stufe 1: gibst {dogName} ein langweiliges Spielzeug, sagst AUS + tauschst gegen Leckerli",
-        "Stufe 2: Lieblings-Spielzeug, AUS + Leckerli-Tausch",
-        "Stufe 3: Kauknochen, AUS + Hähnchen als Mega-Tausch",
-        "Wichtig: Objekt zurückgeben nach 3 Sek — Tausch endet positiv",
-        "Pro Tag 1 Stufe, eine Woche lang",
-      ],
-      warum: "AUS muss vor dem Hot-Spot draußen sitzen. Stufenweise Wertigkeit ist der einzige Weg ohne Vergiftung des Signals.",
-    },
-    {
-      nummer: 2,
-      name: "Belohnungs-Suche statt Aufheben",
-      ziel: "Alternative für den Such-Trieb auf dem Spaziergang",
-      schritte: [
-        "Vor dem Spaziergang: 20 Leckerlis in der Hosentasche",
-        "Wenn {dogName} schnüffelnd zum Boden geht: 2-3 Leckerlis ins Gras werfen",
-        "Sage SUCH — {dogName} sucht freigegebene Belohnung statt zufälligem Müll",
-        "Über 2 Wochen: er checkt erst dich, dann den Boden",
-      ],
-      warum: "Such-Trieb wird befriedigt, ohne dass {dogName} alles aufnimmt. Die Hosentasche wird der bessere Lieferant als der Boden.",
-    },
-    {
-      nummer: 3,
-      name: "Aus-Memory mit drei Objekten",
-      ziel: "AUS auch bei mehreren Versuchungen in Folge",
-      schritte: [
-        "Lege 3 verschiedene Objekte hin (Knochen, Spielzeug, harmloser Karton)",
-        "{dogName} nimmt eins: AUS + Tausch + Objekt-1 wegnehmen",
-        "Lass ihn das nächste aufnehmen: AUS + Tausch + weg",
-        "5 Durchgänge pro Session — {dogName} lernt: jedes Aufgeben lohnt sich",
-      ],
-      warum: "Mehrere AUS hintereinander baut Frust-Toleranz auf. Im Alltag draußen kommt selten nur ein Fund.",
-    },
-  ],
-  recall: [
-    {
-      nummer: 1,
-      name: "Versteck-Rückruf",
-      ziel: "KOMM-HER mit hoher Begeisterung im Spiel verankern",
-      schritte: [
-        "Eine zweite Person hält {dogName} sanft fest",
-        "Du versteckst dich 5-10m weit, rufst dann fröhlich KOMM-HER",
-        "{dogName} wird losgelassen — sucht dich aktiv",
-        "Bei Ankunft: MEGA-Belohnung, Begeisterung, Spiel",
-        "10-15 Durchgänge wirken Wunder, mehr als jede Trockenübung",
-      ],
-      warum: "Suchen + Finden + Erfolg = stärkste Verknüpfung. KOMM-HER wird emotionales Highlight statt Pflichtsignal.",
-    },
-    {
-      nummer: 2,
-      name: "Leckerli-Werfer-Belohnung",
-      ziel: "Rückruf für Hunde mit hohem Beutetrieb attraktiv machen",
-      schritte: [
-        "Hast einen Beutel mit besonders hochwertigen Leckerli (Hähnchen, Käse)",
-        "Bei jedem KOMM-HER: bei Ankunft 2-3 Leckerli nacheinander vor seine Füße werfen",
-        "{dogName} jagt die Belohnung — Beutetrieb wird befriedigt",
-        "Steigerung: nur 1 von 3 Rückrufen mit Werfer, der Rest klassisch",
-      ],
-      warum: "Hunde mit Beutetrieb brauchen Bewegung in der Belohnung, nicht nur Leckerli aus der Hand. Macht KOMM-HER zur attraktivsten Option im Spaziergang.",
-    },
-    {
-      nummer: 3,
-      name: "Pfeifen-Drei-Stufen",
-      ziel: "Pfeife als zweites Signal sauber konditionieren",
-      schritte: [
-        "Drinnen Stufe 1: kurzer Pfiff + sofort Belohnung. 10x pro Tag, 5 Tage",
-        "Stufe 2: kurzer Pfiff, {dogName} kommt aus 3m Distanz: Belohnung",
-        "Stufe 3: kurzer Pfiff draußen aus 10m, an der Schleppleine: MEGA-Belohnung",
-        "Nutze die Pfeife nie für Negatives — sie bleibt das positive Backup",
-      ],
-      warum: "Pfeife reicht weiter als Stimme, klingt immer gleich (egal wie gestresst du bist) und ist im Notfall verlässlicher als das Wort.",
-    },
-  ],
-  barking: [
-    {
-      nummer: 1,
-      name: "Stille-Marker für Schweige-Pausen",
-      ziel: "Schweige-Phasen aktiv verstärken statt nur Bellen managen",
-      schritte: [
-        "Sobald {dogName} 3 Sekunden nicht bellt nach einer Bell-Pause: RUHE + weiches Leckerli",
-        "Wichtig: nicht warten bis er bellt — Schweigen ist die Belohnung",
-        "8-10 Mal pro Tag, in jeder ruhigen Phase",
-        "Nach 2 Wochen: {dogName} sucht aktiv Schweige-Phasen, weil sie sich lohnen",
-      ],
-      warum: "Hunde lernen schneller, was sie BEKOMMEN sollen, als was sie LASSEN sollen. Verstärkung der Stille schlägt jedes Anti-Bell-Mittel.",
-    },
-    {
-      nummer: 2,
-      name: "Klingel-Aufnahme-Konditionierung",
-      ziel: "Klingel-Sound emotional umlernen, ohne echte Klingel zu nutzen",
-      schritte: [
-        "Klingel-Geräusch auf Handy aufnehmen (eigene Klingel, originalgetreu)",
-        "Drinnen abspielen in leiser Lautstärke — gleichzeitig Leckerli ins Maul",
-        "Nach 10 Wiederholungen: Lautstärke leicht erhöhen",
-        "Über 2 Wochen: {dogName} bekommt bei echtem Klingelton Erwartung auf Leckerli, statt Hochfahren",
-      ],
-      warum: "Klassische Gegenkonditionierung. Du baust die Reaktion um, BEVOR du mit echten Klingel-Gästen arbeitest.",
-    },
-    {
-      nummer: 3,
-      name: "Drei-Sekunden-Check",
-      ziel: "Bell-Phasen verkürzen durch konsequentes Wegdrehen",
-      schritte: [
-        "Sobald {dogName} bellt: du drehst dich kommentarlos weg, schaust nicht hin",
-        "Sobald 3 Sek Stille: RUHE + Leckerli + ruhige Zuwendung",
-        "Konsequenz ist entscheidend — eine Familien-Person, die guckt, sabotiert die Übung",
-        "Nach 7 Tagen: Aufmerksamkeits-Bellen reduziert sich messbar",
-      ],
-      warum: "Aufmerksamkeits-Bellen wird durch JEDE Reaktion verstärkt — auch durch Schimpfen. Wegdrehen ist die einzige saubere Antwort.",
-    },
-  ],
-  anxiety: [
-    {
-      nummer: 1,
-      name: "Schlüssel-Bonbon-Spiel",
-      ziel: "Abschieds-Auslöser entkoppeln, ohne wegzugehen",
-      schritte: [
-        "Schlüssel in die Hand nehmen, einmal klimpern — sofort Leckerli geben",
-        "Schlüssel wieder weglegen, KEIN Gehen",
-        "10-15x am Tag, völlig unabhängig vom tatsächlichen Rausgehen",
-        "Nach 2 Wochen: Schlüssel-Klimpern erzeugt Erwartung auf Belohnung statt Angst",
-      ],
-      warum: "Die Vorbereitungs-Auslöser bauen den Stress auf, lange bevor du die Tür öffnest. Entkoppeln ist der Kern jeder Trennungsangst-Therapie.",
-    },
-    {
-      nummer: 2,
-      name: "Solo-Kong auf der Sicherheits-Decke",
-      ziel: "Allein-Sein-Erfahrung Schritt für Schritt aufbauen",
-      schritte: [
-        "Spezial-Kong (nur für Allein-Zeit, sonst nie) vorbereiten — gefrorenes Nassfutter",
-        "{dogName} bekommt Kong auf der Decke, du verlässt den Raum für 2-3 Min",
-        "Per Video beobachten: arbeitet er am Kong oder zeigt Stress?",
-        "Bei ruhiger Arbeit: nächste Stufe 5 Min, 10 Min, 20 Min",
-      ],
-      warum: "Kong wird zum exklusiven Allein-Werkzeug. Stress wird mit Beschäftigung gekoppelt — er hat etwas zu tun, statt sich auf die Abwesenheit zu fokussieren.",
-    },
-    {
-      nummer: 3,
-      name: "Komm-Geh-Routine ohne Drama",
-      ziel: "Tür-Routinen so banal machen, dass kein Stress mehr triggert",
-      schritte: [
-        "Mehrmals täglich: Tür aufmachen, kurz raustreten, wieder reinkommen",
-        "Kein Wort, kein Blickkontakt mit {dogName}, weder bei Rein noch Raus",
-        "Steigern: 30 Sek raus, 2 Min, 5 Min — jedes Mal ohne Aufsehen",
-        "Wieder-Sehen ist ruhig, nicht freudig-laut",
-      ],
-      warum: "Dramatische Verabschiedungen sagen dem Hund: das hier ist ein wichtiges Ereignis. Banalität nimmt der Trennung die Bedeutung.",
-    },
-  ],
-  jumping: [
-    {
-      nummer: 1,
-      name: "Vier-Pfoten-Lotterie",
-      ziel: "Boden-Kontakt zur Standard-Belohnung machen",
-      schritte: [
-        "Mehrfach täglich beiläufig: 4 Pfoten am Boden = ruhig Leckerli zwischen die Vorderpfoten legen",
-        "Komplett unaufgefordert, einfach im Vorbeigehen",
-        "Wenn {dogName} springt: keine Reaktion, weggehen",
-        "Nach 10 Tagen: er sucht aktiv den Boden, weil Boden = Belohnung",
-      ],
-      warum: "Anspringen wird nicht weg-trainiert, sondern durch eine attraktivere Alternative ersetzt. Boden-Kontakt zahlt sich aus.",
-    },
-    {
-      nummer: 2,
-      name: "Sitz vor dem Hallo",
-      ziel: "SITZ als reflexartige Begrüßungs-Reaktion etablieren",
-      schritte: [
-        "Bei JEDER Begrüßung (Familie, dir selbst, Gast): erst SITZ verlangen, dann freundlich begrüßen",
-        "Steht {dogName} auf zum Springen: Streicheln stop, weggehen, neu beginnen",
-        "Familien-Briefing: alle ziehen mit, sonst sabotiert eine Person die Arbeit",
-        "Nach 14 Tagen: {dogName} setzt sich von selbst bei jeder Begrüßung",
-      ],
-      warum: "Begrüßung ist Konditionierungs-Moment Nummer 1. Konsequenz bei jedem Hallo zahlt 10x ein, Inkonsequenz löscht den Lerneffekt.",
-    },
-    {
-      nummer: 3,
-      name: "Decke statt Tür",
-      ziel: "Klingel-Reaktion umlenken: zur Decke statt zur Tür",
-      schritte: [
-        "Decke 3m von der Tür entfernt platzieren, mit Lieblings-Kau-Objekt",
-        "Trockenübungen: Klingel-Geräusch (Handy), DECKE-Signal, {dogName} läuft zur Decke",
-        "Belohnung auf der Decke, niemals an der Tür",
-        "Nach 1 Woche echte Gäste: einer klingelt, einer drinnen mit Belohnung an der Decke",
-      ],
-      warum: "Der Tür-Bereich ist der höchste Aufregungs-Punkt. Wer dort hin will, springt. Decke macht die räumliche Verschiebung — Aufregung kann sich nicht entladen.",
-    },
-  ],
-  destructive: [
-    {
-      nummer: 1,
-      name: "Sieben-Tage-Kau-Rotation",
-      ziel: "Erlaubte Kau-Objekte attraktiv halten",
-      schritte: [
-        "5-7 verschiedene Kau-Objekte besorgen: Büffelhaut, Holzknochen, Schnüffelmatte, Kong, Naturkauartikel",
-        "Pro Tag wird EIN Objekt freigegeben, alle anderen weg",
-        "Tagesrotation: nach 7 Tagen ist jedes Objekt wieder spannend",
-        "Verbotenes Material (Schuhe, Sofa): proaktiv außerhalb der Reichweite, nicht durch Bestrafung",
-      ],
-      warum: "Gleiches Kauobjekt jeden Tag wird langweilig. Rotation hält die Attraktivität hoch, ohne ständig neu kaufen zu müssen.",
-    },
-    {
-      nummer: 2,
-      name: "Box-Training mit Beschäftigung",
-      ziel: "Box oder Bereich als ruhigen Beschäftigungs-Ort etablieren",
-      schritte: [
-        "Box öffnen, Kong/Schnüffelmatte hineinlegen — Tür offen",
-        "{dogName} darf rein/raus, Beschäftigung passiert nur drinnen",
-        "Über 2 Wochen: er geht von selbst rein für die Beschäftigung",
-        "Stufe 2: Tür mal für 5 Min geschlossen lassen, mit Kong aktiv — er merkt es kaum",
-      ],
-      warum: "Sichere Zone für Allein-Phasen + verhindert Zerstörung von Objekten außerhalb. Box ist Werkzeug, nicht Strafe.",
-    },
-    {
-      nummer: 3,
-      name: "Wohnzimmer-Schatzsuche",
-      ziel: "Energie über Nase abbauen statt über Zähne",
-      schritte: [
-        "10 kleine Leckerli im Wohnzimmer verstecken — unter Kissen, hinter Beine, leicht erhöht",
-        "{dogName} bekommt SUCH-Signal, du lehnst dich zurück",
-        "10-15 Min konzentrierte Such-Beschäftigung",
-        "Pro Woche 3-4 Mal — ersetzt einen Spaziergang an Regen-Tagen",
-      ],
-      warum: "Kau- und Zerstörungs-Drang sinkt messbar nach Nasenarbeit. Müde Nase = ruhige Pfoten.",
-    },
-  ],
-  soiling: [
-    {
-      nummer: 1,
-      name: "Pipi-Wort-Konditionierung",
-      ziel: "Stichwort für Pipi-Machen aufbauen — wertvoll auf Reisen",
-      schritte: [
-        "Sobald {dogName} draußen mit Pipi anfängt: ruhiges Wort PIPI-PIPI sagen",
-        "Während des Akts NICHT loben (lenkt ab), DANACH: FEIN + Mega-Leckerli",
-        "Über 3-4 Wochen wird das Wort mit dem Akt verknüpft",
-        "Später: an neuen Orten oder vor langen Auto-Fahrten gezielt PIPI-PIPI sagen",
-      ],
-      warum: "Spart später Stunden im Park-and-Wait-Modus. Ein Wort statt Hoffen.",
-    },
-    {
-      nummer: 2,
-      name: "Trink-Tracker für 7 Tage",
-      ziel: "Wasser-Mengen + Unfälle korrelieren erkennen",
-      schritte: [
-        "Trink-Napf morgens markieren (Tape an gefüllter Höhe)",
-        "Pro Tag dokumentieren: wie viel hat sie getrunken, wann, wie viele Unfälle",
-        "Nach 7 Tagen Muster sichtbar: trinkt zu viel auf einmal, zu wenig morgens, etc.",
-        "Anpassung: Wasser-Reduktion 2h vor Schlaf bei nächtlichen Unfällen",
-      ],
-      warum: "Stubenreinheit ist oft eine Frage von Timing + Mengen, nicht von Disziplin. Daten zeigen das Problem schnell.",
-    },
-    {
-      nummer: 3,
-      name: "Klingel-am-Türgriff-Routine",
-      ziel: "{dogName} signalisiert selbst wenn er raus muss",
-      schritte: [
-        "Glöckchen am Türgriff anbringen",
-        "Vor jeder Toiletten-Runde: deine Hand an die Klingel, ein Mal anstoßen",
-        "Tür öffnen, raus, Belohnung am Pipi-Platz",
-        "Nach 3 Wochen: {dogName} stößt selbst gegen die Klingel, wenn er raus muss",
-      ],
-      warum: "Gibt {dogName} eine eindeutige Möglichkeit, Bedürfnis zu kommunizieren. Reduziert Unfälle aus Missverständnissen.",
-    },
-  ],
-};
+// ── Zusatz-Spiele ──────────────────────────────────────────────────
+const BONUS_SPIELE = [
+  {
+    nummer: 1,
+    name: "Futter-Suche",
+    ziel: "Konzentration, Nasenarbeit und innere Ruhe fördern",
+    schritte: [
+      "{dogName} sitzt oder steht ruhig",
+      "Zeige ein kleines Futterstück",
+      "Lege es sichtbar ab",
+      "Sage ruhig SUCH",
+      "Lass {dogName} selbstständig suchen",
+      "Lobe leise nach dem Finden",
+      "Wiederhole an anderer Stelle",
+    ],
+    warum: "Nasenarbeit macht müde, ruhig und zufrieden. Stärkt Selbstständigkeit und Frustrationstoleranz.",
+  },
+  {
+    nummer: 2,
+    name: "Hand-Touch",
+    ziel: "Aufmerksamkeit und Orientierung an dir stärken",
+    schritte: [
+      "Halte deine Hand seitlich auf Nasenhöhe",
+      "Warte bis {dogName} Interesse zeigt",
+      "Berührt {dogName} die Hand mit der Nase: sofort FEIN",
+      "Belohne direkt",
+      "Wechsle die Position der Hand",
+      "Bleibe freundlich und entspannt",
+      "Beende nach wenigen Wiederholungen",
+    ],
+    warum: "{dogName} lernt sich aktiv an dir zu orientieren. Ideal bei Unsicherheit oder Ablenkung.",
+  },
+  {
+    nummer: 3,
+    name: "Ruhiges Zerrspiel",
+    ziel: "Impulskontrolle und kontrolliertes Spiel lernen",
+    schritte: [
+      "Nimm ein weiches Spielzeug",
+      "Lade ruhig zum Ziehen ein",
+      "Spiele langsam und kontrolliert",
+      "Stoppe plötzlich die Bewegung",
+      "Warte auf Lockerlassen oder Ruhe",
+      "Belohne ruhiges Verhalten",
+      "Spiele erst dann weiter",
+      "Beende das Spiel bewusst",
+    ],
+    warum: "{dogName} lernt Erregung zu regulieren. Spiel und Kontrolle schließen sich nicht aus.",
+  },
+];
 
 // ════════════════════════════════════════════════════════════════════
 // Hauptfunktion
@@ -6133,74 +5739,6 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
   const ranges = phaseRanges(weeksTotal);
   const weeks = [];
 
-  // Tracking: pro Exercise-ID wievielte Verwendung im aktuellen Plan.
-  // Bei Wiederholung (2., 3., 4. Mal) bekommt die Übung einen Stufen-Marker
-  // im Titel plus eine konkrete Steigerung als ersten Schritt. So merkt der
-  // Halter: das ist nicht 1:1 dieselbe Übung, hier kommt was Neues dazu.
-  const exerciseUsageCount = new Map<string, number>();
-
-  // Festigungs-Modus: wenn eine Übung wiederholt wird und keine variant
-  // definiert ist, läuft eine eigene Reflexions-Choreografie ab —
-  // KEIN Copy-Paste der Original-Schritte. So entsteht kein Widerspruch,
-  // und der Halter bekommt eine echte Reflexions-Anleitung statt nochmal
-  // den gleichen Text zu lesen wie in Woche X.
-  function buildFestigungsSchritte(e: ExerciseTemplate, phase: Phase): string[] {
-    const exTitle = personalize(e.title, dog);
-    const dogN = dog.dogName || "dein Hund";
-    const grundDetail =
-      phase === "fundament"
-        ? "Die Grundlagen müssen erst sicher sitzen, bevor wir steigern."
-        : phase === "steigerung"
-          ? "Diese Phase ist Investition — wer hier sauber arbeitet, hat in Phase 3 die größten Sprünge."
-          : "Im Alltag braucht jedes Verhalten mehrere Wiederholungen, bevor es zum Reflex wird.";
-
-    return [
-      `Diese Woche festigst du die Übung "${exTitle}". ${grundDetail} Statt neue Inhalte aufzubauen, schaust du gezielt auf das, was noch wackelt.`,
-      `Tag 1: Beobachten ohne Training. Welcher Teilschritt der Übung läuft schon sicher, welcher nicht? Schau ${dogN} bewusst zu und notiere 2-3 konkrete Beobachtungen.`,
-      `Tag 2-3: Identifiziere DEN einen Schritt, der noch nicht 100% sitzt. Nicht zwei oder drei — einen. Konzentriere dich diese Woche nur auf diese eine Stelle, statt die ganze Übung neu durchzulaufen.`,
-      `Tag 4-5: Pro Tag 3-5 gezielte Mini-Wiederholungen NUR an dieser Stelle. Kürzere Sessions, dafür präziser. Beispiel: wenn der Marker drinnen sitzt aber draußen wackelt, übst du draußen — nicht drinnen.`,
-      `Tag 6: Niedrigere Anforderung als sonst. Reduziere die Schwachstelle auf die einfachste Form, die ${dogN} zuverlässig schafft. Erfolg ist wichtiger als Tempo.`,
-      `Tag 7: Bilanz ziehen. Ist die Schwachstelle stabiler geworden? Wenn ja: Übung läuft nächste Woche wieder normal weiter. Wenn nein: eine weitere Festigungs-Woche oder zurück zur vorherigen Stufe.`,
-      `Die konkreten Übungs-Schritte stehen in der Woche, in der die Übung eingeführt wurde. Diese Festigungs-Woche ist gezielte Vertiefung, kein Neu-Lernen.`,
-    ];
-  }
-
-  function buildExerciseFromTemplate(e: ExerciseTemplate, phase: Phase) {
-    const prevCount = exerciseUsageCount.get(e.id) || 0;
-    const stage = prevCount + 1;
-    exerciseUsageCount.set(e.id, stage);
-
-    const baseTitle = personalize(e.title, dog);
-    const baseSteps = e.steps.map((s) => personalize(s, dog));
-
-    if (stage === 1) {
-      return { name: baseTitle, schritte: baseSteps, stage };
-    }
-
-    // Bei Wiederholung mit definierter Variant: KOMPLETT andere Schritte
-    // (keine Mischung mit Base-Steps mehr, die widerspricht).
-    const variant =
-      Array.isArray(e.variants) && stage - 2 < e.variants.length
-        ? e.variants[stage - 2]
-        : null;
-
-    if (variant) {
-      const suffix = variant.titleSuffix || `Stufe ${stage}`;
-      return {
-        name: `${baseTitle} — ${suffix}`,
-        schritte: variant.steps.map((s) => personalize(s, dog)),
-        stage,
-      };
-    }
-
-    // Festigungs-Modus: eigene Reflexions-Schritte, kein Copy-Paste.
-    return {
-      name: `${baseTitle} — Festigungs-Woche`,
-      schritte: buildFestigungsSchritte(e, phase),
-      stage,
-    };
-  }
-
   for (let w = 1; w <= weeksTotal; w++) {
     const phase = phaseForWeek(w, weeksTotal);
     // Position der Woche INNERHALB der Phase (1-basiert)
@@ -6211,78 +5749,41 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
     const phaseTpls = weekTpls[phase];
     const tpl = phaseTpls[Math.min(positionInPhase - 1, phaseTpls.length - 1)];
 
-    // Übungen aus den im Template hinterlegten IDs ziehen — Progressions-
-    // Tracking sorgt dafür dass Wiederholungen als Stufe 2/3/4 erscheinen.
+    // Übungen aus den im Template hinterlegten IDs ziehen — fallback
+    // auf den ersten Pool-Eintrag der Phase falls eine ID nicht existiert.
     const uebungen = tpl.exerciseIds
       .map((id) => exById.get(id))
       .filter((e): e is ExerciseTemplate => !!e)
-      .map((e) => buildExerciseFromTemplate(e, phase));
+      .map((e) => ({
+        name: personalize(e.title, dog),
+        schritte: e.steps.map((s) => personalize(s, dog)),
+      }));
 
     // Falls keine Übung gefunden (anderes Problem mit pulling-fallback und
     // ID nicht im Pool), nimm die erste passende Übung der Phase.
     if (uebungen.length === 0) {
       const fallback = pool.find((e) => e.phase === phase);
       if (fallback) {
-        uebungen.push(buildExerciseFromTemplate(fallback, phase));
+        uebungen.push({
+          name: personalize(fallback.title, dog),
+          schritte: fallback.steps.map((s) => personalize(s, dog)),
+        });
       }
-    }
-
-    // Falls nur eine Übung verfügbar war: zweite Übung aus dem Phase-Pool
-    // ergänzen, damit jede Woche mindestens 2 Übungen hat. Bevorzugt eine,
-    // die im aktuellen Plan noch nicht (oder seltener) verwendet wurde.
-    if (uebungen.length === 1) {
-      const usedIds = new Set(tpl.exerciseIds);
-      const filler = pool
-        .filter((e) => e.phase === phase && !usedIds.has(e.id))
-        .sort((a, b) => (exerciseUsageCount.get(a.id) || 0) - (exerciseUsageCount.get(b.id) || 0))[0];
-      if (filler) {
-        uebungen.push(buildExerciseFromTemplate(filler, phase));
-      }
-    }
-
-    // Schwerpunkt-Text dynamisch anpassen, wenn die Wochen-Übungen
-    // schon in einer höheren Stufe laufen. So kein Widerspruch mehr
-    // zwischen "Wir verknüpfen ein Wort..." (Erst-Einführung) im
-    // Schwerpunkt-Text und einer Stufe-3-Übung darunter.
-    const maxStage = Math.max(0, ...uebungen.map((u) => (u as any).stage || 1));
-    let weekSchwerpunkt = personalize(tpl.schwerpunkt, dog);
-    if (maxStage >= 2) {
-      const verb = maxStage === 2 ? "vertiefen" : maxStage === 3 ? "festigen" : "im Alltag verankern";
-      const intro = uebungen
-        .filter((u) => (u as any).stage > 1)
-        .map((u) => {
-          const cleanName = u.name
-            .replace(/ — Festigungs-Woche$/, "")
-            .replace(/ — .+$/, "");
-          return cleanName;
-        })
-        .slice(0, 2)
-        .join(" und ");
-      weekSchwerpunkt = `Diese Woche ${verb} wir die schon eingeführte Übung "${intro}". ${weekSchwerpunkt}`;
     }
 
     weeks.push({
       num: w,
       title: personalize(tpl.title, dog),
-      schwerpunkt: weekSchwerpunkt,
+      schwerpunkt: personalize(tpl.schwerpunkt, dog),
       wochenziele: tpl.wochenziele.map((z) => personalize(z, dog)),
       tagesplan: personalize(tpl.tagesplan, dog),
       no_gos: tpl.no_gos.map((n) => personalize(n, dog)),
       fortschritt: tpl.fortschritt.map((f) => personalize(f, dog)),
-      uebungen: uebungen.map((u) => ({ name: u.name, schritte: u.schritte })),
+      uebungen,
     });
   }
 
-  // Tonfall je Plan-Länge: 1M = kompakt + fokussiert, 3M = solide mit Zeit
-  // pro Schritt, 6M = entspannt + tief.
-  const tempoBeschreibung =
-    planLengthMonths === 1
-      ? `Vier Wochen ist eine kompakte Strecke. Wir gehen gezielt vor: die wichtigsten Werkzeuge zuerst, dann eine schnelle Übertragung in den Alltag. Erwarte einen straffen Rhythmus.`
-      : planLengthMonths === 3
-        ? `Zwölf Wochen sind eine entspannte Strecke. Du hast Zeit, jeden Schritt sauber aufzubauen, statt durchzuhetzen. Pro Woche reicht eine Sache, die wirklich sitzt.`
-        : `Sechs Monate sind viel Zeit, und genau das ist der Vorteil. Wir können jeden Baustein in Ruhe festigen, kleine Rückschritte ohne Stress auffangen und am Ende echte Generalisierung erreichen, statt nur Erstkonditionierung.`;
-
-  const fallbackEinleitung = `Dieser Trainingsplan wurde speziell für ${dogName} und das Thema ${problemLabel} entwickelt. Er begleitet dich über ${weeksTotal} Wochen Schritt für Schritt, vom ruhigen Fundament drinnen bis zur souveränen Bewältigung schwieriger Alltagssituationen.\n\n${tempoBeschreibung}\n\nJede Übung ist so gestaltet, dass du sie ohne Vorkenntnisse umsetzen kannst. Du brauchst weiche Leckerlis, eine Leine, eine Decke und vor allem Geduld.`;
+  const fallbackEinleitung = `Dieser Trainingsplan wurde speziell für ${dogName} und das Thema ${problemLabel} entwickelt. Er begleitet dich über ${weeksTotal} Wochen Schritt für Schritt, vom ruhigen Fundament drinnen bis zur souveränen Bewältigung schwieriger Alltagssituationen.\n\nJede Übung ist so gestaltet, dass du sie ohne Vorkenntnisse umsetzen kannst. Du brauchst weiche Leckerlis, eine Leine, eine Decke und vor allem Geduld.`;
 
   // Problem-spezifisches Equipment-Briefing.
   const equipmentBriefings: Record<ProblemKey, string> = {
@@ -6294,27 +5795,18 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
     barking: `\n\nAusrüstungs-Check: Entspannungsdecke (mind. 60x80cm, fester Ort), Klingel-Aufnahme auf dem Handy für Türklingel-Training, hochwertige Belohnung für Stille-Verstärkung. Optional: Hintergrundmusik (Adagio-Klassik) bei Außenreiz-Phasen.`,
     anxiety: `\n\nAusrüstungs-Check: Kong Classic (Größe passend zu ${dogName}) als Allein-Zeit-exklusives Werkzeug, Entspannungsdecke als Sicherheits-Anker, Smartphone-Kamera oder Smart-Camera mit Live-Stream für Allein-Zeit-Beobachtung. Hochwertiger Kong-Inhalt (Nassfutter, einfrieren = schwerer).`,
     jumping: `\n\nAusrüstungs-Check: SITZ-Signal muss vorher zuverlässig sitzen. Entspannungsdecke für Gäste-Empfang. Familien-Briefing-Zettel am Eingang für Gäste. Hochwertige Leckerlis griffbereit für jede Begegnung.`,
-    destructive: `\n\nAusrüstungs-Check: 4-5 verschiedene Kau-Objekte für Rotation (Naturkauartikel wie Büffelhaut/Ochsenziemer, Kong Classic, Schnüffelmatte, Holzknochen, Geweih). KEINE Rohhaut-Knochen — Verletzungsgefahr. Box oder Babyschutz für sichere Allein-Zonen. Enzym-Reiniger.`,
-    soiling: `\n\nAusrüstungs-Check WICHTIG: Enzym-Reiniger (Tierhandlung) für Unfälle — normaler Reiniger reicht nicht, der Geruch bleibt für den Hund. Hochwertige Belohnungen griffbereit für jede Toilettenrunde. Bei häufigen Unfällen erwachsener Hunde: Tierarzt-Check (Blasenentzündung etc.) vor Trainings-Start.`,
+    destructive: `\n\nAusrüstungs-Check: 4-5 verschiedene Kau-Objekte für Rotation (Naturkauartikel wie Bueffelhaut/Ochsenziemer, Kong Classic, Schnüffelmatte, Holzknochen, Geweih). KEINE Rohhaut-Knochen — Verletzungsgefahr. Box oder Babyschutz für sichere Allein-Zonen. Enzym-Reiniger.`,
+    soiling: `\n\nAusrüstungs-Check WICHTIG: Enzym-Reiniger (Tierhandlung) für Unfaelle — normaler Reiniger reicht nicht, der Geruch bleibt für den Hund. Hochwertige Belohnungen griffbereit für jede Toilettenrunde. Bei haufigen Unfaellen erwachsener Hunde: Tierarzt-Check (Blasenentzuendung etc.) vor Trainings-Start.`,
   };
   const equipmentBriefing = equipmentBriefings[problem] || "";
 
-  // Phasen-Aufteilung explizit nach Plan-Länge: macht den Halter klar wo
-  // Zeitpolster ist (3M/6M) bzw. wo es straff wird (1M).
-  const phasenBeschreibung =
-    planLengthMonths === 1
-      ? `Der Plan ist in drei Phasen gegliedert: Fundament drinnen (Woche 1-2), Steigerung draußen (Woche 3) und Generalisierung im Alltag (Woche 4). Bei nur vier Wochen muss jede Woche sitzen, bevor wir die nächste aufschlagen.`
-      : planLengthMonths === 3
-        ? `Der Plan ist in drei Phasen gegliedert: Fundament drinnen (Woche 1-4), Steigerung draußen (Woche 5-8) und Generalisierung im Alltag (Woche 9-12). Pro Phase hast du vier Wochen Zeit, das gibt Spielraum bei Plateaus und Rückschritten.`
-        : `Der Plan ist in drei Phasen gegliedert: Fundament drinnen (Woche 1-8), Steigerung draußen (Woche 9-16) und Generalisierung im Alltag (Woche 17-24). Acht Wochen pro Phase erlaubt richtiges Tiefen-Training, mit Wartungs-Wochen und Übertragung auf mehrere Kontexte.`;
-
-  const fallbackAufbau = `${phasenBeschreibung}\n\nJede Woche enthält klare Wochenziele, einen Tagesplan und konkrete Übungen mit Schritt-für-Schritt-Anleitung. Ein bis zwei gut gemachte Trainingseinheiten pro Tag reichen. Qualität schlägt Dauer.${equipmentBriefing}`;
+  const fallbackAufbau = `Der Plan ist in drei Phasen gegliedert: Fundament (drinnen, reizarm), Steigerung (raus, kontrolliert) und Generalisierung (echter Alltag). Jede Woche enthält klare Wochenziele, einen Tagesplan und konkrete Übungen mit Schritt-für-Schritt-Anleitung.\n\nEin bis zwei gut gemachte Trainingseinheiten pro Tag reichen. Qualität schlägt Dauer.${equipmentBriefing}`;
   // Problem-spezifischer Ziel-Satz, statt holpriger Direkt-Einsetzung
   const ZIEL_FORMULIERUNGEN: Record<ProblemKey, string> = {
     pulling: "deutlich entspannter an der Leine laufen",
     energy: "seine Energie deutlich besser regulieren und mehr zur Ruhe finden",
     aggression: "Begegnungen mit anderen Hunden, Joggern und Radfahrern deutlich entspannter meistern",
-    mouthing: "verbotene Gegenstände freiwillig hergeben statt sie zu verteidigen",
+    mouthing: "verbotene Gegenstaende freiwillig hergeben statt sie zu verteidigen",
     recall: "auf den Rückruf zuverlässig und freudig zurückkommen",
     barking: "deutlich seltener und kontrollierter bellen",
     anxiety: "entspannter allein bleiben können, ohne Trennungsstress",
@@ -6328,24 +5820,17 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
   return {
     intro: {
       headline: `${planLengthMonths}-Monatsplan für ${dogName}`,
-      // KI-Text (introText/zieleText/abschlussText) wird von Claude standardmäßig
-      // mit weiblichen Pronomen geschrieben — daher auch hier durch personalize()
-      // laufen lassen, damit bei Rüden korrekt auf er/ihn/sein geswappt wird.
-      einleitung: personalize(introText || fallbackEinleitung, dog),
-      aufbau: personalize(fallbackAufbau, dog),
-      ziele: personalize(zieleText || fallbackZiele, dog),
+      einleitung: introText || fallbackEinleitung,
+      aufbau: fallbackAufbau,
+      ziele: zieleText || fallbackZiele,
     },
     weeks,
     monats_uebersichten: buildMonatsUebersichten(problem, weeksTotal, monthsTotal, dog, problemLabel, customProblemText),
-    abschluss: personalize(
+    abschluss:
       abschlussText ||
-        `Du hast ${dogName} über ${weeksTotal} Wochen systematisch begleitet, das ist eine echte Leistung. Halte die Routinen aufrecht, beobachte die kleinen Fortschritte und bleib geduldig mit euch beiden. Veränderung ist keine Linie, sondern eine Welle.`,
-      dog
-    ),
-    zusatz_spiele: (BONUS_BY_PROBLEM[problem] || []).map((bs) => ({
+      `Du hast ${dogName} über ${weeksTotal} Wochen systematisch begleitet, das ist eine echte Leistung. Halte die Routinen aufrecht, beobachte die kleinen Fortschritte und bleib geduldig mit euch beiden. Veränderung ist keine Linie, sondern eine Welle.`,
+    zusatz_spiele: BONUS_SPIELE.map((bs) => ({
       ...bs,
-      name: personalize(bs.name, dog),
-      ziel: personalize(bs.ziel, dog),
       schritte: bs.schritte.map((s) => personalize(s, dog)),
       warum: personalize(bs.warum, dog),
     })),
