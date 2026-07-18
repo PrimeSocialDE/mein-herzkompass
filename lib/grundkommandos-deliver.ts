@@ -128,24 +128,54 @@ export async function deliverGrundkommandosForLead(
   const fileName = isPL
     ? `Plan-komend-${dog.replace(/[^a-zA-Z0-9]/g, "")}.pdf`
     : `Notfall-Grundkommando-Plan-${dog.replace(/[^a-zA-Z0-9]/g, "")}.pdf`;
-  const r = await fetch("https://api.brevo.com/v3/smtp/email", {
-    method: "POST",
-    headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      sender: isPL
-        ? { name: "ŁapaPlan", email: "support@pfoten-plan.de" }
-        : { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
-      to: [{ email: lead.email }],
-      cc: [{ email: "kontakt@primesocial.de" }],
-      subject: isPL
-        ? `🎯 Plan podstawowych komend dla ${dog}`
-        : `🎯 Dein Notfall-Grundkommando-Plan für ${dog}`,
-      htmlContent: isPL ? customerHtmlPL(dog) : customerHtml(dog),
-      attachment: [{ name: fileName, content: pdfBase64 }],
-    }),
-  });
-  if (!r.ok) {
-    return { ok: false, reason: `brevo_${r.status}: ${(await r.text()).slice(0, 160)}` };
+  const subject = isPL
+    ? `🎯 Plan podstawowych komend dla ${dog}`
+    : `🎯 Dein Notfall-Grundkommando-Plan für ${dog}`;
+  const html = isPL ? customerHtmlPL(dog) : customerHtml(dog);
+
+  // Bezahlte Auslieferung: DE primär über Google Workspace SMTP, Brevo Fallback.
+  let sentVia: "google" | "brevo" | null = null;
+  if (!isPL) {
+    try {
+      const { googleSmtpConfigured, sendViaGoogleSmtp } = await import(
+        "./google-smtp"
+      );
+      if (googleSmtpConfigured()) {
+        await sendViaGoogleSmtp({
+          to: lead.email,
+          subject,
+          html,
+          cc: "kontakt@primesocial.de",
+          attachments: [{ name: fileName, contentBase64: pdfBase64 }],
+        });
+        sentVia = "google";
+      }
+    } catch (e: any) {
+      console.error(
+        "[grundkommandos-deliver] Google-SMTP fehlgeschlagen → Fallback Brevo:",
+        e?.message
+      );
+    }
+  }
+
+  if (!sentVia) {
+    const r = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sender: isPL
+          ? { name: "ŁapaPlan", email: "support@pfoten-plan.de" }
+          : { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
+        to: [{ email: lead.email }],
+        cc: [{ email: "kontakt@primesocial.de" }],
+        subject,
+        htmlContent: html,
+        attachment: [{ name: fileName, content: pdfBase64 }],
+      }),
+    });
+    if (!r.ok) {
+      return { ok: false, reason: `brevo_${r.status}: ${(await r.text()).slice(0, 160)}` };
+    }
   }
 
   // 4) Idempotenz-Marker (frischer Read + Merge, um answers nicht zu clobbern)

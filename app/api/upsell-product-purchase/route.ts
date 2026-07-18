@@ -298,6 +298,36 @@ export async function POST(request: Request) {
     const contentHtml = textToHtml(generatedText);
     const emailHtml = buildDeliveryEmail(type, dogName, contentHtml);
     const productName = PRODUCT_NAMES[type] || "Pfoten-Plan Produkt";
+    const upsellSubject = `Dein ${productName} für ${dogName} ist fertig!`;
+
+    // Bezahlte Auslieferung: primär über Google Workspace SMTP, Brevo Fallback.
+    try {
+      const { googleSmtpConfigured, sendViaGoogleSmtp } = await import(
+        "@/lib/google-smtp"
+      );
+      if (googleSmtpConfigured()) {
+        await sendViaGoogleSmtp({
+          to: email,
+          subject: upsellSubject,
+          html: emailHtml,
+          cc: "kontakt@primesocial.de",
+        });
+        console.log(`${type} via Google an ${email} für ${dogName}`);
+        return NextResponse.json({
+          success: true,
+          type,
+          email,
+          dogName,
+          message: `${productName} wurde generiert und per Email gesendet.`,
+          via: "google",
+        });
+      }
+    } catch (e: any) {
+      console.error(
+        "[upsell-product-purchase] Google-SMTP fehlgeschlagen → Fallback Brevo:",
+        e?.message
+      );
+    }
 
     const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",

@@ -53,6 +53,37 @@ export async function POST(request: Request) {
       );
     }
     const fileName = `Anti-Giftkoeder-Plan-${name.replace(/\s+/g, "-")}.pdf`;
+    const agSubject = `Dein Anti-Giftköder-Trainingsplan für ${name}`;
+    const agHtml = htmlBody(name, breedStr);
+
+    // Bezahlte Auslieferung: primär über Google Workspace SMTP, Brevo Fallback.
+    try {
+      const { googleSmtpConfigured, sendViaGoogleSmtp } = await import(
+        "@/lib/google-smtp"
+      );
+      if (googleSmtpConfigured()) {
+        await sendViaGoogleSmtp({
+          to: email,
+          subject: agSubject,
+          html: agHtml,
+          cc: "kontakt@primesocial.de",
+          attachments: [{ name: fileName, contentBase64: pdfBase64 }],
+        });
+        console.log(`Anti-Giftkoeder-Plan via Google an ${email} (${name})`);
+        return NextResponse.json({
+          ok: true,
+          message: `Plan an ${email} gesendet`,
+          pdf_bytes: pdfBytes.length,
+          via: "google",
+        });
+      }
+    } catch (e: any) {
+      console.error(
+        "[anti-giftkoeder] Google-SMTP fehlgeschlagen → Fallback Brevo:",
+        e?.message
+      );
+    }
+
     const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
@@ -63,8 +94,8 @@ export async function POST(request: Request) {
         sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
         to: [{ email }],
         cc: [{ email: "kontakt@primesocial.de" }],
-        subject: `Dein Anti-Giftköder-Trainingsplan für ${name}`,
-        htmlContent: htmlBody(name, breedStr),
+        subject: agSubject,
+        htmlContent: agHtml,
         attachment: [{ name: fileName, content: pdfBase64 }],
       }),
     });

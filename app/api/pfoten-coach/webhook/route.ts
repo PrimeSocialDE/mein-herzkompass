@@ -73,6 +73,23 @@ async function notifyCustomer(dogName: string, email: string) {
       </table>
     </td></tr></table>
   </div>`;
+  const coachSubject = `🎧 Dein Audio-Coach für ${dog} ist da!`;
+  // Bezahlte Auslieferung (Audio-Coach): primär über Google Workspace SMTP,
+  // Brevo als Fallback.
+  try {
+    const { googleSmtpConfigured, sendViaGoogleSmtp } = await import(
+      "@/lib/google-smtp"
+    );
+    if (googleSmtpConfigured()) {
+      await sendViaGoogleSmtp({ to: email, subject: coachSubject, html });
+      return;
+    }
+  } catch (e: any) {
+    console.error(
+      "[pfoten-coach/webhook] Google-SMTP fehlgeschlagen → Fallback Brevo:",
+      e?.message || e
+    );
+  }
   try {
     const r = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
@@ -80,7 +97,7 @@ async function notifyCustomer(dogName: string, email: string) {
       body: JSON.stringify({
         sender: { name: "Pfoten-Plan", email: "support@pfoten-plan.de" },
         to: [{ email }],
-        subject: `🎧 Dein Audio-Coach für ${dog} ist da!`,
+        subject: coachSubject,
         htmlContent: html,
       }),
     });

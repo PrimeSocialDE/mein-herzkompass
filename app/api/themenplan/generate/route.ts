@@ -122,6 +122,36 @@ export async function POST(req: NextRequest) {
       <p>Viel Freude mit ${dogName}!<br>Dein Pfoten-Plan-Team</p>
     </div>`;
 
+    // Bezahlte Auslieferung: primär über Google Workspace SMTP (bessere
+    // Zustellung bei web.de/GMX), Brevo als Fallback.
+    try {
+      const { googleSmtpConfigured, sendViaGoogleSmtp } = await import(
+        "@/lib/google-smtp"
+      );
+      if (googleSmtpConfigured()) {
+        await sendViaGoogleSmtp({
+          to: email,
+          subject,
+          html,
+          cc: "kontakt@primesocial.de",
+          attachments: [{ name: filename, contentBase64: pdfBase64 }],
+        });
+        return NextResponse.json({
+          ok: true,
+          module,
+          theme,
+          illustrated,
+          email,
+          via: "google",
+        });
+      }
+    } catch (e: any) {
+      console.error(
+        "[themenplan/generate] Google-SMTP fehlgeschlagen → Fallback Brevo:",
+        e?.message
+      );
+    }
+
     const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: { "api-key": process.env.BREVO_API_KEY!, "Content-Type": "application/json" },

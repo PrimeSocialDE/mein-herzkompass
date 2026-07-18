@@ -49,6 +49,37 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "BREVO_API_KEY nicht gesetzt" }, { status: 500 });
     }
     const fileName = `Sommer-Sicherheits-Plan-${name.replace(/\s+/g, "-")}.pdf`;
+    const shSubject = `Dein Sommer-Sicherheits-Plan für ${name}`;
+    const shHtml = htmlBody(name, breedStr);
+
+    // Bezahlte Auslieferung: primär über Google Workspace SMTP, Brevo Fallback.
+    try {
+      const { googleSmtpConfigured, sendViaGoogleSmtp } = await import(
+        "@/lib/google-smtp"
+      );
+      if (googleSmtpConfigured()) {
+        await sendViaGoogleSmtp({
+          to: email,
+          subject: shSubject,
+          html: shHtml,
+          cc: "kontakt@primesocial.de",
+          attachments: [{ name: fileName, contentBase64: pdfBase64 }],
+        });
+        console.log(`Sommer-Sicherheits-Plan via Google an ${email} (${name})`);
+        return NextResponse.json({
+          ok: true,
+          message: `Plan an ${email} gesendet`,
+          pdf_bytes: pdfBytes.length,
+          via: "google",
+        });
+      }
+    } catch (e: any) {
+      console.error(
+        "[sommer-hitzeschutz] Google-SMTP fehlgeschlagen → Fallback Brevo:",
+        e?.message
+      );
+    }
+
     const brevoRes = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
