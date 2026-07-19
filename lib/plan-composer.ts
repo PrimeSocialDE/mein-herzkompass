@@ -47,58 +47,100 @@ export interface ComposeArgs {
 function isMale(gender?: string): boolean {
   if (!gender) return false;
   const g = gender.toLowerCase();
-  return g === "m" || g === "male" || g === "ruede" || g === "rüde" || g === "männlich" || g === "maennlich";
+  return (
+    g === "m" ||
+    g === "male" ||
+    g === "rüde" ||
+    g === "ruede" ||
+    g === "männlich" ||
+    g === "maennlich"
+  );
 }
 
 function personalize(text: string, dog: DogProfile): string {
   let out = text.replace(/\{dogName\}/g, dog.dogName || "deinem Hund");
 
   if (isMale(dog.dogGender)) {
-    out = out
-      // Verb-nahe Pronomen (Nominativ/Akkusativ-Mischung)
-      .replace(/\bwenn sie\b/g, "wenn er")
-      .replace(/\bWenn sie\b/g, "Wenn er")
-      .replace(/\bSobald sie\b/g, "Sobald er")
-      .replace(/\bsobald sie\b/g, "sobald er")
-      .replace(/\bbis sie\b/g, "bis er")
-      .replace(/\bdass sie\b/g, "dass er")
-      .replace(/\bdamit sie\b/g, "damit er")
-      .replace(/\bweil sie\b/g, "weil er")
-      .replace(/\bob sie\b/g, "ob er")
-      .replace(/\bals sie\b/g, "als er")
-      .replace(/\bwo sie\b/g, "wo er")
-      // Imperative + Hund-Akkusativ
-      .replace(/\blass sie\b/g, "lass ihn")
-      .replace(/\bLass sie\b/g, "Lass ihn")
-      .replace(/\blasse sie\b/g, "lasse ihn")
-      .replace(/\bfuehre sie\b/g, "führe ihn")
-      .replace(/\bführe sie\b/g, "führe ihn")
-      .replace(/\bFuehre sie\b/g, "Führe ihn")
-      .replace(/\bFühre sie\b/g, "Führe ihn")
-      .replace(/\bbringe sie\b/g, "bringe ihn")
-      .replace(/\bbring sie\b/g, "bring ihn")
-      .replace(/\blocke sie\b/g, "locke ihn")
-      .replace(/\bLocke sie\b/g, "Locke ihn")
-      .replace(/\bBelohne sie\b/g, "Belohne ihn")
-      .replace(/\bbelohne sie\b/g, "belohne ihn")
-      .replace(/\bLobe sie\b/g, "Lobe ihn")
-      .replace(/\blobe sie\b/g, "lobe ihn")
-      .replace(/\bRufe sie\b/g, "Rufe ihn")
-      .replace(/\brufe sie\b/g, "rufe ihn")
+    // Pronomen-Swap "sie"→"er" / "ihr"→"ihm" / "ihre/ihren"→"seine/seinen".
+    // Wir matchen nach Satz-Kontext (vorangehendes Wort), damit wir nur den Hund
+    // erwischen und nicht z.B. eine Person ("die Familie hat sie eingeladen").
+    const sieToEr: Array<[RegExp, string]> = [
+      // Konjunktionen + Verb-Trigger (Hund als Subjekt)
+      [/\b(wenn|Wenn) sie\b/g, "$1 er"],
+      [/\b(sobald|Sobald) sie\b/g, "$1 er"],
+      [/\b(bis|Bis) sie\b/g, "$1 er"],
+      [/\b(dass|Dass) sie\b/g, "$1 er"],
+      [/\b(damit|Damit) sie\b/g, "$1 er"],
+      [/\b(weil|Weil) sie\b/g, "$1 er"],
+      [/\b(ob|Ob) sie\b/g, "$1 er"],
+      [/\b(als|Als) sie\b/g, "$1 er"],
+      [/\b(wo|Wo) sie\b/g, "$1 er"],
+      [/\b(falls|Falls) sie\b/g, "$1 er"],
+      [/\b(während|Während) sie\b/g, "$1 er"],
+      [/\b(bevor|Bevor) sie\b/g, "$1 er"],
+      [/\b(nachdem|Nachdem) sie\b/g, "$1 er"],
+      // Häufige Verb-Phrasen mit Hund als Subjekt (Subjekt-Verb) — sehr breit
+      [/\bsie (ist|war|hat|hatte|wird|wurde|kann|konnte|soll|sollte|muss|musste|darf|durfte|mag|mochte|will|wollte|liegt|sitzt|steht|läuft|kommt|geht|bleibt|schläft|frisst|trinkt|sucht|reagiert|braucht|zeigt|lernt|versteht|kennt|merkt|fühlt|sieht|hört|schaut|blickt|wirkt|scheint|sich|springt|hüpft|rennt|spielt|schluckt|kotet|pinkelt|hebt|schnüffelt|wittert|akzeptiert|verweigert|verteidigt|trägt|probiert|bellt|knurrt|jault|hechelt|wedelt|atmet|folgt|findet|fasst|erkennt|versucht|schafft|macht|nimmt|gibt|reicht|legt|setzt|stellt|wendet|dreht|wartet|achtet|ignoriert|verfolgt|fixiert|orientiert|verliert|gewinnt|holt|bringt|kaut|tappt|winselt|reagiert)\b/g, "er $1"],
+      [/\bSie (ist|war|hat|hatte|wird|wurde|kann|konnte|soll|sollte|muss|musste|darf|durfte|mag|mochte|will|wollte|liegt|sitzt|steht|läuft|kommt|geht|bleibt|schläft|frisst|trinkt|sucht|reagiert|braucht|zeigt|lernt|versteht|kennt|merkt|fühlt|sieht|hört|schaut|blickt|wirkt|scheint|sich|springt|hüpft|rennt|spielt|schluckt|kotet|pinkelt|hebt|schnüffelt|wittert|akzeptiert|verweigert|verteidigt|trägt|probiert|bellt|knurrt|jault|hechelt|wedelt|atmet|folgt|findet|fasst|erkennt|versucht|schafft|macht|nimmt|gibt|reicht|legt|setzt|stellt|wendet|dreht|wartet|achtet|ignoriert|verfolgt|fixiert|orientiert|verliert|gewinnt|holt|bringt|kaut|tappt|winselt|reagiert)\b/g, "Er $1"],
+      // Verb-Subjekt-Inversion (nach Frage-/Adverbien): "wann schläft sie",
+      // "wo läuft sie", "oft braucht sie", "schon kommt sie", "verliert sie Interesse"
+      [/\b(schläft|läuft|kommt|geht|bleibt|sitzt|steht|liegt|frisst|trinkt|sucht|reagiert|braucht|zeigt|lernt|versteht|kennt|merkt|fühlt|sieht|hört|schaut|blickt|wirkt|scheint|kaut|wedelt|atmet|bellt|knurrt|jault|winselt|hechelt|tappt|hüpft|springt|rennt|spielt|schluckt|kotet|pinkelt|hebt|schnüffelt|wittert|akzeptiert|verweigert|verteidigt|trägt|bringt|holt|nimmt|gibt|reicht|legt|setzt|stellt|wendet|dreht|wartet|achtet|ignoriert|verfolgt|fixiert|orientiert|verliert|gewinnt|findet|fasst|erkennt|versucht|schafft|macht|hat|ist|war|wird|wurde|kann|konnte|soll|muss|darf|mag) sie\b/g, "$1 er"],
+      [/\b(braucht|zeigt|lernt|kennt|reagiert|sucht|frisst|läuft|kommt|geht|verliert|findet|hat|ist|kann|will|soll|muss|darf|mag) sie (das|den|die|ein|einen|eine|genau|wieder|nicht|schon|noch|jetzt|heute|kurz|Interesse|Lust|Energie|Mühe|Spaß|Zeit|Geduld|Hunger|Durst)\b/g, "$1 er $2"],
+      // Imperative + Hund-Akkusativ (inkl. konjugierte Formen "lässt sie")
+      [/\b(lass|Lass|lasse|Lasse|lässt|Lässt|lassen|Lassen) sie\b/g, "$1 ihn"],
+      [/\b(führe|Führe|fuehre|Fuehre|führst|Führst|führt|Führt|führen|Führen) sie\b/g, "$1 ihn"],
+      [/\b(bring|Bring|bringe|Bringe|bringst|Bringst|bringt|Bringt|bringen|Bringen) sie\b/g, "$1 ihn"],
+      [/\b(locke|Locke|lockst|Lockst|lockt|Lockt|locken|Locken) sie\b/g, "$1 ihn"],
+      [/\b(belohne|Belohne|belohnst|belohnt|belohnen) sie\b/g, "$1 ihn"],
+      [/\b(lobe|Lobe|lobst|Lobst|lobt|Lobt|loben|Loben) sie\b/g, "$1 ihn"],
+      [/\b(rufe|Rufe|rufst|Rufst|ruft|Ruft|rufen|Rufen) sie\b/g, "$1 ihn"],
+      [/\b(hole|Hole|hol|Hol|holst|Holst|holt|Holt|holen|Holen) sie\b/g, "$1 ihn"],
+      [/\b(nimm|Nimm|nehme|Nehme|nimmst|Nimmst|nimmt|Nimmt|nehmen|Nehmen) sie\b/g, "$1 ihn"],
+      [/\b(setze|Setze|setz|Setz|setzt|Setzt|setzen|Setzen) sie\b/g, "$1 ihn"],
+      [/\b(streichle|Streichle|streichele|Streichele|streichelst|streichelt|streicheln) sie\b/g, "$1 ihn"],
+      [/\b(beobachte|Beobachte|beobachtest|beobachtet|beobachten) sie\b/g, "$1 ihn"],
+      [/\b(siehst|sieht|sehen|seht) sie\b/g, "$1 ihn"],
+      [/\b(hörst|hört|hören) sie\b/g, "$1 ihn"],
+      [/\b(forderst|fordert|fordern) sie\b/g, "$1 ihn"],
+      [/\b(lädst|lade|lädt|laden|Lade) sie\b/g, "$1 ihn"],
+      [/\b(hältst|hält|halten|haltest) sie\b/g, "$1 ihn"],
+      [/\b(weckst|weckt|wecken) sie\b/g, "$1 ihn"],
+      [/\b(ignoriere|Ignoriere|ignorierst|ignoriert|ignorieren) sie\b/g, "$1 ihn"],
+      [/\b(belohne|belohnst|belohnt|belohnen) sie\b/g, "$1 ihn"],
+      [/\b(siehst|sieht|sehen|seht) sie\b/g, "$1 ihn"],
+      [/\b(trainier|Trainier|trainiere|Trainiere|trainierst|trainiert|trainieren) sie\b/g, "$1 ihn"],
+      [/\b(kennst|kennt|kennen) sie\b/g, "$1 ihn"],
+      [/\b(verstehst|versteht|verstehen) sie\b/g, "$1 ihn"],
+      [/\b(brauchst|brauchen) sie\b/g, "$1 ihn"],
+      [/\b(zeigst|zeigt|zeigen) sie\b/g, "$1 ihm"],
+      [/\b(\w+st) sie (zuverlässig|sicher|stabil|locker|ruhig|entspannt|gezielt|aktiv)\b/g, "$1 er $2"],
       // Dativ
-      .replace(/\bmit ihr\b/g, "mit ihm")
-      .replace(/\bzu ihr\b/g, "zu ihm")
-      .replace(/\bvon ihr\b/g, "von ihm")
-      .replace(/\bbei ihr\b/g, "bei ihm")
-      .replace(/\bnach ihr\b/g, "nach ihm")
-      .replace(/\bvor ihr\b/g, "vor ihm")
-      // Possessiv (sehr grob — sicherer Best-effort)
-      .replace(/\bihrer Pfote\b/g, "seiner Pfote")
-      .replace(/\bihre Pfote\b/g, "seine Pfote")
-      .replace(/\bihr Bein\b/g, "sein Bein")
-      .replace(/\bihren Kopf\b/g, "seinen Kopf")
-      .replace(/\bihre Schulter\b/g, "seine Schulter")
-      .replace(/\bihrer Schulter\b/g, "seiner Schulter");
+      [/\b(mit|zu|von|bei|nach|vor|aus|seit|gegenüber|hinter|neben|unter|über|an|auf) ihr\b/g, "$1 ihm"],
+      // Possessiv: "ihr/ihre/ihren/ihrer/ihrem" → "sein/seine/seinen/seiner/seinem"
+      [/\bihren\b/g, "seinen"],
+      [/\bihrem\b/g, "seinem"],
+      [/\bihrer\b/g, "seiner"],
+      [/\bihres\b/g, "seines"],
+      [/\bihre\b/g, "seine"],
+      [/\bIhren\b/g, "Seinen"],
+      [/\bIhrem\b/g, "Seinem"],
+      [/\bIhrer\b/g, "Seiner"],
+      [/\bIhres\b/g, "Seines"],
+      [/\bIhre\b/g, "Seine"],
+      // "ihr" als Possessiv vor Nomen: alle Faelle catchen AUSSER 2.-Person-
+      // Plural ("ihr seid", "ihr habt", "ihr werdet"). Negativ-Lookahead.
+      [/\bihr (?!(seid|seiet|sei|wart|werdet|werden|werdend|habt|hattet|haben|hattest|gewesen|wurdet|euch|untereinander)\b)([A-ZÄÖÜ][a-zäöüßA-ZÄÖÜ-]*)/g, "sein $2"],
+      [/\bIhr (?!(seid|seiet|sei|wart|werdet|werden|werdend|habt|hattet|haben|hattest|gewesen|wurdet|euch|untereinander)\b)([A-ZÄÖÜ][a-zäöüßA-ZÄÖÜ-]*)/g, "Sein $2"],
+      // "ihr" mit kleinem Anfangsbuchstaben — Spezialfall ohne Substantiv-Großschreibung
+      // (z.B. "ihr eigenes", "ihr eigenes Komfort-Niveau")
+      [/\bihr (eigenes|eigenen|eigener|eigene)\b/g, "sein $1"],
+      // Reflexiv-Genitiv: "ihres", "ihrer Sache" etc. werden oben schon abgedeckt
+      // Demonstrativ: "ihretwegen" → "seinetwegen"
+      [/\bihretwegen\b/g, "seinetwegen"],
+    ];
+    for (const [re, repl] of sieToEr) {
+      out = out.replace(re, repl);
+    }
   }
 
   return out;
@@ -5820,15 +5862,20 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
   return {
     intro: {
       headline: `${planLengthMonths}-Monatsplan für ${dogName}`,
-      einleitung: introText || fallbackEinleitung,
-      aufbau: fallbackAufbau,
-      ziele: zieleText || fallbackZiele,
+      // KI-Text (introText/zieleText/abschlussText) wird von Claude standardmaessig
+      // mit weiblichen Pronomen geschrieben — daher auch hier durch personalize(),
+      // damit bei Rueden korrekt auf er/ihn/sein geswappt wird.
+      einleitung: personalize(introText || fallbackEinleitung, dog),
+      aufbau: personalize(fallbackAufbau, dog),
+      ziele: personalize(zieleText || fallbackZiele, dog),
     },
     weeks,
     monats_uebersichten: buildMonatsUebersichten(problem, weeksTotal, monthsTotal, dog, problemLabel, customProblemText),
-    abschluss:
+    abschluss: personalize(
       abschlussText ||
       `Du hast ${dogName} über ${weeksTotal} Wochen systematisch begleitet, das ist eine echte Leistung. Halte die Routinen aufrecht, beobachte die kleinen Fortschritte und bleib geduldig mit euch beiden. Veränderung ist keine Linie, sondern eine Welle.`,
+      dog
+    ),
     zusatz_spiele: BONUS_SPIELE.map((bs) => ({
       ...bs,
       schritte: bs.schritte.map((s) => personalize(s, dog)),
