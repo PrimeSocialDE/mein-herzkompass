@@ -261,16 +261,13 @@
         
         let isNavigating = false;
 
-        // A/B Test: 50% sehen Trust-Zwischenseite, 50% gehen direkt weiter
-        // (hochgezogen von 30/70, damit der Test schneller Signifikanz erreicht)
+        // A/B Test ENTSCHIEDEN (18.582 Leads): Trainer-Trust-Seite (A) gewinnt
+        // klar mit 11,80% vs 7,77% Kaufrate (+52% relativ, z=9,18). Daher jetzt
+        // 100% auf die Trust-Seite (kurz-schritt2b). ab_test_trust bleibt 'A'
+        // gesetzt fuer die Attribution im weiteren Funnel.
         function getTrustVariant() {
-            let variant = localStorage.getItem('ab_test_trust');
-            if (!variant) {
-                variant = Math.random() < 0.50 ? 'A' : 'B';
-                localStorage.setItem('ab_test_trust', variant);
-            }
-            // A = Trust-Seite (kurz-schritt2b), B = direkt zu Schritt 3
-            return variant === 'A' ? 'kurz-schritt2b.html' : 'kurz-schritt3.html';
+            localStorage.setItem('ab_test_trust', 'A');
+            return 'kurz-schritt2b.html';
         }
 
         function selectBreed(breed) {
