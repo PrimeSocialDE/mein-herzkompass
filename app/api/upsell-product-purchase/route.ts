@@ -215,6 +215,42 @@ export async function POST(request: Request) {
 
     const dogName = rawDogName || "deinen Hund";
 
+    // Lebensretter-Training wird NICHT als KI-Text im Body ausgeliefert, sondern
+    // als designtes PDF-Modul (10 Kommandos + KI-Einleitung) über die interne
+    // zusatzmodul/send-Pipeline. Idempotenz dort dedupliziert gegen den Webhook.
+    if (type === "lebensretter") {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+        "https://www.pfoten-plan.de";
+      try {
+        const r = await fetch(`${baseUrl}/api/zusatzmodul/send`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            dogName: dogName === "deinen Hund" ? undefined : dogName,
+            moduleKey: "lebensretter",
+          }),
+        });
+        const j = await r.json().catch(() => ({}));
+        return NextResponse.json({
+          success: true,
+          type,
+          email,
+          dogName,
+          via: "zusatzmodul",
+          delivery: j,
+        });
+      } catch (e: any) {
+        console.error("[upsell-product-purchase] lebensretter delivery error:", e?.message);
+        return NextResponse.json(
+          { error: "Lebensretter-Auslieferung fehlgeschlagen" },
+          { status: 500 }
+        );
+      }
+    }
+
     // 1. Update upsell_tracking
     const { error: updateError } = await supabase
       .from("upsell_tracking")

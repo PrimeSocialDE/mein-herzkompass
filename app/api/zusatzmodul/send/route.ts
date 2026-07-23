@@ -141,6 +141,13 @@ const MODULE_CONFIG: Record<
     body: "Der Plan wurde individuell auf {dogName} abgestimmt und setzt auf klare Routinen und konsequente Belohnung statt Strafe. Die acht Übungen greifen logisch ineinander und helfen euch dabei, eine berechenbare Toiletten-Routine zu etablieren, Auslöser zu lesen und Unfälle sauber zu managen.",
     closing: "Geduld und Routine zahlen sich aus — viel Erfolg mit {dogName}!",
   },
+  lebensretter: {
+    label: "Lebensretter-Training",
+    subject: "Dein Lebensretter-Training für {dogName} ist da",
+    intro: "dein persönliches Lebensretter-Training für {dogName} ist jetzt fertig.",
+    body: "Es enthält 10 Kommandos, die im Ernstfall den Unterschied machen: vom Notfall-Rückruf über das sofortige Aus bei Giftködern bis zum Distanz-Not-Halt an der Straße. Jedes Kommando ist in fünf klaren Schritten aufgebaut, mit Übungsplan und den wichtigsten No-Gos. Die Einleitung ist eigens auf {dogName} zugeschnitten.",
+    closing: "Fang am besten mit dem Notfall-Rückruf an, damit du weißt, dass du für {dogName} alles getan hast.",
+  },
 };
 
 // Bonus-Varianten: nutzen den PDF-Inhalt eines bestehenden Moduls (pdfModuleKey),
@@ -256,6 +263,71 @@ const BONUS_CONFIG_PL: typeof BONUS_CONFIG = {
 
 function personalize(s: string, name: string): string {
   return String(s || "").replace(/\{dogName\}/g, name);
+}
+
+// Lebensretter-Modul: persönliche KI-Einleitung (whyParas) auf Basis von Rasse
+// + Quiz-Antworten. Fällt bei Fehler still auf null zurück → buildPdf nutzt dann
+// den statischen Standardtext des Moduls. Keine Gedankenstriche (Kunden-Wunsch).
+async function buildLebensretterIntro(
+  dogName: string,
+  breed: string,
+  answers: Record<string, any> | null
+): Promise<string[] | null> {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return null;
+  const problem =
+    answers?.dog_problem ||
+    answers?.problem ||
+    (Array.isArray(answers?.dog_behaviors)
+      ? answers!.dog_behaviors.join(", ")
+      : "") ||
+    "";
+  const age = answers?.dog_age || answers?.age || "";
+  const prompt = `Du schreibst die persönliche Einleitung für das "Lebensretter-Training" für einen Hund. Das ist ein Modul mit 10 Sicherheits-Kommandos (Notfall-Rückruf, sofortiges Aus bei Giftködern, Distanz-Not-Halt, Straßen-Stopp, Maulkorb-Akzeptanz u.a.), die den Hund im Ernstfall schützen.
+
+Hund: ${dogName}, Rasse: ${breed || "unbekannt"}${age ? `, Alter: ${age}` : ""}.${problem ? ` Themen aus dem Quiz: ${problem}.` : ""}
+
+Schreibe 3 bis 4 kurze, warme Absätze (per du, wie ein erfahrener Hundetrainer), die:
+- auf die typischen Eigenschaften der Rasse eingehen und WARUM gerade dieser Hund von den Sicherheits-Kommandos profitiert
+- die Quiz-Themen (falls vorhanden) aufgreifen und mit dem Sicherheits-Aspekt verknüpfen
+- das Ganze um die Kernfrage rahmen: "Was, wenn es mal drauf ankommt?"
+- in den Gedanken münden, dass diese 10 Kommandos das Sicherheitsnetz für ${dogName} sind
+
+WICHTIG: Keine Gedankenstriche. Nutze Kommas und Punkte. Deutsch, konkret, nicht kitschig.
+
+Gib AUSSCHLIESSLICH ein JSON-Array von 3 bis 4 Strings zurück (jeder String ein Absatz), sonst nichts.`;
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1200,
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    if (!res.ok) {
+      console.error("[zusatzmodul/send] Intro-API", res.status);
+      return null;
+    }
+    const data = await res.json();
+    const text = (data.content || [])
+      .map((c: any) => c.text || "")
+      .join("");
+    const m = text.match(/\[[\s\S]*\]/);
+    const paras = JSON.parse(m ? m[0] : text);
+    if (Array.isArray(paras) && paras.length && paras.every((p) => typeof p === "string")) {
+      return paras;
+    }
+    return null;
+  } catch (e: any) {
+    console.error("[zusatzmodul/send] Intro-Generierung fehlgeschlagen:", e?.message);
+    return null;
+  }
 }
 
 function buildHtml(
@@ -381,7 +453,7 @@ export async function POST(request: Request) {
         ? BONUS_CONFIG_PL[bonusKey]
         : bonus
       : isPL
-        ? MODULE_CONFIG_PL[moduleKey]
+        ? MODULE_CONFIG_PL[moduleKey] || MODULE_CONFIG[moduleKey]
         : MODULE_CONFIG[moduleKey];
     const pdfModuleKey: string = bonus ? bonus.pdfModuleKey : moduleKey;
     const trackKey: string = bonus ? bonusKey : moduleKey;
@@ -412,11 +484,41 @@ export async function POST(request: Request) {
     const { buildPdf } = isPL
       ? await import("@/generate-zusatzmodul-pdf.pl.mjs")
       : await import("@/generate-zusatzmodul-pdf.mjs");
+
+    // Lebensretter: echte Rasse + persönliche KI-Einleitung (whyParas) auf Basis
+    // von Rasse/Quiz. Die anderen Module bleiben unverändert (Default-Breed + statischer why-Text).
+    let pdfBreed = isPL ? "kundelek" : "Mischling";
+    let whyParas: string[] | undefined;
+    if (pdfModuleKey === "lebensretter") {
+      try {
+        const admin = createMemberAdminClient();
+        const { data: lead } = await admin
+          .from("wauwerk_leads")
+          .select("answers, breed")
+          .ilike("email", email)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        const answers = (lead?.answers as any) || null;
+        const breed =
+          (lead as any)?.breed ||
+          answers?.breed ||
+          answers?.dog_breed ||
+          "";
+        if (breed) pdfBreed = breed;
+        const intro = await buildLebensretterIntro(name, breed, answers);
+        if (intro) whyParas = intro;
+      } catch (e: any) {
+        console.warn("[zusatzmodul/send] Lebensretter-Personalisierung übersprungen:", e?.message);
+      }
+    }
+
     const pdfBytes = await buildPdf({
       dogName: name,
-      dogBreed: isPL ? "kundelek" : "Mischling",
+      dogBreed: pdfBreed,
       moduleKey: pdfModuleKey,
       verbose: false,
+      ...(whyParas ? { whyParas } : {}),
     });
     const pdfBase64 = Buffer.from(pdfBytes).toString("base64");
 

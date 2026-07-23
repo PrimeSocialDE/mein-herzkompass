@@ -367,6 +367,193 @@ const PILL_AC_GOLD  = GOLD_DARK;
 // Personalisierung: ${'$'}{dogName} wird im Code ersetzt.
 
 const MODULES = {
+  lebensretter: {
+    coverTitle: "Lebensretter-Training für",
+    coverImage: null,
+    fallbackCoverImage: null,
+    why: {
+      title: "Warum diese 10 Kommandos so wichtig sind",
+      subtitle: "Die Übungen, die im Ernstfall zählen",
+      paras: [
+        "Dein normaler Trainingsplan macht euren Alltag entspannter. Dieses Training hat eine andere Aufgabe: Es soll {dogName} in genau den Momenten schützen, in denen du keine Sekunde zum Nachdenken hast.",
+        "Ein losgerissener Hund an der Straße, ein Giftköder auf dem Weg, ein Radfahrer, der plötzlich um die Ecke kommt. In solchen Momenten entscheidet nicht Gehorsam, sondern ein einziges, blitzschnell sitzendes Signal.",
+        "Genau diese Signale trainieren die wenigsten Halter gezielt, obwohl sie die wichtigsten überhaupt sind. Die folgenden 10 Kommandos bauen dir Schritt für Schritt ein Sicherheitsnetz für {dogName} auf.",
+        "Wichtig: Du übst diese Signale in Ruhe und ohne echten Stress auf, damit sie im Ernstfall automatisch abrufbar sind. Ein Kommando, das nur zuhause klappt, hilft draußen nicht.",
+      ],
+    },
+    how: {
+      title: "So baust du die Kommandos richtig auf",
+      paras: [
+        "Trainiere jedes Kommando zuerst drinnen und in völliger Ruhe, bevor du es nach draußen und in schwierigere Situationen bringst. {dogName} muss erst verstehen, was gemeint ist, bevor Ablenkung dazukommt.",
+        "Belohne im Sicherheitstraining großzügig und hochwertig. Gerade der Notfall-Rückruf und das Aus sollen sich für {dogName} maximal lohnen, dann reagiert er auch, wenn etwas Spannenderes lockt.",
+        "Kurze, häufige Einheiten schlagen lange. 2 bis 3 Minuten pro Kommando am Tag, dafür regelmäßig, bringen mehr als eine lange Einheit am Wochenende.",
+        "Teste ein Kommando nie zum ersten Mal in einer echten Gefahrensituation. Baue es sauber auf, festige es unter leichter Ablenkung und steigere erst dann. Sicherheit entsteht durch Wiederholung, nicht durch Druck.",
+      ],
+    },
+    exercises: [
+      {
+        title: "Der Notfall-Rückruf",
+        intro: "Das eine Signal, das zieht, wenn es wirklich drauf ankommt, aufgebaut als absoluter Jackpot.",
+        steps: [
+          { name: "Ein eigenes Notfallwort wählen", desc: "Nimm ein Wort, das du im Alltag NICHT benutzt, zum Beispiel Sofort oder einen Pfiff. Es wird ausschließlich für den Ernstfall reserviert und nie verbraucht." },
+          { name: "Mit dem Mega-Jackpot verknüpfen", desc: "Sag das Wort in ruhiger Umgebung und gib {dogName} sofort etwas außergewöhnlich Gutes, mehrere Stücke Käse oder Fleisch hintereinander. So wird das Wort zum größten Versprechen, das er kennt." },
+          { name: "Distanz langsam aufbauen", desc: "Wiederhole es über Tage aus wenigen Metern, dann aus dem Nebenraum, dann aus dem Garten. Jedes Mal kommt der Jackpot." },
+          { name: "Leichte Ablenkung einbauen", desc: "Übe, wenn {dogName} gerade schnüffelt oder spielt. Kommt er trotzdem, feiere ihn überschwänglich. Kommt er nicht, gehst du eine Stufe zurück, näher und mit weniger Ablenkung." },
+          { name: "Wort heilig halten", desc: "Benutze das Notfallwort NIE für Alltagssituationen und rufe nie damit, wenn du unsicher bist, ob er kommt. Jedes verbrannte Mal schwächt es." },
+        ],
+        frequency: ["Täglich 5 kurze Wiederholungen", "Immer mit Top-Belohnung", "Nie im echten Notfall zum ersten Mal testen"],
+        watchFor: ["Kommt {dogName} freudig und schnell", "Kein Zögern beim Wort", "Belohnung bleibt immer außergewöhnlich"],
+        gos: ["Wort ausschließlich für den Ernstfall", "Immer der größte Jackpot", "Großzügig feiern"],
+        noGos: ["Nicht im Alltag verbrauchen", "Nicht rufen bei Unsicherheit", "Nie schimpfen, wenn er kommt"],
+      },
+      {
+        title: "Sofort-Aus",
+        intro: "{dogName} spuckt auf ein Wort sofort aus, was er im Maul hat, der wichtigste Schutz vor Giftködern und Fremdkörpern.",
+        steps: [
+          { name: "Mit dem Tausch beginnen", desc: "Gib {dogName} etwas Langweiliges ins Maul, ein Stück Trockenfutter, und halte ihm gleichzeitig etwas viel Besseres hin. Sag ruhig Aus und belohne, sobald er loslässt." },
+          { name: "Loslassen belohnen, nicht nehmen", desc: "Der Deal ist: abgeben lohnt sich immer. Nimm ihm nie einfach etwas weg, sonst lernt er zu schlucken oder wegzulaufen." },
+          { name: "Schwierigkeit steigern", desc: "Übe mit langweiligen, dann interessanteren Gegenständen. Immer gilt: Aus plus sofort etwas Besseres." },
+          { name: "Draußen übertragen", desc: "Übe an harmlosen Fundstücken beim Spaziergang. Sag Aus, tausche gegen ein Top-Leckerli. So wird Abgeben zur Gewohnheit, bevor es ernst wird." },
+          { name: "Zufällig einbauen", desc: "Baue Aus in unerwartete Alltagsmomente ein, nicht nur in der Übungssituation. Immer sofort etwas Besseres dafür, damit es überall zuverlässig sitzt." },
+        ],
+        frequency: ["Täglich 5 bis 10 Tausch-Wiederholungen", "Erst drinnen, dann draußen", "Immer der bessere Tausch"],
+        watchFor: ["{dogName} lässt zügig los", "Kein Verschlucken oder Wegdrehen", "Er kommt eher zu dir statt weg"],
+        gos: ["Abgeben immer belohnen", "Ruhig und freundlich bleiben", "Gegen etwas Besseres tauschen"],
+        noGos: ["Nicht hinterherjagen", "Nicht aus dem Maul reißen", "Nicht schimpfen"],
+      },
+      {
+        title: "Lass es",
+        intro: "{dogName} nimmt Gefährliches gar nicht erst auf, die proaktive Stufe vor dem Aus.",
+        steps: [
+          { name: "Leckerli in der Faust anbieten", desc: "Halte ein Leckerli in der geschlossenen Faust hin. {dogName} wird schnuppern und lecken. Warte ruhig, bis er ablässt, und belohne genau dann aus der anderen Hand." },
+          { name: "Wort einführen", desc: "Sobald er zuverlässig ablässt, sag ruhig Lass es in dem Moment, in dem er sich abwendet, und belohne." },
+          { name: "Auf den Boden übertragen", desc: "Leg ein Leckerli auf den Boden, deck es mit der Hand ab. Sag Lass es. Belohne für Ablassen aus der anderen Hand, nie das abgedeckte." },
+          { name: "In Bewegung üben", desc: "Leg beim Spaziergang harmlose Köder aus, etwa Trockenfutter. Sag Lass es, bevor er ran will, und belohne das Vorbeigehen großzügig." },
+          { name: "Mit mehr Ablenkung steigern", desc: "Übe an belebteren Orten mit mehr Reizen. Steigere die Schwierigkeit erst, wenn Lass es an ruhigen Orten sicher klappt." },
+        ],
+        frequency: ["Täglich 5 Minuten", "Vom Ruhigen ins Ablenkende steigern", "Belohnung kommt IMMER aus deiner Hand"],
+        watchFor: ["{dogName} wendet sich aktiv ab", "Er schaut zu dir statt zum Objekt", "Kein Hinstürzen mehr"],
+        gos: ["Ablassen sofort belohnen", "Ruhig und klar bleiben", "Frühzeitig ansagen"],
+        noGos: ["Nie das verbotene Objekt geben", "Nicht mit lauter Stimme", "Nicht zu schnell steigern"],
+      },
+      {
+        title: "Steh, der Distanz-Not-Halt",
+        intro: "{dogName} bleibt auf ein Wort sofort stehen, auch aus 15 Metern, wenn er auf eine Gefahr zuläuft.",
+        steps: [
+          { name: "Steh direkt vor dir aufbauen", desc: "Locke {dogName} mit einem Leckerli vor der Nase langsam nach oben und leicht zurück, bis er aus der Bewegung stehen bleibt. Sag Steh und belohne im Stehen." },
+          { name: "Kurze Distanz einbauen", desc: "Geh einen Schritt weg, sag Steh, geh zu ihm und belohne AN der Stelle. Wichtig: Belohnung kommt dorthin, wo er steht, nicht zu dir." },
+          { name: "Distanz vergrößern", desc: "Steigere über Tage auf 5, dann 10, dann 15 Meter. Bleibt er nicht, gehst du wieder näher heran." },
+          { name: "Aus der Bewegung stoppen", desc: "Lass {dogName} auf dich zukommen und sag mitten in der Bewegung Steh. Belohne das sofortige Anhalten. Das ist die eigentliche Notfall-Situation." },
+          { name: "Im Alltag testen", desc: "Baue Steh in ganz normale Spaziergänge ein, an einer Kreuzung oder vor einer Wiese, damit es zur verlässlichen Gewohnheit wird." },
+        ],
+        frequency: ["Täglich einige Wiederholungen", "Distanz langsam steigern", "Belohnung immer am Standort"],
+        watchFor: ["Sofortiges Anhalten", "Kein Weiterlaufen zu dir", "Ruhiges Stehen"],
+        gos: ["Am Standort belohnen", "Klar und ruhig ansagen", "In kleinen Schritten steigern"],
+        noGos: ["Nicht zu dir rufen beim Steh", "Nicht zu früh weit weggehen", "Nicht wiederholt rufen"],
+      },
+      {
+        title: "Platz auf Distanz",
+        intro: "{dogName} legt sich sofort ab, auch aus Entfernung, der zuverlässigste Not-Stopp überhaupt.",
+        steps: [
+          { name: "Platz sicher aufbauen", desc: "Festige zuerst ein sauberes Platz direkt vor dir mit Handzeichen, flache Hand nach unten, und Wort." },
+          { name: "Handzeichen betonen", desc: "Ein deutliches Handzeichen wirkt über Distanz oft besser als das Wort. Übe beides gemeinsam, damit {dogName} beide versteht." },
+          { name: "Einen Schritt Abstand", desc: "Geh einen Schritt zurück, gib Wort und Handzeichen. Belohne das Ablegen an Ort und Stelle." },
+          { name: "Distanz aufbauen", desc: "Steigere langsam die Entfernung. Ein sicheres Platz aus Distanz kann {dogName} an einer Gefahrenkante halten, wenn ein Rückruf zu riskant wäre." },
+          { name: "Überall üben", desc: "Übe Platz an unterschiedlichen Orten und Untergründen, damit {dogName} überall zuverlässig reagiert, nicht nur in der gewohnten Umgebung." },
+        ],
+        frequency: ["Täglich üben", "Handzeichen immer mitgeben", "Distanz nur langsam steigern"],
+        watchFor: ["Zügiges Ablegen", "Bleibt liegen bis zur Auflösung", "Reagiert auch auf das Handzeichen"],
+        gos: ["Am Ablege-Ort belohnen", "Deutliches Handzeichen", "Ruhig auflösen"],
+        noGos: ["Nicht ranrufen zum Ablegen", "Nicht drücken oder schieben", "Nicht zu schnell steigern"],
+      },
+      {
+        title: "Bleib unter Ablenkung",
+        intro: "{dogName} bleibt zuverlässig, auch wenn es spannend wird, an der Tür, am Auto, an der Gefahrenstelle.",
+        steps: [
+          { name: "Kurz und nah starten", desc: "Sag Bleib, warte 2 Sekunden, geh zurück und belohne. Baue Zeit und Distanz getrennt auf, nie beides gleichzeitig." },
+          { name: "Dauer steigern", desc: "Verlängere die Wartezeit langsam auf 10, dann 30 Sekunden, bevor du Distanz dazunimmst." },
+          { name: "Ablenkung einbauen", desc: "Übe, während du dich bewegst, ein Leckerli fallen lässt oder es an der Tür klingelt. Belohne das Bleiben." },
+          { name: "Klares Auflösewort", desc: "Beende jedes Bleib mit einem festen Wort, etwa Okay. Nur dann darf {dogName} sich lösen, nicht von allein." },
+          { name: "In den Alltag übertragen", desc: "Nutze Bleib in echten Situationen, an der Kasse, beim Schuhe-Anziehen, vor dem Auto, damit es alltagssicher wird." },
+        ],
+        frequency: ["Täglich kurze Einheiten", "Dauer und Distanz getrennt", "Immer klar auflösen"],
+        watchFor: ["Bleibt trotz Ablenkung", "Wartet auf das Auflösewort", "Ruhige Körperhaltung"],
+        gos: ["In kleinen Schritten steigern", "Klar auflösen", "Ruhe belohnen"],
+        noGos: ["Nicht zu schwer starten", "Nicht ohne Auflösewort enden", "Nicht schimpfen bei Fehler"],
+      },
+      {
+        title: "Zu mir, die Not-Position",
+        intro: "{dogName} kommt auf ein Wort sofort dicht an dein Bein, an engen Wegen, bei Radfahrern oder anderen Hunden.",
+        steps: [
+          { name: "Position ans Bein locken", desc: "Locke {dogName} mit einem Leckerli an deine Seite, sodass er dicht neben deinem Bein steht. Sag Zu mir und belohne genau dort." },
+          { name: "Aus der Bewegung", desc: "Sag im Gehen Zu mir und locke ihn an dein Bein. Belohne mehrfach an der Bein-Naht, damit die Position sich lohnt." },
+          { name: "In Ruhe festigen", desc: "Übe, dass er auch mal einige Schritte dicht an dir bleibt, bevor er sich wieder lösen darf." },
+          { name: "An echten Engstellen nutzen", desc: "Setze Zu mir bewusst ein, wenn ein Radfahrer oder Hund kommt. So hast du {dogName} sicher an deiner Seite statt im Weg." },
+          { name: "Belohnung ausschleichen", desc: "Wenn die Position sicher sitzt, belohne nicht mehr jedes Mal, sondern unregelmäßig. So bleibt Zu mir spannend und zuverlässig." },
+        ],
+        frequency: ["Täglich in den Spaziergang einbauen", "Belohnung an der Bein-Naht", "Kurz halten, dann auflösen"],
+        watchFor: ["Kommt zügig an die Seite", "Bleibt kurz dicht bei dir", "Orientiert sich an dir"],
+        gos: ["An der Bein-Position belohnen", "Ruhig und freundlich", "Früh genug ansagen"],
+        noGos: ["Nicht zerren", "Nicht festhalten", "Nicht zu lange am Stück verlangen"],
+      },
+      {
+        title: "Warte an Tür und Auto",
+        intro: "{dogName} stürmt nicht aus Tür oder Auto, die häufigste Situation, in der Hunde ausbüxen.",
+        steps: [
+          { name: "Hand an die Tür, nicht öffnen", desc: "Fass den Griff an. Wird {dogName} hektisch, lass wieder los. Nur Ruhe bringt den nächsten Schritt." },
+          { name: "Spaltweise öffnen", desc: "Öffne die Tür minimal. Drängt er vor, schließ wieder. Öffne weiter nur bei ruhigem Warten." },
+          { name: "Auflösen kontrollieren", desc: "{dogName} geht erst raus, wenn du es freigibst, etwa mit Okay, nie von allein." },
+          { name: "Am Auto sichern", desc: "Übe besonders am geöffneten Auto: erst wird die Leine angelegt, dann kommt die Freigabe. Nie ohne Leine rausspringen lassen." },
+          { name: "Konsequent bleiben", desc: "Lass {dogName} an JEDER Tür und JEDEM Ausstieg warten, auch wenn es mal eilig ist. Erst die Konsequenz macht es zur festen Regel." },
+        ],
+        frequency: ["Bei jeder Tür und jedem Ausstieg", "Immer erst Freigabe", "Auto immer mit Leine"],
+        watchFor: ["Wartet ruhig", "Springt nicht vor", "Wartet aufs Auflösewort"],
+        gos: ["Nur bei Ruhe öffnen", "Klar freigeben", "Am Auto immer zuerst die Leine"],
+        noGos: ["Nicht rausstürmen lassen", "Nicht ohne Freigabe", "Auto nie ungesichert öffnen"],
+      },
+      {
+        title: "Schau, die Not-Aufmerksamkeit",
+        intro: "{dogName} nimmt auf ein Wort Blickkontakt zu dir auf, bevor er auf eine Gefahr fixiert.",
+        steps: [
+          { name: "Blick belohnen", desc: "Halte ein Leckerli an dein Gesicht und sag Schau. Sobald {dogName} in deine Augen schaut, markiere mit Fein und belohne." },
+          { name: "Ohne Leckerli am Gesicht", desc: "Sag nur Schau. Schaut er, sofort belohnen. So löst das Wort den Blick aus, nicht das Leckerli." },
+          { name: "Leichte Ablenkung", desc: "Übe an ruhigen Orten mit etwas Ablenkung. Schaut {dogName} auf Schau weg von der Ablenkung zu dir, feiere das." },
+          { name: "Vor der Fixierung einsetzen", desc: "Nutze Schau, sobald du eine mögliche Gefahr früh siehst, etwa einen Hund oder Radfahrer. Du holst {dogName}s Aufmerksamkeit, bevor er sich festbeißt." },
+          { name: "Immer wieder auffrischen", desc: "Setze Schau regelmäßig in echten Momenten ein, sobald sich draußen etwas Spannendes zeigt. Je öfter du früh reagierst, desto verlässlicher wird der Blick." },
+        ],
+        frequency: ["Täglich mehrfach kurz", "Vom Ruhigen ins Ablenkende", "Immer sofort belohnen"],
+        watchFor: ["Schneller Blick zu dir", "Löst sich von der Ablenkung", "Reagiert auf das Wort allein"],
+        gos: ["Blick sofort belohnen", "Früh einsetzen", "Ruhig bleiben"],
+        noGos: ["Nicht zu spät einsetzen", "Nicht den Kopf festhalten", "Nicht genervt wiederholen"],
+      },
+      {
+        title: "Maulkorb ohne Stress",
+        intro: "{dogName} akzeptiert den Maulkorb entspannt, unverzichtbar für Tierarzt, Notfall oder wenn er Pflicht ist.",
+        steps: [
+          { name: "Maulkorb positiv einführen", desc: "Leg den Maulkorb hin und belohne jedes Interesse. Füttere durch das Gitter, damit {dogName} den Maulkorb mit Gutem verbindet." },
+          { name: "Schnauze selbst reinstecken", desc: "Halte ein Leckerli hinten im Maulkorb, sodass {dogName} die Schnauze von selbst hineinsteckt. Noch nicht schließen." },
+          { name: "Kurz schließen", desc: "Schließ den Verschluss für 1 Sekunde, belohne, öffne wieder. Steigere die Dauer sehr langsam." },
+          { name: "In Bewegung tragen", desc: "Lass {dogName} den geschlossenen Maulkorb erst kurz, dann länger beim Spaziergang tragen. Immer wieder durch das Gitter belohnen." },
+          { name: "Regelmäßig auffrischen", desc: "Setz den Maulkorb ab und zu kurz auf, auch ohne Anlass, und belohne. So bleibt er entspannt und ist im Ernstfall kein Stress." },
+        ],
+        frequency: ["Täglich 2 bis 3 Minuten", "Dauer sehr langsam steigern", "Immer positiv beenden"],
+        watchFor: ["Steckt die Schnauze freiwillig rein", "Bleibt ruhig beim Tragen", "Kein Kratzen oder Panik"],
+        gos: ["Durch das Gitter belohnen", "In winzigen Schritten", "Immer freiwillig"],
+        noGos: ["Nicht überstülpen", "Nicht zu lange zu früh", "Nie erzwingen"],
+      },
+    ],
+    abschluss: {
+      title: "Abschluss",
+      subtitle: "Dein Sicherheitsnetz für {dogName}",
+      paras: [
+        "Diese 10 Kommandos sind kein einmaliges Projekt, sondern ein Sicherheitsnetz, das du immer wieder auffrischst. Ein Signal, das monatelang nicht geübt wurde, verblasst, gerade die wichtigsten willst du frisch halten.",
+        "Nimm dir vor, jede Woche zwei oder drei dieser Kommandos kurz zu wiederholen. Ein paar Minuten reichen, damit sie im Ernstfall sitzen.",
+        "Denk daran: Diese Übungen sollen {dogName} schützen, nicht unter Druck setzen. Baue sie ruhig und mit viel Belohnung auf, dann reagiert er im entscheidenden Moment freudig statt ängstlich.",
+        "Wenn du irgendwo feststeckst, ist dein persönlicher KI-Trainer jederzeit für dich da. Du kannst ihm sogar ein Foto oder Video von {dogName} zeigen und bekommst konkrete Hilfe.",
+      ],
+    },
+  },
+
   pulling: {
     coverTitle: "Leinenführungs-Plan für",
     coverImage: null,
@@ -2000,6 +2187,139 @@ const MODULES = {
       ],
     },
   },
+
+  sicherheit: {
+    coverTitle: "Sicherheits-Kommandos für",
+    coverImage: null,
+    fallbackCoverImage: null,
+    why: {
+      title: "Warum diese Kommandos über Sicherheit entscheiden",
+      subtitle: "Die Grundlagen für den Ernstfall",
+      paras: [
+        "Die meisten gefährlichen Momente im Hundeleben passieren in Sekunden: die offene Autotür an der Straße, der Köder im Gebüsch, das Reh am Waldrand. In genau diesen Momenten hilft kein langes Training - nur ein Kommando, das sitzt.",
+        "Deshalb geht es in diesem Plan nicht um Tricks, sondern um {dogName}s Sicherheit. Jedes der sechs Kommandos ist ein kleiner Rettungsanker: der automatische Halt am Bordstein, der Stopp auf Distanz, das verlässliche Lass-es, der Notfall-Rückruf.",
+        "Das Schöne daran: Diese Signale geben nicht nur dir Sicherheit, sondern auch {dogName}. Ein Hund, der klare Regeln kennt, ist entspannter - weil er nicht selbst entscheiden muss, was gefährlich ist.",
+        "Du brauchst dafür keine Härte und keinen Drill. Nur Ruhe, klare Wörter und ein paar Minuten am Tag. Schritt für Schritt wird aus jedem Kommando eine Gewohnheit, auf die im Ernstfall Verlass ist.",
+      ],
+    },
+    how: {
+      title: "So trainierst du die Kommandos richtig",
+      paras: [
+        "Übe immer erst dort, wo es leicht ist: drinnen, ohne Ablenkung, in Ruhe. {dogName} muss ein Kommando sicher kennen, bevor Straße, andere Hunde oder Aufregung dazukommen.",
+        "Halte die Einheiten kurz. Zwei bis drei Minuten pro Kommando, dafür täglich, bringen mehr als eine lange Übung am Wochenende. Ein gutes Ende zur richtigen Zeit ist wichtiger als viele Wiederholungen.",
+        "Belohne großzügig - gerade bei Sicherheits-Kommandos. Wenn Steh oder der Notfall-Rückruf sich für {dogName} immer richtig lohnt, zieht das Wort auch dann, wenn es drauf ankommt.",
+        "Steigere die Schwierigkeit immer nur in einem Punkt: entweder mehr Distanz, oder mehr Ablenkung, oder mehr Zeit - nie alles gleichzeitig. Klappt etwas nicht, mach es eine Stufe leichter. Erfolg baut auf Erfolg.",
+      ],
+    },
+    exercises: [
+      {
+        title: "Der Bordstein-Stopp",
+        intro: "{dogName} bleibt automatisch an jeder Kante stehen - bevor er überhaupt an die Straße denkt.",
+        steps: [
+          { name: "Ruhige Kante wählen", desc: "Beginne an einem Bordstein ohne Verkehr. {dogName} soll die Übung in Ruhe verstehen, bevor echte Straßen dazukommen." },
+          { name: "Vor der Kante anhalten", desc: "Kurz vor dem Bordstein selbst stehen bleiben. Nicht ziehen, nicht reden. Einfach anhalten und warten." },
+          { name: "Halt belohnen", desc: "Sobald {dogName} steht und die Leine locker ist: ruhig loben, kleines Leckerli an deiner Seite. Der Halt soll sich lohnen." },
+          { name: "Freigabe-Wort einführen", desc: "Erst du entscheidest, wann es weitergeht. Ein klares Geh oder Weiter als Freigabe. Vorher passiert nichts." },
+          { name: "An jeder Kante wiederholen", desc: "Ab jetzt an jedem Bordstein anhalten - auch ohne Verkehr. So wird der Halt zur Gewohnheit, nicht zur Ausnahme." },
+          { name: "Erst dann echte Straßen", desc: "Wenn es an ruhigen Kanten sicher sitzt, übe an belebteren Stellen. Der Ablauf bleibt gleich, nur die Umgebung wird spannender." },
+        ],
+        frequency: ["An jeder Bordsteinkante", "Erst ohne, dann mit Verkehr", "Bei jedem Spaziergang"],
+        watchFor: ["Halt kommt vor der Kante", "Leine bleibt locker", "Du gibst die Freigabe"],
+        gos: ["Immer anhalten, ausnahmslos", "Ruhig loben beim Stehen", "Klares Freigabe-Wort"],
+        noGos: ["Nicht mal so, mal so", "Nicht den Hund entscheiden lassen", "Nicht über die Straße ziehen"],
+      },
+      {
+        title: "Der Notfall-Stopp (Steh)",
+        intro: "Ein Wort, das {dogName} auf der Stelle einfrieren lässt - auch auf Distanz. Für den Moment, der zählt.",
+        steps: [
+          { name: "Nah beginnen", desc: "Starte direkt vor {dogName}, ohne Ablenkung. Er soll das Wort in Ruhe kennenlernen, bevor Distanz oder Aufregung dazukommen." },
+          { name: "Steh plus Stopp-Hand", desc: "Sag ruhig und klar Steh und hebe die flache Hand wie ein Stoppschild. Stimme und Geste gehören zusammen." },
+          { name: "Stillstand sofort belohnen", desc: "In der Sekunde, in der {dogName} stehen bleibt: sofort loben und belohnen. Das Timing ist alles - die Belohnung gehört an den Stillstand." },
+          { name: "Distanz langsam aufbauen", desc: "Wenn es nah klappt, vergrößere den Abstand. Erst zwei Meter, dann fünf, dann mehr. Immer nur so weit, wie es sicher gelingt." },
+          { name: "In Bewegung testen", desc: "Übe den Stopp, während {dogName} langsam auf dich zukommt oder wegläuft. Das ist der Ernstfall: Stopp aus der Bewegung." },
+          { name: "Selten, aber ernst", desc: "Nutze das Wort nur, wenn du es meinst - und belohne es immer groß. So bleibt es das stärkste Signal, das du hast." },
+        ],
+        frequency: ["Täglich 2-3 Mini-Runden", "Distanz nur langsam steigern", "Jedes Gelingen belohnen"],
+        watchFor: ["Stopp heißt sofortiger Halt", "Hand und Stimme zusammen", "Belohnung am Stillstand"],
+        gos: ["Groß belohnen, jedes Mal", "Ruhig und bestimmt bleiben", "Nur bei echtem Gelingen steigern"],
+        noGos: ["Nicht ins Leere rufen", "Nicht schimpfen bei Fehlern", "Nicht zu früh auf Distanz"],
+      },
+      {
+        title: "Bleib und Warte",
+        intro: "{dogName} bleibt, wo er ist - an der Tür, am Auto, an der Kreuzung - bis du ihn freigibst.",
+        steps: [
+          { name: "Grundposition wählen", desc: "Lass {dogName} sitzen oder liegen. Aus einer ruhigen Position heraus fällt Warten leichter als im Stehen." },
+          { name: "Bleib plus eine Sekunde", desc: "Sag ruhig Bleib und warte nur eine Sekunde. Dann zurück, loben, belohnen. Anfangs geht es um Sekunden, nicht Minuten." },
+          { name: "Zeit langsam dehnen", desc: "Steigere die Wartezeit in kleinen Schritten: zwei, drei, fünf Sekunden. Bricht {dogName} ab, warst du zu schnell - kürzer wieder anfangen." },
+          { name: "Einen Schritt Abstand", desc: "Wenn die Zeit klappt, kommt Distanz dazu: ein Schritt zurück, wieder hin, belohnen. Zeit und Abstand nie gleichzeitig steigern." },
+          { name: "Ablenkung einbauen", desc: "Übe an der Tür, am geöffneten Auto, an der Kreuzung. Genau dort brauchst du das Bleib im Alltag." },
+          { name: "Immer aktiv auflösen", desc: "{dogName} bleibt, bis du Okay oder Geh sagst. Nie von selbst aufstehen lassen - die Freigabe kommt immer von dir." },
+        ],
+        frequency: ["Täglich kurz üben", "Zeit oder Abstand steigern, nie beides", "An echten Orten testen"],
+        watchFor: ["Freigabe kommt von dir", "Kleine Schritte", "Position bleibt stabil"],
+        gos: ["Aktiv auflösen mit Wort", "Bei Abbruch leichter machen", "Ruhig bestätigen"],
+        noGos: ["Nicht selbst aufstehen lassen", "Nicht zu lang am Anfang", "Nicht locken und wegziehen"],
+      },
+      {
+        title: "Impulskontrolle an Tür und Auto",
+        intro: "Kein Rausstürmen mehr - {dogName} wartet an der geöffneten Tür und am Kofferraum auf deine Freigabe.",
+        steps: [
+          { name: "Hand an den Griff", desc: "Fass Türgriff oder Kofferraum an, ohne zu öffnen. Wird {dogName} hektisch, Hand weg und warten. Ruhe öffnet, Unruhe stoppt." },
+          { name: "Spaltbreit öffnen", desc: "Öffne nur einen Spalt. Drängelt {dogName} vor, sofort wieder schließen. Bleibt er ruhig, weiter öffnen." },
+          { name: "Ganz offen, er bleibt", desc: "Tür oder Klappe ganz offen - {dogName} bleibt sitzen. Das ist der Kern: eine offene Tür heißt nicht automatisch raus." },
+          { name: "Freigabe abwarten lassen", desc: "Erst auf dein Okay darf {dogName} durch oder raus. Ohne Wort passiert nichts, egal wie weit offen." },
+          { name: "Am Auto besonders üben", desc: "Der Kofferraum ist der wichtigste Ort: {dogName} springt erst auf Freigabe raus, nie von selbst an die Straße." },
+          { name: "Jedes Mal gleich", desc: "Immer dieselbe Regel, an jeder Tür. Keine Ausnahme, wenn es mal schnell gehen soll - gerade dann zählt es." },
+        ],
+        frequency: ["Bei jeder Tür- und Auto-Situation", "Kurz, aber konsequent", "Kofferraum extra üben"],
+        watchFor: ["Offen heißt nicht Freigabe", "Ruhe öffnet die Tür", "Wort vor Bewegung"],
+        gos: ["Bei Drängeln schließen", "Nur bei Ruhe öffnen", "Freigabe klar setzen"],
+        noGos: ["Nicht rausstürmen lassen", "Keine Ausnahme bei Eile", "Nicht schimpfen, nur schließen"],
+      },
+      {
+        title: "Aus und Lass es",
+        intro: "{dogName} lässt sofort los oder nimmt gar nicht erst auf - der wichtigste Schutz gegen Giftköder und Gefahr.",
+        steps: [
+          { name: "Mit Tausch beginnen", desc: "Halte etwas Langweiliges in der Hand. Sag Aus und tausche gegen ein besseres Leckerli. Loslassen soll sich immer lohnen." },
+          { name: "Lass es am Boden", desc: "Leg ein Leckerli auf den Boden und decke es mit der Hand ab. Sag Lass es. Sobald {dogName} ablässt: aus der anderen Hand belohnen." },
+          { name: "Nie das Verbotene geben", desc: "Was am Boden liegt, bekommt {dogName} nie. Die Belohnung kommt immer von dir, aus der Hand. So wird Lass es verlässlich." },
+          { name: "Hand langsam wegnehmen", desc: "Wenn es klappt, deck das Leckerli nicht mehr ab. {dogName} soll es liegen lassen, obwohl es frei liegt. Fein steigern." },
+          { name: "In Bewegung üben", desc: "Geh an einem liegenden Leckerli vorbei und sag Lass es. Der Alltag ist genau das: etwas liegt, ihr geht weiter." },
+          { name: "Draußen absichern", desc: "Übe es auf dem Spaziergang mit Abstand. Im Ernstfall - Giftköder, Aas - kann dieses Wort {dogName}s Leben retten." },
+        ],
+        frequency: ["Täglich 2-3 Minuten", "Erst drinnen, dann draußen", "Immer aus der Hand belohnen"],
+        watchFor: ["Verbotenes gibt es nie", "Belohnung aus der Hand", "Ruhig, kein Zerren"],
+        gos: ["Gegen Besseres tauschen", "Ablassen groß loben", "Langsam frei liegen lassen"],
+        noGos: ["Nie das Bodenstück geben", "Nicht aus dem Maul reißen", "Nicht drohen"],
+      },
+      {
+        title: "Der Notfall-Rückruf",
+        intro: "Ein reserviertes Wort, das {dogName} immer zurückholt - geladen für den einen Moment, in dem es zählt.",
+        steps: [
+          { name: "Neues Wort wählen", desc: "Nimm ein Wort, das ihr sonst nie nutzt - zum Beispiel Hierher oder eine Pfeife. Es darf nie mit etwas Negativem verknüpft sein." },
+          { name: "Mit dem Jackpot laden", desc: "Sag das Wort und gib sofort etwas Außergewöhnliches: Käse, Wurst, das absolute Lieblings-Highlight. Nur für dieses Wort." },
+          { name: "Ohne Ablenkung starten", desc: "Übe zuerst drinnen, direkt vor {dogName}. Wort, dann Jackpot, viele Male. Das Wort wird zum Versprechen auf das Beste." },
+          { name: "Distanz und Räume wechseln", desc: "Ruf {dogName} aus dem Nebenzimmer, dann aus dem Garten. Kommt er, gibt es immer den Jackpot. Nie enttäuschen." },
+          { name: "Nie zum Beenden nutzen", desc: "Ruf {dogName} nie mit diesem Wort, um Spaß zu beenden (Leine dran, heim gehen). Sonst verbrennt es. Für den Abbruch gibt es andere Wörter." },
+          { name: "Selten und heilig halten", desc: "Nutze das Notfall-Wort im Alltag fast nie. Es bleibt geladen für die echte Gefahr - und zieht dann zuverlässig." },
+        ],
+        frequency: ["Täglich laden, kaum abrufen", "Immer der Jackpot", "Distanz langsam steigern"],
+        watchFor: ["Nur positive Verknüpfung", "Immer die Top-Belohnung", "Nie zum Spaß-Ende"],
+        gos: ["Eigenes, reserviertes Wort", "Jackpot jedes Mal", "Selten und ernst einsetzen"],
+        noGos: ["Nie zum Beenden rufen", "Nicht schimpfen wenn er kommt", "Nicht im Alltag verheizen"],
+      },
+    ],
+    abschluss: {
+      title: "Jetzt ist dein Hund sicherer unterwegs",
+      subtitle: "Dranbleiben lohnt sich",
+      paras: [
+        "Du hast {dogName} jetzt sechs Werkzeuge an die Hand gegeben, die im Ernstfall wirklich zählen. Kein Trick, keine Show - sondern echte Sicherheit für euch beide.",
+        "Der Schlüssel ist Wiederholung im Alltag. Ein Bordstein-Stopp, der nur manchmal gilt, hilft nicht. Bleib bei jeder Kante, jeder Tür, jedem Lass es konsequent - dann werden die Kommandos zur Gewohnheit, auf die im entscheidenden Moment Verlass ist.",
+        "Halte besonders den Notfall-Rückruf und das Steh heilig: selten einsetzen, immer groß belohnen. So bleiben sie die stärksten Wörter, die du hast.",
+        "Und denk dran: Jede kleine Übung heute ist eine Versicherung für morgen. {dogName} vertraut darauf, dass du in der Gefahr für ihn da bist - mit diesen Kommandos bist du es. Viel Freude und sichere Wege euch beiden!",
+      ],
+    },
+  },
 };
 
 // Personalisierungs-Helper: ersetzt {dogName} in beliebigem Text.
@@ -2170,7 +2490,7 @@ export async function buildPdf(params = {}) {
     y -= 18;
     p.drawText(mod.why.subtitle, { x: MARGIN, y, size: 12, font: fontBold, color: GOLD_DARK });
     y -= 26;
-    for (const para of mod.why.paras) {
+    for (const para of (Array.isArray(params.whyParas) && params.whyParas.length ? params.whyParas : mod.why.paras)) {
       y = drawParagraph(p, personalize(para, DOG_NAME), MARGIN, y, CONTENT_W, fontReg, 12, TEXT_DARK, 17);
       y -= 10;
     }
@@ -2242,7 +2562,7 @@ export async function buildPdf(params = {}) {
       for (const it of items) {
         const dot = "•";
         p.drawText(dot, { x: RIGHT_X, y: sy, size: 10, font: fontBold, color: GOLD });
-        const lines = wrapText(it, fontReg, 10, RIGHT_W - 14);
+        const lines = wrapText(personalize(it, DOG_NAME), fontReg, 10, RIGHT_W - 14);
         for (let li = 0; li < lines.length; li++) {
           p.drawText(lines[li], { x: RIGHT_X + 12, y: sy, size: 10, font: fontReg, color: TEXT_DARK });
           sy -= 13;

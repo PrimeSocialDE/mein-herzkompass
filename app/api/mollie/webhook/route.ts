@@ -891,6 +891,9 @@ async function handleUpsellProductPaid(payment: any) {
     "thema-zerstoerung": "destructive",
     "thema-stubenrein": "soiling",
     "thema-aufnehmen": "mouthing",
+    // Lebensretter-Training: eigenes Modul (10 Sicherheits-Kommandos + KI-Einleitung),
+    // wird ebenfalls über die interne zusatzmodul/send-Pipeline ausgeliefert.
+    lebensretter: "lebensretter",
   };
   const moduleKey = themaModuleMap[product];
   if (moduleKey) {
