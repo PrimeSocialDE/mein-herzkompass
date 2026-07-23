@@ -10,6 +10,7 @@ import type { UserChallenge } from "./member-challenges";
 import type { MemberProfile } from "./member-db";
 import type { Lang } from "./lang";
 import { renderBelegFooterHtml, type BelegRow } from "./beleg";
+import { buildOneTapUrl } from "./one-tap-login";
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
 const SITE_URL =
@@ -392,7 +393,18 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
     lang !== "pl" && args.beleg ? renderBelegFooterHtml(args.beleg) : undefined;
 
   // Auto-Login-Link: User landet direkt eingeloggt auf der Coaching-Seite
-  const ctaUrl = await buildAutoLoginUrl(to, "/mitglieder/erfolge/coaching");
+  // Durabler One-Tap-Login-Link (365 Tage, wiederverwendbar, scanner-sicher)
+  // statt des ablaufenden Magic-Links — so kommt der Kunde ueber die Plan-Mail
+  // jederzeit ohne Code rein (behebt die web.de/GMX-"kein Code"-Tickets).
+  // Fallback auf den Magic-Link, falls das Secret fehlt.
+  let ctaUrl: string;
+  try {
+    ctaUrl = buildOneTapUrl(SITE_URL, to, {
+      next: "/mitglieder/erfolge/coaching",
+    });
+  } catch {
+    ctaUrl = await buildAutoLoginUrl(to, "/mitglieder/erfolge/coaching");
+  }
   const weeksTotal = plan.weeks.length;
 
   let html: string;
