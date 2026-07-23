@@ -610,11 +610,25 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
       </td></tr>
     </table>`;
 
+  // Lebensretter-Anteaser: kurz, Angst-Framing, KEIN Preis. Führt auf die eigene
+  // Seite (dort Quiz + Kauf). Der Mitglieder-Showcase oben bleibt unangetastet.
+  const lebensretterUrl = `${SITE_URL}/lebensretter.html?utm_medium=email&email=${encodeURIComponent(to)}&dogName=${encodeURIComponent(dogName)}`;
+  const lebensretterTeaser = `
+    <div style="border-top:1px solid #F0EBE3;margin:24px 0 16px;"></div>
+    <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:14px;padding:20px;">
+      <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#C0392B;">Was, wenn es mal drauf ankommt?</p>
+      <h2 style="margin:0 0 10px;font-size:18px;line-height:1.3;font-weight:800;color:#1a1a1a;">Die 10 Kommandos, die ${escapeHtml(dogName)} im Ernstfall schützen</h2>
+      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#4B5563;">
+        Eine offene Autotür, ein Giftköder im Gebüsch, ein Reh, das über den Weg springt. In dem Moment zählt nur eins: Hört ${escapeHtml(dogName)} sofort? Das Lebensretter-Training baut genau diese Kommandos auf, damit sie auch dann sitzen, wenn es drauf ankommt.
+      </p>
+      <a href="${lebensretterUrl}" style="display:inline-block;padding:12px 22px;font-size:14px;font-weight:700;line-height:1;color:#FFFFFF;background:#C0392B;text-decoration:none;border-radius:10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">Lebensretter-Training ansehen →</a>
+    </div>`;
+
   html = wrapTemplate({
     preheader: `Dein ${monthsLabel} für ${dogName} ist fertig.`,
     headline: `Dein ${monthsLabel} für ${dogName} ist fertig`,
     intro: `${greeting} dein persönlicher Trainings-Plan ist soeben für dich erstellt worden — komplett zugeschnitten auf ${dogName} und euer Haupt-Thema. ${weeksTotal} Wochen, mit konkreten Übungen für jeden Tag, Wochenzielen, Fortschritts-Markern und einem klaren roten Faden.`,
-    bodyHtml: `${pdfHinweis}${mitgliederShowcase}`,
+    bodyHtml: `${pdfHinweis}${mitgliederShowcase}${lebensretterTeaser}`,
     ctaText: "Mitglieder-Bereich öffnen →",
     ctaUrl,
     footerHint: `Der Button enthält einen Einmal-Login — du landest direkt eingeloggt im Mitglieder-Bereich. Der Link gilt 1 Stunde und ist nur für dich.`,

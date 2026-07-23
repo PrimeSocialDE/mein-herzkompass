@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <script src="/utm-tracking.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lebensretter-Training | Pfoten-Plan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ufxcf43805");
+    </script>
+
+    <!-- Meta Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #FAF8F5; min-height: 100vh; color: #2C2C2E; }
+        .container { max-width: 500px; margin: 0 auto; padding: 24px 16px 40px; }
+        .header { text-align: center; margin-bottom: 24px; padding: 16px 0; }
+        .header-logo { font-size: 20px; font-weight: 800; color: #C4A576; letter-spacing: -0.5px; }
+        .hero { text-align: center; margin-bottom: 24px; }
+        .hero h1 { font-size: 24px; font-weight: 800; color: #2C2C2E; margin-bottom: 8px; line-height: 1.3; }
+        .hero p { font-size: 15px; color: #888; }
+        .product-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 20px; }
+        .price-section { text-align: center; padding: 20px 0; border-top: 1px solid #F0F0F0; margin-bottom: 20px; }
+        .price-old { font-size: 16px; color: #999; text-decoration: line-through; margin-bottom: 4px; }
+        .price-new { font-size: 32px; font-weight: 800; color: #C4A576; }
+        .price-info { font-size: 13px; color: #888; margin-top: 4px; }
+        .cta-btn { width: 100%; background: linear-gradient(135deg, #C4A576, #8B7355); color: white; border: none; padding: 16px 24px; border-radius: 12px; font-size: 17px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .cta-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(196,165,118,0.4); }
+        .cta-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+        .guarantee { text-align: center; margin-top: 12px; font-size: 12px; color: #22C55E; font-weight: 500; }
+        .thank-you { display: none; text-align: center; padding: 40px 20px; }
+        .thank-you.active { display: block; }
+        .thank-you-check { width: 64px; height: 64px; background: #22C55E; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .thank-you-check svg { width: 32px; height: 32px; color: white; }
+        .thank-you h1 { font-size: 22px; color: #2C2C2E; margin-bottom: 8px; }
+        .thank-you p { font-size: 15px; color: #666; line-height: 1.6; }
+        .main-content { display: block; }
+        .main-content.hidden { display: none; }
+
+        /* Mini Quiz */
+        .quiz-section { margin-bottom: 24px; }
+        .quiz-title { font-size: 16px; font-weight: 700; color: #2C2C2E; margin-bottom: 4px; }
+        .quiz-subtitle { font-size: 13px; color: #999; margin-bottom: 16px; }
+        .quiz-step { display: none; }
+        .quiz-step.active { display: block; }
+        .quiz-question { font-size: 14px; font-weight: 600; color: #2C2C2E; margin-bottom: 12px; }
+        .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+        .quiz-option { background: white; border: 2px solid #E8E8E8; border-radius: 12px; padding: 14px 16px; cursor: pointer; font-size: 14px; color: #444; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+        .quiz-option:hover { border-color: #C4A576; background: #FFFBF5; }
+        .quiz-option.selected { border-color: #C4A576; background: #FFFBF5; }
+        .quiz-option-icon { font-size: 20px; }
+        .quiz-progress { display: flex; gap: 6px; margin-bottom: 14px; }
+        .quiz-dot { flex: 1; height: 4px; border-radius: 2px; background: #E8E8E8; }
+        .quiz-dot.done { background: #C4A576; }
+
+        .product-section { display: none; }
+        .product-section.visible { display: block; }
+        .cmd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .cmd { background: #FAF8F5; border-radius: 10px; padding: 12px; display: flex; gap: 8px; align-items: flex-start; }
+        .cmd-num { width: 22px; height: 22px; background: #C4A576; border-radius: 50%; color: white; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .cmd-txt { font-size: 12px; font-weight: 600; color: #2C2C2E; line-height: 1.3; }
+    </style>
+</head>
+<body>
+
+    <!-- Email-Gate für QR-Traffic -->
+    <div id="emailGate" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:white;border-radius:16px;max-width:380px;width:100%;padding:28px 24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+            <div style="font-size:40px;margin-bottom:10px;">🐾</div>
+            <h2 style="font-size:20px;font-weight:800;color:#2C2C2E;margin:0 0 8px;">Willkommen zurück!</h2>
+            <p style="font-size:14px;color:#666;line-height:1.5;margin:0 0 18px;">Gib deine E-Mail ein, damit wir dein Lebensretter-Training vorbereiten.</p>
+            <form id="emailGateForm" style="display:flex;flex-direction:column;gap:10px;">
+                <input type="email" id="emailGateInput" required placeholder="deine@email.de" style="width:100%;padding:14px 16px;border:2px solid #E8E8E8;border-radius:10px;font-size:15px;font-family:inherit;box-sizing:border-box;" autofocus>
+                <div id="emailGateError" style="display:none;font-size:12px;color:#DC2626;text-align:left;"></div>
+                <button type="submit" id="emailGateSubmit" style="background:#C4A576;color:white;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;">Weiter →</button>
+            </form>
+            <p style="font-size:11px;color:#999;margin:14px 0 0;line-height:1.5;">Wir nutzen deine Daten aus dem Trainingsplan-Quiz. Kein Newsletter, keine Weitergabe.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="thank-you" id="thankYou">
+            <div class="thank-you-check">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h1>Vielen Dank!</h1>
+            <p>Dein persönliches Lebensretter-Training wird jetzt erstellt und in wenigen Minuten an deine E-Mail gesendet.</p>
+            <p style="margin-top:16px;font-size:13px;color:#999;">Schau auch im Spam-Ordner nach, falls du nichts findest.</p>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="container">
+            <div class="header">
+                <div class="header-logo">Pfoten-Plan</div>
+            </div>
+
+            <div class="hero">
+                <div style="display:inline-block;background:#FEF2F2;color:#DC2626;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:14px;">10 Kommandos, die schützen</div>
+                <h1 id="heroTitle" style="margin-bottom:10px;">Was, wenn es mal drauf ankommt?</h1>
+                <p style="font-size:15px;color:#666;line-height:1.6;">Eine offene Autotür. Ein Giftköder im Gebüsch. Ein Reh, das über den Weg springt. In dem Moment zählt nur eins: Hört <span class="heroDogName">dein Hund</span> sofort?</p>
+            </div>
+
+            <!-- Mini Quiz -->
+            <div class="quiz-section" id="quizSection">
+                <div class="quiz-title">3 kurze Fragen zu <span id="quizDogName">deinem Hund</span></div>
+                <div class="quiz-subtitle">Damit das Training auf die typischen Risiko-Situationen zugeschnitten ist</div>
+                <div class="quiz-progress">
+                    <div class="quiz-dot done" id="dot1"></div>
+                    <div class="quiz-dot" id="dot2"></div>
+                    <div class="quiz-dot" id="dot3"></div>
+                </div>
+
+                <!-- Frage 1: Größe -->
+                <div class="quiz-step active" id="step1">
+                    <div class="quiz-question">Wie groß ist <span class="qDogName">dein Hund</span>?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectSize(this, 'klein')">
+                            <span class="quiz-option-icon">🐕</span>
+                            <div><div style="font-weight:600;">Klein</div><div style="font-size:12px;color:#999;">Unter 10 kg (z.B. Dackel, Chihuahua)</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectSize(this, 'mittel')">
+                            <span class="quiz-option-icon">🐕‍🦺</span>
+                            <div><div style="font-weight:600;">Mittel</div><div style="font-size:12px;color:#999;">10 - 25 kg (z.B. Beagle, Border Collie)</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectSize(this, 'gross')">
+                            <span class="quiz-option-icon">🐕‍🦮</span>
+                            <div><div style="font-weight:600;">Groß</div><div style="font-size:12px;color:#999;">Über 25 kg (z.B. Labrador, Schäferhund)</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frage 2: Rückruf-Zuverlässigkeit -->
+                <div class="quiz-step" id="step2">
+                    <div class="quiz-question">Wenn du rufst und es wird gerade spannend, kommt <span class="qDogName">dein Hund</span> dann?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectRecall(this, 'zuverlaessig')">
+                            <span class="quiz-option-icon">✅</span>
+                            <div><div style="font-weight:600;">Fast immer</div><div style="font-size:12px;color:#999;">Klappt schon ziemlich gut</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectRecall(this, 'wechselhaft')">
+                            <span class="quiz-option-icon">🤷</span>
+                            <div><div style="font-weight:600;">Kommt drauf an</div><div style="font-size:12px;color:#999;">Mal ja, mal ignoriert er mich</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectRecall(this, 'schwierig')">
+                            <span class="quiz-option-icon">🙈</span>
+                            <div><div style="font-weight:600;">Eher nicht</div><div style="font-size:12px;color:#999;">Bei Ablenkung bin ich Luft für ihn</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Frage 3: Umgebung / Risiko -->
+                <div class="quiz-step" id="step3">
+                    <div class="quiz-question">Wo ist <span class="qDogName">dein Hund</span> meistens unterwegs?</div>
+                    <div class="quiz-options">
+                        <div class="quiz-option" onclick="selectEnv(this, 'stadt')">
+                            <span class="quiz-option-icon">🏙️</span>
+                            <div><div style="font-weight:600;">Stadt & Straßen</div><div style="font-size:12px;color:#999;">Verkehr, Gehwege, viele Reize</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectEnv(this, 'natur')">
+                            <span class="quiz-option-icon">🌲</span>
+                            <div><div style="font-weight:600;">Feld, Wald & Freilauf</div><div style="font-size:12px;color:#999;">Wild, Jagdreize, weite Flächen</div></div>
+                        </div>
+                        <div class="quiz-option" onclick="selectEnv(this, 'gemischt')">
+                            <span class="quiz-option-icon">🔀</span>
+                            <div><div style="font-weight:600;">Gemischt</div><div style="font-size:12px;color:#999;">Mal Stadt, mal Natur</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alles nach Quiz sichtbar -->
+            <div class="product-section" id="productSection">
+
+            <!-- Personalisierte Zusammenfassung -->
+            <div style="background:linear-gradient(135deg,#FFFBF5,#FEF3E7);border:1px solid #E8DCC8;border-radius:14px;padding:18px 20px;margin-bottom:16px;">
+                <div style="font-size:12px;font-weight:700;color:#8B7355;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Dein persönliches Training</div>
+                <div style="font-size:17px;font-weight:800;color:#2C2C2E;margin-bottom:10px;" id="personalTitle">Lebensretter-Training für deinen Hund</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;" id="personalTags"></div>
+                <div style="font-size:12px;color:#666;line-height:1.6;margin-top:12px;padding-top:12px;border-top:1px solid #E8DCC8;" id="personalIntro"></div>
+            </div>
+
+            <!-- Problem: Der Moment -->
+            <div style="background:white;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+                <div style="text-align:center;margin-bottom:16px;">
+                    <div style="font-size:14px;font-weight:800;color:#1a1a1a;">Der Alltag hält sich nicht an den Trainingsplan</div>
+                </div>
+                <p style="font-size:13px;color:#555;line-height:1.7;margin-bottom:12px;">Beim Training auf der Wiese läuft alles rund. Aber dann passiert es im echten Leben: Die Leine rutscht dir aus der Hand. Jemand öffnet die Tür. <span class="heroDogName">Dein Hund</span> sieht etwas und rennt los, Richtung Straße.</p>
+                <p style="font-size:13px;color:#555;line-height:1.7;"><strong style="color:#1a1a1a;">In genau diesen Sekunden</strong> nützt dir kein "Sitz" und kein Leckerli. Was zählt, ist ein Kommando, das so tief sitzt, dass es auch dann funktioniert, wenn alles um euch herum aufregend oder gefährlich ist.</p>
+            </div>
+
+            <!-- Abgrenzung + Was du lernst -->
+            <div class="product-card">
+                <div style="font-size:13px;font-weight:700;color:#8B7355;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Das lernst du (PDF, für jeden Hund einzeln erstellt)</div>
+                <div style="font-size:13px;color:#666;line-height:1.6;margin-bottom:16px;">10 Kommandos, die im Ernstfall den Unterschied machen. Jedes in 5 klaren Schritten aufgebaut, mit Übungsplan, No-Gos und einer persönlichen Einleitung, die zu <span class="heroDogName">deinem Hund</span> passt.</div>
+
+                <div class="cmd-grid" style="margin-bottom:20px;">
+                    <div class="cmd"><div class="cmd-num">1</div><div class="cmd-txt">Der Notfall-Rückruf</div></div>
+                    <div class="cmd"><div class="cmd-num">2</div><div class="cmd-txt">Sofort-Aus (Giftköder)</div></div>
+                    <div class="cmd"><div class="cmd-num">3</div><div class="cmd-txt">Lass es</div></div>
+                    <div class="cmd"><div class="cmd-num">4</div><div class="cmd-txt">Distanz-Not-Halt</div></div>
+                    <div class="cmd"><div class="cmd-num">5</div><div class="cmd-txt">Platz auf Distanz</div></div>
+                    <div class="cmd"><div class="cmd-num">6</div><div class="cmd-txt">Bleib unter Ablenkung</div></div>
+                    <div class="cmd"><div class="cmd-num">7</div><div class="cmd-txt">Zu mir / Not-Position</div></div>
+                    <div class="cmd"><div class="cmd-num">8</div><div class="cmd-txt">Warte an Tür & Auto</div></div>
+                    <div class="cmd"><div class="cmd-num">9</div><div class="cmd-txt">Schau / Not-Aufmerksamkeit</div></div>
+                    <div class="cmd"><div class="cmd-num">10</div><div class="cmd-txt">Maulkorb ohne Stress</div></div>
+                </div>
+
+                <!-- Abgrenzung zu Erste-Hilfe -->
+                <div style="background:#F8F8F8;border-radius:10px;padding:14px 16px;margin-bottom:20px;">
+                    <div style="font-size:12px;color:#555;line-height:1.6;"><strong style="color:#2C2C2E;">Kein Erste-Hilfe-Guide.</strong> Hier geht es nicht darum, was du tust, wenn schon etwas passiert ist, sondern um das Training, das den Notfall gar nicht erst entstehen lässt.</div>
+                </div>
+
+                <!-- Emotional Hook -->
+                <div style="background:linear-gradient(135deg,#FFFBF5,#FEF3E7);border-radius:12px;padding:18px 20px;margin-bottom:20px;text-align:center;">
+                    <div style="font-size:13px;font-weight:700;color:#8B7355;margin-bottom:6px;">Das Sicherheitsnetz für <span class="heroDogName">deinen Hund</span></div>
+                    <div style="font-size:12px;color:#555;line-height:1.6;">Du kannst dir die Situationen nicht aussuchen. Aber du kannst dafür sorgen, dass <span class="heroDogName">dein Hund</span> vorbereitet ist, wenn sie kommen.</div>
+                </div>
+
+                <div class="price-section">
+                    <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:6px;">
+                        <div style="background:#DC2626;color:white;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700;">Aktion</div>
+                        <div class="price-old" style="margin:0;">€34,99</div>
+                    </div>
+                    <div class="price-new">€24,99</div>
+                    <div class="price-info">Einmalzahlung · Sofort per E-Mail</div>
+                </div>
+
+                <button class="cta-btn" onclick="buyProduct()">Jetzt absichern - für <span class="heroDogName">deinen Hund</span></button>
+                <div class="guarantee">30 Tage Geld-zurück · Einmalzahlung · Sofort per E-Mail</div>
+                <div class="payment-trust" style="display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;opacity:0.7;">
+                    <img src="sepa-logo.png" alt="SEPA" style="height:26px;">
+                    <img src="visa-logo.png" alt="Visa" style="height:26px;">
+                    <img src="paypal-logo.png" alt="PayPal" style="height:26px;">
+                    <img src="mastercard-logo.png" alt="Mastercard" style="height:26px;">
+                    <img src="applepay.png" alt="Apple Pay" style="height:26px;">
+                    <img src="googlepay.png" alt="Google Pay" style="height:26px;">
+                </div>
+                <div style="text-align:center;margin-top:10px;font-size:11px;color:#888;">🔒 Sichere SSL-Zahlung</div>
+            </div>
+
+            <!-- PS -->
+            <div style="background:#FEF2F2;border-left:3px solid #DC2626;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
+                <div style="font-size:12px;font-weight:700;color:#DC2626;margin-bottom:4px;">Warum jetzt und nicht später?</div>
+                <div style="font-size:12px;color:#555;line-height:1.6;">Ein sicheres Kommando entsteht nicht an dem Tag, an dem du es brauchst, sondern in den Wochen davor. Der beste Zeitpunkt anzufangen ist bevor etwas passiert.</div>
+            </div>
+            </div><!-- /product-section -->
+        </div>
+    </div>
+
+    <script>
+        const PRODUCT_TYPE = 'lebensretter';
+        const PRICE_VALUE = 24.99;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        let userEmail = urlParams.get('email') || '';
+        let leadId = urlParams.get('lead_id') || '';
+        let dogName = urlParams.get('dogName') || urlParams.get('dog_name') || localStorage.getItem('dogName') || 'deinen Hund';
+        let dogBreed = urlParams.get('breed') || '';
+
+        // Quiz-Daten
+        let dogSize = urlParams.get('size') || '';
+        let recall = urlParams.get('recall') || '';
+        let dogEnv = urlParams.get('env') || '';
+
+        function updateDogNameUI(name) {
+            document.getElementById('heroTitle').textContent = 'Was, wenn es mal drauf ankommt, ' + name + '?';
+            document.querySelectorAll('.heroDogName').forEach(el => el.textContent = name);
+            document.querySelectorAll('.qDogName').forEach(el => el.textContent = name);
+            document.getElementById('quizDogName').textContent = name;
+        }
+
+        if (dogName && dogName !== 'deinen Hund') {
+            updateDogNameUI(dogName);
+        }
+
+        const quizSkipped = dogSize && recall && dogEnv;
+
+        function selectSize(el, value) {
+            document.querySelectorAll('#step1 .quiz-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            dogSize = value;
+            setTimeout(() => {
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step2').classList.add('active');
+                document.getElementById('dot2').classList.add('done');
+            }, 300);
+        }
+
+        function selectRecall(el, value) {
+            document.querySelectorAll('#step2 .quiz-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            recall = value;
+            setTimeout(() => {
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step3').classList.add('active');
+                document.getElementById('dot3').classList.add('done');
+            }, 300);
+        }
+
+        function selectEnv(el, value) {
+            document.querySelectorAll('#step3 .quiz-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            dogEnv = value;
+            setTimeout(finishQuiz, 300);
+        }
+
+        function finishQuiz() {
+            document.getElementById('quizSection').style.display = 'none';
+
+            const sizeLabels = { klein: 'Kleiner Hund', mittel: 'Mittlerer Hund', gross: 'Großer Hund' };
+            const recallLabels = { zuverlaessig: 'Rückruf sitzt schon', wechselhaft: 'Rückruf wechselhaft', schwierig: 'Rückruf schwierig' };
+            const envLabels = { stadt: 'Stadt & Verkehr', natur: 'Wald & Freilauf', gemischt: 'Stadt & Natur' };
+
+            const name = dogName !== 'deinen Hund' ? dogName : 'deinen Hund';
+            document.getElementById('personalTitle').textContent = 'Lebensretter-Training für ' + name;
+
+            const tags = [];
+            if (dogBreed) tags.push(dogBreed);
+            if (dogSize) tags.push(sizeLabels[dogSize] || dogSize);
+            if (recall) tags.push(recallLabels[recall] || recall);
+            if (dogEnv) tags.push(envLabels[dogEnv] || dogEnv);
+            document.getElementById('personalTags').innerHTML = tags.map(t =>
+                '<span style="background:white;border:1px solid #E8DCC8;color:#8B7355;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;">' + t + '</span>'
+            ).join('');
+
+            let intro = '';
+            if (recall === 'schwierig') {
+                intro = 'Gerade weil der Rückruf bei ' + name + ' unter Ablenkung noch nicht sitzt, ist der Notfall-Rückruf hier das Herzstück. Wir bauen ihn so auf, dass er auch dann greift, wenn es spannend wird.';
+            } else if (dogEnv === 'natur') {
+                intro = 'Bei viel Freilauf in Feld und Wald sind Jagdreize das größte Risiko. Der Fokus liegt auf Notfall-Rückruf, Distanz-Not-Halt und dem sicheren Sofort-Aus.';
+            } else if (dogEnv === 'stadt') {
+                intro = 'In der Stadt entscheiden oft Sekunden am Straßenrand. Das Training legt besonderen Wert auf Distanz-Not-Halt, Warten an Tür und Auto und den Notfall-Rückruf.';
+            } else {
+                intro = 'Alle 10 Kommandos, zugeschnitten auf ' + name + ' und eure typischen Situationen im Alltag.';
+            }
+            document.getElementById('personalIntro').textContent = intro;
+
+            document.getElementById('productSection').classList.add('visible');
+            setTimeout(() => {
+                document.getElementById('productSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        if (quizSkipped) {
+            setTimeout(() => finishQuiz(), 100);
+        }
+
+        // Trusted sources: Email-Kampagne + PDF-QR
+        const utmSource = urlParams.get('utm_source') || '';
+        const utmMedium = urlParams.get('utm_medium') || '';
+        const cameFromEmail = utmSource === 'brevo' || utmMedium === 'email';
+        const cameFromPdf = utmSource === 'pdf_plan' || utmSource === 'pdf';
+        const SB_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+        const SB_HEADERS = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` };
+
+        function applyLead(lead) {
+            if (!lead || !lead.dog_name) return;
+            dogName = lead.dog_name;
+            if (lead.dog_breed) dogBreed = lead.dog_breed;
+            updateDogNameUI(lead.dog_name);
+        }
+
+        if ((cameFromEmail || cameFromPdf) && leadId) {
+            fetch(`${SB_URL}/rest/v1/wauwerk_leads?id=eq.${leadId}&select=dog_name,dog_breed`, { headers: SB_HEADERS })
+                .then(r => r.json()).then(d => d[0] && applyLead(d[0])).catch(() => {});
+        } else if (cameFromPdf && !leadId) {
+            const gate = document.getElementById('emailGate');
+            if (gate) {
+                gate.style.display = 'flex';
+                document.getElementById('emailGateForm').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const input = document.getElementById('emailGateInput');
+                    const submit = document.getElementById('emailGateSubmit');
+                    const errEl = document.getElementById('emailGateError');
+                    const email = (input.value || '').trim().toLowerCase();
+                    if (!email.includes('@')) return;
+                    submit.disabled = true; submit.textContent = 'Lade...';
+                    errEl.style.display = 'none';
+                    try {
+                        const res = await fetch(`${SB_URL}/rest/v1/wauwerk_leads?email=ilike.${encodeURIComponent(email)}&order=created_at.desc&limit=1&select=id,dog_name,dog_breed`, { headers: SB_HEADERS });
+                        const data = await res.json();
+                        if (data[0]) {
+                            userEmail = email;
+                            if (data[0].id) leadId = data[0].id;
+                            applyLead(data[0]);
+                            gate.style.display = 'none';
+                        } else {
+                            errEl.textContent = 'Keine Daten gefunden. Nutze die E-Mail mit der du den Plan gekauft hast.';
+                            errEl.style.display = 'block';
+                            submit.disabled = false; submit.textContent = 'Weiter →';
+                        }
+                    } catch (err) {
+                        submit.disabled = false; submit.textContent = 'Weiter →';
+                    }
+                });
+            }
+        }
+
+        if (urlParams.get('success') === 'true' || urlParams.get('redirect_status') === 'succeeded') {
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('thankYou').classList.add('active');
+            const piId = urlParams.get('payment_intent') || '';
+            fetch('/api/upsell-product-purchase', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    paymentIntentId: piId, type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName,
+                    dogSize: urlParams.get('size') || dogSize,
+                    recall: urlParams.get('recall') || recall,
+                    dogEnv: urlParams.get('env') || dogEnv
+                })
+            }).then(r => r.json()).then(d => console.log('Purchase handler:', d)).catch(err => console.error('Purchase error:', err));
+            if (typeof fbq !== 'undefined') fbq('track', 'Purchase', { value: PRICE_VALUE, currency: 'EUR', content_name: 'Lebensretter-Training' });
+            if (typeof gtag !== 'undefined') gtag('event', 'conversion', { send_to: 'AW-17806525009/I3FdCL3O1NEbENGE6KpC', value: PRICE_VALUE, currency: 'EUR', transaction_id: leadId + '_' + PRODUCT_TYPE });
+        }
+
+        async function buyProduct() {
+            const btn = document.querySelector('.cta-btn');
+            btn.textContent = 'Lädt...'; btn.disabled = true;
+            try {
+                const returnUrl = window.location.origin + '/lebensretter.html?success=true&redirect_status=succeeded&email=' + encodeURIComponent(userEmail) + '&lead_id=' + encodeURIComponent(leadId) + '&size=' + encodeURIComponent(dogSize || '') + '&recall=' + encodeURIComponent(recall || '') + '&env=' + encodeURIComponent(dogEnv || '') + '&dogName=' + encodeURIComponent(dogName || '') + '&breed=' + encodeURIComponent(dogBreed || '');
+                const response = await fetch('/api/mollie/upsell-product-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: PRODUCT_TYPE, email: userEmail, leadId: leadId, dogName: dogName, returnUrl: returnUrl })
+                });
+                const result = await response.json();
+                if (result.error || !result.url) { alert('Fehler: ' + (result.error || 'Keine Zahlungs-URL')); btn.textContent = 'Jetzt absichern'; btn.disabled = false; return; }
+                window.location.href = result.url;
+            } catch (err) { console.error('Checkout error:', err); alert('Fehler beim Laden.'); btn.textContent = 'Jetzt absichern'; btn.disabled = false; }
+        }
+    </script>
+</body>
+</html>

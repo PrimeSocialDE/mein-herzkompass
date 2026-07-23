@@ -12,6 +12,7 @@ const PRODUCT_PRICES: Record<string, number> = {
   abo: 999,
   reise: 1999,
   erstehilfe: 1499,
+  lebensretter: 2499,
 };
 
 const PRODUCT_NAMES: Record<string, string> = {
@@ -20,6 +21,7 @@ const PRODUCT_NAMES: Record<string, string> = {
   abo: "Jahreszeiten-Abo",
   reise: "Reise-Guide mit Hund",
   erstehilfe: "Erste-Hilfe Guide fuer Hunde",
+  lebensretter: "Lebensretter-Training (10 Kommandos)",
 };
 
 export async function POST(request: Request) {

@@ -16,6 +16,7 @@ const PRODUCT_PRICES: Record<string, number> = {
   abo: 999,
   reise: 1999,
   erstehilfe: 1499,
+  lebensretter: 2499,
   // Themen-Module (siehe lib/member-themen.ts) — alle einheitlich 14,99
   "thema-leinen": 1499,
   "thema-bellen": 1499,
@@ -35,6 +36,7 @@ const PRODUCT_NAMES: Record<string, string> = {
   abo: "Jahreszeiten-Abo",
   reise: "Reise-Guide mit Hund",
   erstehilfe: "Erste-Hilfe Guide fuer Hunde",
+  lebensretter: "Lebensretter-Training (10 Kommandos)",
   "thema-leinen": "Themen-Modul Leinenfuehrigkeit",
   "thema-bellen": "Themen-Modul Bellen abgewoehnen",
   "thema-aggression": "Themen-Modul Aggression entschaerfen",
