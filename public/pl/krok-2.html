@@ -261,16 +261,12 @@
 
         let isNavigating = false;
 
-        // A/B Test: 50% sehen Trust-Zwischenseite, 50% gehen direkt weiter
-        // (hochgezogen von 30/70, damit der Test schneller Signifikanz erreicht)
+        // 100% auf die Trust-Seite (krok-2b, poln. Trainer-Team). Der A/B-Test
+        // wurde auf DE zugunsten der Trainer-Seite entschieden (+Conversion), PL
+        // zieht 1:1 nach. ab_test_trust bleibt 'A' fuer die Attribution.
         function getTrustVariant() {
-            let variant = localStorage.getItem('ab_test_trust');
-            if (!variant) {
-                variant = Math.random() < 0.50 ? 'A' : 'B';
-                localStorage.setItem('ab_test_trust', variant);
-            }
-            // A = Trust-Seite (krok-2b), B = direkt zu Schritt 3
-            return variant === 'A' ? 'krok-2b.html' : 'krok-3.html';
+            localStorage.setItem('ab_test_trust', 'A');
+            return 'krok-2b.html';
         }
 
         function selectBreed(breed) {
