@@ -875,6 +875,32 @@ async function handleUpsellProductPaid(payment: any) {
     }
   }
 
+  // ── Beleg (Kleinbetragsrechnung) für Lebensretter erzeugen ────────────────
+  // Bewusst VOR der zusatzmodul/send-Auslieferung: die Auslieferungs-Mail lädt
+  // den Beleg nach und zeigt ihn im Footer (Transaktionsnummer). Idempotent
+  // (create_beleg dedupt über mollie_payment_id) + failure-isoliert. Nur DE.
+  if (product === "lebensretter") {
+    const isPlSale = (leadData?.answers as any)?.lang === "pl";
+    const bruttoCents = Math.round(parseFloat(payment.amount?.value || "0") * 100);
+    if (!isPlSale && bruttoCents > 0) {
+      try {
+        await supabase.rpc("create_beleg", {
+          p_mollie_payment_id: payment.id,
+          p_lead_id: leadData?.id || null,
+          p_email: email,
+          p_beschreibung: "Zusatzleistung: Lebensretter-Training (10 Kommandos)",
+          p_brutto_cents: bruttoCents,
+          p_leistungsdatum: new Date().toISOString(),
+        });
+      } catch (e: any) {
+        console.error(
+          "[mollie-webhook] Beleg (lebensretter) fehlgeschlagen (Auslieferung läuft weiter):",
+          e?.message
+        );
+      }
+    }
+  }
+
   // Themen-Modul (thema-*) → direkt /api/zusatzmodul/send (interne Mail-Pipeline).
   // Sonst-Upsells (ernaehrung/zweithund/abo/reise/erstehilfe) → an Make.com.
   // Damit der Versand nicht mehr ausschliesslich von Make abhaengt — Make hat

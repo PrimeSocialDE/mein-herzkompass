@@ -109,6 +109,7 @@ function buildHtml(opts: {
   ctaText: string;
   footerHint: string;
   lang?: Lang;
+  unsubUrl?: string;
 }): string {
   const {
     subject,
@@ -122,6 +123,7 @@ function buildHtml(opts: {
     ctaText,
     footerHint,
     lang = "de",
+    unsubUrl,
   } = opts;
   // PL-Weiche für Marke + Template-Texte (Footer/Abmelden). DE bleibt identisch.
   const isPl = lang === "pl";
@@ -172,7 +174,7 @@ function buildHtml(opts: {
       </td></tr>
       <tr><td style="padding:14px 28px;background:#FAFAFA;border-top:1px solid #F0EBE3;">
         <p style="margin:0;font-size:11px;line-height:1.6;color:#9CA3AF;text-align:center;">
-          ${brand} · <a href="${BASE}/mitglieder" style="color:#8B7355;text-decoration:underline;">${myArea}</a> · <a href="mailto:support@pfoten-plan.de" style="color:#8B7355;text-decoration:underline;">support@pfoten-plan.de</a><br><a href="{{ unsubscribe }}" style="color:#9CA3AF;text-decoration:underline;">${unsub}</a>
+          ${brand} · <a href="${BASE}/mitglieder" style="color:#8B7355;text-decoration:underline;">${myArea}</a> · <a href="mailto:support@pfoten-plan.de" style="color:#8B7355;text-decoration:underline;">support@pfoten-plan.de</a><br><a href="${unsubUrl || "{{ unsubscribe }}"}" style="color:#9CA3AF;text-decoration:underline;">${unsub}</a>
         </p>
       </td></tr>
     </table>
@@ -460,20 +462,25 @@ function buildMailDef(
     const umfrageUrl = `${BASE}/umfrage.html?lead_id=${encodeURIComponent(
       lead.id
     )}&email=${encodeURIComponent(lead.email)}&dog=${encodeURIComponent(dogName)}`;
+    // DSGVO: sichtbarer Abmelde-Link (unser Endpoint setzt answers.unsubscribed,
+    // die Sequenz-Cron stoppt daraufhin). Zusätzlich als List-Unsubscribe-Header.
+    const unsubUrl = `${BASE}/api/unsubscribe?lead=${encodeURIComponent(lead.id)}`;
 
     const plainHtml = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;">
 <div style="max-width:520px;margin:0 auto;padding:24px 22px;font-size:15.5px;line-height:1.65;">
   <p style="margin:0 0 14px;">Hallo,</p>
-  <p style="margin:0 0 18px;">ich bin Laura, Werkstudentin bei Pfoten-Plan 🐾 — ich sammle gerade kurz Feedback zu deinem Training mit ${dogName}. <strong>4 Fragen, keine 2 Minuten.</strong> Als Dankeschön bekommst du danach ein Zusatzmodul <strong>33 % günstiger</strong>:</p>
+  <p style="margin:0 0 14px;">ich bin Laura, Werkstudentin bei Pfoten-Plan 🐾. Ich sammle gerade kurz Feedback zu deinem Training mit ${dogName}.</p>
+  <p style="margin:0 0 18px;"><strong>4 Fragen, keine 2 Minuten.</strong> Als Dankeschön bekommst du danach ein Zusatzmodul <strong>33 % günstiger</strong>:</p>
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 18px;"><tr><td>
     <a href="${umfrageUrl}" target="_blank" style="display:inline-block;background:#C4A576;color:#ffffff;text-decoration:none;padding:15px 34px;border-radius:11px;font-size:16px;font-weight:700;">Zur kurzen Umfrage →</a>
   </td></tr></table>
-  <p style="margin:0 0 16px;color:#4B5563;">Du trainierst jetzt seit etwa 30 Tagen mit ${dogName} — genau der richtige Moment, um kurz zu schauen, was gut läuft und was wir besser machen können. Dein Feedback hilft uns wirklich.</p>
+  <p style="margin:0 0 12px;color:#4B5563;">Du trainierst jetzt seit etwa 30 Tagen mit ${dogName}.</p>
+  <p style="margin:0 0 16px;color:#4B5563;">Genau der richtige Moment, um kurz zu schauen, was gut läuft und was wir besser machen können. Dein Feedback hilft uns wirklich.</p>
   <p style="margin:0 0 16px;font-size:13px;color:#9CA3AF;">Falls der Button nicht geht: <a href="${umfrageUrl}" style="color:#8B7355;word-break:break-all;">hier klicken</a></p>
   <p style="margin:0 0 6px;">Dankeschön &amp; liebe Grüße</p>
   <p style="margin:0;">Laura<br><span style="color:#6B7280;font-size:13px;">Werkstudentin · Pfoten-Plan</span></p>
-  <p style="margin:20px 0 0;font-size:11px;color:#9CA3AF;line-height:1.5;">Die Teilnahme ist freiwillig. Mehr zum Datenschutz: <a href="${BASE}/datenschutz.html" style="color:#9CA3AF;">pfoten-plan.de/datenschutz</a></p>
+  <p style="margin:20px 0 0;font-size:11px;color:#9CA3AF;line-height:1.5;">Die Teilnahme ist freiwillig. Mehr zum Datenschutz: <a href="${BASE}/datenschutz.html" style="color:#9CA3AF;">pfoten-plan.de/datenschutz</a><br>Keine E-Mails mehr von uns? <a href="${unsubUrl}" style="color:#9CA3AF;text-decoration:underline;">Hier abmelden</a>.</p>
 </div>
 </body></html>`;
 
@@ -482,15 +489,17 @@ function buildMailDef(
 <body style="margin:0;padding:0;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;">
 <div style="max-width:520px;margin:0 auto;padding:24px 22px;font-size:15.5px;line-height:1.65;">
   <p style="margin:0 0 14px;">Cześć,</p>
-  <p style="margin:0 0 18px;">jestem Laura, praktykantka w ŁapaPlan 🐾 — zbieram właśnie krótko opinie o twoim treningu z ${dogName}. <strong>4 pytania, mniej niż 2 minuty.</strong> W podziękowaniu dostaniesz potem moduł dodatkowy <strong>33 % taniej</strong>:</p>
+  <p style="margin:0 0 14px;">jestem Laura, praktykantka w ŁapaPlan 🐾. Zbieram właśnie krótko opinie o twoim treningu z ${dogName}.</p>
+  <p style="margin:0 0 18px;"><strong>4 pytania, mniej niż 2 minuty.</strong> W podziękowaniu dostaniesz potem moduł dodatkowy <strong>33 % taniej</strong>:</p>
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 18px;"><tr><td>
     <a href="${umfrageUrl}" target="_blank" style="display:inline-block;background:#C4A576;color:#ffffff;text-decoration:none;padding:15px 34px;border-radius:11px;font-size:16px;font-weight:700;">Do krótkiej ankiety →</a>
   </td></tr></table>
-  <p style="margin:0 0 16px;color:#4B5563;">Trenujesz z ${dogName} już od około 30 dni — to idealny moment, żeby krótko sprawdzić, co idzie dobrze, a co możemy zrobić lepiej. Twoja opinia naprawdę nam pomaga.</p>
+  <p style="margin:0 0 12px;color:#4B5563;">Trenujesz z ${dogName} już od około 30 dni.</p>
+  <p style="margin:0 0 16px;color:#4B5563;">To idealny moment, żeby krótko sprawdzić, co idzie dobrze, a co możemy zrobić lepiej. Twoja opinia naprawdę nam pomaga.</p>
   <p style="margin:0 0 16px;font-size:13px;color:#9CA3AF;">Jeśli przycisk nie działa: <a href="${umfrageUrl}" style="color:#8B7355;word-break:break-all;">kliknij tutaj</a></p>
   <p style="margin:0 0 6px;">Dziękuję &amp; serdecznie pozdrawiam</p>
   <p style="margin:0;">Laura<br><span style="color:#6B7280;font-size:13px;">Praktykantka · ŁapaPlan</span></p>
-  <p style="margin:20px 0 0;font-size:11px;color:#9CA3AF;line-height:1.5;">Udział jest dobrowolny. Więcej o ochronie danych: <a href="${BASE}/datenschutz.html" style="color:#9CA3AF;">pfoten-plan.de/datenschutz</a></p>
+  <p style="margin:20px 0 0;font-size:11px;color:#9CA3AF;line-height:1.5;">Udział jest dobrowolny. Więcej o ochronie danych: <a href="${BASE}/datenschutz.html" style="color:#9CA3AF;">pfoten-plan.de/datenschutz</a><br>Nie chcesz już e-maili? <a href="${unsubUrl}" style="color:#9CA3AF;text-decoration:underline;">Wypisz się tutaj</a>.</p>
 </div>
 </body></html>`;
 
@@ -521,6 +530,9 @@ export async function sendSequenceMail(
   if (!def) return { ok: false, reason: "no_content_for_mail" };
   if (!lead.email) return { ok: false, reason: "no_email" };
 
+  // DSGVO: sichtbarer Abmelde-Link (unser Endpoint → answers.unsubscribed, Cron stoppt).
+  const unsubUrl = `${BASE}/api/unsubscribe?lead=${encodeURIComponent(lead.id)}`;
+
   // Schlichte, persönliche Mail (z.B. Laura-Umfrage) nutzt eigenes HTML und
   // umgeht das Design-Template komplett. Sonst der normale Sequenz-Look.
   const html =
@@ -537,16 +549,45 @@ export async function sendSequenceMail(
       ctaText: def.ctaText || "",
       footerHint: def.footerHint || "",
       lang,
+      unsubUrl,
     });
+
+  const senderName =
+    def.senderName || (lang === "pl" ? "Max z ŁapaPlan" : "Max von Pfoten-Plan");
+
+  // DE: primär über Amazon SES (pfoten-post.de) — macht uns unabhängig von Brevo
+  // und wärmt die neue Absenderdomain mit sauberem, engagiertem Käufer-Traffic auf.
+  // Brevo bleibt automatischer Fallback. PL bleibt komplett auf Brevo (SES kann
+  // nur als pfoten-post.de senden, nicht als lapaplan.pl).
+  if (lang !== "pl") {
+    const { sendViaSes, sesConfigured } = await import("./ses");
+    if (sesConfigured()) {
+      const fromEmail = /laura/i.test(senderName)
+        ? "laura@pfoten-post.de"
+        : "hallo@pfoten-post.de";
+      const r = await sendViaSes({
+        to: lead.email,
+        subject: def.subject,
+        html,
+        fromName: senderName,
+        fromEmail,
+        replyTo: "support@pfoten-plan.de",
+        unsubscribeUrl: unsubUrl,
+        tags: [`email-seq-${mailNum}`],
+      });
+      if (r.ok) return { ok: true };
+      console.error(
+        `[email-sequence] SES fehlgeschlagen (mail ${mailNum}, ${lead.email}): ${r.status} ${r.error} → Fallback Brevo`
+      );
+    }
+  }
 
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
     body: JSON.stringify({
       sender: {
-        name:
-          def.senderName ||
-          (lang === "pl" ? "Max z ŁapaPlan" : "Max von Pfoten-Plan"),
+        name: senderName,
         email: lang === "pl" ? "pomoc@lapaplan.pl" : "support@pfoten-plan.de",
       },
       to: [{ email: lead.email }],

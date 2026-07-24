@@ -10,6 +10,7 @@
 
 import { NextResponse } from "next/server";
 import { createMemberAdminClient } from "@/lib/member-auth-server";
+import { renderBelegFooterHtml, type BelegRow } from "@/lib/beleg";
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
 
@@ -332,7 +333,8 @@ Gib AUSSCHLIESSLICH ein JSON-Array von 3 bis 4 Strings zurück (jeder String ein
 
 function buildHtml(
   cfg: { intro: string; body: string; closing: string },
-  dogName: string
+  dogName: string,
+  belegFooterHtml?: string
 ): string {
   const intro = personalize(cfg.intro, dogName);
   const body = personalize(cfg.body, dogName);
@@ -354,6 +356,7 @@ function buildHtml(
 <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;padding:14px 16px;">
 <p style="margin:0;font-size:13px;color:#4B5563;line-height:1.5;">Der vollständige Plan liegt als PDF im Anhang — druckbar oder unterwegs auf dem Handy dabei.</p>
 </div>
+${belegFooterHtml ? `<div style="margin-top:8px;">${belegFooterHtml}</div>` : ""}
 </td></tr>
 <tr><td style="padding:18px 32px;background:#FAFAFA;border-top:1px solid #F0EBE3;">
 <p style="margin:0;font-size:11px;color:#9CA3AF;text-align:center;">Pfoten-Plan · Persönliches Hundetraining</p>
@@ -489,12 +492,13 @@ export async function POST(request: Request) {
     // von Rasse/Quiz. Die anderen Module bleiben unverändert (Default-Breed + statischer why-Text).
     let pdfBreed = isPL ? "kundelek" : "Mischling";
     let whyParas: string[] | undefined;
+    let belegFooterHtml: string | undefined;
     if (pdfModuleKey === "lebensretter") {
       try {
         const admin = createMemberAdminClient();
         const { data: lead } = await admin
           .from("wauwerk_leads")
-          .select("answers, breed")
+          .select("id, answers, breed")
           .ilike("email", email)
           .order("created_at", { ascending: false })
           .limit(1)
@@ -508,6 +512,23 @@ export async function POST(request: Request) {
         if (breed) pdfBreed = breed;
         const intro = await buildLebensretterIntro(name, breed, answers);
         if (intro) whyParas = intro;
+
+        // Beleg (Kleinbetragsrechnung) nachladen — im Mollie-Webhook bereits
+        // erzeugt (vor der Auslieferung). Nur DE. Best-effort: fehlt er (seltener
+        // Timing-Fall), geht die Mail trotzdem raus, der Beleg liegt im System.
+        if (!isPL && (lead as any)?.id) {
+          const { data: b } = await admin
+            .from("belege")
+            .select(
+              "belegnummer,beschreibung,brutto_cents,ust_cents,netto_cents,ust_satz,leistungsdatum"
+            )
+            .eq("lead_id", (lead as any).id)
+            .ilike("beschreibung", "%Lebensretter%")
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (b) belegFooterHtml = renderBelegFooterHtml(b as BelegRow);
+        }
       } catch (e: any) {
         console.warn("[zusatzmodul/send] Lebensretter-Personalisierung übersprungen:", e?.message);
       }
@@ -523,7 +544,7 @@ export async function POST(request: Request) {
     const pdfBase64 = Buffer.from(pdfBytes).toString("base64");
 
     const subject = personalize(cfg.subject, name);
-    const html = isPL ? buildHtmlPL(cfg, name) : buildHtml(cfg, name);
+    const html = isPL ? buildHtmlPL(cfg, name) : buildHtml(cfg, name, belegFooterHtml);
     const filename = `Pfoten-Plan-${cfg.label.replace(/[^a-zA-Z0-9-]/g, "-")}-${name.replace(/[^a-zA-Z0-9-]/g, "")}.pdf`;
 
     // Bezahlte Auslieferung: DE primär über Google Workspace SMTP (bessere
