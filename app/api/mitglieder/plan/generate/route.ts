@@ -365,7 +365,7 @@ export async function POST(req: NextRequest) {
             // Beleg (Kleinbetragsrechnung) für die DE-Plan-Mail — im Mollie-Webhook
             // bereits erzeugt (vor status='paid'), hier per lead_id nachgeladen.
             let beleg: any = null;
-            if (planLang !== "pl" && lead?.id) {
+            if (lead?.id) {
               try {
                 const { data: b } = await admin
                   .from("belege")

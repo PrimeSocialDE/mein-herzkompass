@@ -244,26 +244,34 @@ async function handlePaid(payment: any) {
     ).toISOString();
   }
 
-  // ── Beleg (Kleinbetragsrechnung) für DE-Verkäufe erzeugen ──────────
+  // ── Beleg (Kleinbetragsrechnung / rachunek) erzeugen ───────────────
   // Bewusst VOR dem status='paid'-Write: der pg_net-Trigger löst danach die
   // Plan-Mail aus, die den Beleg-Footer anzeigen soll → Beleg muss vorher da
   // sein. Idempotent (create_beleg prüft mollie_payment_id) + failure-isoliert
-  // (ein Beleg-Fehler darf Zahlung/Plan NIE blockieren). Nur DE, nicht PL.
+  // (ein Beleg-Fehler darf Zahlung/Plan NIE blockieren).
+  // DE: 19% USt, EUR. PL: 23% VAT (poln. Satz, OSS), PLN, markt='PL' →
+  // in Supabase über belege.markt trennbar/nachverfolgbar.
   if (table === "wauwerk_leads" && customerEmail) {
     const isPlSale = (prevAnswers as any)?.lang === "pl";
     const bruttoCents = Math.round(
       parseFloat(payment.amount?.value || "0") * 100
     );
-    if (!isPlSale && bruttoCents > 0) {
+    if (bruttoCents > 0) {
       try {
-        const { belegDescription } = await import("@/lib/beleg");
+        const { belegDescription, belegDescriptionPl, PL_VAT_RATE } =
+          await import("@/lib/beleg");
         await supabase.rpc("create_beleg", {
           p_mollie_payment_id: payment.id,
           p_lead_id: referenceId,
           p_email: customerEmail,
-          p_beschreibung: belegDescription(meta),
+          p_beschreibung: isPlSale
+            ? belegDescriptionPl(meta)
+            : belegDescription(meta),
           p_brutto_cents: bruttoCents,
           p_leistungsdatum: new Date().toISOString(),
+          ...(isPlSale
+            ? { p_ust_satz: PL_VAT_RATE, p_markt: "PL", p_waehrung: "PLN" }
+            : {}),
         });
       } catch (e: any) {
         console.error(
