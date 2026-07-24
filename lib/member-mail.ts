@@ -9,7 +9,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { UserChallenge } from "./member-challenges";
 import type { MemberProfile } from "./member-db";
 import type { Lang } from "./lang";
-import { renderBelegFooterHtml, type BelegRow } from "./beleg";
+import { renderBelegFooterHtml, renderBelegFooterHtmlPl, type BelegRow } from "./beleg";
 import { buildOneTapUrl } from "./one-tap-login";
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
@@ -388,9 +388,12 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
   const lang = args.lang ?? "de";
   if (!to) return { ok: false, reason: "no_email" };
 
-  // Beleg-Footer (Kleinbetragsrechnung) — nur DE, nur wenn ein Beleg vorliegt.
-  const belegHtml =
-    lang !== "pl" && args.beleg ? renderBelegFooterHtml(args.beleg) : undefined;
+  // Beleg-Footer (Kleinbetragsrechnung / rachunek) — DE 19% USt, PL 23% VAT.
+  const belegHtml = args.beleg
+    ? lang === "pl"
+      ? renderBelegFooterHtmlPl(args.beleg)
+      : renderBelegFooterHtml(args.beleg)
+    : undefined;
 
   // Auto-Login-Link: User landet direkt eingeloggt auf der Coaching-Seite
   // Durabler One-Tap-Login-Link (365 Tage, wiederverwendbar, scanner-sicher)
@@ -511,6 +514,7 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
       ctaUrl,
       footerHint: `Przycisk zawiera jednorazowe logowanie — trafisz od razu zalogowany do panelu członkowskiego. Link jest ważny 1 godzinę i tylko dla Ciebie.`,
       lang: "pl",
+      belegHtml,
     });
     subject = `🐾 Twój ${monthsLabelPl} dla ${dogName} jest gotowy`;
   } else {
