@@ -5,6 +5,7 @@
 import { createMemberAdminClient } from "./member-auth-server";
 import { langFromEmailLookup } from "./lang";
 import type { MemberProfile } from "./member-db";
+import { CHALLENGE_TEMPLATES_PL } from "./member-challenges-pl";
 
 // ── Challenge-Templates ────────────────────────────────────────────
 // problem_match: NULL = generic (jedem User), sonst quiz-problem-key.
@@ -549,7 +550,8 @@ export interface UserChallenge {
 function pickTemplatesForUser(
   member: MemberProfile,
   recentSlugs: Set<string>,
-  weekStart: string
+  weekStart: string,
+  templates: ChallengeTemplate[] = CHALLENGE_TEMPLATES
 ): ChallengeTemplate[] {
   const isPaid = member.purchase_status === "paid";
   const problemKey =
@@ -593,13 +595,13 @@ function pickTemplatesForUser(
   const result: ChallengeTemplate[] = [];
 
   // 1) Problem-spezifisch (Paid: bis 2, Free: 1) — bevorzugt frisch, sonst rotierend
-  const problemPool = CHALLENGE_TEMPLATES.filter(
+  const problemPool = templates.filter(
     (t) => t.problem_match === problemKey && (isPaid || !t.is_premium)
   );
   result.push(...pick(problemPool, isPaid ? 2 : 1, result));
 
   // 2) Generic — Mindestgarantie (falls kein Problem-Match griff) + Paid-Bonus
-  const genericPool = CHALLENGE_TEMPLATES.filter(
+  const genericPool = templates.filter(
     (t) => t.problem_match === null && (isPaid || !t.is_premium)
   );
   const wantGeneric = isPaid
@@ -655,11 +657,21 @@ export async function getOrAssignWeekChallenges(
   );
   const isFirstEver = (countRes.count || 0) === 0;
 
-  // 3) Templates picken
-  const templates = pickTemplatesForUser(member, recentSlugs, weekStart);
+  // 3) Templates picken — Sprache des Members bestimmt das Templateset.
+  //    langFromEmailLookup, da member_users kein lang-Feld hat. Default "de"
+  //    → deutsche Kunden bekommen unveraendert die deutschen Aufgaben.
+  const memberLang = await langFromEmailLookup(admin, member.email);
+  const templateSet =
+    memberLang === "pl" ? CHALLENGE_TEMPLATES_PL : CHALLENGE_TEMPLATES;
+  const templates = pickTemplatesForUser(
+    member,
+    recentSlugs,
+    weekStart,
+    templateSet
+  );
   if (templates.length === 0) {
     // Notfall: alle wurden schon mal gemacht — recyclen, nimm irgendeine generic
-    const fallback = CHALLENGE_TEMPLATES.filter(
+    const fallback = templateSet.filter(
       (t) =>
         t.problem_match === null &&
         (member.purchase_status === "paid" || !t.is_premium)

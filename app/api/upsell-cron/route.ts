@@ -244,6 +244,9 @@ export async function GET(request: Request) {
       if (!lead || !lead.email) continue;
       // Skip if lead status is no longer paid (e.g. refunded)
       if (!["paid", "plan_sent"].includes(lead.status)) continue;
+      // PL-Kunden ausschliessen: diese Upsell-Mails sind hardcodiert deutsch und
+      // bewerben Make.com-Produkte (Ernaehrung/Reise), die es auf PL nicht gibt.
+      if (lead.answers?.lang === "pl") continue;
 
       const startDate = new Date(schedule.upsell_start_date + "T00:00:00Z");
       const daysSinceStart = Math.floor((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
