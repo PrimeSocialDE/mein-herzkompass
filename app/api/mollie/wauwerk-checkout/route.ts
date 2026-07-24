@@ -167,7 +167,15 @@ export async function POST(req: NextRequest) {
       "3month": "Dein 12-Wochen-Trainingsplan",
       "6month": "Dein 6-Monats-Trainingsplan",
     };
-    const planName = planNames[plan] || "Dein 4-Wochen-Trainingsplan";
+    // PL: polnische Beschreibung für die Mollie-Zahlseite / PayPal-Beleg.
+    const planNamesPl: Record<string, string> = {
+      "1month": "Twój 4-tygodniowy plan treningowy",
+      "3month": "Twój 12-tygodniowy plan treningowy",
+      "6month": "Twój 6-miesięczny plan treningowy",
+    };
+    const planName = isPL
+      ? planNamesPl[plan] || planNamesPl["1month"]
+      : planNames[plan] || planNames["1month"];
 
     // Origin (identische Logik wie Stripe)
     const rawOrigin = req.headers.get("origin") || "https://pfoten-plan.de";
@@ -195,10 +203,16 @@ export async function POST(req: NextRequest) {
     // Bank-Statement bei manchen Methoden). 'Pfoten-Plan' hier raus, weil der
     // Markenname schon aus dem Mollie-Profile-Trade-Name im Header steht
     // — sonst doppelt.
-    const description =
-      `${planName} für ${dogName || "deinen Hund"}` +
-      (bumpApplied ? ` + ${bumpDetails.name}` : "") +
-      ` · Einmalzahlung, kein Abo · direkt per E-Mail zum Herunterladen & Ausdrucken`;
+    // PL-Bump-Label (BUMP_DETAILS ist deutsch + kennt den PL-Grundkommando-Bump
+    // nicht → für die PL-Beschreibung ein sauberes polnisches Label statt Fallback).
+    const bumpLabelPl = "Plan komend ratunkowych";
+    const description = isPL
+      ? `${planName} dla ${dogName || "Twojego psa"}` +
+        (bumpApplied ? ` + ${bumpLabelPl}` : "") +
+        ` · Płatność jednorazowa, bez abonamentu · od razu e-mailem do pobrania i wydruku`
+      : `${planName} für ${dogName || "deinen Hund"}` +
+        (bumpApplied ? ` + ${bumpDetails.name}` : "") +
+        ` · Einmalzahlung, kein Abo · direkt per E-Mail zum Herunterladen & Ausdrucken`;
 
     const safeCancelPath =
       typeof cancelPath === "string" &&
