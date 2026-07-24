@@ -482,6 +482,12 @@ export async function POST(req: NextRequest) {
       if (ab_test_trust) ansMerge.ab_test_trust = ab_test_trust;
       if (ab_variant) ansMerge.ab_variant = ab_variant;
       if (entry_page) ansMerge.entry_page = entry_page;
+      // PL-Herkunft (lapaplan.pl / PLN-Checkout) am Lead persistieren, damit
+      // Webhook + Plan-Generierung + Sequenz-Mails den polnischen Zweig waehlen.
+      // Bisher wurde lang NUR im Stripe-Checkout gesetzt, nicht hier → PL-Kaeufer
+      // ueber Mollie bekamen faelschlich einen deutschen Plan. DE bleibt unberuehrt
+      // (wir setzen lang NUR bei isPL; ohne Flag greift ueberall der DE-Default).
+      if (isPL) ansMerge.lang = "pl";
 
       // First-Touch-Attribution set-once am Lead persistieren. So erbt JEDER
       // Folgekauf (Upsells/One-Click) dieselbe Herkunft aus answers — auch wenn
