@@ -89,8 +89,11 @@ export async function GET(req: NextRequest) {
 
     const answers = (lead.answers || {}) as Record<string, any>;
 
-    // 2) Unsubscribe-Flag — KAUF-DROP-OUT-Mechanismus
-    if (answers.email_sequence_unsubscribed_at) {
+    // 2) Unsubscribe-Flag — KAUF-DROP-OUT-Mechanismus.
+    // Honoriert sowohl das Sequenz-eigene Flag als auch die generische Abmeldung
+    // (answers.unsubscribed, gesetzt von /api/unsubscribe = der Link in der Mail).
+    // Eine Abmeldung stoppt damit DSGVO-konform die weitere Sequenz.
+    if (answers.email_sequence_unsubscribed_at || answers.unsubscribed) {
       stats.skipped_unsubscribed++;
       continue;
     }
