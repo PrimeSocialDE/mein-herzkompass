@@ -167,7 +167,15 @@ export async function POST(req: NextRequest) {
       "3month": "Dein 12-Wochen-Trainingsplan",
       "6month": "Dein 6-Monats-Trainingsplan",
     };
-    const planName = planNames[plan] || "Dein 4-Wochen-Trainingsplan";
+    // PL: polnische Beschreibung für die Mollie-Zahlseite / PayPal-Beleg.
+    const planNamesPl: Record<string, string> = {
+      "1month": "Twój 4-tygodniowy plan treningowy",
+      "3month": "Twój 12-tygodniowy plan treningowy",
+      "6month": "Twój 6-miesięczny plan treningowy",
+    };
+    const planName = isPL
+      ? planNamesPl[plan] || planNamesPl["1month"]
+      : planNames[plan] || planNames["1month"];
 
     // Origin (identische Logik wie Stripe)
     const rawOrigin = req.headers.get("origin") || "https://pfoten-plan.de";
@@ -179,6 +187,11 @@ export async function POST(req: NextRequest) {
       req.headers.get("x-real-ip") ||
       null;
     const clientUserAgent = req.headers.get("user-agent") || null;
+    // Land aus Vercels Geo-Header (x-vercel-ip-country, z.B. "DE"/"AT"/"CH").
+    // Keine externe API, kein extra Request. Additiv am Lead gespeichert für
+    // saubere Länder-Auswertung (DE/AT/CH-Split) + ggf. USt-Zuordnung.
+    const clientCountry =
+      (req.headers.get("x-vercel-ip-country") || "").toUpperCase() || null;
     const origin = rawOrigin.includes("pfoten-plan.de")
       ? "https://pfoten-plan.de"
       : rawOrigin;
@@ -195,10 +208,16 @@ export async function POST(req: NextRequest) {
     // Bank-Statement bei manchen Methoden). 'Pfoten-Plan' hier raus, weil der
     // Markenname schon aus dem Mollie-Profile-Trade-Name im Header steht
     // — sonst doppelt.
-    const description =
-      `${planName} für ${dogName || "deinen Hund"}` +
-      (bumpApplied ? ` + ${bumpDetails.name}` : "") +
-      ` · Einmalzahlung, kein Abo · direkt per E-Mail zum Herunterladen & Ausdrucken`;
+    // PL-Bump-Label (BUMP_DETAILS ist deutsch + kennt den PL-Grundkommando-Bump
+    // nicht → für die PL-Beschreibung ein sauberes polnisches Label statt Fallback).
+    const bumpLabelPl = "Plan komend ratunkowych";
+    const description = isPL
+      ? `${planName} dla ${dogName || "Twojego psa"}` +
+        (bumpApplied ? ` + ${bumpLabelPl}` : "") +
+        ` · Płatność jednorazowa, bez abonamentu · od razu e-mailem do pobrania i wydruku`
+      : `${planName} für ${dogName || "deinen Hund"}` +
+        (bumpApplied ? ` + ${bumpDetails.name}` : "") +
+        ` · Einmalzahlung, kein Abo · direkt per E-Mail zum Herunterladen & Ausdrucken`;
 
     const safeCancelPath =
       typeof cancelPath === "string" &&
@@ -482,6 +501,7 @@ export async function POST(req: NextRequest) {
       if (ab_test_trust) ansMerge.ab_test_trust = ab_test_trust;
       if (ab_variant) ansMerge.ab_variant = ab_variant;
       if (entry_page) ansMerge.entry_page = entry_page;
+      if (clientCountry) ansMerge.country = clientCountry;
       // PL-Herkunft (lapaplan.pl / PLN-Checkout) am Lead persistieren, damit
       // Webhook + Plan-Generierung + Sequenz-Mails den polnischen Zweig waehlen.
       // Bisher wurde lang NUR im Stripe-Checkout gesetzt, nicht hier → PL-Kaeufer
