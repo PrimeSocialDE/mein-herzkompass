@@ -11,6 +11,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createMemberAdminClient } from "@/lib/member-auth-server";
 import { sendPlNurtureMail, type PlNurtureStage } from "@/lib/pl-nurture";
+import { PL_MAILS_PAUSED } from "@/lib/email-sequence";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -71,6 +72,17 @@ export async function GET(req: NextRequest) {
       out.push({ stage: s, ok: r.ok, reason: r.reason });
     }
     return NextResponse.json({ ok: true, preview, sent: out });
+  }
+
+  // PL-Marketing pausiert (lapaplan.pl-Auth/DNS down) → keine unauthentifizierten
+  // Mails raushauen. Reaktivieren: PL_MAILS_PAUSED in lib/email-sequence auf false.
+  if (PL_MAILS_PAUSED) {
+    return NextResponse.json({
+      ok: true,
+      paused: true,
+      reason: "pl_mails_paused",
+      sent: 0,
+    });
   }
 
   const dryRun = searchParams.get("dry") === "1";

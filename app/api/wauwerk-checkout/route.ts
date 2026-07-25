@@ -133,20 +133,25 @@ export async function POST(req: NextRequest) {
       const clientCountry =
         (req.headers.get('x-vercel-ip-country') || '').toUpperCase() || null;
       if (isPL || clientCountry) {
-        const { data: leadRow } = await supabase
+        const { data: leadRow, error: ansErr } = await supabase
           .from('wauwerk_leads')
           .select('answers')
           .eq('id', leadId)
           .maybeSingle();
-        const ans =
-          leadRow?.answers && typeof leadRow.answers === 'object'
-            ? (leadRow.answers as Record<string, any>)
-            : {};
-        updateData.answers = {
-          ...ans,
-          ...(isPL ? { lang: 'pl' } : {}),
-          ...(clientCountry ? { country: clientCountry } : {}),
-        };
+        // NUR mergen, wenn der Read sauber war UND ein Lead existiert — sonst
+        // answers NICHT anfassen, damit ein fehlgeschlagener Read nie die
+        // Quiz-Antworten mit {} ueberschreibt.
+        if (!ansErr && leadRow) {
+          const ans =
+            leadRow.answers && typeof leadRow.answers === 'object'
+              ? (leadRow.answers as Record<string, any>)
+              : {};
+          updateData.answers = {
+            ...ans,
+            ...(isPL ? { lang: 'pl' } : {}),
+            ...(clientCountry ? { country: clientCountry } : {}),
+          };
+        }
       }
       await supabase
         .from('wauwerk_leads')
