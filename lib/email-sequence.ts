@@ -11,6 +11,13 @@ import type { Lang } from "./lang";
 const BREVO_API_KEY = process.env.BREVO_API_KEY!;
 const BASE = "https://www.pfoten-plan.de";
 
+// TEMPORÄR: Solange lapaplan.pl auf dem Verifizierungs-Halteserver hängt, sind
+// SPF/DKIM/DMARC für pomoc@lapaplan.pl nicht erreichbar → PL-Marketing-Mails
+// würden unauthentifiziert rausgehen (Spam/Ablehnung + Reputationsschaden).
+// Deshalb PL-Marketing (Sequenz/Laura + pl-nurture) pausiert, bis die Domain
+// zurück ist. Zum Reaktivieren: auf false setzen. DE ist NICHT betroffen.
+export const PL_MAILS_PAUSED = true;
+
 // ── Schedule ─────────────────────────────────────────────────────────
 export const EMAIL_SEQUENCE_SCHEDULE: Array<{
   num: number;
@@ -526,6 +533,10 @@ export async function sendSequenceMail(
   lead: SequenceLead,
   lang: Lang = "de"
 ): Promise<{ ok: boolean; reason?: string }> {
+  // PL-Marketing pausiert (lapaplan.pl-Auth down) — DE laeuft normal weiter.
+  if (lang === "pl" && PL_MAILS_PAUSED) {
+    return { ok: false, reason: "pl_paused" };
+  }
   const def = buildMailDef(mailNum, lead, lang);
   if (!def) return { ok: false, reason: "no_content_for_mail" };
   if (!lead.email) return { ok: false, reason: "no_email" };
