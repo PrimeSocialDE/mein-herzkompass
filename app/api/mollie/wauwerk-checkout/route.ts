@@ -187,6 +187,11 @@ export async function POST(req: NextRequest) {
       req.headers.get("x-real-ip") ||
       null;
     const clientUserAgent = req.headers.get("user-agent") || null;
+    // Land aus Vercels Geo-Header (x-vercel-ip-country, z.B. "DE"/"AT"/"CH").
+    // Keine externe API, kein extra Request. Additiv am Lead gespeichert für
+    // saubere Länder-Auswertung (DE/AT/CH-Split) + ggf. USt-Zuordnung.
+    const clientCountry =
+      (req.headers.get("x-vercel-ip-country") || "").toUpperCase() || null;
     const origin = rawOrigin.includes("pfoten-plan.de")
       ? "https://pfoten-plan.de"
       : rawOrigin;
@@ -496,6 +501,7 @@ export async function POST(req: NextRequest) {
       if (ab_test_trust) ansMerge.ab_test_trust = ab_test_trust;
       if (ab_variant) ansMerge.ab_variant = ab_variant;
       if (entry_page) ansMerge.entry_page = entry_page;
+      if (clientCountry) ansMerge.country = clientCountry;
       // PL-Herkunft (lapaplan.pl / PLN-Checkout) am Lead persistieren, damit
       // Webhook + Plan-Generierung + Sequenz-Mails den polnischen Zweig waehlen.
       // Bisher wurde lang NUR im Stripe-Checkout gesetzt, nicht hier → PL-Kaeufer

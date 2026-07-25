@@ -127,10 +127,12 @@ export async function POST(req: NextRequest) {
         stripe_payment_intent: paymentIntent.id,
         status: 'checkout_started',
       };
-      // PL: Sprache am Lead vermerken (answers.lang), damit die Plan-
-      // Generierung spaeter den polnischen Composer/Intro waehlt. Read-
-      // modify-write, um bestehende answers nicht zu ueberschreiben.
-      if (isPL) {
+      // Land (Vercel-Geo-Header, z.B. DE/AT/CH) + ggf. PL-Sprache additiv am
+      // Lead vermerken. Read-modify-write, um bestehende answers NICHT zu
+      // ueberschreiben. Land ohne externe API, direkt aus dem Request-Header.
+      const clientCountry =
+        (req.headers.get('x-vercel-ip-country') || '').toUpperCase() || null;
+      if (isPL || clientCountry) {
         const { data: leadRow } = await supabase
           .from('wauwerk_leads')
           .select('answers')
@@ -140,7 +142,11 @@ export async function POST(req: NextRequest) {
           leadRow?.answers && typeof leadRow.answers === 'object'
             ? (leadRow.answers as Record<string, any>)
             : {};
-        updateData.answers = { ...ans, lang: 'pl' };
+        updateData.answers = {
+          ...ans,
+          ...(isPL ? { lang: 'pl' } : {}),
+          ...(clientCountry ? { country: clientCountry } : {}),
+        };
       }
       await supabase
         .from('wauwerk_leads')
