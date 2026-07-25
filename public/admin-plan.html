@@ -373,6 +373,14 @@
                 </select>
             </div>
 
+            <div class="field">
+                <label>Sprache des Plans *</label>
+                <select id="plan-lang">
+                    <option value="de" selected>Deutsch</option>
+                    <option value="pl">Polnisch (polski)</option>
+                </select>
+            </div>
+
             <button type="submit" class="btn" id="submit-btn">Plan korrigieren</button>
         </form>
 
@@ -619,6 +627,7 @@
         const customerName = document.getElementById('customer-name').value.trim();
         const dogName = document.getElementById('dog-name').value.trim();
         const dogProblem = document.getElementById('dog-problem').value;
+        const planLang = document.getElementById('plan-lang').value;
 
         document.getElementById('submit-btn').disabled = true;
         document.getElementById('spinner').classList.add('active');
@@ -629,13 +638,18 @@
         const reader = new FileReader();
         reader.onload = async function() {
             const base64 = reader.result.split(',')[1];
-            await sendRequest(base64, complaint, customerName, dogName, dogProblem);
+            await sendRequest(base64, complaint, customerName, dogName, dogProblem, planLang);
         };
         reader.readAsDataURL(pdf);
     }
 
-    async function sendRequest(pdfBase64, complaint, customerName, dogName, dogProblem) {
+    async function sendRequest(pdfBase64, complaint, customerName, dogName, dogProblem, planLang) {
         try {
+            // Sprach-Weiche: PL -> kompletter Output auf Polnisch, sonst Deutsch (Default).
+            const langDirective = planLang === 'pl'
+                ? 'AUSGABE-SPRACHE: POLNISCH (polski).\n'
+                  + 'Der KOMPLETTE korrigierte Plan MUSS auf Polnisch geschrieben sein: alle Titel, Ueberschriften, Fliesstext und Labels. Die Struktur-Anweisungen unten sind auf Deutsch NUR als Vorlage fuer dich, deine gesamte AUSGABE ist ausschliesslich Polnisch. Feste Titel entsprechend uebersetzen (z.B. "So nutzt du diesen Plan" -> "Jak korzystac z tego planu"). Hundekommandos GROSS auf Polnisch: SITZ->SIAD, PLATZ->WARUJ, HIER/KOMM->DO MNIE, AUS->PUSC, PFUI->FUJ, WARTE->CZEKAJ, BLEIB->ZOSTAN, SCHAU->PATRZ, FUSS->DO NOGI, LASS ES->ZOSTAW.\n\n'
+                : 'AUSGABE-SPRACHE: DEUTSCH. Der komplette Plan bleibt auf Deutsch.\n\n';
             // API Key vom Server holen
             const keyRes = await fetch('/api/admin/plan-korrektur', {
                 method: 'POST',
@@ -667,7 +681,7 @@
                 body: JSON.stringify({
                     model: 'claude-sonnet-4-6',
                     max_tokens: 12000,
-                    system: `Du bist ein erfahrener Hundetrainer-Assistent. Analysiere den Trainingsplan, verstehe die Beschwerde, und erstelle eine korrigierte Version.
+                    system: langDirective + `Du bist ein erfahrener Hundetrainer-Assistent. Analysiere den Trainingsplan, verstehe die Beschwerde, und erstelle eine korrigierte Version.
 
 WICHTIG - FORMATIERUNG:
 - Verwende KEIN Markdown. Keine Hashtags (#), keine Sterne (*/**), keine Unterstriche (_).
