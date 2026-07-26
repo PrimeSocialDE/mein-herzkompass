@@ -203,7 +203,7 @@ export async function GET(req: NextRequest) {
       ? `${url.origin}${successPath}${successPath.includes("?") ? "&" : "?"}` +
         `lead_id=${encodeURIComponent(leadId)}` +
         `&redirect_status=succeeded`
-      : `${url.origin}/${isPL ? "dziekujemy.html" : "zusatz.html"}` +
+      : `${url.origin}/${isPL ? "dodatek.html" : "zusatz.html"}` +
         `?lead_id=${encodeURIComponent(leadId)}` +
         `&redirect_status=succeeded` +
         `&mollie_payment_id=${encodeURIComponent(lead.mollie_payment_id)}`;

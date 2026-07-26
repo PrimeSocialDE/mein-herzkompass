@@ -3,7 +3,7 @@
 // Returnt { url, paymentId } statt { clientSecret } weil Mollie Hosted Checkout (Redirect) nutzt.
 
 import { NextRequest, NextResponse } from "next/server";
-import { getMollie, formatAmountEUR, Locale } from "@/lib/mollie";
+import { getMollie, getMolliePL, formatAmountEUR, formatAmount, Locale } from "@/lib/mollie";
 import { createClient } from "@supabase/supabase-js";
 import { utmMetaFromAnswers } from "@/lib/attribution";
 
@@ -34,14 +34,6 @@ const moduleNames: Record<string, string> = {
 };
 
 export async function POST(req: NextRequest) {
-  const mollie = getMollie();
-  if (!mollie) {
-    return NextResponse.json(
-      { error: "Mollie nicht konfiguriert" },
-      { status: 500 }
-    );
-  }
-
   try {
     const body = await req.json();
     const module = body.module as string | undefined;
@@ -52,6 +44,16 @@ export async function POST(req: NextRequest) {
     const price = body.price as number | undefined;
     const returnUrl = body.returnUrl as string | undefined;
     const referredByCode = body.referredByCode as string | undefined;
+    // Sprach-/Markt-Weiche: lang="pl" -> polnisches Mollie-Konto (PLN, lapaplan).
+    // DE-Pfad bleibt exakt wie bisher (getMollie/EUR).
+    const isPL = body.lang === "pl";
+    const mollie = isPL ? getMolliePL() : getMollie();
+    if (!mollie) {
+      return NextResponse.json(
+        { error: "Mollie nicht konfiguriert" },
+        { status: 500 }
+      );
+    }
 
     if (!module || !email) {
       return NextResponse.json(
@@ -82,9 +84,10 @@ export async function POST(req: NextRequest) {
       moduleName = moduleNames[module] || "Zusatz-Modul";
     }
 
-    const origin =
-      req.headers.get("origin") &&
-      req.headers.get("origin")!.includes("pfoten-plan.de")
+    const origin = isPL
+      ? "https://www.lapaplan.pl"
+      : req.headers.get("origin") &&
+          req.headers.get("origin")!.includes("pfoten-plan.de")
         ? "https://pfoten-plan.de"
         : req.headers.get("origin") || "https://pfoten-plan.de";
 
@@ -103,9 +106,28 @@ export async function POST(req: NextRequest) {
         ? returnUrl.startsWith("/")
           ? `${origin}${returnUrl}`
           : returnUrl
-        : `${origin}/zusatz.html?lead_id=${leadId || ""}`;
+        : `${origin}/${isPL ? "dodatek.html" : "zusatz.html"}?lead_id=${leadId || ""}`;
 
-    const description = `Pfoten-Plan ${moduleName} für ${dogName || "Hund"} · kommt sofort per E-Mail`;
+    // PL-Modulname + Beschreibung (nur fuer PL; DE unveraendert).
+    const PL_MODULE_NAMES: Record<string, string> = {
+      "notfall-karten": "10 kart ratunkowych",
+      pulling: "Plan: chodzenie na luźnej smyczy",
+      energy: "Plan: nadmiar energii i wyciszanie",
+      anxiety: "Plan: lęk separacyjny",
+      aggression: "Plan: kontrola agresji",
+      mouthing: "Plan: podnoszenie rzeczy z ziemi",
+      recall: "Plan: przywołanie",
+      barking: "Plan: nadmierne szczekanie",
+      jumping: "Plan: skakanie na ludzi",
+      destructive: "Plan: niszczenie w domu",
+      soiling: "Plan: nieczystość w domu",
+    };
+    const moduleNamePL = isBundle
+      ? "Pakiet modułów treningowych"
+      : PL_MODULE_NAMES[module] || moduleName;
+    const description = isPL
+      ? `ŁapaPlan ${moduleNamePL} dla ${dogName || "psa"} · przyjdzie natychmiast e-mailem`
+      : `Pfoten-Plan ${moduleName} für ${dogName || "Hund"} · kommt sofort per E-Mail`;
 
     // First-Touch-Attribution aus dem Lead holen (durabel, cookie-unabhaengig),
     // damit auch dieser Folgekauf der urspruenglichen Anzeige zugeordnet wird.
@@ -134,23 +156,27 @@ export async function POST(req: NextRequest) {
     }
 
     const payment = await mollie.payments.create({
-      amount: { currency: "EUR", value: formatAmountEUR(amountCents) },
+      amount: isPL
+        ? { currency: "PLN", value: formatAmount(amountCents) }
+        : { currency: "EUR", value: formatAmountEUR(amountCents) },
       description: description.slice(0, 255),
       // Mollie redirected nach Erfolg/Fail/Cancel hier hin — Frontend prüft selbst
       // ob Mollie-Status paid (oder wir nutzen den /api/mollie/return wenn lead_id vorhanden)
       redirectUrl: safeReturnUrl,
-      webhookUrl: `${webhookBase}/api/mollie/webhook`,
-      locale: Locale.de_DE,
+      // PL: ?acct=pl damit der Webhook die Zahlung ueber das PL-Mollie-Konto liest.
+      webhookUrl: `${webhookBase}/api/mollie/webhook${isPL ? "?acct=pl" : ""}`,
+      locale: isPL ? Locale.pl_PL : Locale.de_DE,
       metadata: {
         type: isPremium ? "premium" : "upsell",
         module: module,
-        module_name: moduleName,
+        module_name: isPL ? moduleNamePL : moduleName,
         lead_id: leadId || "",
         dog_name: dogName || "",
         email: email,
         is_bundle: isBundle ? "true" : "false",
         is_premium: isPremium ? "true" : "false",
         referred_by_code: referredByCode || "",
+        lang: isPL ? "pl" : "de",
         ...utmMeta,
       },
     });

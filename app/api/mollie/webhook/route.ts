@@ -614,6 +614,8 @@ async function handleUpsellPaid(payment: any) {
           email: email || leadData.email,
           dogName: meta.dog_name || leadData.dog_name || "deinen Hund",
           leadId: leadData.id,
+          // Sprache mitgeben -> PL liefert das polnische PDF + Brevo-Mail aus.
+          lang: meta.lang || (leadData.answers && leadData.answers.lang) || "de",
         }),
       });
     } catch (e) {
@@ -770,7 +772,18 @@ async function handleUpsellPaid(payment: any) {
           const res = await fetch(`${baseUrl}/api/zusatzmodul/send`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: targetEmail, dogName, moduleKey }),
+            // Sprache explizit mitgeben (aus der Kauf-Metadata bzw. am Lead),
+            // damit PL-Kaeufer garantiert das polnische Modul bekommen und nicht
+            // vom Lead-Lookup abhaengen.
+            body: JSON.stringify({
+              email: targetEmail,
+              dogName,
+              moduleKey,
+              lang:
+                meta.lang ||
+                (leadData.answers && (leadData.answers as any).lang) ||
+                "de",
+            }),
           });
           const data = await res.json().catch(() => ({}));
           console.log(
