@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script src="/utm-tracking.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekomendacja dla Ciebie | ŁapaPlan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ufxcf43805");
+    </script>
+
+    <!-- Meta Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+        (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAF8F5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 440px; margin: 0 auto; }
+
+        /* Plan gesichert Banner */
+        .secured-banner {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 16px;
+            background: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .secured-banner .check {
+            width: 28px; height: 28px; background: #22C55E; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .secured-banner .check svg { width: 14px; height: 14px; color: white; }
+        .secured-banner p { font-size: 14px; color: #166534; font-weight: 600; }
+
+        /* Hero Card */
+        .upsell-card {
+            background: white; border-radius: 20px;
+            padding: 28px 22px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            margin-bottom: 16px;
+        }
+        .upsell-card .eyebrow {
+            font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; color: #8B7355; margin-bottom: 6px;
+        }
+        .upsell-card h2 {
+            font-size: 22px; font-weight: 800; color: #1a1a1a;
+            line-height: 1.3; margin-bottom: 12px;
+        }
+        .upsell-hook {
+            background: #FFF8E7; border-left: 3px solid #C4A576;
+            padding: 12px 14px; border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+            font-size: 13.5px; color: #5C4A2A; line-height: 1.55;
+        }
+
+        /* Module Card */
+        .module-card {
+            background: #FFFBF5; border: 2px solid #E7DBC5;
+            border-radius: 14px; padding: 18px;
+            position: relative; margin-bottom: 14px;
+        }
+        .module-card.bundle {
+            border: 2px solid #C4A576;
+            background: #FFF8EC;
+        }
+        .module-card .badge {
+            position: absolute; top: -10px; left: 16px;
+            background: #C4A576; color: white;
+            font-size: 11px; font-weight: 700;
+            padding: 3px 10px; border-radius: 6px;
+        }
+        .module-card.bundle .badge {
+            background: #166534;
+        }
+        .module-header {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 10px;
+        }
+        .module-icon { font-size: 28px; }
+        .module-name {
+            font-size: 16px; font-weight: 700; color: #1a1a1a;
+            line-height: 1.3;
+        }
+        .module-desc {
+            font-size: 14px; color: #555; line-height: 1.55;
+            margin-bottom: 12px;
+        }
+        .module-benefits {
+            display: flex; flex-direction: column; gap: 6px;
+            margin-bottom: 14px;
+        }
+        .module-benefit {
+            font-size: 13px; color: #1a1a1a; line-height: 1.5;
+            padding-left: 22px; position: relative;
+        }
+        .module-benefit::before {
+            content: '✓'; position: absolute; left: 0; top: 0;
+            color: #166534; font-weight: 700;
+        }
+        .module-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px; flex-wrap: wrap;
+        }
+        .module-price-old {
+            font-size: 13px; color: #999; text-decoration: line-through;
+            margin-right: 8px;
+        }
+        .module-price-new {
+            font-size: 18px; font-weight: 800; color: #C4A576;
+        }
+        .module-btn {
+            background: linear-gradient(135deg, #C4A576, #8B7355);
+            color: white; border: none;
+            padding: 12px 22px; border-radius: 10px;
+            font-size: 14px; font-weight: 700; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .module-btn:hover { transform: translateY(-1px); }
+        .module-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .module-btn.bundle-btn {
+            background: linear-gradient(135deg, #16A34A, #166534);
+        }
+        .module-disclaimer {
+            text-align: center; margin-top: 10px;
+            font-size: 12px; color: #166534; font-weight: 500;
+        }
+
+        /* Bundle-Vorteil */
+        .bundle-savings {
+            display: inline-block; margin-top: 4px;
+            font-size: 12px; font-weight: 700; color: #166534;
+            background: #DCFCE7; padding: 2px 8px; border-radius: 6px;
+        }
+        .divider {
+            text-align: center; font-size: 12px; color: #999;
+            font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+            margin: 6px 0 16px;
+        }
+
+        /* Social Proof */
+        .social-proof {
+            text-align: center; margin-top: 14px; font-size: 13px; color: #666;
+        }
+        .social-proof .dot {
+            display: inline-block; width: 8px; height: 8px;
+            background: #22C55E; border-radius: 50%; margin-right: 6px;
+            box-shadow: 0 0 6px rgba(34,197,94,0.6);
+            animation: livePulse 2s infinite;
+        }
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Skip */
+        .skip-btn {
+            display: block; width: 100%; text-align: center;
+            font-size: 13px; color: #999; background: none; border: none;
+            padding: 12px; cursor: pointer; text-decoration: underline;
+            transition: color 0.2s; opacity: 0;
+        }
+        .skip-btn:hover { color: #666; }
+
+        /* Spinner */
+        .spinner {
+            display: inline-block; width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white; border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle; margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+
+    <script
+      defer
+      data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+      data-domain="lapaplan.pl"
+      src="https://datafa.st/js/script.js">
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Plan zabezpieczony -->
+        <div class="secured-banner">
+            <div class="check">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <p>Plan dla <span class="dog-name">Twojego psa</span> jest zabezpieczony</p>
+        </div>
+
+        <!-- Rekomendacja modułu -->
+        <div class="upsell-card">
+            <p class="eyebrow">Uzupełniająca rekomendacja dla <span class="dog-name">Twojego psa</span></p>
+            <h2 id="upsellTitle">Dokończ trening <span class="dog-name">Twojego psa</span></h2>
+
+            <div class="upsell-hook" id="upsellHook">
+                <!-- dynamicznie -->
+            </div>
+
+            <div id="upsellModule">
+                <!-- dynamicznie: pojedynczy moduł -->
+            </div>
+
+            <div class="divider">albo zaoszczędź z pakietem</div>
+
+            <div id="upsellBundle">
+                <!-- dynamicznie: pakiet -->
+            </div>
+
+            <div class="social-proof">
+                <span class="dot"></span>
+                <span style="color:#C4A576;font-weight:600;">347 właścicieli psów</span> dobrało to uzupełnienie
+            </div>
+        </div>
+
+        <!-- Skip -->
+        <button class="skip-btn" id="skipBtn" onclick="skipToFinal()">
+            Nie, dziękuję, przejdź do mojego planu →
+        </button>
+    </div>
+
+    <script>
+        const dogName = localStorage.getItem('dogName') || 'Twojego psa';
+        const dogAge = localStorage.getItem('dogAge') || 'adult';
+        const urlParamsInit = new URLSearchParams(window.location.search);
+        const leadId = urlParamsInit.get('lead_id') || localStorage.getItem('leadId') || '';
+        const userEmail = localStorage.getItem('userEmail') || '';
+
+        document.querySelectorAll('.dog-name').forEach(el => { el.textContent = dogName; });
+
+        // Skip po 3s pokazać
+        setTimeout(() => {
+            const sb = document.getElementById('skipBtn');
+            if (sb) sb.style.opacity = '1';
+        }, 3000);
+
+        function skipToFinal() {
+            // Relatywna ścieżka, działa lokalnie i na Vercel (rozwiązuje się do /pl/dziekujemy.html)
+            window.location.href = 'dziekujemy.html?lead_id=' + encodeURIComponent(leadId || '');
+        }
+
+        // ── Moduły z jasnym, konkretnym językiem korzyści ──
+        const moduleData = {
+            'anxiety': {
+                icon: '🏠',
+                name: 'Lęk separacyjny, spokojne zostawanie samemu',
+                exercises: '6 ćwiczeń, 2 tygodnie',
+                benefits: [
+                    'Spokój, gdy wyjeżdżasz albo idziesz do lekarza',
+                    'Rytuały pożegnania, które od razu obniżają stres',
+                    'Budowa krok po kroku, bez traumy'
+                ],
+                desc: 'Żeby ' + dogName + ' nie wpadał w panikę, gdy musisz nagle wyjść.',
+                hook: 'Lęk separacyjny często pojawia się dopiero wtedy, gdy nie da się go już zapobiec, zwykle po pierwszym dłuższym rozstaniu. Te ćwiczenia przygotują Was w 2 tygodnie.'
+            },
+            'pulling': {
+                icon: '🦮',
+                name: 'Chodzenie na luźnej smyczy, spokojne spacery',
+                exercises: '6 ćwiczeń, 2 tygodnie',
+                benefits: [
+                    'Skutecznie zatrzymasz ciągnięcie, nawet przy rozproszeniu',
+                    'Technika zmiany kierunku prosto z pracy trenera',
+                    'Spokojne mijanie innych psów, rowerzystów i biegaczy'
+                ],
+                desc: 'Żebyś znów chętnie wychodził z ' + dogName + ' na spacer, bez bólu ramienia.',
+                hook: 'Ciągnięcie na smyczy rzadko poprawia się samo, zwłaszcza u pobudliwych psów. Te ćwiczenia dają Ci konkretne techniki na co dzień.'
+            },
+            'barking': {
+                icon: '🔕',
+                name: 'Nadmierne szczekanie, spokój dla gości i sąsiadów',
+                exercises: '6 ćwiczeń, 2 tygodnie',
+                benefits: [
+                    'Konsekwentne wygaszanie szczekania przy drzwiach',
+                    'Jasny sygnał "cisza" na komendę',
+                    'Rozbrajanie bodźców zamiast tłumienia'
+                ],
+                desc: 'Żeby ' + dogName + ' nie stał się źródłem stresu w mieszkaniu, zwłaszcza w bloku.',
+                hook: 'Wiele psów zaczyna szczekać, gdy główny trening przynosi pierwsze efekty, to zachowanie zastępcze. Ten moduł to wyłapuje.'
+            },
+            'aggression': {
+                icon: '🛡️',
+                name: 'Kontrola agresji, pewność przy spotkaniach',
+                exercises: '6 ćwiczeń, 2 tygodnie',
+                benefits: [
+                    'Rozładujesz napięte sytuacje w porę',
+                    'Zbudujesz kontrolę impulsów w realnych spotkaniach',
+                    'Wprowadzisz spokój przy zachowaniu dystansu'
+                ],
+                desc: 'Żebyś znów bez obaw brał ' + dogName + ' na smycz, także tam gdzie jest dużo psów.',
+                hook: 'Reaktywność na inne psy bez ukierunkowanego treningu się pogłębia, a nie znika. Te ćwiczenia dają Ci konkretne narzędzia na każde spotkanie.'
+            },
+            'recall': {
+                icon: '📣',
+                name: 'Przywołanie, pewne także przy lesie i drodze',
+                exercises: '6 ćwiczeń, 2 tygodnie',
+                benefits: [
+                    'Niezawodne przywołanie, nawet przy silnych bodźcach',
+                    'Prawidłowa budowa przywołania, bez "spalenia" komendy',
+                    'Swoboda bez ciągłego niepokoju'
+                ],
+                desc: 'Żeby ' + dogName + ' w razie potrzeby natychmiast wracał, nawet gdy w pobliżu jest sarna albo samochód.',
+                hook: 'Spalone przywołanie to jedno z największych zagrożeń w codziennym życiu z psem. Te ćwiczenia budują je od nowa, prawidłowo.'
+            },
+            'jumping': {
+                icon: '🚪',
+                name: 'Skakanie na ludzi, spokojne powitania',
+                exercises: '6 ćwiczeń, 2 tygodnie',
+                benefits: [
+                    'Zasada czterech łap, która naprawdę działa',
+                    'Spokojne przyjmowanie gości',
+                    'Przekierowanie skakania zamiast zakazów'
+                ],
+                desc: 'Żeby ' + dogName + ' witał gości spokojnie, zwłaszcza starsze osoby i dzieci.',
+                hook: 'Skakanie, zwłaszcza u średnich i dużych psów, to kwestia bezpieczeństwa. Ten moduł rozwiązuje to trwale.'
+            },
+            'energy': {
+                icon: '🌿',
+                name: 'Nadmiar energii i wyciszanie, trening spokoju',
+                exercises: '6 ćwiczeń, 2 tygodnie',
+                benefits: [
+                    'Celowane ćwiczenia wyciszające na każdy dzień',
+                    'Praca głową zamiast ciągłego wybiegania',
+                    'Budowa sygnału relaksu'
+                ],
+                desc: 'Żeby ' + dogName + ' nauczył się wyłączać, zamiast być ciągle w gotowości.',
+                hook: 'Psy, które nie potrafią się wyciszyć, gorzej się uczą. Bez treningu spokoju ' + dogName + ' sam się blokuje w codzienności.'
+            },
+            'destructive': {
+                icon: '🧸',
+                name: 'Niszczenie w domu, meble i buty zostają całe',
+                exercises: '6 ćwiczeń, 2 tygodnie',
+                benefits: [
+                    'Pewne wprowadzenie dozwolonych alternatyw',
+                    'Przekierowanie gryzienia zamiast kary',
+                    'Zostawanie samemu bez chaosu'
+                ],
+                desc: 'Żebyś nie musiał co tydzień kupować nowych butów albo mebli.',
+                hook: 'Niszczenie to zwykle objaw stresu lub niedostatecznej stymulacji. Ten moduł działa na przyczynę.'
+            },
+            'mouthing': {
+                icon: '🦴',
+                name: 'Podnoszenie rzeczy z ziemi, bezpiecznie na dworze',
+                exercises: '6 ćwiczeń, 2 tygodnie',
+                benefits: [
+                    'Pewne wprowadzenie komendy "zostaw"',
+                    'Ochrona przed trutkami na co dzień',
+                    'Spacery bez obaw'
+                ],
+                desc: 'Żebyś nie musiał ciągle pilnować, co ' + dogName + ' bierze do pyska.',
+                hook: 'Trutki, kawałki szkła, resztki jedzenia, na dworze jest wiele rzeczy, które mogą być groźne. Te ćwiczenia Cię zabezpieczą.'
+            },
+            'soiling': {
+                icon: '🚫',
+                name: 'Nieczystość w domu, czysto bez stresu',
+                exercises: '6 ćwiczeń, 2 tygodnie',
+                benefits: [
+                    'Jasny plan wychodzenia dopasowany do dnia',
+                    'Rozpoznawanie sygnałów, zanim będzie za późno',
+                    'Spokojne, konsekwentne budowanie czystości'
+                ],
+                desc: 'Żeby ' + dogName + ' nauczył się załatwiać na dworze, bez stresu i kary.',
+                hook: 'Nieczystość w domu rzadko mija sama, częściej wynika z braku jasnej rutyny. Ten moduł ją porządkuje.'
+            }
+        };
+
+        // Problem psa z quizu / localStorage / URL
+        const answers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
+        const dogGoal = answers.dog_goal || urlParamsInit.get('problem') || localStorage.getItem('dogProblemKey') || '';
+        const dogProblem = answers.dog_problem || localStorage.getItem('dogProblem') || '';
+        const dogBehaviors = answers.dog_behaviors || JSON.parse(localStorage.getItem('dogBehaviors') || '[]');
+        const allUserProblems = [...new Set([dogGoal, dogProblem, ...dogBehaviors].filter(p => p))];
+
+        // Mapa trafności: który moduł najlepiej pasuje do głównego problemu
+        const relevanceMap = {
+            'pulling':      ['recall', 'energy', 'jumping', 'aggression', 'barking', 'anxiety', 'destructive', 'mouthing', 'soiling'],
+            'recall':       ['pulling', 'energy', 'aggression', 'jumping', 'barking', 'anxiety', 'destructive', 'mouthing', 'soiling'],
+            'aggression':   ['energy', 'pulling', 'recall', 'anxiety', 'barking', 'jumping', 'destructive', 'mouthing', 'soiling'],
+            'anxiety':      ['destructive', 'energy', 'barking', 'pulling', 'recall', 'jumping', 'aggression', 'soiling', 'mouthing'],
+            'barking':      ['anxiety', 'energy', 'aggression', 'jumping', 'pulling', 'recall', 'destructive', 'mouthing', 'soiling'],
+            'jumping':      ['recall', 'pulling', 'energy', 'barking', 'aggression', 'anxiety', 'destructive', 'mouthing', 'soiling'],
+            'energy':       ['pulling', 'destructive', 'recall', 'jumping', 'barking', 'anxiety', 'aggression', 'mouthing', 'soiling'],
+            'destructive':  ['anxiety', 'energy', 'barking', 'pulling', 'recall', 'jumping', 'aggression', 'soiling', 'mouthing'],
+            'mouthing':     ['recall', 'energy', 'pulling', 'destructive', 'anxiety', 'barking', 'aggression', 'jumping', 'soiling'],
+            'soiling':      ['anxiety', 'destructive', 'energy', 'recall', 'pulling', 'barking', 'jumping', 'aggression', 'mouthing']
+        };
+
+        // Rekomendowany pojedynczy moduł (fallback: recall)
+        function pickRecommended() {
+            const allModules = Object.keys(moduleData);
+            const available = allModules.filter(m => !allUserProblems.includes(m));
+            const pool = available.length ? available : allModules;
+            const mainProblem = dogProblem || dogGoal || '';
+            const order = relevanceMap[mainProblem] || [];
+            const sorted = pool.slice().sort((a, b) => {
+                const iA = order.indexOf(a); const iB = order.indexOf(b);
+                return (iA === -1 ? 999 : iA) - (iB === -1 ? 999 : iB);
+            });
+            return sorted[0] || 'recall';
+        }
+
+        const recommendedKey = pickRecommended();
+        const rec = moduleData[recommendedKey];
+
+        function renderOffers() {
+            document.getElementById('upsellHook').textContent = rec.hook;
+
+            // ── Pojedynczy moduł: 59 zł (zamiast 99 zł) ──
+            const single = document.createElement('div');
+            single.className = 'module-card';
+            single.innerHTML = `
+                <div class="badge">Pasuje do Twojego planu</div>
+                <div class="module-header">
+                    <span class="module-icon">${rec.icon}</span>
+                    <span class="module-name">${rec.name}</span>
+                </div>
+                <p class="module-desc">${rec.desc}</p>
+                <div class="module-benefits">
+                    ${rec.benefits.map(b => '<div class="module-benefit">' + b + '</div>').join('')}
+                </div>
+                <div class="module-footer">
+                    <div>
+                        <span class="module-price-old">99 zł</span>
+                        <span class="module-price-new">59 zł</span>
+                    </div>
+                    <button class="module-btn" id="moduleBuyBtn" onclick="buyModule()">
+                        Dodaj do planu
+                    </button>
+                </div>
+                <div class="module-disclaimer">${rec.exercises} · Od razu na e-mail · 30 dni gwarancji</div>
+            `;
+            document.getElementById('upsellModule').appendChild(single);
+
+            // ── Pakiet: wszystkie moduły 89 zł ──
+            const bundle = document.createElement('div');
+            bundle.className = 'module-card bundle';
+            bundle.innerHTML = `
+                <div class="badge">Najlepszy wybór</div>
+                <div class="module-header">
+                    <span class="module-icon">📦</span>
+                    <span class="module-name">Pakiet: wszystkie moduły treningowe</span>
+                </div>
+                <p class="module-desc">Wszystkie moduły tematyczne w jednym: przywołanie, luźna smycz, szczekanie i więcej. Kompletny zestaw dla ${dogName}.</p>
+                <div class="module-benefits">
+                    <div class="module-benefit">Wszystkie moduły tematyczne, nie tylko jeden</div>
+                    <div class="module-benefit">Gotowy na każde wyzwanie, które przyjdzie</div>
+                    <div class="module-benefit">Największa oszczędność, jedna niska cena</div>
+                </div>
+                <div class="module-footer">
+                    <div>
+                        <span class="module-price-new">89 zł</span>
+                        <span class="bundle-savings">tylko 30 zł więcej za wszystko</span>
+                    </div>
+                    <button class="module-btn bundle-btn" id="bundleBuyBtn" onclick="buyBundle()">
+                        Wybieram pakiet
+                    </button>
+                </div>
+                <div class="module-disclaimer">Wszystkie moduły · Od razu na e-mail · 30 dni gwarancji</div>
+            `;
+            document.getElementById('upsellBundle').appendChild(bundle);
+        }
+        renderOffers();
+
+        // ── Pojedynczy zakup: 59 zł (5900) ──
+        async function buyModule() {
+            const btn = document.getElementById('moduleBuyBtn');
+            const originalText = btn.textContent;
+            btn.innerHTML = '<span class="spinner"></span> Ładowanie...';
+            btn.disabled = true;
+
+            if (!userEmail) {
+                alert('Błąd: nie znaleziono adresu e-mail.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            try { fbq('track', 'InitiateCheckout', { value: 59, currency: 'PLN', content_name: recommendedKey }); } catch (e) {}
+
+            try {
+                const response = await fetch('/api/mollie/upsell-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        module: recommendedKey,
+                        lang: 'pl',
+                        price: 5900,
+                        leadId: leadId,
+                        email: userEmail,
+                        dogName: dogName,
+                        returnUrl: '/dziekujemy.html'
+                    })
+                });
+                const result = await response.json();
+                if (result.error || !result.url) {
+                    alert('Błąd podczas ładowania. Spróbuj ponownie.');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+                window.location.href = result.url;
+            } catch (err) {
+                console.error('Module Error:', err);
+                alert('Błąd podczas ładowania.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // ── Pakiet: 89 zł (8900) ──
+        async function buyBundle() {
+            const btn = document.getElementById('bundleBuyBtn');
+            const originalText = btn.textContent;
+            btn.innerHTML = '<span class="spinner"></span> Ładowanie...';
+            btn.disabled = true;
+
+            if (!userEmail) {
+                alert('Błąd: nie znaleziono adresu e-mail.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            // Rekomendowany klucz + stały zestaw (zduplikowane klucze nie szkodzą)
+            const bundleModules = recommendedKey + '+recall+pulling+barking';
+
+            try { fbq('track', 'InitiateCheckout', { value: 89, currency: 'PLN', content_name: 'bundle' }); } catch (e) {}
+
+            try {
+                const response = await fetch('/api/mollie/upsell-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        module: bundleModules,
+                        lang: 'pl',
+                        price: 8900,
+                        bundle: true,
+                        leadId: leadId,
+                        email: userEmail,
+                        dogName: dogName,
+                        returnUrl: '/dziekujemy.html'
+                    })
+                });
+                const result = await response.json();
+                if (result.error || !result.url) {
+                    alert('Błąd podczas ładowania. Spróbuj ponownie.');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+                window.location.href = result.url;
+            } catch (err) {
+                console.error('Bundle Error:', err);
+                alert('Błąd podczas ładowania.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -9,21 +9,82 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { email, dogName } = body;
+    const isPL = body.lang === "pl";
 
     if (!email) {
       return NextResponse.json({ error: "Email fehlt" }, { status: 400 });
     }
 
-    const name = dogName || "deinen Hund";
+    const name = dogName || (isPL ? "Twojego psa" : "deinen Hund");
 
-    // Statische PDF lesen
-    const pdfPath = join(process.cwd(), "public", "notfall-karten.pdf");
+    // Statische PDF lesen (PL: polnische Karten).
+    const pdfPath = join(
+      process.cwd(),
+      "public",
+      isPL ? "notfall-karten-pl.pdf" : "notfall-karten.pdf"
+    );
     const pdfBuffer = readFileSync(pdfPath);
     const pdfBase64 = pdfBuffer.toString("base64");
 
+    const nkSubject = isPL
+      ? `Oto Twoje 10 kart ratunkowych dla ${name}`
+      : `Hier sind deine 10 Notfall-Karten für ${name}`;
+    const nkFile = isPL
+      ? `Karty-ratunkowe-${name.replace(/\s+/g, "-")}.pdf`
+      : `Notfall-Karten-${name.replace(/\s+/g, "-")}.pdf`;
+
+    // PL-Auslieferung: ueber Brevo mit pomoc@lapaplan.pl (PL-Mails bleiben auf Brevo).
+    if (isPL) {
+      const nkHtmlPL = `
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:500px;margin:0 auto;padding:20px;color:#1a1a1a;">
+            <div style="text-align:center;margin-bottom:24px;">
+              <h1 style="font-size:24px;margin:0 0 8px;">Oto Twoje karty ratunkowe dla ${name}!</h1>
+              <p style="font-size:15px;color:#666;margin:0;">10 gotowych rozwiązań na typowe trudne sytuacje z psem, do wydrukowania lub zapisania w telefonie</p>
+            </div>
+            <div style="background:#F0FDF4;border-radius:10px;padding:14px 16px;margin-bottom:20px;text-align:center;">
+              <p style="font-size:14px;color:#166534;font-weight:600;margin:0;">PDF znajdziesz w załączniku</p>
+            </div>
+            <div style="background:#FAFAFA;border-radius:10px;padding:16px;margin-bottom:20px;">
+              <p style="font-size:14px;color:#555;margin:0 0 8px;"><strong>Jak korzystać z kart dla ${name}:</strong></p>
+              <p style="font-size:13px;color:#666;margin:0 0 4px;">1. Wydrukuj PDF lub zapisz go w telefonie</p>
+              <p style="font-size:13px;color:#666;margin:0 0 4px;">2. W trudnej sytuacji wybierz odpowiednią kartę</p>
+              <p style="font-size:13px;color:#666;margin:0;">3. Przejdź po kolei przez 5 kroków</p>
+            </div>
+            <p style="font-size:13px;color:#999;text-align:center;">
+              Masz pytania? Napisz do nas na <a href="mailto:pomoc@lapaplan.pl" style="color:#C4A576;">pomoc@lapaplan.pl</a><br>
+              Pozdrawiamy, zespół ŁapaPlan
+            </p>
+          </div>
+        `;
+      const brevoResPL = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sender: { name: "ŁapaPlan", email: "pomoc@lapaplan.pl" },
+          to: [{ email }],
+          cc: [{ email: "kontakt@primesocial.de" }],
+          subject: nkSubject,
+          htmlContent: nkHtmlPL,
+          attachment: [{ name: nkFile, content: pdfBase64 }],
+        }),
+      });
+      if (!brevoResPL.ok) {
+        const errData = await brevoResPL.text();
+        console.error("Brevo PL error:", brevoResPL.status, errData);
+        return NextResponse.json(
+          { error: "E-Mail konnte nicht gesendet werden" },
+          { status: 500 }
+        );
+      }
+      console.log(`Karty ratunkowe an ${email} gesendet (PL/Brevo)`);
+      return NextResponse.json({
+        success: true,
+        message: `Karty ratunkowe an ${email} gesendet`,
+        via: "brevo-pl",
+      });
+    }
+
     // Per Brevo senden
-    const nkSubject = `Hier sind deine 10 Notfall-Karten für ${name}`;
-    const nkFile = `Notfall-Karten-${name.replace(/\s+/g, "-")}.pdf`;
     const nkHtml = `
           <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:500px;margin:0 auto;padding:20px;color:#1a1a1a;">
             <div style="text-align:center;margin-bottom:24px;">

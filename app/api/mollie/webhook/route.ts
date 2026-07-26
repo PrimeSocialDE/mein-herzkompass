@@ -614,6 +614,8 @@ async function handleUpsellPaid(payment: any) {
           email: email || leadData.email,
           dogName: meta.dog_name || leadData.dog_name || "deinen Hund",
           leadId: leadData.id,
+          // Sprache mitgeben -> PL liefert das polnische PDF + Brevo-Mail aus.
+          lang: meta.lang || (leadData.answers && leadData.answers.lang) || "de",
         }),
       });
     } catch (e) {
