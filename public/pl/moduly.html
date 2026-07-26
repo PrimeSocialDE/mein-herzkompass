@@ -255,11 +255,38 @@
     </div>
 
     <script>
-        const dogName = localStorage.getItem('dogName') || 'Twojego psa';
+        let dogName = localStorage.getItem('dogName') || 'Twojego psa';
         const dogAge = localStorage.getItem('dogAge') || 'adult';
         const urlParamsInit = new URLSearchParams(window.location.search);
         const leadId = urlParamsInit.get('lead_id') || localStorage.getItem('leadId') || '';
-        const userEmail = localStorage.getItem('userEmail') || '';
+        let userEmail = localStorage.getItem('userEmail') || '';
+
+        // Robust: email/dogName aus dem Lead nachladen. localStorage ueberlebt den
+        // Mollie/BLIK-Umweg auf dem Handy nicht immer; leadId kommt zuverlaessig aus
+        // der URL. Ohne email schlaegt der Upsell-Checkout mit 400 fehl.
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+        let _leadDataLoaded = false;
+        async function ensureLeadData() {
+            if (_leadDataLoaded) return;
+            if (userEmail && dogName && dogName !== 'Twojego psa') { _leadDataLoaded = true; return; }
+            if (!leadId) return;
+            try {
+                const r = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + encodeURIComponent(leadId) + '&select=email,dog_name', {
+                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+                });
+                const rows = await r.json();
+                if (rows && rows[0]) {
+                    if (!userEmail && rows[0].email) userEmail = rows[0].email;
+                    if ((!dogName || dogName === 'Twojego psa') && rows[0].dog_name) {
+                        dogName = rows[0].dog_name;
+                        document.querySelectorAll('.dog-name').forEach(el => { el.textContent = dogName; });
+                    }
+                    _leadDataLoaded = true;
+                }
+            } catch (e) { console.error('ensureLeadData:', e); }
+        }
+        ensureLeadData();
 
         document.querySelectorAll('.dog-name').forEach(el => { el.textContent = dogName; });
 
@@ -502,6 +529,7 @@
             btn.innerHTML = '<span class="spinner"></span> Ładowanie...';
             btn.disabled = true;
 
+            await ensureLeadData();
             if (!userEmail) {
                 alert('Błąd: nie znaleziono adresu e-mail.');
                 btn.textContent = originalText;
@@ -548,6 +576,7 @@
             btn.innerHTML = '<span class="spinner"></span> Ładowanie...';
             btn.disabled = true;
 
+            await ensureLeadData();
             if (!userEmail) {
                 alert('Błąd: nie znaleziono adresu e-mail.');
                 btn.textContent = originalText;
