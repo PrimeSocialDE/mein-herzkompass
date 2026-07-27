@@ -485,7 +485,7 @@
                 lastYear = d.getFullYear();
             }
             const checked = i === 0 ? 'checked' : '';
-            html += '<label style="display:inline-flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;white-space:nowrap;"><input type="checkbox" class="steuer-mcb" value="' + ym + '" ' + checked + '> ' + MDE[d.getMonth()] + ' ' + d.getFullYear() + '</label>';
+            html += '<label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;white-space:nowrap;"><input type="checkbox" class="steuer-mcb" style="width:16px;height:16px;min-width:16px;margin:0;padding:0;flex:0 0 auto;accent-color:#C4A576;" value="' + ym + '" ' + checked + '> ' + MDE[d.getMonth()] + ' ' + d.getFullYear() + '</label>';
         }
         wrap.innerHTML = html;
         wrap.dataset.built = '1';
