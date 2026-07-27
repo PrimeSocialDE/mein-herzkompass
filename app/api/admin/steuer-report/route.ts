@@ -1,15 +1,15 @@
 // POST /api/admin/steuer-report
 //
 // Rein LESENDER Buchhaltungs-Report aus Mollie (EUR-Konto + PL/PLN-Konto).
-// Kein Schreibzugriff, kein Workflow betroffen. Aggregiert pro Monat und Land:
-// Brutto, Netto (ohne USt je Landessatz), USt, Refunds und Mollie-Gebühren.
+// Kein Schreibzugriff, kein Workflow betroffen. Aggregiert je gewähltem Monat
+// und Land: Brutto, Netto (ohne USt je Landessatz), USt, Refunds und Mollie-
+// Gebühren, plus eine Gesamt-Summe über die gesamte Auswahl.
 //
-// Body: { password, month }  // month = "YYYY-MM"
+// Body: { password, months: ["YYYY-MM", ...] }   (month: "YYYY-MM" auch erlaubt)
 // Auth: ADMIN_PASSWORD (wie die anderen Admin-Endpunkte).
 //
-// Gebühr pro Zahlung = amount - settlementAmount (Betrag, der Mollie einbehält).
-// EUR-Konto -> Länder DE/AT/CH/Sonstige (alles in EUR).
-// PL-Konto  -> PL (in PLN).
+// Gebühr pro Zahlung = amount - settlementAmount (Betrag, den Mollie einbehält).
+// EUR-Konto -> Länder DE/AT/CH/Sonstige (EUR). PL-Konto -> PL (PLN).
 
 import { NextRequest, NextResponse } from "next/server";
 
@@ -18,17 +18,14 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
 const ADMIN_PASS = process.env.ADMIN_PASSWORD || "pfoten2024";
-
-// USt-Sätze je Land. CH = Nicht-EU-Export -> 0% EU-USt.
 const VAT: Record<string, number> = { DE: 19, AT: 20, CH: 0, PL: 23 };
 
 function num(v: any): number {
   const n = parseFloat(v);
   return isNaN(n) ? 0 : n;
 }
-
 function resolveCountry(p: any): string {
-  const c = (
+  return (
     p?.details?.billingAddress?.country ||
     p?.countryCode ||
     p?.details?.cardCountryCode ||
@@ -37,7 +34,10 @@ function resolveCountry(p: any): string {
   )
     .toString()
     .toUpperCase();
-  return c;
+}
+function monthKey(p: any): string {
+  const iso = p.paidAt || p.createdAt || "";
+  return String(iso).slice(0, 7); // YYYY-MM
 }
 
 interface Bucket {
@@ -47,75 +47,58 @@ interface Bucket {
   fees: number;
 }
 const emptyBucket = (): Bucket => ({ count: 0, brutto: 0, refunds: 0, fees: 0 });
+const r2 = (n: number | null) => (n == null ? null : Math.round(n * 100) / 100);
 
-// Alle bezahlten Zahlungen eines Mollie-Kontos im Monat holen (paginiert,
-// neueste zuerst; Stopp, sobald deutlich vor Monatsanfang).
-async function fetchMonth(apiKey: string, monthStart: Date, monthEnd: Date) {
+// Alle bezahlten Zahlungen eines Kontos in [start,end) holen (paginiert,
+// neueste zuerst; Stopp, sobald deutlich vor Bereichsanfang).
+async function fetchRange(apiKey: string, start: Date, end: Date) {
   const rows: any[] = [];
-  const stopBefore = monthStart.getTime() - 10 * 86400000; // 10 Tage Puffer
+  const stopBefore = start.getTime() - 10 * 86400000;
   let url: string | null = "https://api.mollie.com/v2/payments?limit=250";
   let guard = 0;
-  while (url && guard < 200) {
+  while (url && guard < 400) {
     guard++;
-    const res = await fetch(url, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
-    if (!res.ok) {
-      throw new Error(`Mollie ${res.status}: ${(await res.text()).slice(0, 200)}`);
-    }
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${apiKey}` } });
+    if (!res.ok) throw new Error(`Mollie ${res.status}: ${(await res.text()).slice(0, 200)}`);
     const j: any = await res.json();
     const payments: any[] = j?._embedded?.payments || [];
     let oldestOnPage = Infinity;
     for (const p of payments) {
       const createdMs = new Date(p.createdAt).getTime();
       if (createdMs < oldestOnPage) oldestOnPage = createdMs;
-      // Zeitbasis: paidAt (Umsatz zählt bei Zahlung). Fallback createdAt.
-      const paidMs = p.paidAt ? new Date(p.paidAt).getTime() : null;
-      const refMs = paidMs ?? createdMs;
-      if (refMs >= monthStart.getTime() && refMs < monthEnd.getTime()) {
-        rows.push(p);
-      }
+      const refMs = p.paidAt ? new Date(p.paidAt).getTime() : createdMs;
+      if (refMs >= start.getTime() && refMs < end.getTime()) rows.push(p);
     }
-    if (oldestOnPage < stopBefore) break; // alles Weitere ist älter
+    if (oldestOnPage < stopBefore) break;
     url = j?._links?.next?.href || null;
   }
   return rows;
 }
 
+// Zahlungen (eines Kontos, eines Monats) -> Länder-Aufstellung.
 function aggregate(payments: any[]) {
   const byCountry: Record<string, Bucket> = {};
   const get = (c: string) => (byCountry[c] ||= emptyBucket());
-
   for (const p of payments) {
-    const status = p.status;
-    // Nur echte Einnahmen: paid. (Refunds werden über amountRefunded erfasst.)
-    if (status !== "paid") continue;
+    if (p.status !== "paid") continue;
     let country = resolveCountry(p);
     if (!(country in VAT)) country = "Sonstige";
     const b = get(country);
     const gross = num(p.amount?.value);
     b.count++;
     b.brutto += gross;
-    // Gebühr = Brutto minus Settlement-Betrag (was Mollie einbehält).
-    if (p.settlementAmount?.value != null) {
-      b.fees += gross - num(p.settlementAmount.value);
-    }
-    if (p.amountRefunded?.value != null) {
-      b.refunds += num(p.amountRefunded.value);
-    }
+    if (p.settlementAmount?.value != null) b.fees += gross - num(p.settlementAmount.value);
+    if (p.amountRefunded?.value != null) b.refunds += num(p.amountRefunded.value);
   }
-
-  // Netto/USt je Land berechnen.
   const rows = Object.entries(byCountry).map(([land, b]) => {
-    const rate = VAT[land]; // Sonstige -> undefined
-    const nettoBrutto = b.brutto - b.refunds; // Netto-Umsatz nach Refunds
+    const rate = VAT[land];
+    const nettoBrutto = b.brutto - b.refunds;
     let netto: number | null = null;
     let ust: number | null = null;
     if (rate != null) {
       netto = rate === 0 ? nettoBrutto : nettoBrutto / (1 + rate / 100);
       ust = nettoBrutto - netto;
     }
-    const r2 = (n: number | null) => (n == null ? null : Math.round(n * 100) / 100);
     return {
       land,
       ust_satz: rate ?? null,
@@ -131,6 +114,24 @@ function aggregate(payments: any[]) {
   rows.sort((a, b) => (b.brutto || 0) - (a.brutto || 0));
   return rows;
 }
+function sumField(rows: any[], f: string): number {
+  return Math.round(rows.reduce((s, r) => s + (r[f] || 0), 0) * 100) / 100;
+}
+function block(currency: string, payments: any[]) {
+  const laender = aggregate(payments);
+  return {
+    currency,
+    laender,
+    summe: {
+      anzahl: laender.reduce((s, r) => s + r.anzahl, 0),
+      brutto: sumField(laender, "brutto"),
+      refunds: sumField(laender, "refunds"),
+      netto: sumField(laender, "netto"),
+      ust: sumField(laender, "ust"),
+      gebuehren: sumField(laender, "gebuehren"),
+    },
+  };
+}
 
 export async function POST(req: NextRequest) {
   let body: any = {};
@@ -141,74 +142,75 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 });
   }
 
-  const month: string = String(body?.month || "").trim();
-  if (!/^\d{4}-\d{2}$/.test(month)) {
+  // Monate normalisieren (months[] bevorzugt, month als Fallback).
+  let months: string[] = Array.isArray(body?.months)
+    ? body.months
+    : body?.month
+      ? [body.month]
+      : [];
+  months = [...new Set(months.map((m) => String(m).trim()))]
+    .filter((m) => /^\d{4}-\d{2}$/.test(m))
+    .sort();
+  if (months.length === 0) {
     return NextResponse.json(
-      { error: "month im Format YYYY-MM erforderlich" },
+      { error: "Bitte mindestens einen Monat (YYYY-MM) auswählen" },
       { status: 400 }
     );
   }
-  const [y, m] = month.split("-").map(Number);
-  const monthStart = new Date(Date.UTC(y, m - 1, 1, 0, 0, 0));
-  const monthEnd = new Date(Date.UTC(y, m, 1, 0, 0, 0));
+
+  // Spanne über min..max der Auswahl (einmal ziehen, dann nach Monat bucketen).
+  const [minY, minM] = months[0].split("-").map(Number);
+  const [maxY, maxM] = months[months.length - 1].split("-").map(Number);
+  const rangeStart = new Date(Date.UTC(minY, minM - 1, 1));
+  const rangeEnd = new Date(Date.UTC(maxY, maxM, 1)); // erster Tag NACH letztem Monat
+  const selected = new Set(months);
 
   const eurKey = process.env.MOLLIE_API_KEY;
   const plKey = process.env.MOLLIE_API_KEY_PL;
 
   try {
-    const out: any = { month, generated_at: new Date().toISOString() };
+    // Pro Konto einmal ziehen, dann nach Monat gruppieren.
+    const groupByMonth = (payments: any[]) => {
+      const map: Record<string, any[]> = {};
+      for (const p of payments) {
+        const k = monthKey(p);
+        if (!selected.has(k)) continue;
+        (map[k] ||= []).push(p);
+      }
+      return map;
+    };
 
-    // EUR-Konto (DE/AT/CH/Sonstige)
-    if (eurKey) {
-      const pay = await fetchMonth(eurKey, monthStart, monthEnd);
-      const rows = aggregate(pay);
-      out.eur = {
-        currency: "EUR",
-        laender: rows,
-        summe: {
-          anzahl: rows.reduce((s, r) => s + r.anzahl, 0),
-          brutto: r2sum(rows, "brutto"),
-          refunds: r2sum(rows, "refunds"),
-          netto: r2sum(rows, "netto"),
-          ust: r2sum(rows, "ust"),
-          gebuehren: r2sum(rows, "gebuehren"),
-        },
+    const eurByMonth = eurKey ? groupByMonth(await fetchRange(eurKey, rangeStart, rangeEnd)) : null;
+    const plByMonth = plKey ? groupByMonth(await fetchRange(plKey, rangeStart, rangeEnd)) : null;
+
+    const monthsOut = months.map((m) => ({
+      month: m,
+      eur: eurByMonth ? block("EUR", eurByMonth[m] || []) : { error: "MOLLIE_API_KEY fehlt" },
+      pln: plByMonth ? block("PLN", plByMonth[m] || []) : { error: "MOLLIE_API_KEY_PL fehlt" },
+    }));
+
+    // Gesamt über die Auswahl (je Währung).
+    const gesamt = (cur: "eur" | "pln") => {
+      const blocks = monthsOut.map((mo: any) => mo[cur]).filter((b: any) => b && !b.error);
+      const add = (f: string) => Math.round(blocks.reduce((s: number, b: any) => s + (b.summe[f] || 0), 0) * 100) / 100;
+      return {
+        anzahl: blocks.reduce((s: number, b: any) => s + b.summe.anzahl, 0),
+        brutto: add("brutto"),
+        refunds: add("refunds"),
+        netto: add("netto"),
+        ust: add("ust"),
+        gebuehren: add("gebuehren"),
       };
-    } else {
-      out.eur = { error: "MOLLIE_API_KEY fehlt" };
-    }
+    };
 
-    // PL-Konto (PLN)
-    if (plKey) {
-      const pay = await fetchMonth(plKey, monthStart, monthEnd);
-      const rows = aggregate(pay);
-      out.pln = {
-        currency: "PLN",
-        laender: rows,
-        summe: {
-          anzahl: rows.reduce((s, r) => s + r.anzahl, 0),
-          brutto: r2sum(rows, "brutto"),
-          refunds: r2sum(rows, "refunds"),
-          netto: r2sum(rows, "netto"),
-          ust: r2sum(rows, "ust"),
-          gebuehren: r2sum(rows, "gebuehren"),
-        },
-      };
-    } else {
-      out.pln = { error: "MOLLIE_API_KEY_PL fehlt" };
-    }
-
-    return NextResponse.json(out);
+    return NextResponse.json({
+      months: monthsOut,
+      gesamt: { eur: gesamt("eur"), pln: gesamt("pln") },
+      auswahl: months,
+      generated_at: new Date().toISOString(),
+    });
   } catch (e: any) {
     console.error("[steuer-report]", e?.message);
-    return NextResponse.json(
-      { error: e?.message || "Report fehlgeschlagen" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: e?.message || "Report fehlgeschlagen" }, { status: 500 });
   }
-}
-
-function r2sum(rows: any[], field: string): number {
-  const s = rows.reduce((acc, r) => acc + (r[field] || 0), 0);
-  return Math.round(s * 100) / 100;
 }
