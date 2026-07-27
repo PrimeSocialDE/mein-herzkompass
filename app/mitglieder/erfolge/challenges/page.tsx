@@ -195,6 +195,18 @@ export default async function ErfolgePage() {
         </div>
       )}
 
+      {/* Wochen-Aufgaben als PDF herunterladen */}
+      {challenges.length > 0 && (
+        <div className="mb-6 text-center">
+          <a
+            href="/api/mitglieder/challenges/pdf"
+            className="inline-flex items-center gap-2 text-[13px] font-semibold text-[#8B7355] border border-[#EADDC5] bg-white rounded-xl px-4 py-2.5 hover:bg-[#FBF7F0] transition"
+          >
+            ⬇ {lang === "pl" ? "Pobierz zadania jako PDF" : "Aufgaben als PDF herunterladen"}
+          </a>
+        </div>
+      )}
+
       {/* Bonus-Aufgaben: kompakt als Mini-Tile-Grid + CTA darunter */}
       {!isPaid && lockedPreview.length > 0 && (
         <div className="mt-10 mb-10">
