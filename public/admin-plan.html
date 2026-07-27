@@ -268,6 +268,7 @@
         <div class="wf-tabs">
             <button class="wf-tab active" id="tabbtn-tools" onclick="switchTab('tools')">🛠️ Tools</button>
             <button class="wf-tab" id="tabbtn-workflow" onclick="switchTab('workflow')">📧 E-Mail-Workflow</button>
+            <button class="wf-tab" id="tabbtn-steuer" onclick="switchTab('steuer')">🧾 Steuer-Report</button>
         </div>
 
         <!-- ============ TAB: E-Mail-Workflow ============ -->
@@ -286,6 +287,26 @@
             <p style="font-size:11px;color:#9CA3AF;margin-top:18px;line-height:1.5;">
                 Öffnungs-/Klickraten kommen live aus Brevo (Zeitraum letzte 90 Tage, je Mail-Tag). Versandzahlen aus der Lead-Datenbank.
                 Mail 5 (Tag 7) der Käufer-Sequenz läuft als Brevo-Automation und wird hier nicht intern getrackt.
+            </p>
+        </div>
+
+        <!-- ============ TAB: Steuer-Report ============ -->
+        <div id="tab-steuer" style="display:none">
+            <div style="margin-bottom:12px;">
+                <h1 style="margin-bottom:2px;">Steuer-Report (Mollie)</h1>
+                <p class="subtitle" style="margin:0;">Monatliche Umsätze nach Land: Brutto, Netto, USt, Refunds und Mollie-Gebühren. Rein lesend, kein Eingriff.</p>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px;">
+                <div>
+                    <label style="display:block;font-size:12px;color:#6B6B6B;margin-bottom:4px;">Monat</label>
+                    <input type="month" id="steuer-month" style="padding:9px 12px;border:1px solid #E5E0D5;border-radius:8px;font-size:14px;">
+                </div>
+                <button class="btn" id="steuer-load" onclick="loadSteuer()" style="padding:9px 18px;">Report laden</button>
+                <button class="btn" id="steuer-csv" onclick="downloadSteuerCsv()" style="padding:9px 18px;background:#166534;display:none;">⬇ CSV herunterladen</button>
+            </div>
+            <div id="steuer-content"><p style="color:#6B6B6B;font-size:14px;">Monat wählen und „Report laden".</p></div>
+            <p style="font-size:11px;color:#9CA3AF;margin-top:18px;line-height:1.5;">
+                Quelle: Mollie EUR-Konto (DE/AT/CH/Sonstige) + PL-Konto (PLN). Gebühr = Brutto minus Settlement-Betrag (was Mollie einbehält). CH als Nicht-EU-Export mit 0% EU-USt. PayPal-Zahlungen, die über Mollie laufen, sind enthalten; ein separates PayPal-Konto ist hier NICHT enthalten.
             </p>
         </div>
 
@@ -436,9 +457,106 @@
     function switchTab(name) {
         document.getElementById('tab-tools').style.display    = name === 'tools' ? 'block' : 'none';
         document.getElementById('tab-workflow').style.display = name === 'workflow' ? 'block' : 'none';
+        document.getElementById('tab-steuer').style.display   = name === 'steuer' ? 'block' : 'none';
         document.getElementById('tabbtn-tools').classList.toggle('active', name === 'tools');
         document.getElementById('tabbtn-workflow').classList.toggle('active', name === 'workflow');
+        document.getElementById('tabbtn-steuer').classList.toggle('active', name === 'steuer');
         if (name === 'workflow' && !wfLoaded) { wfLoaded = true; loadWorkflow(); }
+        if (name === 'steuer') initSteuerMonth();
+    }
+
+    // ===================== Steuer-Report (Mollie) =====================
+    let STEUER_DATA = null;
+    function initSteuerMonth() {
+        const el = document.getElementById('steuer-month');
+        if (el && !el.value) {
+            const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - 1); // Vormonat
+            el.value = d.toISOString().slice(0, 7);
+        }
+    }
+    function fmtMoney(n, cur) {
+        if (n == null) return '–';
+        return Number(n).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + cur;
+    }
+    function steuerBlock(title, block) {
+        if (!block || block.error) {
+            return '<div style="margin-bottom:24px;"><h2 style="font-size:15px;color:#C4A576;">' + title + '</h2><p style="color:#b91c1c;font-size:13px;">' + ((block && block.error) || 'keine Daten') + '</p></div>';
+        }
+        const cur = block.currency;
+        let rows = '';
+        for (const r of block.laender) {
+            rows += '<tr>'
+                + '<td style="padding:7px 10px;font-weight:700;">' + r.land + '</td>'
+                + '<td style="padding:7px 10px;text-align:right;">' + (r.ust_satz == null ? 'variabel' : r.ust_satz + '%') + '</td>'
+                + '<td style="padding:7px 10px;text-align:right;">' + r.anzahl + '</td>'
+                + '<td style="padding:7px 10px;text-align:right;">' + fmtMoney(r.brutto, cur) + '</td>'
+                + '<td style="padding:7px 10px;text-align:right;">' + fmtMoney(r.refunds, cur) + '</td>'
+                + '<td style="padding:7px 10px;text-align:right;">' + fmtMoney(r.netto, cur) + '</td>'
+                + '<td style="padding:7px 10px;text-align:right;">' + fmtMoney(r.ust, cur) + '</td>'
+                + '<td style="padding:7px 10px;text-align:right;">' + fmtMoney(r.gebuehren, cur) + '</td>'
+                + '</tr>';
+        }
+        const s = block.summe;
+        rows += '<tr style="border-top:2px solid #C4A576;font-weight:800;background:#FFFBF5;">'
+            + '<td style="padding:8px 10px;">Summe</td><td></td>'
+            + '<td style="padding:8px 10px;text-align:right;">' + s.anzahl + '</td>'
+            + '<td style="padding:8px 10px;text-align:right;">' + fmtMoney(s.brutto, cur) + '</td>'
+            + '<td style="padding:8px 10px;text-align:right;">' + fmtMoney(s.refunds, cur) + '</td>'
+            + '<td style="padding:8px 10px;text-align:right;">' + fmtMoney(s.netto, cur) + '</td>'
+            + '<td style="padding:8px 10px;text-align:right;">' + fmtMoney(s.ust, cur) + '</td>'
+            + '<td style="padding:8px 10px;text-align:right;">' + fmtMoney(s.gebuehren, cur) + '</td></tr>';
+        return '<div style="margin-bottom:28px;overflow-x:auto;"><h2 style="font-size:15px;color:#C4A576;margin-bottom:8px;">' + title + ' (' + cur + ')</h2>'
+            + '<table style="width:100%;border-collapse:collapse;font-size:13px;min-width:640px;">'
+            + '<thead><tr style="background:#F7F2E8;">'
+            + '<th style="padding:7px 10px;text-align:left;">Land</th><th style="padding:7px 10px;text-align:right;">USt</th><th style="padding:7px 10px;text-align:right;">Zahlungen</th><th style="padding:7px 10px;text-align:right;">Brutto</th><th style="padding:7px 10px;text-align:right;">Refunds</th><th style="padding:7px 10px;text-align:right;">Netto</th><th style="padding:7px 10px;text-align:right;">USt-Betrag</th><th style="padding:7px 10px;text-align:right;">Mollie-Gebühr</th></tr></thead>'
+            + '<tbody>' + rows + '</tbody></table></div>';
+    }
+    function renderSteuer(d) {
+        document.getElementById('steuer-content').innerHTML =
+            '<p style="font-size:13px;color:#6B6B6B;margin-bottom:14px;">Monat <b>' + d.month + '</b> · erstellt ' + new Date(d.generated_at).toLocaleString('de-DE') + '</p>'
+            + steuerBlock('EUR-Konto', d.eur) + steuerBlock('PL-Konto', d.pln);
+    }
+    async function loadSteuer() {
+        const month = document.getElementById('steuer-month').value;
+        if (!month) { alert('Bitte Monat wählen.'); return; }
+        const btn = document.getElementById('steuer-load');
+        btn.disabled = true; btn.textContent = '… lädt';
+        document.getElementById('steuer-csv').style.display = 'none';
+        document.getElementById('steuer-content').innerHTML = '<p style="color:#6B6B6B;font-size:14px;">Lade aus Mollie (kann 10-30s dauern) …</p>';
+        try {
+            const res = await fetch('/api/admin/steuer-report', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: PASS, month: month })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Fehler');
+            STEUER_DATA = data;
+            renderSteuer(data);
+            document.getElementById('steuer-csv').style.display = 'inline-block';
+        } catch (e) {
+            document.getElementById('steuer-content').innerHTML = '<p style="color:#b91c1c;font-size:14px;">Fehler: ' + e.message + '</p>';
+        } finally {
+            btn.disabled = false; btn.textContent = 'Report laden';
+        }
+    }
+    function downloadSteuerCsv() {
+        if (!STEUER_DATA) return;
+        const rows = [['Konto', 'Waehrung', 'Land', 'USt_Satz_%', 'Zahlungen', 'Brutto', 'Refunds', 'Brutto_nach_Refund', 'Netto', 'USt_Betrag', 'Mollie_Gebuehr']];
+        const add = (konto, block) => {
+            if (!block || block.error) return;
+            for (const r of block.laender) rows.push([konto, block.currency, r.land, r.ust_satz == null ? '' : r.ust_satz, r.anzahl, r.brutto, r.refunds, r.brutto_nach_refund, r.netto == null ? '' : r.netto, r.ust == null ? '' : r.ust, r.gebuehren]);
+            const s = block.summe; rows.push([konto, block.currency, 'SUMME', '', s.anzahl, s.brutto, s.refunds, '', s.netto, s.ust, s.gebuehren]);
+        };
+        add('Mollie-EUR', STEUER_DATA.eur); add('Mollie-PL', STEUER_DATA.pln);
+        const csv = rows.map(r => r.map(c => {
+            const v = (c == null ? '' : String(c)).replace(/"/g, '""');
+            return /[",;\n]/.test(v) ? '"' + v + '"' : v;
+        }).join(';')).join('\r\n');
+        const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'steuer-report-mollie-' + STEUER_DATA.month + '.csv';
+        a.click();
     }
 
     // Struktur 1:1 aus dem Code (lib/email-sequence.ts + lib/warm-recovery-mail.ts)
