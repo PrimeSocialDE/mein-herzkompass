@@ -62,10 +62,16 @@ export interface WarmRecoveryArgs {
   abVariant?: "A" | "B" | null;
 }
 
-// Recovery-Link zur richtigen Plan-Page (deinplan3 oder deinplan6 je AB-Variante)
-function buildPlanRecoveryUrl(args: WarmRecoveryArgs, stage: WarmRecoveryStage): string {
-  // Warm-Recovery führt auf die Win-Back-Seite rueckhol.html. Diese liest
-  // lead_id aus der URL und stellt Hund/E-Mail/Problem wieder her.
+// Recovery-Link zur richtigen Win-Back-Seite. Diese liest lead_id aus der URL
+// und stellt Hund/E-Mail/Problem wieder her.
+// WICHTIG: PL fuehrt auf lapaplan.pl/powrot.html (polnische Seite + PLN-Checkout).
+// Sonst landet ein PL-Kunde aus seiner poln. Recovery-Mail auf der DEUTSCHEN
+// rueckhol.html (EUR/Deutsch). DE bleibt unveraendert.
+function buildPlanRecoveryUrl(
+  args: WarmRecoveryArgs,
+  stage: WarmRecoveryStage,
+  lang: Lang = "de"
+): string {
   const params = new URLSearchParams({
     lead_id: args.leadId,
     utm_source: "email",
@@ -73,6 +79,9 @@ function buildPlanRecoveryUrl(args: WarmRecoveryArgs, stage: WarmRecoveryStage):
     utm_campaign: "warm-recovery",
     utm_content: `stage-${stage}`,
   });
+  if (lang === "pl") {
+    return `https://www.lapaplan.pl/powrot.html?${params.toString()}`;
+  }
   return `${SITE_URL}/rueckhol.html?${params.toString()}`;
 }
 
@@ -443,7 +452,7 @@ export async function sendWarmRecoveryMail(
   if (!args.to) return { ok: false, reason: "no_recipient" };
 
   const stageContent = getStageContent(args, stage, lang);
-  const ctaUrl = buildPlanRecoveryUrl(args, stage);
+  const ctaUrl = buildPlanRecoveryUrl(args, stage, lang);
 
   // Versuche Claude-Personalisierung, fallback auf defaultBlock
   let personalizedHtml: string;
