@@ -45,6 +45,18 @@
             background: #fff;
             transition: border-color 0.2s;
         }
+        /* Checkboxen/Radios von der 100%-Breite oben ausnehmen (sonst
+           ueberlappen sie Labels, z.B. die Monatsauswahl im Steuer-Report). */
+        input[type="checkbox"], input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            min-width: 16px;
+            padding: 0;
+            margin: 0;
+            flex: 0 0 auto;
+            vertical-align: middle;
+            accent-color: #C4A576;
+        }
         input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: #C4A576;
