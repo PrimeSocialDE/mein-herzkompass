@@ -59,6 +59,10 @@ export interface SesMail {
   /** Sichtbare Abmelde-URL → wird als List-Unsubscribe (One-Click) gesetzt. */
   unsubscribeUrl?: string;
   tags?: string[];
+  /** SES Configuration Set fuer Open/Click/Bounce-Tracking. Default aus
+   *  SES_CONFIGURATION_SET (z.B. "pfoten-tracking"). Ohne Config Set kein
+   *  Open/Click-Tracking — Transaktionsmails koennen es weglassen. */
+  configurationSet?: string;
 }
 
 /** Sendet eine Mail über SES v2. Wirft NICHT — gibt {ok,status,error} zurück,
@@ -89,6 +93,8 @@ export async function sendViaSes(
     },
   };
   if (mail.replyTo) payload.ReplyToAddresses = [mail.replyTo];
+  const configSet = mail.configurationSet || process.env.SES_CONFIGURATION_SET;
+  if (configSet) payload.ConfigurationSetName = configSet;
   if (mail.tags && mail.tags.length) {
     payload.EmailTags = mail.tags.map((t, i) => ({
       Name: i === 0 ? "campaign" : `tag${i}`,
