@@ -37,10 +37,53 @@ const PROBLEM_DE: Record<string, string> = {
   separation: "Alleinbleiben",
 };
 
+// Rassen-Labels (Quiz-Keys -> deutsch). "other"/unbekannt -> keine Nennung.
+const BREED_DE: Record<string, string> = {
+  labrador: "Labrador",
+  german_shepherd: "Schäferhund",
+  golden_retriever: "Golden Retriever",
+  french_bulldog: "Französische Bulldogge",
+  chihuahua: "Chihuahua",
+  poodle: "Pudel",
+  dachshund: "Dackel",
+  beagle: "Beagle",
+  husky: "Husky",
+  border_collie: "Border Collie",
+  mixed: "Mischling",
+};
+// Alter adjektivisch, passt in "dass {Hund} ein {Rasse} und {Alter} ist".
+const AGE_PHRASE: Record<string, string> = {
+  puppy: "noch jung",
+  young: "jung",
+  adult: "erwachsen",
+  senior: "schon älter",
+};
+
+// Individualisierungs-Satz: benennt Rasse + Alter + Problem konkret ->
+// zeigt "wirklich für MEINEN Hund gemacht" (gegen Scam-Eindruck).
+// Degradiert sauber, wenn Rasse/Alter fehlen.
+function personalNote(
+  dog: string,
+  breedKey: string | null | undefined,
+  ageKey: string | null | undefined,
+  problemLabel: string
+): string {
+  const breed = BREED_DE[String(breedKey || "")];
+  const age = AGE_PHRASE[String(ageKey || "")];
+  let who = "";
+  if (breed && age) who = `dass ${dog} ein ${breed} und ${age} ist, `;
+  else if (breed) who = `dass ${dog} ein ${breed} ist, `;
+  else if (age) who = `dass ${dog} ${age} ist, `;
+  if (who) return `Wir haben berücksichtigt, ${who}und genau dein Thema: ${problemLabel}.`;
+  return `Wir haben genau dein Thema berücksichtigt: ${problemLabel}.`;
+}
+
 interface EcArgs {
   to: string;
   dogName?: string | null;
   dogProblem?: string | null;
+  dogBreed?: string | null;
+  dogAge?: string | null;
   leadId?: string | null;
 }
 
@@ -52,11 +95,18 @@ function planUrl(leadId: string | null | undefined, stage: EcStage): string {
   p.set("utm_medium", "nurture");
   p.set("utm_campaign", "ec-sequence");
   p.set("utm_content", `mail-${stage}`);
-  return `${BASE}/deinplan3.html?${p.toString()}`;
+  return `${BASE}/deinplan3?${p.toString()}`;
 }
 
 function p(text: string): string {
   return `<p style="margin:0 0 14px;font-size:16px;line-height:1.65;color:#374151;">${text}</p>`;
+}
+
+// Hero-Bild (volle Breite, abgerundet) — z.B. das gedruckte Heftchen.
+function heroImage(src: string, alt: string): string {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td align="center" style="padding:0 0 18px;">
+    <img src="${src}" alt="${escapeHtml(alt)}" width="536" style="width:100%;max-width:536px;height:auto;border-radius:14px;display:block;">
+  </td></tr></table>`;
 }
 
 // Kleines Bild (zentriert, abgerundet, max 300px).
@@ -123,6 +173,8 @@ export function buildEmailCaptured(
   const dog = (args.dogName || "").trim() || "deinen Hund";
   const dogCap = (args.dogName || "").trim() || "Dein Hund";
   const problem = PROBLEM_DE[String(args.dogProblem || "")] || "das Verhalten";
+  const breedLabel = BREED_DE[String(args.dogBreed || "")] || "";
+  const note = personalNote(dog, args.dogBreed, args.dogAge, problem);
   const cta = planUrl(args.leadId, stage);
   const common = { ctaUrl: cta, unsubscribe: true, lang: "de" as const };
 
@@ -134,10 +186,15 @@ export function buildEmailCaptured(
           ...common,
           preheader: "Deine Antworten sind gespeichert, hier geht es weiter.",
           headline: `Schön, dass du da bist`,
-          intro: `Danke, dass du das Quiz für ${dog} ausgefüllt hast. Auf Basis deiner Antworten haben wir einen persönlichen Trainingsplan vorbereitet, genau auf ${dog} zugeschnitten.`,
+          intro: `Danke, dass du das Quiz für ${dog} ausgefüllt hast. ${note} Auf Basis deiner Antworten haben wir einen persönlichen Trainingsplan vorbereitet.`,
           bodyHtml:
+            heroImage(
+              `${BASE}/deinplan-heft.jpg`,
+              "Der ausgedruckte PfotenPlan als Heft auf dem Tisch, daneben Kaffee und Lesebrille"
+            ) +
+            p(`Das bekommt ${dog}: einen persönlichen Plan, den du dir als <strong>richtiges Heft zum Anfassen</strong> ausdrucken kannst, große Schrift, zum Abhaken. Kein Wisch-PDF.`) +
             p(`Wir arbeiten <strong>ausschließlich mit Belohnung</strong>, ohne Schreien, ohne Strafen, ohne Stachelhalsband. Nur klare, einfache Übungen, die du sofort starten kannst.`) +
-            p(`Der Plan ist einmalig (kein Abo) und du kannst ihn dir <strong>ausdrucken</strong>, große Schrift, zum Abhaken. Und wenn du eine Frage hast, antwortest du einfach auf diese Mail, ein <strong>echter Mensch</strong> antwortet dir.`),
+            p(`Und wenn du eine Frage hast, antwortest du einfach auf diese Mail, ein <strong>echter Mensch</strong> antwortet dir.`),
           ctaText: `${dogCap}s Plan ansehen`,
         }),
       };
@@ -181,7 +238,13 @@ export function buildEmailCaptured(
           preheader: "Ein offener Blick ins Inhaltsverzeichnis.",
           headline: `So ist ${dog}s Plan aufgebaut`,
           intro: `Kein geheimnisvolles PDF, sondern ein klar aufgebautes Programm zum Abhaken. Und du wählst selbst, wie viel Zeit ihr euch nehmt.`,
-          bodyHtml: tocBlock(dog),
+          bodyHtml:
+            heroImage(
+              `${BASE}/deinplan-heft.jpg`,
+              "Der ausgedruckte PfotenPlan als Heft auf dem Tisch, daneben Kaffee und Lesebrille"
+            ) +
+            p(`So sieht ${dog}s Plan aus, wenn du ihn dir <strong>ausdruckst</strong>: ein richtiges Heft zum Anfassen und Abhaken, kein Wisch-PDF.`) +
+            tocBlock(dog),
           ctaText: `${dogCap}s Plan ansehen`,
         }),
       };
@@ -216,7 +279,7 @@ export function buildEmailCaptured(
           headline: `„Aber ${dog} ist anders"`,
           intro: `Hören wir oft. Und ja, jeder Hund ist anders, deshalb ist der Plan kein Standard-PDF, sondern entsteht aus deinen Antworten.`,
           bodyHtml:
-            p(`Rasse, Alter, Charakter und genau das Thema, das du angekreuzt hast (${problem}), fließen ein. Die Übungen sind so gemacht, dass du sie <strong>ohne Vorerfahrung</strong> schaffst.`) +
+            p(`Der Plan ist keine Schablone: ${breedLabel ? `${dogCap}s Rasse (${breedLabel}), ` : ""}Alter, Charakter und genau dein Thema (${problem}) fließen direkt ein. Die Übungen sind so gemacht, dass du sie <strong>ohne Vorerfahrung</strong> schaffst.`) +
             p(`Und du gehst kein Risiko ein:`) +
             p(`🔒 <strong>Einmal zahlen</strong>, kein Abo, kein Vertrag, der weiterläuft.<br>
                🛡️ <strong>30 Tage Geld-zurück.</strong> Passt der Plan nicht, schreib uns kurz, du bekommst dein Geld zurück.<br>

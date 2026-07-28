@@ -66,6 +66,8 @@ export async function GET(req: NextRequest) {
         to: preview,
         dogName: searchParams.get("dog") || "Balu",
         dogProblem: searchParams.get("problem") || "pulling",
+        dogBreed: searchParams.get("breed") || "labrador",
+        dogAge: searchParams.get("age") || "adult",
         leadId: null,
       });
       out.push({ stage: s, ok: r.ok, reason: r.reason });
@@ -76,20 +78,34 @@ export async function GET(req: NextRequest) {
   const dryRun = searchParams.get("dry") === "1";
   const emailFilter = searchParams.get("email")?.toLowerCase();
 
-  // Sicherheits-Schalter: echte Leads erst mit EC_SEQUENCE_LIVE=1.
-  const live = process.env.EC_SEQUENCE_LIVE === "1";
+  // Sicherheits-Schalter + Go-Live-Grenze:
+  //  - leer/ungesetzt  -> schlafend (kein Versand an echte Leads)
+  //  - "1"             -> live OHNE Grenze (nur fuer Tests/Flexibilitaet)
+  //  - Datum (ISO)     -> live, aber NUR Leads ab diesem Datum. So faengt der
+  //    Umschalt-Cron NICHT den ganzen Backlog der letzten Tage auf einmal ab
+  //    (kein Burst, kein Doppel mit dem auslaufenden Brevo-Workflow).
+  const liveVal = (process.env.EC_SEQUENCE_LIVE || "").trim();
+  const live = liveVal !== "";
   if (!live && !emailFilter && !dryRun) {
     return NextResponse.json({
       ok: true,
       disabled: true,
-      reason: "EC_SEQUENCE_LIVE!=1 — setze die Env-Var auf 1 um live zu gehen",
+      reason:
+        "EC_SEQUENCE_LIVE leer — setze ein Startdatum (z.B. 2026-07-28) fuer sauberen Livegang, oder 1 fuer Test ohne Grenze",
     });
+  }
+  let startCutoff: string | null = null;
+  if (live && liveVal !== "1") {
+    const d = new Date(liveVal);
+    if (!isNaN(d.getTime())) startCutoff = d.toISOString();
   }
 
   const admin = createMemberAdminClient();
 
-  // Fenster: 10 Min alt bis 11 Tage alt.
-  const from = new Date(Date.now() - 11 * 86_400_000).toISOString();
+  // Fenster: 10 Min alt bis 11 Tage alt. Bei gesetzter Go-Live-Grenze ab dem
+  // spaeteren der beiden (Startdatum), damit kein alter Backlog erwischt wird.
+  const elevenDaysAgo = new Date(Date.now() - 11 * 86_400_000).toISOString();
+  const from = startCutoff && startCutoff > elevenDaysAgo ? startCutoff : elevenDaysAgo;
   const until = new Date(Date.now() - 10 * 60_000).toISOString();
 
   let query = admin
@@ -155,6 +171,8 @@ export async function GET(req: NextRequest) {
       to: lead.email,
       dogName: lead.dog_name || answers.dog_name || null,
       dogProblem: answers.dog_problem || null,
+      dogBreed: answers.dog_breed || null,
+      dogAge: answers.dog_age || null,
       leadId: lead.id,
     });
 
