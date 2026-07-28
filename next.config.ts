@@ -94,6 +94,22 @@ const nextConfig: NextConfig = {
           has: [{ type: 'host', value: 'www.lapaplan.pl' }],
           destination: '/pl/:path',
         },
+        // ── IT / ZampaPlan.it (analog zu PL, additiv) — host-gebunden auf
+        //    zampaplan.it, greift NIE bei pfoten-plan.de oder lapaplan.pl.
+        //    Seiten liegen unter public/it/*. Zahlung startet als Platzhalter
+        //    (IT_PAYMENTS_OFF), bis Mollie IT beantragt/live ist.
+        { source: '/', has: [{ type: 'host', value: 'zampaplan.it' }], destination: '/it' },
+        { source: '/', has: [{ type: 'host', value: 'www.zampaplan.it' }], destination: '/it' },
+        {
+          source: '/:path((?!api/|api$|mitglieder|_next|it/|it$).*)',
+          has: [{ type: 'host', value: 'zampaplan.it' }],
+          destination: '/it/:path',
+        },
+        {
+          source: '/:path((?!api/|api$|mitglieder|_next|it/|it$).*)',
+          has: [{ type: 'host', value: 'www.zampaplan.it' }],
+          destination: '/it/:path',
+        },
       ],
       afterFiles: [
         // alle Step-Seiten ohne .html erreichbar machen
