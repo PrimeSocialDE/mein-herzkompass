@@ -217,7 +217,7 @@ export async function sendPlNurtureMail(
     html,
     lang: "pl",
     // Persoenlicher Absender hebt Open-Rate (statt reiner Marke "ŁapaPlan").
-    senderName: "Ania z ŁapaPlan",
+    senderName: "Maks z ŁapaPlan",
     tags: ["pl-nurture", `stage-${stage}`],
   });
 }
