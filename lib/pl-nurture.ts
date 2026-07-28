@@ -75,7 +75,7 @@ export function buildPlNurture(
   switch (stage) {
     case 1:
       return {
-        subject: `Plan treningowy dla ${dog} jest gotowy 🐾`,
+        subject: `Plan dla ${dog} jest gotowy 🐾`,
         html: wrapTemplate({
           ...common,
           preheader: "Twoje odpowiedzi są zapisane — zobacz, co przygotowaliśmy.",
@@ -90,7 +90,7 @@ export function buildPlNurture(
 
     case 2:
       return {
-        subject: `Ponad 3000 psów miało ten sam problem`,
+        subject: `${dog} nie jest sam z tym problemem`,
         html: wrapTemplate({
           ...common,
           preheader: "Zobacz, co zmieniło się u innych właścicieli.",
@@ -121,7 +121,7 @@ export function buildPlNurture(
 
     case 4:
       return {
-        subject: `Im dłużej czekasz, tym trudniej`,
+        subject: `${dog}: im dłużej czekasz, tym trudniej`,
         html: wrapTemplate({
           ...common,
           preheader: "Bez presji — po prostu szczerze.",
@@ -137,7 +137,7 @@ export function buildPlNurture(
 
     case 5:
       return {
-        subject: `Co dokładnie dostajesz`,
+        subject: `Co dokładnie dostaje ${dog}`,
         html: wrapTemplate({
           ...common,
           preheader: "Konkretnie, punkt po punkcie.",
@@ -157,7 +157,7 @@ export function buildPlNurture(
 
     case 6:
       return {
-        subject: `Kto stoi za ŁapaPlan`,
+        subject: `Kto ułoży plan dla ${dog}`,
         html: wrapTemplate({
           ...common,
           preheader: "Metoda oparta na nauce, nie na sile.",
@@ -173,7 +173,7 @@ export function buildPlNurture(
 
     case 7:
       return {
-        subject: `Bez ryzyka — masz naszą gwarancję`,
+        subject: `Bez ryzyka dla ${dog}`,
         html: wrapTemplate({
           ...common,
           preheader: "Jedyne, co możesz stracić, to stary problem.",
@@ -190,7 +190,7 @@ export function buildPlNurture(
 
     case 8:
       return {
-        subject: `Ostatnie przypomnienie w sprawie ${dog}`,
+        subject: `Ostatnie przypomnienie dla ${dog}`,
         html: wrapTemplate({
           ...common,
           preheader: "Nie chcemy zapełniać Ci skrzynki.",
@@ -216,6 +216,8 @@ export async function sendPlNurtureMail(
     subject,
     html,
     lang: "pl",
+    // Persoenlicher Absender hebt Open-Rate (statt reiner Marke "ŁapaPlan").
+    senderName: "Maks z ŁapaPlan",
     tags: ["pl-nurture", `stage-${stage}`],
   });
 }
