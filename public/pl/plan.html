@@ -5382,7 +5382,14 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 <div class="hybrid-divider">lub</div>
 
                 <!-- Weitere Methoden als Listen-Zeilen (Radio-Stil) -->
-                <button type="button" class="hybrid-method-row" onclick="payWithMethod('przelewy24')" aria-label="Zapłać przez Przelewy24">
+                <!-- Przelewy24 TEMPORAER AUSGEBLENDET (2026-07-28): P24 ist bei Mollie
+                     zwar "activated", aber die Abwicklung ist kaputt — 100% der P24-
+                     Zahlungen liefen "expired", Payment-Create gibt 503 upstream (Mollie/
+                     P24-Acquirer-Problem, nicht unser Code). Ausgeblendet, damit Kunden
+                     auf BLIK (97% Erfolg) gehen statt ins Leere zu laufen.
+                     WIEDER EINBLENDEN: einfach style="display:none" unten entfernen,
+                     sobald Mollie/P24 den Fehler behoben hat. -->
+                <button type="button" class="hybrid-method-row" onclick="payWithMethod('przelewy24')" aria-label="Zapłać przez Przelewy24" style="display:none">
                     <span class="hmr-radio"></span>
                     <span class="hmr-name">Przelewy24</span>
                     <img class="hmr-logo" src="przelewy24-logo.svg" alt="Przelewy24">
