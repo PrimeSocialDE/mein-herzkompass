@@ -238,25 +238,28 @@
         const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
 
-        // A/B Test (ab 2026-06-18): deinplan3 (Champion, Control) vs deinplan2.
-        // deinplan2 ist jetzt ein EXAKTER Klon von deinplan3 PLUS dem
-        // "Du bist nicht allein"-Reassurance-Block ueber der Haupt-CTA
-        // (aus echten KI-Trainer-Chatfragen abgeleitet). Der Test isoliert
-        // genau diesen einen Block. Messung via source_page (deinplan2 vs deinplan3).
-        // 50/50 (seit 23.06: hochgezogen von 70/30, damit B schneller Signifikanz erreicht —
-        // B lag bei ~+23% rel. CR, aber noch nicht signifikant). localStorage-Key bleibt v6
-        // (kurz-schritt1 Returning-Logik haengt dran; bestehende Nutzer behalten ihre Variante).
+        // ── A/B-Test 2 (ab 2026-07-28): deinplan3 (Control) vs deinplan2 + Peer-Testimonial ──
+        // Test 1 (deinplan2 "Du bist nicht allein"-Bullet-Block) beendet: ueber 30d Gleichstand,
+        // letzte 7d klar deinplan3 (15,4% vs 12,8% CR). Der Bullet-Block zog nicht.
+        // Test 2 isoliert stattdessen EINEN Peer-Testimonial-Block (aeltere Kundin, ue50)
+        // direkt ueber der Kauf-Entscheidung auf deinplan2.
+        //   A = deinplan3.html (Control, unveraendert)
+        //   B = deinplan2.html (Control + Testimonial-Block)  → DB-Label 'B2'
+        // 'B2' (statt 'B') trennt die neue B-Variante sauber vom alten Test-B in der DB.
+        // Messung: ab_variant IN ('A','B2') AND created_at >= '2026-07-28'.
+        // Routing-Key bleibt v6 = auch "sawPlan"-Flag fuer die Wiederkehrer-Weiche in
+        // kurz-schritt1 (Quiz-Fertige → rueckhol). Start bei 70/30 (vorsichtig anfahren,
+        // neue Variante absichern; spaeter auf 50/50 hochziehen falls B mithaelt).
         function getABTestPage() {
             let variant = localStorage.getItem('ab_test_pricing_v6');
             if (!variant) {
-                // 50/50: A=deinplan3 (Control), B=deinplan2 (mit "Du bist nicht allein"-Block)
-                variant = Math.random() < 0.50 ? 'A' : 'B';
-                localStorage.setItem('ab_test_pricing_v6', variant);
-                // Legacy-Key auch setzen damit Supabase-Tracking (ab_variant) konsistent bleibt
-                localStorage.setItem('ab_test_pricing', variant);
+                // 70% A=deinplan3 (Control), 30% B=deinplan2 (+ Peer-Testimonial-Block)
+                variant = Math.random() < 0.70 ? 'A' : 'B';
+                localStorage.setItem('ab_test_pricing_v6', variant); // Routing + sawPlan-Flag
+                // DB-Label (ab_variant): Control='A', neue B-Variante='B2' (vom alten 'B' trennbar)
+                localStorage.setItem('ab_test_pricing', variant === 'A' ? 'A' : 'B2');
             }
-            // A = deinplan3.html (Champion, Control)
-            // B = deinplan2.html (deinplan3-Klon + "Du bist nicht allein"-Block)
+            // A = deinplan3.html (Control) · B = deinplan2.html (+ Peer-Testimonial-Block)
             return variant === 'A' ? 'deinplan3.html' : 'deinplan2.html';
         }
 
