@@ -25,6 +25,40 @@ export async function GET(req: NextRequest) {
 
   const out: any = { acct };
 
+  // Detail-Dump einer bestimmten Zahlung (?payment=tr_xxx)
+  const payId = searchParams.get("payment");
+  if (payId) {
+    try {
+      const p: any = await mollie.payments.get(payId);
+      return NextResponse.json({ payment: p });
+    } catch (e: any) {
+      return NextResponse.json({ error: e?.message });
+    }
+  }
+
+  // Test-P24-Zahlung anlegen + Checkout-URL zurueckgeben (?action=testp24)
+  if (searchParams.get("action") === "testp24") {
+    try {
+      const p: any = await mollie.payments.create({
+        amount: { currency: "PLN", value: "1.00" },
+        description: "DIAG TEST P24 (laeuft ab, nicht bezahlen)",
+        redirectUrl: "https://www.lapaplan.pl/plan",
+        method: "przelewy24" as any,
+        billingEmail: "diag@lapaplan.pl",
+        locale: "pl_PL" as any,
+      } as any);
+      return NextResponse.json({
+        id: p.id,
+        status: p.status,
+        method: p.method,
+        checkoutUrl: p._links?.checkout?.href || null,
+        full: p,
+      });
+    } catch (e: any) {
+      return NextResponse.json({ error: e?.message, field: e?.field });
+    }
+  }
+
   // 1. Status einzelner Methoden (przelewy24 im Fokus)
   out.methodStatus = {};
   for (const id of ["przelewy24", "blik", "creditcard", "paypal"]) {
