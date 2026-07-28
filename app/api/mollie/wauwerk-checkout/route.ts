@@ -382,6 +382,14 @@ export async function POST(req: NextRequest) {
       if (method === "creditcard" && cardToken && !isPL) {
         paymentParams.cardToken = cardToken;
       }
+      // Przelewy24 verlangt bei Mollie ZWINGEND billingEmail. Fehlt es, lehnt
+      // Mollie das Payment-Create mit 422 ab -> die Zahlung wird nie erstellt.
+      // Das erklaert 0 durchgegangene P24-Zahlungen trotz aktivierter Methode
+      // (der Nutzer sah nur "Nie udało się rozpocząć płatności"). resolvedEmail
+      // ist oben validiert (EMAIL_RE), also immer eine gueltige Adresse.
+      if (method === "przelewy24" && resolvedEmail) {
+        paymentParams.billingEmail = resolvedEmail;
+      }
     }
 
     // ── Customer + Mandate fuer One-Click-Upsells ─────────────────────
