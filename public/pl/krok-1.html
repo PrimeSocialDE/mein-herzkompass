@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
-        // Wiederkehrer-Weiche (Phase 2 PL): zeigt auf die PL-Rueckhol-Seite,
-        // sobald sie existiert. Bis dahin deaktiviert, damit kein 404 entsteht.
-        // (function () {
-        //     try {
-        //         var sawPlan = localStorage.getItem('ab_test_pricing_v6');
-        //         var bought  = localStorage.getItem('purchased');
-        //         if (sawPlan && !bought) {
-        //             window.location.replace('powrot.html' + window.location.search);
-        //         }
-        //     } catch (e) {}
-        // })();
+        // Wiederkehrer-Weiche (PL): wer das Quiz schon durch hatte (bis krok-11,
+        // ab_test_pricing_v6 gesetzt) und noch nicht gekauft hat, springt beim
+        // erneuten Ad-Klick direkt auf die PL-Rueckhol-Seite (powrot) statt
+        // nochmal durchs Quiz. location.search mitnehmen -> UTMs/fbclid der NEUEN
+        // Ad bleiben getrackt. Powrot stellt die Daten per leadId wieder her.
+        (function () {
+            try {
+                var sawPlan = localStorage.getItem('ab_test_pricing_v6');
+                var bought  = localStorage.getItem('purchased');
+                if (sawPlan && !bought) {
+                    window.location.replace('powrot.html' + window.location.search);
+                }
+            } catch (e) { /* localStorage blockiert -> normaler Funnel */ }
+        })();
     </script>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" type="image/png" href="favconHund.png">
