@@ -89,6 +89,9 @@ interface SendArgs {
   attachments?: Array<{ name: string; contentBase64: string }>;
   cc?: string | string[];
   lang?: Lang;
+  /** Optionaler Absender-Anzeigename (statt des Marken-Defaults). Persoenlicher
+   *  Name (z.B. "Ania z ŁapaPlan") hebt Open-Rates. E-Mail-Adresse bleibt. */
+  senderName?: string;
   /** Transaktionale DE-Mail (Plan/Zusatzmodul/Login/Beleg — alles Bezahlte):
    *  primär über Google Workspace SMTP verschicken (bessere Zustellung bei
    *  web.de/GMX), Brevo nur als Fallback. Marketing lässt das Flag weg → Brevo.
@@ -109,10 +112,13 @@ export function mailReplyTo(lang: Lang = "de") {
     : { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" };
 }
 
-export async function sendBrevoMail({ to, subject, html, tags, attachments, cc, lang, transactional }: SendArgs) {
+export async function sendBrevoMail({ to, subject, html, tags, attachments, cc, lang, transactional, senderName }: SendArgs) {
   if (!to) {
     return { ok: false, reason: "no_recipient" };
   }
+  const sender = senderName
+    ? { ...mailSender(lang), name: senderName }
+    : mailSender(lang);
   // Bezahlte/transaktionale DE-Mails primär über Google Workspace SMTP —
   // Brevo bleibt automatischer Fallback (siehe lib/google-smtp.ts).
   if (transactional && lang !== "pl") {
@@ -125,7 +131,7 @@ export async function sendBrevoMail({ to, subject, html, tags, attachments, cc, 
           html,
           attachments,
           cc,
-          fromName: mailSender(lang).name,
+          fromName: sender.name,
           replyTo: mailReplyTo(lang).email,
         });
         return { ok: true, via: "google" as const };
@@ -143,7 +149,7 @@ export async function sendBrevoMail({ to, subject, html, tags, attachments, cc, 
   }
   try {
     const payload: Record<string, unknown> = {
-      sender: mailSender(lang),
+      sender,
       replyTo: mailReplyTo(lang),
       to: [{ email: to }],
       subject,
