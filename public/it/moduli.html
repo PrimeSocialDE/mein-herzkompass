@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <script src="/utm-tracking.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consiglio per te | ZampaPlan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+
+    <!-- TODO: eigene IT Meta-Pixel + Google-Ads-ID einsetzen -->
+    <!-- Google tag (gtag.js) -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+    -->
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ufxcf43805");
+    </script>
+
+    <!-- TODO: eigene IT Meta-Pixel + Google-Ads-ID einsetzen -->
+    <!-- Meta Pixel -->
+    <!--
+    <script>
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+        (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+    -->
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAF8F5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 440px; margin: 0 auto; }
+
+        /* Plan gesichert Banner */
+        .secured-banner {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 16px;
+            background: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .secured-banner .check {
+            width: 28px; height: 28px; background: #22C55E; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .secured-banner .check svg { width: 14px; height: 14px; color: white; }
+        .secured-banner p { font-size: 14px; color: #166534; font-weight: 600; }
+
+        /* Hero Card */
+        .upsell-card {
+            background: white; border-radius: 20px;
+            padding: 28px 22px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            margin-bottom: 16px;
+        }
+        .upsell-card .eyebrow {
+            font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; color: #8B7355; margin-bottom: 6px;
+        }
+        .upsell-card h2 {
+            font-size: 22px; font-weight: 800; color: #1a1a1a;
+            line-height: 1.3; margin-bottom: 12px;
+        }
+        .upsell-hook {
+            background: #FFF8E7; border-left: 3px solid #C4A576;
+            padding: 12px 14px; border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+            font-size: 13.5px; color: #5C4A2A; line-height: 1.55;
+        }
+
+        /* Module Card */
+        .module-card {
+            background: #FFFBF5; border: 2px solid #E7DBC5;
+            border-radius: 14px; padding: 18px;
+            position: relative; margin-bottom: 14px;
+        }
+        .module-card.bundle {
+            border: 2px solid #C4A576;
+            background: #FFF8EC;
+        }
+        .module-card .badge {
+            position: absolute; top: -10px; left: 16px;
+            background: #C4A576; color: white;
+            font-size: 11px; font-weight: 700;
+            padding: 3px 10px; border-radius: 6px;
+        }
+        .module-card.bundle .badge {
+            background: #166534;
+        }
+        .module-header {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 10px;
+        }
+        .module-icon { font-size: 28px; }
+        .module-name {
+            font-size: 16px; font-weight: 700; color: #1a1a1a;
+            line-height: 1.3;
+        }
+        .module-desc {
+            font-size: 14px; color: #555; line-height: 1.55;
+            margin-bottom: 12px;
+        }
+        .module-benefits {
+            display: flex; flex-direction: column; gap: 6px;
+            margin-bottom: 14px;
+        }
+        .module-benefit {
+            font-size: 13px; color: #1a1a1a; line-height: 1.5;
+            padding-left: 22px; position: relative;
+        }
+        .module-benefit::before {
+            content: '✓'; position: absolute; left: 0; top: 0;
+            color: #166534; font-weight: 700;
+        }
+        .module-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px; flex-wrap: wrap;
+        }
+        .module-price-old {
+            font-size: 13px; color: #999; text-decoration: line-through;
+            margin-right: 8px;
+        }
+        .module-price-new {
+            font-size: 18px; font-weight: 800; color: #C4A576;
+        }
+        .module-btn {
+            background: linear-gradient(135deg, #C4A576, #8B7355);
+            color: white; border: none;
+            padding: 12px 22px; border-radius: 10px;
+            font-size: 14px; font-weight: 700; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .module-btn:hover { transform: translateY(-1px); }
+        .module-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .module-btn.bundle-btn {
+            background: linear-gradient(135deg, #16A34A, #166534);
+        }
+        .module-disclaimer {
+            text-align: center; margin-top: 10px;
+            font-size: 12px; color: #166534; font-weight: 500;
+        }
+
+        /* Bundle-Vorteil */
+        .bundle-savings {
+            display: inline-block; margin-top: 4px;
+            font-size: 12px; font-weight: 700; color: #166534;
+            background: #DCFCE7; padding: 2px 8px; border-radius: 6px;
+        }
+        .divider {
+            text-align: center; font-size: 12px; color: #999;
+            font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+            margin: 6px 0 16px;
+        }
+
+        /* Social Proof */
+        .social-proof {
+            text-align: center; margin-top: 14px; font-size: 13px; color: #666;
+        }
+        .social-proof .dot {
+            display: inline-block; width: 8px; height: 8px;
+            background: #22C55E; border-radius: 50%; margin-right: 6px;
+            box-shadow: 0 0 6px rgba(34,197,94,0.6);
+            animation: livePulse 2s infinite;
+        }
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Skip */
+        .skip-btn {
+            display: block; width: 100%; text-align: center;
+            font-size: 13px; color: #999; background: none; border: none;
+            padding: 12px; cursor: pointer; text-decoration: underline;
+            transition: color 0.2s; opacity: 0;
+        }
+        .skip-btn:hover { color: #666; }
+
+        /* Spinner */
+        .spinner {
+            display: inline-block; width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white; border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle; margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+
+    <script
+      defer
+      data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+      data-domain="zampaplan.it"
+      src="https://datafa.st/js/script.js">
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Plan zabezpieczony -->
+        <div class="secured-banner">
+            <div class="check">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <p>Il piano per <span class="dog-name">il tuo cane</span> è al sicuro</p>
+        </div>
+
+        <!-- Consiglio del modulo -->
+        <div class="upsell-card">
+            <p class="eyebrow">Consiglio integrativo per <span class="dog-name">il tuo cane</span></p>
+            <h2 id="upsellTitle">Completa l'addestramento di <span class="dog-name">il tuo cane</span></h2>
+
+            <div class="upsell-hook" id="upsellHook">
+                <!-- dynamisch -->
+            </div>
+
+            <div id="upsellModule">
+                <!-- dynamisch: einzelnes Modul -->
+            </div>
+
+            <div class="divider">oppure risparmia con il pacchetto</div>
+
+            <div id="upsellBundle">
+                <!-- dynamisch: Paket -->
+            </div>
+
+            <div class="social-proof">
+                <span class="dot"></span>
+                <span style="color:#C4A576;font-weight:600;">347 proprietari di cani</span> hanno scelto questa integrazione
+            </div>
+        </div>
+
+        <!-- Skip -->
+        <button class="skip-btn" id="skipBtn" onclick="skipToFinal()">
+            No, grazie, vai al mio piano →
+        </button>
+    </div>
+
+    <script>
+        // Payment-Guard: echte Zahlungen deaktiviert bis IT-Zahlungsanbindung steht
+        const PL_PAYMENTS_OFF = true;
+
+        let dogName = localStorage.getItem('dogName') || 'il tuo cane';
+        const dogAge = localStorage.getItem('dogAge') || 'adult';
+        const urlParamsInit = new URLSearchParams(window.location.search);
+        const leadId = urlParamsInit.get('lead_id') || localStorage.getItem('leadId') || '';
+        let userEmail = localStorage.getItem('userEmail') || '';
+
+        // Robust: email/dogName aus dem Lead nachladen. localStorage ueberlebt den
+        // Mollie/BLIK-Umweg auf dem Handy nicht immer; leadId kommt zuverlaessig aus
+        // der URL. Ohne email schlaegt der Upsell-Checkout mit 400 fehl.
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+        let _leadDataLoaded = false;
+        async function ensureLeadData() {
+            if (_leadDataLoaded) return;
+            if (userEmail && dogName && dogName !== 'il tuo cane') { _leadDataLoaded = true; return; }
+            if (!leadId) return;
+            try {
+                const r = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + encodeURIComponent(leadId) + '&select=email,dog_name', {
+                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+                });
+                const rows = await r.json();
+                if (rows && rows[0]) {
+                    if (!userEmail && rows[0].email) userEmail = rows[0].email;
+                    if ((!dogName || dogName === 'il tuo cane') && rows[0].dog_name) {
+                        dogName = rows[0].dog_name;
+                        document.querySelectorAll('.dog-name').forEach(el => { el.textContent = dogName; });
+                    }
+                    _leadDataLoaded = true;
+                }
+            } catch (e) { console.error('ensureLeadData:', e); }
+        }
+        ensureLeadData();
+
+        document.querySelectorAll('.dog-name').forEach(el => { el.textContent = dogName; });
+
+        // Skip nach 3s einblenden
+        setTimeout(() => {
+            const sb = document.getElementById('skipBtn');
+            if (sb) sb.style.opacity = '1';
+        }, 3000);
+
+        function skipToFinal() {
+            // Relativer Pfad, funktioniert lokal und auf Vercel (loest zu /it/grazie.html auf)
+            window.location.href = 'grazie.html?lead_id=' + encodeURIComponent(leadId || '');
+        }
+
+        // ── Module mit klarer, konkreter Nutzensprache ──
+        const moduleData = {
+            'anxiety': {
+                icon: '🏠',
+                name: 'Ansia da separazione, restare solo con serenità',
+                exercises: '6 esercizi, 2 settimane',
+                benefits: [
+                    'Serenità quando parti o vai dal medico',
+                    'Rituali di commiato che riducono subito lo stress',
+                    'Costruzione passo dopo passo, senza traumi'
+                ],
+                desc: 'Così ' + dogName + ' non va nel panico quando devi uscire all\'improvviso.',
+                hook: 'L\'ansia da separazione spesso si manifesta solo quando non è più possibile prevenirla, di solito dopo la prima separazione più lunga. Questi esercizi vi preparano in 2 settimane.'
+            },
+            'pulling': {
+                icon: '🦮',
+                name: 'Camminare al guinzaglio morbido, passeggiate tranquille',
+                exercises: '6 esercizi, 2 settimane',
+                benefits: [
+                    'Fermi il tiraggio in modo efficace, anche in presenza di distrazioni',
+                    'Tecnica del cambio di direzione presa direttamente dal lavoro dell\'addestratore',
+                    'Incrociare con calma altri cani, ciclisti e corridori'
+                ],
+                desc: 'Così torni a uscire volentieri a passeggio con ' + dogName + ', senza dolori alla spalla.',
+                hook: 'Il tiraggio al guinzaglio raramente migliora da solo, soprattutto nei cani più eccitabili. Questi esercizi ti danno tecniche concrete per ogni giorno.'
+            },
+            'barking': {
+                icon: '🔕',
+                name: 'Abbaio eccessivo, tranquillità per ospiti e vicini',
+                exercises: '6 esercizi, 2 settimane',
+                benefits: [
+                    'Spegnere in modo coerente l\'abbaio alla porta',
+                    'Un chiaro segnale "silenzio" a comando',
+                    'Disinnescare gli stimoli invece di reprimerli'
+                ],
+                desc: 'Così ' + dogName + ' non diventa una fonte di stress in casa, soprattutto in condominio.',
+                hook: 'Molti cani iniziano ad abbaiare quando l\'addestramento principale dà i primi risultati: è un comportamento sostitutivo. Questo modulo lo intercetta.'
+            },
+            'aggression': {
+                icon: '🛡️',
+                name: 'Controllo dell\'aggressività, sicurezza negli incontri',
+                exercises: '6 esercizi, 2 settimane',
+                benefits: [
+                    'Allenti le situazioni di tensione in tempo',
+                    'Costruisci il controllo degli impulsi negli incontri reali',
+                    'Introduci la calma mantenendo la giusta distanza'
+                ],
+                desc: 'Così porti di nuovo ' + dogName + ' al guinzaglio senza timori, anche dove ci sono molti cani.',
+                hook: 'La reattività verso altri cani, senza un addestramento mirato, peggiora invece di sparire. Questi esercizi ti danno strumenti concreti per ogni incontro.'
+            },
+            'recall': {
+                icon: '📣',
+                name: 'Richiamo, affidabile anche vicino al bosco e alla strada',
+                exercises: '6 esercizi, 2 settimane',
+                benefits: [
+                    'Un richiamo infallibile, anche in presenza di stimoli forti',
+                    'Costruzione corretta del richiamo, senza "bruciare" il comando',
+                    'Libertà senza ansia continua'
+                ],
+                desc: 'Così ' + dogName + ', in caso di necessità, torna subito, anche quando nelle vicinanze c\'è un capriolo o un\'auto.',
+                hook: 'Un richiamo "bruciato" è uno dei rischi più grandi nella vita quotidiana con il cane. Questi esercizi lo ricostruiscono da zero, nel modo giusto.'
+            },
+            'jumping': {
+                icon: '🚪',
+                name: 'Saltare addosso alle persone, saluti tranquilli',
+                exercises: '6 esercizi, 2 settimane',
+                benefits: [
+                    'La regola delle quattro zampe che funziona davvero',
+                    'Accogliere gli ospiti con calma',
+                    'Reindirizzare il salto invece di vietarlo'
+                ],
+                desc: 'Così ' + dogName + ' accoglie gli ospiti con calma, soprattutto gli anziani e i bambini.',
+                hook: 'Saltare addosso, soprattutto nei cani di taglia media e grande, è una questione di sicurezza. Questo modulo lo risolve in modo duraturo.'
+            },
+            'energy': {
+                icon: '🌿',
+                name: 'Energia in eccesso e rilassamento, allenamento della calma',
+                exercises: '6 esercizi, 2 settimane',
+                benefits: [
+                    'Esercizi di rilassamento mirati per ogni giorno',
+                    'Lavoro mentale invece di sfoghi fisici continui',
+                    'Costruzione di un segnale di relax'
+                ],
+                desc: 'Così ' + dogName + ' impara a "spegnersi" invece di restare sempre in allerta.',
+                hook: 'I cani che non riescono a rilassarsi imparano peggio. Senza un allenamento della calma, ' + dogName + ' si blocca da solo nella quotidianità.'
+            },
+            'destructive': {
+                icon: '🧸',
+                name: 'Distruzioni in casa, mobili e scarpe restano intatti',
+                exercises: '6 esercizi, 2 settimane',
+                benefits: [
+                    'Introduzione sicura di alternative consentite',
+                    'Reindirizzare il mordere invece di punire',
+                    'Restare solo senza caos'
+                ],
+                desc: 'Così non devi comprare scarpe o mobili nuovi ogni settimana.',
+                hook: 'Le distruzioni sono di solito un sintomo di stress o di scarsa stimolazione. Questo modulo agisce sulla causa.'
+            },
+            'mouthing': {
+                icon: '🦴',
+                name: 'Raccogliere cose da terra, sicurezza all\'aperto',
+                exercises: '6 esercizi, 2 settimane',
+                benefits: [
+                    'Introduzione sicura del comando "lascia"',
+                    'Protezione dalle esche avvelenate ogni giorno',
+                    'Passeggiate senza preoccupazioni'
+                ],
+                desc: 'Così non devi controllare di continuo cosa ' + dogName + ' mette in bocca.',
+                hook: 'Esche avvelenate, pezzi di vetro, avanzi di cibo: all\'aperto ci sono molte cose che possono essere pericolose. Questi esercizi ti mettono al sicuro.'
+            },
+            'soiling': {
+                icon: '🚫',
+                name: 'Sporcare in casa, pulizia senza stress',
+                exercises: '6 esercizi, 2 settimane',
+                benefits: [
+                    'Un piano di uscite chiaro, adattato alla giornata',
+                    'Riconoscere i segnali prima che sia troppo tardi',
+                    'Costruire la pulizia con calma e coerenza'
+                ],
+                desc: 'Così ' + dogName + ' impara a fare i bisogni all\'aperto, senza stress né punizioni.',
+                hook: 'Sporcare in casa raramente passa da solo, più spesso deriva dalla mancanza di una routine chiara. Questo modulo la mette in ordine.'
+            }
+        };
+
+        // Problem des Hundes aus Quiz / localStorage / URL
+        const answers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
+        const dogGoal = answers.dog_goal || urlParamsInit.get('problem') || localStorage.getItem('dogProblemKey') || '';
+        const dogProblem = answers.dog_problem || localStorage.getItem('dogProblem') || '';
+        const dogBehaviors = answers.dog_behaviors || JSON.parse(localStorage.getItem('dogBehaviors') || '[]');
+        const allUserProblems = [...new Set([dogGoal, dogProblem, ...dogBehaviors].filter(p => p))];
+
+        // Relevanz-Map: welches Modul passt am besten zum Hauptproblem
+        const relevanceMap = {
+            'pulling':      ['recall', 'energy', 'jumping', 'aggression', 'barking', 'anxiety', 'destructive', 'mouthing', 'soiling'],
+            'recall':       ['pulling', 'energy', 'aggression', 'jumping', 'barking', 'anxiety', 'destructive', 'mouthing', 'soiling'],
+            'aggression':   ['energy', 'pulling', 'recall', 'anxiety', 'barking', 'jumping', 'destructive', 'mouthing', 'soiling'],
+            'anxiety':      ['destructive', 'energy', 'barking', 'pulling', 'recall', 'jumping', 'aggression', 'soiling', 'mouthing'],
+            'barking':      ['anxiety', 'energy', 'aggression', 'jumping', 'pulling', 'recall', 'destructive', 'mouthing', 'soiling'],
+            'jumping':      ['recall', 'pulling', 'energy', 'barking', 'aggression', 'anxiety', 'destructive', 'mouthing', 'soiling'],
+            'energy':       ['pulling', 'destructive', 'recall', 'jumping', 'barking', 'anxiety', 'aggression', 'mouthing', 'soiling'],
+            'destructive':  ['anxiety', 'energy', 'barking', 'pulling', 'recall', 'jumping', 'aggression', 'soiling', 'mouthing'],
+            'mouthing':     ['recall', 'energy', 'pulling', 'destructive', 'anxiety', 'barking', 'aggression', 'jumping', 'soiling'],
+            'soiling':      ['anxiety', 'destructive', 'energy', 'recall', 'pulling', 'barking', 'jumping', 'aggression', 'mouthing']
+        };
+
+        // Empfohlenes Einzelmodul (Fallback: recall)
+        function pickRecommended() {
+            const allModules = Object.keys(moduleData);
+            const available = allModules.filter(m => !allUserProblems.includes(m));
+            const pool = available.length ? available : allModules;
+            const mainProblem = dogProblem || dogGoal || '';
+            const order = relevanceMap[mainProblem] || [];
+            const sorted = pool.slice().sort((a, b) => {
+                const iA = order.indexOf(a); const iB = order.indexOf(b);
+                return (iA === -1 ? 999 : iA) - (iB === -1 ? 999 : iB);
+            });
+            return sorted[0] || 'recall';
+        }
+
+        const recommendedKey = pickRecommended();
+        const rec = moduleData[recommendedKey];
+
+        function renderOffers() {
+            document.getElementById('upsellHook').textContent = rec.hook;
+
+            // ── Einzelmodul: 9,99 € (statt 19,99 €) ──
+            // TODO: finale IT-Preise festlegen
+            const single = document.createElement('div');
+            single.className = 'module-card';
+            single.innerHTML = `
+                <div class="badge">Adatto al tuo piano</div>
+                <div class="module-header">
+                    <span class="module-icon">${rec.icon}</span>
+                    <span class="module-name">${rec.name}</span>
+                </div>
+                <p class="module-desc">${rec.desc}</p>
+                <div class="module-benefits">
+                    ${rec.benefits.map(b => '<div class="module-benefit">' + b + '</div>').join('')}
+                </div>
+                <div class="module-footer">
+                    <div>
+                        <span class="module-price-old">19,99 €</span>
+                        <span class="module-price-new">9,99 €</span>
+                    </div>
+                    <button class="module-btn" id="moduleBuyBtn" onclick="buyModule()">
+                        Aggiungi al piano
+                    </button>
+                </div>
+                <div class="module-disclaimer">${rec.exercises} · Subito via e-mail · 30 giorni di garanzia</div>
+            `;
+            document.getElementById('upsellModule').appendChild(single);
+
+            // ── Paket: alle Module 19,99 € ──
+            // TODO: finale IT-Preise festlegen
+            const bundle = document.createElement('div');
+            bundle.className = 'module-card bundle';
+            bundle.innerHTML = `
+                <div class="badge">La scelta migliore</div>
+                <div class="module-header">
+                    <span class="module-icon">📦</span>
+                    <span class="module-name">Pacchetto: tutti i moduli di addestramento</span>
+                </div>
+                <p class="module-desc">Tutti i moduli tematici in uno: richiamo, guinzaglio morbido, abbaio e altro. Il set completo per ${dogName}.</p>
+                <div class="module-benefits">
+                    <div class="module-benefit">Tutti i moduli tematici, non solo uno</div>
+                    <div class="module-benefit">Pronto per ogni sfida che arriverà</div>
+                    <div class="module-benefit">Il massimo risparmio, un unico prezzo basso</div>
+                </div>
+                <div class="module-footer">
+                    <div>
+                        <span class="module-price-new">19,99 €</span>
+                        <span class="bundle-savings">solo 10 € in più per tutto</span>
+                    </div>
+                    <button class="module-btn bundle-btn" id="bundleBuyBtn" onclick="buyBundle()">
+                        Scelgo il pacchetto
+                    </button>
+                </div>
+                <div class="module-disclaimer">Tutti i moduli · Subito via e-mail · 30 giorni di garanzia</div>
+            `;
+            document.getElementById('upsellBundle').appendChild(bundle);
+        }
+        renderOffers();
+
+        // ── Einzelkauf: 9,99 € (999) ──
+        async function buyModule() {
+            if (PL_PAYMENTS_OFF) { alert('I pagamenti saranno presto disponibili, ci stiamo lavorando! Grazie per la pazienza. 🐾'); return; }
+            const btn = document.getElementById('moduleBuyBtn');
+            const originalText = btn.textContent;
+            btn.innerHTML = '<span class="spinner"></span> Caricamento...';
+            btn.disabled = true;
+
+            await ensureLeadData();
+            if (!userEmail) {
+                alert('Errore: indirizzo e-mail non trovato.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            try { fbq('track', 'InitiateCheckout', { value: 9.99, currency: 'EUR', content_name: recommendedKey }); } catch (e) {}
+
+            try {
+                const response = await fetch('/api/mollie/upsell-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        module: recommendedKey,
+                        lang: 'it',
+                        price: 999,
+                        leadId: leadId,
+                        email: userEmail,
+                        dogName: dogName,
+                        returnUrl: '/grazie.html'
+                    })
+                });
+                const result = await response.json();
+                if (result.error || !result.url) {
+                    alert('Errore durante il caricamento. Riprova.');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+                window.location.href = result.url;
+            } catch (err) {
+                console.error('Module Error:', err);
+                alert('Errore durante il caricamento.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // ── Paket: 19,99 € (1999) ──
+        async function buyBundle() {
+            if (PL_PAYMENTS_OFF) { alert('I pagamenti saranno presto disponibili, ci stiamo lavorando! Grazie per la pazienza. 🐾'); return; }
+            const btn = document.getElementById('bundleBuyBtn');
+            const originalText = btn.textContent;
+            btn.innerHTML = '<span class="spinner"></span> Caricamento...';
+            btn.disabled = true;
+
+            await ensureLeadData();
+            if (!userEmail) {
+                alert('Errore: indirizzo e-mail non trovato.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            // Empfohlener Key + fester Satz (doppelte Keys schaden nicht)
+            const bundleModules = recommendedKey + '+recall+pulling+barking';
+
+            try { fbq('track', 'InitiateCheckout', { value: 19.99, currency: 'EUR', content_name: 'bundle' }); } catch (e) {}
+
+            try {
+                const response = await fetch('/api/mollie/upsell-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        module: bundleModules,
+                        lang: 'it',
+                        price: 1999,
+                        bundle: true,
+                        leadId: leadId,
+                        email: userEmail,
+                        dogName: dogName,
+                        returnUrl: '/grazie.html'
+                    })
+                });
+                const result = await response.json();
+                if (result.error || !result.url) {
+                    alert('Errore durante il caricamento. Riprova.');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+                window.location.href = result.url;
+            } catch (err) {
+                console.error('Bundle Error:', err);
+                alert('Errore durante il caricamento.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

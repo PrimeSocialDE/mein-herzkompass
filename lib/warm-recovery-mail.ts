@@ -96,7 +96,7 @@ function buildPlanRecoveryUrl(
     return `https://www.lapaplan.pl/powrot.html?${params.toString()}`;
   }
   if (lang === "it") {
-    return `https://www.zampaplan.it/powrot.html?${params.toString()}`;
+    return `https://www.zampaplan.it/recupero.html?${params.toString()}`;
   }
   return `${SITE_URL}/rueckhol.html?${params.toString()}`;
 }
