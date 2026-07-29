@@ -4488,10 +4488,11 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         }
 
         // IT: Server-Mollie-Wiring steht (getMollieIT + acct=it), ABER die
-        // Checkout-Modal ist noch PL-Copy: Karte laeuft ueber Stripe (DE-Account)
-        // und Express-Buttons zeigen BLIK statt Karte/Satispay. Bis die Modal auf
-        // reines Mollie-IT umgebaut ist → Platzhalter AN (kein Fehl-Charge).
-        const PL_PAYMENTS_OFF = true;
+        // IT-Zahlungen AKTIV: Checkout laeuft ueber Mollie IT (getMollieIT via
+        // market/lang 'it'). Express-Methoden (Satispay/Apple/Google Pay/PayPal/
+        // Bancomat) + IT-Preise + IVA stehen. Inline-Karte tokenisiert noch ueber
+        // das DE-Profil → Karte laeuft daher ueber Mollies gehostete Kartenseite.
+        const PL_PAYMENTS_OFF = false;
         function plPaymentPlaceholder() {
             try { document.getElementById('paymentLoadingOverlay')?.remove(); } catch (e) {}
             alert('I pagamenti saranno presto disponibili, ci stiamo lavorando! Grazie per la pazienza. 🐾');
