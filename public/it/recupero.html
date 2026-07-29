@@ -1555,7 +1555,7 @@
 
         <!-- Payment Logos -->
         <div class="payment-logos">
-            <img src="blik-logo.svg" alt="BLIK">
+            <img src="satispay.svg" alt="Satispay"><img src="bancomatpay.svg" alt="Bancomat Pay">
             <img src="visa-logo.png" alt="Visa">
             <img src="paypal-logo.png" alt="PayPal">
             
@@ -2465,8 +2465,10 @@
         // Checkout öffnen — direkt Loading + Mollie-Redirect, kein
         // Stripe-Overlay mehr (Legacy-Code unten bleibt im DOM aber
         // wird nicht mehr aktiviert).
-        // PL: Zahlungen vorübergehend deaktiviert, bis der Mollie-PLN-Account steht.
-        // Kein EUR-Charge. Der deutsche Funnel (zampaplan.it) ist NICHT betroffen.
+        // IT: Server-Mollie-Wiring steht (getMollieIT + acct=it), ABER die
+        // Checkout-Modal ist noch PL-Copy: Karte laeuft ueber Stripe (DE-Account)
+        // und Express-Buttons zeigen BLIK statt Karte/Satispay. Bis die Modal auf
+        // reines Mollie-IT umgebaut ist → Platzhalter AN (kein Fehl-Charge).
         const PL_PAYMENTS_OFF = true;
         function plPaymentPlaceholder() {
             alert('I pagamenti saranno presto disponibili, ci stiamo lavorando! Grazie per la pazienza. 🐾');
@@ -2489,7 +2491,7 @@
                     body: JSON.stringify({
                         plan: selectedPlan,
                         lang: 'it',
-                        market: 'pl',
+                        market: 'it',
                         timerExpired: false,
                         dogName: dogName,
                         leadId: leadId,

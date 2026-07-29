@@ -2374,12 +2374,9 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         background: #fff; border-color: #E5E7EB;
     }
     .hybrid-express-btn--googlepay img { max-height: 46px; }
-    /* BLIK: schwarzer Button (Apple-Pay-Stil) + weisses BLIK-Zeichen */
-    .hybrid-express-btn--blik { background:#000; border-color:#000; }
-    .hybrid-express-btn--blik img { max-height: 42px; }
-    /* Przelewy24: roter Brand-Button — Badge-Rot verschmilzt nahtlos */
-    .hybrid-express-btn--p24 { background:#D13239; border-color:#D13239; }
-    .hybrid-express-btn--p24 img { max-height: 46px; }
+    /* Satispay: weisser Button, offizielles Mollie-Tile zentriert */
+    .hybrid-express-btn--satispay { background:#fff; border-color:#E5E7EB; }
+    .hybrid-express-btn--satispay img { max-height: 40px; }
     /* SEPA-Logo: Untertitel-Detail braucht etwas mehr Höhe */
     .hybrid-express-btn img[alt="SEPA"] { max-height: 44px; }
 
@@ -2947,7 +2944,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </button>
 
         <div class="payment-logos">
-            <img src="blik-logo.svg" alt="BLIK">
+            <img src="satispay.svg" alt="Satispay"><img src="bancomatpay.svg" alt="Bancomat Pay">
             <img src="visa-logo.png" alt="Visa">
             <img src="mastercard-logo.png" alt="Mastercard">
             <img src="paypal-logo.png" alt="PayPal">
@@ -4490,9 +4487,10 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             }
         }
 
-        // PL: Zahlungen vorübergehend deaktiviert, bis der Mollie-PLN-Account steht.
-        // Alle Zahl-Funktionen zeigen stattdessen einen Hinweis (kein EUR-Charge).
-        // Der deutsche Funnel (zampaplan.it) ist davon NICHT betroffen.
+        // IT: Server-Mollie-Wiring steht (getMollieIT + acct=it), ABER die
+        // Checkout-Modal ist noch PL-Copy: Karte laeuft ueber Stripe (DE-Account)
+        // und Express-Buttons zeigen BLIK statt Karte/Satispay. Bis die Modal auf
+        // reines Mollie-IT umgebaut ist → Platzhalter AN (kein Fehl-Charge).
         const PL_PAYMENTS_OFF = true;
         function plPaymentPlaceholder() {
             try { document.getElementById('paymentLoadingOverlay')?.remove(); } catch (e) {}
@@ -5060,8 +5058,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             paypal: 'PayPal',
             applepay: 'Apple Pay',
             googlepay: 'Google Pay',
-            blik: 'BLIK',
-            przelewy24: 'Przelewy24',
+            satispay: 'Satispay',
+            bancomatpay: 'Bancomat Pay',
             banktransfer: 'SEPA',
             klarna: 'Klarna',
         };
@@ -5237,7 +5235,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     </button>
 
                     <div class="payment-icons">
-                        <img src="blik-logo.svg" alt="BLIK">
+                        <img src="satispay.svg" alt="Satispay"><img src="bancomatpay.svg" alt="Bancomat Pay">
                         <img src="visa-logo.png" alt="Visa">
                         <img src="mastercard-logo.png" alt="Mastercard">
                         <img src="paypal-logo.png" alt="PayPal">
@@ -5376,8 +5374,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                      selbst was auf dem jeweiligen Geraet nicht geht. -->
                 <p class="hybrid-section-label">Pagamento espresso</p>
                 <div class="hybrid-express-grid">
-                    <button class="hybrid-express-btn hybrid-express-btn--blik" onclick="payWithMethod('blik')" aria-label="Paga con BLIK">
-                        <img src="blik-white.svg" alt="BLIK">
+                    <button class="hybrid-express-btn hybrid-express-btn--satispay" onclick="payWithMethod('satispay')" aria-label="Paga con Satispay">
+                        <img src="satispay.svg" alt="Satispay">
                     </button>
                     <button id="applePayBtn" class="hybrid-express-btn hybrid-express-btn--applepay" onclick="payWithMethod('applepay')" aria-label="Paga con Apple Pay">
                         <img src="Apple-Pay-Logo.jpg" alt="ApplePay">
@@ -5390,17 +5388,12 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 <div class="hybrid-divider">oppure</div>
 
                 <!-- Weitere Methoden als Listen-Zeilen (Radio-Stil) -->
-                <!-- Przelewy24 TEMPORAER AUSGEBLENDET (2026-07-28): P24 ist bei Mollie
-                     zwar "activated", aber die Abwicklung ist kaputt — 100% der P24-
-                     Zahlungen liefen "expired", Payment-Create gibt 503 upstream (Mollie/
-                     P24-Acquirer-Problem, nicht unser Code). Ausgeblendet, damit Kunden
-                     auf BLIK (97% Erfolg) gehen statt ins Leere zu laufen.
-                     WIEDER EINBLENDEN: einfach style="display:none" unten entfernen,
-                     sobald Mollie/P24 den Fehler behoben hat. -->
-                <button type="button" class="hybrid-method-row" onclick="payWithMethod('przelewy24')" aria-label="Paga con Przelewy24" style="display:none">
+                <!-- Bancomat Pay: italienisches Domestic-Scheme, im IT-Mollie-Account
+                     aktiviert. Ersetzt das polnische Przelewy24 der PL-Vorlage. -->
+                <button type="button" class="hybrid-method-row" onclick="payWithMethod('bancomatpay')" aria-label="Paga con Bancomat Pay">
                     <span class="hmr-radio"></span>
-                    <span class="hmr-name">Przelewy24</span>
-                    <img class="hmr-logo" src="przelewy24-logo.svg" alt="Przelewy24">
+                    <span class="hmr-name">Bancomat Pay</span>
+                    <img class="hmr-logo" src="bancomatpay.svg" alt="Bancomat Pay">
                 </button>
                 <button type="button" class="hybrid-method-row" onclick="payWithMethod('paypal')" aria-label="Paga con PayPal">
                     <span class="hmr-radio"></span>
@@ -5449,7 +5442,8 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
             <div class="hybrid-footer">
                 <div class="hybrid-footer-icons">
-                    <img src="blik-logo.svg" alt="BLIK" onerror="this.style.display='none'">
+                    <img src="satispay.svg" alt="Satispay" onerror="this.style.display='none'">
+                    <img src="bancomatpay.svg" alt="Bancomat Pay" onerror="this.style.display='none'">
                     <img src="visa-logo.png" alt="Visa" onerror="this.style.display='none'">
                     <img src="mastercard-logo.png" alt="Mastercard" onerror="this.style.display='none'">
                     <img src="paypal-logo.png" alt="PayPal" onerror="this.style.display='none'">
