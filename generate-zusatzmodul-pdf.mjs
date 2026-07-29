@@ -2367,7 +2367,9 @@ export async function buildPdf(params = {}) {
   const fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
   const fontItalic = await doc.embedFont(StandardFonts.HelveticaOblique);
 
-  const logoBytes = readFileSync(PUBLIC("logo.png"));
+  // logo.png aus pdf-assets/ (nicht public/) lesen: public/*.png ist aus den
+  // Function-Bundles ausgeschlossen (250-MB-Limit), pdf-assets/ wird gebundelt.
+  const logoBytes = readFileSync(pathJoin(__dirname, "pdf-assets", "logo.png"));
   const logoImage = await doc.embedPng(logoBytes);
 
   // Cover-Bild optional: wenn fuer das Modul ein eigenes Bild definiert

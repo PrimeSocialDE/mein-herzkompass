@@ -2054,7 +2054,9 @@ export async function buildPdf(params = {}) {
   const fontBold = await doc.embedFont(readFileSync(ARIMO_BOLD), { subset: true });
   const fontItalic = await doc.embedFont(readFileSync(ARIMO_ITALIC), { subset: true });
 
-  const logoBytes = readFileSync(PUBLIC("logo.png"));
+  // logo.png aus pdf-assets/ (nicht public/): public/*.png ist aus den
+  // Function-Bundles ausgeschlossen (250-MB-Limit), pdf-assets/ wird gebundelt.
+  const logoBytes = readFileSync(pathJoin(__dirname, "pdf-assets", "logo.png"));
   const logoImage = await doc.embedPng(logoBytes);
 
   // Cover-Bild optional: wenn fuer das Modul ein eigenes Bild definiert
