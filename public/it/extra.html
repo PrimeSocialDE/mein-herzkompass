@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <!-- Kauf-Flag sofort setzen: zusatz.html wird nur nach erfolgreichem Hauptkauf
+         erreicht (Mollie routet nur 'paid' hierher). Schliesst die Luecke, dass ein
+         Kaeufer der auf der Upsell-Seite abbricht spaeter faelschlich auf rueckhol
+         (Wiederkehrer-Weiche in kurz-schritt1) landet. -->
+    <script>try { localStorage.setItem('purchased', '1'); } catch (e) {}</script>
+    <script src="/utm-tracking.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordine confermato | ZampaPlan</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favconHund.png">
+
+    <!-- TODO: eigene IT Meta-Pixel + Google-Ads-ID einsetzen -->
+    <!-- Google tag (gtag.js) -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17806525009"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17806525009');
+    </script>
+    -->
+
+    <!-- SOFORT PRÜFEN: Wurde Zahlung abgebrochen? -->
+    <script>
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectStatus = urlParams.get('redirect_status');
+            const paymentIntent = urlParams.get('payment_intent');
+            // Zahlung abgebrochen → zurueck zur Plan-Seite
+            if (redirectStatus && redirectStatus !== 'succeeded') {
+                console.log('❌ Zahlung abgebrochen, redirect_status:', redirectStatus);
+                window.location.href = 'piano.html';
+                return;
+            }
+            if (paymentIntent && !redirectStatus) {
+                console.log('ℹ️ Payment Intent ohne redirect_status, prüfe weiter...');
+            }
+        })();
+    </script>
+
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ufxcf43805");
+    </script>
+
+    <!-- TODO: eigene IT Meta-Pixel + Google-Ads-ID einsetzen -->
+    <!-- Meta Pixel -->
+    <!--
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '864109602683515');
+        fbq('track', 'PageView');
+    </script>
+    -->
+
+    <!-- TODO: eigene IT Meta-Pixel + Google-Ads-ID einsetzen -->
+    <!-- TikTok Pixel -->
+    <!--
+    <script>
+        !function (w, d, t) {
+            w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for( var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+            ttq.load('D4RFSQBC77U7SM7UL8A0');
+        }(window, document, 'ttq');
+    </script>
+    -->
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FAF8F5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 440px; margin: 0 auto; }
+
+        /* Bestellung bestätigt - groß */
+        .success-msg {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .success-check {
+            width: 56px; height: 56px;
+            background: #22C55E;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 14px;
+            box-shadow: 0 4px 14px rgba(34,197,94,0.3);
+        }
+        .success-check svg { width: 28px; height: 28px; color: white; }
+        .success-msg h1 {
+            font-size: 24px; font-weight: 800; color: #166534;
+            line-height: 1.2; margin-bottom: 6px;
+        }
+        .success-msg .plan-unterwegs {
+            font-size: 15px; color: #166534; font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .success-msg .time-hint {
+            font-size: 14px; color: #4B5563; line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* Hero Card: Karty ratunkowe */
+        .upsell-card {
+            background: white; border-radius: 20px;
+            padding: 28px 22px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            margin-bottom: 16px;
+        }
+        .upsell-card .eyebrow {
+            font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; color: #8B7355; margin-bottom: 6px;
+        }
+        .upsell-card h2 {
+            font-size: 22px; font-weight: 800; color: #1a1a1a;
+            line-height: 1.3; margin-bottom: 12px;
+        }
+        .upsell-desc {
+            font-size: 15px; color: #555; line-height: 1.6; margin-bottom: 22px;
+        }
+        .upsell-desc strong { color: #1a1a1a; }
+
+        /* Example Cards */
+        .examples { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+        .example-card {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 16px; background: #FAFAFA;
+            border-radius: 12px; border: 1px solid #f0f0f0;
+        }
+        .example-icon {
+            width: 40px; height: 40px; background: #FEF3E7; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0;
+        }
+        .example-info { flex: 1; }
+        .example-title { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px; }
+        .example-steps { font-size: 12px; color: #888; }
+
+        /* How it works */
+        .how-it-works {
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px; background: #F8F6F3; border-radius: 10px;
+            margin-bottom: 22px;
+        }
+        .how-it-works span { font-size: 13px; color: #666; line-height: 1.5; }
+
+        /* Price */
+        .price-section { text-align: center; margin-bottom: 18px; }
+        .price-amount { font-size: 32px; font-weight: 800; color: #C4A576; }
+        .price-info { font-size: 13px; color: #888; margin-top: 4px; }
+
+        /* CTA */
+        .cta-btn {
+            display: block; width: 100%; padding: 16px;
+            background: linear-gradient(135deg, #C4A576, #8B7355);
+            color: white; border: none; border-radius: 12px;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+            transition: all 0.2s; margin-bottom: 8px;
+        }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(196, 165, 118, 0.4); }
+        .cta-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        .guarantee-text {
+            text-align: center; font-size: 12px; color: #166534;
+            font-weight: 500; margin-bottom: 16px;
+        }
+
+        /* Skip */
+        .skip-btn {
+            display: block; width: 100%; text-align: center;
+            font-size: 13px; color: #999; background: none; border: none;
+            padding: 12px; cursor: pointer; text-decoration: underline;
+            transition: color 0.2s; opacity: 0; transition: opacity 0.5s;
+        }
+        .skip-btn:hover { color: #666; }
+
+        /* Spinner */
+        .spinner {
+            display: inline-block; width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white; border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle; margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* 1-Click Success Overlay */
+        @keyframes upsellFadeIn { from{opacity:0;} to{opacity:1;} }
+        @keyframes upsellPop { 0%{transform:scale(0.8);opacity:0;} 60%{transform:scale(1.05);} 100%{transform:scale(1);opacity:1;} }
+        @keyframes upsellCheck { from{stroke-dashoffset:60;} to{stroke-dashoffset:0;} }
+    </style>
+<script
+  defer
+  data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
+  data-domain="zampaplan.it"
+  src="https://datafa.st/js/script.js">
+</script>
+</head>
+<body>
+    <div class="container">
+        <!-- Ordine confermato -->
+        <div class="success-msg">
+            <div class="success-check">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <h1>Ordine confermato!</h1>
+            <p class="plan-unterwegs">Il piano per <span class="dog-name">il tuo cane</span> è già in arrivo</p>
+            <p class="time-hint">La consegna del piano via e-mail può richiedere fino a 20 minuti 🐶</p>
+        </div>
+
+        <!-- Backup-Support-Hinweis: erscheint erst nach 20 Min -->
+        <div id="supportFallback" style="display:none; margin-bottom: 20px; background: #FFF7ED; border: 1.5px solid #FED7AA; border-radius: 14px; padding: 18px 22px;">
+            <div style="display:flex; align-items:flex-start; gap:14px;">
+                <div style="font-size:28px; flex-shrink:0; line-height:1;">📩</div>
+                <div style="flex:1;">
+                    <p style="font-size:15px; font-weight:700; color:#9A3412; margin:0 0 6px;">Il piano non è ancora arrivato?</p>
+                    <p style="font-size:14px; color:#7C2D12; line-height:1.55; margin:0 0 12px;">
+                        A volte l'e-mail finisce nella cartella spam, controllala per favore.
+                        <br>Se non è nemmeno lì: <strong>scrivici direttamente</strong> e ti invieremo il piano personalmente.
+                    </p>
+                    <a id="supportFallbackLink" href="mailto:supporto@zampaplan.it" style="display:inline-block; background:#9A3412; color:#fff; text-decoration:none; padding:10px 18px; border-radius:8px; font-size:14px; font-weight:600;">
+                        Richiedi il piano → supporto@zampaplan.it
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upsell: Karty ratunkowe als ERSTER Slot -->
+        <div class="upsell-card">
+            <p class="eyebrow">Consigliato per te</p>
+            <h2>10 schede di emergenza per la borsa dell'attrezzatura del cane</h2>
+
+            <p class="upsell-desc">
+                <strong>Le 10 situazioni di emergenza più frequenti</strong> con il cane.
+                Ogni scheda ti dà istruzioni chiare in 3 passi. Da stampare,
+                da mettere in borsa o da salvare sul telefono: sei pronto
+                quando conta davvero.
+            </p>
+
+            <div class="examples">
+                <div class="example-card">
+                    <div class="example-icon">🚪</div>
+                    <div class="example-info">
+                        <div class="example-title">Il cane abbaia alla porta</div>
+                        <div class="example-steps">3 passi → subito calma</div>
+                    </div>
+                </div>
+                <div class="example-card">
+                    <div class="example-icon">💨</div>
+                    <div class="example-info">
+                        <div class="example-title">Il cane scatta improvvisamente in avanti</div>
+                        <div class="example-steps">3 passi → subito stop</div>
+                    </div>
+                </div>
+                <div class="example-card">
+                    <div class="example-icon">🐕</div>
+                    <div class="example-info">
+                        <div class="example-title">Il cane abbaia a un altro cane</div>
+                        <div class="example-steps">3 passi → allenta la situazione</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="how-it-works">
+                <span>📋</span>
+                <span>10 schede · PDF da stampare · Arriva subito via e-mail</span>
+            </div>
+
+            <div class="price-section">
+                <!-- TODO: finale IT-Preise festlegen -->
+                <div class="price-amount">4,99 €</div>
+                <div class="price-info">Una tantum · Senza abbonamento</div>
+            </div>
+
+            <button class="cta-btn" id="ctaBtn" onclick="buyNotfallKarten()">
+                Aggiungi le schede di emergenza per 4,99 €
+            </button>
+
+            <div class="guarantee-text">
+                🛡️ 30 giorni di garanzia soddisfatti o rimborsati
+            </div>
+        </div>
+
+        <!-- Skip → weiter zu grazie.html -->
+        <button class="skip-btn" id="skipBtn" onclick="skipToModules()">
+            No, grazie →
+        </button>
+    </div>
+
+    <script>
+        // Payment-Guard: echte Zahlungen deaktiviert bis IT-Zahlungsanbindung steht
+        const PL_PAYMENTS_OFF = true;
+
+        // Daten aus localStorage / URL
+        let dogName = localStorage.getItem('dogName') || 'il tuo cane';
+        let userEmail = localStorage.getItem('userEmail') || '';
+        const urlParamsInit = new URLSearchParams(window.location.search);
+        const leadId = urlParamsInit.get('lead_id') || localStorage.getItem('leadId') || '';
+        const selectedPlan = localStorage.getItem('selectedPlan') || '3month';
+
+        // Supabase Config (fuer Purchase-Status-Update)
+        const SUPABASE_URL = 'https://xomsibpyksrzrnixbdwf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+        // Robust: email/dogName aus dem Lead nachladen. localStorage ueberlebt den
+        // Mollie/BLIK-Umweg auf dem Handy nicht immer; leadId kommt zuverlaessig aus
+        // der URL (Return-Route). Ohne email schlaegt der Upsell-Checkout mit 400 fehl.
+        let _leadDataLoaded = false;
+        async function ensureLeadData() {
+            if (_leadDataLoaded) return;
+            if (userEmail && dogName && dogName !== 'il tuo cane') { _leadDataLoaded = true; return; }
+            if (!leadId) return;
+            try {
+                const r = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + encodeURIComponent(leadId) + '&select=email,dog_name', {
+                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+                });
+                const rows = await r.json();
+                if (rows && rows[0]) {
+                    if (!userEmail && rows[0].email) userEmail = rows[0].email;
+                    if ((!dogName || dogName === 'il tuo cane') && rows[0].dog_name) {
+                        dogName = rows[0].dog_name;
+                        document.querySelectorAll('.dog-name').forEach(el => { el.textContent = dogName; });
+                    }
+                    _leadDataLoaded = true;
+                }
+            } catch (e) { console.error('ensureLeadData:', e); }
+        }
+        ensureLeadData();
+
+        // Hundenamen in Banner ersetzen
+        document.querySelectorAll('.dog-name').forEach(el => { el.textContent = dogName; });
+
+        // Skip-Button nach 3 Sekunden einblenden
+        setTimeout(() => {
+            const sb = document.getElementById('skipBtn');
+            if (sb) sb.style.opacity = '1';
+        }, 3000);
+
+        function skipToModules() {
+            // Relativer Pfad, vorerst direkt zur Danke-Seite (zweite Upsell-Stufe folgt spaeter)
+            window.location.href = 'moduli.html?lead_id=' + encodeURIComponent(leadId || '');
+        }
+
+        // Support-Fallback nach 20 Min einblenden
+        setTimeout(function() {
+            try {
+                const el = document.getElementById('supportFallback');
+                if (!el) return;
+                el.style.display = 'block';
+                const link = document.getElementById('supportFallbackLink');
+                if (link) {
+                    const mail = userEmail || '';
+                    const dog = dogName || '';
+                    const subject = encodeURIComponent('Il piano non è arrivato, chiedo aiuto');
+                    const body = encodeURIComponent(
+                        'Ciao team ZampaPlan,\n\n' +
+                        'il mio piano non è ancora arrivato dopo più di 20 minuti. Vi chiedo di inviarmelo manualmente.\n\n' +
+                        'Cane: ' + (dog || '(da compilare)') + '\n' +
+                        'E-mail: ' + (mail || '(da compilare)') + '\n\n' +
+                        'Grazie!'
+                    );
+                    link.href = 'mailto:supporto@zampaplan.it?subject=' + subject + '&body=' + body;
+                }
+            } catch(e) {}
+        }, 20 * 60 * 1000);
+
+        // ==================== PURCHASE TRACKING (1. PLAN-KAUF) ====================
+        // WICHTIG: feuert NUR fuer den Erstkauf des Plans, NICHT fuer Upsells.
+        // Selbe Deduplizierungs-Logik wie vorher. Werte in EUR (italienische Marke).
+        const planPrices = { '1month': 79.99, '3month': 99.99, '6month': 139.99 };
+        // Kaufwert exakt wie im Checkout: Basis + 15% Exit-Rabatt + Order-Bump (39 €).
+        const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
+        const bumpBought = localStorage.getItem('order_bump_antigift_checked') === 'true'
+                        || localStorage.getItem('order_bump_checked') === 'true';
+        let purchaseValue = planPrices[selectedPlan] || 99.99;
+        if (exitDiscount) purchaseValue = Math.round(purchaseValue * 85) / 100;
+        if (bumpBought) purchaseValue += 39;
+        purchaseValue = Math.round(purchaseValue * 100) / 100;
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        const paymentIntent = urlParams.get('payment_intent');
+        const redirectStatus = urlParams.get('redirect_status');
+        const isValidPurchase = (redirectStatus === 'succeeded') || (paymentIntent && !redirectStatus);
+        const uniqueKey = paymentIntent || sessionId || leadId || 'unknown';
+        const trackingKey = 'wauwerk_purchase_tracked_' + uniqueKey;
+
+        if (isValidPurchase && !localStorage.getItem(trackingKey)) {
+            console.log('🔥 Purchase Event feuern:', purchaseValue, 'EUR');
+            const eventId = 'purchase_' + uniqueKey;
+
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'Purchase', {
+                    value: purchaseValue,
+                    currency: 'EUR',
+                    content_type: 'product',
+                    content_ids: ['lapaplan_' + selectedPlan],
+                    content_name: 'ZampaPlan piano di allenamento ' + selectedPlan,
+                    contents: [{ id: 'lapaplan_' + selectedPlan, quantity: 1 }]
+                }, { eventID: eventId });
+                console.log('✅ Meta Purchase gefeuert (Event ID:', eventId, ')');
+            }
+
+            if (typeof ttq !== 'undefined') {
+                ttq.track('CompletePayment', {
+                    value: purchaseValue,
+                    currency: 'EUR',
+                    content_type: 'product',
+                    content_name: 'ZampaPlan piano di allenamento'
+                });
+                console.log('✅ TikTok Purchase gefeuert');
+            }
+
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'conversion', {
+                    'send_to': 'AW-17806525009/I3FdCL3O1NEbENGE6KpC',
+                    'value': purchaseValue,
+                    'currency': 'EUR',
+                    'transaction_id': sessionId || leadId
+                });
+                gtag('event', 'purchase', {
+                    'value': purchaseValue,
+                    'currency': 'EUR',
+                    'transaction_id': sessionId || leadId
+                });
+                console.log('✅ Google Purchase gefeuert');
+            }
+
+            localStorage.setItem(trackingKey, 'true');
+
+            // Supabase Status auf "paid" setzen (Fallback falls Webhook nicht durchlief)
+            (async () => {
+                let updateUrl = '';
+                if (leadId) {
+                    updateUrl = SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + leadId;
+                } else if (userEmail) {
+                    updateUrl = SUPABASE_URL + '/rest/v1/wauwerk_leads?email=eq.' + encodeURIComponent(userEmail) + '&order=created_at.desc&limit=1';
+                }
+                if (!updateUrl) return;
+                try {
+                    await fetch(updateUrl, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                        },
+                        body: JSON.stringify({
+                            status: 'paid',
+                            selected_plan: selectedPlan,
+                            price: purchaseValue,
+                            stripe_payment_intent: paymentIntent || null,
+                            paid_at: new Date().toISOString()
+                        })
+                    });
+                    console.log('✅ Supabase Status auf paid gesetzt');
+                } catch (err) { console.error('Supabase update error:', err); }
+            })();
+
+            // Tagebuch-Bump-Auslieferung idempotent triggern
+            if (leadId) {
+                fetch('/api/tagebuch/check-and-deliver', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ leadId })
+                }).then(r => r.json()).then(d => console.log('📓 Tagebuch-Check:', d)).catch(() => {});
+            }
+        } else {
+            console.log('⏭️ Purchase bereits getrackt, skip');
+        }
+        // ==================== END TRACKING ====================
+
+        // ==================== KARTY RATUNKOWE UPSELL ====================
+        // In IT kein Mandate/1-Click, nur einfacher Mollie-Redirect-Checkout (EUR).
+        async function buyNotfallKarten() {
+            if (PL_PAYMENTS_OFF) { alert('I pagamenti saranno presto disponibili, ci stiamo lavorando! Grazie per la pazienza. 🐾'); return; }
+            const btn = document.getElementById('ctaBtn');
+            const originalText = btn.textContent;
+            btn.innerHTML = '<span class="spinner"></span> Caricamento...';
+            btn.disabled = true;
+
+            // Sicherstellen, dass email/dogName da sind (aus Lead nachladen falls
+            // localStorage nach BLIK/Mollie-Umweg leer ist).
+            await ensureLeadData();
+
+            if (!userEmail) {
+                alert('Errore: indirizzo e-mail non trovato.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/mollie/upsell-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        module: 'notfall-karten',
+                        lang: 'it',
+                        price: 499,
+                        leadId: leadId,
+                        email: userEmail,
+                        dogName: dogName,
+                        returnUrl: '/moduli.html'
+                    })
+                });
+                const result = await response.json();
+                if (result.error || !result.url) {
+                    alert('Si è verificato un errore. Riprova.');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+                window.location.href = result.url;
+            } catch (err) {
+                console.error('Karty ratunkowe Error:', err);
+                alert('Si è verificato un errore.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
