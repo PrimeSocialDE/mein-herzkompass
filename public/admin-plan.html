@@ -812,7 +812,17 @@
             // Sprach-Weiche: PL -> kompletter Output auf Polnisch, sonst Deutsch (Default).
             const langDirective = planLang === 'pl'
                 ? 'AUSGABE-SPRACHE: POLNISCH (polski).\n'
-                  + 'Der KOMPLETTE korrigierte Plan MUSS auf Polnisch geschrieben sein: alle Titel, Ueberschriften, Fliesstext und Labels. Die Struktur-Anweisungen unten sind auf Deutsch NUR als Vorlage fuer dich, deine gesamte AUSGABE ist ausschliesslich Polnisch. Feste Titel entsprechend uebersetzen (z.B. "So nutzt du diesen Plan" -> "Jak korzystac z tego planu"). Hundekommandos GROSS auf Polnisch: SITZ->SIAD, PLATZ->WARUJ, HIER/KOMM->DO MNIE, AUS->PUSC, PFUI->FUJ, WARTE->CZEKAJ, BLEIB->ZOSTAN, SCHAU->PATRZ, FUSS->DO NOGI, LASS ES->ZOSTAW.\n\n'
+                  + 'Der KOMPLETTE korrigierte Plan MUSS auf Polnisch geschrieben sein: alle Titel, Ueberschriften, Fliesstext und Labels. Die Struktur-Anweisungen unten sind auf Deutsch NUR als Vorlage fuer dich, deine gesamte AUSGABE ist ausschliesslich Polnisch. Hundekommandos GROSS auf Polnisch: SITZ->SIAD, PLATZ->WARUJ, HIER/KOMM->DO MNIE, AUS->PUSC, PFUI->FUJ, WARTE->CZEKAJ, BLEIB->ZOSTAN, SCHAU->PATRZ, FUSS->DO NOGI, LASS ES->ZOSTAW.\n'
+                  + 'WICHTIG — verwende fuer die STRUKTUR-UEBERSCHRIFTEN EXAKT diese polnischen Begriffe (woertlich, unveraendert, damit das Layout korrekt rendert):\n'
+                  + '- Deckblatt (erste Seite): genau "Osobisty plan dodatkowy dla [Hundename]"\n'
+                  + '- Uebungstitel: "Cwiczenie N:" mit polnischem Zeichen -> "Ćwiczenie N:" (N = Nummer, Doppelpunkt am Ende)\n'
+                  + '- Schritt-fuer-Schritt-Ueberschrift: genau "Krok po kroku"\n'
+                  + '- Wie-oft-Ueberschrift: genau "Jak często i jak długo"\n'
+                  + '- Worauf-achten-Ueberschrift: genau "Na co zwrócić uwagę"\n'
+                  + '- Go\'s-Ueberschrift: genau "Zalecane"\n'
+                  + '- No-Go\'s-Ueberschrift: genau "Unikaj"\n'
+                  + '- Intro-Titel (zweite Seite): genau "Jak korzystać z tego planu"\n'
+                  + '- Fahrplan-Ueberschrift: genau "Twój plan na 3 miesiące"; Monatszeilen: "Miesiąc 1 (Tydzień 1-4): Ćwiczenie 1 i 2" usw.\n\n'
                 : 'AUSGABE-SPRACHE: DEUTSCH. Der komplette Plan bleibt auf Deutsch.\n\n';
             // API Key vom Server holen
             const keyRes = await fetch('/api/admin/plan-korrektur', {
@@ -1072,20 +1082,50 @@ WEITERE REGELN:
         // Seiten aufteilen bei ===
         const pages = text.split(/={3,}/).map(p => p.trim()).filter(p => p.length > 0);
 
+        // Sprach-Labels: PL-Plaene liefern polnische Struktur-Ueberschriften; ohne
+        // sprachabhaengiges Matching greift der DE-Parser nicht und das saubere
+        // 2-Spalten-Layout bricht in eine unuebersichtliche einspaltige Wand.
+        const planLang = (document.getElementById('plan-lang') && document.getElementById('plan-lang').value) || 'de';
+        const L = planLang === 'pl' ? {
+            brand: 'ŁapaPlan',
+            titlePage: 'Osobisty plan dodatkowy<br>dla ' + dogName,
+            exerciseRe: /^Ćwiczenie \d+:/m,
+            exLineRe: /^Ćwiczenie \d+:/,
+            stepsRe: /^Krok po kroku/,                     stepsH: 'Krok po kroku',
+            freqRe:  /^Jak często/,                        freqH: 'Jak często i jak długo',
+            watchRe: /^Na co (zwrócić|zwrocić|zwrocic)/,   watchH: 'Na co zwrócić uwagę',
+            gosRe:   /^Zalecane/,                          gosH: 'Zalecane',
+            nogosRe: /^Unikaj/,                            nogosH: 'Unikaj',
+            introHeads: /^(Jak korzystać z tego planu|Twój plan na 3 miesiące|Wskazówki na sukces|Podsumowanie|Na czym to polega)$/gm,
+            monthRe: /^(Miesiąc \d+ .+)$/gm,
+        } : {
+            brand: 'Pfoten-Plan',
+            titlePage: dogName + "'s persönlicher<br>Zusatz-Plan",
+            exerciseRe: /^Übung \d+:/m,
+            exLineRe: /^Übung \d+:/,
+            stepsRe: /^Schritt für Schritt/,               stepsH: 'Schritt für Schritt',
+            freqRe:  /^Wie oft und wie lange/,             freqH: 'Wie oft und wie lange',
+            watchRe: /^Worauf du achten solltest/,         watchH: 'Worauf du achten solltest',
+            gosRe:   /^Go's/,                              gosH: "Go's",
+            nogosRe: /^No Go's/,                           nogosH: "No Go's",
+            introHeads: /^(So nutzt du diesen Plan|Dein 3-Monats-Fahrplan|Tipps für den Erfolg|Abschluss|Worum es geht)$/gm,
+            monthRe: /^(Monat \d+ .+)$/gm,
+        };
+
         let pagesHtml = '';
         pages.forEach((pageText, i) => {
             const isTitle = i === 0;
             const isIntro = i === 1;
-            const isExercise = pageText.match(/^Übung \d+:/m);
+            const isExercise = pageText.match(L.exerciseRe);
             const isAbschluss = i === pages.length - 1 && i > 7;
 
             function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
             function formatBlock(t) {
                 return esc(t)
-                    // Überschriften wie "So nutzt du diesen Plan", "Dein 3-Monats-Fahrplan", "Tipps für den Erfolg", "Abschluss"
-                    .replace(/^(So nutzt du diesen Plan|Dein 3-Monats-Fahrplan|Tipps für den Erfolg|Abschluss|Worum es geht)$/gm, '<h2 class="intro-heading">$1</h2>')
-                    // Monat-Zeilen und fette Tipp-Titel
-                    .replace(/^(Monat \d+ .+)$/gm, '<p class="month-title"><strong>$1</strong></p>')
+                    // Intro-Ueberschriften (sprachabhaengig, DE oder PL)
+                    .replace(L.introHeads, '<h2 class="intro-heading">$1</h2>')
+                    // Monat-/Miesiąc-Zeilen (sprachabhaengig) und fette Tipp-Titel
+                    .replace(L.monthRe, '<p class="month-title"><strong>$1</strong></p>')
                     .replace(/^(Kurz und regelmäßig:|Immer positiv aufhören:|Rückschritte gehören dazu:|Du bist nicht allein:)/gm, '<strong>$1</strong>')
                     .replace(/^(\d+\.\s.+)/gm, '<p class="step"><strong>$1</strong></p>')
                     .replace(/^- (.+)/gm, '<li>$1</li>')
@@ -1097,7 +1137,7 @@ WEITERE REGELN:
             if (isTitle) {
                 pagesHtml += '<div class="page title-page">' +
                     '<div class="title-content">' +
-                    '<h1>' + dogName + '\'s persönlicher<br>Zusatz-Plan</h1>' +
+                    '<h1>' + L.titlePage + '</h1>' +
                     '<div class="title-divider"></div>' +
                     '</div></div>';
             } else if (isExercise) {
@@ -1107,12 +1147,12 @@ WEITERE REGELN:
                 let section = 'top';
 
                 for (const line of lines) {
-                    if (line.match(/^Übung \d+:/)) { title = line; continue; }
-                    if (line.match(/^Schritt für Schritt/)) { section = 'steps'; leftContent += '<h3>Schritt für Schritt</h3>'; continue; }
-                    if (line.match(/^Wie oft und wie lange/)) { section = 'right'; rightContent += '<h3>Wie oft und wie lange</h3>'; continue; }
-                    if (line.match(/^Worauf du achten solltest/)) { rightContent += '<h3>Worauf du achten solltest</h3>'; section = 'right'; continue; }
-                    if (line.match(/^Go's/)) { rightContent += '<h3 class="gos">Go\'s</h3>'; section = 'right'; continue; }
-                    if (line.match(/^No Go's/)) { rightContent += '<h3 class="nogos">No Go\'s</h3>'; section = 'right'; continue; }
+                    if (line.match(L.exLineRe)) { title = line; continue; }
+                    if (line.match(L.stepsRe)) { section = 'steps'; leftContent += '<h3>' + L.stepsH + '</h3>'; continue; }
+                    if (line.match(L.freqRe)) { section = 'right'; rightContent += '<h3>' + L.freqH + '</h3>'; continue; }
+                    if (line.match(L.watchRe)) { rightContent += '<h3>' + L.watchH + '</h3>'; section = 'right'; continue; }
+                    if (line.match(L.gosRe)) { rightContent += '<h3 class="gos">' + L.gosH + '</h3>'; section = 'right'; continue; }
+                    if (line.match(L.nogosRe)) { rightContent += '<h3 class="nogos">' + L.nogosH + '</h3>'; section = 'right'; continue; }
 
                     if (section === 'top' && line.trim()) { desc += esc(line) + '<br>'; }
                     else if (section === 'steps' && line.trim()) {
@@ -1128,7 +1168,7 @@ WEITERE REGELN:
                 rightContent = rightContent.replace(/(<li>.*?<\/li>)+/gs, m => '<ul>' + m + '</ul>');
 
                 pagesHtml += '<div class="page">' +
-                    '<div class="page-header"><span class="paw">🐾</span> <span>Pfoten-Plan</span></div>' +
+                    '<div class="page-header"><span class="paw">🐾</span> <span>' + L.brand + '</span></div>' +
                     '<h2 class="exercise-title">' + esc(title) + '</h2>' +
                     '<p class="exercise-desc">' + desc + '</p>' +
                     '<div class="two-col"><div class="col-left">' + leftContent + '</div><div class="col-right">' + rightContent + '</div></div>' +
@@ -1138,7 +1178,7 @@ WEITERE REGELN:
                 // Einleitung / Abschluss: einspaltig
                 let content = formatBlock(pageText);
                 pagesHtml += '<div class="page">' +
-                    '<div class="page-header"><span class="paw">🐾</span> <span>Pfoten-Plan</span></div>' +
+                    '<div class="page-header"><span class="paw">🐾</span> <span>' + L.brand + '</span></div>' +
                     '<div class="page-content single-col"><p>' + content + '</p></div>' +
                     '<div class="page-number">' + (i + 1) + '</div>' +
                     '</div>';
