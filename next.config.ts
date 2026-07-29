@@ -34,6 +34,29 @@ const nextConfig: NextConfig = {
       // von keiner Server-Function gelesen, nur statisch via CDN. Sonst blaeht
       // die 206-MB-IT-Kopie jede verschachtelte API-Function ueber 250 MB.
       "public/it/**/*",
+      // DE-Top-Level-Medien (Videos, Bilder, HTML-Funnelseiten) — reine CDN-
+      // Assets, von KEINER Server-Function gelesen. Sie machen ~296 MB der
+      // 306 MB Top-Level-Dateien aus und blaehen sonst verschachtelte API-
+      // Functions (z.B. api/brevo/bounce-webhook, das via member-mail transitiv
+      // PDF-Libs erreicht) ueber das 250-MB-Limit. BEWUSST NICHT ausgeschlossen:
+      // *.pdf (public/vorlage.pdf + notfall-karten*.pdf werden zur Laufzeit per
+      // readFileSync gelesen) und die kleinen Unterordner public/fonts +
+      // public/breeds (Arimo-Unicode-Fonts + Rassebilder fuer die PDF-Generatoren).
+      // So bleiben die runtime-gelesenen Assets garantiert im Bundle — ohne sich
+      // auf Include-Precedence zu verlassen.
+      "public/*.png",
+      "public/*.jpg",
+      "public/*.jpeg",
+      "public/*.webp",
+      "public/*.gif",
+      "public/*.mp4",
+      "public/*.mov",
+      "public/*.webm",
+      "public/*.html",
+      "public/*.js",
+      "public/*.svg",
+      "public/*.xml",
+      "public/*.txt",
     ],
     "*": [
       // public/ — alles raus (wird als statische Assets via CDN ausgeliefert,
