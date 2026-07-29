@@ -20,6 +20,14 @@ const PRICES_PL = {
   "6month": { discount: 13999, normal: 29999 },
 };
 
+// IT-Preise (zampaplan.it) in Cent — bewusst ~15-20 % unter DE, da geringere
+// Kaufkraft in Italien. Rabattpreis (Timer) / durchgestrichener Normalpreis.
+const PRICES_IT = {
+  "1month": { discount: 1999, normal: 3499 },
+  "3month": { discount: 2999, normal: 5499 },
+  "6month": { discount: 4999, normal: 8999 },
+};
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -159,7 +167,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Preis ermitteln (identisch zu Stripe-Logik)
-    const priceTable = isPL ? PRICES_PL : PRICES;
+    const priceTable = isPL ? PRICES_PL : isIt ? PRICES_IT : PRICES;
     const priceData = priceTable[plan as keyof typeof priceTable] || priceTable["1month"];
     const baseAmount = timerExpired ? priceData.normal : priceData.discount;
     const planAmountCents = exitDiscountApplied
