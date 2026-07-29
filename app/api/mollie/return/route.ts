@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
-import { getMollie, getMolliePL } from "@/lib/mollie";
+import { getMollie, getMolliePL, getMollieIT } from "@/lib/mollie";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,9 +25,11 @@ export async function GET(req: NextRequest) {
       ? successPathRaw
       : "";
 
-  // PL-Zahlungen (acct=pl) mit dem PL-Mollie-Key pruefen.
-  const isPL = url.searchParams.get("acct") === "pl";
-  const mollie = isPL ? getMolliePL() : getMollie();
+  // PL/IT-Zahlungen (acct=pl / acct=it) mit dem jeweiligen Mollie-Key pruefen.
+  const acct = url.searchParams.get("acct");
+  const isPL = acct === "pl";
+  const isIt = acct === "it";
+  const mollie = isPL ? getMolliePL() : isIt ? getMollieIT() : getMollie();
   if (!mollie || !leadId) {
     return NextResponse.redirect(cancelUrl, { status: 303 });
   }
@@ -203,7 +205,7 @@ export async function GET(req: NextRequest) {
       ? `${url.origin}${successPath}${successPath.includes("?") ? "&" : "?"}` +
         `lead_id=${encodeURIComponent(leadId)}` +
         `&redirect_status=succeeded`
-      : `${url.origin}/${isPL ? "dodatek.html" : "zusatz.html"}` +
+      : `${url.origin}/${isPL ? "dodatek.html" : isIt ? "extra.html" : "zusatz.html"}` +
         `?lead_id=${encodeURIComponent(leadId)}` +
         `&redirect_status=succeeded` +
         `&mollie_payment_id=${encodeURIComponent(lead.mollie_payment_id)}`;

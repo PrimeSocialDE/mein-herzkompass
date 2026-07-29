@@ -4490,9 +4490,10 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             }
         }
 
-        // PL: Zahlungen vorübergehend deaktiviert, bis der Mollie-PLN-Account steht.
-        // Alle Zahl-Funktionen zeigen stattdessen einen Hinweis (kein EUR-Charge).
-        // Der deutsche Funnel (zampaplan.it) ist davon NICHT betroffen.
+        // IT: Server-Mollie-Wiring steht (getMollieIT + acct=it), ABER die
+        // Checkout-Modal ist noch PL-Copy: Karte laeuft ueber Stripe (DE-Account)
+        // und Express-Buttons zeigen BLIK statt Karte/Satispay. Bis die Modal auf
+        // reines Mollie-IT umgebaut ist → Platzhalter AN (kein Fehl-Charge).
         const PL_PAYMENTS_OFF = true;
         function plPaymentPlaceholder() {
             try { document.getElementById('paymentLoadingOverlay')?.remove(); } catch (e) {}

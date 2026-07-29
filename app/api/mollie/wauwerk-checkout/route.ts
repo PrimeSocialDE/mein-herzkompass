@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
-import { getMollie, getMolliePL, formatAmountEUR, formatAmount, Locale } from "@/lib/mollie";
+import { getMollie, getMolliePL, getMollieIT, formatAmountEUR, formatAmount, Locale } from "@/lib/mollie";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -29,13 +29,21 @@ export async function POST(req: NextRequest) {
       body?.market === "pl" ||
       body?.lang === "pl" ||
       /(^|\.)lapaplan\.pl/i.test(req.headers.get("origin") || "");
-    const mollie = isPL ? getMolliePL() : getMollie();
+    // IT-Markt (zampaplan.it): eigener Mollie-Account (EUR). Erkennung analog PL.
+    // Wichtig: isPL hat Vorrang; IT-Seiten senden market:"it"/lang:"it".
+    const isIt =
+      !isPL &&
+      (body?.market === "it" ||
+        body?.lang === "it" ||
+        /(^|\.)zampaplan\.it/i.test(req.headers.get("origin") || ""));
+    const mollie = isPL ? getMolliePL() : isIt ? getMollieIT() : getMollie();
     if (!mollie) {
       return NextResponse.json(
         { error: "Mollie nicht konfiguriert" },
         { status: 500 }
       );
     }
+    // IT nutzt EUR wie DE (nur separater Account). Nur PL ist PLN.
     const CURRENCY = isPL ? "PLN" : "EUR";
     const fmtAmt = isPL ? formatAmount : formatAmountEUR;
     const {
@@ -81,7 +89,7 @@ export async function POST(req: NextRequest) {
       entry_page,
     } = body;
 
-    const ORDER_BUMP_PRICE_CENTS = isPL ? 3900 : 999;
+    const ORDER_BUMP_PRICE_CENTS = isPL ? 3900 : isIt ? 499 : 999;
     const bumpApplied = orderBump === true || orderBump === "true";
     const effectiveBumpType = (bumpType || "tagebuch").toLowerCase();
     const planDaysMap: Record<string, number> = {
@@ -173,8 +181,16 @@ export async function POST(req: NextRequest) {
       "3month": "Twój 12-tygodniowy plan treningowy",
       "6month": "Twój 6-miesięczny plan treningowy",
     };
+    // IT: italienische Beschreibung fuer Mollie-Zahlseite / PayPal-Beleg.
+    const planNamesIt: Record<string, string> = {
+      "1month": "Il tuo piano di addestramento di 4 settimane",
+      "3month": "Il tuo piano di addestramento di 12 settimane",
+      "6month": "Il tuo piano di addestramento di 6 mesi",
+    };
     const planName = isPL
       ? planNamesPl[plan] || planNamesPl["1month"]
+      : isIt
+      ? planNamesIt[plan] || planNamesIt["1month"]
       : planNames[plan] || planNames["1month"];
 
     // Origin (identische Logik wie Stripe)
@@ -211,10 +227,22 @@ export async function POST(req: NextRequest) {
     // PL-Bump-Label (BUMP_DETAILS ist deutsch + kennt den PL-Grundkommando-Bump
     // nicht → für die PL-Beschreibung ein sauberes polnisches Label statt Fallback).
     const bumpLabelPl = "Plan komend ratunkowych";
+    // IT-Bump-Labels (BUMP_DETAILS ist deutsch) fuer die italienische Beschreibung.
+    const BUMP_NAMES_IT: Record<string, string> = {
+      tagebuch: `Diario di addestramento di ${effectiveBumpDays} giorni`,
+      notfallkarten: "Schede di emergenza",
+      antigiftkoeder: "Piano anti-veleno (12 pagine, personalizzato)",
+      sommer: "Piano sicurezza estate (18 pagine, personalizzato)",
+    };
+    const bumpLabelIt = BUMP_NAMES_IT[effectiveBumpType] || BUMP_NAMES_IT.tagebuch;
     const description = isPL
       ? `${planName} dla ${dogName || "Twojego psa"}` +
         (bumpApplied ? ` + ${bumpLabelPl}` : "") +
         ` · Płatność jednorazowa, bez abonamentu · od razu e-mailem do pobrania i wydruku`
+      : isIt
+      ? `${planName} per ${dogName || "il tuo cane"}` +
+        (bumpApplied ? ` + ${bumpLabelIt}` : "") +
+        ` · Pagamento unico, senza abbonamento · subito via e-mail da scaricare e stampare`
       : `${planName} für ${dogName || "deinen Hund"}` +
         (bumpApplied ? ` + ${bumpDetails.name}` : "") +
         ` · Einmalzahlung, kein Abo · direkt per E-Mail zum Herunterladen & Ausdrucken`;
@@ -224,7 +252,7 @@ export async function POST(req: NextRequest) {
       cancelPath.startsWith("/") &&
       !cancelPath.includes("://")
         ? cancelPath
-        : isPL ? "/plan" : "/deinplan3.html";
+        : isPL ? "/plan" : isIt ? "/piano" : "/deinplan3.html";
     const cancelJoiner = safeCancelPath.includes("?") ? "&" : "?";
 
     // Mollie redirected nach Abschluss IMMER auf redirectUrl — egal ob paid/canceled/failed.
@@ -249,7 +277,8 @@ export async function POST(req: NextRequest) {
       (safeSuccessPath
         ? `&success=${encodeURIComponent(safeSuccessPath)}`
         : "") +
-      (isPL ? "&acct=pl" : "");
+      (isPL ? "&acct=pl" : "") +
+      (isIt ? "&acct=it" : "");
 
     // Payment-Parameter zusammenbauen — Mollie metadata-Limit ist ~1024 bytes.
     // Vorher haben wir leere Felder + ungekuerzte FB-Tracking-IDs reingeschoben
@@ -362,9 +391,9 @@ export async function POST(req: NextRequest) {
       amount: { currency: CURRENCY, value: fmtAmt(totalCents) },
       description: description.slice(0, 255),
       redirectUrl: returnUrl,
-      // PL-Zahlungen -> Webhook nutzt den PL-Key (acct=pl).
-      webhookUrl: `${webhookBase}/api/mollie/webhook${isPL ? "?acct=pl" : ""}`,
-      locale: isPL ? Locale.pl_PL : paymentLocale,
+      // PL/IT-Zahlungen -> Webhook nutzt den jeweiligen Key (acct=pl / acct=it).
+      webhookUrl: `${webhookBase}/api/mollie/webhook${isPL ? "?acct=pl" : isIt ? "?acct=it" : ""}`,
+      locale: isPL ? Locale.pl_PL : isIt ? Locale.it_IT : paymentLocale,
       metadata: meta,
     };
 
@@ -379,7 +408,7 @@ export async function POST(req: NextRequest) {
       // gueltig. Fuer PL wird method=creditcard ohne Token gesetzt -> Mollie
       // hostet die Kartenseite auf dem PL-Account (direkt zur Karte, keine
       // Methoden-Uebersicht).
-      if (method === "creditcard" && cardToken && !isPL) {
+      if (method === "creditcard" && cardToken && !isPL && !isIt) {
         paymentParams.cardToken = cardToken;
       }
       // Przelewy24 verlangt bei Mollie ZWINGEND billingEmail. Fehlt es, lehnt
@@ -407,9 +436,9 @@ export async function POST(req: NextRequest) {
       "bancontact",
       "ideal",
     ]);
-    // PL: keine Mandate/Recurring (Hosted-Checkout mit ApplePay/GooglePay,
-    // kein One-Click-Upsell-Flow) — sonst wie DE.
-    const supportsMandate = !isPL && (!method || RECURRING_METHODS.has(method));
+    // PL/IT: keine Mandate/Recurring (Hosted-Checkout mit ApplePay/GooglePay/
+    // Satispay, kein One-Click-Upsell-Flow) — sonst wie DE.
+    const supportsMandate = !isPL && !isIt && (!method || RECURRING_METHODS.has(method));
     let createdCustomerId: string | null = null;
     if (supportsMandate && resolvedEmail) {
       try {
@@ -450,7 +479,7 @@ export async function POST(req: NextRequest) {
     // Klarna (Pay later) verlangt zwingend Order-Lines mit MwSt — ohne lines
     // gibt Mollie 422 "lines required". Preise sind brutto inkl. 19% USt
     // (AGB: "inklusive der gesetzlichen Umsatzsteuer"). Summe der Zeilen = totalCents.
-    if (!isPL && method === "klarna") {
+    if (!isPL && !isIt && method === "klarna") {
       const vat19 = (grossCents: number) =>
         formatAmountEUR(Math.round((grossCents * 19) / 119));
       const lines: any[] = [
@@ -516,6 +545,10 @@ export async function POST(req: NextRequest) {
       // ueber Mollie bekamen faelschlich einen deutschen Plan. DE bleibt unberuehrt
       // (wir setzen lang NUR bei isPL; ohne Flag greift ueberall der DE-Default).
       if (isPL) ansMerge.lang = "pl";
+      // IT-Herkunft (zampaplan.it / EUR-Checkout) persistieren, damit Webhook
+      // (isItSale → IVA 22 %, IT-Plan/Beleg) + Plan-Generierung + Sequenz-Mails
+      // den italienischen Zweig waehlen. DE bleibt unberuehrt.
+      if (isIt) ansMerge.lang = "it";
 
       // First-Touch-Attribution set-once am Lead persistieren. So erbt JEDER
       // Folgekauf (Upsells/One-Click) dieselbe Herkunft aus answers — auch wenn

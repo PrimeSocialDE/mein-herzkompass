@@ -48,6 +48,29 @@ export function getMolliePL(): MollieClient | null {
   return cachedPL;
 }
 
+// ── IT-Account (zampaplan.it) ───────────────────────────────────────────
+// Separater Mollie-Account fuer den italienischen Markt (Waehrung EUR). Eigener
+// Key MOLLIE_API_KEY_IT. Optionaler Test-Key MOLLIE_TEST_API_KEY_IT. Vollstaendig
+// getrennt vom DE- und PL-Account. Analog zu getMolliePL.
+let cachedIT: MollieClient | null = null;
+
+export function getMollieIT(): MollieClient | null {
+  if (cachedIT) return cachedIT;
+  const mode = (process.env.MOLLIE_MODE || "live").toLowerCase();
+  const apiKey =
+    mode === "test"
+      ? process.env.MOLLIE_TEST_API_KEY_IT || process.env.MOLLIE_API_KEY_IT
+      : process.env.MOLLIE_API_KEY_IT;
+  if (!apiKey) {
+    console.error(
+      `[mollie] Kein IT-API-Key gefunden. Setze MOLLIE_API_KEY_IT (live).`
+    );
+    return null;
+  }
+  cachedIT = createMollieClient({ apiKey });
+  return cachedIT;
+}
+
 export function formatAmountEUR(cents: number): string {
   return (cents / 100).toFixed(2);
 }
