@@ -24,7 +24,7 @@ const fmt = (s: number) => {
   return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
 };
 
-export default function CoachPlayer({ content, lang = "de" }: { content: CoachContent; lang?: "de" | "pl" }) {
+export default function CoachPlayer({ content, lang = "de" }: { content: CoachContent; lang?: "de" | "pl" | "it" }) {
   const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
   const [activeId, setActiveId] = useState<string | null>(null);
   const [prog, setProg] = useState<Record<string, { cur: number; dur: number }>>({});

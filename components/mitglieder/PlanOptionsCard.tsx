@@ -133,7 +133,7 @@ export default function PlanOptionsCard({
   dogName?: string | null;
   email: string;
   leadId?: string | null;
-  lang?: "de" | "pl";
+  lang?: "de" | "pl" | "it";
 }) {
   const isPL = lang === "pl";
   const dog = dogName?.trim() || (isPL ? "Twoim psem" : "deinem Hund");

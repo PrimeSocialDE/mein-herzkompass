@@ -60,7 +60,7 @@ export default function SiteShell({
 }: {
   children: React.ReactNode;
   email?: string;
-  lang?: "de" | "pl";
+  lang?: "de" | "pl" | "it";
 }) {
   const pathname = usePathname();
   const isPL = lang === "pl";
