@@ -253,8 +253,10 @@
         function getABTestPage() {
             let variant = localStorage.getItem('ab_test_pricing_v6');
             if (!variant) {
-                // 70% A=deinplan3 (Control), 30% B=deinplan2 (+ Peer-Testimonial-Block)
-                variant = Math.random() < 0.70 ? 'A' : 'B';
+                // 10% A=deinplan3 (Control-Holdout), 90% B=deinplan2 (+ Peer-Testimonial-Block).
+                // Hochgezogen auf 90/10, nachdem B2 klar besser konvertierte (19,4% vs 12,0%).
+                // Kleine A-Kontrolle bleibt, um Signifikanz + Mess-Sauberkeit abzusichern.
+                variant = Math.random() < 0.10 ? 'A' : 'B';
                 localStorage.setItem('ab_test_pricing_v6', variant); // Routing + sawPlan-Flag
                 // DB-Label (ab_variant): Control='A', neue B-Variante='B2' (vom alten 'B' trennbar)
                 localStorage.setItem('ab_test_pricing', variant === 'A' ? 'A' : 'B2');
