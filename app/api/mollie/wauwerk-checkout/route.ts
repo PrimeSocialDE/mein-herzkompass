@@ -416,7 +416,10 @@ export async function POST(req: NextRequest) {
       // gueltig. Fuer PL wird method=creditcard ohne Token gesetzt -> Mollie
       // hostet die Kartenseite auf dem PL-Account (direkt zur Karte, keine
       // Methoden-Uebersicht).
-      if (method === "creditcard" && cardToken && !isPL && !isIt) {
+      // DE + IT: cardToken anhaengen (Inline-Karte). IT-Components tokenisieren
+      // ueber das IT-Profil (pfl_F5VSSezLzn) -> Token gueltig auf dem IT-Account.
+      // Nur PL laeuft weiter ueber die gehostete Kartenseite (kein Token).
+      if (method === "creditcard" && cardToken && !isPL) {
         paymentParams.cardToken = cardToken;
       }
       // Przelewy24 verlangt bei Mollie ZWINGEND billingEmail. Fehlt es, lehnt

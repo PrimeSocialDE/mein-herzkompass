@@ -4657,7 +4657,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         // (Klarna braucht zwingend billingAddress).
         // ════════════════════════════════════════════════════════════════════
 
-        const MOLLIE_PROFILE_ID_PUBLIC = 'pfl_JiqZcNVUKu';
+        const MOLLIE_PROFILE_ID_PUBLIC = 'pfl_F5VSSezLzn'; // IT-Profil (zampaplan.it)
         let mollieClient = null;
         let cardComponents = null;
         let hybridContext = null; // hält Plan-Info für aktuellen Checkout-Versuch
@@ -4966,7 +4966,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 return;
             }
             try {
-                mollieClient = Mollie(MOLLIE_PROFILE_ID_PUBLIC, { locale: 'de_DE', testmode: false });
+                mollieClient = Mollie(MOLLIE_PROFILE_ID_PUBLIC, { locale: 'it_IT', testmode: false });
                 // fontSize MUSS >= 16px sein, sonst zoomt iOS Safari automatisch
                 // ins Feld rein wenn der User reintippt — extrem irritierend.
                 const styles = {
