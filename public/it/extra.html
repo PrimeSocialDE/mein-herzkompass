@@ -386,12 +386,12 @@
         // ==================== PURCHASE TRACKING (1. PLAN-KAUF) ====================
         // WICHTIG: feuert NUR fuer den Erstkauf des Plans, NICHT fuer Upsells.
         // Selbe Deduplizierungs-Logik wie vorher. Werte in EUR (italienische Marke).
-        const planPrices = { '1month': 79.99, '3month': 99.99, '6month': 139.99 };
+        const planPrices = { '1month': 19.99, '3month': 29.99, '6month': 49.99 };
         // Kaufwert exakt wie im Checkout: Basis + 15% Exit-Rabatt + Order-Bump (39 €).
         const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
         const bumpBought = localStorage.getItem('order_bump_antigift_checked') === 'true'
                         || localStorage.getItem('order_bump_checked') === 'true';
-        let purchaseValue = planPrices[selectedPlan] || 99.99;
+        let purchaseValue = planPrices[selectedPlan] || 29.99;
         if (exitDiscount) purchaseValue = Math.round(purchaseValue * 85) / 100;
         if (bumpBought) purchaseValue += 39;
         purchaseValue = Math.round(purchaseValue * 100) / 100;
