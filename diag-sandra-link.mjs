@@ -1,0 +1,15 @@
+import { readFileSync } from "node:fs";
+import { createHmac } from "node:crypto";
+const e=readFileSync(new URL("./.env.local",import.meta.url),"utf8");
+for(const m of [...e.matchAll(/([A-Z_][A-Z0-9_]*)=([^\n\r]*?)(?=\s*[A-Z_][A-Z0-9_]*=|\s*$)/gm)]) if(!process.env[m[1]])process.env[m[1]]=m[2].replace(/^["']|["']$/g,"");
+const SECRET=process.env.LOGIN_LINK_SECRET||process.env.WORKER_TOKEN||"";
+const b64url=b=>Buffer.from(b).toString("base64").replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const em="sandra@serrano-home.de";
+const exp=Math.floor(Date.now()/1000)+365*86400;
+const sig=b64url(createHmac("sha256",SECRET).update(`${em}|${exp}`).digest());
+const params=new URLSearchParams({e:b64url(Buffer.from(em,"utf8")),exp:String(exp),sig,next:"/mitglieder"});
+const link=`https://www.pfoten-plan.de/api/mitglieder/one-tap?${params.toString()}`;
+const r=await fetch(link,{redirect:"manual"});
+const setc=r.headers.get("set-cookie")||"";
+console.log("Link-Test: HTTP",r.status,"| Session-Cookie:",/sb-|auth-token/i.test(setc)?"ja -> FUNKTIONIERT":"nein");
+console.log("\nLINK:\n"+link);

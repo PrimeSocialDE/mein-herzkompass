@@ -85,10 +85,11 @@ function buildLoginUrl(p: SupabaseEmailHookPayload): string {
   return `${PFOTEN_SITE_URL}/mitglieder/anmelden?${params.toString()}`;
 }
 
-type Lang = "de" | "pl";
+type Lang = "de" | "pl" | "it";
 
 // Sprache des Users (answers.lang am Lead) via Email nachschlagen — Default "de".
-// So bekommt ein polnischer Kunde die Login-Mail auf Polnisch (ŁapaPlan).
+// So bekommt ein polnischer Kunde die Login-Mail auf Polnisch (ŁapaPlan),
+// ein italienischer auf Italienisch (ZampaPlan).
 async function langForEmail(email: string): Promise<Lang> {
   if (!email) return "de";
   try {
@@ -99,7 +100,10 @@ async function langForEmail(email: string): Promise<Lang> {
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
-    return String((data?.answers as any)?.lang || "").toLowerCase() === "pl" ? "pl" : "de";
+    const l = String((data?.answers as any)?.lang || "").toLowerCase();
+    if (l === "pl") return "pl";
+    if (l === "it") return "it";
+    return "de";
   } catch {
     return "de";
   }
@@ -197,6 +201,44 @@ const T = {
     regards: "Pozdrawiamy serdecznie, zespół ŁapaPlan 🐾",
     tagline: "ŁapaPlan · Trening psa, który działa",
     htmlLang: "pl",
+  },
+  it: {
+    brand: "ZampaPlan",
+    subject: {
+      signup: "Benvenuto in ZampaPlan – la tua area riservata ti aspetta",
+      recovery: "Ripristina il tuo accesso a ZampaPlan",
+      email_change: "Conferma la tua nuova e-mail su ZampaPlan",
+      magiclink: "Il tuo link di accesso per ZampaPlan",
+    },
+    heading: {
+      signup: (n: string) => `Benvenuto in ZampaPlan${n ? ", " + n : ""}!`,
+      recovery: (n: string) => `Accesso appena ripristinato${n ? ", " + n : ""}`,
+      email_change: (n: string) => `Ci siamo quasi${n ? ", " + n : ""}`,
+      magiclink: (n: string) => `Ecco il tuo accesso${n ? ", " + n : ""}`,
+    },
+    subtitle: {
+      signup: "Che bello averti con noi! Clicca sul pulsante qui sotto — arrivi dritto nella tua area riservata.",
+      recovery: "Nessun problema — con un clic sei di nuovo dentro. Il tuo accesso è appena stato ripristinato.",
+      email_change: "Conferma il tuo nuovo indirizzo e-mail, così possiamo aggiornare il tuo accesso.",
+      magiclink: "Un clic e sei nella tua area riservata. Nessuna password, niente da digitare.",
+    },
+    cta: "Accedi ora →",
+    orCode: "— oppure inserisci il codice —",
+    codeHintLabel: "pfoten-plan.de/mitglieder/login",
+    codeHintPrefix: "Inseriscilo su",
+    codeHintSuffix: "",
+    stepsTitle: "Ecco come funziona",
+    steps: [
+      "Clicca sul pulsante qui sopra",
+      "Arrivi dritto nella tua area riservata",
+      "Fatto — nessuna password, niente da digitare",
+    ],
+    security:
+      "🔒 Il pulsante di accesso funziona per diversi giorni — puoi quindi aprire questa e-mail con calma anche più tardi. È solo per te; se non sei stato tu, ignorala semplicemente.",
+    questionsPrefix: "Domande? Scrivici a",
+    regards: "Un caro saluto, il tuo team ZampaPlan 🐾",
+    tagline: "ZampaPlan · Addestramento del cane che funziona",
+    htmlLang: "it",
   },
 } as const;
 
@@ -333,6 +375,31 @@ Masz pytania? pomoc@lapaplan.pl
 
 Pozdrawiamy serdecznie,
 zespół ŁapaPlan`;
+  }
+  if (lang === "it") {
+    const greeting = firstName ? `Ciao ${firstName},` : "Ciao,";
+    return `${greeting}
+
+con un clic sei nella tua area riservata ZampaPlan — nessuna password, niente da digitare.
+
+Link di accesso:
+${link}
+
+OPPURE usa questo codice a 6 cifre su pfoten-plan.de/mitglieder/login:
+
+  ${codePretty}
+
+Ecco come funziona:
+1. Clicca sul link qui sopra (oppure inserisci il codice)
+2. Arrivi dritto nella tua area riservata
+3. Fatto
+
+Il link di accesso funziona per diversi giorni — puoi aprire l'e-mail con calma anche più tardi. Il codice a 6 cifre è valido per meno tempo. Entrambi sono solo per te; se non sei stato tu, ignora semplicemente.
+
+Domande? support@pfoten-plan.de
+
+Un caro saluto,
+il tuo team ZampaPlan`;
   }
   const greeting = firstName ? `Hi ${firstName},` : "Hi,";
   return `${greeting}
@@ -496,10 +563,14 @@ export async function POST(req: NextRequest) {
         sender:
           lang === "pl"
             ? { name: "ŁapaPlan", email: "pomoc@lapaplan.pl" }
+            : lang === "it"
+            ? { name: "ZampaPlan", email: "supporto@zampaplan.it" }
             : { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
         replyTo:
           lang === "pl"
             ? { email: "pomoc@lapaplan.pl", name: "ŁapaPlan" }
+            : lang === "it"
+            ? { email: "supporto@zampaplan.it", name: "ZampaPlan Support" }
             : { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" },
         to: [{ email: payload.user.email }],
         subject,

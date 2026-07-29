@@ -7,7 +7,7 @@ import { createMemberBrowserClient } from "@/lib/member-auth";
 // DSGVO: Supabase speichert das Passwort serverseitig als bcrypt-Hash
 // (kein Klartext), Übertragung nur via HTTPS. Wir loggen das Passwort
 // NIRGENDS und halten es nur kurz im lokalen State.
-export default function SetPasswordCard({ lang = "de" }: { lang?: "de" | "pl" }) {
+export default function SetPasswordCard({ lang = "de" }: { lang?: "de" | "pl" | "it" }) {
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [busy, setBusy] = useState(false);
@@ -30,6 +30,23 @@ export default function SetPasswordCard({ lang = "de" }: { lang?: "de" | "pl" })
         saving: "Zapisuję…",
         saveBtn: "Zapisz hasło",
         secure: "🔒 Twoje hasło jest bezpiecznie szyfrowane (bcrypt) i nigdy nie jest przechowywane jako zwykły tekst.",
+      }
+    : lang === "it"
+    ? {
+        errMin: "La password deve avere almeno 8 caratteri.",
+        errMismatch: "Le password non coincidono.",
+        errSame: "Questa è già la tua password attuale.",
+        errSave: "Impossibile salvare la password. Riprova più tardi.",
+        saved: "Password salvata. D'ora in poi puoi accedere direttamente con e-mail e password — senza e-mail con codice.",
+        title: "Imposta la password",
+        intro: "Facoltativo — ma comodo: con una password entri quando vuoi, senza aspettare l'e-mail con il codice.",
+        newPw: "Nuova password",
+        newPwPlaceholder: "Min. 8 caratteri",
+        repeatPw: "Ripeti la password",
+        repeatPwPlaceholder: "Inserisci di nuovo",
+        saving: "Salvataggio…",
+        saveBtn: "Salva la password",
+        secure: "🔒 La tua password viene salvata in modo sicuro e cifrato (bcrypt) e mai in chiaro.",
       }
     : {
         errMin: "Das Passwort muss mindestens 8 Zeichen haben.",

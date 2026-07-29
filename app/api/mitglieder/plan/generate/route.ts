@@ -231,7 +231,12 @@ export async function POST(req: NextRequest) {
         // duplizierten polnischen Bausteine. lang kommt aus answers.lang
         // (wird im PL-Checkout gesetzt). Literale Import-Pfade, damit der
         // Bundler beide Varianten sauber aufloest.
-        const planLang = (answers as any)?.lang === "pl" ? "pl" : "de";
+        const planLang =
+          (answers as any)?.lang === "pl"
+            ? "pl"
+            : (answers as any)?.lang === "it"
+              ? "it"
+              : "de";
         let composePlan: typeof import("@/lib/plan-composer").composePlan;
         let generatePersonalizedIntro: typeof import("@/lib/plan-intro-ai").generatePersonalizedIntro;
         let problemLabelMap: Record<string, string>;
@@ -240,6 +245,11 @@ export async function POST(req: NextRequest) {
           ({ generatePersonalizedIntro } = await import("@/lib/plan-intro-ai.pl"));
           problemLabelMap = (await import("@/lib/exercise-library.pl"))
             .PROBLEM_LABELS_PL as Record<string, string>;
+        } else if (planLang === "it") {
+          ({ composePlan } = await import("@/lib/plan-composer.it"));
+          ({ generatePersonalizedIntro } = await import("@/lib/plan-intro-ai.it"));
+          problemLabelMap = (await import("@/lib/exercise-library.it"))
+            .PROBLEM_LABELS_IT as Record<string, string>;
         } else {
           ({ composePlan } = await import("@/lib/plan-composer"));
           ({ generatePersonalizedIntro } = await import("@/lib/plan-intro-ai"));

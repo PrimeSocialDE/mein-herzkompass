@@ -41,6 +41,16 @@ export default async function AnmeldenPage({
         expired: "Ten link do logowania jest niekompletny lub wygasł. Po prostu poproś o nowy.",
         toLogin: "Do logowania →",
       }
+    : lang === "it"
+    ? {
+        done: "Ci sei quasi!",
+        incomplete: "Link incompleto",
+        clickInfo: "Clicca una volta su «Accedi» per entrare in sicurezza nella tua area membri.",
+        loginBtn: "Accedi ora →",
+        scannerNote: "Questo passaggio protegge il tuo accesso dagli scanner automatici delle e-mail. Il link è valido per un'ora.",
+        expired: "Questo link di accesso è incompleto o scaduto. Richiedine semplicemente uno nuovo.",
+        toLogin: "Al login →",
+      }
     : {
         done: "Fast geschafft!",
         incomplete: "Link unvollständig",

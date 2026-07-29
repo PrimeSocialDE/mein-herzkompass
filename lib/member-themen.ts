@@ -14,6 +14,13 @@ export interface ThemenModule {
   price_cents: number;
   problem_match: string | null; // matched gegen quiz_result.dog_problem
   badge_text: string | null;
+  // Italienische Parallel-Felder (DE bleibt unangetastet; PL faellt via ?? auf DE zurueck)
+  title_it?: string;
+  goal_it?: string;
+  short_it?: string;
+  features_it?: string[];
+  badge_text_it?: string | null;
+  image_url_it?: string;
 }
 
 const DEFAULT_PRICE = 1499; // 14,99 Euro pro Themen-Modul
@@ -35,6 +42,17 @@ export const THEMEN_MODULES: ThemenModule[] = [
     price_cents: DEFAULT_PRICE,
     problem_match: "pulling",
     badge_text: "Beliebt",
+    title_it: "Condotta al guinzaglio",
+    goal_it: "Cammina rilassato al guinzaglio",
+    short_it: "Al guinzaglio senza tirare in 14 giorni.",
+    features_it: [
+      "Percorso passo passo in 14 giorni",
+      "Cosa calma davvero i cani",
+      "Esercizi per città, bosco e parco",
+      "Subito come PDF nella casella",
+    ],
+    badge_text_it: "Popolare",
+    image_url_it: "/Leinenfuhr.it.png",
   },
   {
     slug: "thema-bellen",
@@ -52,6 +70,17 @@ export const THEMEN_MODULES: ThemenModule[] = [
     price_cents: DEFAULT_PRICE,
     problem_match: "barking",
     badge_text: null,
+    title_it: "Smettere di abbaiare",
+    goal_it: "Abbaia di meno e più brevemente",
+    short_it: "Stabilire il segnale di calma, senza stress.",
+    features_it: [
+      "Capire le cause (paura, noia, guardia)",
+      "Costruire il segnale di calma",
+      "Esercizi per campanello, visite, rumori esterni",
+      "Subito come PDF nella casella",
+    ],
+    badge_text_it: null,
+    image_url_it: "/BellenAbg.it.png",
   },
   {
     slug: "thema-aggression",
@@ -70,6 +99,18 @@ export const THEMEN_MODULES: ThemenModule[] = [
     price_cents: DEFAULT_PRICE,
     problem_match: "aggression",
     badge_text: "Ausführlich",
+    title_it: "Gestire l'aggressività",
+    goal_it: "Resta calmo con gli altri cani",
+    short_it: "Gestire in sicurezza, calmare, prevenire.",
+    features_it: [
+      "Perché i cani reagiscono in modo aggressivo",
+      "Riconoscere ed evitare i fattori scatenanti",
+      "Tecniche di de-escalation passo passo",
+      "Quando serve l'aiuto di un professionista",
+      "Subito come PDF nella casella",
+    ],
+    badge_text_it: "Dettagliato",
+    image_url_it: "/Agression.it.png",
   },
   {
     slug: "thema-trennungsangst",
@@ -87,6 +128,17 @@ export const THEMEN_MODULES: ThemenModule[] = [
     price_cents: DEFAULT_PRICE,
     problem_match: "anxiety",
     badge_text: null,
+    title_it: "Ansia da separazione",
+    goal_it: "Resta rilassato da solo a casa",
+    short_it: "Da solo a casa senza stress.",
+    features_it: [
+      "Abituarlo con piccoli passi",
+      "Passare da 1 minuto a 4 ore",
+      "Cosa fare in caso di ricadute",
+      "Subito come PDF nella casella",
+    ],
+    badge_text_it: null,
+    image_url_it: "/Trennungsangst.it.png",
   },
   {
     slug: "thema-anspringen",
@@ -104,6 +156,17 @@ export const THEMEN_MODULES: ThemenModule[] = [
     price_cents: DEFAULT_PRICE,
     problem_match: "jumping",
     badge_text: null,
+    title_it: "Non saltare addosso",
+    goal_it: "Saluta con tutte le zampe a terra",
+    short_it: "Saluti con le quattro zampe a terra.",
+    features_it: [
+      "Perché i cani saltano (attenzione)",
+      "Allenare una reazione coerente",
+      "Esercizi per famiglia, ospiti, estranei",
+      "Subito come PDF nella casella",
+    ],
+    badge_text_it: null,
+    image_url_it: "/Anspringen.it.png",
   },
   {
     slug: "thema-rueckruf",
@@ -121,6 +184,17 @@ export const THEMEN_MODULES: ThemenModule[] = [
     price_cents: DEFAULT_PRICE,
     problem_match: "recall",
     badge_text: null,
+    title_it: "Il richiamo",
+    goal_it: "Torna in modo affidabile quando lo chiami",
+    short_it: "Il tuo cane torna in modo affidabile.",
+    features_it: [
+      "Caricare il nome in positivo",
+      "Allenamento al fischietto passo passo",
+      "Esercizi con distrazioni crescenti",
+      "Subito come PDF nella casella",
+    ],
+    badge_text_it: null,
+    image_url_it: "/rueckruf.it.png",
   },
   {
     slug: "thema-energie",
@@ -138,6 +212,17 @@ export const THEMEN_MODULES: ThemenModule[] = [
     price_cents: DEFAULT_PRICE,
     problem_match: "energy",
     badge_text: null,
+    title_it: "Energia in eccesso",
+    goal_it: "Trova la calma dopo essersi sfogato",
+    short_it: "Sfogarsi e poi trovare la calma.",
+    features_it: [
+      "Stimolazione mentale vs fisica",
+      "Tappetino olfattivo e giochi di ricerca",
+      "Costruire la fase di riposo",
+      "Subito come PDF nella casella",
+    ],
+    badge_text_it: null,
+    image_url_it: "/energie.it.png",
   },
   {
     slug: "thema-zerstoerung",
@@ -155,6 +240,17 @@ export const THEMEN_MODULES: ThemenModule[] = [
     price_cents: DEFAULT_PRICE,
     problem_match: "destructive",
     badge_text: null,
+    title_it: "Stop alla distruzione",
+    goal_it: "Lascia in pace mobili, scarpe e cavi",
+    short_it: "Mobili, scarpe e cavi al sicuro.",
+    features_it: [
+      "Perché i cani distruggono",
+      "Offrire alternative da masticare",
+      "Allenare il gioco dello scambio",
+      "Subito come PDF nella casella",
+    ],
+    badge_text_it: null,
+    image_url_it: "/kaputt.it.png",
   },
   {
     slug: "thema-stubenrein",
@@ -172,6 +268,17 @@ export const THEMEN_MODULES: ThemenModule[] = [
     price_cents: DEFAULT_PRICE,
     problem_match: "soiling",
     badge_text: null,
+    title_it: "Pulizia in casa",
+    goal_it: "La fa fuori, non dentro casa",
+    short_it: "Stabilire la routine in 21 giorni.",
+    features_it: [
+      "Orari fissi per la pausa pipì",
+      "Cosa fare in caso di incidenti",
+      "Cuccioli vs cani adulti",
+      "Subito come PDF nella casella",
+    ],
+    badge_text_it: null,
+    image_url_it: "/Stubenreinheit.it.png",
   },
   {
     slug: "thema-aufnehmen",
@@ -189,6 +296,17 @@ export const THEMEN_MODULES: ThemenModule[] = [
     price_cents: DEFAULT_PRICE,
     problem_match: "mouthing",
     badge_text: null,
+    title_it: "Niente da terra",
+    goal_it: "Lascia gli oggetti a terra dove sono",
+    short_it: "Basta raccogliere roba durante la passeggiata.",
+    features_it: [
+      "Il gioco dello scambio come base",
+      "Costruire il comando 'lascia'",
+      "Esercizi lungo il percorso della passeggiata",
+      "Subito come PDF nella casella",
+    ],
+    badge_text_it: null,
+    image_url_it: "/Nichtsvomboden.it.png",
   },
 ];
 

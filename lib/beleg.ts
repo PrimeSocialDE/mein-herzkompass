@@ -95,3 +95,40 @@ export function renderBelegFooterHtmlPl(b: BelegRow): string {
   <div style="margin-top:9px; color:#9CA3AF;">Wystawca: ${s.name} &middot; ${s.street} &middot; ${s.city} &middot; NIP UE ${s.ustId} &middot; VAT rozliczany w procedurze OSS</div>
 </div>`;
 }
+
+// ── IT-Belege (italienische IVA 22 %, Währung €, Markt IT) ──────────────────
+// Verkauf digitaler Leistungen an ital. Endkunden: IVA am Kundenland (IT 22 %),
+// abgeführt über EU-OSS. Aussteller bleibt die (deutsche) GbR — analog PL.
+// Format wie DE (Komma-Dezimal, € nachgestellt): eur() wird wiederverwendet.
+// Hinweis: falls spaeter eine echte IT-Entitaet mit eigener Partita IVA
+// existiert, hier BELEG_SELLER-Variante ergaenzen (Go-Live-Entscheidung).
+export const IT_VAT_RATE = 22;
+
+const PLAN_LABEL_IT: Record<string, string> = {
+  "1month": "Piano di addestramento personalizzato per cani (1 mese)",
+  "3month": "Piano di addestramento personalizzato per cani (3 mesi)",
+  "6month": "Piano di addestramento personalizzato per cani (6 mesi)",
+};
+
+/** Italienische Leistungsbeschreibung aus den Mollie-Metadaten. */
+export function belegDescriptionIt(meta: Record<string, any> = {}): string {
+  if (meta.plan && PLAN_LABEL_IT[meta.plan]) return PLAN_LABEL_IT[meta.plan];
+  if (meta.module) {
+    return `Servizio aggiuntivo: ${String(meta.module).replace(/\+/g, " + ")}`;
+  }
+  if (meta.type === "premium") return "Analisi comportamentale premium";
+  return "ZampaPlan – servizio di addestramento digitale";
+}
+
+/** Italienischer Beleg-Footer (ricevuta) für die ZampaPlan-Plan-Mail. */
+export function renderBelegFooterHtmlIt(b: BelegRow): string {
+  const s = BELEG_SELLER;
+  return `
+<div style="border-top:1px solid #E8E4DF; margin:28px 0 0; padding-top:16px; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.65; color:#6B6B6B;">
+  <div style="font-weight:700; color:#1a1a1a; font-size:13px; margin-bottom:5px;">Ricevuta &middot; Nr ${b.belegnummer}</div>
+  <div>Data: ${fmtDate(b.leistungsdatum)}</div>
+  <div>Servizio: ${b.beschreibung}</div>
+  <div style="margin-top:7px; color:#1a1a1a;"><b>Totale: ${eur(b.brutto_cents)}</b> &mdash; IVA ${b.ust_satz}% inclusa (${eur(b.ust_cents)}) &middot; netto ${eur(b.netto_cents)}</div>
+  <div style="margin-top:9px; color:#9CA3AF;">Emittente: ${s.name} &middot; ${s.street} &middot; ${s.city} &middot; P.IVA UE ${s.ustId} &middot; IVA assolta tramite regime OSS</div>
+</div>`;
+}

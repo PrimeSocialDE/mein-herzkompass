@@ -30,6 +30,33 @@ const nextConfig: NextConfig = {
     // veraendern. Deutsche Assets/Generatoren bleiben exakt wie bisher.
     "**": [
       "public/pl/**/*",
+      // IT-Anzeigebilder (public/it/**) genauso ausschliessen wie PL — werden
+      // von keiner Server-Function gelesen, nur statisch via CDN. Sonst blaeht
+      // die 206-MB-IT-Kopie jede verschachtelte API-Function ueber 250 MB.
+      "public/it/**/*",
+      // DE-Top-Level-Medien (Videos, Bilder, HTML-Funnelseiten) — reine CDN-
+      // Assets, von KEINER Server-Function gelesen. Sie machen ~296 MB der
+      // 306 MB Top-Level-Dateien aus und blaehen sonst verschachtelte API-
+      // Functions (z.B. api/brevo/bounce-webhook, das via member-mail transitiv
+      // PDF-Libs erreicht) ueber das 250-MB-Limit. BEWUSST NICHT ausgeschlossen:
+      // *.pdf (public/vorlage.pdf + notfall-karten*.pdf werden zur Laufzeit per
+      // readFileSync gelesen) und die kleinen Unterordner public/fonts +
+      // public/breeds (Arimo-Unicode-Fonts + Rassebilder fuer die PDF-Generatoren).
+      // So bleiben die runtime-gelesenen Assets garantiert im Bundle — ohne sich
+      // auf Include-Precedence zu verlassen.
+      "public/*.png",
+      "public/*.jpg",
+      "public/*.jpeg",
+      "public/*.webp",
+      "public/*.gif",
+      "public/*.mp4",
+      "public/*.mov",
+      "public/*.webm",
+      "public/*.html",
+      "public/*.js",
+      "public/*.svg",
+      "public/*.xml",
+      "public/*.txt",
     ],
     "*": [
       // public/ — alles raus (wird als statische Assets via CDN ausgeliefert,
@@ -93,6 +120,22 @@ const nextConfig: NextConfig = {
           source: '/:path((?!api/|api$|mitglieder|_next|pl/|pl$).*)',
           has: [{ type: 'host', value: 'www.lapaplan.pl' }],
           destination: '/pl/:path',
+        },
+        // ── IT / ZampaPlan.it (analog zu PL, additiv) — host-gebunden auf
+        //    zampaplan.it, greift NIE bei pfoten-plan.de oder lapaplan.pl.
+        //    Seiten liegen unter public/it/*. Zahlung startet als Platzhalter
+        //    (IT_PAYMENTS_OFF), bis Mollie IT beantragt/live ist.
+        { source: '/', has: [{ type: 'host', value: 'zampaplan.it' }], destination: '/it' },
+        { source: '/', has: [{ type: 'host', value: 'www.zampaplan.it' }], destination: '/it' },
+        {
+          source: '/:path((?!api/|api$|mitglieder|_next|it/|it$).*)',
+          has: [{ type: 'host', value: 'zampaplan.it' }],
+          destination: '/it/:path',
+        },
+        {
+          source: '/:path((?!api/|api$|mitglieder|_next|it/|it$).*)',
+          has: [{ type: 'host', value: 'www.zampaplan.it' }],
+          destination: '/it/:path',
         },
       ],
       afterFiles: [

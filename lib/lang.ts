@@ -1,16 +1,17 @@
-// Zentrale Sprach-Ermittlung fuer die Mehrsprachigkeit (DE / PL).
+// Zentrale Sprach-Ermittlung fuer die Mehrsprachigkeit (DE / PL / IT).
 //
 // WICHTIG fuer die Sicherheit: Default ist IMMER "de". Solange kein Lead
-// lang="pl" traegt (= vor dem PL-Launch), verhaelt sich alles exakt wie bisher.
-// Der PL-Zweig ist bis dahin toter Code. Deutsche Kunden bekommen nie "pl".
+// lang="pl"/"it" traegt, verhaelt sich alles exakt wie bisher. PL- und IT-Zweig
+// sind bis dahin toter Code. Deutsche Kunden bekommen nie "pl"/"it". "it" faellt
+// ueberall, wo noch nicht uebersetzt, sauber auf den de-Zweig zurueck (kein Crash).
 
-export type Lang = "de" | "pl";
+export type Lang = "de" | "pl" | "it";
 
 export const DEFAULT_LANG: Lang = "de";
 
 /** Normalisiert einen beliebigen Wert auf eine unterstuetzte Sprache (Default de). */
 export function normalizeLang(v: unknown): Lang {
-  return v === "pl" ? "pl" : "de";
+  return v === "pl" ? "pl" : v === "it" ? "it" : "de";
 }
 
 /** Liest die Sprache aus einem Lead/Member-Objekt (Spalte `lang` oder answers.lang). */
@@ -19,10 +20,13 @@ export function langFromLead(lead: unknown): Lang {
   return normalizeLang(l?.lang ?? l?.answers?.lang);
 }
 
-/** Leitet die Sprache aus dem Host ab: lapaplan.pl -> pl, sonst de. */
+/** Leitet die Sprache aus dem Host ab: lapaplan.pl -> pl, zampaplan.it -> it, sonst de. */
 export function langFromHost(host?: string | null): Lang {
   if (!host) return "de";
-  return /(^|\.)lapaplan\.pl$/i.test(host.split(":")[0]) ? "pl" : "de";
+  const h = host.split(":")[0];
+  if (/(^|\.)lapaplan\.pl$/i.test(h)) return "pl";
+  if (/(^|\.)zampaplan\.it$/i.test(h)) return "it";
+  return "de";
 }
 
 /**

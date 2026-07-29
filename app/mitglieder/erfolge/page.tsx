@@ -71,6 +71,36 @@ export default async function ErfolgeHubPage() {
             "Po każdym ćwiczeniu szybki zapis: 😊 😐 😞 + opcjonalna notatka. Tak buduje się wasz przebieg — widzicie, kiedy jest lepiej.",
           enter: "Zapisz",
         }
+      : lang === "it"
+      ? {
+          kicker: "Successi",
+          heroSub: "Due strade per non mollare. Cosa vuoi fare oggi?",
+          yourPlan: "Il tuo piano di addestramento",
+          week: "Settimana",
+          thisWeek: "Questa settimana",
+          fullPlanExercises: "Piano completo con tutti gli esercizi",
+          openPlan: "Apri il piano",
+          hereFullPlanFor: "Ecco il tuo piano completo per",
+          allWeeksPdf: "Tutte le settimane, gli esercizi e il download PDF",
+          badgesLabel: "distintivi",
+          weeklyTasks: "Compiti della settimana",
+          challengesDescA: "Mini-sfide divertenti per",
+          challengesDescB: ". Completata = un distintivo per la collezione.",
+          getTasks: "Prendi i compiti",
+          modulesFree: "moduli sbloccati",
+          freeTips: "Consigli gratis",
+          planCoaching: "Accompagnamento al piano",
+          coachingDescA:
+            "A che punto sei nel piano? Il consiglio di oggi e il prossimo modulo per",
+          coachingDescB: " — restare in pista, facile.",
+          viewTip: "Vedi il consiglio",
+          entries7d: "voci / 7 giorni",
+          neu: "Nuovo",
+          moodDiary: "Diario dell'umore",
+          moodDesc:
+            "Dopo ogni esercizio un rapido tracciamento: 😊 😐 😞 + una nota facoltativa. Così si costruisce il vostro percorso — vedete quando va meglio.",
+          enter: "Registra",
+        }
       : {
           kicker: "Erfolge",
           heroSub: "Zwei Wege, dranzubleiben. Was möchtest du heute machen?",
@@ -102,7 +132,9 @@ export default async function ErfolgeHubPage() {
         };
 
   const dogName = member.dog_name?.trim() || null;
-  const dog = dogName || (lang === "pl" ? "Twojego psa" : "deinem Hund");
+  const dog =
+    dogName ||
+    (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinem Hund");
   const dogPossessive = dogName ? `${dogName}s` : "Eure";
   const isPaid = member.purchase_status === "paid";
 
@@ -145,7 +177,11 @@ export default async function ErfolgeHubPage() {
               ? dogName
                 ? `Strefa treningowa ${dogName}`
                 : "Wasza strefa treningowa"
-              : `${dogPossessive} Trainings-Bereich`
+              : lang === "it"
+                ? dogName
+                  ? `Zona di addestramento di ${dogName}`
+                  : "La vostra zona di addestramento"
+                : `${dogPossessive} Trainings-Bereich`
           }
           className="w-full aspect-[16/7] object-cover object-bottom md:rounded-2xl"
         />
@@ -161,9 +197,13 @@ export default async function ErfolgeHubPage() {
             ? dogName
               ? `Strefa treningowa ${dogName}`
               : "Wasza strefa treningowa"
-            : dogName
-              ? `${dogPossessive} Trainings-Bereich`
-              : "Euer Trainings-Bereich"}
+            : lang === "it"
+              ? dogName
+                ? `Zona di addestramento di ${dogName}`
+                : "La vostra zona di addestramento"
+              : dogName
+                ? `${dogPossessive} Trainings-Bereich`
+                : "Euer Trainings-Bereich"}
         </h1>
         <p className="text-[14px] text-[#4B5563] mt-2 leading-relaxed">
           {t.heroSub}

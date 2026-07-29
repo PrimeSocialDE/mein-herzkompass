@@ -42,6 +42,23 @@ function customerHtmlPL(dog: string): string {
   </div>`;
 }
 
+// ITALIENISCHE Kunden-Mail (lang="it")
+function customerHtmlIT(dog: string): string {
+  return `
+  <div style="font-family:-apple-system,Segoe UI,Arial,sans-serif;max-width:560px;margin:auto;color:#1a1a1a">
+    <div style="text-align:center;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8B7355">🐾 ZampaPlan</div>
+    <h1 style="font-size:23px;font-weight:800;margin:14px 0 10px">Il piano dei comandi di base per ${dog} è pronto! 🎯</h1>
+    <p style="font-size:15px;line-height:1.6;color:#42413f">Ciao,<br><br>in allegato trovi il piano personale per <b>${dog}</b>, passo dopo passo: Seduto, Terra, Resta e Vieni, costruiti in modo che funzionino anche dove conta davvero (ciclisti, corridori, altri cani, ospiti).</p>
+    <ul style="font-size:14px;line-height:1.7;color:#333">
+      <li>Ogni comando come un vero tutorial: preparazione, passaggi, "quando non collabora", ripetizioni realistiche</li>
+      <li>Guida per la quotidianità: quale comando in quale situazione</li>
+      <li>Piano di avvio di 7 giorni + verifica dei risultati</li>
+    </ul>
+    <p style="font-size:14px;line-height:1.6;color:#42413f">Stampalo o tienilo a portata di mano sul telefono. Buon allenamento con ${dog}! 🐾</p>
+    <p style="font-size:12.5px;color:#9aa2ad;margin-top:16px">Hai domande? Rispondi semplicemente a questa mail.</p>
+  </div>`;
+}
+
 export async function deliverGrundkommandosForLead(
   leadId: string,
   opts: { force?: boolean } = {}
@@ -100,16 +117,21 @@ export async function deliverGrundkommandosForLead(
   // Sprach-Weiche: PL -> polnischer Opus-Prompt + Unicode-PDF (Arimo) + polnische
   // Mail. Dynamische Imports, damit der deutsche Pfad byte-identisch bleibt.
   const isPL = String((a as any).lang || "").toLowerCase() === "pl";
+  const isIt = String((a as any).lang || "").toLowerCase() === "it";
   const { generateGrundkommandosContent, knownLabelsFromDogCommands } = isPL
     ? await import("./grundkommandos-content.pl")
+    : isIt
+    ? await import("./grundkommandos-content.it")
     : await import("./grundkommandos-content");
   const { buildGrundkommandosPDF } = isPL
     ? await import("./grundkommandos-pdf.pl")
+    : isIt
+    ? await import("./grundkommandos-pdf.it")
     : await import("./grundkommandos-pdf");
 
-  const dog = (lead.dog_name || a.dog_name || (isPL ? "Twój pies" : "dein Hund")).toString();
+  const dog = (lead.dog_name || a.dog_name || (isPL ? "Twój pies" : isIt ? "il tuo cane" : "dein Hund")).toString();
   const breed = a.dog_breed ? String(a.dog_breed) : null;
-  const problem = a.dog_problem || a.custom_problem_text || (isPL ? "niepewność" : "Unsicherheit");
+  const problem = a.dog_problem || a.custom_problem_text || (isPL ? "niepewność" : isIt ? "insicurezza" : "Unsicherheit");
   const known = knownLabelsFromDogCommands(a.dog_commands);
 
   // 1) Content generieren (Opus, ~2-3 Min)
@@ -127,11 +149,15 @@ export async function deliverGrundkommandosForLead(
   // 3) Brevo-Mail mit Anhang
   const fileName = isPL
     ? `Plan-komend-${dog.replace(/[^a-zA-Z0-9]/g, "")}.pdf`
+    : isIt
+    ? `Piano-comandi-base-${dog.replace(/[^a-zA-Z0-9]/g, "")}.pdf`
     : `Notfall-Grundkommando-Plan-${dog.replace(/[^a-zA-Z0-9]/g, "")}.pdf`;
   const subject = isPL
     ? `🎯 Plan podstawowych komend dla ${dog}`
+    : isIt
+    ? `🎯 Il piano dei comandi di base per ${dog}`
     : `🎯 Dein Notfall-Grundkommando-Plan für ${dog}`;
-  const html = isPL ? customerHtmlPL(dog) : customerHtml(dog);
+  const html = isPL ? customerHtmlPL(dog) : isIt ? customerHtmlIT(dog) : customerHtml(dog);
 
   // Bezahlte Auslieferung: DE primär über Google Workspace SMTP, Brevo Fallback.
   let sentVia: "google" | "brevo" | null = null;
@@ -145,6 +171,7 @@ export async function deliverGrundkommandosForLead(
           to: lead.email,
           subject,
           html,
+          fromName: isIt ? "ZampaPlan" : undefined,
           cc: "kontakt@primesocial.de",
           attachments: [{ name: fileName, contentBase64: pdfBase64 }],
         });
@@ -165,6 +192,8 @@ export async function deliverGrundkommandosForLead(
       body: JSON.stringify({
         sender: isPL
           ? { name: "ŁapaPlan", email: "support@pfoten-plan.de" }
+          : isIt
+          ? { name: "ZampaPlan", email: "support@pfoten-plan.de" }
           : { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
         to: [{ email: lead.email }],
         cc: [{ email: "kontakt@primesocial.de" }],

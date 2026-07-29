@@ -47,6 +47,19 @@ const PROBLEM_LABELS_PL: Record<string, string> = {
   mouthing: "Podnoszenie z ziemi",
 };
 
+const PROBLEM_LABELS_IT: Record<string, string> = {
+  pulling: "Tira al guinzaglio",
+  barking: "Abbaio",
+  aggression: "Aggressività",
+  anxiety: "Ansia da separazione",
+  jumping: "Salta addosso",
+  recall: "Richiamo",
+  energy: "Energia",
+  destructive: "Comportamento distruttivo",
+  soiling: "Pulizia in casa",
+  mouthing: "Raccogliere da terra",
+};
+
 export default async function CoachingPage() {
   const user = await getCurrentMember();
   if (!user) {
@@ -70,12 +83,19 @@ export default async function CoachingPage() {
 
   const dogName = member.dog_name?.trim() || null;
   // "Dein Plan für X" — Akkusativ, daher "deinen Hund" als Fallback
-  const dog = dogName || (lang === "pl" ? "Twojego psa" : "deinen Hund");
+  const dog =
+    dogName ||
+    (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinen Hund");
   const isPaid = member.purchase_status === "paid";
 
   const problemKey =
     member.quiz_result?.dog_problem || member.quiz_result?.problem || null;
-  const labels = lang === "pl" ? PROBLEM_LABELS_PL : PROBLEM_LABELS;
+  const labels =
+    lang === "pl"
+      ? PROBLEM_LABELS_PL
+      : lang === "it"
+        ? PROBLEM_LABELS_IT
+        : PROBLEM_LABELS;
   const problemLabel = problemKey ? labels[problemKey] || null : null;
 
   const tip = getDailyTip(problemKey);
@@ -153,6 +173,46 @@ export default async function CoachingPage() {
           directHelp: "Bezpośrednia pomoc",
           weeklyTask: "Zadanie tygodnia",
           getBadge: "Zdobądź odznakę",
+        }
+      : lang === "it"
+      ? {
+          backToOverview: "← Panoramica successi",
+          planBegleitung: "Accompagnamento al piano",
+          planForPre: "Il piano per ",
+          subPaid:
+            "Dove sei ora, cosa viene dopo e un consiglio del giorno a riguardo.",
+          subFree: "Consiglio del giorno e il prossimo modulo per il tuo cane.",
+          standInPlan: "Il tuo punto nel piano",
+          weekLabel: "Settimana ",
+          nextWeekUnlockPre: "La prossima settimana si sblocca la settimana ",
+          nextWeekUnlockPost: ".",
+          pdfTitle: "Il tuo piano di addestramento in PDF",
+          pdfSub: "Identico a quello ricevuto via email — da stampare",
+          open: "Apri →",
+          completePlan: "Il tuo piano completo",
+          identicalPdf: "Identico al PDF",
+          planOverview: "Panoramica del tuo piano",
+          planMailNote:
+            "Il piano dettagliato di 12 settimane con tutti gli esercizi lo trovi nell'email che hai ricevuto al momento dell'acquisto.",
+          current: "Ora",
+          comingUp: "In arrivo",
+          tipToday: "Consiglio di oggi",
+          newTipDaily: "Un nuovo consiglio ogni giorno — torna domani.",
+          workingOnPre: "Al lavoro con ",
+          openModule: "Apri il modulo",
+          noModulePre: "Nessun modulo sbloccato. Dai un'occhiata alla ",
+          moduleOverview: "panoramica dei moduli",
+          noModulePost: ".",
+          withFullPlan: "Con il piano completo",
+          weeklyGuidancePre: "Accompagnamento settimana per settimana per ",
+          benefit1: "Sai sempre a che punto sei nel piano",
+          benefit2: "Moduli sbloccati passo dopo passo",
+          benefit3: "Trainer AI illimitato per le tue domande",
+          viewPlan: "Guarda il piano",
+          askTrainer: "Chiedi al trainer AI",
+          directHelp: "Aiuto diretto",
+          weeklyTask: "Compito della settimana",
+          getBadge: "Prendi il distintivo",
         }
       : {
           backToOverview: "← Erfolge-Übersicht",

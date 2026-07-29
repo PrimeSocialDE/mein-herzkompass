@@ -48,6 +48,19 @@ const PROBLEM_LABELS_PL: Record<string, string> = {
   mouthing: "podnoszenie rzeczy z ziemi",
 };
 
+const PROBLEM_LABELS_IT: Record<string, string> = {
+  pulling: "tirare al guinzaglio",
+  barking: "abbaiare eccessivo",
+  aggression: "aggressività negli incontri",
+  anxiety: "ansia da separazione",
+  jumping: "saltare addosso alle persone",
+  recall: "richiamo inaffidabile",
+  energy: "troppa energia",
+  destructive: "comportamento distruttivo",
+  soiling: "sporcare in casa",
+  mouthing: "raccogliere oggetti da terra",
+};
+
 export type WarmRecoveryStage = 1 | 2 | 3 | 4 | 5;
 
 export interface WarmRecoveryArgs {
@@ -82,6 +95,9 @@ function buildPlanRecoveryUrl(
   if (lang === "pl") {
     return `https://www.lapaplan.pl/powrot.html?${params.toString()}`;
   }
+  if (lang === "it") {
+    return `https://www.zampaplan.it/powrot.html?${params.toString()}`;
+  }
   return `${SITE_URL}/rueckhol.html?${params.toString()}`;
 }
 
@@ -92,6 +108,7 @@ async function generatePersonalizedBlock(
   lang: Lang = "de"
 ): Promise<string | null> {
   if (lang === "pl") return generatePersonalizedBlockPl(args, stage);
+  if (lang === "it") return generatePersonalizedBlockIt(args, stage);
   if (!process.env.ANTHROPIC_API_KEY) return null;
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -205,6 +222,65 @@ WAŻNE:
   }
 }
 
+// Italienische Personalisierung — eigener Zweig, damit der deutsche oben unangetastet bleibt.
+async function generatePersonalizedBlockIt(
+  args: WarmRecoveryArgs,
+  stage: WarmRecoveryStage
+): Promise<string | null> {
+  if (!process.env.ANTHROPIC_API_KEY) return null;
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+  const dog = args.dogName?.trim() || "il tuo cane";
+  const breed = args.dogBreed?.trim() || "meticcio";
+  const age = args.dogAge?.trim() || "adulto";
+  const problem =
+    args.customProblem?.trim() ||
+    PROBLEM_LABELS_IT[args.dogProblem || ""] ||
+    "problema comportamentale";
+
+  const stagePrompt: Record<WarmRecoveryStage, string> = {
+    1: `Scrivi 3 frasi concrete e pacate (max 80 parole in totale) per una prima e-mail di promemoria. Tono: rispettoso, competente, come un'educatrice cinofila qualificata. NIENTE „Ehi", niente „tranquillo" o „facile" colloquiali. NESSUNA pressione di vendita. Piuttosto: spiega concretamente dove di solito sta la difficoltà con questo profilo di cane (considera razza e età). Cita un aspetto che crea fiducia (per es. che il problema si può allenare).`,
+    2: `Scrivi una breve storia autentica (70-100 parole) su un altro cane inventato con profilo simile e stesso problema. Prima e dopo in concrete 4 settimane. Inventa nomi plausibili (nome del cane e nome del proprietario). NIENTE „Ehi", nessun linguaggio colloquiale. Scrivi come una breve storia di successo dalla quotidianità di un'educatrice, concreta ma emotivamente comprensibile. Frase finale: cosa ne ha imparato la proprietaria.`,
+    3: `Scrivi un paragrafo personale da educatrice (70-100 parole) in prima persona. Come un'educatrice cinofila qualificata (40+) che scrive una lettera. Formula di apertura „Caro/Cara [nome sconosciuto, inizia semplicemente senza formula di apertura, perché titolo e intro se ne occupano]". Competente, empatica, senza pressione di vendita. Cita 1 esercizio concreto adatto al problema e fattibile oggi (5-10 min, senza attrezzatura). NIENTE „Ehi" o slang.`,
+    4: `Scrivi 3 domande frequenti e risposte brevi e concrete (90-130 parole in totale) su questo problema. FORMATO RIGIDO: ogni domanda sta su una PROPRIA riga e finisce con un punto interrogativo; nella riga direttamente sotto la risposta; tra le coppie domanda-risposta una RIGA VUOTA. NIENTE Markdown, NIENTE HTML, niente asterischi, niente <b>. Concentrati sulle preoccupazioni di una proprietaria 40+, la prima domanda DEVE essere: „Ce la faccio davvero da sola?" (rassicura: istruzioni chiare passo dopo passo, piccole tappe, supporto in qualsiasi momento per le domande). Poi: „Funziona con la mia razza?" e „Quanto tempo mi serve al giorno?". Risposte concrete, non pubblicitarie.`,
+    5: `Scrivi 2-3 frasi (max 60 parole) in tono da ultimo richiamo: concreto e caloroso. „Se hai deciso diversamente, è comprensibile." Un ultimo, gentile promemoria che il piano è pronto. Cita la garanzia soddisfatti o rimborsati entro 30 giorni come sicurezza. NON citare sconti, nessuna pressione, NIENTE „Ehi", niente slang.`,
+  };
+
+  const prompt = `Gruppo target: proprietari di cani italiani, principalmente 35-55 anni, cercano un aiuto serio nell'educazione del cane. Lingua: concreta, pacata, competente. NIENTE slang, NIENTE „Ehi", NIENTE „facile/forte/ci penso io".
+
+Cane: ${dog} (${breed}, ${age})
+Problema principale: ${problem}
+Piano scelto: ${args.selectedPlan || "3month"}
+
+${stagePrompt[stage]}
+
+IMPORTANTE:
+- Scrivi SOLO il blocco stesso, NESSUNA formula di saluto („Ciao X"), NESSUNA formula di commiato, NIENTE „Ecco".
+- Dai del „tu" (non del „Lei"), ma con rispetto e calma.
+- Cita ${dog} per nome quando è opportuno.
+- Output: SOLO testo scorrevole. NIENTE Markdown, NIENTE HTML, NESSUN tag come <b>, NESSUN asterisco (*), nessuna virgoletta attorno. Separa i paragrafi con una riga vuota (doppio a capo).
+- Molti proprietari temono di non riuscire ad allenare da soli. Togli con leggerezza questa preoccupazione: il piano guida passo dopo passo in piccole tappe fattibili, e per le domande si ottiene sempre una risposta, nessuno viene lasciato solo.
+- NESSUNA parola come „Ehi", „facile", „sbrigare", „tranquillo", „di sicuro".
+- Usa il maschile generico (per es. „proprietario", „educatore cinofilo").`;
+
+  try {
+    const res = await client.messages.create({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 400,
+      messages: [{ role: "user", content: prompt }],
+    });
+    const text = res.content
+      .filter((c: any) => c.type === "text")
+      .map((c: any) => c.text)
+      .join("\n")
+      .trim();
+    return text || null;
+  } catch (e: any) {
+    console.warn(`[warm-recovery] Claude failed (it) stage=${stage}:`, e?.message);
+    return null;
+  }
+}
+
 // HTML-Block formatieren: Absaetze (Leerzeile) + Zeilenumbrueche (einzelnes \n),
 // FAQ-Fragen (enden auf "?") fett. AI-Text wird vorher von Markdown/HTML
 // gesaeubert, damit NIE ein rohes <b> o.ae. sichtbar wird.
@@ -263,6 +339,7 @@ function getStageContent(
   lang: Lang = "de"
 ): StageContent {
   if (lang === "pl") return getStageContentPl(args, stage);
+  if (lang === "it") return getStageContentIt(args, stage);
   const dog = args.dogName?.trim() || "dein Hund";
   const problemLabel =
     args.customProblem?.trim() ||
@@ -440,6 +517,94 @@ function getStageContentPl(args: WarmRecoveryArgs, stage: WarmRecoveryStage): St
   }
 }
 
+// Italienische Stage-Inhalte — eigener Zweig, deutscher oben bleibt byte-identisch.
+function getStageContentIt(args: WarmRecoveryArgs, stage: WarmRecoveryStage): StageContent {
+  const dog = args.dogName?.trim() || "il tuo cane";
+  const problemLabel =
+    args.customProblem?.trim() ||
+    PROBLEM_LABELS_IT[args.dogProblem || ""] ||
+    "questione comportamentale";
+
+  const whatYouGetBox = `
+    <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:10px;padding:16px 18px;margin:18px 0;">
+      <p style="margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:#8B7355;">Cosa ricevi per ${escapeHtml(dog)}</p>
+      <p style="margin:0 0 6px;font-size:14px;color:#1a1a1a;line-height:1.55;">📄 <strong>Piano di allenamento personale in PDF</strong>, da scaricare e stampare</p>
+      <p style="margin:0 0 6px;font-size:14px;color:#1a1a1a;line-height:1.55;">🐾 <strong>La tua area membri</strong> con esercizi quotidiani, monitoraggio dei progressi e sfide settimanali</p>
+      <p style="margin:0;font-size:14px;color:#1a1a1a;line-height:1.55;">💬 <strong>Chat con l'educatore</strong> per le domande, non sei solo</p>
+    </div>`;
+
+  const compareBox = `
+    <div style="background:#F8F8F8;border-radius:10px;padding:14px 16px;margin:16px 0;font-size:13.5px;color:#1a1a1a;line-height:1.55;">
+      <p style="margin:0 0 8px;font-weight:700;color:#8B7355;">Rispetto a una scuola cinofila</p>
+      <p style="margin:0 0 4px;">🏫 Scuola cinofila: 60-100 € a lezione · orari fissi · di solito lezioni di gruppo</p>
+      <p style="margin:0;">📋 ZampaPlan: una tantum da 30 € · 12 settimane di contenuti · su misura per ${escapeHtml(dog)} · al tuo ritmo</p>
+    </div>`;
+
+  switch (stage) {
+    case 1:
+      return {
+        subject: `Una domanda sul piano di allenamento di ${dog}?`,
+        preheader: `Ti aiutiamo volentieri, se qualcosa non è chiaro.`,
+        headline: `Forse è rimasto qualcosa in sospeso`,
+        intro: `Ciao, avevi già scelto il piano per ${escapeHtml(
+          dog
+        )}, ma non sei arrivato in fondo al checkout. Se è rimasta una domanda in sospeso, rispondi semplicemente a questa e-mail, leggiamo ognuna personalmente.`,
+        defaultBlock: `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1a1a1a;">${problemLabel} è uno dei temi più frequenti con cui i nostri membri si rivolgono a noi, e nella maggior parte dei casi ci si può lavorare molto bene. Il piano è ritagliato esattamente sul profilo di ${escapeHtml(
+          dog
+        )}.</p>${whatYouGetBox}`,
+        ctaText: `Guarda il piano per ${dog}`,
+        footerHint: `Questa e-mail arriva una sola volta. Se non fai nulla, avrai di nuovo nostre notizie solo quando potremo aiutarti con una breve storia o una domanda.`,
+      };
+    case 2:
+      return {
+        subject: `Come un'altra proprietaria ha risolto lo stesso tema`,
+        preheader: `Una breve storia dalla quotidianità di un'educatrice.`,
+        headline: `Una storia che si adatta a ${escapeHtml(dog)}`,
+        intro: `Ciao, riceviamo spesso e-mail da membri che erano allo stesso punto in cui sei tu ora. Ecco una breve storia con un cane il cui profilo assomiglia a ${escapeHtml(
+          dog
+        )}:`,
+        defaultBlock: `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1a1a1a;font-style:italic;border-left:3px solid #C4A576;padding-left:14px;">«Per molto tempo abbiamo pensato che facesse parte del suo carattere. Dopo un buon mese con il piano, ${problemLabel} non era più un motivo di discussione, ma routine. Cosa ci ha aiutato: gli esercizi chiari che ogni giorno potevamo fare in poco tempo.»</p><p style="margin:0;font-size:14px;color:#6B7280;line-height:1.5;">— Proprietaria di Bruno (incrocio husky, 4 anni)</p>`,
+        ctaText: `Inizia ora il piano`,
+      };
+    case 3:
+      return {
+        subject: `Una lettera da noi su ${escapeHtml(dog)}`,
+        preheader: `Personalmente dalla nostra educatrice, nessun marketing.`,
+        headline: `Qualche parola personale`,
+        intro: `Ciao, questa non è un'e-mail pubblicitaria, piuttosto una breve lettera. Negli ultimi anni abbiamo lavorato con migliaia di cani, e il tema di ${escapeHtml(
+          dog
+        )} lo conosciamo bene.`,
+        defaultBlock: `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1a1a1a;">Quello che molti sottovalutano: ${problemLabel} si può quasi sempre cambiare in modo visibile in 4-12 settimane, se si resta costanti. Non ti serve alcuna conoscenza pregressa, il piano ti guida passo dopo passo, con esercizi da 10 minuti al giorno.</p><p style="margin:0;font-size:14px;color:#6B7280;">— Il team di educatori ZampaPlan</p>${compareBox}`,
+        ctaText: `Guarda il piano`,
+      };
+    case 4:
+      return {
+        subject: `Le domande più frequenti sul nostro piano di allenamento`,
+        preheader: `Se hai ancora dubbi, qui trovi tutte le risposte.`,
+        headline: `Cosa ci chiedono più spesso i proprietari`,
+        intro: `Ciao, prima che tu decida, ecco le domande più frequenti dei nostri membri, soprattutto di chi convive già da tempo con ${problemLabel}:`,
+        defaultBlock: `${whatYouGetBox}
+          <p style="margin:0 0 10px;font-size:15px;line-height:1.6;color:#1a1a1a;"><strong>Funziona anche con la mia razza?</strong><br>Sì. Il piano viene composto individualmente in base a razza, età e comportamento concreto di ${escapeHtml(dog)}, nessun modello standard.</p>
+          <p style="margin:0 0 10px;font-size:15px;line-height:1.6;color:#1a1a1a;"><strong>Quanto tempo mi serve al giorno?</strong><br>Bastano dai 10 ai 20 minuti. Gli esercizi sono pensati per entrare nella vita di tutti i giorni.</p>
+          <p style="margin:0 0 10px;font-size:15px;line-height:1.6;color:#1a1a1a;"><strong>E se ${escapeHtml(dog)} non collabora?</strong><br>Proprio per questo c'è la chat con l'educatore nell'area membri. Non sei solo.</p>
+          <p style="margin:0;font-size:15px;line-height:1.6;color:#1a1a1a;"><strong>E se comunque non funziona?</strong><br>30 giorni soddisfatti o rimborsati. Senza discussioni. Basta una breve e-mail.</p>`,
+        ctaText: `Prendi ora il piano`,
+      };
+    case 5:
+      return {
+        subject: `Ultimo messaggio sul piano di ${dog}`,
+        preheader: `Dopo non avrai più nostre notizie.`,
+        headline: `Un ultimo promemoria`,
+        intro: `Ciao, se hai deciso contro il piano, è comprensibile, va benissimo così. Ma se ci stai ancora pensando:`,
+        defaultBlock: `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1a1a1a;">Il piano personale per ${escapeHtml(
+          dog
+        )} è pronto, con la garanzia soddisfatti o rimborsati entro 30 giorni. Puoi restituirlo in qualsiasi momento se non va bene. Senza rischi.</p>${compareBox}`,
+        ctaText: `Guarda il piano per ${escapeHtml(dog)}`,
+        footerHint: `Questa è l'ultima e-mail di questa sequenza. Se non rispondi, non avrai più nostre notizie.`,
+      };
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────
 // Hauptfunktion: Mail für eine bestimmte Stage senden
 // ─────────────────────────────────────────────────────────────────────
@@ -472,6 +637,13 @@ export async function sendWarmRecoveryMail(
     <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 16px;margin:18px 0 4px;">
       <p style="margin:0;font-size:13px;color:#166534;line-height:1.5;">
         <strong>✓ Bez abonamentu · Jednorazowa płatność · 30 dni zwrotu pieniędzy.</strong> Nic nie tracisz.
+      </p>
+    </div>`
+      : lang === "it"
+      ? `
+    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 16px;margin:18px 0 4px;">
+      <p style="margin:0;font-size:13px;color:#166534;line-height:1.5;">
+        <strong>✓ Nessun abbonamento · Pagamento unico · 30 giorni soddisfatti o rimborsati.</strong> Non rischi nulla.
       </p>
     </div>`
       : `

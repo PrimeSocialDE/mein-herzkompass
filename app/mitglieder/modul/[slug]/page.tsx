@@ -56,6 +56,22 @@ export default async function ModulDetailPage({
           teaserCta: "Odblokuj plan →",
           teaserSecondary: "Najpierw zadaj pytanie",
         }
+      : lang === "it"
+      ? {
+          back: "Torna alla panoramica",
+          modul: "Modulo",
+          free: "Gratis",
+          locked: "Bloccato",
+          personalizedFor: "Personalizzato per ",
+          createdOn: "creato il",
+          pdfDownload: "Scarica il PDF",
+          pending:
+            "Il tuo contenuto personalizzato viene inviato via e-mail. Non appena è pronto, apparirà anche qui sulla pagina.",
+          teaserEyebrow: "Quando questo funziona",
+          teaserTitle: "I prossimi esercizi si basano direttamente su questo",
+          teaserCta: "Sblocca il piano →",
+          teaserSecondary: "Prima fai una domanda",
+        }
       : {
           back: "Zurück zur Übersicht",
           modul: "Modul",
@@ -87,7 +103,7 @@ export default async function ModulDetailPage({
   // Wenn DB-Sections sparse sind (<3): Generic-Fallback einsetzen
   // damit User immer eine vollstaendige Anleitung sieht
   const dog =
-    member.dog_name?.trim() || (lang === "pl" ? "Twojego psa" : "deinem Hund");
+    member.dog_name?.trim() || (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinem Hund");
   const sections =
     moduleSections.length >= 3 ? moduleSections : buildExerciseFallback(dog);
 
@@ -202,6 +218,13 @@ export default async function ModulDetailPage({
                 celu. Samo jedno ćwiczenie nie rozwiąże problemu — jasna
                 kolejność już tak.
               </>
+            ) : lang === "it" ? (
+              <>
+                Questo esercizio è la <strong>base</strong>. Nel piano completo
+                ogni giorno si aggiungono nuovi passi che portano {member.dog_name?.trim() || "il tuo cane"} sistematicamente
+                all&apos;obiettivo. Un solo esercizio non risolve il problema — una
+                sequenza chiara sì.
+              </>
             ) : (
               <>
                 Diese Übung ist die <strong>Basis</strong>. Im vollen Plan kommen
@@ -238,7 +261,7 @@ function SectionRenderer({
 }: {
   section: ContentSection;
   index: number;
-  lang: "de" | "pl";
+  lang: "de" | "pl" | "it";
 }) {
   if (section.type === "step") {
     return (
@@ -265,7 +288,7 @@ function SectionRenderer({
     return (
       <div className="bg-[#FFF9F0] border-l-4 border-[#C4A576] rounded-r-lg px-4 py-3">
         <p className="text-[12px] font-bold text-[#8B7355] uppercase tracking-wide mb-1">
-          💡 {section.title || (lang === "pl" ? "Wskazówka" : "Tipp")}
+          💡 {section.title || (lang === "pl" ? "Wskazówka" : lang === "it" ? "Consiglio" : "Tipp")}
         </p>
         {section.content && (
           <p className="text-[13px] text-[#5A4A3A] leading-relaxed">
@@ -280,7 +303,7 @@ function SectionRenderer({
     return (
       <div className="bg-[#F0FDF4] border-l-4 border-[#16A34A] rounded-r-lg px-4 py-3">
         <p className="text-[12px] font-bold text-[#15803D] uppercase tracking-wide mb-2">
-          ✓ {section.title || (lang === "pl" ? "Rób tak" : "Mach das")}
+          ✓ {section.title || (lang === "pl" ? "Rób tak" : lang === "it" ? "Fai così" : "Mach das")}
         </p>
         <ul className="space-y-1.5">
           {items.map((it, i) => (
@@ -298,7 +321,7 @@ function SectionRenderer({
     return (
       <div className="bg-[#FEF2F2] border-l-4 border-[#DC2626] rounded-r-lg px-4 py-3">
         <p className="text-[12px] font-bold text-[#B91C1C] uppercase tracking-wide mb-2">
-          ✗ {section.title || (lang === "pl" ? "Proszę nie" : "Bitte nicht")}
+          ✗ {section.title || (lang === "pl" ? "Proszę nie" : lang === "it" ? "Da evitare" : "Bitte nicht")}
         </p>
         <ul className="space-y-1.5">
           {items.map((it, i) => (
@@ -317,7 +340,7 @@ function SectionRenderer({
         <span className="text-[24px] leading-none">⏱️</span>
         <div className="flex-1 min-w-0">
           <p className="text-[12px] font-bold text-[#1E40AF] uppercase tracking-wide mb-0.5">
-            {section.title || (lang === "pl" ? "Jak często" : "Wie oft")}
+            {section.title || (lang === "pl" ? "Jak często" : lang === "it" ? "Quanto spesso" : "Wie oft")}
           </p>
           {section.content && (
             <p className="text-[14px] font-semibold text-[#1E3A8A] leading-relaxed">
@@ -335,7 +358,7 @@ function SectionRenderer({
   );
 }
 
-function LockedOverlay({ lang }: { lang: "de" | "pl" }) {
+function LockedOverlay({ lang }: { lang: "de" | "pl" | "it" }) {
   const t =
     lang === "pl"
       ? {
@@ -343,6 +366,13 @@ function LockedOverlay({ lang }: { lang: "de" | "pl" }) {
           body:
             "Dzięki pełnemu planowi zyskujesz dostęp do wszystkich modułów — krok po kroku, jeden na drugim.",
           cta: "Odblokuj plan",
+        }
+      : lang === "it"
+      ? {
+          title: "Questo modulo è bloccato",
+          body:
+            "Con il piano completo ottieni accesso a tutti i moduli — costruiti passo dopo passo l'uno sull'altro.",
+          cta: "Sblocca il piano",
         }
       : {
           title: "Dieses Modul ist gesperrt",

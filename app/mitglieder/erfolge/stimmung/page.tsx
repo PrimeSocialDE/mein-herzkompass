@@ -45,9 +45,17 @@ const MOOD_LABEL_PL: Record<Mood, string> = {
   schwierig: "trudno",
 };
 
+const MOOD_LABEL_IT: Record<Mood, string> = {
+  gut: "bene",
+  mittel: "così così",
+  schwierig: "difficile",
+};
+
 const DAY_SHORT = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 
 const DAY_SHORT_PL = ["Nd", "Pn", "Wt", "Śr", "Cz", "Pt", "So"];
+
+const DAY_SHORT_IT = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
 
 export default async function StimmungPage() {
   const user = await getCurrentMember();
@@ -94,6 +102,30 @@ export default async function StimmungPage() {
           emptyRest:
             "Wpisz powyżej swój pierwszy tygodniowy check — AI odeśle ci wtedy krótkie podsumowanie twojego tygodnia.",
         }
+      : lang === "it"
+      ? {
+          back: "← Panoramica successi",
+          kicker: "Accompagnamento settimanale",
+          diaryWith: "Diario con",
+          intro:
+            "Una volta a settimana annota com'è andata. L'AI riassume la tua settimana e osserva a che punto siete nel piano.",
+          checkinBody: "Annota in breve com'è andata la vostra settimana di addestramento.",
+          planProgress: "Il tuo percorso nel piano",
+          week: "Settimana",
+          current: "Ora",
+          future:
+            "Ancora davanti a voi — annotatelo quando arriverà il momento di questa settimana.",
+          aiSummary: "Riassunto AI",
+          entryFrom: "Voce del",
+          moodLabel: "Umore:",
+          last7: "Ultimi 7 giorni",
+          fromModules: "dai moduli",
+          dailyHint:
+            "Questi punti giornalieri nascono automaticamente quando, dopo un esercizio nei moduli, fai una breve annotazione.",
+          emptyStrong: "Ancora nessuna voce.",
+          emptyRest:
+            "Inserisci sopra il tuo primo check settimanale — l'AI ti restituirà poi un breve riassunto della tua settimana.",
+        }
       : {
           back: "← Erfolge-Übersicht",
           kicker: "Wochen-Begleitung",
@@ -119,7 +151,8 @@ export default async function StimmungPage() {
         };
 
   const dog =
-    member.dog_name?.trim() || (lang === "pl" ? "Twojego psa" : "deinem Hund");
+    member.dog_name?.trim() ||
+    (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinem Hund");
   const problemKey =
     member.quiz_result?.dog_problem || member.quiz_result?.problem || null;
   const planIntro = getPlanIntro(problemKey, dog);
@@ -275,9 +308,11 @@ export default async function StimmungPage() {
                                 { day: "2-digit", month: "2-digit" }
                               )}{" "}
                               · {t.moodLabel}{" "}
-                              {(lang === "pl" ? MOOD_LABEL_PL : MOOD_LABEL)[
-                                entry.mood
-                              ]}
+                              {(lang === "pl"
+                                ? MOOD_LABEL_PL
+                                : lang === "it"
+                                  ? MOOD_LABEL_IT
+                                  : MOOD_LABEL)[entry.mood]}
                             </p>
                           )}
                         </div>
@@ -306,9 +341,11 @@ export default async function StimmungPage() {
             <div className="grid grid-cols-7 gap-2">
               {[...days7].reverse().map((d) => {
                 const dt = new Date(d.date);
-                const dayName = (lang === "pl" ? DAY_SHORT_PL : DAY_SHORT)[
-                  dt.getDay()
-                ];
+                const dayName = (lang === "pl"
+                  ? DAY_SHORT_PL
+                  : lang === "it"
+                    ? DAY_SHORT_IT
+                    : DAY_SHORT)[dt.getDay()];
                 const dayNum = dt.getDate();
                 const color = d.predominant
                   ? MOOD_COLOR[d.predominant]

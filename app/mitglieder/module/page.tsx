@@ -128,6 +128,27 @@ export default async function ModulShopPage() {
           moreSub: "Poradniki specjalne jako PDF",
           trust: "🔒 Bezpieczna płatność przez Mollie · Od razu PDF w skrzynce",
         }
+      : lang === "it"
+      ? {
+          eyebrow: "Panoramica moduli",
+          heading: "Tutti i moduli per",
+          subtitle: "Il tuo piano di addestramento più temi speciali aggiuntivi.",
+          clubAllFree: "Tutti i moduli sono sbloccati 🎉",
+          themenTitle: "Moduli tematici",
+          themenAvail: "disponibili · Tocca una scheda per i dettagli",
+          howTitle: "Come funzionano i moduli tematici?",
+          howText:
+            "Addestramenti speciali su singoli temi. Acquisti una volta, disponibili per sempre — come PDF nella tua casella e qui nell'area membri.",
+          stepChoose: "Scegli e acquista il modulo",
+          stepPdf: "PDF subito nella casella",
+          stepForever: "Disponibile a vita",
+          unlocked: "✅ Sbloccato",
+          lockedSoon: "🔒 Presto disponibile",
+          forYou: "Per te",
+          moreTitle: "Altri moduli",
+          moreSub: "Guide speciali in PDF",
+          trust: "🔒 Pagamento sicuro tramite Mollie · Subito come PDF nella casella",
+        }
       : {
           eyebrow: "Modul-Übersicht",
           heading: "Alle Module für",
@@ -151,7 +172,7 @@ export default async function ModulShopPage() {
 
   const upsells = await listActiveUpsells();
   const dog =
-    member.dog_name?.trim() || (lang === "pl" ? "Twojego psa" : "deinen Hund");
+    member.dog_name?.trim() || (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinen Hund");
 
   // Themen-Module sortiert nach User-Relevanz (eigenes Quiz-Problem zuerst)
   const userProblemKey =
@@ -210,12 +231,16 @@ export default async function ModulShopPage() {
             <p className="text-[13px] font-extrabold text-[#1a1a1a] leading-tight">
               {lang === "pl"
                 ? `Twój Klub jest aktywny — ${clubUnlocked.size} z ${themenModules.length} modułów odblokowanych`
+                : lang === "it"
+                ? `Il tuo Club è attivo — ${clubUnlocked.size} di ${themenModules.length} moduli sbloccati`
                 : `Dein Club ist aktiv — ${clubUnlocked.size} von ${themenModules.length} Modulen frei`}
             </p>
             <p className="text-[12px] text-[#8B7355] mt-0.5">
               {clubNextUnlockAt
                 ? lang === "pl"
                   ? `Następny moduł odblokuje się ${new Date(clubNextUnlockAt).toLocaleDateString("de-DE")}.`
+                  : lang === "it"
+                  ? `Il prossimo modulo si sblocca il ${new Date(clubNextUnlockAt).toLocaleDateString("de-DE")}.`
                   : `Nächstes Modul schaltet sich am ${new Date(clubNextUnlockAt).toLocaleDateString("de-DE")} frei.`
                 : tr.clubAllFree}
             </p>
@@ -277,11 +302,11 @@ export default async function ModulShopPage() {
                   }`}
                 >
                   <div className="relative">
-                    {t.image_url ? (
+                    {(lang === "it" ? t.image_url_it ?? t.image_url : t.image_url) ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={t.image_url}
-                        alt={t.title}
+                        src={lang === "it" ? t.image_url_it ?? t.image_url! : t.image_url!}
+                        alt={lang === "it" ? t.title_it ?? t.title : t.title}
                         className="w-full aspect-square object-cover"
                       />
                     ) : (
@@ -297,7 +322,7 @@ export default async function ModulShopPage() {
                   </div>
                   <div className="p-2.5">
                     <p className="text-[12px] font-bold text-[#1a1a1a] leading-tight">
-                      {t.title}
+                      {lang === "it" ? t.title_it ?? t.title : t.title}
                     </p>
                     <p
                       className={`text-[11px] mt-1 font-semibold ${
@@ -319,18 +344,22 @@ export default async function ModulShopPage() {
                 upsell={{
                   id: t.slug,
                   slug: t.slug,
-                  title: t.title,
-                  description: t.short,
+                  title: lang === "it" ? t.title_it ?? t.title : t.title,
+                  description: lang === "it" ? t.short_it ?? t.short : t.short,
                   badge_text:
                     t.problem_match === userProblemKey
                       ? tr.forYou
+                      : lang === "it"
+                      ? t.badge_text_it ?? t.badge_text
                       : t.badge_text,
                   price_cents: t.price_cents,
-                  image_url: t.image_url || null,
+                  image_url:
+                    (lang === "it" ? t.image_url_it ?? t.image_url : t.image_url) ||
+                    null,
                 }}
-                features={t.features}
+                features={lang === "it" ? t.features_it ?? t.features : t.features}
                 emoji={t.emoji}
-                goal={t.goal}
+                goal={lang === "it" ? t.goal_it ?? t.goal : t.goal}
                 email={member.email}
                 leadId={member.source_lead_id}
                 dogName={member.dog_name}

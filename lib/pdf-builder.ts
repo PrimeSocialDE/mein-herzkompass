@@ -20,7 +20,7 @@ interface PlanPdfFromContentParams {
   mainProblem: string;
   planLengthMonths: 1 | 3 | 6;
   verbose?: boolean;
-  lang?: "de" | "pl";
+  lang?: "de" | "pl" | "it";
 }
 
 // ECHTE PERSONALISIERUNG: rendert den AI-erzeugten Plan-JSON.
@@ -41,7 +41,12 @@ export async function buildPlanPdfFromContent(
 }
 
 // Filename-Helper fuer den Mail-Anhang.
-export function planPdfFilename(dogName: string, months: 1 | 3 | 6): string {
+export function planPdfFilename(
+  dogName: string,
+  months: 1 | 3 | 6,
+  lang: "de" | "pl" | "it" = "de"
+): string {
   const safeName = (dogName || "Hund").replace(/[^a-zA-Z0-9äöüÄÖÜß-]/g, "");
-  return `Pfoten-Plan-${safeName}-${months}M.pdf`;
+  const brand = lang === "pl" ? "LapaPlan" : lang === "it" ? "ZampaPlan" : "Pfoten-Plan";
+  return `${brand}-${safeName}-${months}M.pdf`;
 }

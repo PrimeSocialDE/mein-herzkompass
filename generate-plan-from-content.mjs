@@ -111,7 +111,7 @@ function drawHeaderBanner(page, fontBold, logoImage, lang = "de") {
   const H = BANNER_H;
   page.drawRectangle({ x: 0, y: A4_H - H, width: A4_W, height: H, color: BANNER_TAN });
   // mittig: Logo + Marke (PL: ŁapaPlan)
-  const label = lang === "pl" ? "ŁapaPlan" : "PfotenPlan";
+  const label = lang === "pl" ? "ŁapaPlan" : lang === "it" ? "ZampaPlan" : "PfotenPlan";
   const labelSize = 15;
   const labelW = fontBold.widthOfTextAtSize(label, labelSize);
   const logoSize = 24;
@@ -201,7 +201,7 @@ function drawSectionTitle(page, title, x, y, fontBold, size = 30, maxWidth = 700
 
 // Wochen-Label-Box (oben links auf Wochen-Seiten, mit weichem Tan-Hintergrund).
 function drawWeekLabel(page, weekNr, x, y, fontBold, _fontReg, lang = "de") {
-  const label = lang === "pl" ? `Tydzień ${weekNr}` : `Woche ${weekNr}`;
+  const label = lang === "pl" ? `Tydzień ${weekNr}` : lang === "it" ? `Settimana ${weekNr}` : `Woche ${weekNr}`;
   const size = 22;
   const txtW = fontBold.widthOfTextAtSize(label, size);
   const padX = 14;
@@ -224,7 +224,7 @@ function drawWeekLabel(page, weekNr, x, y, fontBold, _fontReg, lang = "de") {
 // Gibt {boxW, subY} zurueck — subY ist die empfohlene Baseline-Y fuer ein
 // Sub-Label (Größe ~13), das vertikal mittig zur Box steht.
 function drawPhaseLabel(page, phaseNr, x, y, fontBold, lang = "de") {
-  const label = lang === "pl" ? `Faza ${phaseNr}` : `Phase ${phaseNr}`;
+  const label = lang === "pl" ? `Faza ${phaseNr}` : lang === "it" ? `Fase ${phaseNr}` : `Phase ${phaseNr}`;
   const size = 22;
   const txtW = fontBold.widthOfTextAtSize(label, size);
   const padX = 14;
@@ -621,12 +621,17 @@ export async function buildPdfFromContent(params = {}) {
   // Font-Weiche: PL braucht einen Unicode-Font (Arimo) fuer ł/ą/ę/ś/ż/ć/ń/ź —
   // sonst crasht pdf-lib (Helvetica = WinAnsi, "cannot encode"). DE bleibt
   // EXAKT bei Helvetica (kein fontkit, keine Aenderung am deutschen Output).
-  const lang = params.lang === "pl" ? "pl" : "de";
-  // i18n-Helfer: t(de, pl) — DE bleibt exakt der bisherige String.
+  const lang = params.lang === "pl" ? "pl" : params.lang === "it" ? "it" : "de";
+  // i18n-Helfer: t(de, pl, it) — DE bleibt exakt der bisherige String; fehlt
+  // ein it-Argument, faellt IT sauber auf DE zurueck (kein Crash).
   const isPl = lang === "pl";
-  const t = (de, pl) => (isPl ? pl : de);
+  const isIt = lang === "it";
+  const t = (de, pl, it) => (isPl ? pl : isIt ? (it ?? de) : de);
+  // PL UND IT brauchen den Arimo-Unicode-Font: PL fuer ł/ą/ę…, IT fuer
+  // typografische Zeichen (Apostroph ’, Anfuehrungszeichen „ “) im Content —
+  // Helvetica (WinAnsi) wuerde daran crashen. DE bleibt exakt bei Helvetica.
   let fontReg, fontBold, fontItalic;
-  if (lang === "pl") {
+  if (isPl || isIt) {
     const fontkit = (await import("@pdf-lib/fontkit")).default;
     doc.registerFontkit(fontkit);
     fontReg = await doc.embedFont(readFileSync(PUBLIC("fonts/Arimo-Regular.ttf")), { subset: true });
@@ -655,7 +660,7 @@ export async function buildPdfFromContent(params = {}) {
   const dogErsteHilfeImg = await doc.embedPng(
     readFileSync(pathJoin(__dirname, AD_PAGES.erstehilfe.imagePath))
   );
-  const dogCoverImg = await doc.embedPng(readFileSync(PDF_ASSETS(lang === "pl" ? "TrainerPfoten-thumb.pl.png" : "TrainerPfoten-thumb.png")));
+  const dogCoverImg = await doc.embedPng(readFileSync(PDF_ASSETS(lang === "pl" ? "TrainerPfoten-thumb.pl.png" : lang === "it" ? "TrainerPfoten-thumb.it.png" : "TrainerPfoten-thumb.png")));
   const dogAccentImg = await doc.embedPng(readFileSync(PDF_ASSETS("Hund4.png")));
 
   const MARGIN = 70;
@@ -686,11 +691,11 @@ export async function buildPdfFromContent(params = {}) {
     // PL-Titel ist länger ("Plan 3-miesięczny") + eigene Namenszeile "dla X";
     // damit er nicht hinter das rechte Foto läuft, wird er bei PL auf die
     // linke Spalte begrenzt (auto-shrink). DE bleibt exakt bei Größe 46.
-    const titleStr = t(`${planLengthMonths}-Monatsplan für`, `Plan ${planLengthMonths}-miesięczny`);
+    const titleStr = t(`${planLengthMonths}-Monatsplan für`, `Plan ${planLengthMonths}-miesięczny`, `Piano di ${planLengthMonths} ${planLengthMonths === 1 ? "mese" : "mesi"}`);
     const maxTitleW = leftW - MARGIN - 24;
     let y = A4_H - BANNER_H - 90;
     let titleSize = 46;
-    if (isPl) {
+    if (isPl || isIt) {
       while (titleSize > 28 && fontBold.widthOfTextAtSize(titleStr, titleSize) > maxTitleW) titleSize -= 1;
     }
     p.drawText(titleStr, {
@@ -710,9 +715,9 @@ export async function buildPdfFromContent(params = {}) {
     });
     // Hundenamen (PL: "dla X")
     y -= 70;
-    const nameStr = t(DOG_NAME, `dla ${DOG_NAME}`);
+    const nameStr = t(DOG_NAME, `dla ${DOG_NAME}`, `per ${DOG_NAME}`);
     let nameSize = 36;
-    if (isPl) {
+    if (isPl || isIt) {
       while (nameSize > 24 && fontReg.widthOfTextAtSize(nameStr, nameSize) > maxTitleW) nameSize -= 1;
     }
     p.drawText(nameStr, {
@@ -724,7 +729,7 @@ export async function buildPdfFromContent(params = {}) {
     });
     // Unter Hundename: kurzer Subtitle dynamisch
     y -= 36;
-    p.drawText(t(`${plan.weeks.length} Wochen · ${planLengthMonths} ${planLengthMonths === 1 ? "Monat" : "Monate"}`, `${plan.weeks.length} tygodni · ${planLengthMonths} ${planLengthMonths === 1 ? "miesiąc" : planLengthMonths === 6 ? "miesięcy" : "miesiące"}`), {
+    p.drawText(t(`${plan.weeks.length} Wochen · ${planLengthMonths} ${planLengthMonths === 1 ? "Monat" : "Monate"}`, `${plan.weeks.length} tygodni · ${planLengthMonths} ${planLengthMonths === 1 ? "miesiąc" : planLengthMonths === 6 ? "miesięcy" : "miesiące"}`, `${plan.weeks.length} settimane · ${planLengthMonths} ${planLengthMonths === 1 ? "mese" : "mesi"}`), {
       x: MARGIN,
       y,
       size: 15,
@@ -775,7 +780,7 @@ export async function buildPdfFromContent(params = {}) {
     });
     // Caption-Streifen unter Bild
     const captionY = boxY - 32;
-    const captionLine = t(`Dein PfotenPlan-Trainerteam`, `Twój zespół trenerów ŁapaPlan`);
+    const captionLine = t(`Dein PfotenPlan-Trainerteam`, `Twój zespół trenerów ŁapaPlan`, `Il tuo team di addestratori ZampaPlan`);
     const captionSize = 13;
     const capW = fontReg.widthOfTextAtSize(captionLine, captionSize);
     p.drawText(captionLine, {
@@ -795,22 +800,25 @@ export async function buildPdfFromContent(params = {}) {
   const introEinleitungText =
     introData.einleitung ||
     t(`Dieser Trainingsplan wurde speziell für ${DOG_NAME} und ihre Bedürfnisse entwickelt. Er begleitet dich Schritt für Schritt durch ${plan.weeks.length} Wochen, mit klarem Fokus auf ${MAIN_PROBLEM}. Jede Übung ist so gestaltet, dass du sie ohne Vorkenntnisse umsetzen kannst.`,
-      `Ten plan treningowy został stworzony specjalnie dla ${DOG_NAME} i jego potrzeb. Prowadzi Cię krok po kroku przez ${plan.weeks.length} tygodni, z wyraźnym naciskiem na ${MAIN_PROBLEM}. Każde ćwiczenie jest tak zaprojektowane, że wykonasz je bez wcześniejszego doświadczenia.`);
+      `Ten plan treningowy został stworzony specjalnie dla ${DOG_NAME} i jego potrzeb. Prowadzi Cię krok po kroku przez ${plan.weeks.length} tygodni, z wyraźnym naciskiem na ${MAIN_PROBLEM}. Każde ćwiczenie jest tak zaprojektowane, że wykonasz je bez wcześniejszego doświadczenia.`,
+      `Questo piano di addestramento è stato creato appositamente per ${DOG_NAME} e le sue esigenze. Ti accompagna passo dopo passo attraverso ${plan.weeks.length} settimane, con un chiaro focus su ${MAIN_PROBLEM}. Ogni esercizio è pensato in modo che tu possa svolgerlo senza alcuna esperienza pregressa.`);
 
   const introAufbauText =
     introData.aufbau ||
     t(`Der Plan ist in ${plan.weeks.length} Wochen gegliedert, die aufeinander aufbauen. Jede Woche hat klare Ziele, einen detaillierten Tagesplan und 2 Kernübungen, die du täglich übst. Plus: einen Wochen-Check, der dir zeigt, ob ihr bereit für die nächste Stufe seid. Gehe erst weiter, wenn die Mehrheit der Check-Punkte sitzt — Stabilität schlägt Tempo.`,
-      `Plan jest podzielony na ${plan.weeks.length} tygodni, które budują się nawzajem. Każdy tydzień ma jasne cele, szczegółowy plan dnia i 2 ćwiczenia główne, które wykonujesz codziennie. Plus: cotygodniowy sprawdzian, który pokazuje, czy jesteście gotowi na kolejny etap. Przejdź dalej dopiero, gdy większość punktów jest opanowana — stabilność jest ważniejsza niż tempo.`);
+      `Plan jest podzielony na ${plan.weeks.length} tygodni, które budują się nawzajem. Każdy tydzień ma jasne cele, szczegółowy plan dnia i 2 ćwiczenia główne, które wykonujesz codziennie. Plus: cotygodniowy sprawdzian, który pokazuje, czy jesteście gotowi na kolejny etap. Przejdź dalej dopiero, gdy większość punktów jest opanowana — stabilność jest ważniejsza niż tempo.`,
+      `Il piano è suddiviso in ${plan.weeks.length} settimane che si costruiscono l'una sull'altra. Ogni settimana ha obiettivi chiari, un piano giornaliero dettagliato e 2 esercizi principali che pratichi ogni giorno. In più: un controllo settimanale che ti mostra se siete pronti per il livello successivo. Prosegui solo quando la maggior parte dei punti del controllo è consolidata — la stabilità conta più della velocità.`);
 
   const introZieleText =
     introData.ziele ||
     t(`Das übergeordnete Ziel dieses Plans ist, dass ${DOG_NAME} ein deutlich entspannteres Verhältnis zu der Situation entwickelt, die heute ${MAIN_PROBLEM} auslöst. Über die ${plan.weeks.length} Wochen lernt ${DOG_NAME} alternative Reaktionsmuster, die ihren Stress senken und dir mehr Sicherheit im Alltag geben.`,
-      `Nadrzędnym celem tego planu jest, aby ${DOG_NAME} rozwinął znacznie spokojniejszy stosunek do sytuacji, która dziś wywołuje ${MAIN_PROBLEM}. Przez ${plan.weeks.length} tygodni ${DOG_NAME} uczy się alternatywnych wzorców reakcji, które obniżają jego stres i dają Ci więcej pewności w codzienności.`);
+      `Nadrzędnym celem tego planu jest, aby ${DOG_NAME} rozwinął znacznie spokojniejszy stosunek do sytuacji, która dziś wywołuje ${MAIN_PROBLEM}. Przez ${plan.weeks.length} tygodni ${DOG_NAME} uczy się alternatywnych wzorców reakcji, które obniżają jego stres i dają Ci więcej pewności w codzienności.`,
+      `L'obiettivo principale di questo piano è che ${DOG_NAME} sviluppi un rapporto decisamente più sereno con la situazione che oggi scatena ${MAIN_PROBLEM}. Nel corso delle ${plan.weeks.length} settimane, ${DOG_NAME} impara schemi di reazione alternativi che riducono il suo stress e ti danno più sicurezza nella vita di tutti i giorni.`);
 
   // Seite 2 — Willkommen
   {
     const p = newPage();
-    let y = drawSectionTitle(p, t(`Willkommen — Dein Plan für ${DOG_NAME}`, `Witaj — Twój plan dla ${DOG_NAME}`), MARGIN, A4_H - BANNER_H - 50, fontBold, 28);
+    let y = drawSectionTitle(p, t(`Willkommen — Dein Plan für ${DOG_NAME}`, `Witaj — Twój plan dla ${DOG_NAME}`, `Benvenuto — il tuo piano per ${DOG_NAME}`), MARGIN, A4_H - BANNER_H - 50, fontBold, 28);
     y -= 6;
     for (const para of String(introEinleitungText).split(/\n\n+/)) {
       y = drawParagraph(p, para.trim(), MARGIN, y, CONTENT_W, fontReg, 12, TEXT_DARK, 17);
@@ -821,7 +829,7 @@ export async function buildPdfFromContent(params = {}) {
   // Seite 3 — Arbeitsweise / Aufbau (inkl. Markerwort-Tipp-Box)
   {
     const p = newPage();
-    let y = drawSectionTitle(p, t("So arbeitest du mit diesem Plan", "Jak pracujesz z tym planem"), MARGIN, A4_H - BANNER_H - 50, fontBold, 28);
+    let y = drawSectionTitle(p, t("So arbeitest du mit diesem Plan", "Jak pracujesz z tym planem", "Come lavorare con questo piano"), MARGIN, A4_H - BANNER_H - 50, fontBold, 28);
     y -= 6;
     for (const para of String(introAufbauText).split(/\n\n+/)) {
       y = drawParagraph(p, para.trim(), MARGIN, y, CONTENT_W, fontReg, 12, TEXT_DARK, 17);
@@ -838,14 +846,16 @@ export async function buildPdfFromContent(params = {}) {
     // Höhe abschätzen — Title + 4 Zeilen Text + Beispiele
     const boxTextLines = wrapText(
       t(`Sage ein klar definiertes Wort wie "Fein", "Supi" oder "Yes" in fröhlichem Ton, SOFORT wenn ${DOG_NAME} das gewünschte Verhalten zeigt. Direkt danach Leckerli geben.`,
-        `Powiedz jasno ustalone słowo jak "Świetnie", "Super" lub "Tak" wesołym tonem, NATYCHMIAST gdy ${DOG_NAME} pokazuje pożądane zachowanie. Zaraz potem daj smakołyk.`),
+        `Powiedz jasno ustalone słowo jak "Świetnie", "Super" lub "Tak" wesołym tonem, NATYCHMIAST gdy ${DOG_NAME} pokazuje pożądane zachowanie. Zaraz potem daj smakołyk.`,
+        `Pronuncia una parola ben definita come "Bravo", "Sì" o "Yes" con tono allegro, SUBITO quando ${DOG_NAME} mostra il comportamento desiderato. Subito dopo dai un premietto.`),
       fontReg,
       11,
       boxW - 2 * boxPadding
     );
     const boxExampleLines = wrapText(
       t(`Beispiel: ${DOG_NAME} schaut dich auf das Signal SCHAU an, du sagst sofort "Fein!" und gibst ihm direkt ein Leckerli. Das Markerwort ist die Brücke zwischen "richtig gemacht" und der Belohnung — die wichtigste Abkürzung im Hundetraining.`,
-        `Przykład: ${DOG_NAME} patrzy na Ciebie na sygnał PATRZ, mówisz od razu "Świetnie!" i dajesz mu smakołyk. Słowo-marker to most między "dobrze zrobione" a nagrodą — najważniejszy skrót w treningu psa.`),
+        `Przykład: ${DOG_NAME} patrzy na Ciebie na sygnał PATRZ, mówisz od razu "Świetnie!" i dajesz mu smakołyk. Słowo-marker to most między "dobrze zrobione" a nagrodą — najważniejszy skrót w treningu psa.`,
+        `Esempio: ${DOG_NAME} ti guarda al segnale GUARDA, tu dici subito "Bravo!" e gli dai immediatamente un premietto. La parola-segnale è il ponte tra "fatto bene" e la ricompensa — la scorciatoia più importante nell'addestramento del cane.`),
       fontReg,
       10.5,
       boxW - 2 * boxPadding
@@ -864,7 +874,7 @@ export async function buildPdfFromContent(params = {}) {
 
     let by = boxY + boxH - boxPadding - 2;
     // Titel
-    p.drawText(t("Dein Markerwort beim Üben", "Twoje słowo-marker podczas ćwiczeń"), {
+    p.drawText(t("Dein Markerwort beim Üben", "Twoje słowo-marker podczas ćwiczeń", "La tua parola-segnale durante gli esercizi"), {
       x: boxX + boxPadding + 8, y: by,
       size: 13, font: fontBold, color: DARK_BROWN,
     });
@@ -891,7 +901,7 @@ export async function buildPdfFromContent(params = {}) {
   // Seite 4 — Trainingsziel
   {
     const p = newPage();
-    let y = drawSectionTitle(p, t(`Euer Trainingsziel`, `Wasz cel treningowy`), MARGIN, A4_H - BANNER_H - 50, fontBold, 28);
+    let y = drawSectionTitle(p, t(`Euer Trainingsziel`, `Wasz cel treningowy`, `Il vostro obiettivo di addestramento`), MARGIN, A4_H - BANNER_H - 50, fontBold, 28);
     y -= 6;
     for (const para of String(introZieleText).split(/\n\n+/)) {
       y = drawParagraph(p, para.trim(), MARGIN, y, CONTENT_W, fontReg, 12, TEXT_DARK, 17);
@@ -935,14 +945,14 @@ export async function buildPdfFromContent(params = {}) {
         y -= 28;
       }
 
-      p.drawText(t("Wochenziele", "Cele tygodnia"), { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
+      p.drawText(t("Wochenziele", "Cele tygodnia", "Obiettivi della settimana"), { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
       y -= 22;
       for (const g of wochenziele) {
         y = drawArrowBullet(p, g, MARGIN, y, CONTENT_W, fontReg, fontBold, 10.5, TEXT_DARK, 14);
       }
 
       y -= 10;
-      p.drawText(t("Tagesplan", "Plan dnia"), { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
+      p.drawText(t("Tagesplan", "Plan dnia", "Piano giornaliero"), { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
       y -= 22;
       for (const para of tagesplanParas) {
         y = drawParagraph(p, para, MARGIN, y, CONTENT_W, fontReg, 10.5, TEXT_DARK, 14);
@@ -954,9 +964,9 @@ export async function buildPdfFromContent(params = {}) {
       const p = newPage();
       drawWeekLabel(p, weekNum, MARGIN, A4_H - BANNER_H - 55, fontBold, fontReg, lang);
       let y = A4_H - BANNER_H - 95;
-      y = drawSectionPill(p, t("ÜBUNG 1", "ĆWICZENIE 1"), MARGIN, y, fontBold, PILL_AC_GREEN, PILL_BG_GREEN, 8);
+      y = drawSectionPill(p, t("ÜBUNG 1", "ĆWICZENIE 1", "ESERCIZIO 1"), MARGIN, y, fontBold, PILL_AC_GREEN, PILL_BG_GREEN, 8);
       y -= 18;
-      p.drawText(String(ue1.name || t("Kernübung", "Ćwiczenie główne")), { x: MARGIN, y, size: 18, font: fontBold, color: DARK_BROWN });
+      p.drawText(String(ue1.name || t("Kernübung", "Ćwiczenie główne", "Esercizio principale")), { x: MARGIN, y, size: 18, font: fontBold, color: DARK_BROWN });
       y -= 28;
       const steps = Array.isArray(ue1.schritte) ? ue1.schritte : [];
       for (let i = 0; i < steps.length; i++) {
@@ -969,9 +979,9 @@ export async function buildPdfFromContent(params = {}) {
       const p = newPage();
       drawWeekLabel(p, weekNum, MARGIN, A4_H - BANNER_H - 55, fontBold, fontReg, lang);
       let y = A4_H - BANNER_H - 95;
-      y = drawSectionPill(p, t("ÜBUNG 2", "ĆWICZENIE 2"), MARGIN, y, fontBold, PILL_AC_GREEN, PILL_BG_GREEN, 8);
+      y = drawSectionPill(p, t("ÜBUNG 2", "ĆWICZENIE 2", "ESERCIZIO 2"), MARGIN, y, fontBold, PILL_AC_GREEN, PILL_BG_GREEN, 8);
       y -= 16;
-      p.drawText(String(ue2.name || t("Kernübung 2", "Ćwiczenie główne 2")), { x: MARGIN, y, size: 17, font: fontBold, color: DARK_BROWN });
+      p.drawText(String(ue2.name || t("Kernübung 2", "Ćwiczenie główne 2", "Esercizio principale 2")), { x: MARGIN, y, size: 17, font: fontBold, color: DARK_BROWN });
       y -= 24;
       const steps2 = Array.isArray(ue2.schritte) ? ue2.schritte : [];
       for (let i = 0; i < steps2.length; i++) {
@@ -981,7 +991,7 @@ export async function buildPdfFromContent(params = {}) {
 
       if (no_gos.length && y > 220) {
         y -= 14;
-        p.drawText(t("Vermeide diese Woche", "Unikaj w tym tygodniu"), { x: MARGIN, y, size: 12, font: fontBold, color: WARN_RED });
+        p.drawText(t("Vermeide diese Woche", "Unikaj w tym tygodniu", "Da evitare questa settimana"), { x: MARGIN, y, size: 12, font: fontBold, color: WARN_RED });
         y -= 16;
         for (const ng of no_gos.slice(0, 4)) {
           y = drawWarnBullet(p, ng, MARGIN, y, CONTENT_W, fontReg, 10, TEXT_DARK, 13);
@@ -990,7 +1000,7 @@ export async function buildPdfFromContent(params = {}) {
       }
       if (fortschritt.length && y > 130) {
         y -= 10;
-        p.drawText(t("Fortschritt erkennst du daran", "Po czym poznasz postęp"), { x: MARGIN, y, size: 12, font: fontBold, color: GOLD_DARK });
+        p.drawText(t("Fortschritt erkennst du daran", "Po czym poznasz postęp", "Riconosci i progressi da questo"), { x: MARGIN, y, size: 12, font: fontBold, color: GOLD_DARK });
         y -= 16;
         for (const f of fortschritt.slice(0, 3)) {
           y = drawCheckBullet(p, f, MARGIN, y, CONTENT_W, fontReg, 10, TEXT_DARK, 13);
@@ -1015,7 +1025,7 @@ export async function buildPdfFromContent(params = {}) {
       const p = newPage();
       const labelY = A4_H - BANNER_H - 50;
       const { boxW, subY } = drawPhaseLabel(p, phaseNum, MARGIN, labelY - 8, fontBold, lang);
-      p.drawText(t(`Woche ${wAnum}–${wBnum}`, `Tydzień ${wAnum}–${wBnum}`), {
+      p.drawText(t(`Woche ${wAnum}–${wBnum}`, `Tydzień ${wAnum}–${wBnum}`, `Settimana ${wAnum}–${wBnum}`), {
         x: MARGIN + boxW + 14, y: subY, size: 13, font: fontReg, color: GOLD_DARK,
       });
       let y = labelY - 60;
@@ -1031,7 +1041,7 @@ export async function buildPdfFromContent(params = {}) {
       const yStart = y;
       // Spalte links: Woche A Ziele
       let yL = yStart;
-      p.drawText(t(`Ziele · Woche ${wAnum}`, `Cele · Tydzień ${wAnum}`), { x: MARGIN, y: yL, size: 11.5, font: fontBold, color: GOLD_DARK });
+      p.drawText(t(`Ziele · Woche ${wAnum}`, `Cele · Tydzień ${wAnum}`, `Obiettivi · Settimana ${wAnum}`), { x: MARGIN, y: yL, size: 11.5, font: fontBold, color: GOLD_DARK });
       yL -= 20;
       for (const g of (wA.wochenziele || []).slice(0, 5)) {
         yL = drawArrowBullet(p, g, MARGIN, yL, colW, fontReg, fontBold, 10, TEXT_DARK, 14);
@@ -1039,7 +1049,7 @@ export async function buildPdfFromContent(params = {}) {
       // Spalte rechts: Woche B Ziele
       let yR = yStart;
       const xR = MARGIN + colW + 30;
-      p.drawText(t(`Ziele · Woche ${wBnum}`, `Cele · Tydzień ${wBnum}`), { x: xR, y: yR, size: 11.5, font: fontBold, color: GOLD_DARK });
+      p.drawText(t(`Ziele · Woche ${wBnum}`, `Cele · Tydzień ${wBnum}`, `Obiettivi · Settimana ${wBnum}`), { x: xR, y: yR, size: 11.5, font: fontBold, color: GOLD_DARK });
       yR -= 20;
       for (const g of (wB.wochenziele || []).slice(0, 5)) {
         yR = drawArrowBullet(p, g, xR, yR, colW, fontReg, fontBold, 10, TEXT_DARK, 14);
@@ -1048,17 +1058,17 @@ export async function buildPdfFromContent(params = {}) {
       y = Math.min(yL, yR) - 18;
 
       // Tagesplan-Übersicht für beide Wochen — verkürzt
-      p.drawText(t("Tagesplan-Übersicht", "Przegląd planu dnia"), { x: MARGIN, y, size: 12, font: fontBold, color: DARK_BROWN });
+      p.drawText(t("Tagesplan-Übersicht", "Przegląd planu dnia", "Panoramica del piano giornaliero"), { x: MARGIN, y, size: 12, font: fontBold, color: DARK_BROWN });
       y -= 20;
       if (wA.tagesplan) {
-        p.drawText(t(`Woche ${wAnum}:`, `Tydzień ${wAnum}:`), { x: MARGIN, y, size: 10, font: fontBold, color: GOLD_DARK });
+        p.drawText(t(`Woche ${wAnum}:`, `Tydzień ${wAnum}:`, `Settimana ${wAnum}:`), { x: MARGIN, y, size: 10, font: fontBold, color: GOLD_DARK });
         y -= 14;
         const firstParaA = String(wA.tagesplan).split(/\n\n+/)[0] || "";
         y = drawParagraph(p, firstParaA, MARGIN, y, CONTENT_W, fontReg, 10, TEXT_DARK, 14);
         y -= 10;
       }
       if (wB.tagesplan) {
-        p.drawText(t(`Woche ${wBnum}:`, `Tydzień ${wBnum}:`), { x: MARGIN, y, size: 10, font: fontBold, color: GOLD_DARK });
+        p.drawText(t(`Woche ${wBnum}:`, `Tydzień ${wBnum}:`, `Settimana ${wBnum}:`), { x: MARGIN, y, size: 10, font: fontBold, color: GOLD_DARK });
         y -= 14;
         const firstParaB = String(wB.tagesplan).split(/\n\n+/)[0] || "";
         y = drawParagraph(p, firstParaB, MARGIN, y, CONTENT_W, fontReg, 10, TEXT_DARK, 14);
@@ -1075,13 +1085,13 @@ export async function buildPdfFromContent(params = {}) {
     {
       const p = newPage();
       const { boxW, subY } = drawPhaseLabel(p, phaseNum, MARGIN, A4_H - BANNER_H - 55, fontBold, lang);
-      p.drawText(t(`Woche ${wAnum}–${wBnum}`, `Tydzień ${wAnum}–${wBnum}`), {
+      p.drawText(t(`Woche ${wAnum}–${wBnum}`, `Tydzień ${wAnum}–${wBnum}`, `Settimana ${wAnum}–${wBnum}`), {
         x: MARGIN + boxW + 14, y: subY, size: 13, font: fontReg, color: GOLD_DARK,
       });
       let y = A4_H - BANNER_H - 100;
-      y = drawSectionPill(p, t("PHASEN-CHECK", "SPRAWDZIAN FAZY"), MARGIN, y, fontBold, PILL_AC_GOLD, PILL_BG_GOLD, 8);
+      y = drawSectionPill(p, t("PHASEN-CHECK", "SPRAWDZIAN FAZY", "CONTROLLO DI FASE"), MARGIN, y, fontBold, PILL_AC_GOLD, PILL_BG_GOLD, 8);
       y -= 18;
-      p.drawText(t("Was diese Phase festigen sollte", "Co ta faza ma utrwalić"), { x: MARGIN, y, size: 16, font: fontBold, color: DARK_BROWN });
+      p.drawText(t("Was diese Phase festigen sollte", "Co ta faza ma utrwalić", "Cosa dovrebbe consolidare questa fase"), { x: MARGIN, y, size: 16, font: fontBold, color: DARK_BROWN });
       y -= 26;
 
       // No-Gos beider Wochen
@@ -1090,7 +1100,7 @@ export async function buildPdfFromContent(params = {}) {
         ...(Array.isArray(wB.no_gos) ? wB.no_gos : []),
       ].slice(0, 6);
       if (allNoGos.length) {
-        p.drawText(t("Vermeide in diesen 2 Wochen", "Unikaj w tych 2 tygodniach"), { x: MARGIN, y, size: 12, font: fontBold, color: WARN_RED });
+        p.drawText(t("Vermeide in diesen 2 Wochen", "Unikaj w tych 2 tygodniach", "Da evitare in queste 2 settimane"), { x: MARGIN, y, size: 12, font: fontBold, color: WARN_RED });
         y -= 20;
         for (const ng of allNoGos) {
           y = drawWarnBullet(p, ng, MARGIN, y, CONTENT_W, fontReg, 10.5, TEXT_DARK, 15);
@@ -1105,7 +1115,7 @@ export async function buildPdfFromContent(params = {}) {
         ...(Array.isArray(wB.fortschritt) ? wB.fortschritt : []),
       ].slice(0, 6);
       if (allFortschritt.length) {
-        p.drawText(t("Fortschritt erkennst du daran", "Po czym poznasz postęp"), { x: MARGIN, y, size: 12, font: fontBold, color: GOLD_DARK });
+        p.drawText(t("Fortschritt erkennst du daran", "Po czym poznasz postęp", "Riconosci i progressi da questo"), { x: MARGIN, y, size: 12, font: fontBold, color: GOLD_DARK });
         y -= 20;
         for (const f of allFortschritt) {
           y = drawCheckBullet(p, f, MARGIN, y, CONTENT_W, fontReg, 10.5, TEXT_DARK, 15);
@@ -1121,7 +1131,7 @@ export async function buildPdfFromContent(params = {}) {
   function renderPhaseExercisePage(week, weekNum, phaseNum) {
     const drawHeader = (page) => {
       const { boxW, subY } = drawPhaseLabel(page, phaseNum, MARGIN, A4_H - BANNER_H - 55, fontBold, lang);
-      page.drawText(t(`Woche ${weekNum}`, `Tydzień ${weekNum}`), {
+      page.drawText(t(`Woche ${weekNum}`, `Tydzień ${weekNum}`, `Settimana ${weekNum}`), {
         x: MARGIN + boxW + 14, y: subY, size: 13, font: fontReg, color: GOLD_DARK,
       });
     };
@@ -1152,7 +1162,7 @@ export async function buildPdfFromContent(params = {}) {
         drawHeader(p);
         y = A4_H - BANNER_H - 100;
       }
-      y = drawSectionPill(p, t(`ÜBUNG ${i + 1}`, `ĆWICZENIE ${i + 1}`), MARGIN, y, fontBold, PILL_AC_GREEN, PILL_BG_GREEN, 6);
+      y = drawSectionPill(p, t(`ÜBUNG ${i + 1}`, `ĆWICZENIE ${i + 1}`, `ESERCIZIO ${i + 1}`), MARGIN, y, fontBold, PILL_AC_GREEN, PILL_BG_GREEN, 6);
       y -= 14;
       p.drawText(String(u.name || ""), { x: MARGIN, y, size: 14, font: fontBold, color: DARK_BROWN });
       y -= 20;
@@ -1198,14 +1208,14 @@ export async function buildPdfFromContent(params = {}) {
       let y = drawSectionTitle(
         p,
         group.length === 1
-          ? t(`Monat ${group[0].monat} — Zwischenstand`, `Miesiąc ${group[0].monat} — stan pośredni`)
-          : t(`Zwischenstand · Monat ${monthLabel}`, `Stan pośredni · Miesiąc ${monthLabel}`),
+          ? t(`Monat ${group[0].monat} — Zwischenstand`, `Miesiąc ${group[0].monat} — stan pośredni`, `Mese ${group[0].monat} — stato intermedio`)
+          : t(`Zwischenstand · Monat ${monthLabel}`, `Stan pośredni · Miesiąc ${monthLabel}`, `Stato intermedio · Mese ${monthLabel}`),
         MARGIN, A4_H - BANNER_H - 50, fontBold, 22
       );
       y -= 6;
 
       for (const mu of group) {
-        p.drawText(t(`Monat ${mu.monat}`, `Miesiąc ${mu.monat}`), { x: MARGIN, y, size: 12, font: fontBold, color: GOLD_DARK });
+        p.drawText(t(`Monat ${mu.monat}`, `Miesiąc ${mu.monat}`, `Mese ${mu.monat}`), { x: MARGIN, y, size: 12, font: fontBold, color: GOLD_DARK });
         y -= 16;
         const firstPara = String(mu.text || "").split(/\n\n+/).filter(Boolean)[0] || "";
         y = drawParagraph(p, firstPara, MARGIN, y, CONTENT_W, fontReg, 10, TEXT_DARK, 13);
@@ -1215,7 +1225,7 @@ export async function buildPdfFromContent(params = {}) {
   } else {
     for (const mu of monatsUebersichten) {
       const p = newPage();
-      let y = drawSectionTitle(p, t(`Monat ${mu.monat} — Zwischenstand`, `Miesiąc ${mu.monat} — stan pośredni`), MARGIN, A4_H - BANNER_H - 50, fontBold, 28);
+      let y = drawSectionTitle(p, t(`Monat ${mu.monat} — Zwischenstand`, `Miesiąc ${mu.monat} — stan pośredni`, `Mese ${mu.monat} — stato intermedio`), MARGIN, A4_H - BANNER_H - 50, fontBold, 28);
       y -= 6;
       for (const para of String(mu.text || "").split(/\n\n+/).filter(Boolean)) {
         y = drawParagraph(p, para, MARGIN, y, CONTENT_W, fontReg, 12, TEXT_DARK, 17);
@@ -1227,12 +1237,13 @@ export async function buildPdfFromContent(params = {}) {
   // ===== Abschluss (aus plan.abschluss; mit Fallback) =====
   {
     const p = newPage();
-    let y = drawSectionTitle(p, t("Abschluss & wie es weitergeht", "Podsumowanie i co dalej"), MARGIN, A4_H - BANNER_H - 50, fontBold, 28);
+    let y = drawSectionTitle(p, t("Abschluss & wie es weitergeht", "Podsumowanie i co dalej", "Conclusione e come proseguire"), MARGIN, A4_H - BANNER_H - 50, fontBold, 28);
     y -= 6;
     const abschlussText =
       plan.abschluss ||
       t(`Du hast ${DOG_NAME} über ${plan.weeks.length} Wochen systematisch begleitet — das ist eine echte Leistung. Die hier aufgebauten Strategien sind jetzt Teil eures Alltags und werden mit weiterer Anwendung immer stabiler.\n\nHalte das Trainingstagebuch im Mitglieder-Bereich weiter aktiv und beobachte die kleinen Fortschritte. Wenn etwas stagniert, kannst du jederzeit über den KI-Trainer Rückfragen stellen — und für tiefere Themen empfehlen wir den Austausch mit einer Hundetrainerin vor Ort.`,
-        `Systematycznie prowadziłeś ${DOG_NAME} przez ${plan.weeks.length} tygodni — to prawdziwe osiągnięcie. Zbudowane tu strategie są teraz częścią waszej codzienności i z każdym kolejnym zastosowaniem stają się coraz stabilniejsze.\n\nProwadź dalej dziennik treningowy w strefie członkowskiej i obserwuj małe postępy. Jeśli coś się zatrzyma, w każdej chwili możesz zadać pytanie trenerowi AI — a przy głębszych tematach polecamy kontakt z trenerem psów na miejscu.`);
+        `Systematycznie prowadziłeś ${DOG_NAME} przez ${plan.weeks.length} tygodni — to prawdziwe osiągnięcie. Zbudowane tu strategie są teraz częścią waszej codzienności i z każdym kolejnym zastosowaniem stają się coraz stabilniejsze.\n\nProwadź dalej dziennik treningowy w strefie członkowskiej i obserwuj małe postępy. Jeśli coś się zatrzyma, w każdej chwili możesz zadać pytanie trenerowi AI — a przy głębszych tematach polecamy kontakt z trenerem psów na miejscu.`,
+        `Hai accompagnato ${DOG_NAME} in modo sistematico per ${plan.weeks.length} settimane — è un risultato davvero notevole. Le strategie costruite qui fanno ora parte della vostra quotidianità e diventano sempre più solide con l'uso continuo.\n\nContinua a tenere attivo il diario di addestramento nell'area membri e osserva i piccoli progressi. Se qualcosa si blocca, puoi in ogni momento porre domande all'addestratore IA — e per temi più approfonditi ti consigliamo il confronto con un'addestratrice cinofila in loco.`);
     for (const para of String(abschlussText).split(/\n\n+/).filter(Boolean)) {
       y = drawParagraph(p, para, MARGIN, y, CONTENT_W, fontReg, 12, TEXT_DARK, 17);
       y -= 10;
@@ -1240,6 +1251,8 @@ export async function buildPdfFromContent(params = {}) {
     // Footer
     const footerLines = isPl
       ? ["W razie pytań napisz w każdej chwili do zespołu ŁapaPlan.", "Powodzenia i dużo radości!"]
+      : isIt
+      ? ["Per qualsiasi domanda scrivi in ogni momento al team ZampaPlan.", "Buon divertimento e buoni risultati!"]
       : ["Bei Fragen kannst du dich jederzeit per Mail beim Pfoten-Plan-Team melden.", "Viel Spaß und Erfolg!"];
     let fy = 60;
     for (let i = footerLines.length - 1; i >= 0; i--) {
@@ -1254,8 +1267,8 @@ export async function buildPdfFromContent(params = {}) {
   const zusatzSpiele = Array.isArray(plan.zusatz_spiele) ? plan.zusatz_spiele : [];
   if (zusatzSpiele.length > 0) {
     const p = newPage();
-    p.drawText(t("Zusatz!", "Bonus!"), { x: MARGIN, y: A4_H - BANNER_H - 50, size: 26, font: fontBold, color: DARK_BROWN });
-    p.drawText(t("Bonus-Spiele fürs Training zwischendurch", "Gry bonusowe do treningu na co dzień"), { x: MARGIN, y: A4_H - 60 - 80, size: 12, font: fontReg, color: TEXT_MEDIUM });
+    p.drawText(t("Zusatz!", "Bonus!", "Bonus!"), { x: MARGIN, y: A4_H - BANNER_H - 50, size: 26, font: fontBold, color: DARK_BROWN });
+    p.drawText(t("Bonus-Spiele fürs Training zwischendurch", "Gry bonusowe do treningu na co dzień", "Giochi bonus per l'addestramento tra un esercizio e l'altro"), { x: MARGIN, y: A4_H - 60 - 80, size: 12, font: fontReg, color: TEXT_MEDIUM });
     p.drawCircle({ x: MARGIN + 95, y: A4_H - 60 - 50, size: 6, color: GOLD });
 
     // bis zu 3 Spielen in drei Spalten
@@ -1269,7 +1282,7 @@ export async function buildPdfFromContent(params = {}) {
       let y = colY0;
 
       // Titel
-      const titleLines = wrapText(String(game.name || t(`Spiel ${i + 1}`, `Zabawa ${i + 1}`)), fontBold, 11.5, col_W);
+      const titleLines = wrapText(String(game.name || t(`Spiel ${i + 1}`, `Zabawa ${i + 1}`, `Gioco ${i + 1}`)), fontBold, 11.5, col_W);
       for (const tl of titleLines) {
         p.drawText(tl, { x: cx, y, size: 11.5, font: fontBold, color: DARK_BROWN });
         y -= 15;
@@ -1277,7 +1290,7 @@ export async function buildPdfFromContent(params = {}) {
       y -= 4;
 
       // Ziel
-      p.drawText(t("Ziel:", "Cel:"), { x: cx, y, size: 10, font: fontBold, color: TEXT_DARK });
+      p.drawText(t("Ziel:", "Cel:", "Obiettivo:"), { x: cx, y, size: 10, font: fontBold, color: TEXT_DARK });
       y -= 14;
       const goalLines = wrapText(String(game.ziel || ""), fontReg, 9.5, col_W);
       for (const l of goalLines) {
@@ -1287,7 +1300,7 @@ export async function buildPdfFromContent(params = {}) {
       y -= 8;
 
       // So funktioniert das Spiel
-      p.drawText(t("So funktioniert das Spiel:", "Jak się bawić:"), { x: cx, y, size: 10, font: fontBold, color: TEXT_DARK });
+      p.drawText(t("So funktioniert das Spiel:", "Jak się bawić:", "Come si gioca:"), { x: cx, y, size: 10, font: fontBold, color: TEXT_DARK });
       y -= 14;
       const steps = Array.isArray(game.schritte) ? game.schritte : [];
       for (const s of steps) {
@@ -1303,7 +1316,7 @@ export async function buildPdfFromContent(params = {}) {
       y -= 8;
 
       // Warum es hilft
-      p.drawText(t("Warum es hilft:", "Dlaczego pomaga:"), { x: cx, y, size: 10, font: fontBold, color: TEXT_DARK });
+      p.drawText(t("Warum es hilft:", "Dlaczego pomaga:", "Perché aiuta:"), { x: cx, y, size: 10, font: fontBold, color: TEXT_DARK });
       y -= 14;
       const whyLines = wrapText(String(game.warum || ""), fontReg, 9.5, col_W);
       for (const l of whyLines) {

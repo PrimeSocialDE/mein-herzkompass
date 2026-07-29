@@ -30,6 +30,20 @@ export default async function ProfilPage() {
           purchasedAt: "Plan kupiony dnia",
           footerPre: "Chcesz zmienić dane lub usunąć konto? Napisz do nas:",
         }
+      : lang === "it"
+      ? {
+          kicker: "Profilo",
+          title: "I tuoi dati",
+          email: "E-mail",
+          name: "Nome",
+          dogName: "Nome del cane",
+          breed: "Razza",
+          status: "Stato",
+          statusPaid: "✓ Piano completo sbloccato",
+          statusFree: "Ancora senza piano",
+          purchasedAt: "Piano acquistato il",
+          footerPre: "Vuoi modificare i dati o cancellare l'account? Scrivici:",
+        }
       : {
           kicker: "Profil",
           title: "Deine Daten",
