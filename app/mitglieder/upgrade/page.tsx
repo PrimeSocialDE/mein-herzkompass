@@ -32,6 +32,19 @@ const PROBLEM_LABELS_PL: Record<string, string> = {
   mouthing: "Podnoszenie z ziemi",
 };
 
+const PROBLEM_LABELS_IT: Record<string, string> = {
+  pulling: "Tirare al guinzaglio",
+  barking: "Abbaiare",
+  aggression: "Aggressività",
+  anxiety: "Ansia da separazione",
+  jumping: "Saltare addosso",
+  recall: "Richiamo",
+  energy: "Energia",
+  destructive: "Comportamento distruttivo",
+  soiling: "Pulizia in casa",
+  mouthing: "Raccogliere da terra",
+};
+
 export default async function UpgradePage({
   searchParams,
 }: {
@@ -64,10 +77,10 @@ export default async function UpgradePage({
     ? false
     : member.purchase_status === "paid";
   const dog =
-    member.dog_name?.trim() || (lang === "pl" ? "Twojego psa" : "deinen Hund");
+    member.dog_name?.trim() || (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinen Hund");
   const problemKey =
     member.quiz_result?.dog_problem || member.quiz_result?.problem || null;
-  const problemLabels = lang === "pl" ? PROBLEM_LABELS_PL : PROBLEM_LABELS;
+  const problemLabels = lang === "pl" ? PROBLEM_LABELS_PL : lang === "it" ? PROBLEM_LABELS_IT : PROBLEM_LABELS;
   const problemLabel = problemKey ? problemLabels[problemKey] || null : null;
   const t =
     lang === "pl"
@@ -85,6 +98,22 @@ export default async function UpgradePage({
           moreText:
             "Tematy specjalne, jak agresja, lęk separacyjny czy podróż, są dostępne jako pojedyncze moduły w przeglądzie modułów.",
           moreCta: "Zobacz przegląd modułów",
+        }
+      : lang === "it"
+      ? {
+          kicker: "Upgrade",
+          headPaid: "Espandi i moduli",
+          headProblem: `Risolvere ${problemLabel} con ${dog}`,
+          headFree: `Sblocca il piano per ${dog}`,
+          howTitle: "È così semplice",
+          stepHome: "Da casa",
+          stepDaily: "5 min al giorno",
+          stepChat: "Aiuto via chat",
+          stepPdf: "PDF da portare con te",
+          moreTitle: `Altro per ${dog}?`,
+          moreText:
+            "Temi speciali come aggressività, ansia da separazione o viaggio sono disponibili come singoli moduli nella panoramica dei moduli.",
+          moreCta: "Vedi la panoramica dei moduli",
         }
       : {
           kicker: "Upgrade",

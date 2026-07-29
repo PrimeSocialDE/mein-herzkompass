@@ -213,7 +213,7 @@
     <script
       defer
       data-website-id="dfid_7GbGWYlC43BwGzuWkUdwp"
-      data-domain="lapaplan.pl"
+      data-domain="zampaplan.it"
       src="https://datafa.st/js/script.js">
     </script>
 </head>
@@ -475,7 +475,7 @@
         function renderOffers() {
             document.getElementById('upsellHook').textContent = rec.hook;
 
-            // ── Einzelmodul: 59 € (statt 99 €) ──
+            // ── Einzelmodul: 9,99 € (statt 19,99 €) ──
             // TODO: finale IT-Preise festlegen
             const single = document.createElement('div');
             single.className = 'module-card';
@@ -491,8 +491,8 @@
                 </div>
                 <div class="module-footer">
                     <div>
-                        <span class="module-price-old">99 €</span>
-                        <span class="module-price-new">59 €</span>
+                        <span class="module-price-old">19,99 €</span>
+                        <span class="module-price-new">9,99 €</span>
                     </div>
                     <button class="module-btn" id="moduleBuyBtn" onclick="buyModule()">
                         Aggiungi al piano
@@ -502,7 +502,7 @@
             `;
             document.getElementById('upsellModule').appendChild(single);
 
-            // ── Paket: alle Module 89 € ──
+            // ── Paket: alle Module 19,99 € ──
             // TODO: finale IT-Preise festlegen
             const bundle = document.createElement('div');
             bundle.className = 'module-card bundle';
@@ -520,8 +520,8 @@
                 </div>
                 <div class="module-footer">
                     <div>
-                        <span class="module-price-new">89 €</span>
-                        <span class="bundle-savings">solo 30 € in più per tutto</span>
+                        <span class="module-price-new">19,99 €</span>
+                        <span class="bundle-savings">solo 10 € in più per tutto</span>
                     </div>
                     <button class="module-btn bundle-btn" id="bundleBuyBtn" onclick="buyBundle()">
                         Scelgo il pacchetto
@@ -533,7 +533,7 @@
         }
         renderOffers();
 
-        // ── Einzelkauf: 59 € (5900) ──
+        // ── Einzelkauf: 9,99 € (999) ──
         async function buyModule() {
             if (PL_PAYMENTS_OFF) { alert('I pagamenti saranno presto disponibili, ci stiamo lavorando! Grazie per la pazienza. 🐾'); return; }
             const btn = document.getElementById('moduleBuyBtn');
@@ -549,7 +549,7 @@
                 return;
             }
 
-            try { fbq('track', 'InitiateCheckout', { value: 59, currency: 'EUR', content_name: recommendedKey }); } catch (e) {}
+            try { fbq('track', 'InitiateCheckout', { value: 9.99, currency: 'EUR', content_name: recommendedKey }); } catch (e) {}
 
             try {
                 const response = await fetch('/api/mollie/upsell-checkout', {
@@ -558,7 +558,7 @@
                     body: JSON.stringify({
                         module: recommendedKey,
                         lang: 'it',
-                        price: 5900,
+                        price: 999,
                         leadId: leadId,
                         email: userEmail,
                         dogName: dogName,
@@ -581,7 +581,7 @@
             }
         }
 
-        // ── Paket: 89 € (8900) ──
+        // ── Paket: 19,99 € (1999) ──
         async function buyBundle() {
             if (PL_PAYMENTS_OFF) { alert('I pagamenti saranno presto disponibili, ci stiamo lavorando! Grazie per la pazienza. 🐾'); return; }
             const btn = document.getElementById('bundleBuyBtn');
@@ -600,7 +600,7 @@
             // Empfohlener Key + fester Satz (doppelte Keys schaden nicht)
             const bundleModules = recommendedKey + '+recall+pulling+barking';
 
-            try { fbq('track', 'InitiateCheckout', { value: 89, currency: 'EUR', content_name: 'bundle' }); } catch (e) {}
+            try { fbq('track', 'InitiateCheckout', { value: 19.99, currency: 'EUR', content_name: 'bundle' }); } catch (e) {}
 
             try {
                 const response = await fetch('/api/mollie/upsell-checkout', {
@@ -609,7 +609,7 @@
                     body: JSON.stringify({
                         module: bundleModules,
                         lang: 'it',
-                        price: 8900,
+                        price: 1999,
                         bundle: true,
                         leadId: leadId,
                         email: userEmail,

@@ -42,7 +42,9 @@ export default async function ErfolgePage() {
 
   const isPaid = member.purchase_status === "paid";
   const dogName = member.dog_name?.trim() || null;
-  const dog = dogName || (lang === "pl" ? "Twojego psa" : "deinem Hund");
+  const dog =
+    dogName ||
+    (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinem Hund");
   const dogPossessive = dogName ? `${dogName}s` : "Eure";
 
   // Parallel: Challenges + Badges gleichzeitig holen statt nacheinander
@@ -92,6 +94,27 @@ export default async function ErfolgePage() {
           stillToEarn: "Jeszcze do zdobycia",
           openCount: " do zdobycia",
         }
+      : lang === "it"
+      ? {
+          backToOverview: "← Panoramica successi",
+          heroAlt: "La vostra settimana di addestramento",
+          thisWeek: "Questa settimana",
+          introPre: "Piccoli compiti di addestramento per ",
+          introPost:
+            ", che si adattano alla vita di tutti i giorni. Se li portate a termine, raccogliete distintivi per la parete.",
+          done: " completati",
+          newMonday: " · Nuovi da lunedì",
+          emptyChallenges:
+            "Questa settimana nessun nuovo compito. Si continua lunedì.",
+          bonusTasks: "Compiti bonus",
+          bonusPlus: "+3 compiti a settimana",
+          bonusUnlocked: "Sbloccati nel piano completo",
+          unlock: "Sblocca",
+          collected: " raccolti",
+          firstBadge: "Completa il primo compito → primo distintivo.",
+          stillToEarn: "Ancora da conquistare",
+          openCount: " aperti",
+        }
       : {
           backToOverview: "← Erfolge-Übersicht",
           heroAlt: "Eure Trainings-Woche",
@@ -127,7 +150,7 @@ export default async function ErfolgePage() {
       <div className="mb-5 -mx-4 md:-mx-8">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/Aufgaben.jpg"
+          src={lang === "it" ? "/Aufgaben.it.png" : "/Aufgaben.jpg"}
           alt={t.heroAlt}
           className="w-full aspect-[16/7] object-cover object-bottom md:rounded-2xl"
         />
@@ -143,9 +166,13 @@ export default async function ErfolgePage() {
             ? dogName
               ? `Tydzień treningowy ${dogName}`
               : "Wasz tydzień treningowy"
-            : dogName
-              ? `${dogPossessive} Trainings-Woche`
-              : "Eure Trainings-Woche"}
+            : lang === "it"
+              ? dogName
+                ? `Settimana di addestramento di ${dogName}`
+                : "La vostra settimana di addestramento"
+              : dogName
+                ? `${dogPossessive} Trainings-Woche`
+                : "Eure Trainings-Woche"}
         </h1>
         <p className="text-[14px] text-[#4B5563] mt-2 leading-relaxed">
           {t.introPre}{dog}{t.introPost}
@@ -202,7 +229,7 @@ export default async function ErfolgePage() {
             href="/api/mitglieder/challenges/pdf"
             className="inline-flex items-center gap-2 text-[13px] font-semibold text-[#8B7355] border border-[#EADDC5] bg-white rounded-xl px-4 py-2.5 hover:bg-[#FBF7F0] transition"
           >
-            ⬇ {lang === "pl" ? "Pobierz zadania jako PDF" : "Aufgaben als PDF herunterladen"}
+            ⬇ {lang === "pl" ? "Pobierz zadania jako PDF" : lang === "it" ? "Scarica i compiti in PDF" : "Aufgaben als PDF herunterladen"}
           </a>
         </div>
       )}
@@ -265,9 +292,13 @@ export default async function ErfolgePage() {
               ? dogName
                 ? `Odznaki ${dogName}`
                 : "Wasze odznaki"
-              : dogName
-                ? `${dogPossessive} Abzeichen`
-                : "Eure Abzeichen"}
+              : lang === "it"
+                ? dogName
+                  ? `Distintivi di ${dogName}`
+                  : "I vostri distintivi"
+                : dogName
+                  ? `${dogPossessive} Abzeichen`
+                  : "Eure Abzeichen"}
           </h2>
           {badges.length > 0 && (
             <span className="text-[12px] text-[#9CA3AF]">
@@ -374,10 +405,14 @@ function GhostBadgeTile({
         isPremium
           ? lang === "pl"
             ? "Odblokuj z planem"
-            : "Mit Plan freischalten"
+            : lang === "it"
+              ? "Sblocca con il piano"
+              : "Mit Plan freischalten"
           : lang === "pl"
             ? "Jeszcze nie zdobyte"
-            : "Noch nicht erspielt"
+            : lang === "it"
+              ? "Non ancora conquistato"
+              : "Noch nicht erspielt"
       }
     >
       {/* Schwarz-Weiss-Silhouette: grayscale + leichte Opacity. Lesbar
@@ -396,10 +431,14 @@ function GhostBadgeTile({
         {isPremium
           ? lang === "pl"
             ? "🔒 Z planem"
-            : "🔒 Mit Plan"
+            : lang === "it"
+              ? "🔒 Con il piano"
+              : "🔒 Mit Plan"
           : lang === "pl"
             ? "Jeszcze otwarte"
-            : "Noch offen"}
+            : lang === "it"
+              ? "Ancora aperto"
+              : "Noch offen"}
       </p>
     </div>
   );
@@ -425,6 +464,27 @@ function ExplainerSlider({ lang }: { lang: Lang }) {
             emoji: "🏆",
             title: "Zdobądź odznakę",
             body: "Zrobione = odznaka do kolekcji.",
+            tint: "from-[#FAF5FF] to-[#FDFBFF]",
+          },
+        ]
+      : lang === "it"
+      ? [
+          {
+            emoji: "🎯",
+            title: "1 compito a settimana",
+            body: "Adatto al tuo cane.",
+            tint: "from-[#FFF9F0] to-[#FFFDF6]",
+          },
+          {
+            emoji: "⏱️",
+            title: "Bastano 5 min",
+            body: "Nella vita di tutti i giorni, senza stress.",
+            tint: "from-[#F0FDF4] to-[#FAFFF8]",
+          },
+          {
+            emoji: "🏆",
+            title: "Conquista il distintivo",
+            body: "Completato = distintivo per la collezione.",
             tint: "from-[#FAF5FF] to-[#FDFBFF]",
           },
         ]

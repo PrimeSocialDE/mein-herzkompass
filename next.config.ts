@@ -30,6 +30,10 @@ const nextConfig: NextConfig = {
     // veraendern. Deutsche Assets/Generatoren bleiben exakt wie bisher.
     "**": [
       "public/pl/**/*",
+      // IT-Anzeigebilder (public/it/**) genauso ausschliessen wie PL — werden
+      // von keiner Server-Function gelesen, nur statisch via CDN. Sonst blaeht
+      // die 206-MB-IT-Kopie jede verschachtelte API-Function ueber 250 MB.
+      "public/it/**/*",
     ],
     "*": [
       // public/ — alles raus (wird als statische Assets via CDN ausgeliefert,

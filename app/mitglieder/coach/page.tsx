@@ -30,7 +30,7 @@ export default async function CoachPage() {
   const member = await getOrCreateMemberProfile({ userId: user.id, email: user.email || "" });
   const lang = await getMemberLang(user?.email ?? member?.email ?? null);
   const dog =
-    member.dog_name?.trim() || (lang === "pl" ? "Twojego psa" : "deinen Hund");
+    member.dog_name?.trim() || (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinen Hund");
   const t =
     lang === "pl"
       ? {
@@ -43,6 +43,18 @@ export default async function CoachPage() {
           creatingTitle: "Twój trener jest właśnie tworzony",
           creatingText: `Przygotowujemy nagrania specjalnie dla ${dog} i jego planu. Gdy będą gotowe, dostaniesz e-mail — wtedy wystarczy tutaj kliknąć Play. Zwykle w ciągu 24 godzin.`,
           footerPre: "Masz pytania? Napisz do nas na",
+        }
+      : lang === "it"
+      ? {
+          kicker: "Pfoten-Plan · Il tuo coach quotidiano",
+          namePrefix: "Il tuo",
+          subtitle: "Ben ti accompagna passo dopo passo attraverso il piano — direttamente nell'orecchio.",
+          unlockTitle: "Sblocca il tuo audio-coach",
+          unlockText: `Sessioni guidate, aiuto SOS immediato e verifiche dei progressi — su misura per ${dog}.`,
+          unlockCta: "▶ Sblocca il coach · 19,99 €",
+          creatingTitle: "Il tuo coach è in preparazione",
+          creatingText: `Stiamo preparando gli audio appositamente per ${dog} e il suo piano. Non appena sono pronti, riceverai un'e-mail — poi ti basta premere Play qui. Di solito entro 24 ore.`,
+          footerPre: "Domande? Scrivici a",
         }
       : {
           kicker: "Pfoten-Plan · Dein Coach nebenbei",

@@ -1,27 +1,26 @@
-// Schickt 2 Sample-Mails mit den Zusatzmodul-PDFs (pulling + energy)
-// an die uebergebene Email-Adresse. Lokal lauffaehig.
-//
-// Voraussetzungen:
-//   node generate-zusatzmodul-pdf.mjs (mit MODULE_KEY=pulling und energy)
+// Generiert Zusatzmodul-PDFs frisch und schickt sie per Mail.
+// Mail-Texte sind pro Modul individuell formuliert.
 //
 // Aufruf:
-//   node scripts/send-zusatzmodul-samples.mjs max@primesocial.de
+//   node scripts/send-zusatzmodul-samples.mjs <email>
+//   node scripts/send-zusatzmodul-samples.mjs <email> pulling energy
+//   node scripts/send-zusatzmodul-samples.mjs <email> all   (alle 10)
 
 import { readFileSync } from "node:fs";
 
 try {
   const envText = readFileSync(".env.local", "utf8");
-  for (const line of envText.split("\n")) {
-    const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/);
-    if (m && !process.env[m[1]]) {
-      process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
-    }
+  const matches = [
+    ...envText.matchAll(/([A-Z_][A-Z0-9_]*)=([^\n\r]*?)(?=\s*[A-Z_][A-Z0-9_]*=|\s*$)/gm),
+  ];
+  for (const m of matches) {
+    if (!process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
   }
 } catch {}
 
 const email = (process.argv[2] || "").trim().toLowerCase();
 if (!email) {
-  console.error("Usage: node scripts/send-zusatzmodul-samples.mjs <email>");
+  console.error("Usage: node scripts/send-zusatzmodul-samples.mjs <email> [moduleKey...]");
   process.exit(1);
 }
 
@@ -31,42 +30,113 @@ if (!BREVO_API_KEY) {
   process.exit(1);
 }
 
-const MODULES_TO_SEND = [
-  {
-    moduleKey: "pulling",
-    label: "Leinenführungs-Plan",
-    subject: "Dein Leinenführungs-Plan für Bruno ist da",
-    pdfPath: "public/zusatzmodul-pulling-TEST.pdf",
-    benefit: "6 Schritt-für-Schritt-Übungen für ruhiges Spazierengehen — vom Start an der Haustür bis zum ruhigen Ankommen zuhause.",
-  },
-  {
-    moduleKey: "energy",
-    label: "Energie- & Ruhe-Plan",
-    subject: "Dein Energie- & Ruhe-Plan für Bruno ist da",
-    pdfPath: "public/zusatzmodul-energy-TEST.pdf",
-    benefit: "6 Übungen die Bruno helfen, seine Energie zu sortieren und tief zu entspannen — Ruhe-Ort etablieren, An-/Ausschalter, Parkbank-Prinzip.",
-  },
-];
+const DOG_NAME = process.env.DOG_NAME || "Bruno";
+const DOG_BREED = process.env.DOG_BREED || "Labrador-Mix";
+const DRY_RUN = process.env.DRY_RUN === "1";
 
-function buildHtml({ label, benefit, dogName }) {
+// Modul-Konfiguration: Subject + Mail-Body pro Modul, individuell formuliert.
+// Mail-Stil basiert auf der existierenden Vorlage: kurz, persönlich, ohne Marketing.
+const MODULE_CONFIG = {
+  pulling: {
+    label: "Leinenführungs-Plan",
+    subject: "Dein Leinenführungs-Plan für {dogName} ist da",
+    intro: "der Leinenführungs-Plan für {dogName} ist jetzt fertig.",
+    body: "Der Plan wurde individuell auf {dogName} abgestimmt und so aufgebaut, dass ihr gemeinsam zu entspannten Spaziergängen findet. Die acht Übungen greifen logisch ineinander und helfen euch dabei, ruhige Orientierung an dir aufzubauen, Ziehen sanft auszuhebeln und Ablenkungen souverän zu meistern.",
+    closing: "Viel Freude bei der Umsetzung und entspannte Spaziergänge mit {dogName}!",
+  },
+  energy: {
+    label: "Energie- & Ruhe-Plan",
+    subject: "Dein Energie- & Ruhe-Plan für {dogName} ist da",
+    intro: "der Energie- & Ruhe-Plan für {dogName} ist jetzt fertig.",
+    body: "Der Plan wurde individuell auf {dogName} abgestimmt und so aufgebaut, dass ihr gemeinsam den \"Aus-Knopf\" findet. Die acht Übungen greifen logisch ineinander und helfen euch dabei, Impulskontrolle zu stärken, Frusttoleranz aufzubauen und eine gesunde Balance zwischen Aktivität und wertvoller Entspannung zu finden.",
+    closing: "Viel Freude bei der Umsetzung und eine entspannte Zeit mit {dogName}!",
+  },
+  anxiety: {
+    label: "Alleine-bleiben Plan",
+    subject: "Dein Alleine-bleiben Plan für {dogName} ist da",
+    intro: "der Alleine-bleiben Plan für {dogName} ist jetzt fertig.",
+    body: "Der Plan wurde individuell auf {dogName} abgestimmt und so aufgebaut, dass {dogName} Schritt für Schritt lernt, dass dein Weggehen sicher und vorhersehbar ist. Die acht Übungen greifen logisch ineinander und helfen euch dabei, Vor-Signale zu entkoppeln, Allein-Zeit sanft aufzubauen und eine berechenbare Tagesstruktur zu etablieren.",
+    closing: "Viel Geduld bei der Umsetzung und entspanntere Stunden für euch beide!",
+  },
+  aggression: {
+    label: "Aggressions-Kontrolle",
+    subject: "Dein Aggressions-Kontroll-Plan für {dogName} ist da",
+    intro: "der Aggressions-Kontroll-Plan für {dogName} ist jetzt fertig.",
+    body: "Der Plan wurde individuell auf {dogName} abgestimmt und konsequent unter dem Schwellenwert aufgebaut, ohne Konfrontation oder Druck. Die acht Übungen greifen logisch ineinander und helfen euch dabei, Sicherheit zu schaffen, Reize emotional umzulernen und Begegnungen ruhiger zu gestalten.",
+    closing: "Geduld zahlt sich hier besonders aus — viel Erfolg mit {dogName}!",
+  },
+  mouthing: {
+    label: "Anti-Aufnehm Plan",
+    subject: "Dein Anti-Aufnehm Plan für {dogName} ist da",
+    intro: "der Anti-Aufnehm Plan für {dogName} ist jetzt fertig.",
+    body: "Der Plan wurde individuell auf {dogName} abgestimmt und so aufgebaut, dass ihr gemeinsam sichere Spaziergänge ohne Such-Drama hinbekommt. Die acht Übungen greifen logisch ineinander und helfen euch dabei, AUS und PFUI sauber zu konditionieren, Tausch-Geschäfte zu etablieren und Hochrisiko-Strecken zu meistern.",
+    closing: "Viel Freude bei der Umsetzung und sichere Spaziergänge mit {dogName}!",
+  },
+  recall: {
+    label: "Rückruf-Plan",
+    subject: "Dein Rückruf-Plan für {dogName} ist da",
+    intro: "der Rückruf-Plan für {dogName} ist jetzt fertig.",
+    body: "Der Plan wurde individuell auf {dogName} abgestimmt und so aufgebaut, dass der Rückruf in Stufen zuverlässig wird. Die acht Übungen greifen logisch ineinander und helfen euch dabei, KOMM-HER positiv zu laden, mit Schleppleine zu festigen und Ablenkungen souverän zu meistern.",
+    closing: "Viel Erfolg beim Aufbau eures sicheren Rückrufs!",
+  },
+  barking: {
+    label: "Anti-Bell Plan",
+    subject: "Dein Anti-Bell Plan für {dogName} ist da",
+    intro: "der Anti-Bell Plan für {dogName} ist jetzt fertig.",
+    body: "Der Plan wurde individuell auf {dogName} abgestimmt und setzt darauf, Stille aktiv zu belohnen statt Bellen zu bekämpfen. Die acht Übungen greifen logisch ineinander und helfen euch dabei, Auslöser zu identifizieren, Klingel-Routinen umzulernen und Frust-Bellen zu reduzieren.",
+    closing: "Viel Erfolg bei der Umsetzung und ruhigere Stunden mit {dogName}!",
+  },
+  jumping: {
+    label: "Anti-Anspring Plan",
+    subject: "Dein Anti-Anspring Plan für {dogName} ist da",
+    intro: "der Anti-Anspring Plan für {dogName} ist jetzt fertig.",
+    body: "Der Plan wurde individuell auf {dogName} abgestimmt und so aufgebaut, dass ihr Begrüßungen entspannt gestalten könnt. Die acht Übungen greifen logisch ineinander und helfen euch dabei, die 4-Pfoten-Regel zu etablieren, SITZ als Begrüßung zu festigen und auch mit Gästen ruhige Routinen zu schaffen.",
+    closing: "Viel Erfolg mit {dogName} bei euren nächsten Begegnungen!",
+  },
+  destructive: {
+    label: "Anti-Zerstörungs Plan",
+    subject: "Dein Anti-Zerstörungs Plan für {dogName} ist da",
+    intro: "der Anti-Zerstörungs Plan für {dogName} ist jetzt fertig.",
+    body: "Der Plan wurde individuell auf {dogName} abgestimmt und arbeitet mit besseren Alternativen statt Verboten. Die acht Übungen greifen logisch ineinander und helfen euch dabei, Ursachen zu erkennen, ein attraktives Kau-Sortiment aufzubauen und mentale Auslastung im Alltag zu sichern.",
+    closing: "Viel Freude bei der Umsetzung und eine ruhigere Wohnung!",
+  },
+  soiling: {
+    label: "Stubenreinheits-Plan",
+    subject: "Dein Stubenreinheits-Plan für {dogName} ist da",
+    intro: "der Stubenreinheits-Plan für {dogName} ist jetzt fertig.",
+    body: "Der Plan wurde individuell auf {dogName} abgestimmt und setzt auf klare Routinen und konsequente Belohnung statt Strafe. Die acht Übungen greifen logisch ineinander und helfen euch dabei, eine berechenbare Toiletten-Routine zu etablieren, Auslöser zu lesen und Unfälle sauber zu managen.",
+    closing: "Geduld und Routine zahlen sich aus — viel Erfolg mit {dogName}!",
+  },
+};
+
+function personalize(s, name) {
+  return String(s || "").replace(/\{dogName\}/g, name);
+}
+
+function buildHtml({ moduleKey, dogName }) {
+  const cfg = MODULE_CONFIG[moduleKey];
+  if (!cfg) throw new Error(`Unbekannter Modul-Key: ${moduleKey}`);
+
+  const intro = personalize(cfg.intro, dogName);
+  const body = personalize(cfg.body, dogName);
+  const closing = personalize(cfg.closing, dogName);
+
   return `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#FAF8F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;">
+<body style="margin:0;padding:0;background:#FAF8F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;line-height:1.6;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAF8F5;">
 <tr><td align="center" style="padding:32px 16px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #EADDC5;border-radius:18px;overflow:hidden;">
-<tr><td style="padding:32px 32px 8px;">
-<p style="margin:0 0 8px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">🐾 ${label} · Zusatz-Modul</p>
-<h1 style="margin:0 0 12px;font-size:24px;line-height:1.25;font-weight:800;color:#1a1a1a;">Dein ${label} für ${dogName} ist da</h1>
-<p style="margin:0;font-size:15px;line-height:1.6;color:#4B5563;">Hallo, dein neues Zusatz-Modul für ${dogName} ist fertig — als druckbares PDF im Anhang.</p>
+<tr><td style="padding:36px 36px 12px;">
+<p style="margin:0 0 18px;font-size:15px;color:#1a1a1a;">Hallo,</p>
+<p style="margin:0 0 16px;font-size:15px;color:#1a1a1a;">${intro}</p>
+<p style="margin:0 0 16px;font-size:15px;color:#1a1a1a;">${body}</p>
+<p style="margin:0 0 16px;font-size:15px;color:#1a1a1a;">Wenn während des Trainings Fragen auftauchen, melde dich jederzeit gern.</p>
+<p style="margin:0 0 8px;font-size:15px;color:#1a1a1a;">${closing}</p>
 </td></tr>
-<tr><td style="padding:20px 32px 4px;">
-<div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:14px;padding:18px 20px;">
-<p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#1a1a1a;line-height:1.4;">Was dich erwartet</p>
-<p style="margin:0;font-size:13px;color:#4B5563;line-height:1.6;">${benefit}</p>
+<tr><td style="padding:8px 36px 32px;">
+<div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;padding:14px 16px;">
+<p style="margin:0;font-size:13px;color:#4B5563;line-height:1.5;">📄 Der vollständige Plan liegt als PDF im Anhang — druckbar oder unterwegs auf dem Handy dabei.</p>
 </div>
-</td></tr>
-<tr><td style="padding:24px 32px 32px;">
-<p style="margin:0;font-size:13px;color:#6B7280;line-height:1.6;">Druck es aus oder hab es unterwegs auf dem Handy dabei — viele Übungen lassen sich direkt auf dem Spaziergang umsetzen.</p>
 </td></tr>
 <tr><td style="padding:18px 32px;background:#FAFAFA;border-top:1px solid #F0EBE3;">
 <p style="margin:0;font-size:11px;color:#9CA3AF;text-align:center;">Pfoten-Plan · Persönliches Hundetraining</p>
@@ -77,13 +147,40 @@ function buildHtml({ label, benefit, dogName }) {
 </body></html>`;
 }
 
-for (const m of MODULES_TO_SEND) {
-  console.log(`\n→ ${m.label} an ${email}`);
-  const pdfBytes = readFileSync(m.pdfPath);
-  const pdfBase64 = pdfBytes.toString("base64");
+// Welche Module senden? Default: pulling + energy
+const requestedModules = process.argv.slice(3).map((s) => s.toLowerCase());
+let modulesToSend;
+if (requestedModules.length === 0) {
+  modulesToSend = ["pulling", "energy"];
+} else if (requestedModules.includes("all")) {
+  modulesToSend = Object.keys(MODULE_CONFIG);
+} else {
+  modulesToSend = requestedModules;
+}
+
+const { buildPdf } = await import("../generate-zusatzmodul-pdf.mjs");
+
+for (const moduleKey of modulesToSend) {
+  const cfg = MODULE_CONFIG[moduleKey];
+  if (!cfg) {
+    console.error(`✗ Unbekannter Modul-Key: ${moduleKey}`);
+    continue;
+  }
+
+  console.log(`\n→ ${cfg.label} für ${DOG_NAME} an ${email}`);
+  const pdfBytes = await buildPdf({
+    dogName: DOG_NAME, dogBreed: DOG_BREED, moduleKey, verbose: false,
+  });
   console.log(`  PDF: ${(pdfBytes.length / 1024).toFixed(0)} KB`);
 
-  const html = buildHtml({ label: m.label, benefit: m.benefit, dogName: "Bruno" });
+  const html = buildHtml({ moduleKey, dogName: DOG_NAME });
+  const subject = personalize(cfg.subject, DOG_NAME);
+
+  if (DRY_RUN) {
+    console.log(`  (DRY-RUN: NICHT gesendet) Subject: "${subject}"`);
+    continue;
+  }
+
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: { "api-key": BREVO_API_KEY, "Content-Type": "application/json" },
@@ -91,12 +188,15 @@ for (const m of MODULES_TO_SEND) {
       sender: { name: "Pfoten-Plan", email: "support@pfoten-plan.de" },
       replyTo: { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" },
       to: [{ email }],
-      subject: `🐾 [SAMPLE] ${m.subject}`,
+      subject,
       htmlContent: html,
       attachment: [
-        { name: `Pfoten-Plan-${m.label}-Bruno.pdf`, content: pdfBase64 },
+        {
+          name: `Pfoten-Plan-${cfg.label.replace(/[^a-zA-Z0-9-]/g, "-")}-${DOG_NAME}.pdf`,
+          content: Buffer.from(pdfBytes).toString("base64"),
+        },
       ],
-      tags: ["sample", `zusatzmodul-${m.moduleKey}`],
+      tags: [`zusatzmodul-${moduleKey}`],
     }),
   });
 
@@ -110,4 +210,4 @@ for (const m of MODULES_TO_SEND) {
   await new Promise((r) => setTimeout(r, 1000));
 }
 
-console.log(`\nFertig. 2 Zusatzmodul-Samples an ${email}.\n`);
+console.log(`\nFertig. ${modulesToSend.length} Zusatzmodul-Mails an ${email}.\n`);

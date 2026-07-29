@@ -42,18 +42,25 @@ const sb = createClient(
 console.log(`Modus: ${dryRun ? "DRY RUN (nichts ändern)" : "LIVE"} · Limit: ${limit}`);
 console.log(`Listen: nurture=#${LIST_NURTURE} · 1M=#${LIST_1M} · 3M=#${LIST_3M} · 6M=#${LIST_6M}\n`);
 
-// Alle paid-Leads holen (egal wie alt — Backfill ist einmalig)
-const { data: paidLeads, error } = await sb
-  .from("wauwerk_leads")
-  .select("id, email, selected_plan, paid_at")
-  .eq("status", "paid")
-  .not("email", "is", null)
-  .order("paid_at", { ascending: false, nullsFirst: false })
-  .limit(limit);
-
-if (error) {
-  console.error("Supabase-Fehler:", error.message);
-  process.exit(1);
+// Alle paid-Leads holen — Supabase JS capped bei 1000/Query, daher Pagination
+const paidLeads = [];
+const PAGE_SIZE = 1000;
+for (let from = 0; from < limit; from += PAGE_SIZE) {
+  const to = Math.min(from + PAGE_SIZE - 1, limit - 1);
+  const { data, error } = await sb
+    .from("wauwerk_leads")
+    .select("id, email, selected_plan, paid_at")
+    .eq("status", "paid")
+    .not("email", "is", null)
+    .order("paid_at", { ascending: false, nullsFirst: false })
+    .range(from, to);
+  if (error) {
+    console.error("Supabase-Fehler:", error.message);
+    process.exit(1);
+  }
+  if (!data || data.length === 0) break;
+  paidLeads.push(...data);
+  if (data.length < PAGE_SIZE) break;
 }
 
 console.log(`Gefunden: ${paidLeads.length} paid-Leads\n`);

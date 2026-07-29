@@ -2,7 +2,7 @@
 // FIRST-TOUCH-ATTRIBUTION:
 // Erfasst die Herkunft beim ERSTEN Aufruf mit echtem Signal (utm / Click-ID /
 // In-App-Browser), speichert sie persistent im Cookie `pp_attr`
-// (.pfoten-plan.de, 90 Tage, SameSite=Lax) + localStorage und ÜBERSCHREIBT SIE
+// (.zampaplan.it, 90 Tage, SameSite=Lax) + localStorage und ÜBERSCHREIBT SIE
 // NIE. Ein späterer organischer Besuch kann die Ad-Herkunft also nicht löschen.
 //
 // WICHTIG für den CRM-Join:
@@ -22,7 +22,7 @@
     var domain = "";
     try {
       if (/(^|\.)pfoten-plan\.de$/i.test(location.hostname))
-        domain = "; domain=.pfoten-plan.de";
+        domain = "; domain=.zampaplan.it";
     } catch (e) {}
     var secure = location.protocol === "https:" ? "; Secure" : "";
     document.cookie =

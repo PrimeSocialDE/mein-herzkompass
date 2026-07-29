@@ -58,6 +58,29 @@ const PILLARS_PL: { icon: string; title: string; text: string }[] = [
   },
 ];
 
+const PILLARS_IT: { icon: string; title: string; text: string }[] = [
+  {
+    icon: "🎥",
+    title: "Video-check del tuo cane",
+    text: "Manda un breve video — ricevi un riscontro concreto sulla vostra situazione specifica, non risposte standard.",
+  },
+  {
+    icon: "🔄",
+    title: "Restiamo al tuo fianco",
+    text: "Qualcosa non va? Una ricaduta? Adattiamo il piano finché non funziona — non un PDF una tantum, restiamo con te.",
+  },
+  {
+    icon: "🆘",
+    title: "Aiuto per tutto ciò che arriva",
+    text: "Visite, trasloco, viaggio, la prossima fase della vita — il tuo trainer è qui quando arriva qualcosa di nuovo.",
+  },
+  {
+    icon: "📦",
+    title: "Tutto subito sbloccato",
+    text: "Carte di emergenza e tutti i moduli tematici — su misura per il tuo cane. E ogni mese ne arriva uno nuovo.",
+  },
+];
+
 export default async function ClubPage() {
   const user = await getCurrentMember();
   if (!user) {
@@ -77,8 +100,8 @@ export default async function ClubPage() {
   });
   const lang = await getMemberLang(user?.email ?? member?.email ?? null);
   const dog =
-    member.dog_name?.trim() || (lang === "pl" ? "Twojego psa" : "deinen Hund");
-  const pillars = lang === "pl" ? PILLARS_PL : PILLARS;
+    member.dog_name?.trim() || (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinen Hund");
+  const pillars = lang === "pl" ? PILLARS_PL : lang === "it" ? PILLARS_IT : PILLARS;
   const t =
     lang === "pl"
       ? {
@@ -97,6 +120,24 @@ export default async function ClubPage() {
           secure: "🔒 Bezpieczna płatność przez Mollie · bez minimalnego okresu",
           footerPre: "Już z nami? Twoją bibliotekę znajdziesz w",
           footerLink: "Moduły",
+        }
+      : lang === "it"
+      ? {
+          soonTitle: "Il Club Pfoten-Plan arriva presto 🐾",
+          soonText: "Stiamo dando gli ultimi ritocchi. Torna presto a trovarci!",
+          soonCta: "Ai moduli →",
+          memberTitle: "Sei membro del Club 🎉",
+          memberText: `Tutti i moduli sono sbloccati. Buon divertimento nell'addestramento con ${dog}!`,
+          libraryCta: "Alla libreria →",
+          imgAlt: "Addestramento con il tuo cane",
+          badge: "⭐ Club Pfoten-Plan",
+          heroTitle: `Mai più senza risposte con ${dog}`,
+          heroText: `Quando non sai come andare avanti, ricevi aiuto personale proprio per ${dog} — mandi un video, ricevi un riscontro concreto e restiamo al tuo fianco finché non funziona.`,
+          priceUnit: "/ mese",
+          priceSub: "Disdici in qualsiasi momento · nessuna durata minima",
+          secure: "🔒 Pagamento sicuro tramite Mollie · nessuna durata minima",
+          footerPre: "Già iscritto? Trovi la tua libreria in",
+          footerLink: "Moduli",
         }
       : {
           soonTitle: "Der Pfoten-Plan Club kommt bald 🐾",

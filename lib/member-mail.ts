@@ -9,7 +9,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { UserChallenge } from "./member-challenges";
 import type { MemberProfile } from "./member-db";
 import type { Lang } from "./lang";
-import { renderBelegFooterHtml, renderBelegFooterHtmlPl, type BelegRow } from "./beleg";
+import { renderBelegFooterHtml, renderBelegFooterHtmlPl, renderBelegFooterHtmlIt, type BelegRow } from "./beleg";
 import { buildOneTapUrl } from "./one-tap-login";
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY || "";
@@ -102,14 +102,16 @@ interface SendArgs {
 // Absender sprachabhaengig: PL-Mails kommen von pomoc@lapaplan.pl (in Brevo
 // verifiziert), DE bleibt exakt wie bisher (support@pfoten-plan.de).
 export function mailSender(lang: Lang = "de") {
-  return lang === "pl"
-    ? { name: "ŁapaPlan", email: "pomoc@lapaplan.pl" }
-    : { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" };
+  if (lang === "pl") return { name: "ŁapaPlan", email: "pomoc@lapaplan.pl" };
+  // TODO(IT): supporto@zampaplan.it muss in Brevo verifiziert sein (DNS fuer
+  // zampaplan.it), bevor IT live geht. Adresse aendern falls gewuenscht.
+  if (lang === "it") return { name: "ZampaPlan", email: "supporto@zampaplan.it" };
+  return { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" };
 }
 export function mailReplyTo(lang: Lang = "de") {
-  return lang === "pl"
-    ? { email: "pomoc@lapaplan.pl", name: "ŁapaPlan" }
-    : { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" };
+  if (lang === "pl") return { email: "pomoc@lapaplan.pl", name: "ŁapaPlan" };
+  if (lang === "it") return { email: "supporto@zampaplan.it", name: "ZampaPlan Support" };
+  return { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" };
 }
 
 export async function sendBrevoMail({ to, subject, html, tags, attachments, cc, lang, transactional, senderName }: SendArgs) {
@@ -215,15 +217,21 @@ export function wrapTemplate(opts: {
     lang = "de",
     belegHtml,
   } = opts;
-  const isPl = lang === "pl";
-  const htmlLang = isPl ? "pl" : "de";
-  const brandLabel = isPl ? "ŁapaPlan" : "Pfoten-Plan";
-  const footerBrandLine = isPl
-    ? `ŁapaPlan · Spersonalizowany trening psa · <a href="${SITE_URL}/mitglieder" style="color:#8B7355;text-decoration:underline;">Mój panel</a>`
-    : `Pfoten-Plan · Persönliches Hundetraining · <a href="${SITE_URL}/mitglieder" style="color:#8B7355;text-decoration:underline;">Mein Bereich</a>`;
-  const unsubscribeText = isPl
-    ? "Wypisz się z tych e-maili"
-    : "Aus diesen E-Mails abmelden";
+  const htmlLang = lang === "pl" ? "pl" : lang === "it" ? "it" : "de";
+  const brandLabel =
+    lang === "pl" ? "ŁapaPlan" : lang === "it" ? "ZampaPlan" : "Pfoten-Plan";
+  const footerBrandLine =
+    lang === "pl"
+      ? `ŁapaPlan · Spersonalizowany trening psa · <a href="${SITE_URL}/mitglieder" style="color:#8B7355;text-decoration:underline;">Mój panel</a>`
+      : lang === "it"
+        ? `ZampaPlan · Addestramento personalizzato per cani · <a href="${SITE_URL}/mitglieder" style="color:#8B7355;text-decoration:underline;">La mia area</a>`
+        : `Pfoten-Plan · Persönliches Hundetraining · <a href="${SITE_URL}/mitglieder" style="color:#8B7355;text-decoration:underline;">Mein Bereich</a>`;
+  const unsubscribeText =
+    lang === "pl"
+      ? "Wypisz się z tych e-maili"
+      : lang === "it"
+        ? "Annulla l'iscrizione a queste email"
+        : "Aus diesen E-Mails abmelden";
   return `<!DOCTYPE html>
 <html lang="${htmlLang}">
 <head>
@@ -290,7 +298,8 @@ export function wrapTemplate(opts: {
 
 function challengesAsHtml(challenges: UserChallenge[], lang: Lang = "de"): string {
   if (challenges.length === 0) return "";
-  const badgeLabel = lang === "pl" ? "→ Odznaka:" : "→ Abzeichen:";
+  const badgeLabel =
+    lang === "pl" ? "→ Odznaka:" : lang === "it" ? "→ Distintivo:" : "→ Abzeichen:";
   const items = challenges
     .map(
       (c) => `
@@ -346,6 +355,35 @@ export async function sendWelcomeChallengesMail(
     });
   }
 
+  if (lang === "it") {
+    const dog = member.dog_name?.trim() || "il tuo cane";
+    const challengesHtml = challengesAsHtml(challenges, "it");
+    const ctaUrl = `${SITE_URL}/mitglieder/erfolge/challenges`;
+
+    const html = wrapTemplate({
+      preheader: `I tuoi primi compiti della settimana per ${dog} sono pronti.`,
+      headline: `Benvenuto in ZampaPlan${
+        member.dog_name ? `, ${member.dog_name}` : ""
+      }!`,
+      intro: `Siamo felici che tu sia qui. Perché non resti solo teoria, ogni settimana ricevi piccoli compiti di addestramento per ${dog}, pensati esattamente sul vostro tema. Quando li completi, colleziona distintivi da aggiungere alla tua raccolta.`,
+      bodyHtml: `<p style="margin:16px 0 8px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">Questa settimana:</p>${challengesHtml}<p style="margin:0 0 8px;font-size:13px;color:#4B5563;line-height:1.55;">Bastano 5-10 minuti al giorno. Nella tua area riservata puoi spuntare ogni esercizio non appena lo hai completato.</p>`,
+      ctaText: "Ai tuoi compiti della settimana",
+      ctaUrl,
+      footerHint: `Ricevi questa email perché ti sei registrato su ZampaPlan. Trovi compiti e distintivi in qualsiasi momento nella sezione "Traguardi" della tua area riservata.`,
+      lang: "it",
+    });
+
+    return sendBrevoMail({
+      lang,
+      to: member.email,
+      subject: `🐾 I compiti della settimana per ${
+        member.dog_name || "il tuo cane"
+      } sono pronti`,
+      html,
+      tags: ["mitglieder", "challenges-welcome"],
+    });
+  }
+
   const dog = member.dog_name?.trim() || "deinem Hund";
   const challengesHtml = challengesAsHtml(challenges);
   const ctaUrl = `${SITE_URL}/mitglieder/erfolge/challenges`;
@@ -394,10 +432,13 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
   const lang = args.lang ?? "de";
   if (!to) return { ok: false, reason: "no_email" };
 
-  // Beleg-Footer (Kleinbetragsrechnung / rachunek) — DE 19% USt, PL 23% VAT.
+  // Beleg-Footer (Kleinbetragsrechnung / rachunek / ricevuta) — DE 19% USt,
+  // PL 23% VAT, IT 22% IVA.
   const belegHtml = args.beleg
     ? lang === "pl"
       ? renderBelegFooterHtmlPl(args.beleg)
+      : lang === "it"
+      ? renderBelegFooterHtmlIt(args.beleg)
       : renderBelegFooterHtml(args.beleg)
     : undefined;
 
@@ -523,6 +564,110 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
       belegHtml,
     });
     subject = `🐾 Twój ${monthsLabelPl} dla ${dogName} jest gotowy`;
+  } else if (lang === "it") {
+    const greeting = customerName?.trim()
+      ? `Ciao ${customerName.trim().split(" ")[0]},`
+      : "Ciao,";
+
+    const monthsLabelIt =
+      planLengthMonths === 1
+        ? "piano di 1 mese"
+        : planLengthMonths === 3
+          ? "piano di 3 mesi"
+          : "piano di 6 mesi";
+
+    const pdfHinweisIt = `
+    <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:14px;padding:18px 20px;margin:0 0 20px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+          <td style="vertical-align:middle;width:54px;">
+            <div style="display:inline-block;width:48px;height:48px;background:#C4A576;border-radius:12px;text-align:center;line-height:48px;font-size:22px;color:#FFFFFF;">📄</div>
+          </td>
+          <td style="vertical-align:middle;padding-left:14px;">
+            <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;line-height:1.3;">Il tuo piano di addestramento in PDF</p>
+            <p style="margin:0;font-size:12px;color:#6B7280;line-height:1.4;">In allegato a questa email · stampabile · da portare con te</p>
+          </td>
+        </tr>
+      </table>
+    </div>`;
+
+    const mitgliederShowcaseIt = `
+    <div style="border-top:1px solid #F0EBE3;margin:24px 0 16px;"></div>
+    <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">Ricevi ancora di più</p>
+    <h2 style="margin:0 0 10px;font-size:20px;line-height:1.3;font-weight:800;color:#1a1a1a;">La tua area riservata</h2>
+    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#4B5563;">
+      Il piano puoi seguirlo in qualsiasi momento anche online. Registriamo automaticamente i tuoi progressi, l'umore di ${escapeHtml(dogName)} e ogni settimana ti inviamo nuovi compiti, così non devi affrontare il piano da solo.
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">📅</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Accompagnamento nel piano, settimana dopo settimana</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Quale settimana è in corso, cosa arriva dopo: tutto a colpo d'occhio.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">📊</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Diario dell'umore con analisi AI</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Annota ogni settimana in breve com'è andata: l'AI riassume la vostra settimana e dà consigli concreti per quella successiva.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">🏆</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Compiti della settimana e distintivi</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Ogni settimana piccoli compiti di addestramento adatti al vostro piano. Completato = un distintivo per la raccolta.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">💬</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Trainer AI per le tue domande</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Fai domande in qualsiasi momento: il trainer AI risponde 24 ore su 24 con le conoscenze del nostro team di addestratori.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+      <tr><td style="padding:10px 0;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td style="vertical-align:top;width:34px;font-size:18px;">📚</td>
+            <td style="vertical-align:top;padding-left:6px;">
+              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Moduli speciali</p>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Se ${escapeHtml(dogName)} ha altri temi, ad esempio ansia da separazione, viaggi, primo soccorso, ci sono moduli dedicati.</p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+    </table>`;
+
+    html = wrapTemplate({
+      preheader: `Il tuo ${monthsLabelIt} per ${dogName} è pronto.`,
+      headline: `Il tuo ${monthsLabelIt} per ${dogName} è pronto`,
+      intro: `${greeting} il tuo piano di addestramento personale è stato appena creato per te, completamente su misura per ${dogName} e il vostro tema principale. ${weeksTotal} settimane, con esercizi concreti per ogni giorno, obiettivi settimanali, indicatori di progresso e un filo conduttore chiaro.`,
+      bodyHtml: `${pdfHinweisIt}${mitgliederShowcaseIt}`,
+      ctaText: "Apri l'area riservata →",
+      ctaUrl,
+      footerHint: `Il pulsante contiene un accesso automatico: entri subito già connesso nella tua area riservata. Il link è valido 1 ora ed è solo per te.`,
+      lang: "it",
+      belegHtml,
+    });
+    subject = `🐾 Il tuo ${monthsLabelIt} per ${dogName} è pronto`;
   } else {
 
   const greeting = customerName?.trim()
@@ -671,7 +816,7 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
         : Buffer.from(pdfBytes.buffer, pdfBytes.byteOffset, pdfBytes.byteLength);
     attachments = [
       {
-        name: planPdfFilename(dogName, planLengthMonths),
+        name: planPdfFilename(dogName, planLengthMonths, lang),
         contentBase64: buf.toString("base64"),
       },
     ];
@@ -746,6 +891,33 @@ export async function sendWeeklyChallengesMail(
     });
   }
 
+  if (lang === "it") {
+    const dog = member.dog_name?.trim() || "il tuo cane";
+    const challengesHtml = challengesAsHtml(challenges, "it");
+    const ctaUrl = `${SITE_URL}/mitglieder/erfolge/challenges`;
+
+    const html = wrapTemplate({
+      preheader: `Nuovi compiti della settimana per ${dog} - conquista il prossimo distintivo.`,
+      headline: `Nuova settimana, nuovi compiti per ${dog}`,
+      intro: `Questa settimana vi aspettano nuovi piccoli esercizi di addestramento - bastano 5-10 minuti al giorno. Quando li completi tutti, ci sono nuovi distintivi per la raccolta.`,
+      bodyHtml: `<p style="margin:16px 0 8px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">Questa settimana:</p>${challengesHtml}`,
+      ctaText: "Vedi i compiti",
+      ctaUrl,
+      footerHint: `Se non desideri più questo promemoria, scrivici due righe a supporto@zampaplan.it.`,
+      lang: "it",
+    });
+
+    return sendBrevoMail({
+      lang,
+      to: member.email,
+      subject: `🐾 Nuovi compiti della settimana per ${
+        member.dog_name || "il tuo cane"
+      }`,
+      html,
+      tags: ["mitglieder", "challenges-weekly"],
+    });
+  }
+
   const dog = member.dog_name?.trim() || "deinem Hund";
   const challengesHtml = challengesAsHtml(challenges);
   const ctaUrl = `${SITE_URL}/mitglieder/erfolge/challenges`;
@@ -804,6 +976,32 @@ export async function sendMidweekReminderMail(
     lang,
       to: member.email,
       subject: `🐾 Ostatni dzień: ${dog} jest o jedną sesję od odznaki`,
+      html,
+      tags: ["mitglieder", "challenges-sunday"],
+    });
+  }
+
+  if (lang === "it") {
+    const dog = member.dog_name?.trim() || "il tuo cane";
+    const challengesHtml = challengesAsHtml(challenges, "it");
+    const ctaUrl = `${SITE_URL}/mitglieder/erfolge/challenges`;
+
+    const firstBadge = challenges[0]?.badge_label || "un nuovo distintivo";
+    const html = wrapTemplate({
+      preheader: `Oggi è l'ultimo giorno - conquista ancora ${firstBadge}!`,
+      headline: `Ultimo giorno - conquista ancora il tuo distintivo 🏆`,
+      intro: `È già domenica e questa settimana ancora nessuna sessione. Bastano 10 minuti e il distintivo è tuo. Da domani ti aspettano nuovi compiti.`,
+      bodyHtml: `<p style="margin:16px 0 8px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8B7355;">Ancora da fare oggi:</p>${challengesHtml}<p style="margin:14px 0 0;font-size:13px;color:#6B7280;line-height:1.55;">Suggerimento: una sessione = una breve serie di esercizi oppure una passeggiata con il focus sul compito. Spunta nella tua area riservata e il gioco è fatto.</p>`,
+      ctaText: "Ultima occasione - inizia ora",
+      ctaUrl,
+      footerHint: `Non vuoi più promemoria? Scrivici due righe a supporto@zampaplan.it.`,
+      lang: "it",
+    });
+
+    return sendBrevoMail({
+      lang,
+      to: member.email,
+      subject: `🐾 Ultimo giorno: ${dog} è a una sessione dal distintivo`,
       html,
       tags: ["mitglieder", "challenges-sunday"],
     });
@@ -930,6 +1128,70 @@ export async function sendCheckoutRecoveryMail(args: {
       subject: hasName
         ? `5-minutowe ćwiczenie dla ${dogPl} — do zrobienia już dziś`
         : `5-minutowe ćwiczenie dla Twojego psa — do zrobienia już dziś`,
+      html,
+      tags: ["checkout-recovery"],
+    });
+  }
+
+  if (lang === "it") {
+    const dogIt = dogName?.trim() || "il tuo cane";
+
+    const bulletsHtmlIt = `
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:6px 0 16px;">
+      <tr><td style="padding:10px 0;vertical-align:top;">
+        <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.55;"><strong>Un esercizio su misura per ${escapeHtml(dogIt)} — gratis da provare.</strong> Fattibile già oggi, bastano 5 minuti. Spiegato passo dopo passo, nessuna conoscenza richiesta.</span>
+      </td></tr>
+      <tr><td style="padding:10px 0;vertical-align:top;">
+        <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.55;"><strong>Ti aiutiamo a risolvere ${problemLabel ? `il tema ${escapeHtml(problemLabel)}` : "il tema del comportamento"}.</strong> Con esercizi concreti dal lavoro quotidiano degli addestratori, adatti esattamente alla situazione di ${escapeHtml(dogIt)}. Più un aiuto personale quando ti blocchi.</span>
+      </td></tr>
+      <tr><td style="padding:10px 0;vertical-align:top;">
+        <span style="display:inline-block;font-size:18px;width:26px;color:#15803D;">✓</span>
+        <span style="font-size:14px;color:#1a1a1a;line-height:1.55;"><strong>Se decidi più avanti:</strong> nessun abbonamento, accesso a vita, 30 giorni soddisfatti o rimborsati. Altrimenti: chiudi semplicemente la finestra e il gioco è fatto.</span>
+      </td></tr>
+    </table>`;
+
+    const trustBoxHtmlIt = `
+    <div style="background:#FAFAFA;border-radius:10px;padding:14px 16px;margin:12px 0 4px;border-left:3px solid #C4A576;">
+      <p style="margin:0;font-size:13px;color:#4B5563;line-height:1.6;">
+        Sappiamo quanto possa essere logorante quando i consigli trovati su internet semplicemente non funzionano, e alla fine resti con la frustrazione invece dei progressi. Proprio per questo abbiamo creato ZampaPlan: un team di addestratori cinofili qualificati, al tuo fianco passo dopo passo.<br><br>
+        Per qualsiasi domanda scrivi a <a href="mailto:supporto@zampaplan.it" style="color:#8B7355;">supporto@zampaplan.it</a> — rispondiamo di persona.
+      </p>
+    </div>`;
+
+    const introTextIt = hasName
+      ? `${problemLabel ? `${escapeHtml(problemLabel)} di ${escapeHtml(dogIt)}` : `Il tema con ${escapeHtml(dogIt)}`} non è qualcosa che devi gestire da solo. Guarda con calma cosa abbiamo preparato <strong>su misura per ${escapeHtml(dogIt)}</strong> — <strong>gratis da provare</strong>.`
+      : `Il tema con il tuo cane non è qualcosa che devi gestire da solo. Guarda con calma cosa abbiamo preparato — <strong>gratis da provare</strong>.`;
+
+    const bodyHtmlIt = `
+    ${bulletsHtmlIt}
+    <p style="margin:14px 0 0;font-size:14px;line-height:1.6;color:#4B5563;">
+      Un clic sul pulsante e sei subito dentro — senza password, senza doverti registrare di nuovo.
+    </p>
+    ${trustBoxHtmlIt}`;
+
+    const html = wrapTemplate({
+      preheader: hasName
+        ? `Prova gratis: un esercizio personalizzato di 5 minuti per ${dogIt}.`
+        : `Prova gratis: un esercizio personalizzato di 5 minuti per il tuo cane.`,
+      headline: hasName
+        ? `5 minuti oggi per ${dogIt}: un esercizio in regalo`
+        : `5 minuti oggi per il tuo cane: un esercizio in regalo`,
+      intro: introTextIt,
+      bodyHtml: bodyHtmlIt,
+      ctaText: "Guarda ora gratis",
+      ctaUrl: loginUrl,
+      footerHint: `Senza impegno — se non prosegui, riceverai solo questa email.`,
+      lang: "it",
+    });
+
+    return sendBrevoMail({
+      lang,
+      to,
+      subject: hasName
+        ? `Esercizio di 5 minuti per ${dogIt}: fattibile già oggi`
+        : `Esercizio di 5 minuti per il tuo cane: fattibile già oggi`,
       html,
       tags: ["checkout-recovery"],
     });

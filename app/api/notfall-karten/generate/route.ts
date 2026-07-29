@@ -10,27 +10,32 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { email, dogName } = body;
     const isPL = body.lang === "pl";
+    const isIt = body.lang === "it";
 
     if (!email) {
       return NextResponse.json({ error: "Email fehlt" }, { status: 400 });
     }
 
-    const name = dogName || (isPL ? "Twojego psa" : "deinen Hund");
+    const name = dogName || (isPL ? "Twojego psa" : isIt ? "il tuo cane" : "deinen Hund");
 
-    // Statische PDF lesen (PL: polnische Karten).
+    // Statische PDF lesen (PL: polnische Karten, IT: italienische Karten).
     const pdfPath = join(
       process.cwd(),
       "public",
-      isPL ? "notfall-karten-pl.pdf" : "notfall-karten.pdf"
+      isPL ? "notfall-karten-pl.pdf" : isIt ? "notfall-karten-it.pdf" : "notfall-karten.pdf"
     );
     const pdfBuffer = readFileSync(pdfPath);
     const pdfBase64 = pdfBuffer.toString("base64");
 
     const nkSubject = isPL
       ? `Oto Twoje 10 kart ratunkowych dla ${name}`
+      : isIt
+      ? `Ecco le tue 10 schede di emergenza per ${name}`
       : `Hier sind deine 10 Notfall-Karten für ${name}`;
     const nkFile = isPL
       ? `Karty-ratunkowe-${name.replace(/\s+/g, "-")}.pdf`
+      : isIt
+      ? `Schede-emergenza-${name.replace(/\s+/g, "-")}.pdf`
       : `Notfall-Karten-${name.replace(/\s+/g, "-")}.pdf`;
 
     // PL-Auslieferung: ueber Brevo mit pomoc@lapaplan.pl (PL-Mails bleiben auf Brevo).
@@ -85,7 +90,28 @@ export async function POST(request: Request) {
     }
 
     // Per Brevo senden
-    const nkHtml = `
+    const nkHtmlIT = `
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:500px;margin:0 auto;padding:20px;color:#1a1a1a;">
+            <div style="text-align:center;margin-bottom:24px;">
+              <h1 style="font-size:24px;margin:0 0 8px;">Ecco le tue schede di emergenza per ${name}!</h1>
+              <p style="font-size:15px;color:#666;margin:0;">10 aiuti immediati per le situazioni difficili più comuni con il cane, da stampare o salvare sul telefono</p>
+            </div>
+            <div style="background:#F0FDF4;border-radius:10px;padding:14px 16px;margin-bottom:20px;text-align:center;">
+              <p style="font-size:14px;color:#166534;font-weight:600;margin:0;">Il PDF è in allegato</p>
+            </div>
+            <div style="background:#FAFAFA;border-radius:10px;padding:16px;margin-bottom:20px;">
+              <p style="font-size:14px;color:#555;margin:0 0 8px;"><strong>Come usare le schede per ${name}:</strong></p>
+              <p style="font-size:13px;color:#666;margin:0 0 4px;">1. Stampa il PDF o salvalo sul telefono</p>
+              <p style="font-size:13px;color:#666;margin:0 0 4px;">2. Nella situazione critica scegli la scheda giusta</p>
+              <p style="font-size:13px;color:#666;margin:0;">3. Segui i 5 passaggi nell'ordine</p>
+            </div>
+            <p style="font-size:13px;color:#999;text-align:center;">
+              Domande? Scrivici a <a href="mailto:supporto@zampaplan.it" style="color:#C4A576;">supporto@zampaplan.it</a><br>
+              Un caro saluto, il tuo team ZampaPlan
+            </p>
+          </div>
+        `;
+    const nkHtml = isIt ? nkHtmlIT : `
           <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:500px;margin:0 auto;padding:20px;color:#1a1a1a;">
             <div style="text-align:center;margin-bottom:24px;">
               <h1 style="font-size:24px;margin:0 0 8px;">Hier sind deine Notfall-Karten für ${name}!</h1>
@@ -120,6 +146,7 @@ export async function POST(request: Request) {
           to: email,
           subject: nkSubject,
           html: nkHtml,
+          fromName: isIt ? "ZampaPlan" : undefined,
           cc: "kontakt@primesocial.de",
           attachments: [{ name: nkFile, contentBase64: pdfBase64 }],
         });
@@ -144,7 +171,9 @@ export async function POST(request: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        sender: { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
+        sender: isIt
+          ? { name: "ZampaPlan", email: "support@pfoten-plan.de" }
+          : { name: "Max von Pfoten-Plan", email: "support@pfoten-plan.de" },
         to: [{ email }],
         cc: [{ email: "kontakt@primesocial.de" }],
         subject: nkSubject,

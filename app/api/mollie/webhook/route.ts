@@ -253,24 +253,34 @@ async function handlePaid(payment: any) {
   // in Supabase über belege.markt trennbar/nachverfolgbar.
   if (table === "wauwerk_leads" && customerEmail) {
     const isPlSale = (prevAnswers as any)?.lang === "pl";
+    const isItSale = (prevAnswers as any)?.lang === "it";
     const bruttoCents = Math.round(
       parseFloat(payment.amount?.value || "0") * 100
     );
     if (bruttoCents > 0) {
       try {
-        const { belegDescription, belegDescriptionPl, PL_VAT_RATE } =
-          await import("@/lib/beleg");
+        const {
+          belegDescription,
+          belegDescriptionPl,
+          belegDescriptionIt,
+          PL_VAT_RATE,
+          IT_VAT_RATE,
+        } = await import("@/lib/beleg");
         await supabase.rpc("create_beleg", {
           p_mollie_payment_id: payment.id,
           p_lead_id: referenceId,
           p_email: customerEmail,
           p_beschreibung: isPlSale
             ? belegDescriptionPl(meta)
+            : isItSale
+            ? belegDescriptionIt(meta)
             : belegDescription(meta),
           p_brutto_cents: bruttoCents,
           p_leistungsdatum: new Date().toISOString(),
           ...(isPlSale
             ? { p_ust_satz: PL_VAT_RATE, p_markt: "PL", p_waehrung: "PLN" }
+            : isItSale
+            ? { p_ust_satz: IT_VAT_RATE, p_markt: "IT", p_waehrung: "EUR" }
             : {}),
         });
       } catch (e: any) {

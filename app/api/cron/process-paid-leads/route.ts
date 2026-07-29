@@ -34,7 +34,12 @@ export async function GET(req: NextRequest) {
   // Nuetzlich fuer manuelles Triggern eines spezifischen Leads.
   const emailFilter = req.nextUrl.searchParams.get("email")?.toLowerCase();
 
-  // 1) Paid-Leads holen, neueste zuerst (max 50 pro Run = nie ein Backlog)
+  // 1) Paid-Leads holen, neueste zuerst.
+  // Filter: nur Leads die in den letzten 7 Tagen bezahlt haben — sonst
+  // wuerde der Cron auch fuer 996 alte Leads (vor unserem Plan-System)
+  // jetzt nachtraeglich Pläne generieren. Manuelles Triggern mit ?email=
+  // ist unbeschraenkt.
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
   let query = admin
     .from("wauwerk_leads")
     .select("id, email, dog_name, paid_at, status, selected_plan, answers")
@@ -43,7 +48,7 @@ export async function GET(req: NextRequest) {
   if (emailFilter) {
     query = query.ilike("email", emailFilter);
   } else {
-    query = query.limit(50);
+    query = query.gte("paid_at", sevenDaysAgo).limit(50);
   }
   const { data: paidLeads, error: leadErr } = await query;
 
