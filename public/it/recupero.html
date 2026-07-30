@@ -1166,7 +1166,7 @@
 
         <!-- ===== PERSÖNLICHE ANALYSE-ZUSAMMENFASSUNG ===== -->
         <div style="margin-bottom: 30px;">
-            <h2 class="analyse-title">Analisi di <span id="analyseNameTitle">il tuo cane</span></h2>
+            <h2 class="analyse-title">Analisi <span id="analyseNameTitle">del tuo cane</span></h2>
             <p class="analyse-subtitle">In base alle tue risposte del quiz salvate</p>
 
             <div class="analyse-grid">
@@ -1575,7 +1575,7 @@
                     </div>
                     <span class="faq-question-text">È un abbonamento?</span>
                 </div>
-                <p class="faq-answer"><strong>No, non è un abbonamento.</strong> Riteniamo che far pagare ogni mese non sia corretto. Il piano è un pagamento unico e vi hai accesso per sempre.</p>
+                <p class="faq-answer"><strong>No, non è un abbonamento.</strong> Riteniamo che far pagare ogni mese non sia corretto. Il piano è un pagamento unico e l'accesso è tuo per sempre.</p>
             </div>
 
             <div class="faq-item">
@@ -2025,7 +2025,7 @@
             
             // ==================== ANALYSE-SECTION BEFÜLLEN ====================
             // Analyse-Titel
-            document.getElementById('analyseNameTitle').textContent = dogName;
+            document.getElementById('analyseNameTitle').textContent = dogName === 'il tuo cane' ? 'del tuo cane' : 'di ' + dogName;
 
             // Problem
             const problemLabels = {
