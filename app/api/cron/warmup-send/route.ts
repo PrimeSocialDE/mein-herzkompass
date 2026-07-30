@@ -92,7 +92,10 @@ export async function GET(req: NextRequest) {
     if (error || !data || !data.length) break;
     for (const r of data) {
       const a = (r.answers || {}) as any;
-      if (a.unsubscribed || a.lang === "pl" || a.energie_kampagne_sent_at || a.warmup_sent_at) continue;
+      // STRIKT DE: nur deutsche Leads. PL/IT (und jede andere Sprache) laufen
+      // ueber ihre eigene Nurture — hier alle Nicht-DE ausschliessen, sonst
+      // bekommen sie die deutsche Warmup-Value-Mail.
+      if (a.unsubscribed || (a.lang && String(a.lang).toLowerCase() !== "de") || a.energie_kampagne_sent_at || a.warmup_sent_at) continue;
       const theme = WARMUP_THEME_MAP[(a.dog_problem || "").trim()];
       if (!theme) continue;
       if (!r.email || !r.email.includes("@")) continue;

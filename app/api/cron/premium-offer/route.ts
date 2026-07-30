@@ -61,7 +61,7 @@ async function run(req: NextRequest) {
     if (a.email_sequence_unsubscribed_at) return false;         // abgemeldet
     if (a.premium_intake?.status === "paid") return false;      // hat Premium schon gekauft
     if (/@primesocial\.de$/i.test(l.email)) return false;       // interne Test-Adressen
-    if (a.lang === "pl") return false;                          // Premium ist kein PL-Produkt → keine dt. Offer an PL-Kunden
+    if (a.lang && String(a.lang).toLowerCase() !== "de") return false; // Premium ist nur DE lokalisiert → keine dt. Offer an PL/IT (o. andere) Kunden
     return true;
   });
 
