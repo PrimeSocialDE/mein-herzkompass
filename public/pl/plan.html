@@ -5374,7 +5374,13 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     <button id="applePayBtn" class="hybrid-express-btn hybrid-express-btn--applepay" onclick="payWithMethod('applepay')" aria-label="Zapłać przez Apple Pay">
                         <img src="Apple-Pay-Logo.jpg" alt="ApplePay">
                     </button>
-                    <button id="googlePayBtn" class="hybrid-express-btn hybrid-express-btn--googlepay" onclick="payWithMethod('googlepay')" aria-label="Zapłać przez Google Pay">
+                    <!-- Google Pay TEMPORAER AUSGEBLENDET (2026-07-30): liefert bei Mollie PL
+                         konsistent 503 (upstream/acquirer-Fehler), Payment-Create schlaegt fehl
+                         → Kunden konnten nicht zahlen (landeten auf pending). Gleiches Muster wie
+                         Przelewy24. Ausgeblendet, damit Kunden auf BLIK/Apple Pay/Karte/PayPal
+                         (alle getestet OK) gehen. WIEDER EINBLENDEN: style unten entfernen, sobald
+                         Google Pay im PL-Mollie-Konto sauber aktiviert ist (mit Mollie klaeren). -->
+                    <button id="googlePayBtn" class="hybrid-express-btn hybrid-express-btn--googlepay" onclick="payWithMethod('googlepay')" aria-label="Zapłać przez Google Pay" style="display:none">
                         <img src="googlepay.png" alt="GooglePay">
                     </button>
                 </div>

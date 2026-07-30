@@ -7,7 +7,7 @@
 // Kein Schreibzugriff. Secret-gated.
 
 import { NextRequest, NextResponse } from "next/server";
-import { getMollie, getMolliePL } from "@/lib/mollie";
+import { getMollie, getMolliePL, getMollieIT } from "@/lib/mollie";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -20,10 +20,28 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
   const acct = (searchParams.get("acct") || "pl").toLowerCase();
-  const mollie = acct === "pl" ? getMolliePL() : getMollie();
+  const mollie =
+    acct === "pl" ? getMolliePL() : acct === "it" ? getMollieIT() : getMollie();
   if (!mollie) return NextResponse.json({ error: "no_key", acct }, { status: 500 });
 
   const out: any = { acct };
+
+  // Profile des Kontos listen (?action=profiles) — um zu pruefen, ob eine
+  // Public-Profile-ID (Components/cardToken) wirklich zu diesem Key/Konto gehoert.
+  if (searchParams.get("action") === "profiles") {
+    try {
+      const list: any = await (mollie as any).profiles.page();
+      const arr = Array.isArray(list) ? list : list?.[Symbol.iterator] ? [...list] : [];
+      return NextResponse.json({
+        acct,
+        profiles: arr.map((p: any) => ({
+          id: p.id, name: p.name, website: p.website, mode: p.mode, status: p.status,
+        })),
+      });
+    } catch (e: any) {
+      return NextResponse.json({ error: e?.message });
+    }
+  }
 
   // Detail-Dump einer bestimmten Zahlung (?payment=tr_xxx)
   const payId = searchParams.get("payment");
