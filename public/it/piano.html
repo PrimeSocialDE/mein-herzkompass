@@ -2544,7 +2544,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 
     <div class="container">
         <div class="title-section">
-            <h1 class="main-title">Tira fuori il meglio del <span id="dogName3">tuo cane</span></h1>
+            <h1 class="main-title">Tira fuori il meglio <span id="dogName3">dal tuo cane</span></h1>
             <p class="outcome-promise" style="display:inline-block;font-size:14px;color:#8B7355;font-weight:700;background:#FFFBF5;border:1px solid #EBDDC4;padding:8px 14px;border-radius:20px;margin:10px 0 6px;line-height:1.35;">🎯 <span id="outcomeHeadline">Un cane tranquillo in 4 settimane</span></p>
             <p class="preview-hint">Questa è un'anteprima del tuo piano di addestramento personale.<br>Gli esercizi individuali si basano sulle tue risposte e sono disponibili dopo l'acquisto.</p>
             
@@ -3217,7 +3217,7 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
 
         document.getElementById('dogName1').textContent = dogName;
         document.getElementById('dogName2').textContent = dogName;
-        document.getElementById('dogName3').textContent = dogName;
+        document.getElementById('dogName3').textContent = dogName === 'il tuo cane' ? 'dal tuo cane' : 'da ' + dogName;
         const mockupTitleEl = document.getElementById('mockupTitle');
         if (mockupTitleEl) mockupTitleEl.textContent = 'Piano di addestramento per ' + dogName;
         document.getElementById('dogNamePlan').textContent = dogName;
