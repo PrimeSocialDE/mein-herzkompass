@@ -1476,9 +1476,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 10px 12px;
             margin-bottom: 15px;
-            flex-wrap: nowrap;
+            /* wrap statt nowrap: auf schmalen Handys quetschen sich 7 Logos sonst
+               auf eine Zeile (wirkt kompakt/gedraengt). Jetzt brechen sie sauber
+               auf 2 Zeilen um, Desktop bleibt einzeilig. */
+            flex-wrap: wrap;
         }
 
         .payment-logos img {
