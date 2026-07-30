@@ -1013,10 +1013,14 @@ async function handleNonSuccess(payment: any) {
       mollie_payment_id: payment.id,
       payment_provider: "mollie",
     })
-    .eq("id", referenceId);
+    .eq("id", referenceId)
+    // CAS-Guard: einen bereits BEZAHLTEN Datensatz NIE zurueckstufen. Verhindert
+    // das Race, bei dem ein spaetes failed/expired/canceled-Event (oder ein
+    // mehrfach gefeuerter Webhook) einen paid-Lead auf failed clobbert.
+    .neq("status", "paid");
 
   console.log(
-    `[mollie-webhook] ${table} ${referenceId} → failed (${payment.status})`
+    `[mollie-webhook] ${table} ${referenceId} → failed (${payment.status}) [nur wenn nicht paid]`
   );
 }
 
