@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 
     switch (payment.status) {
       case "paid":
-        await handlePaid(payment);
+        await handlePaid(payment, acct);
         break;
       case "failed":
       case "canceled":
@@ -102,8 +102,40 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ ok: true });
 }
 
+// ── DataFast: Umsatz an das pfoten-plan.de-Projekt melden ────────────────────
+// Ordnet den Mollie-Umsatz der Marketing-Quelle des Besuchers zu. Die visitor-id
+// kommt aus der Payment-Metadata (im Checkout aus der datafast_visitor_id-Cookie
+// gesetzt). Nur wenn API-Key + visitor-id vorhanden. Best-effort, wirft nie.
+async function reportDataFastRevenue(payment: any) {
+  const key = process.env.DATAFAST_API_KEY;
+  const meta = (payment?.metadata || {}) as Record<string, any>;
+  const visitorId = meta.datafast_visitor_id;
+  const amount = parseFloat(payment?.amount?.value || "0");
+  if (!key || !visitorId || !amount) return;
+  try {
+    const r = await fetch("https://datafa.st/api/v1/payments", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        amount,
+        currency: payment?.amount?.currency || "EUR",
+        transaction_id: payment.id,
+        datafast_visitor_id: visitorId,
+      }),
+    });
+    if (!r.ok) {
+      console.warn(`[datafast] revenue report ${r.status} fuer ${payment.id}`);
+    }
+  } catch (e: any) {
+    console.warn("[datafast] revenue report failed:", e?.message);
+  }
+}
+
 // ── Hauptpfad: Zahlung erfolgreich ───────────────────────────────────────────
-async function handlePaid(payment: any) {
+async function handlePaid(payment: any, acct?: string | null) {
   const meta = (payment.metadata || {}) as Record<string, any>;
   const isUpsell = meta.type === "upsell";
   const isPremium = meta.type === "premium";
@@ -188,6 +220,14 @@ async function handlePaid(payment: any) {
       `[mollie-webhook] payment ${payment.id} bereits prozessiert — skip`
     );
     return;
+  }
+
+  // ── DataFast Revenue-Attribution (nur DE-Konto, best-effort) ───────────
+  // Hinter der Dedup → jede Zahlung genau 1x gemeldet (kein Doppel-Umsatz).
+  // Nur DE (acct leer): der DataFast-Key gehoert zum pfoten-plan.de-Projekt,
+  // PL/IT haben eigene. Failure-isoliert, blockt den Webhook nie.
+  if (!acct) {
+    try { await reportDataFastRevenue(payment); } catch {}
   }
 
   // Mollie liefert Customer-Daten je nach Methode unterschiedlich
