@@ -437,6 +437,14 @@
         .tp-card p.q { font-size:13.5px; color:#2C2C2E; margin:7px 0 6px; line-height:1.5; }
         .tp-card p.a { font-size:11.5px; color:#8A8A8A; margin:0; font-weight:600; }
         .tp-verified { color:#00B67A; }
+        .tp-slider { overflow: hidden; margin: 0; }
+        .tp-track { display: flex; transition: transform 0.45s cubic-bezier(0.22,1,0.36,1); will-change: transform; }
+        .tp-slide { min-width: 100%; box-sizing: border-box; padding: 2px; }
+        .tp-slide .tp-card { margin-bottom: 0; }
+        .tp-dots { display: flex; justify-content: center; gap: 6px; margin: 10px 0 0; }
+        .tp-dot { width: 7px; height: 7px; border-radius: 50%; background: #D8D2C6; transition: all 0.3s ease; }
+        .tp-dot.is-active { background: #00B67A; width: 18px; border-radius: 4px; }
+        @media (prefers-reduced-motion: reduce) { .tp-track { transition: none; } }
 
         .continue-btn:hover {
             background: #8B7355;
@@ -574,21 +582,26 @@
                 <span style="font-size:13px; font-weight:800; color:#1a1a1a;">4.8/5</span>
                 <span style="font-size:11.5px; color:#8A8A8A;">· 3.447+ Bewertungen</span>
             </div>
-            <div class="tp-card">
-                <span class="tp-stars"><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span>
-                <p class="q">"Nach 2 Wochen zieht Luna endlich nicht mehr an der Leine – ich war baff, wie schnell das ging."</p>
-                <p class="a">Sandra M. · <span class="tp-verified">✓ Verifiziert</span></p>
+            <div class="tp-slider">
+                <div class="tp-track" id="tpTrack">
+                    <div class="tp-slide"><div class="tp-card">
+                        <span class="tp-stars"><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span>
+                        <p class="q">"Nach 2 Wochen zieht Luna endlich nicht mehr an der Leine – ich war baff, wie schnell das ging."</p>
+                        <p class="a">Sandra M. · <span class="tp-verified">✓ Verifiziert</span></p>
+                    </div></div>
+                    <div class="tp-slide"><div class="tp-card">
+                        <span class="tp-stars"><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span>
+                        <p class="q">"Das ständige Bellen bei Besuch ist fast komplett weg. Endlich wieder Ruhe zuhause."</p>
+                        <p class="a">Thomas K. · <span class="tp-verified">✓ Verifiziert</span></p>
+                    </div></div>
+                    <div class="tp-slide"><div class="tp-card">
+                        <span class="tp-stars"><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span>
+                        <p class="q">"Endlich hört Bruno auf 'Hier' – sogar im Park mit anderen Hunden. Der Plan ist wirklich top."</p>
+                        <p class="a">Julia W. · <span class="tp-verified">✓ Verifiziert</span></p>
+                    </div></div>
+                </div>
             </div>
-            <div class="tp-card">
-                <span class="tp-stars"><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span>
-                <p class="q">"Das ständige Bellen bei Besuch ist fast komplett weg. Endlich wieder Ruhe zuhause."</p>
-                <p class="a">Thomas K. · <span class="tp-verified">✓ Verifiziert</span></p>
-            </div>
-            <div class="tp-card">
-                <span class="tp-stars"><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span>
-                <p class="q">"Endlich hört Bruno auf 'Hier' – sogar im Park mit anderen Hunden. Der Plan ist wirklich top."</p>
-                <p class="a">Julia W. · <span class="tp-verified">✓ Verifiziert</span></p>
-            </div>
+            <div class="tp-dots" id="tpDots"><span class="tp-dot is-active"></span><span class="tp-dot"></span><span class="tp-dot"></span></div>
 
             <!-- Spacer, damit der fixe Weiter-Button den letzten Review nicht verdeckt -->
             <div style="height: 96px;"></div>
@@ -851,6 +864,36 @@
 
         // Start
         setTimeout(animateProgress, 600);
+    </script>
+    <script>
+        // Trustpilot-Review-Slider: alle 2s nach links, swipebar (Touch + Maus)
+        (function () {
+            const track = document.getElementById('tpTrack');
+            const slider = track ? track.parentElement : null;
+            const dots = document.querySelectorAll('#tpDots .tp-dot');
+            if (!track || !slider) return;
+            const n = track.children.length;
+            let i = 0, timer = null, x0 = null;
+            function go(idx) {
+                i = (idx % n + n) % n;
+                track.style.transform = 'translateX(' + (-i * 100) + '%)';
+                dots.forEach((d, k) => d.classList.toggle('is-active', k === i));
+            }
+            function start() { stop(); timer = setInterval(() => go(i + 1), 2000); }
+            function stop() { if (timer) { clearInterval(timer); timer = null; } }
+            function down(x) { x0 = x; stop(); }
+            function up(x) {
+                if (x0 === null) return;
+                const dx = x - x0; x0 = null;
+                if (Math.abs(dx) > 30) go(i + (dx < 0 ? 1 : -1));
+                start();
+            }
+            slider.addEventListener('touchstart', (e) => down(e.touches[0].clientX), { passive: true });
+            slider.addEventListener('touchend', (e) => up(e.changedTouches[0].clientX), { passive: true });
+            slider.addEventListener('mousedown', (e) => down(e.clientX));
+            window.addEventListener('mouseup', (e) => up(e.clientX));
+            go(0); start();
+        })();
     </script>
 </body>
 </html>
