@@ -358,6 +358,10 @@ export async function POST(req: NextRequest) {
     set("ttclid", t(ttclid, 50));
     set("referred_by_code", t(referredByCode, 24));
     set("source_page", t(source_page, 20));
+    // DataFast Revenue-Attribution: Besucher-ID aus der first-party Cookie
+    // (same-origin-Fetch sendet sie automatisch mit, wie pp_attr). Der Webhook
+    // meldet damit bei "paid" den Umsatz an DataFast. Leer = kein Problem.
+    set("datafast_visitor_id", t(req.cookies.get("datafast_visitor_id")?.value || "", 40));
 
     // ── Byte-Budget-Guard (Mollie-Limit ~1024 Bytes) ───────────────────────
     // utm_* sind join-kritisch und MÜSSEN überleben. Falls die Metadata zu groß
