@@ -41,6 +41,8 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [sessionChecked, setSessionChecked] = useState(false);
   const [isPL, setIsPL] = useState(false);
+  const [linkSending, setLinkSending] = useState(false);
+  const [linkSent, setLinkSent] = useState(false);
 
   // Sprach-Erkennung über Host (hydration-sicher: initial de, nach Mount pl)
   useEffect(() => {
@@ -102,6 +104,12 @@ export default function LoginPage() {
         trustBefore: "Na tym urządzeniu pozostaniesz ",
         trustStrong: "zalogowany przez 30 dni",
         trustAfter: " — bez ciągłego pingpongu z e-mailami.",
+        codeNotArrived:
+          "Kod nie dotarł? Przy web.de, GMX lub t-online bywa blokowany.",
+        sendDirectLink: "→ Wyślij bezpośredni link do logowania",
+        linkSending: "Wysyłam…",
+        linkSentConfirm:
+          "✅ Jeśli jesteś członkiem, link do logowania jest w drodze. Działa też przy web.de/GMX — po prostu kliknij w e-mailu.",
       }
     : {
         tabAnmelden: "Anmelden",
@@ -155,6 +163,12 @@ export default function LoginPage() {
         trustBefore: "Auf diesem Gerät bleibst du ",
         trustStrong: "30 Tage eingeloggt",
         trustAfter: " — kein ständiges Mail-Pingpong.",
+        codeNotArrived:
+          "Code nicht angekommen? Bei web.de, GMX oder t-online wird er manchmal blockiert.",
+        sendDirectLink: "→ Direkt-Login-Link per E-Mail schicken",
+        linkSending: "Wird geschickt…",
+        linkSentConfirm:
+          "✅ Falls du Mitglied bist, ist dein Direkt-Login-Link unterwegs. Er funktioniert auch bei web.de/GMX — einfach in der Mail draufklicken.",
       };
 
   // Auto-Redirect wenn schon eingeloggt — User klickt auf "Anmelden" und
@@ -292,6 +306,31 @@ export default function LoginPage() {
     setPassword("");
     setShowPassword(false);
     setErrorMsg("");
+    setLinkSent(false);
+    setLinkSending(false);
+  }
+
+  // Selbsthilfe: durablen Direkt-Login-Link anfordern (fuer Scanner-Provider
+  // wie web.de/GMX/t-online, die den 6-stelligen Code verbrennen). Antwort ist
+  // immer generisch — der Endpoint schickt nur echten Mitgliedern einen Link.
+  async function requestDirectLink() {
+    const mail = email.trim().toLowerCase();
+    if (!mail) {
+      setErrorMsg(t.emailRequired);
+      return;
+    }
+    setLinkSending(true);
+    try {
+      await fetch("/api/mitglieder/send-login-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: mail }),
+      });
+    } catch {
+      // Selbst bei Netzwerkfehler generisch bestaetigen (Link kann trotzdem raus sein).
+    }
+    setLinkSending(false);
+    setLinkSent(true);
   }
 
   function switchMode(m: Mode) {
@@ -422,6 +461,30 @@ export default function LoginPage() {
                     {t.otherEmail}
                   </button>
                 </form>
+
+                {/* Selbsthilfe: durabler Direkt-Login-Link — Scanner-Provider
+                    (web.de/GMX/t-online) verbrennen den 6-stelligen Code. */}
+                <div className="mt-4 pt-4 border-t border-[#EADDC5] text-center">
+                  {linkSent ? (
+                    <div className="bg-[#F0FDF4] border border-[#BBF7D0] text-[#166534] text-[12px] rounded-lg px-3 py-2.5 leading-relaxed">
+                      {t.linkSentConfirm}
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-[11px] text-[#9CA3AF] mb-2 leading-relaxed">
+                        {t.codeNotArrived}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={requestDirectLink}
+                        disabled={linkSending}
+                        className="text-[12px] font-semibold text-[#8B7355] underline hover:text-[#1a1a1a] disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {linkSending ? t.linkSending : t.sendDirectLink}
+                      </button>
+                    </>
+                  )}
+                </div>
               </>
             ) : (
               // ── Account erstellen: Link prominent ─────────────────
