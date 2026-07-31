@@ -253,13 +253,13 @@
         function getABTestPage() {
             let variant = localStorage.getItem('ab_test_pricing_v6');
             if (!variant) {
-                // 10% A=deinplan3 (Control-Holdout), 90% B=deinplan2 (+ Peer-Testimonial-Block).
-                // Hochgezogen auf 90/10, nachdem B2 klar besser konvertierte (19,4% vs 12,0%).
-                // Kleine A-Kontrolle bleibt, um Signifikanz + Mess-Sauberkeit abzusichern.
-                variant = Math.random() < 0.10 ? 'A' : 'B';
-                localStorage.setItem('ab_test_pricing_v6', variant); // Routing + sawPlan-Flag
-                // DB-Label (ab_variant): Control='A', neue B-Variante='B2' (vom alten 'B' trennbar)
-                localStorage.setItem('ab_test_pricing', variant === 'A' ? 'A' : 'B2');
+                // 30% A=deinplan3 NEU (Handy-Animation, Kein-Abo-Zeile, Digital/Ausdrucken),
+                // 70% B=deinplan2 (bisheriger Gewinner, 19,4% vs 12,0%). Von 10% -> 30%
+                // hochgezogen, um die ueberarbeitete deinplan3 gegen den Gewinner zu testen.
+                variant = Math.random() < 0.30 ? 'A' : 'B';
+                localStorage.setItem('ab_test_pricing_v6', variant); // Routing + sawPlan-Flag (Key bleibt v6!)
+                // DB-Label (ab_variant): neue deinplan3 = 'A2' (sauber trennbar von alten 'A'-Daten), B = 'B2'
+                localStorage.setItem('ab_test_pricing', variant === 'A' ? 'A2' : 'B2');
             }
             // A = deinplan3.html (Control) · B = deinplan2.html (+ Peer-Testimonial-Block)
             return variant === 'A' ? 'deinplan3.html' : 'deinplan2.html';
