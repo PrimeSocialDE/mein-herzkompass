@@ -242,6 +242,35 @@
             📧 <strong>Alles wird in wenigen Minuten</strong> an deine E-Mail gesendet. Bitte check auch deinen Spam-Ordner.
         </div>
 
+        <!-- Selbsthilfe: Plan nicht erhalten? -> nochmal schicken (nur bezahlte Leads) -->
+        <div style="margin: 14px auto 0; max-width: 440px; text-align: center;">
+            <p id="resendConfirm" style="display:none; font-size:13px; color:#166534; background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:10px 14px; line-height:1.5; margin:0;">✅ Ist unterwegs an deine E-Mail — schau in 1–2 Minuten nochmal (auch im Spam-Ordner).</p>
+            <div id="resendBox">
+                <p style="font-size:12px; color:#9CA3AF; margin:0 0 6px; line-height:1.4;">Nach ein paar Minuten noch nichts im Postfach (auch nicht im Spam)?</p>
+                <button type="button" onclick="resendPlan(this)" style="font-size:13px; font-weight:600; color:#8B7355; background:none; border:none; text-decoration:underline; cursor:pointer; padding:0;">→ Plan nochmal an meine E-Mail schicken</button>
+            </div>
+        </div>
+        <script>
+            async function resendPlan(btn) {
+                btn.disabled = true;
+                btn.textContent = "Wird geschickt…";
+                var p = new URLSearchParams(location.search);
+                var leadId = p.get("lead_id") || localStorage.getItem("leadId") || localStorage.getItem("lead_id") || "";
+                var email = localStorage.getItem("userEmail") || "";
+                try {
+                    await fetch("/api/mitglieder/resend-plan", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ lead_id: leadId, email: email })
+                    });
+                } catch (e) {}
+                var box = document.getElementById("resendBox");
+                if (box) box.style.display = "none";
+                var conf = document.getElementById("resendConfirm");
+                if (conf) conf.style.display = "block";
+            }
+        </script>
+
         <div class="support-note">
             Fragen? Schreib uns an <a href="mailto:support@pfoten-plan.de">support@pfoten-plan.de</a>
         </div>
