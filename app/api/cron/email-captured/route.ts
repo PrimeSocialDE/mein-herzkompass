@@ -138,8 +138,10 @@ export async function GET(req: NextRequest) {
   for (const lead of leads || []) {
     const answers = lead.answers || {};
 
-    // STRIKT DE: polnische Leads laufen ueber pl-nurture, hier ausschliessen.
-    if (String(answers.lang || "").toLowerCase() === "pl") {
+    // STRIKT DE: nur deutsche Leads. PL laeuft ueber pl-nurture, IT ueber
+    // it-nurture — alle Nicht-DE-Sprachen hier ausschliessen.
+    const leadLang = String(answers.lang || "").toLowerCase();
+    if (leadLang && leadLang !== "de") {
       skipped++;
       continue;
     }
