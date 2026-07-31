@@ -29,6 +29,42 @@ const ERROR_MESSAGES_PL: Record<string, string> = {
     "Link był niekompletny. Poproś o nowy.",
 };
 
+// Uebersetzt rohe (englische) Supabase-Auth-Fehler nach DE/PL — vor allem das
+// Rate-Limit "For security purposes, you can only request this after N seconds".
+function translateAuthError(msg: string | undefined, isPL: boolean): string {
+  const raw = msg || "";
+  const m = raw.toLowerCase();
+  const sec = raw.match(/after (\d+)\s*seconds?/i)?.[1];
+  if (
+    m.includes("security purposes") ||
+    m.includes("rate limit") ||
+    m.includes("too many") ||
+    sec
+  ) {
+    if (isPL)
+      return sec
+        ? `Ze względów bezpieczeństwa odczekaj jeszcze ${sec} sek., zanim poprosisz ponownie.`
+        : "Za dużo prób. Odczekaj chwilę i spróbuj ponownie.";
+    return sec
+      ? `Aus Sicherheitsgründen bitte noch ${sec} Sekunden warten, dann kannst du es erneut anfordern.`
+      : "Zu viele Versuche. Bitte warte einen kurzen Moment und versuch es dann erneut.";
+  }
+  if (m.includes("expired") || m.includes("invalid") || m.includes("token")) {
+    return isPL
+      ? "Kod wygasł lub jest nieprawidłowy. Wpisz e-mail i poproś o nowy."
+      : "Der Code ist abgelaufen oder ungültig. Trag deine E-Mail ein und fordere einen neuen an.";
+  }
+  if (m.includes("email") && m.includes("valid")) {
+    return isPL
+      ? "Ten adres e-mail wygląda na nieprawidłowy."
+      : "Diese E-Mail-Adresse sieht nicht gültig aus.";
+  }
+  // Fallback: generisch lokalisiert statt roher englischer Text.
+  return isPL
+    ? "Coś poszło nie tak. Spróbuj ponownie za chwilę."
+    : "Etwas ist schiefgelaufen. Bitte versuch es gleich nochmal.";
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -259,7 +295,7 @@ export default function LoginPage() {
 
     if (error) {
       setStage("error");
-      setErrorMsg(error.message || t.sendMailFailed);
+      setErrorMsg(error.message ? translateAuthError(error.message, isPL) : t.sendMailFailed);
       return;
     }
     setStage("sent");
@@ -290,7 +326,7 @@ export default function LoginPage() {
       } else if (msg.includes("not found") || msg.includes("user not")) {
         setErrorMsg(t.emailUnknown);
       } else if (error?.message) {
-        setErrorMsg(`${t.loginFailedPrefix}${error.message}`);
+        setErrorMsg(translateAuthError(error.message, isPL));
       } else {
         setErrorMsg(t.codeWrong);
       }
