@@ -417,8 +417,26 @@
 
         .continue-btn.show {
             opacity: 1;
-            transform: translateY(0);
+            position: fixed;
+            left: 50%;
+            bottom: 12px;
+            transform: translateX(-50%);
+            width: calc(100% - 28px);
+            max-width: 400px;
+            z-index: 1000;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.20);
         }
+
+        /* Trustpilot-Reviews */
+        .tp-head { display:flex; align-items:center; justify-content:center; gap:7px; margin: 22px 0 14px; flex-wrap:wrap; }
+        .tp-stars { display:inline-flex; gap:2px; }
+        .tp-star { display:inline-flex; width:15px; height:15px; background:#00B67A; align-items:center; justify-content:center; border-radius:2px; }
+        .tp-star svg { width:9px; height:9px; fill:#fff; }
+        .tp-title { font-size:12px; font-weight:700; color:#1a1a1a; text-align:center; margin: 26px 0 0; }
+        .tp-card { background:#fff; border:1px solid #ECECEC; border-radius:12px; padding:12px 14px; margin-bottom:10px; text-align:left; box-shadow:0 1px 3px rgba(0,0,0,0.05); }
+        .tp-card p.q { font-size:13.5px; color:#2C2C2E; margin:7px 0 6px; line-height:1.5; }
+        .tp-card p.a { font-size:11.5px; color:#8A8A8A; margin:0; font-weight:600; }
+        .tp-verified { color:#00B67A; }
 
         .continue-btn:hover {
             background: #8B7355;
@@ -548,6 +566,32 @@
             <p class="vision-text" id="visionText">
                 Die meisten Hundebesitzer sehen <strong>innerhalb von 2 Wochen</strong> deutliche Verbesserungen.
             </p>
+
+            <!-- Trustpilot-Reviews: Social Proof waehrend der "Plan wird erstellt"-Wartezeit -->
+            <p class="tp-title">Das sagen andere Hundebesitzer</p>
+            <div class="tp-head">
+                <span class="tp-stars"><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span>
+                <span style="font-size:13px; font-weight:800; color:#1a1a1a;">4.8/5</span>
+                <span style="font-size:11.5px; color:#8A8A8A;">· 3.447+ Bewertungen</span>
+            </div>
+            <div class="tp-card">
+                <span class="tp-stars"><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span>
+                <p class="q">"Nach 2 Wochen zieht Luna endlich nicht mehr an der Leine – ich war baff, wie schnell das ging."</p>
+                <p class="a">Sandra M. · <span class="tp-verified">✓ Verifiziert</span></p>
+            </div>
+            <div class="tp-card">
+                <span class="tp-stars"><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span>
+                <p class="q">"Das ständige Bellen bei Besuch ist fast komplett weg. Endlich wieder Ruhe zuhause."</p>
+                <p class="a">Thomas K. · <span class="tp-verified">✓ Verifiziert</span></p>
+            </div>
+            <div class="tp-card">
+                <span class="tp-stars"><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span><span class="tp-star"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span>
+                <p class="q">"Endlich hört Bruno auf 'Hier' – sogar im Park mit anderen Hunden. Der Plan ist wirklich top."</p>
+                <p class="a">Julia W. · <span class="tp-verified">✓ Verifiziert</span></p>
+            </div>
+
+            <!-- Spacer, damit der fixe Weiter-Button den letzten Review nicht verdeckt -->
+            <div style="height: 96px;"></div>
 
             <!-- Continue Button -->
             <button class="continue-btn" id="continueBtn">
