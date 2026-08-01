@@ -249,8 +249,10 @@
         function getABTestPage() {
             let variant = localStorage.getItem('ab_test_pricing_v6');
             if (!variant) {
-                // 50/50: A=deinplan3 (Control), B=deinplan2 (mit "Du bist nicht allein"-Block)
-                variant = Math.random() < 0.50 ? 'A' : 'B';
+                // 80% A = statisches MockupPL.png (Control), 20% B = animiertes Handy-
+                // Mockup (scrollt durch den echten PL-Plan bis Tydzień 1). Vorsichtiger
+                // 20%-Start; plan.html schaltet das Handy bei Variante B frei.
+                variant = Math.random() < 0.80 ? 'A' : 'B';
                 localStorage.setItem('ab_test_pricing_v6', variant);
                 // Legacy-Key auch setzen damit Supabase-Tracking (ab_variant) konsistent bleibt
                 localStorage.setItem('ab_test_pricing', variant);
