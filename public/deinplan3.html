@@ -5409,8 +5409,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     <button id="googlePayBtn" class="hybrid-express-btn hybrid-express-btn--googlepay" onclick="payWithMethod('googlepay')" aria-label="Mit Google Pay bezahlen">
                         <img src="googlepay.png" alt="GooglePay">
                     </button>
-                    <button class="hybrid-express-btn" onclick="payWithMethod('banktransfer')" aria-label="Per SEPA-Banküberweisung">
-                        <img src="sepa-logo.png" alt="SEPA">
+                    <button class="hybrid-express-btn" onclick="payWithMethod('banktransfer')" aria-label="Per SEPA-Banküberweisung" style="flex-direction:column; gap:2px; height:auto; min-height:64px; padding:8px 10px;">
+                        <img src="sepa-logo.png" alt="SEPA" style="max-height:30px;">
+                        <span style="font-size:11px; font-weight:600; color:#6B7280; line-height:1;">Überweisung</span>
                     </button>
                 </div>
 
