@@ -5391,14 +5391,15 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 <div class="hybrid-divider">oppure</div>
 
                 <!-- Weitere Methoden als Listen-Zeilen (Radio-Stil) -->
-                <!-- Bancomat Pay: italienisches Domestic-Scheme, im IT-Mollie-Account
-                     aktiviert. Ersetzt das polnische Przelewy24 der PL-Vorlage. -->
-                <button type="button" class="hybrid-method-row" onclick="payWithMethod('bancomatpay')" aria-label="Paga con Bancomat Pay">
+                <!-- Bancomat Pay AUSGEBLENDET: 0% Abschlussquote in der IT-Analyse
+                     (10 Versuche, 0 bezahlt) — Nutzer landen jetzt bei PayPal/Karte. -->
+                <button type="button" class="hybrid-method-row" style="display:none" onclick="payWithMethod('bancomatpay')" aria-label="Paga con Bancomat Pay">
                     <span class="hmr-radio"></span>
                     <span class="hmr-name">Bancomat Pay</span>
                     <img class="hmr-logo" src="bancomatpay.svg" alt="Bancomat Pay">
                 </button>
-                <button type="button" class="hybrid-method-row" onclick="payWithMethod('satispay')" aria-label="Paga con Satispay">
+                <!-- Satispay AUSGEBLENDET: 0% Abschlussquote in der IT-Analyse. -->
+                <button type="button" class="hybrid-method-row" style="display:none" onclick="payWithMethod('satispay')" aria-label="Paga con Satispay">
                     <span class="hmr-radio"></span>
                     <span class="hmr-name">Satispay</span>
                     <img class="hmr-logo" src="satispay.svg" alt="Satispay">
