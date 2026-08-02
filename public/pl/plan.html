@@ -3892,27 +3892,49 @@ if (popularBadge) {
             }
         };
         
+        // ── PL-Preis-A/B (ab_pl_price_v1): A = aktuell, B = +~15-28% ──────────
+        // Fehlertolerant: bei Problemen Fallback 'A'. Der Server bucht bei
+        // fehlendem/unbekanntem Flag IMMER 'A' -> nie Ueberabbuchung. Anzeige
+        // UND gesendetes Flag stammen aus derselben Variable -> immer synchron.
+        var PL_PV = 'A';
+        try {
+            PL_PV = localStorage.getItem('ab_pl_price_v1');
+            if (PL_PV !== 'A' && PL_PV !== 'B') { PL_PV = Math.random() < 0.5 ? 'A' : 'B'; localStorage.setItem('ab_pl_price_v1', PL_PV); }
+        } catch (e) { PL_PV = 'A'; }
+        var PL_PRICES = {
+            A: {
+                '1month': { d:'79,99',  n:'129,99', wd:'79',  wn:'129', daily:'2,67', nd:'4,33' },
+                '3month': { d:'99,99',  n:'199,99', wd:'99',  wn:'199', daily:'1,11', nd:'2,22' },
+                '6month': { d:'139,99', n:'299,99', wd:'139', wn:'299', daily:'0,78', nd:'1,67' }
+            },
+            B: {
+                '1month': { d:'89,99',  n:'149,99', wd:'89',  wn:'149', daily:'3,00', nd:'5,00' },
+                '3month': { d:'119,99', n:'239,99', wd:'119', wn:'239', daily:'1,33', nd:'2,67' },
+                '6month': { d:'169,99', n:'349,99', wd:'169', wn:'349', daily:'0,94', nd:'1,94' }
+            }
+        };
+        var PLP = PL_PRICES[PL_PV] || PL_PRICES.A;
+        // Rabatt-Preise (Default-Anzeige) in die Karten schreiben.
+        (function applyPlDiscountPrices(){
+            try {
+                document.querySelectorAll('.pricing-card').forEach(function(c){
+                    var k = c.getAttribute('data-plan'); if (!PLP[k]) return;
+                    var amt = c.querySelector('.price-amount'); if (amt) amt.textContent = PLP[k].wd;
+                    var cents = c.querySelector('.price-cents'); if (cents) cents.textContent = ',99 zł';
+                    var tot = c.querySelector('.pricing-total'); if (tot) tot.textContent = PLP[k].daily + ' zł dziennie';
+                });
+            } catch(e){}
+        })();
+
         function switchToNormalPrices() {
     const cards = document.querySelectorAll('.pricing-card');
-
-    // cards[0] = 1-Monat, cards[1] = 3-Monat, cards[2] = 6-Monat
-    // 1-Monat: 129,99 zł jednorazowo (≈4,33 zł/Tag)
-    cards[0].querySelector('.price-amount').textContent = '129';
-    cards[0].querySelector('.price-cents').textContent = ',99 zł';
-    cards[0].querySelector('.pricing-total').textContent = '4,33 zł dziennie';
-    cards[0].dataset.price = '199';
-
-    // 3-Monat: 179,99 zł jednorazowo (≈2,22 zł/Tag)
-    cards[1].querySelector('.price-amount').textContent = '199';
-    cards[1].querySelector('.price-cents').textContent = ',99 zł';
-    cards[1].querySelector('.pricing-total').textContent = '2,22 zł dziennie';
-    cards[1].dataset.price = '259';
-
-    // 6-Monat: 299,99 zł jednorazowo (≈1,67 zł/Tag)
-    cards[2].querySelector('.price-amount').textContent = '299';
-    cards[2].querySelector('.price-cents').textContent = ',99 zł';
-    cards[2].querySelector('.pricing-total').textContent = '1,67 zł dziennie';
-    cards[2].dataset.price = '389';
+    // Anker-/Normalpreise aus der aktiven Preis-Variante (PLP).
+    cards.forEach(function(c){
+        var k = c.getAttribute('data-plan'); if (!PLP[k]) return;
+        var amt = c.querySelector('.price-amount'); if (amt) amt.textContent = PLP[k].wn;
+        var cents = c.querySelector('.price-cents'); if (cents) cents.textContent = ',99 zł';
+        var tot = c.querySelector('.pricing-total'); if (tot) tot.textContent = PLP[k].nd + ' zł dziennie';
+    });
 }
         
         updateTimer();
@@ -4090,6 +4112,7 @@ if (popularBadge) {
                 territorial_aggression: localStorage.getItem('territorialAggression'),
 custom_problem_text: localStorage.getItem('customProblem'),    // ← NEU
 custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
+                pl_price_variant: (typeof PL_PV !== 'undefined' ? PL_PV : 'A'),
                 email: localStorage.getItem('userEmail') || null,
                 ...utmParams
             };
@@ -4335,9 +4358,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
         // Preise
         const checkoutPrices = {
-            '1month': { discount: '79,99', normal: '129,99', oldTotal: 999, duration: 'Plan 1-miesięczny' },
-            '3month': { discount: '99,99', normal: '199,99', oldTotal: 1099, duration: 'Plan 3-miesięczny' },
-            '6month': { discount: '139,99', normal: '299,99', oldTotal: 1249, duration: 'Plan 6-miesięczny' }
+            '1month': { discount: PLP['1month'].d, normal: PLP['1month'].n, oldTotal: 999, duration: 'Plan 1-miesięczny' },
+            '3month': { discount: PLP['3month'].d, normal: PLP['3month'].n, oldTotal: 1099, duration: 'Plan 3-miesięczny' },
+            '6month': { discount: PLP['6month'].d, normal: PLP['6month'].n, oldTotal: 1249, duration: 'Plan 6-miesięczny' }
         };
         
         async function openCheckoutPopup() {
@@ -4515,6 +4538,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         plan: selectedPlan,
+                        plPriceVariant: PL_PV,
                         timerExpired: timerExpired,
                         dogName: dogName,
                         leadId: currentLeadId,
