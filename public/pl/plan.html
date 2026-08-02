@@ -2641,7 +2641,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
                 <div style="width: 1px; height: 36px; background: var(--border-light);"></div>
                 <div style="flex: 1.2; padding: 8px 4px; background: var(--white); border-radius: 10px; border: 2px solid var(--warm-brown); margin: -4px 0;">
-                    <span style="font-size: 16px; font-weight: 800; color: var(--warm-brown);">od 79,99 zł</span>
+                    <span id="plCompareFrom" style="font-size: 16px; font-weight: 800; color: var(--warm-brown);">od 79,99 zł</span>
                     <p style="font-size: 10px; color: var(--warm-brown); font-weight: 600; margin: 4px 0 0;">ŁapaPlan · jednorazowo</p>
                 </div>
             </div>
@@ -3871,31 +3871,11 @@ if (popularBadge) {
         const pricingCards = document.querySelectorAll('.pricing-card');
         let selectedPlan = '6month';
 
-        const planDetails = {
-            '1month': {
-                price: '79,99 zł',
-                priceNormal: '129,99 zł',
-                name: 'Plan 1-miesięczny',
-                interval: 'miesięcznie'
-            },
-            '3month': {
-                price: '99,99 zł',
-                priceNormal: '179,99 zł',
-                name: 'Plan 3-miesięczny',
-                interval: 'co 3 miesiące'
-            },
-            '6month': {
-                price: '139,99 zł',
-                priceNormal: '299,99 zł',
-                name: 'Plan 6-miesięczny',
-                interval: 'co 6 miesięcy'
-            }
-        };
-        
         // ── PL-Preis-A/B (ab_pl_price_v1): A = aktuell, B = +~15-28% ──────────
         // Fehlertolerant: bei Problemen Fallback 'A'. Der Server bucht bei
-        // fehlendem/unbekanntem Flag IMMER 'A' -> nie Ueberabbuchung. Anzeige
-        // UND gesendetes Flag stammen aus derselben Variable -> immer synchron.
+        // fehlendem/unbekanntem Flag IMMER 'A' -> nie Ueberabbuchung. ALLE
+        // Preis-Anzeigen leiten sich aus PLP ab -> Anzeige == gesendetes Flag
+        // == Server-Abbuchung, immer konsistent.
         var PL_PV = 'A';
         try {
             PL_PV = localStorage.getItem('ab_pl_price_v1');
@@ -3903,18 +3883,18 @@ if (popularBadge) {
         } catch (e) { PL_PV = 'A'; }
         var PL_PRICES = {
             A: {
-                '1month': { d:'79,99',  n:'129,99', wd:'79',  wn:'129', daily:'2,67', nd:'4,33' },
-                '3month': { d:'99,99',  n:'199,99', wd:'99',  wn:'199', daily:'1,11', nd:'2,22' },
-                '6month': { d:'139,99', n:'299,99', wd:'139', wn:'299', daily:'0,78', nd:'1,67' }
+                '1month': { d:'79,99',  n:'129,99', wd:'79',  wn:'129', daily:'2,67', nd:'4,33', dn:79.99,  nn:129.99 },
+                '3month': { d:'99,99',  n:'199,99', wd:'99',  wn:'199', daily:'1,11', nd:'2,22', dn:99.99,  nn:199.99 },
+                '6month': { d:'139,99', n:'299,99', wd:'139', wn:'299', daily:'0,78', nd:'1,67', dn:139.99, nn:299.99 }
             },
             B: {
-                '1month': { d:'89,99',  n:'149,99', wd:'89',  wn:'149', daily:'3,00', nd:'5,00' },
-                '3month': { d:'119,99', n:'239,99', wd:'119', wn:'239', daily:'1,33', nd:'2,67' },
-                '6month': { d:'169,99', n:'349,99', wd:'169', wn:'349', daily:'0,94', nd:'1,94' }
+                '1month': { d:'89,99',  n:'149,99', wd:'89',  wn:'149', daily:'3,00', nd:'5,00', dn:89.99,  nn:149.99 },
+                '3month': { d:'119,99', n:'239,99', wd:'119', wn:'239', daily:'1,33', nd:'2,67', dn:119.99, nn:239.99 },
+                '6month': { d:'169,99', n:'349,99', wd:'169', wn:'349', daily:'0,94', nd:'1,94', dn:169.99, nn:349.99 }
             }
         };
         var PLP = PL_PRICES[PL_PV] || PL_PRICES.A;
-        // Rabatt-Preise (Default-Anzeige) in die Karten schreiben.
+        // Rabatt-Preise (Default-Anzeige) in Karten + Vergleichsblock schreiben.
         (function applyPlDiscountPrices(){
             try {
                 document.querySelectorAll('.pricing-card').forEach(function(c){
@@ -3923,9 +3903,32 @@ if (popularBadge) {
                     var cents = c.querySelector('.price-cents'); if (cents) cents.textContent = ',99 zł';
                     var tot = c.querySelector('.pricing-total'); if (tot) tot.textContent = PLP[k].daily + ' zł dziennie';
                 });
+                var cf = document.getElementById('plCompareFrom');
+                if (cf) cf.textContent = 'od ' + PLP['1month'].d + ' zł';
             } catch(e){}
         })();
 
+        const planDetails = {
+            '1month': {
+                price: PLP['1month'].d + ' zł',
+                priceNormal: PLP['1month'].n + ' zł',
+                name: 'Plan 1-miesięczny',
+                interval: 'miesięcznie'
+            },
+            '3month': {
+                price: PLP['3month'].d + ' zł',
+                priceNormal: PLP['3month'].n + ' zł',
+                name: 'Plan 3-miesięczny',
+                interval: 'co 3 miesiące'
+            },
+            '6month': {
+                price: PLP['6month'].d + ' zł',
+                priceNormal: PLP['6month'].n + ' zł',
+                name: 'Plan 6-miesięczny',
+                interval: 'co 6 miesięcy'
+            }
+        };
+        
         function switchToNormalPrices() {
     const cards = document.querySelectorAll('.pricing-card');
     // Anker-/Normalpreise aus der aktiven Preis-Variante (PLP).
@@ -4381,9 +4384,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             
             // Tagespreis berechnen
             const dailyPrices = {
-                '1month': { discount: '2,67', normal: '4,33' },
-                '3month': { discount: '1,11', normal: '2,22' },
-                '6month': { discount: '0,78', normal: '1,67' }
+                '1month': { discount: PLP['1month'].daily, normal: PLP['1month'].nd },
+                '3month': { discount: PLP['3month'].daily, normal: PLP['3month'].nd },
+                '6month': { discount: PLP['6month'].daily, normal: PLP['6month'].nd }
             };
             const dailyData = dailyPrices[selectedPlan] || dailyPrices['3month'];
             const dailyPrice = timerExpired ? dailyData.normal : dailyData.discount;
@@ -4745,9 +4748,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         // Formel wie getMyPlan (priceMap/timer/exit-discount/Bump-Aufschlag).
         function refreshHybridPrice() {
             const priceMap = {
-                '1month': { d: 79.99, n: 129.99, name: 'Twój 4-tygodniowy plan treningowy' },
-                '3month': { d: 99.99, n: 199.99, name: 'Twój 12-tygodniowy plan treningowy' },
-                '6month': { d: 139.99, n: 299.99, name: 'Twój 6-miesięczny plan treningowy' }
+                '1month': { d: PLP['1month'].dn, n: PLP['1month'].nn, name: 'Twój 4-tygodniowy plan treningowy' },
+                '3month': { d: PLP['3month'].dn, n: PLP['3month'].nn, name: 'Twój 12-tygodniowy plan treningowy' },
+                '6month': { d: PLP['6month'].dn, n: PLP['6month'].nn, name: 'Twój 6-miesięczny plan treningowy' }
             };
             const info = priceMap[selectedPlan] || priceMap['3month'];
             const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
@@ -4779,9 +4782,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             // Meta Pixel: InitiateCheckout event
             try {
                 const priceMap = {
-                    '1month': { d: 79.99, n: 129.99 },
-                    '3month': { d: 99.99, n: 199.99 },
-                    '6month': { d: 139.99, n: 299.99 }
+                    '1month': { d: PLP['1month'].dn, n: PLP['1month'].nn },
+                    '3month': { d: PLP['3month'].dn, n: PLP['3month'].nn },
+                    '6month': { d: PLP['6month'].dn, n: PLP['6month'].nn }
                 };
                 let val = timerExpired ? priceMap[selectedPlan].n : priceMap[selectedPlan].d;
                 const _ed = localStorage.getItem('exit_discount_15') === 'true';
@@ -4814,9 +4817,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             // Plan-Info merken für späteren Submit (Preis, Name, etc.)
             // name wird im hybrid-modal als Untertitel angezeigt ("Dein X-Plan für Bruno").
             const priceMap = {
-                '1month': { d: 79.99, n: 129.99, name: 'Twój 4-tygodniowy plan treningowy' },
-                '3month': { d: 99.99, n: 199.99, name: 'Twój 12-tygodniowy plan treningowy' },
-                '6month': { d: 139.99, n: 299.99, name: 'Twój 6-miesięczny plan treningowy' }
+                '1month': { d: PLP['1month'].dn, n: PLP['1month'].nn, name: 'Twój 4-tygodniowy plan treningowy' },
+                '3month': { d: PLP['3month'].dn, n: PLP['3month'].nn, name: 'Twój 12-tygodniowy plan treningowy' },
+                '6month': { d: PLP['6month'].dn, n: PLP['6month'].nn, name: 'Twój 6-miesięczny plan treningowy' }
             };
             const planInfo = priceMap[selectedPlan] || priceMap['3month'];
             const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
