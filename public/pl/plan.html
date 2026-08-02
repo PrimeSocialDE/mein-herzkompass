@@ -4697,6 +4697,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 : localStorage.getItem('order_bump_antigift_checked') === 'true';
             return Object.assign({
                 plan: selectedPlan,
+                plPriceVariant: (typeof PL_PV !== 'undefined' ? PL_PV : 'A'),
                 lang: 'pl',
                 timerExpired: timerExpired,
                 dogName: dogName,
