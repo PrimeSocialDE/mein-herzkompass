@@ -12,12 +12,13 @@ const PRICES = {
   "6month": { discount: 5999, normal: 11999 },
 };
 
-// PL-Preise in Groszy (PLN-Cent) — lapaplan.pl. Rabatt 109/149/229 zł,
-// Normal 199/259/389 zł. Order-Bump 89 zł (siehe unten).
+// PL-Preise in Groszy (PLN-Cent) — lapaplan.pl. Rabatt 89,99/119,99/169,99 zł,
+// Normal 149,99/239,99/349,99 zł (auf die hoehere Stufe angehoben; A/B beendet,
+// beide Varianten identisch teuer). Order-Bump 39 zł (siehe unten).
 const PRICES_PL = {
-  "1month": { discount: 7999, normal: 12999 },
-  "3month": { discount: 9999, normal: 19999 },
-  "6month": { discount: 13999, normal: 29999 },
+  "1month": { discount: 8999, normal: 14999 },
+  "3month": { discount: 11999, normal: 23999 },
+  "6month": { discount: 16999, normal: 34999 },
 };
 
 // PL-Preis-A/B — Variante B (Test, ~+15-28 % ggue. A). Die Seite (pl/plan.html)
