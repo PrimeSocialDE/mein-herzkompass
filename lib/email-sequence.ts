@@ -616,7 +616,56 @@ function buildMailDef(
     // die Sequenz-Cron stoppt daraufhin). Zusätzlich als List-Unsubscribe-Header.
     const unsubUrl = `${BASE}/api/unsubscribe?lead=${encodeURIComponent(lead.id)}`;
 
-    const plainHtml = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+    // ── Trustpilot-Bewertungs-Einladung (Stern-Gating) ──────────────────
+    // Hinter Flag REVIEW_INVITE_LIVE="1" — bis dahin bleibt die Laura-Mail
+    // exakt wie bisher. 4-5★ → Trustpilot, 1-3★ → /bewertung → umfrage.html.
+    // Die Einladung ist UNKONDITIONIERT (kein Rabatt daran geknüpft — das
+    // 33%-Dankeschön hängt an der Umfrage, nicht an der öffentlichen Bewertung;
+    // incentivierte Reviews wären Trustpilot-/UWG-widrig). Nur DE (Trustpilot-
+    // Profil = pfoten-plan.de); PL/IT bräuchten eigene Profile.
+    const reviewLive = process.env.REVIEW_INVITE_LIVE === "1";
+    const revLink = (n: number) =>
+      `${BASE}/bewertung?sterne=${n}&lead_id=${encodeURIComponent(
+        lead.id
+      )}&email=${encodeURIComponent(lead.email)}`;
+    const starRow = (n: number, label: string, color: string) =>
+      `<tr><td style="padding:5px 0;"><a href="${revLink(
+        n
+      )}" target="_blank" style="text-decoration:none;"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td><img src="${BASE}/review-stars-${n}.png" alt="${n} von 5 Sternen" width="150" height="28" style="display:block;width:150px;height:28px;border:0;"></td><td style="vertical-align:middle;padding-left:10px;"><span style="color:${color};font-size:14px;font-weight:600;">${label}</span></td></tr></table></a></td></tr>`;
+    const starsTable = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px;">${starRow(
+      5,
+      "Hervorragend",
+      "#00b67a"
+    )}${starRow(4, "Gut", "#73cf11")}${starRow(
+      3,
+      "Befriedigend",
+      "#e6a700"
+    )}${starRow(2, "Ausreichend", "#ff8622")}${starRow(
+      1,
+      "Mangelhaft",
+      "#ff3722"
+    )}</table>`;
+
+    // Flag AN → bewertungs-fokussierte Mail (Umfrage-CTA raus, Sterne = Haupt-CTA;
+    //           1-3★ landen über /bewertung weiter auf umfrage.html).
+    // Flag AUS → exakt die bisherige Umfrage-Mail, damit bis zum Scharfstellen
+    //           nichts an der laufenden Sequenz verändert wird.
+    const reviewHtml = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;">
+<div style="max-width:520px;margin:0 auto;padding:24px 22px;font-size:15.5px;line-height:1.65;">
+  <p style="margin:0 0 14px;">Hallo,</p>
+  <p style="margin:0 0 14px;">ich bin Laura, Werkstudentin bei Pfoten-Plan 🐾. Du trainierst jetzt seit etwa 30 Tagen mit ${dogName} — und ich wollte kurz hören, wie zufrieden du bist.</p>
+  <p style="margin:0 0 6px;font-weight:700;">Wie zufrieden bist du mit Pfoten-Plan?</p>
+  <p style="margin:0 0 14px;color:#4B5563;">Wenn dir und ${dogName} der Plan geholfen hat, freuen wir uns riesig über deine Bewertung. Das dauert nur eine Minute und hilft anderen Hundehaltern bei der Entscheidung. Tippe einfach auf deine Bewertung:</p>
+  ${starsTable}
+  <p style="margin:14px 0 16px;color:#4B5563;">Und falls gerade etwas nicht rund läuft: Klick genauso auf die Sterne, dann kümmern wir uns persönlich darum.</p>
+  <p style="margin:0 0 6px;">Dankeschön &amp; liebe Grüße</p>
+  <p style="margin:0;">Laura<br><span style="color:#6B7280;font-size:13px;">Werkstudentin · Pfoten-Plan</span></p>
+  <p style="margin:20px 0 0;font-size:11px;color:#9CA3AF;line-height:1.5;">Mehr zum Datenschutz: <a href="${BASE}/datenschutz.html" style="color:#9CA3AF;">pfoten-plan.de/datenschutz</a><br>Keine E-Mails mehr von uns? <a href="${unsubUrl}" style="color:#9CA3AF;text-decoration:underline;">Hier abmelden</a>.</p>
+</div>
+</body></html>`;
+
+    const surveyHtml = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;">
 <div style="max-width:520px;margin:0 auto;padding:24px 22px;font-size:15.5px;line-height:1.65;">
   <p style="margin:0 0 14px;">Hallo,</p>
@@ -633,6 +682,8 @@ function buildMailDef(
   <p style="margin:20px 0 0;font-size:11px;color:#9CA3AF;line-height:1.5;">Die Teilnahme ist freiwillig. Mehr zum Datenschutz: <a href="${BASE}/datenschutz.html" style="color:#9CA3AF;">pfoten-plan.de/datenschutz</a><br>Keine E-Mails mehr von uns? <a href="${unsubUrl}" style="color:#9CA3AF;text-decoration:underline;">Hier abmelden</a>.</p>
 </div>
 </body></html>`;
+
+    const plainHtml = reviewLive ? reviewHtml : surveyHtml;
 
     if (lang === "pl") {
       const plainHtmlPl = `<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>

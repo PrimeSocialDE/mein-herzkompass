@@ -41,6 +41,12 @@ export async function POST(req: NextRequest) {
     was_fehlt: (body?.was_fehlt ?? "").toString().slice(0, 2000),
     plan_beachten: (body?.plan_beachten ?? "").toString().slice(0, 2000),
     website_erlebnis: body?.website_erlebnis ?? null, // 1-5
+    // Nachfrage nach weiteren Plänen (Themen als Mehrfachauswahl + Freitext) —
+    // Demand-Signal: welches Zusatzmodul lohnt sich / wo Upsell ansetzen.
+    zusatzplan_wunsch: Array.isArray(body?.zusatzplan_wunsch)
+      ? body.zusatzplan_wunsch.map((x: any) => String(x).slice(0, 60)).slice(0, 12)
+      : [],
+    zusatzplan_text: (body?.zusatzplan_text ?? "").toString().slice(0, 500),
     consent_testimonial: body?.consent_testimonial === true,
     submitted_at: new Date().toISOString(),
   };
@@ -87,6 +93,8 @@ async function notifyMax(
     was_fehlt: string;
     plan_beachten: string;
     website_erlebnis: any;
+    zusatzplan_wunsch: string[];
+    zusatzplan_text: string;
     consent_testimonial: boolean;
     submitted_at: string;
   }
@@ -101,6 +109,11 @@ async function notifyMax(
         <tr><td style="padding:4px 12px 4px 0;color:#6B6B6B;vertical-align:top">Was geholfen hat</td><td>${esc(s.was_geholfen) || "—"}</td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#6B6B6B;vertical-align:top">Was fehlt / Verbesserung</td><td>${esc(s.was_fehlt) || "—"}</td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#6B6B6B;vertical-align:top">Im Plan beachten</td><td>${esc(s.plan_beachten) || "—"}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6B6B6B;vertical-align:top">Wunsch: Zusatzplan</td><td>${
+          s.zusatzplan_wunsch && s.zusatzplan_wunsch.length
+            ? `<strong>${esc(s.zusatzplan_wunsch.join(", "))}</strong>`
+            : "—"
+        }${s.zusatzplan_text ? ` &middot; ${esc(s.zusatzplan_text)}` : ""}</td></tr>
         <tr><td style="padding:4px 12px 4px 0;color:#6B6B6B">Testimonial erlaubt?</td><td>${s.consent_testimonial ? "✅ ja" : "—"}</td></tr>
       </table>
     </div>`;

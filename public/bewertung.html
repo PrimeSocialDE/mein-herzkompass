@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deine Bewertung · Pfoten-Plan</title>
+<style>
+  :root{ --gold:#C4A576; --ink:#1f2937; --muted:#6B7280; --bg:#FFF9F0; --line:#EADDC5; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased; }
+  .wrap{ max-width:540px; margin:0 auto; padding:44px 22px; text-align:center; }
+  .logo{ width:170px; max-width:55%; height:auto; margin:0 auto 26px; display:block; }
+  h1{ font-size:23px; line-height:1.3; margin:0 0 14px; }
+  p{ font-size:17px; color:var(--muted); margin:0 0 14px; }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:18px;
+    padding:26px 22px; box-shadow:0 2px 10px rgba(196,165,118,.10); margin-top:8px; }
+  .stars{ display:flex; flex-direction:column; gap:12px; margin:22px 0 6px; }
+  .star-row{ display:flex; align-items:center; justify-content:center; gap:12px;
+    text-decoration:none; padding:10px 12px; border:1px solid var(--line);
+    border-radius:12px; transition:background .12s,border-color .12s; }
+  .star-row:hover,.star-row:focus{ background:#FFF4E4; border-color:var(--gold); }
+  .star-row img{ width:150px; height:auto; display:block; }
+  .star-row .lbl{ font-size:15px; font-weight:600; min-width:96px; text-align:left; }
+  .spinner{ width:34px; height:34px; border:3px solid #EADDC5; border-top-color:var(--gold);
+    border-radius:50%; animation:spin .8s linear infinite; margin:18px auto 6px; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .small{ font-size:13px; color:#9CA3AF; margin-top:18px; }
+  a.plain{ color:var(--gold); }
+  @media (prefers-color-scheme: dark){
+    body{ background:#14110d; color:#F3EEE6; }
+    .card{ background:#1e1a14; border-color:#3a3324; box-shadow:none; }
+    p{ color:#B9B1A4; } .star-row{ border-color:#3a3324; } .star-row:hover{ background:#25201896; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <img class="logo" src="/logo.png" alt="Pfoten-Plan" onerror="this.style.display='none'">
+  <div class="card">
+    <div id="view"></div>
+  </div>
+  <p class="small">Pfoten-Plan · Dein persönlicher Hunde-Trainingsplan</p>
+</div>
+
+<script>
+  // 4-5 Sterne  -> Trustpilot (oeffentliche Bewertung)
+  // 1-3 Sterne  -> unsere Umfrage (internes Feedback, wo wir helfen koennen)
+  var TRUSTPILOT = "https://www.trustpilot.com/evaluate/pfoten-plan.de";
+  var p = new URLSearchParams(location.search);
+  var sterne = parseInt(p.get("sterne") || p.get("stars") || "0", 10);
+  var leadId = p.get("lead_id") || "";
+  var email  = p.get("email") || "";
+  var view = document.getElementById("view");
+
+  function record(n){
+    // Best-effort: Sternzahl am Lead protokollieren (fuer die Verteilung). Blockt nie.
+    try{
+      navigator.sendBeacon
+        ? navigator.sendBeacon("/api/bewertung/record", new Blob([JSON.stringify({lead_id:leadId,email:email,sterne:n})],{type:"application/json"}))
+        : fetch("/api/bewertung/record",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({lead_id:leadId,email:email,sterne:n}),keepalive:true});
+    }catch(e){}
+  }
+
+  function go(url){ setTimeout(function(){ location.href = url; }, 900); }
+
+  function umfrageUrl(n){
+    var u = "/umfrage.html?sterne=" + n;
+    if(leadId) u += "&lead_id=" + encodeURIComponent(leadId);
+    if(email)  u += "&email=" + encodeURIComponent(email);
+    return u;
+  }
+
+  if (sterne >= 4) {
+    record(sterne);
+    view.innerHTML =
+      '<h1>Wie schön, dass du zufrieden bist! 🐾</h1>' +
+      '<p>Wir leiten dich gerade zu Trustpilot weiter, dort kannst du deine Bewertung abgeben. Das dauert nur eine Minute und hilft anderen Hundehaltern sehr.</p>' +
+      '<div class="spinner"></div>' +
+      '<p class="small">Es geht nicht automatisch weiter? <a class="plain" href="' + TRUSTPILOT + '">Hier zu Trustpilot</a></p>';
+    go(TRUSTPILOT);
+  } else if (sterne >= 1) {
+    record(sterne);
+    view.innerHTML =
+      '<h1>Danke für deine Ehrlichkeit.</h1>' +
+      '<p>Uns ist wichtig, dass es für dich und deinen Hund wirklich funktioniert. Erzähl uns kurz, was gerade nicht rund läuft, dann helfen wir dir persönlich weiter.</p>' +
+      '<div class="spinner"></div>' +
+      '<p class="small">Es geht nicht automatisch weiter? <a class="plain" href="' + umfrageUrl(sterne) + '">Hier zum Feedback</a></p>';
+    go(umfrageUrl(sterne));
+  } else {
+    // Kein/ungueltiger Wert -> Sternauswahl anzeigen (Fallback, falls direkt geoeffnet)
+    var rows = [
+      [5,"Hervorragend","#00b67a"],[4,"Gut","#73cf11"],[3,"Befriedigend","#e6a700"],
+      [2,"Ausreichend","#ff8622"],[1,"Mangelhaft","#ff3722"]
+    ];
+    var base = "/bewertung?";
+    var q = (leadId?("lead_id="+encodeURIComponent(leadId)+"&"):"") + (email?("email="+encodeURIComponent(email)+"&"):"");
+    var html = '<h1>Wie zufrieden bist du mit Pfoten-Plan?</h1><p>Tippe einfach auf deine Bewertung.</p><div class="stars">';
+    rows.forEach(function(r){
+      html += '<a class="star-row" href="' + base + q + 'sterne=' + r[0] + '">' +
+              '<img src="/review-stars-' + r[0] + '.png" alt="' + r[0] + ' von 5 Sternen">' +
+              '<span class="lbl" style="color:' + r[2] + '">' + r[1] + '</span></a>';
+    });
+    html += '</div>';
+    view.innerHTML = html;
+  }
+</script>
+</body>
+</html>
