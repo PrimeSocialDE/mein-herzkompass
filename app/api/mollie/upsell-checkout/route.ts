@@ -44,6 +44,12 @@ export async function POST(req: NextRequest) {
     const price = body.price as number | undefined;
     const returnUrl = body.returnUrl as string | undefined;
     const referredByCode = body.referredByCode as string | undefined;
+    // DataFast-Besucher-ID aus dem First-Party-Cookie (vom datafa.st-Script auf
+    // der Landingpage gesetzt) durchreichen — der Webhook meldet damit den
+    // Umsatz an DataFast (sonst bleibt der Upsell-Kauf in DataFast unattribuiert).
+    const datafastVisitorId = (
+      req.cookies.get("datafast_visitor_id")?.value || ""
+    ).slice(0, 40);
     // Sprach-/Markt-Weiche: lang="pl" -> polnisches Mollie-Konto (PLN, lapaplan).
     // DE-Pfad bleibt exakt wie bisher (getMollie/EUR).
     const isPL = body.lang === "pl";
@@ -177,6 +183,7 @@ export async function POST(req: NextRequest) {
         is_premium: isPremium ? "true" : "false",
         referred_by_code: referredByCode || "",
         lang: isPL ? "pl" : "de",
+        datafast_visitor_id: datafastVisitorId,
         ...utmMeta,
       },
     });
