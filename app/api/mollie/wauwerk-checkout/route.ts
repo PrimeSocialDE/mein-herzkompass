@@ -20,6 +20,16 @@ const PRICES_PL = {
   "6month": { discount: 13999, normal: 29999 },
 };
 
+// PL-Preis-A/B — Variante B (Test, ~+15-28 % ggue. A). Die Seite (pl/plan.html)
+// wuerfelt die Variante, zeigt die passenden Preise UND schickt plPriceVariant.
+// Sicherheit: NUR bei plPriceVariant==="B" wird hier B gebucht; bei
+// fehlendem/unbekanntem Flag IMMER A (PRICES_PL) -> nie Ueberabbuchung.
+const PRICES_PL_B = {
+  "1month": { discount: 8999, normal: 14999 },
+  "3month": { discount: 11999, normal: 23999 },
+  "6month": { discount: 16999, normal: 34999 },
+};
+
 // IT-Preise (zampaplan.it) in Cent — bewusst ~15-20 % unter DE, da geringere
 // Kaufkraft in Italien. Rabattpreis (Timer) / durchgestrichener Normalpreis.
 const PRICES_IT = {
@@ -167,7 +177,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Preis ermitteln (identisch zu Stripe-Logik)
-    const priceTable = isPL ? PRICES_PL : isIt ? PRICES_IT : PRICES;
+    // PL-Preis-A/B: Variante B nur bei explizitem Flag, sonst A (nie Ueberabbuchung).
+    const plVariantB = isPL && String(body?.plPriceVariant || "") === "B";
+    const priceTable = isPL
+      ? (plVariantB ? PRICES_PL_B : PRICES_PL)
+      : isIt ? PRICES_IT : PRICES;
     const priceData = priceTable[plan as keyof typeof priceTable] || priceTable["1month"];
     const baseAmount = timerExpired ? priceData.normal : priceData.discount;
     const planAmountCents = exitDiscountApplied
