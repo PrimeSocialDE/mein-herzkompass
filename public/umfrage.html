@@ -23,6 +23,11 @@
         .scale { display: flex; gap: 8px; }
         .scale button { flex: 1; padding: 11px 0; border: 1.5px solid #E5E7EB; background: #fff; border-radius: 10px; font-size: 16px; font-weight: 700; color: #6B7280; cursor: pointer; transition: all .12s; }
         .scale button.sel { border-color: #C4A576; background: #FFF9F0; color: #1a1a1a; }
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .chips button { padding: 9px 14px; border: 1.5px solid #E5E7EB; background: #fff; border-radius: 999px; font-size: 13.5px; font-weight: 600; color: #6B7280; cursor: pointer; transition: all .12s; }
+        .chips button:hover { border-color: #C4A576; }
+        .chips button.sel { border-color: #C4A576; background: #FFF9F0; color: #1a1a1a; }
+        .chips button.sel::before { content: "✓ "; color: #C4A576; }
         textarea { width: 100%; border: 1.5px solid #E5E7EB; border-radius: 10px; padding: 11px 12px; font-size: 14.5px; font-family: inherit; resize: vertical; min-height: 70px; }
         textarea:focus, .scale button:focus { outline: none; border-color: #C4A576; }
         .consent { display: flex; gap: 10px; align-items: flex-start; background: #FFF9F0; border: 1px solid #EADDC5; border-radius: 10px; padding: 12px 14px; font-size: 12.5px; color: #5A4A3A; }
@@ -90,6 +95,20 @@
                 <div class="q">
                     <label class="qlabel" for="plan_beachten">5. Was sollten wir bei einem Plan für <strong id="dogNameQ">deinen Hund</strong> unbedingt beachten?</label>
                     <textarea id="plan_beachten" placeholder="z. B. Besonderheiten, euer Alltag, was bei euch anders ist…"></textarea>
+                </div>
+                <div class="q">
+                    <label class="qlabel">6. Wünschst du dir noch einen Zusatzplan zu einem weiteren Thema? <span style="font-weight:400;color:#9CA3AF;">(Mehrfachauswahl, optional)</span></label>
+                    <div class="chips" data-field="zusatzplan_wunsch">
+                        <button type="button" value="Bellen">Bellen</button>
+                        <button type="button" value="Leine ziehen">Leine ziehen</button>
+                        <button type="button" value="Rückruf">Rückruf</button>
+                        <button type="button" value="Aggression / Reaktivität">Aggression / Reaktivität</button>
+                        <button type="button" value="Angst / Unsicherheit">Angst / Unsicherheit</button>
+                        <button type="button" value="Alleinbleiben">Alleinbleiben</button>
+                        <button type="button" value="Welpe / Junghund">Welpe / Junghund</button>
+                        <button type="button" value="Ein weiterer Hund">Ein weiterer Hund</button>
+                    </div>
+                    <textarea id="zusatzplan_text" placeholder="Anderes Thema oder Details? Schreib's kurz rein…" style="margin-top:10px;"></textarea>
                 </div>
                 <div class="q">
                     <label class="consent">
@@ -162,6 +181,16 @@
             });
         });
 
+        // Mehrfachauswahl-Chips (Zusatzplan-Wunsch) — toggeln, kein Radio-Verhalten
+        document.querySelectorAll('.chips button').forEach(function (btn) {
+            btn.addEventListener('click', function () { btn.classList.toggle('sel'); });
+        });
+        function collectChips(field) {
+            var out = [];
+            document.querySelectorAll('.chips[data-field="' + field + '"] button.sel').forEach(function (b) { out.push(b.value); });
+            return out;
+        }
+
         function showErr(id, msg) { var e = document.getElementById(id); e.textContent = msg; e.style.display = 'block'; }
 
         document.getElementById('surveyForm').addEventListener('submit', async function (e) {
@@ -181,6 +210,8 @@
                         was_geholfen: document.getElementById('was_geholfen').value,
                         was_fehlt: document.getElementById('was_fehlt').value,
                         plan_beachten: document.getElementById('plan_beachten').value,
+                        zusatzplan_wunsch: collectChips('zusatzplan_wunsch'),
+                        zusatzplan_text: document.getElementById('zusatzplan_text').value,
                         consent_testimonial: document.getElementById('consent_testimonial').checked
                     })
                 });
