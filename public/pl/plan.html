@@ -3878,8 +3878,14 @@ if (popularBadge) {
         // == Server-Abbuchung, immer konsistent.
         var PL_PV = 'A';
         try {
-            PL_PV = localStorage.getItem('ab_pl_price_v1');
-            if (PL_PV !== 'A' && PL_PV !== 'B') { PL_PV = Math.random() < 0.5 ? 'A' : 'B'; localStorage.setItem('ab_pl_price_v1', PL_PV); }
+            // Test-Override: ?pv=A / ?pv=B erzwingt eine Variante (zum Gegenchecken).
+            var _pv = new URLSearchParams(location.search).get('pv');
+            if (_pv === 'A' || _pv === 'B') {
+                PL_PV = _pv; localStorage.setItem('ab_pl_price_v1', PL_PV);
+            } else {
+                PL_PV = localStorage.getItem('ab_pl_price_v1');
+                if (PL_PV !== 'A' && PL_PV !== 'B') { PL_PV = Math.random() < 0.5 ? 'A' : 'B'; localStorage.setItem('ab_pl_price_v1', PL_PV); }
+            }
         } catch (e) { PL_PV = 'A'; }
         var PL_PRICES = {
             A: {
@@ -4691,6 +4697,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 : localStorage.getItem('order_bump_antigift_checked') === 'true';
             return Object.assign({
                 plan: selectedPlan,
+                plPriceVariant: (typeof PL_PV !== 'undefined' ? PL_PV : 'A'),
                 lang: 'pl',
                 timerExpired: timerExpired,
                 dogName: dogName,
