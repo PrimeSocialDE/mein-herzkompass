@@ -2431,10 +2431,16 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
         </div>
     </div>
 
-    <!-- Sommer-Aktion-Banner — ganz oben fuer maximale Sichtbarkeit -->
-    <div style="background:linear-gradient(90deg,#C4A576 0%,#D4B888 50%,#C4A576 100%);color:#fff;text-align:center;padding:9px 12px;font-size:13px;font-weight:700;letter-spacing:0.3px;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
-        🎯 Aktion läuft — jetzt sichern
+    <!-- Problem-bezogener Quick-Win-Banner (ganz oben, Text aus dog_problem) -->
+    <div id="topPromoBanner" onclick="(document.querySelector('.pricing-section')||document.querySelector('[data-plan]')||document.querySelector('.cta-button'))?.scrollIntoView({behavior:'smooth'})" style="background:linear-gradient(90deg,#C4A576 0%,#D4B888 50%,#C4A576 100%);color:#fff;text-align:center;padding:9px 12px;font-size:13.5px;font-weight:700;letter-spacing:0.3px;box-shadow:0 1px 4px rgba(0,0,0,0.08);cursor:pointer;">
+        🐾 <span id="topPromoText">Erste Fortschritte – schon ab Übung 1</span>
     </div>
+    <script>
+      (function(){
+        var map = { recall:'Besserer Rückruf – schon ab Übung 1', pulling:'Weniger Ziehen – schon ab Übung 1', barking:'Weniger Bellen – schon ab Übung 1', aggression:'Ruhiger an der Leine – ab Übung 1', anxiety:'Entspannter allein – schon ab Übung 1', energy:'Mehr Ruhe – schon ab Übung 1', jumping:'Weniger Anspringen – ab Übung 1', destructive:'Weniger Zerstörung – ab Übung 1', soiling:'Stubenrein – Schritt für Schritt', mouthing:'Weniger Aufnehmen – ab Übung 1' };
+        try { var p=(localStorage.getItem('dogProblem')||'').toLowerCase(); var el=document.getElementById('topPromoText'); if(el&&map[p]) el.textContent=map[p]; } catch(e){}
+      })();
+    </script>
 
     <header class="header">
         <div class="logo">
