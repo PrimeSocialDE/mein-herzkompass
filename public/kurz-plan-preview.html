@@ -507,16 +507,17 @@
                         </div>
                         
                         <div class="plan-lines">
-                            <div class="plan-line"></div>
-                            <div class="plan-line"></div>
-                            <div class="plan-line"></div>
-                            <div class="plan-line"></div>
+                            <div style="font-size:12px;font-weight:700;color:#3a342b;line-height:1.35;padding:0 0 6px;">
+                                <span style="color:#C4A576;">✓ Woche&nbsp;1 · Übung&nbsp;1:</span> <span id="planFirstExercise">wird erstellt…</span>
+                            </div>
+                            <div id="planStepLine" style="font-size:11.5px;color:#6b6357;line-height:1.4;padding:0 0 5px;">→ <span id="planStepText">…</span></div>
+                            <div id="planBreedLine" style="font-size:11.5px;color:#6b6357;line-height:1.4;padding:0 0 8px;">🐕 <span id="planBreedText">…</span></div>
                             <div class="plan-line"></div>
                         </div>
 
                         <div class="stats-row">
                             <div class="stat-item animate">
-                                <div class="stat-number">10+</div>
+                                <div class="stat-number">20+</div>
                                 <div class="stat-label">Seiten</div>
                             </div>
                             <div class="stat-item animate">
@@ -739,20 +740,43 @@
 
         selectionTags.innerHTML = tagsHTML;
 
-        // Titel personalisieren
+        // Titel personalisieren (Rasse — der Hundename liegt an dieser Funnel-Stelle noch nicht vor)
         let displayName = 'deinen Hund';
-        if (dogBreed && dogBreed !== 'Andere Rasse') {
-            displayName = 'deinen ' + dogBreed;
-        }
+        if (dogBreed && dogBreed !== 'Andere Rasse') displayName = 'deinen ' + dogBreed;
         document.getElementById('dogNameTitle').textContent = displayName;
 
         // Plan-Titel im iPad
         let planTitleText = 'Trainingsplan';
-        if (dogBreed && dogBreed !== 'Andere Rasse') {
-            planTitleText = 'Trainingsplan für ' + dogBreed;
-        }
+        if (dogBreed && dogBreed !== 'Andere Rasse') planTitleText = 'Trainingsplan für ' + dogBreed;
         document.getElementById('planTitle').textContent = planTitleText;
         document.getElementById('planSubtitle').textContent = 'Fokus: ' + focusLabel;
+
+        // Erste Übung im Mockup — aus dem gewaehlten Problem (konkreter "das ist ein echter Plan"-Beweis)
+        const firstExercise = { recall:'Rückruf positiv aufladen', pulling:'Lockere-Leine-Basis', barking:'Ruhe-Signal aufbauen', aggression:'Begegnungen aus Distanz', anxiety:'Tür-Routine + Decke als Anker', energy:'Entspannungs-Anker konditionieren', jumping:'4 Pfoten am Boden', destructive:'Kau-Alternative aufbauen', soiling:'Stubenrein-Routine', mouthing:'AUS-Signal aufbauen' };
+        const exEl = document.getElementById('planFirstExercise');
+        if (exEl) exEl.textContent = firstExercise[dogProblem] || 'Basis-Ritual aufbauen';
+
+        // Zeile 2: Anpassung — Mischling/ohne Rasse -> individuell (kein "auf Mischling")
+        const stepEl = document.getElementById('planStepText');
+        if (stepEl) {
+            if (!dogBreed || dogBreed === 'Andere Rasse') {
+                stepEl.textContent = 'Übungen individuell auf deinen Hund aufgebaut & angepasst';
+            } else if (dogBreed === 'Mischling') {
+                stepEl.textContent = 'Übungen individuell auf deinen Mischling aufgebaut & angepasst';
+            } else {
+                stepEl.textContent = 'Übungen auf ' + dogBreed + ' aufgebaut & angepasst';
+            }
+        }
+
+        // Zeile 3: kurzer Rasse-Insight (das "Warum"); ohne bekannten Insight ausgeblendet
+        const breedNote = { 'Beagle':'folgen der Nase — das nutzen wir gezielt', 'Labrador Retriever':'verfressen & neugierig — perfekt fürs Training', 'Border Collie':'reagieren stark auf Bewegung', 'Husky':'Ausdauer-Läufer — brauchen klaren Aufbau', 'Deutscher Schäferhund':'arbeitsfreudig — wollen Aufgaben', 'Golden Retriever':'menschenbezogen & lernwillig', 'Dackel':'eigensinnig — mit Geduld & Belohnung', 'Chihuahua':'klein, aber sehr lernfähig', 'Australian Shepherd':'brauchen viel Kopf-Auslastung', 'Mischling':'Aufbau nach Verhalten, nicht nach Rasse' };
+        const breedLineEl = document.getElementById('planBreedLine');
+        const breedTextEl = document.getElementById('planBreedText');
+        if (dogBreed && dogBreed !== 'Andere Rasse' && breedNote[dogBreed] && breedTextEl) {
+            breedTextEl.textContent = breedNote[dogBreed];
+        } else if (breedLineEl) {
+            breedLineEl.style.display = 'none';
+        }
 
         // Vision Text
         let visionName = dogBreed && dogBreed !== 'Andere Rasse' ? 'dein ' + dogBreed : 'dein Hund';
