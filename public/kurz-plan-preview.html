@@ -510,8 +510,7 @@
                             <div style="font-size:12px;font-weight:700;color:#3a342b;line-height:1.35;padding:0 0 6px;">
                                 <span style="color:#C4A576;">✓ Woche&nbsp;1 · Übung&nbsp;1:</span> <span id="planFirstExercise">wird erstellt…</span>
                             </div>
-                            <div id="planStepLine" style="font-size:11.5px;color:#6b6357;line-height:1.4;padding:0 0 5px;">→ <span id="planStepText">…</span></div>
-                            <div id="planBreedLine" style="font-size:11.5px;color:#6b6357;line-height:1.4;padding:0 0 8px;">🐕 <span id="planBreedText">…</span></div>
+                            <div id="planStepLine" style="font-size:11.5px;color:#6b6357;line-height:1.4;padding:0 0 8px;">→ <span id="planStepText">…</span></div>
                             <div class="plan-line"></div>
                         </div>
 
@@ -694,14 +693,17 @@
         // Determine focus label and vision text
         let focusLabel = 'Verhaltenskorrektur';
         let visionOutcome = 'folgsamer';
+        let resolvedProblem = '';  // genau der Key, der auch den Fokus bestimmt -> Übung bleibt konsistent
 
         // Erstes Problem (egal ob standard oder custom) für Focus verwenden
         if (dogProblem && problemData[dogProblem]) {
             focusLabel = problemData[dogProblem].label;
             visionOutcome = problemData[dogProblem].vision;
+            resolvedProblem = dogProblem;
         } else if (customProblemKey && problemData[customProblemKey]) {
             focusLabel = problemData[customProblemKey].label;
             visionOutcome = problemData[customProblemKey].vision;
+            resolvedProblem = customProblemKey;
         }
 
         // Selection Tags erstellen
@@ -751,10 +753,14 @@
         document.getElementById('planTitle').textContent = planTitleText;
         document.getElementById('planSubtitle').textContent = 'Fokus: ' + focusLabel;
 
-        // Erste Übung im Mockup — aus dem gewaehlten Problem (konkreter "das ist ein echter Plan"-Beweis)
-        const firstExercise = { recall:'Rückruf positiv aufladen', pulling:'Lockere-Leine-Basis', barking:'Ruhe-Signal aufbauen', aggression:'Begegnungen aus Distanz', anxiety:'Tür-Routine + Decke als Anker', energy:'Entspannungs-Anker konditionieren', jumping:'4 Pfoten am Boden', destructive:'Kau-Alternative aufbauen', soiling:'Stubenrein-Routine', mouthing:'AUS-Signal aufbauen' };
+        // Erste Übung im Mockup — aus DEMSELBEN aufgeloesten Problem wie der Fokus (konsistent, kein "Aggression"-Text bei Rueckruf)
+        const firstExercise = {
+            recall:'Rückruf positiv aufladen', pulling:'Lockere-Leine-Basis', barking:'Ruhe-Signal aufbauen', aggression:'Begegnungen aus Distanz', anxiety:'Tür-Routine + Decke als Anker', energy:'Entspannungs-Anker konditionieren', jumping:'4 Pfoten am Boden', destructive:'Kau-Alternative aufbauen', soiling:'Stubenrein-Routine', mouthing:'AUS-Signal aufbauen',
+            // Custom-Keys (Freitext-Diagnose) -> passende Uebung statt Fallback
+            'visitor-anxiety':'Ruhe bei Besuch aufbauen', 'thunder-anxiety':'Geräusch-Desensibilisierung', 'noise-sensitivity':'Geräusch-Desensibilisierung', 'general-anxiety':'Sicherheits-Anker aufbauen', 'stranger-anxiety':'Distanz-Training zu Fremden', 'chasing':'Impuls-Stopp aufbauen', 'chasing-movement':'Impuls-Stopp aufbauen', 'prey-drive':'Abbruch-Signal aufbauen', 'chasing-cars':'Abbruch-Signal aufbauen', 'eating-unwanted':'„Lass es"-Signal aufbauen', 'eating-trash':'„Lass es"-Signal aufbauen', 'eating-objects':'„Lass es"-Signal aufbauen', 'postman-reactive':'Ruhe bei Besuch aufbauen', 'dog-reactive':'Begegnungen aus Distanz', 'leash-reactive':'Leinen-Ruhe aufbauen', 'overreaction':'Impuls-Stopp aufbauen', 'anxious-overreaction':'Sicherheits-Anker aufbauen', 'separation':'Allein-bleiben in Mini-Schritten', 'vocalization':'Ruhe-Signal aufbauen', 'resource-guarding':'Tausch-Spiel aufbauen', 'biting':'Beißhemmung aufbauen', 'digging':'Alternativ-Beschäftigung', 'marking':'Stubenrein-Routine', 'custom-other':'Basis-Ritual aufbauen'
+        };
         const exEl = document.getElementById('planFirstExercise');
-        if (exEl) exEl.textContent = firstExercise[dogProblem] || 'Basis-Ritual aufbauen';
+        if (exEl) exEl.textContent = firstExercise[resolvedProblem] || 'Basis-Ritual aufbauen';
 
         // Zeile 2: Anpassung — Mischling/ohne Rasse -> individuell (kein "auf Mischling")
         const stepEl = document.getElementById('planStepText');
@@ -768,15 +774,7 @@
             }
         }
 
-        // Zeile 3: kurzer Rasse-Insight (das "Warum"); ohne bekannten Insight ausgeblendet
-        const breedNote = { 'Beagle':'folgen der Nase — das nutzen wir gezielt', 'Labrador Retriever':'verfressen & neugierig — perfekt fürs Training', 'Border Collie':'reagieren stark auf Bewegung', 'Husky':'Ausdauer-Läufer — brauchen klaren Aufbau', 'Deutscher Schäferhund':'arbeitsfreudig — wollen Aufgaben', 'Golden Retriever':'menschenbezogen & lernwillig', 'Dackel':'eigensinnig — mit Geduld & Belohnung', 'Chihuahua':'klein, aber sehr lernfähig', 'Australian Shepherd':'brauchen viel Kopf-Auslastung', 'Mischling':'Aufbau nach Verhalten, nicht nach Rasse' };
-        const breedLineEl = document.getElementById('planBreedLine');
-        const breedTextEl = document.getElementById('planBreedText');
-        if (dogBreed && dogBreed !== 'Andere Rasse' && breedNote[dogBreed] && breedTextEl) {
-            breedTextEl.textContent = breedNote[dogBreed];
-        } else if (breedLineEl) {
-            breedLineEl.style.display = 'none';
-        }
+        // (Rasse-Insight-Zeile entfernt — war missverstaendlich; die Rasse steht bereits in Zeile 2)
 
         // Vision Text
         let visionName = dogBreed && dogBreed !== 'Andere Rasse' ? 'dein ' + dogBreed : 'dein Hund';
