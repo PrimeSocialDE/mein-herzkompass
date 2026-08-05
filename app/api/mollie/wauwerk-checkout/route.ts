@@ -105,6 +105,7 @@ export async function POST(req: NextRequest) {
       // zuverlaessig am Kaeufer-Lead haengen (vorher nur am email_captured-Lead).
       ab_test_trust,
       ab_variant,
+      ab_badge,
       entry_page,
     } = body;
 
@@ -567,6 +568,7 @@ export async function POST(req: NextRequest) {
       // A/B-Flags am Kaeufer-Lead persistieren (Mess-Attribution Step-Level-Tests)
       if (ab_test_trust) ansMerge.ab_test_trust = ab_test_trust;
       if (ab_variant) ansMerge.ab_variant = ab_variant;
+      if (ab_badge) ansMerge.ab_badge = String(ab_badge).slice(0, 8);
       if (entry_page) ansMerge.entry_page = entry_page;
       if (clientCountry) ansMerge.country = clientCountry;
       // PL-Herkunft (lapaplan.pl / PLN-Checkout) am Lead persistieren, damit

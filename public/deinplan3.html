@@ -3748,9 +3748,20 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         // ==================== DYNAMISCHER POPULAR BADGE ====================
         const popularBadge = document.getElementById('popularBadge');
 if (popularBadge) {
-    popularBadge.textContent = (typeof dogName !== 'undefined' && dogName && dogName !== 'deinen Hund')
-        ? '⭐ Für ' + dogName + ' empfohlen'
-        : '⭐ Das empfehlen wir dir';
+    // A/B-Test Badge-Text (ab_badge_v1): A = Empfehlung (Control), B = "+20 Übungen".
+    // Einmalig 50/50 zuweisen, dann persistent. Variante haengt beim Kauf am Lead
+    // (buildCheckoutPayload -> ab_badge) fuer die Conversion-Attribution.
+    let abBadge = localStorage.getItem('ab_badge_v1');
+    if (abBadge !== 'A' && abBadge !== 'B') {
+        abBadge = Math.random() < 0.5 ? 'A' : 'B';
+        localStorage.setItem('ab_badge_v1', abBadge);
+    }
+    const hasName = (typeof dogName !== 'undefined' && dogName && dogName !== 'deinen Hund');
+    if (abBadge === 'B') {
+        popularBadge.textContent = hasName ? '⭐ +20 Übungen für ' + dogName : '⭐ +20 Übungen mehr';
+    } else {
+        popularBadge.textContent = hasName ? '⭐ Für ' + dogName + ' empfohlen' : '⭐ Das empfehlen wir dir';
+    }
 }
         
         // Problem-Label in Stat-Boxen — kurze Kategorie statt voller Problem-Phrase,
@@ -4699,6 +4710,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 source_page: 'deinplan3',
                 ab_test_trust: localStorage.getItem('ab_test_trust') || '',
                 ab_variant: localStorage.getItem('ab_test_pricing') || '',
+                ab_badge: localStorage.getItem('ab_badge_v1') || '',
                 entry_page: localStorage.getItem('entry_page') || '',
                 orderBump: bumpChecked,
                 bumpType: bumpChecked ? 'sommer' : undefined,
