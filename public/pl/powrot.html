@@ -1460,7 +1460,7 @@
                         </div>
                     </div>
                     <div class="pricing-right" style="text-align:right;">
-                        <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">79,99 zł</div>
+                        <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">89,99 zł</div>
                         <div style="font-size:11px;color:#999;margin-top:2px;">jednorazowo</div>
                     </div>
                 </div>
@@ -1477,7 +1477,7 @@
                         </div>
                     </div>
                     <div class="pricing-right" style="text-align:right;">
-                        <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">99,99 zł</div>
+                        <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">119,99 zł</div>
                         <div style="font-size:11px;color:#999;margin-top:2px;">jednorazowo</div>
                     </div>
                 </div>
@@ -1493,7 +1493,7 @@
                         </div>
                     </div>
                     <div class="pricing-right" style="text-align:right;">
-                        <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">139,99 zł</div>
+                        <div style="font-size:22px;font-weight:800;color:#C4A576;line-height:1.15;margin-top:2px;">169,99 zł</div>
                         <div style="font-size:11px;color:#999;margin-top:2px;">jednorazowo</div>
                     </div>
                 </div>
@@ -1634,7 +1634,7 @@
                         <div class="checkout-plan-duration" id="checkoutPlanDuration">Plan 12-tygodniowy</div>
                     </div>
                     <div class="checkout-plan-price-box">
-                        <div class="checkout-plan-price" id="checkoutPrice">99,99 zł</div>
+                        <div class="checkout-plan-price" id="checkoutPrice">119,99 zł</div>
                         <div class="checkout-plan-access">Pełny dostęp</div>
                     </div>
                 </div>
@@ -2406,14 +2406,29 @@
         }
 
         // Pricing Selection
+        // Preise = Rabattpreise aus PRICES_PL (Server belastet exakt diese Betraege).
+        const PL_CHECKOUT_PRICES = {
+            '1month': { price: '89,99 zł',  duration: 'Plan 4-tygodniowy' },
+            '3month': { price: '119,99 zł', duration: 'Plan 12-tygodniowy' },
+            '6month': { price: '169,99 zł', duration: 'Plan 6-miesięczny' }
+        };
+        function updateCheckoutSummary(plan) {
+            const p = PL_CHECKOUT_PRICES[plan]; if (!p) return;
+            const priceEl = document.getElementById('checkoutPrice');
+            const durEl = document.getElementById('checkoutPlanDuration');
+            if (priceEl) priceEl.textContent = p.price;
+            if (durEl) durEl.textContent = p.duration;
+        }
         const pricingCards = document.querySelectorAll('.pricing-card');
         pricingCards.forEach(card => {
             card.addEventListener('click', () => {
                 pricingCards.forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
                 selectedPlan = card.dataset.plan;
+                updateCheckoutSummary(selectedPlan);
             });
         });
+        updateCheckoutSummary(selectedPlan);
 
         // Helper: Cookie lesen
         function getCookie(name) {
