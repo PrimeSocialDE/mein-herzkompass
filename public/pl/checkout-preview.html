@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkout Variante B — Vorschau (ŁapaPlan)</title>
+<style>
+  :root{
+    --bg:#f6f3ee; --card:#ffffff; --ink:#1a1a1a; --muted:#6B7280;
+    --brand:#8B7355; --brand2:#C4A576; --line:#ECE7DE;
+    --paypal:#FFC439; --blik:#000000;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:var(--ink);padding:24px 14px;}
+  .wrap{max-width:440px;margin:0 auto;}
+  .pill{display:inline-block;background:#EADDC5;color:#6b5b3e;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:5px 12px;border-radius:20px;margin:0 auto 14px;}
+  .modal{background:var(--card);border-radius:18px;box-shadow:0 8px 34px rgba(0,0,0,.10);overflow:hidden;}
+  .head{padding:20px 22px 6px;}
+  .head h2{margin:0 0 2px;font-size:18px;font-weight:800;}
+  .head .sub{font-size:13px;color:var(--muted);}
+  .total-row{display:flex;align-items:baseline;justify-content:space-between;padding:14px 22px 4px;}
+  .total-row .lbl{font-size:14px;color:var(--muted);font-weight:600;}
+  .total-row .amt{font-size:22px;font-weight:800;}
+  .total-row .old{font-size:14px;color:#b9b3a8;text-decoration:line-through;margin-right:8px;font-weight:600;}
+  .body{padding:8px 22px 22px;}
+  .seclabel{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#9a927f;margin:14px 2px 9px;}
+
+  /* Große gebrandete Full-Width-Buttons */
+  .paybtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:60px;border:none;border-radius:14px;
+          font-size:16px;font-weight:800;cursor:pointer;margin:0 0 10px;transition:transform .06s ease, box-shadow .2s ease;}
+  .paybtn:active{transform:translateY(1px);}
+  .paybtn img{display:block;}
+
+  .pb-blik{background:var(--blik);box-shadow:0 2px 10px rgba(0,0,0,.18);}
+  .pb-blik img{height:24px;}
+  .pb-apple{background:#000;}
+  .pb-apple img{height:42px;filter:invert(1);} /* schwarzes Logo -> weiß */
+  .pb-gpay{background:#000;}
+  .pb-gpay img{height:30px;}
+  .pb-paypal{background:var(--paypal);}
+  .pb-paypal img{height:50px;}
+  .pb-card{background:linear-gradient(135deg,var(--brand2),var(--brand));color:#fff;}
+  .pb-card .cardlogos{display:flex;gap:6px;align-items:center;margin-left:4px;}
+  .pb-card .cardlogos img{height:20px;background:#fff;border-radius:3px;padding:1px 3px;}
+  .pb-card svg{width:22px;height:22px;}
+  .pb-card .chev{margin-left:2px;transition:transform .2s ease;font-size:13px;opacity:.9;}
+  .pb-card[aria-expanded="true"] .chev{transform:rotate(180deg);}
+
+  /* Karten-Felder (klappen bei Klick auf "Zapłać kartą" auf) */
+  .cardfields{display:none;margin:-2px 0 10px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#FBFAF7;animation:cf .18s ease;}
+  .cardfields.open{display:block;}
+  @keyframes cf{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
+  .cf-field{margin-bottom:10px;}
+  .cf-field label{display:block;font-size:11px;font-weight:700;color:#8a8272;margin-bottom:5px;}
+  .cf-input{background:#fff;border:1px solid #E3DED4;border-radius:9px;padding:11px 12px;font-size:14px;color:#b7b0a2;}
+  .cf-row{display:flex;gap:10px;}
+  .cf-row .cf-field{flex:1;margin-bottom:0;}
+  .cf-submit{width:100%;height:52px;margin-top:12px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--brand2),var(--brand));color:#fff;font-size:15px;font-weight:800;cursor:pointer;}
+
+  /* Redirect-Hinweis für die Direkt-Methoden */
+  .rtoast{display:none;text-align:center;font-size:13px;font-weight:700;color:var(--brand);background:#F6EFDF;border-radius:10px;padding:11px;margin-top:6px;}
+
+  .divider{display:flex;align-items:center;text-align:center;color:#b7b0a2;font-size:12px;font-weight:600;margin:6px 0 10px;}
+  .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line);}
+  .divider span{padding:0 12px;}
+
+  .foot{display:flex;flex-direction:column;align-items:center;gap:8px;padding:6px 22px 20px;border-top:1px solid var(--line);}
+  .foot .icons{display:flex;gap:10px;align-items:center;opacity:.75;}
+  .foot .icons img{height:20px;}
+  .foot p{margin:0;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.5;}
+
+  .note{max-width:440px;margin:16px auto 0;font-size:12.5px;color:#8a8272;line-height:1.6;text-align:center;}
+  .cmp{max-width:440px;margin:26px auto 0;font-size:12px;color:#9a927f;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;line-height:1.6;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div style="text-align:center;"><span class="pill">Wariant B · Podgląd</span></div>
+
+    <div class="modal">
+      <div class="head">
+        <h2>Wybierz metodę płatności</h2>
+        <div class="sub">Plan treningowy dla Twojego psa · jednorazowo</div>
+      </div>
+
+      <div class="total-row">
+        <span class="lbl">Razem</span>
+        <span><span class="old">349,99 zł</span><span class="amt">169,99 zł</span></span>
+      </div>
+
+      <div class="body">
+        <div class="seclabel">Szybka płatność</div>
+
+        <!-- BLIK — Held, ganz oben (PL-nativ, sofort, kein 3DS) -->
+        <button class="paybtn pb-blik" onclick="demo('BLIK')" aria-label="Zapłać przez BLIK">
+          <img src="blik-white.svg" alt="BLIK">
+        </button>
+
+        <!-- Apple Pay (nur wenn Gerät es kann — hier zur Vorschau sichtbar) -->
+        <button class="paybtn pb-apple" onclick="demo('Apple Pay')" aria-label="Zapłać przez Apple Pay">
+          <img src="applepay.png" alt="Apple Pay">
+        </button>
+
+        <!-- Google Pay: aktuell wg. Mollie-PL-503 ausgeblendet. Zum Aktivieren display:flex. -->
+        <button class="paybtn pb-gpay" onclick="demo('Google Pay')" aria-label="Zapłać przez Google Pay" style="display:none;">
+          <img src="googlepay.png" alt="Google Pay">
+        </button>
+
+        <div class="divider"><span>lub</span></div>
+
+        <!-- PayPal -->
+        <button class="paybtn pb-paypal" onclick="demo('PayPal')" aria-label="Zapłać przez PayPal">
+          <img src="PayPal3.png" alt="PayPal">
+        </button>
+
+        <!-- Karta — öffnet die Kartenfelder (kein Redirect) -->
+        <button class="paybtn pb-card" id="cardBtn" onclick="toggleCard()" aria-expanded="false" aria-label="Zapłać kartą">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <span>Zapłać kartą</span>
+          <span class="cardlogos"><img src="visa-logo.png" alt="Visa"><img src="mastercard-logo.png" alt="Mastercard"></span>
+          <span class="chev">▾</span>
+        </button>
+
+        <!-- Kartenfelder (klappen auf) -->
+        <div class="cardfields" id="cardfields">
+          <div class="cf-field"><label>Numer karty</label><div class="cf-input">1234 5678 9012 3456</div></div>
+          <div class="cf-field"><label>Właściciel karty</label><div class="cf-input">Imię i nazwisko</div></div>
+          <div class="cf-row">
+            <div class="cf-field"><label>Ważna do</label><div class="cf-input">MM / RR</div></div>
+            <div class="cf-field"><label>CVC</label><div class="cf-input">•••</div></div>
+          </div>
+          <button class="cf-submit" onclick="demo('Karta (3-D Secure)')">🔒 Bezpieczna płatność · 169,99 zł</button>
+        </div>
+
+        <!-- Redirect-Hinweis (Direkt-Methoden) -->
+        <div class="rtoast" id="rtoast"></div>
+      </div>
+
+      <div class="foot">
+        <div class="icons">
+          <img src="blik-logo.svg" alt="BLIK" onerror="this.style.display='none'">
+          <img src="ING_Identifier_FC.png" alt="ING" style="border-radius:4px;">
+          <img src="visa-logo.png" alt="Visa">
+          <img src="mastercard-logo.png" alt="Mastercard">
+          <img src="paypal-logo.png" alt="PayPal" onerror="this.style.display='none'">
+        </div>
+        <p>ŁapaPlan · Plan treningowy przyjdzie od razu mailem<br>30 dni gwarancji zwrotu pieniędzy</p>
+      </div>
+    </div>
+
+    <p class="note">Vorschau von <strong>Variante B</strong> — großer gebrandeter Methoden-Stack, BLIK als Held oben.
+    Klick auf einen Button zeigt nur, welche Methode ausgelöst würde (Demo).</p>
+
+    <div class="cmp">
+      <strong>Was neu ist ggü. jetzt (Variante A):</strong> Aktuell kleines Logo-Grid (BLIK/Apple) + dünne Radio-Zeilen (PayPal/Karta).
+      Variante B = große Ein-Tap-Buttons in Marken-Farben. Reihenfolge: BLIK → Apple&nbsp;Pay → (Google&nbsp;Pay, aus) → PayPal → Karta. Kein Klarna (in PL nicht verfügbar). Pläne + Order-Bump unverändert.
+    </div>
+  </div>
+
+  <script>
+    // Direkt-Methoden (BLIK/Apple/Google/PayPal): im echten Checkout -> sofort
+    // Redirect zum Anbieter (payWithMethod). Hier nur Hinweis-Toast als Demo.
+    function demo(m){
+      const t=document.getElementById('rtoast');
+      t.textContent='→ Przekierowanie do: ' + m + ' …';
+      t.style.display='block';
+      clearTimeout(window.__rt); window.__rt=setTimeout(()=>{t.style.display='none';}, 1800);
+    }
+    // Karte: klappt die Kartenfelder auf/zu (kein Redirect).
+    function toggleCard(){
+      const cf=document.getElementById('cardfields');
+      const open=cf.classList.toggle('open');
+      document.getElementById('cardBtn').setAttribute('aria-expanded', open ? 'true':'false');
+      const t=document.getElementById('rtoast'); if(t) t.style.display='none';
+      if(open) cf.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
+  </script>
+</body>
+</html>
