@@ -31,6 +31,8 @@ export interface DogProfile {
 
 export interface ComposeArgs {
   problem: ProblemKey;
+  /** Weitere gewählte Top-Probleme (werden als Blöcke in den Plan eingewebt). */
+  secondaryProblems?: ProblemKey[];
   planLengthMonths: 1 | 3 | 6;
   dog: DogProfile;
   introText?: string;
@@ -6102,8 +6104,40 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
   const problemLabel = PROBLEM_LABELS_DE[problem] || problem;
   const dogName = dog.dogName || "deinem Hund";
 
-  // Pool für Exercise-Lookup
-  let rawPool = EXERCISE_LIBRARY[problem] || [];
+  // ── Multi-Problem: Top-Themen als Blöcke einweben ───────────────────
+  // Der Halter wählt im Quiz oft 2-3 Probleme (Ø 2,7). Damit der Plan hält,
+  // was das Angebot zeigt ("Für X, Y & Z"), reihen wir pro Problem einen
+  // eigenen Block: 1 Problem -> ganze Laufzeit, 2 -> je Hälfte, 3 -> je Drittel.
+  // Jeder Block durchläuft die volle Fundament->Steigerung->Generalisierung-
+  // Progression seines Problems (skaliert auf die Block-Länge).
+  const VALID_KEYS: ProblemKey[] = [
+    "pulling", "energy", "aggression", "mouthing", "recall",
+    "barking", "anxiety", "jumping", "destructive", "soiling",
+  ];
+  const orderedProbs: ProblemKey[] = [];
+  for (const p of [problem, ...(args.secondaryProblems || [])]) {
+    if (VALID_KEYS.includes(p) && !orderedProbs.includes(p)) orderedProbs.push(p);
+    // 1-Monats-Plan ist zu kurz für 3 Blöcke -> max 2; sonst max 3.
+    if (orderedProbs.length >= (planLengthMonths === 1 ? 2 : 3)) break;
+  }
+  if (orderedProbs.length === 0) orderedProbs.push(problem);
+  const _n = orderedProbs.length;
+  const _baseW = Math.floor(weeksTotal / _n);
+  const _remW = weeksTotal % _n;
+  // Rest-Wochen auf die ersten Blöcke (Haupt-Problem bekommt am meisten).
+  const blockSizes = orderedProbs.map((_, i) => _baseW + (i < _remW ? 1 : 0));
+  const _labelOf = (p: ProblemKey) => PROBLEM_LABELS_DE[p] || p;
+  const combinedLabel =
+    _n === 1
+      ? problemLabel
+      : orderedProbs.slice(0, -1).map(_labelOf).join(", ") +
+        " & " +
+        _labelOf(orderedProbs[_n - 1]);
+
+  // Baut die Wochen für EIN Problem über `weeksTotal` (= Block-Länge).
+  function buildBlockWeeks(problem: ProblemKey, weeksTotal: number) {
+    // Pool für Exercise-Lookup
+    let rawPool = EXERCISE_LIBRARY[problem] || [];
   if (rawPool.length === 0) {
     rawPool = EXERCISE_LIBRARY.pulling || [];
     console.warn(`[plan-composer] kein Pool für "${problem}" — Fallback pulling`);
@@ -6272,6 +6306,22 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
       uebungen: uebungen.map((u) => ({ name: u.name, schritte: u.schritte })),
     });
   }
+    return weeks;
+  }
+
+  // ── Blöcke der Top-Probleme aneinanderreihen + global durchnummerieren ─
+  const weeks: any[] = [];
+  let _gw = 0;
+  orderedProbs.forEach((_p, _i) => {
+    const _blockWeeks = buildBlockWeeks(_p, blockSizes[_i]);
+    const _label = PROBLEM_LABELS_DE[_p] || _p;
+    for (const _wk of _blockWeeks) {
+      _gw++;
+      weeks.push(
+        _n > 1 ? { ..._wk, num: _gw, fokus: _label } : { ..._wk, num: _gw }
+      );
+    }
+  });
 
   // Tonfall je Plan-Länge: 1M = kompakt + fokussiert, 3M = solide mit Zeit
   // pro Schritt, 6M = entspannt + tief.
@@ -6282,7 +6332,7 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
         ? `Zwölf Wochen sind eine entspannte Strecke. Du hast Zeit, jeden Schritt sauber aufzubauen, statt durchzuhetzen. Pro Woche reicht eine Sache, die wirklich sitzt.`
         : `Sechs Monate sind viel Zeit, und genau das ist der Vorteil. Wir können jeden Baustein in Ruhe festigen, kleine Rückschritte ohne Stress auffangen und am Ende echte Generalisierung erreichen, statt nur Erstkonditionierung.`;
 
-  const fallbackEinleitung = `Dieser Trainingsplan wurde speziell für ${dogName} und das Thema ${problemLabel} entwickelt. Er begleitet dich über ${weeksTotal} Wochen Schritt für Schritt, vom ruhigen Fundament drinnen bis zur souveränen Bewältigung schwieriger Alltagssituationen.\n\n${tempoBeschreibung}\n\nJede Übung ist so gestaltet, dass du sie ohne Vorkenntnisse umsetzen kannst. Du brauchst weiche Leckerlis, eine Leine, eine Decke und vor allem Geduld.`;
+  const fallbackEinleitung = `Dieser Trainingsplan wurde speziell für ${dogName} und ${_n > 1 ? `die Themen ${combinedLabel}` : `das Thema ${combinedLabel}`} entwickelt. Er begleitet dich über ${weeksTotal} Wochen Schritt für Schritt${_n > 1 ? ` — Thema für Thema (${combinedLabel})` : ""}, vom ruhigen Fundament drinnen bis zur souveränen Bewältigung schwieriger Alltagssituationen.\n\n${tempoBeschreibung}\n\nJede Übung ist so gestaltet, dass du sie ohne Vorkenntnisse umsetzen kannst. Du brauchst weiche Leckerlis, eine Leine, eine Decke und vor allem Geduld.`;
 
   // Problem-spezifisches Equipment-Briefing.
   const equipmentBriefings: Record<ProblemKey, string> = {
@@ -6297,7 +6347,10 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
     destructive: `\n\nAusrüstungs-Check: 4-5 verschiedene Kau-Objekte für Rotation (Naturkauartikel wie Büffelhaut/Ochsenziemer, Kong Classic, Schnüffelmatte, Holzknochen, Geweih). KEINE Rohhaut-Knochen — Verletzungsgefahr. Box oder Babyschutz für sichere Allein-Zonen. Enzym-Reiniger.`,
     soiling: `\n\nAusrüstungs-Check WICHTIG: Enzym-Reiniger (Tierhandlung) für Unfälle — normaler Reiniger reicht nicht, der Geruch bleibt für den Hund. Hochwertige Belohnungen griffbereit für jede Toilettenrunde. Bei häufigen Unfällen erwachsener Hunde: Tierarzt-Check (Blasenentzündung etc.) vor Trainings-Start.`,
   };
-  const equipmentBriefing = equipmentBriefings[problem] || "";
+  // Equipment aller Blöcke zusammenführen (jedes Problem hat eigenes Briefing).
+  const equipmentBriefing = orderedProbs
+    .map((p) => equipmentBriefings[p] || "")
+    .join("");
 
   // Phasen-Aufteilung explizit nach Plan-Länge: macht den Halter klar wo
   // Zeitpolster ist (3M/6M) bzw. wo es straff wird (1M).
@@ -6322,8 +6375,30 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
     destructive: "deutlich seltener Dinge zerstören und mehr aus erlaubten Beschäftigungen herausholen",
     soiling: "zuverlässig stubenrein werden mit klarer Toiletten-Routine",
   };
-  const zielSatz = ZIEL_FORMULIERUNGEN[problem] || "das gemeinsame Leben deutlich entspannter gestalten";
+  const zielSatz =
+    orderedProbs
+      .map((p) => ZIEL_FORMULIERUNGEN[p])
+      .filter(Boolean)
+      .join("; ") || "das gemeinsame Leben deutlich entspannter gestalten";
   const fallbackZiele = `Am Ende der ${weeksTotal} Wochen wird ${dogName} ${zielSatz}. Nicht durch Strafe oder Druck, sondern durch positive Verstärkung und klare Routinen. Du wirst ${dogName} besser verstehen und gemeinsam einen ruhigeren Alltag haben.`;
+
+  // Monats-Übersichten: bei 1 Problem wie bisher; bei mehreren pro Block eine
+  // eigene Übersicht (mit Block-Fokus), fortlaufend nummeriert.
+  const monatsUebersichten =
+    _n === 1
+      ? buildMonatsUebersichten(problem, weeksTotal, monthsTotal, dog, problemLabel, customProblemText)
+      : (() => {
+          const out: Array<{ monat: number; text: string }> = [];
+          let mnum = 0;
+          orderedProbs.forEach((p, i) => {
+            const bm = Math.max(1, Math.round(blockSizes[i] / 4));
+            buildMonatsUebersichten(p, blockSizes[i], bm, dog, _labelOf(p), customProblemText).forEach((s) => {
+              mnum++;
+              out.push({ monat: mnum, text: `Block-Fokus: ${_labelOf(p)}.\n\n${s.text}` });
+            });
+          });
+          return out;
+        })();
 
   return {
     intro: {
@@ -6336,13 +6411,15 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
       ziele: personalize(zieleText || fallbackZiele, dog),
     },
     weeks,
-    monats_uebersichten: buildMonatsUebersichten(problem, weeksTotal, monthsTotal, dog, problemLabel, customProblemText),
+    monats_uebersichten: monatsUebersichten,
     abschluss: personalize(
       abschlussText ||
         `Du hast ${dogName} über ${weeksTotal} Wochen systematisch begleitet, das ist eine echte Leistung. Halte die Routinen aufrecht, beobachte die kleinen Fortschritte und bleib geduldig mit euch beiden. Veränderung ist keine Linie, sondern eine Welle.`,
       dog
     ),
-    zusatz_spiele: (BONUS_BY_PROBLEM[problem] || []).map((bs) => ({
+    zusatz_spiele: orderedProbs
+      .flatMap((p) => BONUS_BY_PROBLEM[p] || [])
+      .map((bs) => ({
       ...bs,
       name: personalize(bs.name, dog),
       ziel: personalize(bs.ziel, dog),
