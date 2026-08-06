@@ -108,26 +108,46 @@ export async function GET(req: NextRequest) {
   const from = startCutoff && startCutoff > elevenDaysAgo ? startCutoff : elevenDaysAgo;
   const until = new Date(Date.now() - 10 * 60_000).toISOString();
 
-  let query = admin
-    .from("wauwerk_leads")
-    .select("id, email, dog_name, status, answers, created_at")
-    .not("email", "is", null)
-    .eq("status", "email_captured");
+  // Sende-Deckel/Lauf: Burst-Schutz + gleichmaessiger Backlog-Abbau. Steady-
+  // State liegt weit darunter (~15/Lauf), greift nur beim einmaligen Nachholen.
+  const MAX_SENDS_PER_RUN = 100;
+  const PAGE = 1000;
 
-  if (emailFilter) {
-    query = query.ilike("email", emailFilter);
-  } else {
-    query = query
-      .gte("created_at", from)
-      .lte("created_at", until)
-      .order("created_at", { ascending: false })
-      .limit(80);
-  }
-
-  const { data: leads, error } = await query;
-  if (error) {
-    console.error("[email-captured] query error:", error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  // ALLE faelligen Leads holen (paginiert) — NICHT nur die neuesten 80. Bei
+  // ~500 Leads/Tag deckten die 80 nur die letzten Stunden ab, also nur Stufe 1;
+  // Stufe 3-8 (Leads >=24h alt) wurden nie geladen -> feuerten nie. Aeltester
+  // zuerst -> ueberfaellige Stufen werden zuerst nachgeholt.
+  let leads: any[] = [];
+  {
+    const base = () =>
+      admin
+        .from("wauwerk_leads")
+        .select("id, email, dog_name, status, answers, created_at")
+        .not("email", "is", null)
+        .eq("status", "email_captured");
+    if (emailFilter) {
+      const { data, error } = await base().ilike("email", emailFilter);
+      if (error) {
+        console.error("[email-captured] query error:", error.message);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      leads = data || [];
+    } else {
+      for (let offset = 0; ; offset += PAGE) {
+        const { data, error } = await base()
+          .gte("created_at", from)
+          .lte("created_at", until)
+          .order("created_at", { ascending: true })
+          .range(offset, offset + PAGE - 1);
+        if (error) {
+          console.error("[email-captured] query error:", error.message);
+          return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+        if (!data || data.length === 0) break;
+        leads.push(...data);
+        if (data.length < PAGE) break;
+      }
+    }
   }
 
   const results: any[] = [];
@@ -136,6 +156,10 @@ export async function GET(req: NextRequest) {
     failed = 0;
 
   for (const lead of leads || []) {
+    // Burst-Schutz: nach MAX_SENDS_PER_RUN echten Sends abbrechen. Da wir
+    // aeltester-zuerst iterieren, wird der Stufe-3-8-Backlog ueber mehrere
+    // Laeufe gleichmaessig abgetragen (kein Massen-Versand auf einmal).
+    if (!dryRun && sent >= MAX_SENDS_PER_RUN) break;
     const answers = lead.answers || {};
 
     // STRIKT DE: nur deutsche Leads. PL laeuft ueber pl-nurture, IT ueber
