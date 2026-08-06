@@ -1,10 +1,13 @@
 // GET /api/cron/recover-abandoned-checkouts?secret=pfoten-cron-2024
 //
-// Cron alle 5 Min. Sucht Leads mit:
-//   - created_at zwischen vor 10-30 Min (Window — nicht zu frueh + nicht zu alt)
+// Cron alle 5 Min (in vercel.json eingetragen). Sucht Leads mit:
+//   - created_at zwischen vor 10 Min und 24h (Window — nicht zu frueh, aber
+//     weit genug fuer Langueberleger + spaet gesetzte "pending"-Abbrecher)
 //   - email gesetzt
-//   - status NICHT paid (also pending, checkout_started, failed, ...)
-//   - answers.recovery_mail_sent_at NICHT gesetzt
+//   - status IN (checkout_started, pending, failed, cancelled) — also echte
+//     Checkout-Abbrecher; NICHT email_captured (Nurture-Sequenz) und nicht paid
+//   - answers.recovery_mail_sent_at NICHT gesetzt (Idempotenz)
+//   - Versand via Brevo (sendCheckoutRecoveryMail ohne transactional-Flag)
 //
 // Schickt EINE Magic-Link-Mail mit Dashboard-Link, setzt das Sent-Flag.
 // Idempotent — wird nur einmal pro Lead geschickt.
@@ -58,9 +61,12 @@ export async function GET(req: NextRequest) {
   const admin = createMemberAdminClient();
 
   // Lead-Window: nicht zu frueh (User braucht 5-10 Min am Checkout),
-  // nicht zu alt (nach 30 Min ist die Chance auf Recovery sehr klein).
+  // Fenster auf 24h geweitet (vorher 30 Min) — faengt auch Langueberleger
+  // + spaeter (per Webhook) auf "pending" gesetzte Abbrecher. Das Idempotenz-
+  // Flag (recovery_mail_sent_at) verhindert Doppel-Mails, .limit(50)/Lauf
+  // drosselt (alle 5 Min -> max ~600/h, Backlog wird abgetragen).
   const tenMinAgo = new Date(Date.now() - 10 * 60_000).toISOString();
-  const thirtyMinAgo = new Date(Date.now() - 30 * 60_000).toISOString();
+  const windowStart = new Date(Date.now() - 24 * 60 * 60_000).toISOString();
 
   let query = admin
     .from("wauwerk_leads")
@@ -69,7 +75,15 @@ export async function GET(req: NextRequest) {
     )
     .not("email", "is", null);
   if (!testMode) {
-    query = query.neq("status", "paid");
+    // NUR echte Checkout-Abbrecher — NICHT email_captured (die bekommen die
+    // Nurture-Sequenz) und nicht paid. Sonst wuerde das 24h-Fenster
+    // Top-of-Funnel-Leads mit "Kauf abschliessen"-Mails zuspammen.
+    query = query.in("status", [
+      "checkout_started",
+      "pending",
+      "failed",
+      "cancelled",
+    ]);
   }
 
   if (emailFilter) {
@@ -77,7 +91,8 @@ export async function GET(req: NextRequest) {
   } else {
     query = query
       .lte("created_at", tenMinAgo)
-      .gte("created_at", thirtyMinAgo)
+      .gte("created_at", windowStart)
+      .order("created_at", { ascending: false })
       .limit(50);
   }
 

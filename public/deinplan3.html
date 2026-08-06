@@ -5408,11 +5408,9 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     <button id="googlePayBtn" class="hybrid-express-btn hybrid-express-btn--googlepay" onclick="payWithMethod('googlepay')" aria-label="Mit Google Pay bezahlen">
                         <img src="googlepay.png" alt="GooglePay">
                     </button>
-                    <button class="hybrid-express-btn" onclick="payWithMethod('banktransfer')" aria-label="Per SEPA-Banküberweisung" style="flex-direction:column; gap:2px; height:auto; min-height:64px; padding:8px 10px;">
-                        <img src="sepa-logo.png" alt="SEPA" style="max-height:30px;">
-                        <span style="font-size:11px; font-weight:600; color:#6B7280; line-height:1;">Überweisung</span>
-                    </button>
                 </div>
+                <!-- Überweisung entfernt (nur 23% Abschluss): Wünscher werden zu Klarna geleitet (dort Bank waehlbar, ~80% Abschluss). -->
+                <div style="text-align:center; font-size:11px; color:#999; margin-top:6px;">Per Überweisung zahlen? Wähle Klarna und dann deine Bank.</div>
 
                 <!-- Klarna: öffnet Adress-Modal → danach direkt zu Klarna (pay.klarna.com) -->
                 <button type="button" class="hybrid-klarna-small" onclick="openKlarnaAddress()" aria-label="Später zahlen mit Klarna">
