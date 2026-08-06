@@ -274,6 +274,39 @@ export async function POST(req: NextRequest) {
 
         const problemLabel = problemLabelMap[validProblemKey] || dogProblem;
 
+        // ── Multi-Problem: weitere gewählte Probleme ableiten ───────────────
+        // Der Halter wählt im Quiz Ø ~2,7 Probleme. Damit der gelieferte Plan
+        // hält, was das Angebot zeigt ("Für X, Y & Z"), reichen wir die weiteren
+        // Top-Probleme an den Composer (er webt sie als Blöcke ein). dog_behaviors
+        // enthält evtl. Custom-Keys -> auf die 10 Basis-Themen mappen.
+        const TO_BASE: Record<string, string> = {
+          pulling: "pulling",
+          aggression: "aggression", "dog-reactive": "aggression", "leash-reactive": "aggression", "postman-reactive": "aggression", overreaction: "aggression", "anxious-overreaction": "aggression",
+          recall: "recall", chasing: "recall", "chasing-movement": "recall", "chasing-cars": "recall", "prey-drive": "recall",
+          energy: "energy",
+          destructive: "destructive", digging: "destructive",
+          barking: "barking", vocalization: "barking",
+          jumping: "jumping",
+          anxiety: "anxiety", separation: "anxiety", "general-anxiety": "anxiety", "stranger-anxiety": "anxiety", "visitor-anxiety": "anxiety", "thunder-anxiety": "anxiety", "noise-sensitivity": "anxiety",
+          mouthing: "mouthing", "eating-unwanted": "mouthing", "eating-trash": "mouthing", "eating-objects": "mouthing", "resource-guarding": "mouthing", biting: "mouthing",
+          soiling: "soiling", marking: "soiling",
+        };
+        const rawBehaviors: string[] = Array.isArray(answers.dog_behaviors)
+          ? answers.dog_behaviors
+          : [];
+        const secondaryProblems: string[] = [];
+        for (const b of rawBehaviors) {
+          const base = TO_BASE[String(b).toLowerCase()];
+          if (base && base !== validProblemKey && !secondaryProblems.includes(base)) {
+            secondaryProblems.push(base);
+          }
+          if (secondaryProblems.length >= 2) break; // Composer nimmt max 3 gesamt
+        }
+        // Kombiniertes Label fuer die KI-Einleitung (damit sie alle Themen nennt).
+        const combinedProblemLabel = [validProblemKey, ...secondaryProblems]
+          .map((k) => problemLabelMap[k] || k)
+          .join(", ");
+
         // KI-Intro generieren (parallel zum Compose-Job)
         const customProblemText =
           typeof answers.custom_problem_text === "string" &&
@@ -284,7 +317,7 @@ export async function POST(req: NextRequest) {
           dogName,
           dogBreed: answers.dog_breed || undefined,
           dogAgeMonths: parseAgeToMonths(answers.dog_age),
-          problemLabel,
+          problemLabel: combinedProblemLabel || problemLabel,
           planLengthMonths,
           zusatzKontext: zusatzKontextLines.join("\n") || undefined,
           customProblemText,
@@ -302,6 +335,7 @@ export async function POST(req: NextRequest) {
 
         const plan = composePlan({
           problem: validProblemKey,
+          secondaryProblems: secondaryProblems as any,
           planLengthMonths,
           dog: {
             dogName,

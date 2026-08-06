@@ -34,6 +34,8 @@ export interface DogProfile {
 
 export interface ComposeArgs {
   problem: ProblemKey;
+  /** Weitere gewählte Top-Probleme (werden als Blöcke in den Plan eingewebt). */
+  secondaryProblems?: ProblemKey[];
   planLengthMonths: 1 | 3 | 6;
   dog: DogProfile;
   introText?: string;
@@ -5987,8 +5989,40 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
   const problemLabel = PROBLEM_LABELS_PL[problem] || problem;
   const dogName = dog.dogName || "Twój pies";
 
-  // Pula do wyszukiwania ćwiczeń
-  let rawPool = EXERCISE_LIBRARY_PL[problem] || [];
+  // ── Multi-Problem: Top-Themen als Blöcke einweben ───────────────────
+  // Der Halter wählt im Quiz oft 2-3 Probleme (Ø 2,7). Damit der Plan hält,
+  // was das Angebot zeigt ("Für X, Y & Z"), reihen wir pro Problem einen
+  // eigenen Block: 1 Problem -> ganze Laufzeit, 2 -> je Hälfte, 3 -> je Drittel.
+  // Jeder Block durchläuft die volle Fundament->Steigerung->Generalisierung-
+  // Progression seines Problems (skaliert auf die Block-Länge).
+  const VALID_KEYS: ProblemKey[] = [
+    "pulling", "energy", "aggression", "mouthing", "recall",
+    "barking", "anxiety", "jumping", "destructive", "soiling",
+  ];
+  const orderedProbs: ProblemKey[] = [];
+  for (const p of [problem, ...(args.secondaryProblems || [])]) {
+    if (VALID_KEYS.includes(p) && !orderedProbs.includes(p)) orderedProbs.push(p);
+    // 1-Monats-Plan ist zu kurz für 3 Blöcke -> max 2; sonst max 3.
+    if (orderedProbs.length >= (planLengthMonths === 1 ? 2 : 3)) break;
+  }
+  if (orderedProbs.length === 0) orderedProbs.push(problem);
+  const _n = orderedProbs.length;
+  const _baseW = Math.floor(weeksTotal / _n);
+  const _remW = weeksTotal % _n;
+  // Rest-Wochen auf die ersten Blöcke (Haupt-Problem bekommt am meisten).
+  const blockSizes = orderedProbs.map((_, i) => _baseW + (i < _remW ? 1 : 0));
+  const _labelOf = (p: ProblemKey) => PROBLEM_LABELS_PL[p] || p;
+  const combinedLabel =
+    _n === 1
+      ? problemLabel
+      : orderedProbs.slice(0, -1).map(_labelOf).join(", ") +
+        " & " +
+        _labelOf(orderedProbs[_n - 1]);
+
+  // Baut die Wochen für EIN Problem über `weeksTotal` (= Block-Länge).
+  function buildBlockWeeks(problem: ProblemKey, weeksTotal: number) {
+    // Pula do wyszukiwania ćwiczeń
+    let rawPool = EXERCISE_LIBRARY_PL[problem] || [];
   if (rawPool.length === 0) {
     rawPool = EXERCISE_LIBRARY_PL.pulling || [];
     console.warn(`[plan-composer] brak puli dla "${problem}" — fallback pulling`);
@@ -6157,6 +6191,22 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
       uebungen: uebungen.map((u) => ({ name: u.name, schritte: u.schritte })),
     });
   }
+    return weeks;
+  }
+
+  // ── Blöcke der Top-Probleme aneinanderreihen + global durchnummerieren ─
+  const weeks: any[] = [];
+  let _gw = 0;
+  orderedProbs.forEach((_p, _i) => {
+    const _blockWeeks = buildBlockWeeks(_p, blockSizes[_i]);
+    const _label = PROBLEM_LABELS_PL[_p] || _p;
+    for (const _wk of _blockWeeks) {
+      _gw++;
+      weeks.push(
+        _n > 1 ? { ..._wk, num: _gw, fokus: _label } : { ..._wk, num: _gw }
+      );
+    }
+  });
 
   // Ton zależny od długości planu: 1M = zwięzły + skupiony, 3M = solidny z czasem
   // na każdy krok, 6M = spokojny + dogłębny.
@@ -6167,7 +6217,7 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
         ? `Dwanaście tygodni to spokojny dystans. Masz czas, żeby każdy krok zbudować starannie, zamiast się śpieszyć. Na tydzień wystarczy jedna rzecz, która naprawdę usiądzie.`
         : `Sześć miesięcy to dużo czasu i właśnie to jest zaletą. Możemy w spokoju utrwalić każdy element, wyłapać drobne cofnięcia bez stresu i na końcu osiągnąć prawdziwą generalizację, a nie tylko pierwsze warunkowanie.`;
 
-  const fallbackEinleitung = `Ten plan treningowy został opracowany specjalnie dla ${dogName} i tematu ${problemLabel}. Prowadzi Cię przez ${weeksTotal} tygodni krok po kroku — od spokojnego fundamentu w domu aż po pewne radzenie sobie z trudnymi sytuacjami codzienności.\n\n${tempoBeschreibung}\n\nKażde ćwiczenie jest tak zaprojektowane, żeby dało się je wykonać bez wcześniejszej wiedzy. Potrzebujesz miękkich smakołyków, smyczy, koca i przede wszystkim cierpliwości.`;
+  const fallbackEinleitung = `Ten plan treningowy został opracowany specjalnie dla ${dogName} i ${_n > 1 ? `tematów ${combinedLabel}` : `tematu ${combinedLabel}`}. Prowadzi Cię przez ${weeksTotal} tygodni krok po kroku${_n > 1 ? ` — temat po temacie (${combinedLabel})` : ""} — od spokojnego fundamentu w domu aż po pewne radzenie sobie z trudnymi sytuacjami codzienności.\n\n${tempoBeschreibung}\n\nKażde ćwiczenie jest tak zaprojektowane, żeby dało się je wykonać bez wcześniejszej wiedzy. Potrzebujesz miękkich smakołyków, smyczy, koca i przede wszystkim cierpliwości.`;
 
   // Briefing sprzętowy specyficzny dla problemu.
   const equipmentBriefings: Record<ProblemKey, string> = {
@@ -6182,7 +6232,10 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
     destructive: `\n\nSprawdzenie sprzętu: 4-5 różnych gryzaków do rotacji (naturalne przysmaki do gryzienia jak skóra bawoli/ścięgno wołowe, Kong Classic, mata węchowa, drewniana kość, poroże). ŻADNYCH gryzaków ze skóry surowej (rawhide) — ryzyko urazu. Kojec lub bramka zabezpieczająca na bezpieczne strefy samotności. Środek enzymatyczny.`,
     soiling: `\n\nSprawdzenie sprzętu WAŻNE: środek enzymatyczny (sklep zoologiczny) na wypadki — zwykły środek nie wystarczy, zapach dla psa pozostaje. Wartościowe nagrody pod ręką na każdą rundę toaletową. Przy częstych wypadkach dorosłego psa: kontrola u weterynarza (zapalenie pęcherza itp.) przed startem treningu.`,
   };
-  const equipmentBriefing = equipmentBriefings[problem] || "";
+  // Equipment aller Blöcke zusammenführen (jedes Problem hat eigenes Briefing).
+  const equipmentBriefing = orderedProbs
+    .map((p) => equipmentBriefings[p] || "")
+    .join("");
 
   // Podział na fazy jawnie według długości planu: pokazuje opiekunowi, gdzie
   // jest zapas czasu (3M/6M) i gdzie robi się napięcie (1M).
@@ -6207,8 +6260,30 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
     destructive: "wyraźnie rzadziej niszczyć rzeczy i więcej czerpać z dozwolonych zajęć",
     soiling: "niezawodnie stać się czysty w domu, z jasną rutyną toaletową",
   };
-  const zielSatz = ZIEL_FORMULIERUNGEN[problem] || "kształtować wspólne życie wyraźnie spokojniej";
+  const zielSatz =
+    orderedProbs
+      .map((p) => ZIEL_FORMULIERUNGEN[p])
+      .filter(Boolean)
+      .join("; ") || "kształtować wspólne życie wyraźnie spokojniej";
   const fallbackZiele = `Pod koniec tych ${weeksTotal} tygodni ${dogName} będzie ${zielSatz}. Nie przez karę czy przymus, lecz przez pozytywne wzmacnianie i jasne rutyny. Będziesz lepiej rozumieć ${dogName} i mieć razem spokojniejszą codzienność.`;
+
+  // Monats-Übersichten: bei 1 Problem wie bisher; bei mehreren pro Block eine
+  // eigene Übersicht (mit Block-Fokus), fortlaufend nummeriert.
+  const monatsUebersichten =
+    _n === 1
+      ? buildMonatsUebersichten(problem, weeksTotal, monthsTotal, dog, problemLabel, customProblemText)
+      : (() => {
+          const out: Array<{ monat: number; text: string }> = [];
+          let mnum = 0;
+          orderedProbs.forEach((p, i) => {
+            const bm = Math.max(1, Math.round(blockSizes[i] / 4));
+            buildMonatsUebersichten(p, blockSizes[i], bm, dog, _labelOf(p), customProblemText).forEach((s) => {
+              mnum++;
+              out.push({ monat: mnum, text: `Fokus bloku: ${_labelOf(p)}.\n\n${s.text}` });
+            });
+          });
+          return out;
+        })();
 
   return {
     intro: {
@@ -6218,11 +6293,13 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
       ziele: zieleText || fallbackZiele,
     },
     weeks,
-    monats_uebersichten: buildMonatsUebersichten(problem, weeksTotal, monthsTotal, dog, problemLabel, customProblemText),
+    monats_uebersichten: monatsUebersichten,
     abschluss:
       abschlussText ||
       `Prowadziłeś ${dogName} systematycznie przez ${weeksTotal} tygodni — to prawdziwe osiągnięcie. Podtrzymuj rutyny, obserwuj małe postępy i bądź cierpliwy wobec was obojga. Zmiana to nie linia, lecz fala.`,
-    zusatz_spiele: (BONUS_BY_PROBLEM[problem] || []).map((bs) => ({
+    zusatz_spiele: orderedProbs
+      .flatMap((p) => BONUS_BY_PROBLEM[p] || [])
+      .map((bs) => ({
       ...bs,
       name: personalize(bs.name, dog),
       ziel: personalize(bs.ziel, dog),
