@@ -2433,6 +2433,9 @@ body.co-b .co-hideB{display:none !important;}
 body.co-b .co-inlineB{display:block;}
 .co-inlineB-label{font-size:13px;font-weight:700;color:#6b6357;text-align:center;margin:2px 0 12px;}
 .co-inlineB-err{display:none;color:#c0392b;font-size:13px;font-weight:600;text-align:center;margin-top:8px;}
+.co-inlineB-email{width:100%;box-sizing:border-box;padding:14px;border:1.5px solid #E3DED4;border-radius:12px;font-size:16px;background:#fff;}
+.co-inlineB-email:focus{outline:none;border-color:#C4A576;box-shadow:0 0 0 3px rgba(196,165,118,.18);}
+.co-inlineB-emailhint{font-size:11.5px;color:#8a8272;margin:6px 2px 12px;text-align:center;}
 .pbbig{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:60px;border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;margin:0 0 10px;transition:transform .06s ease;}
 .pbbig:active{transform:translateY(1px);}
 .pbbig img{display:block;}
@@ -2969,6 +2972,10 @@ body.co-b .co-inlineB{display:block;}
         <!-- Variante B (ab_pl_checkout_v1=B): Zahlungsmethoden DIREKT hier, ohne Popup-Zwischenschritt -->
         <div class="co-inlineB">
             <p class="co-inlineB-label">🔒 Bezpieczna płatność — wybierz metodę:</p>
+            <div id="inlineEmailWrap" style="display:none;">
+                <input type="email" id="inlineEmail" inputmode="email" autocomplete="email" placeholder="Twój adres e-mail" class="co-inlineB-email">
+                <p class="co-inlineB-emailhint">Na ten adres wyślemy Twój plan treningowy.</p>
+            </div>
             <button class="pbbig pbbig--blik" onclick="inlinePay('blik')" aria-label="Zapłać przez BLIK"><img src="blik-white.svg" alt="BLIK"></button>
             <button class="pbbig pbbig--paypal" onclick="inlinePay('paypal')" aria-label="Zapłać przez PayPal"><img src="PayPal3.png" alt="PayPal"></button>
             <div class="hybrid-divider">lub</div>
@@ -3953,6 +3960,13 @@ if (popularBadge) {
                 window.__canApplePay = canAP;
                 var apBtn = document.getElementById('inlineApplePay');
                 if (apBtn && canAP) apBtn.style.display = 'flex';
+            } catch (e) {}
+            // E-Mail-Feld inline zeigen, falls noch keine gültige E-Mail da ist
+            // (im echten Funnel ab krok-11 gesetzt -> Feld bleibt versteckt).
+            try {
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(localStorage.getItem('userEmail') || '')) {
+                    var w = document.getElementById('inlineEmailWrap'); if (w) w.style.display = 'block';
+                }
             } catch (e) {}
         });
         var PL_PRICES = {
@@ -5168,13 +5182,26 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             klarna: 'Klarna',
         };
 
-        // Variante B (Inline): Direktzahlung von der Seite. Fehlt die E-Mail
-        // (der Server verlangt sie -> 400 email_required), öffnen wir stattdessen
-        // das Popup, das die E-Mail erfasst — keine Sackgasse.
+        // Variante B (Inline): Direktzahlung von der Seite — KEIN Popup.
+        // Ist die E-Mail da (Funnel setzt sie in krok-11) -> direkter Redirect
+        // zum Anbieter. Fehlt sie (Direkt-Test / localStorage leer) -> Inline-
+        // E-Mail-Feld einblenden statt Popup.
         function inlinePay(method) {
+            var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             var email = localStorage.getItem('userEmail') || '';
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                if (typeof getMyPlan === 'function') { getMyPlan(); return; }
+            if (!re.test(email)) {
+                var f = document.getElementById('inlineEmail');
+                var typed = f ? (f.value || '').trim() : '';
+                if (re.test(typed)) {
+                    email = typed;
+                    localStorage.setItem('userEmail', email);
+                } else {
+                    var wrap = document.getElementById('inlineEmailWrap');
+                    if (wrap) wrap.style.display = 'block';
+                    if (f) f.focus();
+                    showHybridError('Podaj adres e-mail, aby kontynuować.');
+                    return;
+                }
             }
             payWithMethod(method);
         }
