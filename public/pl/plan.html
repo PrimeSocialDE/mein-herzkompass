@@ -2427,9 +2427,12 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 </script>
 <style>
 /* PL-Checkout-A/B Variante B — großer gebrandeter Methoden-Stack (BLIK-Held) */
-.pmset--b{display:none;}
-.co-b .pmset--a{display:none;}
-.co-b .pmset--b{display:block;}
+/* Variante B: Zahlungsmethoden direkt auf der Seite statt Button->Popup */
+.co-inlineB{display:none;max-width:540px;margin:0 auto;}
+body.co-b .co-hideB{display:none !important;}
+body.co-b .co-inlineB{display:block;}
+.co-inlineB-label{font-size:13px;font-weight:700;color:#6b6357;text-align:center;margin:2px 0 12px;}
+.co-inlineB-err{display:none;color:#c0392b;font-size:13px;font-weight:600;text-align:center;margin-top:8px;}
 .pbbig{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:60px;border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer;margin:0 0 10px;transition:transform .06s ease;}
 .pbbig:active{transform:translateY(1px);}
 .pbbig img{display:block;}
@@ -2957,10 +2960,26 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
             </div>
         </label>
 
-        <button class="cta-button glow" onclick="getMyPlan()">
+        <!-- Variante A (Control): Button öffnet das Checkout-Popup -->
+        <button class="cta-button glow co-hideB" onclick="getMyPlan()">
             Odblokuj plan treningowy
             <span class="cta-subtext">Od razu mailem · Bez abonamentu · 30 dni gwarancji</span>
         </button>
+
+        <!-- Variante B (ab_pl_checkout_v1=B): Zahlungsmethoden DIREKT hier, ohne Popup-Zwischenschritt -->
+        <div class="co-inlineB">
+            <p class="co-inlineB-label">🔒 Bezpieczna płatność — wybierz metodę:</p>
+            <button class="pbbig pbbig--blik" onclick="payWithMethod('blik')" aria-label="Zapłać przez BLIK"><img src="blik-white.svg" alt="BLIK"></button>
+            <button class="pbbig pbbig--apple" id="inlineApplePay" onclick="payWithMethod('applepay')" aria-label="Zapłać przez Apple Pay" style="display:none"><img src="applepay.png" alt="Apple Pay"></button>
+            <div class="hybrid-divider">lub</div>
+            <button class="pbbig pbbig--paypal" onclick="payWithMethod('paypal')" aria-label="Zapłać przez PayPal"><img src="PayPal3.png" alt="PayPal"></button>
+            <button class="pbbig pbbig--card" onclick="payWithMethod('creditcard')" aria-label="Zapłać kartą">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                <span>Zapłać kartą</span>
+                <span class="pbbig-cardlogos"><img src="visa-logo.png" alt="Visa" onerror="this.style.display='none'"><img src="mastercard-logo.png" alt="Mastercard" onerror="this.style.display='none'"></span>
+            </button>
+            <div class="co-inlineB-err" id="inlineBError"></div>
+        </div>
 
         <div class="payment-logos">
             <img src="blik-logo.svg" alt="BLIK">
@@ -3925,7 +3944,16 @@ if (popularBadge) {
         } catch (e) { PL_CO = 'A'; }
         window.__abCheckout = PL_CO;
         document.addEventListener('DOMContentLoaded', function () {
-            if (PL_CO === 'B') { var _ov = document.getElementById('hybridOverlay'); if (_ov) _ov.classList.add('co-b'); }
+            if (PL_CO !== 'B') return;
+            document.body.classList.add('co-b');
+            // Apple Pay nur einblenden, wenn das Gerät es kann (sonst würde der
+            // Inline-Button ins Leere führen). BLIK/PayPal/Karte gehen immer.
+            try {
+                var canAP = !!(window.ApplePaySession && typeof window.ApplePaySession.canMakePayments === 'function' && window.ApplePaySession.canMakePayments());
+                window.__canApplePay = canAP;
+                var apBtn = document.getElementById('inlineApplePay');
+                if (apBtn && canAP) apBtn.style.display = 'flex';
+            } catch (e) {}
         });
         var PL_PRICES = {
             A: {
@@ -5021,8 +5049,13 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
 
         function showHybridError(msg) {
             const el = document.getElementById('hybridError');
-            el.textContent = msg || 'Coś poszło nie tak. Spróbuj ponownie.';
-            el.style.display = 'block';
+            if (el) { el.textContent = msg || 'Coś poszło nie tak. Spróbuj ponownie.'; el.style.display = 'block'; }
+            // Variante B: Modal ist zu -> Fehler zusätzlich inline auf der Seite zeigen.
+            const inl = document.getElementById('inlineBError');
+            if (inl && document.body.classList.contains('co-b')) {
+                inl.textContent = msg || 'Coś poszło nie tak. Spróbuj ponownie.';
+                inl.style.display = 'block';
+            }
         }
         function hideHybridError() {
             const el = document.getElementById('hybridError');
@@ -5444,8 +5477,6 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 <!-- Express-Bezahlung: 4 gleichgroße Logo-Buttons (Shopify-Style).
                      Apple Pay + Google Pay default visible — Mollie filtert
                      selbst was auf dem jeweiligen Geraet nicht geht. -->
-                <!-- ===== VARIANTE A (Control): aktuelles Grid + Radio-Zeilen ===== -->
-                <div class="pmset pmset--a">
                 <p class="hybrid-section-label">Płatność ekspresowa</p>
                 <div class="hybrid-express-grid">
                     <button class="hybrid-express-btn hybrid-express-btn--blik" onclick="payWithMethod('blik')" aria-label="Zapłać przez BLIK">
@@ -5499,36 +5530,6 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     </span>
                     <span class="hybrid-card-toggle-chevron">▾</span>
                 </button>
-                </div><!-- /pmset--a -->
-
-                <!-- ===== VARIANTE B: großer gebrandeter Methoden-Stack (BLIK-Held) ===== -->
-                <div class="pmset pmset--b">
-                    <p class="hybrid-section-label">Szybka płatność</p>
-                    <button class="pbbig pbbig--blik" onclick="payWithMethod('blik')" aria-label="Zapłać przez BLIK">
-                        <img src="blik-white.svg" alt="BLIK">
-                    </button>
-                    <button class="pbbig pbbig--apple" onclick="payWithMethod('applepay')" aria-label="Zapłać przez Apple Pay">
-                        <img src="applepay.png" alt="Apple Pay">
-                    </button>
-                    <!-- Google Pay bleibt aus (Mollie-PL-503) — display:flex zum Aktivieren -->
-                    <button class="pbbig pbbig--gpay" onclick="payWithMethod('googlepay')" aria-label="Zapłać przez Google Pay" style="display:none">
-                        <img src="googlepay.png" alt="Google Pay">
-                    </button>
-
-                    <div class="hybrid-divider">lub</div>
-
-                    <button class="pbbig pbbig--paypal" onclick="payWithMethod('paypal')" aria-label="Zapłać przez PayPal">
-                        <img src="PayPal3.png" alt="PayPal">
-                    </button>
-
-                    <!-- Karta: großer Button = Karten-Toggle (öffnet die geteilten Mollie-Felder) -->
-                    <button type="button" class="pbbig pbbig--card" id="hybridCardToggleB" onclick="toggleHybridCardFields()" aria-expanded="false" aria-controls="hybridCardFields">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                        <span>Zapłać kartą</span>
-                        <span class="pbbig-cardlogos"><img src="visa-logo.png" alt="Visa" onerror="this.style.display='none'"><img src="mastercard-logo.png" alt="Mastercard" onerror="this.style.display='none'"></span>
-                        <span class="pbbig-chev">▾</span>
-                    </button>
-                </div>
 
                 <div class="hybrid-card-fields" id="hybridCardFields">
                     <div class="mollie-field">
