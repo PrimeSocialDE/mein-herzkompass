@@ -37,17 +37,43 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const PROBLEM_LABELS: Record<string, string> = {
-  pulling: "Leinenziehen",
-  barking: "Bellen",
-  aggression: "Aggression",
-  anxiety: "Trennungsangst",
-  jumping: "Anspringen",
-  recall: "Rückruf",
-  energy: "übermäßige Energie",
-  destructive: "Zerstörungsverhalten",
-  soiling: "Stubenreinheit",
-  mouthing: "Aufnehmen von Gegenständen",
+const PROBLEM_LABELS_BY_LANG: Record<"de" | "pl" | "it", Record<string, string>> = {
+  de: {
+    pulling: "Leinenziehen",
+    barking: "Bellen",
+    aggression: "Aggression",
+    anxiety: "Trennungsangst",
+    jumping: "Anspringen",
+    recall: "Rückruf",
+    energy: "übermäßige Energie",
+    destructive: "Zerstörungsverhalten",
+    soiling: "Stubenreinheit",
+    mouthing: "Aufnehmen von Gegenständen",
+  },
+  pl: {
+    pulling: "Ciągnięcie na smyczy",
+    barking: "Szczekanie",
+    aggression: "Agresja",
+    anxiety: "Lęk separacyjny",
+    jumping: "Skakanie na ludzi",
+    recall: "Przywołanie",
+    energy: "nadmierna energia",
+    destructive: "Niszczenie",
+    soiling: "Czystość w domu",
+    mouthing: "Podnoszenie przedmiotów",
+  },
+  it: {
+    pulling: "Tira al guinzaglio",
+    barking: "Abbaio",
+    aggression: "Aggressività",
+    anxiety: "Ansia da separazione",
+    jumping: "Salta addosso",
+    recall: "Richiamo",
+    energy: "energia eccessiva",
+    destructive: "Distruttività",
+    soiling: "Pulizia in casa",
+    mouthing: "Raccoglie oggetti",
+  },
 };
 
 export default async function MitgliederDashboard({
@@ -140,7 +166,10 @@ export default async function MitgliederDashboard({
   // Problem-Label aus Quiz für Kontext
   const problemKey =
     member.quiz_result?.dog_problem || member.quiz_result?.problem;
-  const problemLabel = problemKey ? PROBLEM_LABELS[problemKey] || null : null;
+  const problemLabels =
+    PROBLEM_LABELS_BY_LANG[(lang as "de" | "pl" | "it") ?? "de"] ||
+    PROBLEM_LABELS_BY_LANG.de;
+  const problemLabel = problemKey ? problemLabels[problemKey] || null : null;
 
   // Aktuelle Plan-Woche fuer die Hundekarte
   const planIntroForCard = getPlanIntro(problemKey, member.dog_name || "deinem Hund");
@@ -160,7 +189,7 @@ export default async function MitgliederDashboard({
           lang={lang}
         />
 
-        {justBought && <PurchaseSuccessBanner hasRichPlan={hasRichPlan} />}
+        {justBought && <PurchaseSuccessBanner hasRichPlan={hasRichPlan} lang={lang} />}
 
         <DogProfileCard
           dogName={member.dog_name}
@@ -168,6 +197,7 @@ export default async function MitgliederDashboard({
           quizResult={member.quiz_result}
           planWeek={cardCurrentWeek}
           totalWeeks={cardTotalWeeks}
+          lang={lang}
         />
 
         {/* PREVIEW: vorerst nur fuer max@primesocial.de sichtbar.
@@ -275,7 +305,7 @@ export default async function MitgliederDashboard({
               })}
             </div>
           ) : (
-            <WeekOverview weeks={weeks} isPaid={true} />
+            <WeekOverview weeks={weeks} isPaid={true} lang={lang} />
           )}
         </div>
 
@@ -286,7 +316,7 @@ export default async function MitgliederDashboard({
         {upsells.length > 0 && <UpsellSection upsells={upsells} lang={lang} />}
 
         {/* Onboarding-Tutorial fuer Erstbesucher (auch Paid) */}
-        <OnboardingTutorial dogName={member.dog_name} />
+        <OnboardingTutorial dogName={member.dog_name} lang={lang} />
       </>
     );
   }
@@ -317,7 +347,7 @@ export default async function MitgliederDashboard({
       {/* Just-bought Banner: User ist gerade vom Mollie-Erfolg gekommen aber
           purchase_status ist noch nicht gesynced (Webhook braucht ein paar
           Sekunden). Banner zeigt "wird erstellt" + reloadt alle 6s. */}
-      {justBought && <PurchaseSuccessBanner hasRichPlan={false} />}
+      {justBought && <PurchaseSuccessBanner hasRichPlan={false} lang={lang} />}
 
       {/* Welcome-Block: Hund-Kontext + Wochen-Position */}
       <div className="bg-white border border-[#EADDC5] rounded-2xl p-5 mb-5">
@@ -335,7 +365,9 @@ export default async function MitgliederDashboard({
                 {[
                   member.dog_breed,
                   member.quiz_result?.dog_age,
-                  problemLabel ? `Hauptthema: ${problemLabel}` : null,
+                  problemLabel
+                    ? `${lang === "pl" ? "Główny temat" : lang === "it" ? "Tema principale" : "Hauptthema"}: ${problemLabel}`
+                    : null,
                 ]
                   .filter(Boolean)
                   .join(" · ")}
@@ -387,6 +419,7 @@ export default async function MitgliederDashboard({
           dogName={member.dog_name}
           dogBreed={member.dog_breed}
           hideImage
+          lang={lang}
         />
       </div>
 
@@ -397,6 +430,7 @@ export default async function MitgliederDashboard({
         quizResult={member.quiz_result}
         planWeek={cardCurrentWeek}
         totalWeeks={cardTotalWeeks}
+        lang={lang}
       />
 
       {/* Weitere Free-Übungen falls mehr als eine */}
@@ -515,10 +549,11 @@ export default async function MitgliederDashboard({
         email={member.email}
         leadId={member.source_lead_id}
         dogName={member.dog_name}
+        lang={lang}
       />
 
       {/* Onboarding-Tutorial fuer Erstbesucher (5-Slide-Slider) */}
-      <OnboardingTutorial dogName={member.dog_name} />
+      <OnboardingTutorial dogName={member.dog_name} lang={lang} />
     </>
   );
 }

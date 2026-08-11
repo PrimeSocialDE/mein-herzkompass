@@ -10,9 +10,12 @@
 import Link from "next/link";
 import type { WeekGroup } from "@/lib/member-weeks";
 
-function formatDate(iso: string | null): string {
+type Lang = "de" | "pl" | "it";
+
+function formatDate(iso: string | null, lang: Lang): string {
   if (!iso) return "";
-  return new Date(iso).toLocaleDateString("de-DE", {
+  const locale = lang === "pl" ? "pl-PL" : lang === "it" ? "it-IT" : "de-DE";
+  return new Date(iso).toLocaleDateString(locale, {
     day: "2-digit",
     month: "long",
   });
@@ -21,9 +24,11 @@ function formatDate(iso: string | null): string {
 export default function WeekOverview({
   weeks,
   isPaid,
+  lang = "de",
 }: {
   weeks: WeekGroup[];
   isPaid: boolean;
+  lang?: Lang;
 }) {
   if (weeks.length === 0) return null;
 
@@ -61,13 +66,24 @@ export default function WeekOverview({
 
               <div className="flex-1 min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355]">
-                  Woche {w.weekNumber}
+                  {lang === "pl" ? "Tydzień" : lang === "it" ? "Settimana" : "Woche"} {w.weekNumber}
                 </p>
                 <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight">
-                  {w.totalCount} {w.totalCount === 1 ? "Modul" : "Module"}
+                  {w.totalCount}{" "}
+                  {lang === "pl"
+                    ? w.totalCount === 1
+                      ? "moduł"
+                      : "modułów"
+                    : lang === "it"
+                    ? w.totalCount === 1
+                      ? "modulo"
+                      : "moduli"
+                    : w.totalCount === 1
+                    ? "Modul"
+                    : "Module"}
                   {isPaid && w.totalCount > 0 && (
                     <span className="ml-1.5 text-[12px] font-medium text-[#6B7280]">
-                      ({w.unlockedCount}/{w.totalCount} frei)
+                      ({w.unlockedCount}/{w.totalCount} {lang === "pl" ? "dostępnych" : lang === "it" ? "sbloccati" : "frei"})
                     </span>
                   )}
                 </p>
@@ -76,8 +92,8 @@ export default function WeekOverview({
               {/* Status-Badge rechts */}
               {!w.isUnlocked && isPaid && w.unlockAt && (
                 <div className="text-[11px] text-[#8B7355] font-medium text-right flex-shrink-0">
-                  Frei ab<br />
-                  {formatDate(w.unlockAt)}
+                  {lang === "pl" ? "Dostępne od" : lang === "it" ? "Disponibile dal" : "Frei ab"}<br />
+                  {formatDate(w.unlockAt, lang)}
                 </div>
               )}
               {!isPaid && !w.isUnlocked && (
@@ -120,7 +136,7 @@ export default function WeekOverview({
                         href={`/mitglieder/modul/${m.slug}`}
                         className="flex-shrink-0 text-[11px] font-semibold text-[#1a1a1a] hover:text-[#8B7355]"
                       >
-                        Öffnen →
+                        {lang === "pl" ? "Otwórz →" : lang === "it" ? "Apri →" : "Öffnen →"}
                       </Link>
                     ) : (
                       <span className="flex-shrink-0">

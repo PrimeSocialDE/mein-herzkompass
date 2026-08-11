@@ -20,9 +20,10 @@ interface Props {
   email: string;
   leadId: string | null;
   dogName: string | null;
+  lang?: "de" | "pl" | "it";
 }
 
-export default function UpgradePopup({ email, leadId, dogName }: Props) {
+export default function UpgradePopup({ email, leadId, dogName, lang = "de" }: Props) {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -88,18 +89,33 @@ export default function UpgradePopup({ email, leadId, dogName }: Props) {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setError(data.error || "Konnte Checkout nicht starten");
+        setError(
+          data.error ||
+            (lang === "pl"
+              ? "Nie udało się rozpocząć płatności"
+              : lang === "it"
+              ? "Impossibile avviare il checkout"
+              : "Konnte Checkout nicht starten")
+        );
         setLoading(false);
       }
     } catch (e) {
-      setError("Verbindungsfehler. Versuch's gleich nochmal.");
+      setError(
+        lang === "pl"
+          ? "Błąd połączenia. Spróbuj zaraz jeszcze raz."
+          : lang === "it"
+          ? "Errore di connessione. Riprova subito."
+          : "Verbindungsfehler. Versuch's gleich nochmal."
+      );
       setLoading(false);
     }
   }
 
   if (!show) return null;
 
-  const dog = dogName?.trim() || "deinem Hund";
+  const dog =
+    dogName?.trim() ||
+    (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinem Hund");
 
   return (
     <div
@@ -115,13 +131,13 @@ export default function UpgradePopup({ email, leadId, dogName }: Props) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/3Monat.jpg"
-            alt="3-Monats-Plan"
+            alt={lang === "pl" ? "Plan 3-miesięczny" : lang === "it" ? "Piano di 3 mesi" : "3-Monats-Plan"}
             className="w-full h-full object-cover"
           />
           <button
             onClick={close}
             className="absolute top-3 right-3 bg-white/95 rounded-full p-1.5 text-[#1a1a1a] shadow"
-            aria-label="Schließen"
+            aria-label={lang === "pl" ? "Zamknij" : lang === "it" ? "Chiudi" : "Schließen"}
           >
             <svg
               width="18"
@@ -140,14 +156,21 @@ export default function UpgradePopup({ email, leadId, dogName }: Props) {
         {/* Content */}
         <div className="p-5 sm:p-6">
           <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
-            Empfohlen · 12 Wochen Plan
+            {lang === "pl" ? "Polecany · plan 12 tygodni" : lang === "it" ? "Consigliato · piano di 12 settimane" : "Empfohlen · 12 Wochen Plan"}
           </p>
           <h2 className="text-[20px] sm:text-[22px] font-extrabold text-[#1a1a1a] leading-tight mb-2">
-            Bring {dog} im Wohlfühl-Tempo ans Ziel
+            {lang === "pl"
+              ? `Doprowadź ${dog} do celu we własnym tempie`
+              : lang === "it"
+              ? `Porta ${dog} al traguardo con calma`
+              : `Bring ${dog} im Wohlfühl-Tempo ans Ziel`}
           </h2>
           <p className="text-[13px] text-[#4B5563] leading-relaxed mb-4">
-            Mehr Übungen für mehr Tiefe. Alle Themen abgedeckt. Klar
-            strukturiert, gut machbarer Aufwand.
+            {lang === "pl"
+              ? "Więcej ćwiczeń dla większej głębi. Wszystkie tematy uwzględnione. Jasno ułożone, spokojny nakład pracy."
+              : lang === "it"
+              ? "Più esercizi per andare in profondità. Tutti i temi coperti. Ben strutturato, con un impegno gestibile."
+              : "Mehr Übungen für mehr Tiefe. Alle Themen abgedeckt. Klar strukturiert, gut machbarer Aufwand."}
           </p>
 
           {/* Preis-Kasten */}
@@ -157,12 +180,11 @@ export default function UpgradePopup({ email, leadId, dogName }: Props) {
                 €39,99
               </p>
               <p className="text-[11px] text-[#6B7280] mt-1">
-                Nur 44 Cent am Tag · einmalig
+                {lang === "pl" ? "Tylko 44 centy dziennie · jednorazowo" : lang === "it" ? "Solo 44 centesimi al giorno · una tantum" : "Nur 44 Cent am Tag · einmalig"}
               </p>
             </div>
             <span className="inline-flex items-center gap-1 text-[10px] text-[#15803D] font-bold uppercase tracking-wider bg-[#F0FDF4] border border-[#BBF7D0] px-2 py-1 rounded-full text-center leading-tight">
-              30 Tage<br />
-              Geld zurück
+              {lang === "pl" ? (<>30 dni<br />gwarancji zwrotu</>) : lang === "it" ? (<>30 giorni<br />soddisfatti o rimborsati</>) : (<>30 Tage<br />Geld zurück</>)}
             </span>
           </div>
 
@@ -171,7 +193,17 @@ export default function UpgradePopup({ email, leadId, dogName }: Props) {
             disabled={loading}
             className="w-full bg-[#C4A576] disabled:opacity-60 text-white font-semibold py-3 px-5 rounded-xl text-[14px] shadow-[0_1px_2px_rgba(139,115,85,0.2)] mb-2"
           >
-            {loading ? "Lade Checkout…" : "Plan wählen →"}
+            {loading
+              ? lang === "pl"
+                ? "Ładuję płatność…"
+                : lang === "it"
+                ? "Carico il checkout…"
+                : "Lade Checkout…"
+              : lang === "pl"
+              ? "Wybierz plan →"
+              : lang === "it"
+              ? "Scegli il piano →"
+              : "Plan wählen →"}
           </button>
           {error && (
             <p className="text-[11px] text-[#B91C1C] text-center mb-2">
@@ -184,13 +216,13 @@ export default function UpgradePopup({ email, leadId, dogName }: Props) {
               href="/mitglieder/upgrade"
               className="text-[12px] text-[#8B7355] underline underline-offset-2"
             >
-              Alle 3 Pläne ansehen
+              {lang === "pl" ? "Zobacz wszystkie 3 plany" : lang === "it" ? "Vedi tutti e 3 i piani" : "Alle 3 Pläne ansehen"}
             </a>
             <button
               onClick={later}
               className="text-[12px] text-[#9CA3AF]"
             >
-              Später erinnern
+              {lang === "pl" ? "Przypomnij później" : lang === "it" ? "Ricordamelo dopo" : "Später erinnern"}
             </button>
           </div>
         </div>

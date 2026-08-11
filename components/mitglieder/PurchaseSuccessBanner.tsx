@@ -10,8 +10,10 @@ import { useEffect, useState } from "react";
 
 export default function PurchaseSuccessBanner({
   hasRichPlan,
+  lang = "de",
 }: {
   hasRichPlan: boolean;
+  lang?: "de" | "pl" | "it";
 }) {
   const [seconds, setSeconds] = useState(0);
 
@@ -37,11 +39,14 @@ export default function PurchaseSuccessBanner({
           <div className="text-[28px] leading-none flex-shrink-0">🎉</div>
           <div>
             <p className="text-[14px] font-bold text-[#15803D] mb-1">
-              Dein Plan ist da!
+              {lang === "pl" ? "Twój plan jest gotowy!" : lang === "it" ? "Il tuo piano è pronto!" : "Dein Plan ist da!"}
             </p>
             <p className="text-[13px] text-[#166534] leading-relaxed">
-              Du findest ihn gleich unten — plus eine Mail mit dem PDF im
-              Anhang ist unterwegs.
+              {lang === "pl"
+                ? "Znajdziesz go tuż poniżej — a mail z PDF w załączniku jest już w drodze."
+                : lang === "it"
+                ? "Lo trovi qui sotto — e una mail con il PDF in allegato è in arrivo."
+                : "Du findest ihn gleich unten — plus eine Mail mit dem PDF im Anhang ist unterwegs."}
             </p>
           </div>
         </div>
@@ -58,12 +63,14 @@ export default function PurchaseSuccessBanner({
         />
         <div>
           <p className="text-[14px] font-bold text-[#1a1a1a] mb-1">
-            Dein Plan wird gerade erstellt
+            {lang === "pl" ? "Twój plan właśnie powstaje" : lang === "it" ? "Il tuo piano è in preparazione" : "Dein Plan wird gerade erstellt"}
           </p>
           <p className="text-[13px] text-[#6B7280] leading-relaxed">
-            Wir bauen ihn personalisiert zusammen — dauert noch ca. 15-30
-            Sekunden. Die Seite lädt automatisch neu, sobald er fertig ist.
-            Eine Mail mit PDF kommt parallel raus.
+            {lang === "pl"
+              ? "Składamy go spersonalizowanie — potrwa jeszcze ok. 15-30 sekund. Strona odświeży się automatycznie, gdy będzie gotowy. Mail z PDF wychodzi równolegle."
+              : lang === "it"
+              ? "Lo stiamo componendo su misura — ancora circa 15-30 secondi. La pagina si ricarica da sola appena è pronto. Una mail con il PDF parte in parallelo."
+              : "Wir bauen ihn personalisiert zusammen — dauert noch ca. 15-30 Sekunden. Die Seite lädt automatisch neu, sobald er fertig ist. Eine Mail mit PDF kommt parallel raus."}
           </p>
         </div>
       </div>

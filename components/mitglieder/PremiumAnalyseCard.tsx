@@ -6,12 +6,71 @@
 export default function PremiumAnalyseCard({
   dogName,
   email,
+  lang = "de",
 }: {
   dogName?: string | null;
   email?: string | null;
+  lang?: "de" | "pl" | "it";
 }) {
-  const dog = dogName?.trim() || "deinen Hund";
+  const dog =
+    dogName?.trim() ||
+    (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinen Hund");
   const href = `/premium-analyse.html${email ? `?email=${encodeURIComponent(email)}` : ""}`;
+
+  const t =
+    lang === "pl"
+      ? {
+          badge: "Premium · Nowość",
+          heading: `Zrozum ${dog} naprawdę`,
+          leadStrong: `dlaczego ${dog} tak działa`,
+          intro1: "Głęboka opinia o zrozumieniu: ",
+          intro2:
+            " — rasa i dziedzictwo, osobowość, zdrowie i etap życia. Idealne uzupełnienie Twojego planu treningowego.",
+          chips: [
+            ["🔍", "Zrozum dlaczego"],
+            ["🐾", "Jego prawdziwy charakter"],
+            ["🩺", "Jasność zamiast obaw"],
+            ["💬", "Twoje pytanie, z odpowiedzią"],
+          ] as [string, string][],
+          delivery: "W 48 h e-mailem",
+          guarantee: "14 dni gwarancji zwrotu pieniędzy",
+          cta: "Dowiedz się więcej →",
+        }
+      : lang === "it"
+      ? {
+          badge: "Premium · Novità",
+          heading: `Capisci davvero ${dog}`,
+          leadStrong: `perché ${dog} è fatto così`,
+          intro1: "Una perizia approfondita di comprensione: ",
+          intro2:
+            " — razza ed eredità, personalità, salute e fase della vita. Il complemento perfetto al tuo piano di addestramento.",
+          chips: [
+            ["🔍", "Capire il perché"],
+            ["🐾", "Il suo vero carattere"],
+            ["🩺", "Chiarezza invece di preoccupazione"],
+            ["💬", "La tua domanda, con risposta"],
+          ] as [string, string][],
+          delivery: "In 48 h via e-mail",
+          guarantee: "14 giorni soddisfatti o rimborsati",
+          cta: "Scopri di più →",
+        }
+      : {
+          badge: "Premium · Neu",
+          heading: `Verstehe ${dog} endlich wirklich`,
+          leadStrong: `warum ${dog} so tickt`,
+          intro1: "Ein tiefes Verständnis-Gutachten: ",
+          intro2:
+            " — Rasse & Erbe, Persönlichkeit, Gesundheit & Lebensphase. Die perfekte Ergänzung zu deinem Trainingsplan.",
+          chips: [
+            ["🔍", "Verstehen, warum"],
+            ["🐾", "Sein wahrer Charakter"],
+            ["🩺", "Klarheit statt Sorge"],
+            ["💬", "Deine Frage, beantwortet"],
+          ] as [string, string][],
+          delivery: "In 48 h per E-Mail",
+          guarantee: "14 Tage Geld-zurück-Garantie",
+          cta: "Mehr erfahren →",
+        };
 
   return (
     <a
@@ -21,39 +80,33 @@ export default function PremiumAnalyseCard({
       <div className="px-5 pt-5 pb-5">
         <div className="flex items-center gap-2.5 mb-2.5">
           <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#C4A576] rounded-full px-2.5 py-1">
-            Premium · Neu
+            {t.badge}
           </span>
           <span className="text-[11.5px] font-semibold text-[#8B7355]">★★★★★ 4,8/5</span>
         </div>
 
         <h2 className="text-[19px] font-extrabold text-[#1a1a1a] leading-tight">
-          Verstehe {dog} endlich wirklich
+          {t.heading}
         </h2>
         <p className="text-[13.5px] text-[#6B7280] mt-2 leading-snug">
-          Ein tiefes Verständnis-Gutachten: <span className="text-[#42413f] font-semibold">warum {dog} so tickt</span> —
-          Rasse &amp; Erbe, Persönlichkeit, Gesundheit &amp; Lebensphase. Die perfekte Ergänzung zu deinem Trainingsplan.
+          {t.intro1}<span className="text-[#42413f] font-semibold">{t.leadStrong}</span>{t.intro2}
         </p>
 
         <div className="grid grid-cols-2 gap-2 mt-4">
-          {[
-            ["🔍", "Verstehen, warum"],
-            ["🐾", "Sein wahrer Charakter"],
-            ["🩺", "Klarheit statt Sorge"],
-            ["💬", "Deine Frage, beantwortet"],
-          ].map(([ico, t]) => (
-            <div key={t} className="flex items-center gap-2 text-[12.5px] text-[#42413f] bg-white/70 border border-[#EADDC5] rounded-lg px-2.5 py-2">
+          {t.chips.map(([ico, label]) => (
+            <div key={label} className="flex items-center gap-2 text-[12.5px] text-[#42413f] bg-white/70 border border-[#EADDC5] rounded-lg px-2.5 py-2">
               <span>{ico}</span>
-              <span className="font-semibold leading-tight">{t}</span>
+              <span className="font-semibold leading-tight">{label}</span>
             </div>
           ))}
         </div>
 
         <div className="flex items-center justify-between gap-3 mt-4">
           <div className="text-[12.5px] text-[#6B7280] font-medium leading-snug">
-            In 48&nbsp;h per E-Mail<br />14&nbsp;Tage Geld-zurück-Garantie
+            {t.delivery}<br />{t.guarantee}
           </div>
           <span className="inline-flex items-center gap-1.5 text-[14px] font-bold text-white bg-gradient-to-b from-[#caa86f] to-[#b7945a] rounded-xl px-4 py-2.5 shadow-sm">
-            Mehr erfahren →
+            {t.cta}
           </span>
         </div>
       </div>

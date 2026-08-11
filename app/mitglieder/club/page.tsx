@@ -199,7 +199,7 @@ export default async function ClubPage() {
             {t.libraryCta}
           </Link>
         </div>
-        <CancelClubButton />
+        <CancelClubButton lang={lang} />
       </div>
     );
   }
@@ -261,6 +261,7 @@ export default async function ClubPage() {
           email={member.email}
           dogName={member.dog_name}
           leadId={member.source_lead_id}
+          lang={lang}
         />
 
         <PaymentLogos />

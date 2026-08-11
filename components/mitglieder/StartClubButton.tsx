@@ -6,11 +6,34 @@ export default function StartClubButton({
   email,
   dogName,
   leadId,
+  lang = "de",
 }: {
   email?: string | null;
   dogName?: string | null;
   leadId?: string | null;
+  lang?: "de" | "pl" | "it";
 }) {
+  const t =
+    lang === "pl"
+      ? {
+          startFail: "Nie udało się rozpocząć. Spróbuj ponownie później.",
+          netFail: "Błąd sieci. Spróbuj ponownie.",
+          loading: "Chwileczkę …",
+          start: "Rozpocznij klub →",
+        }
+      : lang === "it"
+      ? {
+          startFail: "Impossibile avviare. Riprova più tardi.",
+          netFail: "Errore di rete. Riprova.",
+          loading: "Un attimo …",
+          start: "Avvia il Club →",
+        }
+      : {
+          startFail: "Konnte nicht starten. Bitte später erneut versuchen.",
+          netFail: "Netzwerkfehler. Bitte erneut versuchen.",
+          loading: "Einen Moment …",
+          start: "Club starten →",
+        };
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -34,10 +57,10 @@ export default function StartClubButton({
         window.location.href = "/mitglieder?club=1";
         return;
       }
-      setErr(data.error || "Konnte nicht starten. Bitte später erneut versuchen.");
+      setErr(data.error || t.startFail);
       setLoading(false);
     } catch {
-      setErr("Netzwerkfehler. Bitte erneut versuchen.");
+      setErr(t.netFail);
       setLoading(false);
     }
   }
@@ -49,7 +72,7 @@ export default function StartClubButton({
         disabled={loading}
         className="w-full sm:w-auto inline-flex items-center justify-center rounded-full px-7 py-3 text-[15px] font-extrabold text-white bg-gradient-to-b from-[#C9A868] to-[#B7945A] shadow-sm disabled:opacity-60"
       >
-        {loading ? "Einen Moment …" : "Club starten →"}
+        {loading ? t.loading : t.start}
       </button>
       {err && <p className="text-[12px] text-red-600 mt-2">{err}</p>}
     </div>

@@ -26,6 +26,7 @@ interface Props {
   leadId: string | null;
   dogName: string | null;
   goal?: string | null;     // Outcome-Versprechen (z.B. 'Laeuft entspannt an der Leine')
+  lang?: "de" | "pl" | "it";
 }
 
 export default function UpsellFlipCard({
@@ -36,10 +37,48 @@ export default function UpsellFlipCard({
   leadId,
   dogName,
   goal,
+  lang = "de",
 }: Props) {
   const [flipped, setFlipped] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const dog =
+    dogName?.trim() ||
+    (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinen Hund");
+  const t =
+    lang === "pl"
+      ? {
+          checkoutFail: "Nie udało się rozpocząć płatności",
+          connError: "Błąd połączenia. Spróbuj zaraz jeszcze raz.",
+          exercisesFor: `8 ćwiczeń dla ${dog}`,
+          onceNoSub: "Jednorazowo · bez abonamentu",
+          back: "← Wstecz",
+          backAria: "Wstecz",
+          loading: "Ładowanie…",
+          buy: (p: string) => `Kup za ${p}`,
+        }
+      : lang === "it"
+      ? {
+          checkoutFail: "Impossibile avviare il pagamento",
+          connError: "Errore di connessione. Riprova tra un istante.",
+          exercisesFor: `8 esercizi per ${dog}`,
+          onceNoSub: "Una tantum · nessun abbonamento",
+          back: "← Indietro",
+          backAria: "Indietro",
+          loading: "Caricamento…",
+          buy: (p: string) => `Acquista per ${p}`,
+        }
+      : {
+          checkoutFail: "Konnte Checkout nicht starten",
+          connError: "Verbindungsfehler. Versuch's gleich nochmal.",
+          exercisesFor: `8 Übungen für ${dog}`,
+          onceNoSub: "Einmalig · kein Abo",
+          back: "← Zurück",
+          backAria: "Zurück",
+          loading: "Lade…",
+          buy: (p: string) => `Für ${p} kaufen`,
+        };
 
   async function handleBuy() {
     if (loading) return;
@@ -61,11 +100,11 @@ export default function UpsellFlipCard({
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setError(data.error || "Konnte Checkout nicht starten");
+        setError(data.error || t.checkoutFail);
         setLoading(false);
       }
     } catch (e) {
-      setError("Verbindungsfehler. Versuch's gleich nochmal.");
+      setError(t.connError);
       setLoading(false);
     }
   }
@@ -120,12 +159,12 @@ export default function UpsellFlipCard({
               </p>
             ) : (
               <p className="text-[10px] text-[#6B7280] leading-snug">
-                8 Übungen für {dogName?.trim() || "deinen Hund"}
+                {t.exercisesFor}
               </p>
             )}
             <p className="text-[9px] text-[#9CA3AF] leading-snug mt-0.5 flex items-center gap-1">
               <span className="text-[#16A34A]">✓</span>
-              <span>Einmalig · kein Abo</span>
+              <span>{t.onceNoSub}</span>
             </p>
 
             <button
@@ -150,9 +189,9 @@ export default function UpsellFlipCard({
           <button
             onClick={() => setFlipped(false)}
             className="self-start text-[10px] text-[#9CA3AF] hover:text-[#1a1a1a] mb-1.5"
-            aria-label="Zurück"
+            aria-label={t.backAria}
           >
-            ← Zurück
+            {t.back}
           </button>
 
           <h3 className="text-[13px] font-extrabold text-[#1a1a1a] mb-2 leading-tight">
@@ -176,7 +215,7 @@ export default function UpsellFlipCard({
             disabled={loading}
             className="w-full bg-[#C4A576] disabled:opacity-60 text-white font-semibold py-2 px-3 rounded-lg text-[12px] shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
           >
-            {loading ? "Lade…" : `Für ${priceFormatted} kaufen`}
+            {loading ? t.loading : t.buy(priceFormatted)}
           </button>
           {error && (
             <p className="text-[10px] text-[#B91C1C] text-center mt-1">

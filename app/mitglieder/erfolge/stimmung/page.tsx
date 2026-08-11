@@ -205,6 +205,7 @@ export default async function StimmungPage() {
             questions={weeklyQuestions}
             problemKey={problemKey}
             alreadyDone={currentWeekDone}
+            lang={lang}
           />
         ) : (
           <WeeklyCheckIn
@@ -214,6 +215,7 @@ export default async function StimmungPage() {
             questions={weeklyQuestions}
             problemKey={problemKey}
             alreadyDone={currentWeekDone}
+            lang={lang}
           />
         )}
       </section>

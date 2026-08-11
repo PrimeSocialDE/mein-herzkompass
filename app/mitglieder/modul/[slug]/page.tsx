@@ -163,10 +163,12 @@ export default async function ModulDetailPage({
               {tr.personalizedFor}{planContent.dog_name}
               {planContent.dog_breed ? ` (${planContent.dog_breed})` : ""} ·{" "}
               {tr.createdOn}{" "}
-              {new Date(planContent.created_at).toLocaleDateString("de-DE")}
+              {new Date(planContent.created_at).toLocaleDateString(
+                lang === "pl" ? "pl-PL" : lang === "it" ? "it-IT" : "de-DE"
+              )}
             </p>
           )}
-          <PlanContentRenderer content={planContent.content} />
+          <PlanContentRenderer content={planContent.content} lang={lang} />
           {planContent.pdf_url && (
             <a
               href={planContent.pdf_url}
