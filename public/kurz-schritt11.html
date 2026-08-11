@@ -253,11 +253,11 @@
         function getABTestPage() {
             let variant = localStorage.getItem('ab_test_pricing_v6');
             if (!variant) {
-                // 50% A=deinplan3 NEU (Handy-Animation, Kein-Abo-Zeile, Digital/Ausdrucken),
-                // 50% B=deinplan2 (bisheriger Gewinner). Von 30% -> 50% hochgezogen, um
-                // schneller Signifikanz zu erreichen (A2 lag frueh vorn). Der Split
-                // aendert die CR pro Variante NICHT — wir sammeln A2 nur schneller ein.
-                variant = Math.random() < 0.50 ? 'A' : 'B';
+                // 20% A=deinplan3 NEU (Handy-Animation, Kein-Abo-Zeile, Digital/Ausdrucken),
+                // 80% B=deinplan2 (bisheriger Gewinner + Testimonial-Block). Von 50/50 auf
+                // 20/80 zugunsten B2 gezogen (A2/B2 zuletzt Gleichstand, B2 wird bevorzugt
+                // ausgespielt). A2 bleibt mit 20% als Kontroll-Rest laufen.
+                variant = Math.random() < 0.20 ? 'A' : 'B';
                 localStorage.setItem('ab_test_pricing_v6', variant); // Routing + sawPlan-Flag (Key bleibt v6!)
                 // DB-Label (ab_variant): neue deinplan3 = 'A2' (sauber trennbar von alten 'A'-Daten), B = 'B2'
                 localStorage.setItem('ab_test_pricing', variant === 'A' ? 'A2' : 'B2');
