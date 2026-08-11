@@ -15,14 +15,41 @@ function formatUnlockDate(iso: string | null): string {
 export default function ModuleGrid({
   modules,
   isPaid,
+  lang = "de",
 }: {
   modules: ModuleWithStatus[];
   isPaid: boolean;
+  lang?: "de" | "pl" | "it";
 }) {
+  const t =
+    lang === "pl"
+      ? {
+          empty: "Moduły wkrótce pojawią się tutaj.",
+          free: "Wolne",
+          freeFrom: "Wolne od",
+          unlock: "Odblokuj →",
+          open: "Otwórz →",
+        }
+      : lang === "it"
+      ? {
+          empty: "I moduli appariranno presto qui.",
+          free: "Libero",
+          freeFrom: "Libero dal",
+          unlock: "Sblocca →",
+          open: "Apri →",
+        }
+      : {
+          empty: "Module werden bald hier erscheinen.",
+          free: "Frei",
+          freeFrom: "Frei ab",
+          unlock: "Freischalten →",
+          open: "Öffnen →",
+        };
+
   if (modules.length === 0) {
     return (
       <div className="bg-white border border-[#EADDC5] rounded-2xl p-6 text-center text-[#6B7280] text-[13px]">
-        Module werden bald hier erscheinen.
+        {t.empty}
       </div>
     );
   }
@@ -66,7 +93,7 @@ export default function ModuleGrid({
               {!showAsLocked && (
                 <div className="absolute top-2 right-2 inline-flex items-center gap-0.5 bg-[#16A34A] text-white text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded">
                   <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
-                  Frei
+                  {t.free}
                 </div>
               )}
             </div>
@@ -83,14 +110,14 @@ export default function ModuleGrid({
               {showAsLocked ? (
                 isPaid && m.unlock_at ? (
                   <div className="text-[10px] text-[#8B7355] font-medium">
-                    Frei ab {formatUnlockDate(m.unlock_at)}
+                    {t.freeFrom} {formatUnlockDate(m.unlock_at)}
                   </div>
                 ) : (
                   <Link
                     href="/mitglieder/upgrade"
                     className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#C4A576] hover:text-[#8B7355]"
                   >
-                    Freischalten →
+                    {t.unlock}
                   </Link>
                 )
               ) : (
@@ -98,7 +125,7 @@ export default function ModuleGrid({
                   href={`/mitglieder/modul/${m.slug}`}
                   className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#1a1a1a] hover:text-[#8B7355]"
                 >
-                  Öffnen →
+                  {t.open}
                 </Link>
               )}
             </div>

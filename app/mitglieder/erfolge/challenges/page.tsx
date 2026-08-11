@@ -217,6 +217,7 @@ export default async function ErfolgePage() {
               badgeLabel={c.badge_label}
               isPremium={c.is_premium}
               completedAt={c.completed_at}
+              lang={lang}
             />
           ))}
         </div>

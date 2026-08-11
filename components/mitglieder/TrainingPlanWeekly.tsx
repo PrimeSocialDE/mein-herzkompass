@@ -10,9 +10,10 @@ import type { TrainingPlanContent } from "@/lib/member-plan-content";
 interface Props {
   plan: TrainingPlanContent;
   currentWeek: number;       // 1..N (aus getCurrentPlanWeek)
+  lang?: "de" | "pl" | "it";
 }
 
-export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
+export default function TrainingPlanWeekly({ plan, currentWeek, lang = "de" }: Props) {
   const totalWeeks = plan.weeks.length;
   const initialWeek = Math.max(1, Math.min(currentWeek, totalWeeks));
   const [selectedWeek, setSelectedWeek] = useState<number>(initialWeek);
@@ -36,7 +37,7 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
                 </h2>
               )}
               <p className="text-[11px] text-[#8B7355] mt-0.5">
-                Einleitung, Aufbau und Ziele
+                {lang === "pl" ? "Wprowadzenie, struktura i cele" : lang === "it" ? "Introduzione, struttura e obiettivi" : "Einleitung, Aufbau und Ziele"}
               </p>
             </div>
             <span className="text-[18px] text-[#8B7355]">▾</span>
@@ -45,7 +46,7 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
             {plan.intro.einleitung && (
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-widest text-[#8B7355] mb-1.5">
-                  Einleitung
+                  {lang === "pl" ? "Wprowadzenie" : lang === "it" ? "Introduzione" : "Einleitung"}
                 </p>
                 <p className="text-[13px] md:text-[14px] text-[#4B5563] leading-relaxed whitespace-pre-line">
                   {plan.intro.einleitung}
@@ -55,7 +56,7 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
             {plan.intro.aufbau && (
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-widest text-[#8B7355] mb-1.5">
-                  Aufbau
+                  {lang === "pl" ? "Struktura" : lang === "it" ? "Struttura" : "Aufbau"}
                 </p>
                 <p className="text-[13px] md:text-[14px] text-[#4B5563] leading-relaxed whitespace-pre-line">
                   {plan.intro.aufbau}
@@ -65,7 +66,7 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
             {plan.intro.ziele && (
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-widest text-[#8B7355] mb-1.5">
-                  Deine Ziele
+                  {lang === "pl" ? "Twoje cele" : lang === "it" ? "I tuoi obiettivi" : "Deine Ziele"}
                 </p>
                 <p className="text-[13px] md:text-[14px] text-[#4B5563] leading-relaxed whitespace-pre-line">
                   {plan.intro.ziele}
@@ -80,14 +81,14 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
       <div>
         <div className="flex items-center justify-between mb-2">
           <p className="text-[11px] font-bold uppercase tracking-widest text-[#8B7355]">
-            Wähle eine Woche
+            {lang === "pl" ? "Wybierz tydzień" : lang === "it" ? "Scegli una settimana" : "Wähle eine Woche"}
           </p>
           <button
             type="button"
             onClick={() => setSelectedWeek(currentWeek)}
             className="text-[11px] font-semibold text-[#C4A576] hover:text-[#8B7355]"
           >
-            → Aktuelle Woche
+            {lang === "pl" ? "→ Aktualny tydzień" : lang === "it" ? "→ Settimana attuale" : "→ Aktuelle Woche"}
           </button>
         </div>
         <div className="-mx-4 md:mx-0 px-4 md:px-0 overflow-x-auto scrollbar-hide">
@@ -110,7 +111,7 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
                           ? "bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0]"
                           : "bg-white text-[#9CA3AF] border border-[#EADDC5]"
                   }`}
-                  aria-label={`Woche ${w.num}`}
+                  aria-label={`${lang === "pl" ? "Tydzień" : lang === "it" ? "Settimana" : "Woche"} ${w.num}`}
                 >
                   <span className="text-[9px] uppercase tracking-wider leading-none">W</span>
                   <span className="text-[14px] leading-none mt-0.5">{w.num}</span>
@@ -151,21 +152,21 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-0.5">
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355]">
-                Woche {week.num} <span className="text-[#9CA3AF] font-medium">/ {totalWeeks}</span>
+                {lang === "pl" ? "Tydzień" : lang === "it" ? "Settimana" : "Woche"} {week.num} <span className="text-[#9CA3AF] font-medium">/ {totalWeeks}</span>
               </p>
               {isCurrent && (
                 <span className="text-[9px] font-bold uppercase tracking-wider bg-white text-[#8B7355] px-1.5 py-0.5 rounded border border-[#EADDC5]">
-                  Aktuell
+                  {lang === "pl" ? "Teraz" : lang === "it" ? "Attuale" : "Aktuell"}
                 </span>
               )}
               {isFuture && (
                 <span className="text-[9px] font-bold uppercase tracking-wider bg-[#F0EBE3] text-[#9CA3AF] px-1.5 py-0.5 rounded">
-                  Kommt noch
+                  {lang === "pl" ? "Wkrótce" : lang === "it" ? "In arrivo" : "Kommt noch"}
                 </span>
               )}
               {isPast && (
                 <span className="text-[9px] font-bold uppercase tracking-wider bg-[#F0FDF4] text-[#15803D] px-1.5 py-0.5 rounded">
-                  Geschafft
+                  {lang === "pl" ? "Ukończone" : lang === "it" ? "Completata" : "Geschafft"}
                 </span>
               )}
             </div>
@@ -180,7 +181,7 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
           {week.schwerpunkt && (
             <div className="bg-[#FAF7F2] border-l-[3px] border-[#C4A576] rounded-r-lg px-4 py-3">
               <p className="text-[11px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
-                Schwerpunkt
+                {lang === "pl" ? "Priorytet" : lang === "it" ? "Focus" : "Schwerpunkt"}
               </p>
               <p className="text-[13px] text-[#4B5563] leading-relaxed whitespace-pre-line">
                 {week.schwerpunkt}
@@ -190,7 +191,7 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
           {week.wochenziele && week.wochenziele.length > 0 && (
             <div>
               <p className="text-[11px] font-bold uppercase tracking-widest text-[#8B7355] mb-2 flex items-center gap-1.5">
-                <span>🎯</span> Wochenziele
+                <span>🎯</span> {lang === "pl" ? "Cele tygodnia" : lang === "it" ? "Obiettivi della settimana" : "Wochenziele"}
               </p>
               <ul className="space-y-1.5">
                 {week.wochenziele.map((z, i) => (
@@ -209,7 +210,7 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
           {week.tagesplan && (
             <div>
               <p className="text-[11px] font-bold uppercase tracking-widest text-[#8B7355] mb-2 flex items-center gap-1.5">
-                <span>📅</span> Tagesplan
+                <span>📅</span> {lang === "pl" ? "Plan dnia" : lang === "it" ? "Piano giornaliero" : "Tagesplan"}
               </p>
               <p className="text-[13px] text-[#4B5563] leading-relaxed whitespace-pre-line">
                 {week.tagesplan}
@@ -220,7 +221,7 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
           {week.no_gos && week.no_gos.length > 0 && (
             <div className="bg-[#FEF2F2] border border-[#FECACA] rounded-xl p-3">
               <p className="text-[11px] font-bold uppercase tracking-widest text-[#B91C1C] mb-2 flex items-center gap-1.5">
-                <span>✕</span> No-Gos
+                <span>✕</span> {lang === "pl" ? "Czego unikać" : lang === "it" ? "Da evitare" : "No-Gos"}
               </p>
               <ul className="space-y-1">
                 {week.no_gos.map((n, i) => (
@@ -238,10 +239,10 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
           {week.fortschritt && week.fortschritt.length > 0 && (
             <div>
               <p className="text-[11px] font-bold uppercase tracking-widest text-[#8B7355] mb-2 flex items-center gap-1.5">
-                <span>📈</span> Fortschritts-Marker
+                <span>📈</span> {lang === "pl" ? "Wskaźniki postępu" : lang === "it" ? "Indicatori di progresso" : "Fortschritts-Marker"}
               </p>
               <p className="text-[12px] text-[#6B7280] mb-1 italic">
-                In dieser Woche sollte dein Hund …
+                {lang === "pl" ? "W tym tygodniu Twój pies powinien …" : lang === "it" ? "Questa settimana il tuo cane dovrebbe …" : "In dieser Woche sollte dein Hund …"}
               </p>
               <ul className="space-y-1">
                 {week.fortschritt.map((f, i) => (
@@ -265,7 +266,7 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
                   className="bg-[#FFFDF8] border border-[#EADDC5] rounded-xl p-4"
                 >
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
-                    Übung {i + 1}
+                    {lang === "pl" ? "Ćwiczenie" : lang === "it" ? "Esercizio" : "Übung"} {i + 1}
                   </p>
                   <p className="text-[14px] font-bold text-[#1a1a1a] mb-2 leading-tight">
                     {u.name}
@@ -295,7 +296,7 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
         <details className="bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] rounded-2xl p-5">
           <summary className="cursor-pointer list-none flex items-center justify-between">
             <p className="text-[11px] font-bold uppercase tracking-widest text-[#C4A576]">
-              Monats-Übersicht · Monat {monthIdx}
+              {lang === "pl" ? "Przegląd miesiąca · Miesiąc" : lang === "it" ? "Panoramica del mese · Mese" : "Monats-Übersicht · Monat"} {monthIdx}
             </p>
             <span className="text-[18px] text-[#C4A576]">▾</span>
           </summary>
@@ -310,7 +311,7 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
         <details className="bg-gradient-to-br from-[#FFFDF8] to-[#FFF9F0] border-2 border-[#C4A576] rounded-2xl p-5">
           <summary className="cursor-pointer list-none flex items-center justify-between">
             <p className="text-[12px] font-bold uppercase tracking-widest text-[#8B7355]">
-              Abschluss · Viel Erfolg 🐾
+              {lang === "pl" ? "Podsumowanie · Powodzenia 🐾" : lang === "it" ? "Conclusione · In bocca al lupo 🐾" : "Abschluss · Viel Erfolg 🐾"}
             </p>
             <span className="text-[18px] text-[#8B7355]">▾</span>
           </summary>
@@ -325,7 +326,7 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
         <details className="bg-white border border-[#EADDC5] rounded-2xl p-5">
           <summary className="cursor-pointer list-none flex items-center justify-between">
             <p className="text-[12px] font-bold uppercase tracking-widest text-[#8B7355] flex items-center gap-1.5">
-              <span>⭐</span> Bonus-Spiele ({plan.zusatz_spiele.length})
+              <span>⭐</span> {lang === "pl" ? "Gry bonusowe" : lang === "it" ? "Giochi bonus" : "Bonus-Spiele"} ({plan.zusatz_spiele.length})
             </p>
             <span className="text-[18px] text-[#8B7355]">▾</span>
           </summary>
@@ -336,13 +337,13 @@ export default function TrainingPlanWeekly({ plan, currentWeek }: Props) {
                 className="bg-[#FFFDF8] border border-[#EADDC5] rounded-xl p-4"
               >
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-1">
-                  Spiel {s.nummer}
+                  {lang === "pl" ? "Gra" : lang === "it" ? "Gioco" : "Spiel"} {s.nummer}
                 </p>
                 <p className="text-[14px] font-bold text-[#1a1a1a] mb-2 leading-tight">
                   {s.name}
                 </p>
                 <p className="text-[12px] text-[#6B7280] mb-2">
-                  <strong>Ziel:</strong> {s.ziel}
+                  <strong>{lang === "pl" ? "Cel:" : lang === "it" ? "Obiettivo:" : "Ziel:"}</strong> {s.ziel}
                 </p>
                 <ol className="space-y-1 mb-2">
                   {s.schritte.map((step, j) => (

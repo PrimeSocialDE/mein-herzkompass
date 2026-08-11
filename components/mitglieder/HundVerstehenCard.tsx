@@ -14,8 +14,34 @@ interface Insight {
   note: string;
 }
 
-export default function HundVerstehenCard({ dogName }: { dogName?: string | null }) {
-  const dog = dogName?.trim() || "deinen Hund";
+export default function HundVerstehenCard({
+  dogName,
+  lang = "de",
+}: {
+  dogName?: string | null;
+  lang?: "de" | "pl" | "it";
+}) {
+  const dog =
+    dogName?.trim() ||
+    (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinen Hund");
+  const t =
+    lang === "pl"
+      ? {
+          fallbackTitle: `Zrozum ${dog}`,
+          badge: "Nowość co miesiąc",
+          analyzing: `${dog} jest właśnie analizowany…`,
+        }
+      : lang === "it"
+      ? {
+          fallbackTitle: `Capire ${dog}`,
+          badge: "Nuovo ogni mese",
+          analyzing: `${dog} è in fase di analisi…`,
+        }
+      : {
+          fallbackTitle: `${dog} verstehen`,
+          badge: "Monatlich neu",
+          analyzing: `${dog} wird gerade analysiert…`,
+        };
   const [insight, setInsight] = useState<Insight | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
 
@@ -47,7 +73,7 @@ export default function HundVerstehenCard({ dogName }: { dogName?: string | null
       <div className="px-5 pt-5 pb-3 flex items-start justify-between gap-3">
         <div>
           <h2 className="text-[18px] font-extrabold text-[#1a1a1a] leading-tight">
-            {state === "ready" ? insight!.title : `${dog} verstehen`}
+            {state === "ready" ? insight!.title : t.fallbackTitle}
           </h2>
           {state === "ready" && insight!.intro && (
             <p className="text-[13.5px] text-[#6B7280] mt-1 leading-snug">
@@ -56,7 +82,7 @@ export default function HundVerstehenCard({ dogName }: { dogName?: string | null
           )}
         </div>
         <span className="flex-shrink-0 text-[10px] font-bold uppercase tracking-wide text-[#8B7355] bg-white/70 border border-[#EADDC5] rounded-full px-2.5 py-1">
-          Monatlich neu
+          {t.badge}
         </span>
       </div>
 
@@ -65,7 +91,7 @@ export default function HundVerstehenCard({ dogName }: { dogName?: string | null
         <div className="px-5 pb-5 space-y-3">
           <div className="flex items-center gap-2 text-[13px] text-[#9CA3AF]">
             <span className="inline-block w-2 h-2 rounded-full bg-[#C4A576] animate-pulse" />
-            <span>{dog} wird gerade analysiert…</span>
+            <span>{t.analyzing}</span>
           </div>
           {[0, 1, 2].map((i) => (
             <div key={i} className="space-y-2">

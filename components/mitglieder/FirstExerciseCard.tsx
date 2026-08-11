@@ -14,6 +14,8 @@ import {
   type ContentSection,
 } from "@/lib/member-exercise-fallback";
 
+type Lang = "de" | "pl" | "it";
+
 interface ModulePreview {
   slug: string;
   title: string;
@@ -27,15 +29,18 @@ export default function FirstExerciseCard({
   dogBreed,
   imageOverride,
   hideImage,
+  lang = "de",
 }: {
   module: ModulePreview;
   dogName?: string | null;
   dogBreed?: string | null;
   imageOverride?: string | null;
   hideImage?: boolean;
+  lang?: Lang;
 }) {
-  const dog = dogName?.trim() || "deinem Hund";
-  const dogPossessive = dogName?.trim() ? `${dogName}s` : "Eure";
+  const dog =
+    dogName?.trim() ||
+    (lang === "pl" ? "Twojego psa" : lang === "it" ? "il tuo cane" : "deinem Hund");
   const moduleSections: ContentSection[] = Array.isArray(
     module.content?.sections
   )
@@ -69,10 +74,20 @@ export default function FirstExerciseCard({
           <span>★</span> Gratis
         </span>
         <span className="text-[12px] font-bold uppercase tracking-widest text-[#8B7355]">
-          {dogName ? `${dogPossessive} erste Übung` : "Deine erste Übung"}
+          {dogName
+            ? lang === "pl"
+              ? `Pierwsze ćwiczenie dla ${dogName}`
+              : lang === "it"
+              ? `Il primo esercizio di ${dogName}`
+              : `${dogName}s erste Übung`
+            : lang === "pl"
+            ? "Twoje pierwsze ćwiczenie"
+            : lang === "it"
+            ? "Il tuo primo esercizio"
+            : "Deine erste Übung"}
         </span>
         <span className="text-[10px] text-[#9CA3AF]">·</span>
-        <span className="text-[12px] text-[#6B7280] font-medium">5 Min</span>
+        <span className="text-[12px] text-[#6B7280] font-medium">5 min</span>
       </div>
 
       {/* Titel + Personalisierung + Beschreibung */}
@@ -83,8 +98,10 @@ export default function FirstExerciseCard({
         <p className="text-[12px] text-[#8B7355] font-semibold mt-1.5 flex items-center gap-1.5">
           <span className="text-[#C4A576]">→</span>
           <span>
-            Auf {dog}
-            {dogBreed ? ` (${dogBreed})` : ""} zugeschnitten
+            {lang === "pl" ? "Dopasowane do " : lang === "it" ? "Su misura per " : "Auf "}
+            {dog}
+            {dogBreed ? ` (${dogBreed})` : ""}
+            {lang === "pl" ? "" : lang === "it" ? "" : " zugeschnitten"}
           </span>
         </p>
         {module.description && (
@@ -100,10 +117,14 @@ export default function FirstExerciseCard({
           <span className="text-[20px] flex-shrink-0">📝</span>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355]">
-              So gehst du vor
+              {lang === "pl" ? "Tak to robisz" : lang === "it" ? "Come si fa" : "So gehst du vor"}
             </p>
             <p className="text-[13px] font-bold text-[#1a1a1a] leading-snug">
-              {stepCount} Schritt{stepCount === 1 ? "" : "e"}, klar erklärt
+              {lang === "pl"
+                ? `${stepCount} ${stepCount === 1 ? "krok" : "kroki"}, jasno wyjaśnione`
+                : lang === "it"
+                ? `${stepCount} ${stepCount === 1 ? "passo" : "passi"}, spiegati chiaramente`
+                : `${stepCount} Schritt${stepCount === 1 ? "" : "e"}, klar erklärt`}
             </p>
           </div>
         </div>
@@ -117,7 +138,7 @@ export default function FirstExerciseCard({
             .slice(0, i)
             .filter((p) => p.type === "step").length;
           return (
-            <SectionRenderer key={i} section={s} stepIndex={stepIndex} />
+            <SectionRenderer key={i} section={s} stepIndex={stepIndex} lang={lang} />
           );
         })}
 
@@ -127,7 +148,7 @@ export default function FirstExerciseCard({
             href={`/mitglieder/modul/${module.slug}`}
             className="w-full inline-flex items-center justify-center gap-1.5 bg-[#1a1a1a] hover:bg-[#000] text-white font-semibold px-5 py-3 rounded-xl text-[14px] transition shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
           >
-            Übung im Detail ansehen
+            {lang === "pl" ? "Zobacz ćwiczenie w szczegółach" : lang === "it" ? "Vedi l'esercizio in dettaglio" : "Übung im Detail ansehen"}
             <span className="text-[12px]">→</span>
           </Link>
         </div>
@@ -139,9 +160,11 @@ export default function FirstExerciseCard({
 function SectionRenderer({
   section,
   stepIndex,
+  lang = "de",
 }: {
   section: ContentSection;
   stepIndex: number;
+  lang?: Lang;
 }) {
   if (section.type === "step") {
     return (
@@ -168,7 +191,7 @@ function SectionRenderer({
     return (
       <div className="bg-[#FFF9F0] border-l-4 border-[#C4A576] rounded-r-lg px-4 py-3">
         <p className="text-[11px] font-bold text-[#8B7355] uppercase tracking-wide mb-1">
-          💡 {section.title || "Tipp"}
+          💡 {section.title || (lang === "pl" ? "Wskazówka" : lang === "it" ? "Consiglio" : "Tipp")}
         </p>
         {section.content && (
           <p className="text-[13px] text-[#5A4A3A] leading-relaxed">
@@ -183,7 +206,7 @@ function SectionRenderer({
     return (
       <div className="bg-[#F0FDF4] border-l-4 border-[#16A34A] rounded-r-lg px-4 py-3">
         <p className="text-[11px] font-bold text-[#15803D] uppercase tracking-wide mb-2">
-          ✓ {section.title || "Mach das"}
+          ✓ {section.title || (lang === "pl" ? "Rób tak" : lang === "it" ? "Fai così" : "Mach das")}
         </p>
         <ul className="space-y-1">
           {items.map((it, i) => (
@@ -204,7 +227,7 @@ function SectionRenderer({
     return (
       <div className="bg-[#FEF2F2] border-l-4 border-[#DC2626] rounded-r-lg px-4 py-3">
         <p className="text-[11px] font-bold text-[#B91C1C] uppercase tracking-wide mb-2">
-          ✗ {section.title || "Bitte nicht"}
+          ✗ {section.title || (lang === "pl" ? "Tego nie rób" : lang === "it" ? "Da non fare" : "Bitte nicht")}
         </p>
         <ul className="space-y-1">
           {items.map((it, i) => (
@@ -226,7 +249,7 @@ function SectionRenderer({
         <span className="text-[22px] leading-none">⏱️</span>
         <div className="flex-1 min-w-0">
           <p className="text-[11px] font-bold text-[#1E40AF] uppercase tracking-wide mb-0.5">
-            {section.title || "Wie oft"}
+            {section.title || (lang === "pl" ? "Jak często" : lang === "it" ? "Quanto spesso" : "Wie oft")}
           </p>
           {section.content && (
             <p className="text-[13px] font-semibold text-[#1E3A8A] leading-relaxed">

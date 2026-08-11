@@ -6,6 +6,8 @@
 
 import { useState, useTransition, useEffect, useRef } from "react";
 
+type Lang = "de" | "pl" | "it";
+
 interface Props {
   id: string;
   title: string;
@@ -16,6 +18,7 @@ interface Props {
   badgeLabel: string;
   isPremium: boolean;
   completedAt: string | null;
+  lang?: Lang;
 }
 
 export default function ChallengeCard({
@@ -28,7 +31,50 @@ export default function ChallengeCard({
   badgeLabel,
   isPremium,
   completedAt: initialCompletedAt,
+  lang = "de",
 }: Props) {
+  const t =
+    lang === "pl"
+      ? {
+          saveFailed: "Nie udało się zapisać",
+          connError: "Błąd połączenia",
+          newBadge: "Nowa odznaka",
+          done: "🎉 Zrobione!",
+          bonus: "Bonus",
+          taskThisWeek: "Zadanie na ten tydzień",
+          badgeEarned: "Odznaka zdobyta",
+          new: "Nowe!",
+          checkSession: "Odhacz sesję",
+          resetSession: "Cofnij sesję",
+          oneSessionBack: "Cofnij jedną sesję",
+        }
+      : lang === "it"
+        ? {
+            saveFailed: "Salvataggio non riuscito",
+            connError: "Errore di connessione",
+            newBadge: "Nuovo distintivo",
+            done: "🎉 Fatto!",
+            bonus: "Bonus",
+            taskThisWeek: "Compito di questa settimana",
+            badgeEarned: "Distintivo conquistato",
+            new: "Nuovo!",
+            checkSession: "Segna la sessione",
+            resetSession: "Annulla sessione",
+            oneSessionBack: "Una sessione indietro",
+          }
+        : {
+            saveFailed: "Konnte nicht speichern",
+            connError: "Verbindungsfehler",
+            newBadge: "Neues Abzeichen",
+            done: "🎉 Geschafft!",
+            bonus: "Bonus",
+            taskThisWeek: "Aufgabe dieser Woche",
+            badgeEarned: "Abzeichen verdient",
+            new: "Neu!",
+            checkSession: "Session abhaken",
+            resetSession: "Session zurücksetzen",
+            oneSessionBack: "Eine Session zurück",
+          };
   const [done, setDone] = useState(initialDone);
   const [completedAt, setCompletedAt] = useState<string | null>(
     initialCompletedAt
@@ -105,7 +151,7 @@ export default function ChallengeCard({
         });
         const data = await res.json();
         if (!res.ok) {
-          setError(data.error || "Konnte nicht speichern");
+          setError(data.error || t.saveFailed);
           // Rollback bei Fehler
           setDone(initialDone);
           setCompletedAt(initialCompletedAt);
@@ -117,7 +163,7 @@ export default function ChallengeCard({
           setCompletedAt(data.challenge.completed_at);
         }
       } catch (e) {
-        setError("Verbindungsfehler");
+        setError(t.connError);
         setDone(initialDone);
         setCompletedAt(initialCompletedAt);
       }
@@ -147,13 +193,13 @@ export default function ChallengeCard({
               {badgeEmoji}
             </div>
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#8B7355] mb-1">
-              Neues Abzeichen
+              {t.newBadge}
             </p>
             <p className="text-[20px] font-extrabold text-[#1a1a1a] leading-tight">
               {badgeLabel}
             </p>
             <p className="text-[12px] text-[#6B7280] mt-2">
-              🎉 Geschafft!
+              {t.done}
             </p>
           </div>
           <style jsx>{`
@@ -173,7 +219,7 @@ export default function ChallengeCard({
       {/* Premium-Pille */}
       {isPremium && (
         <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wider bg-[#FFF9F0] text-[#8B7355] px-2 py-0.5 rounded-md">
-          Bonus
+          {t.bonus}
         </span>
       )}
 
@@ -188,7 +234,7 @@ export default function ChallengeCard({
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-[10px] font-bold uppercase tracking-widest text-[#8B7355] mb-0.5">
-            Aufgabe dieser Woche
+            {t.taskThisWeek}
           </p>
           <h3 className="text-[16px] font-extrabold text-[#1a1a1a] leading-tight">
             {title}
@@ -223,7 +269,7 @@ export default function ChallengeCard({
           <span className="text-[28px]">{badgeEmoji}</span>
           <div className="flex-1 min-w-0">
             <p className="text-[10px] font-bold uppercase tracking-wider text-[#8B7355]">
-              Abzeichen verdient
+              {t.badgeEarned}
             </p>
             <p className="text-[14px] font-extrabold text-[#1a1a1a]">
               {badgeLabel}
@@ -231,7 +277,7 @@ export default function ChallengeCard({
           </div>
           {justCompleted && (
             <span className="text-[11px] font-bold text-[#15803D] animate-pulse">
-              Neu!
+              {t.new}
             </span>
           )}
         </div>
@@ -242,15 +288,15 @@ export default function ChallengeCard({
             disabled={pending || done >= target}
             className="flex-1 bg-[#C4A576] hover:bg-[#B5946A] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl text-[13px] transition shadow-[0_1px_2px_rgba(139,115,85,0.2)]"
           >
-            Session abhaken
+            {t.checkSession}
           </button>
           {done > 0 && (
             <button
               onClick={() => logSession(-1)}
               disabled={pending}
               className="px-3 text-[12px] text-[#9CA3AF] hover:text-[#1a1a1a] disabled:opacity-50"
-              aria-label="Session zurücksetzen"
-              title="Eine Session zurück"
+              aria-label={t.resetSession}
+              title={t.oneSessionBack}
             >
               ↺
             </button>

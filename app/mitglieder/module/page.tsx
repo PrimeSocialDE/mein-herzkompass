@@ -21,7 +21,7 @@ export const dynamic = "force-dynamic";
 // in der DB keine eigene Features-Liste hinterlegt ist (faellt zurueck
 // auf split der description). Slugs entsprechen den 'type'-Werten der
 // upsell-product-checkout-Route.
-const UPSELL_FEATURES: Record<string, string[]> = {
+const UPSELL_FEATURES_DE: Record<string, string[]> = {
   ernaehrung: [
     "Personalisierter Ernährungsplan für deinen Hund",
     "Klare Mengenangaben für jeden Tag",
@@ -58,6 +58,209 @@ const UPSELL_FEATURES: Record<string, string[]> = {
   ],
 };
 
+const UPSELL_FEATURES_PL: Record<string, string[]> = {
+  ernaehrung: [
+    "Spersonalizowany plan żywienia dla Twojego psa",
+    "Jasne ilości na każdy dzień",
+    "Wskazówki dot. przekąsek i nagród",
+    "Od razu PDF w skrzynce",
+  ],
+  reise: [
+    "Przygotowanie i lista rzeczy do spakowania",
+    "Samochód, pociąg, samolot — na co uważać",
+    "Etykieta w hotelu i restauracji",
+    "Od razu PDF w skrzynce",
+  ],
+  erstehilfe: [
+    "Działania w nagłych wypadkach krok po kroku",
+    "Zatrucia, urazy, ukąszenia owadów",
+    "Kiedy do weterynarza, a kiedy działać samemu",
+    "Od razu PDF w skrzynce",
+  ],
+  zweithund: [
+    "Wprowadzenie drugiego psa bez konfliktów",
+    "Który pies pasuje do Twojego?",
+    "Jak przetrwać pierwsze tygodnie",
+    "Od razu PDF w skrzynce",
+  ],
+  abo: [
+    "Sezonowe wskazówki treningowe",
+    "Wiosna, lato, jesień, zima",
+    "Nowe treści co kwartał",
+  ],
+  tagebuch: [
+    "Dziennik treningowy do uzupełniania",
+    "Struktura 12 tygodni, krok po kroku",
+    "Wysoka jakość druku, od razu jako PDF",
+  ],
+};
+
+const UPSELL_FEATURES_IT: Record<string, string[]> = {
+  ernaehrung: [
+    "Piano alimentare personalizzato per il tuo cane",
+    "Quantità chiare per ogni giorno",
+    "Consigli su snack e ricompense",
+    "Subito come PDF nella casella",
+  ],
+  reise: [
+    "Preparazione e lista dei bagagli",
+    "Auto, treno, aereo — cosa considerare",
+    "Etichetta in hotel e ristorante",
+    "Subito come PDF nella casella",
+  ],
+  erstehilfe: [
+    "Misure di emergenza passo passo",
+    "Avvelenamenti, ferite, punture di insetti",
+    "Quando andare dal veterinario, quando agire da soli",
+    "Subito come PDF nella casella",
+  ],
+  zweithund: [
+    "Introdurre un secondo cane senza conflitti",
+    "Quale cane si adatta al tuo?",
+    "Superare le prime settimane",
+    "Subito come PDF nella casella",
+  ],
+  abo: [
+    "Consigli di addestramento stagionali",
+    "Primavera, estate, autunno, inverno",
+    "Nuovi contenuti ogni trimestre",
+  ],
+  tagebuch: [
+    "Diario di addestramento da compilare",
+    "Struttura di 12 settimane, passo passo",
+    "Alta qualità di stampa, subito come PDF",
+  ],
+};
+
+// Polnische Parallel-Felder fuer THEMEN_MODULES (nach Slug). DE/IT bleiben in
+// member-themen.ts; hier nur PL ergaenzt (Bilder fallen auf DE zurueck).
+const THEMEN_PL: Record<
+  string,
+  { title: string; goal: string; short: string; features: string[]; badge_text: string | null }
+> = {
+  "thema-leinen": {
+    title: "Chodzenie na smyczy",
+    goal: "Chodzi spokojnie na smyczy",
+    short: "Luźna smycz w 14 dni.",
+    features: [
+      "Budowanie krok po kroku w 14 dni",
+      "Co naprawdę uspokaja psy",
+      "Ćwiczenia na miasto, las i park",
+      "Od razu PDF w skrzynce",
+    ],
+    badge_text: "Popularne",
+  },
+  "thema-bellen": {
+    title: "Oduczanie szczekania",
+    goal: "Szczeka rzadziej i krócej",
+    short: "Ustal sygnał spokoju, bez stresu.",
+    features: [
+      "Zrozum przyczyny (strach, nuda, pilnowanie)",
+      "Zbuduj sygnał spokoju",
+      "Ćwiczenia na dzwonek, gości, hałasy z zewnątrz",
+      "Od razu PDF w skrzynce",
+    ],
+    badge_text: null,
+  },
+  "thema-aggression": {
+    title: "Rozładowanie agresji",
+    goal: "Zachowuje spokój przy innych psach",
+    short: "Bezpiecznie reaguj, wyciszaj, zapobiegaj.",
+    features: [
+      "Dlaczego psy reagują agresywnie",
+      "Rozpoznawanie i unikanie wyzwalaczy",
+      "Techniki deeskalacji krok po kroku",
+      "Kiedy potrzebna jest pomoc profesjonalisty",
+      "Od razu PDF w skrzynce",
+    ],
+    badge_text: "Szczegółowe",
+  },
+  "thema-trennungsangst": {
+    title: "Lęk separacyjny",
+    goal: "Zostaje spokojny sam w domu",
+    short: "Sam w domu bez stresu.",
+    features: [
+      "Oswajanie małymi krokami",
+      "Od 1 minuty do 4 godzin",
+      "Co robić przy nawrotach",
+      "Od razu PDF w skrzynce",
+    ],
+    badge_text: null,
+  },
+  "thema-anspringen": {
+    title: "Oduczanie skakania",
+    goal: "Wita z wszystkimi łapami na ziemi",
+    short: "Powitanie z czterema łapami na ziemi.",
+    features: [
+      "Dlaczego psy skaczą (uwaga)",
+      "Trenuj konsekwentną reakcję",
+      "Ćwiczenia na rodzinę, gości, obcych",
+      "Od razu PDF w skrzynce",
+    ],
+    badge_text: null,
+  },
+  "thema-rueckruf": {
+    title: "Trening przywołania",
+    goal: "Wraca niezawodnie, gdy wołasz",
+    short: "Twój pies wraca niezawodnie.",
+    features: [
+      "Naładuj imię pozytywnie",
+      "Trening z gwizdkiem krok po kroku",
+      "Ćwiczenia z rosnącym rozproszeniem",
+      "Od razu PDF w skrzynce",
+    ],
+    badge_text: null,
+  },
+  "thema-energie": {
+    title: "Nadmiar energii",
+    goal: "Znajduje spokój po wyładowaniu",
+    short: "Wyładuj energię i znajdź spokój.",
+    features: [
+      "Stymulacja umysłowa vs fizyczna",
+      "Mata węchowa i gry w szukanie",
+      "Buduj fazę spokoju",
+      "Od razu PDF w skrzynce",
+    ],
+    badge_text: null,
+  },
+  "thema-zerstoerung": {
+    title: "Zachowania destrukcyjne",
+    goal: "Zostawia meble, buty i kable w spokoju",
+    short: "Meble, buty i kable bezpieczne.",
+    features: [
+      "Dlaczego psy niszczą",
+      "Zaproponuj alternatywy do gryzienia",
+      "Trenuj grę w wymianę",
+      "Od razu PDF w skrzynce",
+    ],
+    badge_text: null,
+  },
+  "thema-stubenrein": {
+    title: "Czystość w domu",
+    goal: "Załatwia się na dworze, nie w domu",
+    short: "Ustal rutynę w 21 dni.",
+    features: [
+      "Stałe pory na siusiu",
+      "Co robić przy wpadkach",
+      "Szczenięta vs dorosłe psy",
+      "Od razu PDF w skrzynce",
+    ],
+    badge_text: null,
+  },
+  "thema-aufnehmen": {
+    title: "Nic z ziemi",
+    goal: "Zostawia rzeczy leżące na ziemi",
+    short: "Koniec z podnoszeniem rzeczy na spacerze.",
+    features: [
+      "Gra w wymianę jako podstawa",
+      "Zbuduj komendę „zostaw”",
+      "Ćwiczenia na trasie spaceru",
+      "Od razu PDF w skrzynce",
+    ],
+    badge_text: null,
+  },
+};
+
 const UPSELL_EMOJI: Record<string, string> = {
   ernaehrung: "🥩",
   reise: "✈️",
@@ -74,8 +277,18 @@ const UPSELL_IMAGE: Record<string, string> = {
   reise: "/reise.png",
 };
 
-function featuresFor(slug: string, description: string | null): string[] {
-  if (UPSELL_FEATURES[slug]) return UPSELL_FEATURES[slug];
+function featuresFor(
+  slug: string,
+  description: string | null,
+  lang: "de" | "pl" | "it"
+): string[] {
+  const map =
+    lang === "pl"
+      ? UPSELL_FEATURES_PL
+      : lang === "it"
+      ? UPSELL_FEATURES_IT
+      : UPSELL_FEATURES_DE;
+  if (map[slug]) return map[slug];
   if (description) {
     const split = description
       .split(/[\n.•]/)
@@ -83,7 +296,11 @@ function featuresFor(slug: string, description: string | null): string[] {
       .filter((s) => s.length > 5);
     if (split.length >= 2) return split.slice(0, 5);
   }
-  return ["Direkt im Postfach", "Sofort startbereit"];
+  return lang === "pl"
+    ? ["Prosto do skrzynki", "Od razu gotowe do startu"]
+    : lang === "it"
+    ? ["Direttamente nella casella", "Subito pronto all'uso"]
+    : ["Direkt im Postfach", "Sofort startbereit"];
 }
 
 export default async function ModulShopPage() {
@@ -179,6 +396,39 @@ export default async function ModulShopPage() {
     member.quiz_result?.dog_problem || member.quiz_result?.problem || null;
   const themenModules = sortByUserRelevance(THEMEN_MODULES, userProblemKey);
 
+  // Lokalisierte Felder pro Themen-Modul (PL aus THEMEN_PL, IT aus den _it-
+  // Feldern, sonst DE). Bilder fallen fuer PL auf DE zurueck (keine .pl-Assets).
+  function themenTitle(t: (typeof THEMEN_MODULES)[number]): string {
+    if (lang === "pl") return THEMEN_PL[t.slug]?.title ?? t.title;
+    if (lang === "it") return t.title_it ?? t.title;
+    return t.title;
+  }
+  function themenShort(t: (typeof THEMEN_MODULES)[number]): string {
+    if (lang === "pl") return THEMEN_PL[t.slug]?.short ?? t.short;
+    if (lang === "it") return t.short_it ?? t.short;
+    return t.short;
+  }
+  function themenGoal(t: (typeof THEMEN_MODULES)[number]): string {
+    if (lang === "pl") return THEMEN_PL[t.slug]?.goal ?? t.goal;
+    if (lang === "it") return t.goal_it ?? t.goal;
+    return t.goal;
+  }
+  function themenFeatures(t: (typeof THEMEN_MODULES)[number]): string[] {
+    if (lang === "pl") return THEMEN_PL[t.slug]?.features ?? t.features;
+    if (lang === "it") return t.features_it ?? t.features;
+    return t.features;
+  }
+  function themenBadge(t: (typeof THEMEN_MODULES)[number]): string | null {
+    if (lang === "pl") return THEMEN_PL[t.slug]?.badge_text ?? t.badge_text;
+    if (lang === "it") return t.badge_text_it ?? t.badge_text;
+    return t.badge_text;
+  }
+  function themenImage(t: (typeof THEMEN_MODULES)[number]): string | null | undefined {
+    // IT hat eigene Bilder; PL nutzt DE-Bilder (kein .pl-Asset vorhanden).
+    if (lang === "it") return t.image_url_it ?? t.image_url;
+    return t.image_url;
+  }
+
   // Club-Status (defensiv — darf die Seite fuer Nicht-Club-Mitglieder NIE
   // beeinflussen; bei jedem Fehler fallen wir auf "kein Club" zurueck).
   let hasClub = false;
@@ -218,7 +468,7 @@ export default async function ModulShopPage() {
           zum oeffentlichen Launch: die email-Bedingung entfernen. ── */}
       {!hasClub &&
         member.email?.toLowerCase() === "max@primesocial.de" && (
-          <ClubAboCard dogName={member.dog_name} email={member.email} />
+          <ClubAboCard dogName={member.dog_name} email={member.email} lang={lang} />
         )}
 
       {/* ── Club aktiv: Status-Banner ────────────────────────────────── */}
@@ -302,11 +552,11 @@ export default async function ModulShopPage() {
                   }`}
                 >
                   <div className="relative">
-                    {(lang === "it" ? t.image_url_it ?? t.image_url : t.image_url) ? (
+                    {themenImage(t) ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={lang === "it" ? t.image_url_it ?? t.image_url! : t.image_url!}
-                        alt={lang === "it" ? t.title_it ?? t.title : t.title}
+                        src={themenImage(t)!}
+                        alt={themenTitle(t)}
                         className="w-full aspect-square object-cover"
                       />
                     ) : (
@@ -322,7 +572,7 @@ export default async function ModulShopPage() {
                   </div>
                   <div className="p-2.5">
                     <p className="text-[12px] font-bold text-[#1a1a1a] leading-tight">
-                      {lang === "it" ? t.title_it ?? t.title : t.title}
+                      {themenTitle(t)}
                     </p>
                     <p
                       className={`text-[11px] mt-1 font-semibold ${
@@ -344,25 +594,20 @@ export default async function ModulShopPage() {
                 upsell={{
                   id: t.slug,
                   slug: t.slug,
-                  title: lang === "it" ? t.title_it ?? t.title : t.title,
-                  description: lang === "it" ? t.short_it ?? t.short : t.short,
+                  title: themenTitle(t),
+                  description: themenShort(t),
                   badge_text:
-                    t.problem_match === userProblemKey
-                      ? tr.forYou
-                      : lang === "it"
-                      ? t.badge_text_it ?? t.badge_text
-                      : t.badge_text,
+                    t.problem_match === userProblemKey ? tr.forYou : themenBadge(t),
                   price_cents: t.price_cents,
-                  image_url:
-                    (lang === "it" ? t.image_url_it ?? t.image_url : t.image_url) ||
-                    null,
+                  image_url: themenImage(t) || null,
                 }}
-                features={lang === "it" ? t.features_it ?? t.features : t.features}
+                features={themenFeatures(t)}
                 emoji={t.emoji}
-                goal={lang === "it" ? t.goal_it ?? t.goal : t.goal}
+                goal={themenGoal(t)}
                 email={member.email}
                 leadId={member.source_lead_id}
                 dogName={member.dog_name}
+                lang={lang}
               />
             ))}
           </div>
@@ -392,11 +637,12 @@ export default async function ModulShopPage() {
                   price_cents: u.price_cents,
                   image_url: UPSELL_IMAGE[u.slug] || u.image_url || null,
                 }}
-                features={featuresFor(u.slug, u.description)}
+                features={featuresFor(u.slug, u.description, lang)}
                 emoji={UPSELL_EMOJI[u.slug] || "🎁"}
                 email={member.email}
                 leadId={member.source_lead_id}
                 dogName={member.dog_name}
+                lang={lang}
               />
             ))}
           </div>
