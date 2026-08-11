@@ -356,6 +356,13 @@ function getStageContent(
       <p style="margin:0;font-size:14px;color:#1a1a1a;line-height:1.55;">💬 <strong>Trainer-Chat</strong> bei Fragen — du bist nicht allein</p>
     </div>`;
 
+  // WhatsApp-Direktkontakt — fuer 40+ Halterinnen niedrigschwelliger als "auf die Mail
+  // antworten". Kommt in Stage 1 (erste Recovery-Mail). Deutsche Nummer, nur DE-Variante.
+  const waHelpBox = `
+    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 16px;margin:18px 0;">
+      <p style="margin:0;font-size:14px;line-height:1.6;color:#166534;">💬 <strong>Ein spezieller Fall, eine Frage oder brauchst du einen konkreten Tipp für ${escapeHtml(dog)}?</strong> Schreib uns direkt auf <a href="https://wa.me/4915129892586?text=Hallo%2C%20ich%20habe%20eine%20Frage%20zu%20meinem%20Trainingsplan" style="color:#166534;font-weight:800;text-decoration:underline;">WhatsApp</a> — wir antworten persönlich, meist innerhalb weniger Stunden.</p>
+    </div>`;
+
   // Hundeschule-Vergleichs-Box — Vertrauen durch Faktenvergleich, kommt Stage 3 + 5
   const compareBox = `
     <div style="background:#F8F8F8;border-radius:10px;padding:14px 16px;margin:16px 0;font-size:13.5px;color:#1a1a1a;line-height:1.55;">
@@ -372,10 +379,10 @@ function getStageContent(
         headline: `Vielleicht ist noch etwas offen`,
         intro: `Hallo, du hattest den Plan für ${escapeHtml(
           dog
-        )} schon ausgewählt, bist aber im Checkout nicht weitergekommen. Falls noch eine Frage offen ist — antworte einfach auf diese Mail, wir lesen jede persönlich.`,
+        )} schon ausgewählt, bist aber im Checkout nicht weitergekommen. Falls noch eine Frage offen ist oder du einen speziellen Fall hast — schreib uns einfach, gern auch direkt per WhatsApp. Wir lesen jede Nachricht persönlich und geben dir einen konkreten Tipp.`,
         defaultBlock: `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1a1a1a;">${problemLabel} ist eines der häufigsten Themen, mit dem unsere Mitglieder zu uns kommen — und in den meisten Fällen lässt sich daran sehr gut arbeiten. Der Plan ist genau auf ${escapeHtml(
           dog
-        )}s Profil zugeschnitten.</p>${whatYouGetBox}`,
+        )}s Profil zugeschnitten.</p>${whatYouGetBox}${waHelpBox}`,
         ctaText: `Plan für ${dog} ansehen`,
         footerHint: `Diese Mail kommt einmalig. Wenn du nichts machst, hörst du nur dann wieder von uns, wenn wir dir mit einer kurzen Story oder Frage helfen können.`,
       };
