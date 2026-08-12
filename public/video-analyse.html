@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video-Analyse für deinen Hund | Pfoten-Plan</title>
+<link rel="icon" type="image/png" href="/favconHund.png">
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --bg:#FBF7EF; --surface:#FFFFFF; --surface-2:#FFF9F0;
+    --ink:#241f1a; --muted:#6E645A; --line:#EADDC5;
+    --gold:#C4A576; --brown:#8B7355; --brown-deep:#6E5A42;
+    --wa:#25D366; --wa-deep:#166534;
+    --shadow:0 18px 44px rgba(60,44,20,.10);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:660px;margin:0 auto;padding:32px 20px 64px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;color:var(--brown-deep);letter-spacing:-.01em;}
+  .brand .paw{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--brown));display:grid;place-items:center;font-size:16px}
+  .eyebrow{display:inline-block;margin-top:34px;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--brown);
+    background:var(--surface-2);border:1px solid var(--line);padding:6px 12px;border-radius:999px;}
+  h1{font-size:clamp(28px,6vw,40px);line-height:1.12;font-weight:850;margin:16px 0 10px;text-wrap:balance;letter-spacing:-.02em;}
+  h1 .hl{color:var(--brown);}
+  .lede{font-size:17px;color:var(--muted);max-width:34em;margin:0 0 6px;}
+  .phone{margin:30px auto 8px;max-width:340px;background:var(--surface);border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow);overflow:hidden;}
+  .phone-top{background:var(--surface-2);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;gap:10px;}
+  .phone-top .av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--brown));display:grid;place-items:center;font-size:15px}
+  .phone-top b{font-size:14px}
+  .phone-top span{font-size:11px;color:var(--muted)}
+  .chat{padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--bg);}
+  .bub{max-width:86%;padding:10px 13px;border-radius:16px;font-size:13.5px;line-height:1.5;}
+  .me{align-self:flex-end;background:var(--brown);color:#fff;border-bottom-right-radius:5px;}
+  .ai{align-self:flex-start;background:var(--surface);border:1px solid var(--line);color:var(--ink);border-bottom-left-radius:5px;}
+  .ai .h{font-weight:800;color:var(--brown-deep);margin:0 0 2px;font-size:13px;}
+  .ai .tip{margin:8px 0 0}
+  .ai .tip b{color:var(--ink)}
+  .ai .warn{color:var(--brown-deep);font-weight:600}
+  .typed{font-size:11px;color:var(--muted);text-align:center;margin-top:2px}
+  .clip{position:relative;margin-top:8px;border-radius:11px;overflow:hidden;border:2px solid rgba(255,255,255,.25);}
+  .clip img{display:block;width:100%;filter:saturate(1.02)}
+  .clip .play{position:absolute;inset:0;margin:auto;width:54px;height:54px;border-radius:50%;background:rgba(20,16,12,.5);color:#fff;display:grid;place-items:center;font-size:19px;padding-left:4px;}
+  .clip .dur{position:absolute;right:8px;bottom:8px;background:rgba(20,16,12,.72);color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;}
+  .clip .vlabel{position:absolute;left:8px;top:8px;background:var(--gold);color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:6px;}
+  .scrub{height:3px;background:rgba(255,255,255,.35);position:absolute;left:0;right:0;bottom:0}
+  .scrub::before{content:"";position:absolute;left:0;top:0;bottom:0;width:38%;background:var(--gold)}
+  .steps{display:grid;gap:12px;margin:34px 0 0;}
+  @media(min-width:560px){.steps{grid-template-columns:repeat(3,1fr)}}
+  .step{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 16px;}
+  .step .n{width:28px;height:28px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line);color:var(--brown);font-weight:800;display:grid;place-items:center;font-size:14px;margin-bottom:10px}
+  .step h3{margin:0 0 4px;font-size:15.5px;font-weight:800}
+  .step p{margin:0;font-size:13.5px;color:var(--muted)}
+  .price{margin:34px 0 0;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px 24px;box-shadow:var(--shadow);text-align:center;}
+  .price .amt{font-size:44px;font-weight:850;letter-spacing:-.02em;line-height:1}
+  .price .amt small{font-size:18px;font-weight:700;color:var(--muted)}
+  .price .sub{font-size:13.5px;color:var(--muted);margin:6px 0 18px}
+  .cta{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:12px 24px;background:var(--gold);color:#fff;font-size:15px;font-weight:800;border:none;border-radius:12px;text-decoration:none;box-shadow:0 6px 16px rgba(139,115,85,.30);cursor:pointer;}
+  .cta:disabled{opacity:.6;cursor:default}
+  .price .fine{font-size:12px;color:var(--muted);margin:14px 0 0;line-height:1.5}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0 0}
+  .badge{font-size:12px;color:var(--brown-deep);background:var(--surface-2);border:1px solid var(--line);padding:5px 11px;border-radius:999px}
+  .why{margin:34px 0 0;background:var(--surface-2);border:1px solid var(--line);border-radius:18px;padding:22px 22px}
+  .why h2{margin:0 0 8px;font-size:20px;font-weight:850;letter-spacing:-.01em}
+  .why p{margin:0;color:var(--muted);font-size:15px}
+  .why p b{color:var(--ink)}
+  .foot{margin-top:30px;font-size:12px;color:var(--muted);text-align:center;border-top:1px solid var(--line);padding-top:16px}
+  .foot a{color:var(--brown)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><span class="paw">🐾</span> Pfoten-Plan</div>
+  <span class="eyebrow">Neu · nur für Mitglieder</span>
+  <h1>Film <span class="dog">deinen Hund</span> — <span class="hl">wir sehen, was wirklich passiert.</span></h1>
+  <p class="lede">Ein <b>kurzes Video</b> (oder Foto) reicht. Unser KI-Trainer, geschult mit dem Wissen unseres Trainer-Teams, schaut sich an, <b>wie sich <span class="dog">dein Hund</span> in genau deiner Situation bewegt</b> — beim Ziehen, Bellen, Anspringen — und gibt dir <b>konkrete nächste Schritte</b>. Denn im Video steckt, was ein Foto nie zeigt.</p>
+
+  <div class="phone" role="img" aria-label="Beispiel-Chat: kurzes Video an der Leine, dazu die persönliche Analyse">
+    <div class="phone-top"><span class="av">🐾</span><div><b>Pfoten-Plan Trainer</b><br><span>Video-Analyse · online</span></div></div>
+    <div class="chat">
+      <div class="bub me">Hier ein kurzes Video von Bello 🎥 Er zieht extrem an der Leine — was mache ich falsch?
+        <div class="clip">
+          <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAEdAXwDASIAAhEBAxEB/8QAHQABAAIDAQEBAQAAAAAAAAAAAAYHBAUIAwECCf/EAEEQAAEDAwMBBgQDBQYGAgMAAAEAAgMEBREGEiExBxMiQVFhFHGBoTKRsQgjQlLBFRYkgtHwM2JykqLhJVMmQ2P/xAAaAQEAAwEBAQAAAAAAAAAAAAAAAgMEAQUG/8QAJhEBAQACAgEEAgMAAwAAAAAAAAECEQMhEgQxQVEiMhNhgQXB0f/aAAwDAQACEQMRAD8A5UREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBEX6Yxz3BrGlzj5AZKD8os1tun6y93CP/wCjwPt1+yz6OxxVEW83GIY6hjHOx+eEGjWbbrdLXSNDS2OMnBkfwPkPU+wW3qrFQ0dPHUG4GcHrEItp+pysm0yyV1S5tJBAJGgbG5w4jp4WnqfPASTbukisvZ5a7jSd1JdKimuRZuY17G7Henh6+R8+FE9TaOu+n6nu6uDvGEbmyRZcHA9D6qVWyumtl6aaoHwuzzkkAdAPmP1U+7U75JNph1Vb6Zhhhcxsk+M+NzRhozzjqT9Evvo11tQjbc5jw2ocY3fy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" alt="Videoclip an der Leine">
+          <span class="vlabel">🎥 Video</span><span class="play">▶</span><span class="dur">0:14</span><span class="scrub"></span>
+        </div>
+      </div>
+      <div class="bub ai">
+        <p class="h">Was ich im Video sehe 👀</p>
+        Bello schießt nach vorn und schaut dabei nach oben — aufgeregt und stark auf einen Reiz fokussiert. Er trägt einen <b>Metallketten-Würger</b>.
+        <p class="tip"><span class="warn">⚠️ Zum Halsband:</span> Würger belasten Hals &amp; Wirbelsäule und lösen das Ziehen nicht. Steig auf ein <b>gut sitzendes Geschirr</b> um — sicherer und effektiver.</p>
+        <p class="tip"><b>💡 Tipp 1 — Steh-bleib-Methode:</b> Sobald die Leine straff wird → sofort stehen bleiben. Der Hund lernt: Ziehen = kein Vorwärtskommen.</p>
+        <p class="tip"><b>💡 Tipp 2 — lockere Leine belohnen:</b> Läuft er entspannt neben dir, sofort loben. Das ist das Wichtigste! 🐾</p>
+      </div>
+      <p class="typed">↑ Echte Analyse unseres KI-Trainers zu einem echten Clip</p>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Jetzt sichern</h3><p>Du holst dir die Analyse — ganz ohne dass du sofort filmen musst.</p></div>
+    <div class="step"><div class="n">2</div><h3>Video hochladen</h3><p>Per E-Mail bekommst du den Link. Film 15–30 Sek (oder schick ein Foto), wann es passt — 30 Tage Zeit.</p></div>
+    <div class="step"><div class="n">3</div><h3>Antwort zurück</h3><p>Persönliche Einschätzung zu <span class="dog">deinem Hund</span> + konkrete nächste Schritte.</p></div>
+  </div>
+
+  <div class="price">
+    <div class="amt">34,99&nbsp;<small>€</small></div>
+    <div class="sub">Einmalig · 30 Tage lang Video- &amp; Foto-Analyse freigeschaltet</div>
+    <button class="cta" id="buyBtn">Video-Analyse für <span class="dog">deinen Hund</span> sichern →</button>
+    <div class="badges"><span class="badge">Kein Abo</span><span class="badge">Sofort per E-Mail</span><span class="badge">Auch in Raten (Klarna)</span></div>
+    <p class="fine">Du kaufst jetzt und lädst dein Video (oder Foto) hoch, wann du magst — kein Stress, keine Technik-Hürde.</p>
+  </div>
+
+  <div class="why">
+    <h2>Warum Video</h2>
+    <p>Ziehen, Anspringen, Reaktivität — das sind <b>Bewegungen</b>. Auf einem Foto sieht man den Moment, im Video sieht man <b>den Auslöser und die Reaktion</b>. Genau daraus liest unser Trainer, was bei <span class="dog">deinem Hund</span> wirklich passiert — und was der nächste Schritt ist. Foto geht auch, Video sagt mehr.</p>
+  </div>
+
+  <p class="foot">Pfoten-Plan · <a href="datenschutz.html">Datenschutz</a> · <a href="agb.html">AGB</a></p>
+</div>
+
+<script>
+  (function(){
+    var p = new URLSearchParams(location.search);
+    var dog = (p.get('dog') || localStorage.getItem('dogName') || '').trim();
+    var leadId = p.get('lead_id') || localStorage.getItem('leadId') || '';
+    var email = (p.get('email') || localStorage.getItem('userEmail') || '').trim();
+    // Hundenamen einsetzen (Fallback bleibt "deinen/dein/deinem Hund")
+    if (dog) {
+      document.querySelectorAll('.dog').forEach(function(el){ el.textContent = dog; });
+      document.title = 'Video-Analyse für ' + dog + ' | Pfoten-Plan';
+    }
+    var btn = document.getElementById('buyBtn');
+    btn.addEventListener('click', function(){
+      btn.disabled = true; btn.textContent = 'Einen Moment …';
+      fetch('/api/mollie/upsell-checkout', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          module:'coach-foto', price:3499,
+          email: email, leadId: leadId, dogName: dog || undefined,
+          returnUrl: location.origin + '/mitglieder'
+        })
+      }).then(function(r){ return r.json(); }).then(function(j){
+        if (j && j.url) { location.href = j.url; }
+        else { btn.disabled=false; btn.textContent='Video-Analyse sichern →'; alert('Checkout konnte nicht gestartet werden. Bitte kurz erneut versuchen.'); }
+      }).catch(function(){ btn.disabled=false; btn.textContent='Video-Analyse sichern →'; alert('Verbindungsfehler. Bitte kurz erneut versuchen.'); });
+    });
+  })();
+</script>
+</body>
+</html>
