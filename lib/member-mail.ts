@@ -204,6 +204,8 @@ export function wrapTemplate(opts: {
   lang?: Lang;
   /** Optional: Beleg-/Kleinbetragsrechnung-Footer (nur DE-Plan-Mail). */
   belegHtml?: string;
+  /** plain: schlichter, persoenlicher Look (EC/Pending) statt Karten-Template. */
+  plain?: boolean;
 }): string {
   const {
     preheader,
@@ -216,6 +218,7 @@ export function wrapTemplate(opts: {
     unsubscribe,
     lang = "de",
     belegHtml,
+    plain,
   } = opts;
   const htmlLang = lang === "pl" ? "pl" : lang === "it" ? "it" : "de";
   const brandLabel =
@@ -232,6 +235,39 @@ export function wrapTemplate(opts: {
       : lang === "it"
         ? "Annulla l'iscrizione a queste email"
         : "Aus diesen E-Mails abmelden";
+  if (plain) {
+    return `<!DOCTYPE html>
+<html lang="${htmlLang}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${headline}</title>
+</head>
+<body style="margin:0;padding:0;background:#FFFFFF;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;">
+<span style="display:none;font-size:1px;color:#FFFFFF;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${preheader}</span>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFFFFF;">
+  <tr><td align="center" style="padding:28px 20px;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="560" style="max-width:560px;width:100%;">
+      <tr><td style="padding:0 2px;">
+        <h1 style="margin:0 0 14px;font-size:20px;line-height:1.3;font-weight:700;color:#1a1a1a;">${headline}</h1>
+        <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#333333;">${intro}</p>
+        ${bodyHtml}
+        <p style="margin:22px 0 0;">
+          <a href="${ctaUrl}" style="display:inline-block;padding:13px 24px;font-size:15px;font-weight:700;line-height:1;color:#FFFFFF;background:#C4A576;text-decoration:none;border-radius:8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">${ctaText}</a>
+        </p>
+        ${footerHint ? `<p style="margin:14px 0 0;font-size:12px;line-height:1.5;color:#9CA3AF;">${footerHint}</p>` : ""}
+        ${belegHtml ? `<div style="margin:22px 0 0;">${belegHtml}</div>` : ""}
+        <p style="margin:28px 0 0;padding-top:14px;border-top:1px solid #EEEAE3;font-size:11px;line-height:1.6;color:#9CA3AF;">
+          ${footerBrandLine}${unsubscribe ? `<br><a href="{{ unsubscribe }}" style="color:#9CA3AF;text-decoration:underline;">${unsubscribeText}</a>` : ""}
+        </p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+  }
+
   return `<!DOCTYPE html>
 <html lang="${htmlLang}">
 <head>
@@ -1114,6 +1150,7 @@ export async function sendCheckoutRecoveryMail(args: {
     ${trustBoxHtmlPl}`;
 
     const html = wrapTemplate({
+      plain: true,
       preheader: hasName
         ? `Za darmo przetestuj: indywidualne 5-minutowe ćwiczenie dla ${dogPl}.`
         : `Za darmo przetestuj: indywidualne 5-minutowe ćwiczenie dla Twojego psa.`,
@@ -1178,6 +1215,7 @@ export async function sendCheckoutRecoveryMail(args: {
     ${trustBoxHtmlIt}`;
 
     const html = wrapTemplate({
+      plain: true,
       preheader: hasName
         ? `Prova gratis: un esercizio personalizzato di 5 minuti per ${dogIt}.`
         : `Prova gratis: un esercizio personalizzato di 5 minuti per il tuo cane.`,
@@ -1259,6 +1297,7 @@ export async function sendCheckoutRecoveryMail(args: {
     ${trustBoxHtml}`;
 
   const html = wrapTemplate({
+      plain: true,
     preheader: hasName
       ? `Kostenfrei testen: eine individuelle 5-Min-Übung für ${dog}.`
       : `Kostenfrei testen: eine individuelle 5-Min-Übung für deinen Hund.`,

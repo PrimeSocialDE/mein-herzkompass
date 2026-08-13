@@ -180,44 +180,23 @@ function buildHtml(opts: {
   return `<!DOCTYPE html>
 <html lang="${htmlLang}">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${subject}</title></head>
-<body style="margin:0;padding:0;background:#FAF8F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;">
-<span style="display:none;font-size:1px;color:#FAF8F5;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${preheader}</span>
-<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAF8F5;">
-  <tr><td align="center" style="padding:24px 12px;">
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #EADDC5;border-radius:16px;overflow:hidden;">
-      <tr><td style="padding:22px 28px 6px;">
-        <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#8B7355;">${brand}</p>
-      </td></tr>
-      <tr><td style="padding:8px 28px 18px;">
-        <img src="${heroImg}" alt="${dogBreed}" width="544" style="width:100%;max-width:544px;height:auto;display:block;border-radius:12px;border:1px solid #F0EBE3;">
-      </td></tr>
-      <tr><td style="padding:0 28px 6px;">
-        <h1 style="margin:0 0 14px;font-size:23px;line-height:1.28;font-weight:800;color:#1a1a1a;">${headline}</h1>
-        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">${intro}</p>
+<body style="margin:0;padding:0;background:#FFFFFF;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1a1a1a;">
+<span style="display:none;font-size:1px;color:#FFFFFF;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${preheader}</span>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFFFFF;">
+  <tr><td align="center" style="padding:28px 20px;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="560" style="max-width:560px;width:100%;">
+      <tr><td style="padding:0 2px;">
+        <img src="${heroImg}" alt="${dogBreed}" width="200" style="width:100%;max-width:200px;height:auto;display:block;border-radius:10px;margin:0 0 18px;">
+        <h1 style="margin:0 0 12px;font-size:21px;line-height:1.3;font-weight:700;color:#1a1a1a;">${headline}</h1>
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#333333;">${intro}</p>
         ${bodyHtml}
         ${waHelp}
-      </td></tr>
-      <tr><td align="center" style="padding:24px 28px 12px;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;">
-          <tr><td align="center" bgcolor="#C4A576" style="border-radius:12px;background:#C4A576;">
-            <a href="${ctaUrl}" target="_blank" rel="noopener" style="display:inline-block;color:#FFFFFF;font-weight:700;font-size:15px;padding:16px 32px;text-decoration:none;border-radius:12px;line-height:1.2;">${ctaText}</a>
-          </td></tr>
-        </table>
-      </td></tr>
-      <tr><td align="center" style="padding:0 28px 24px;">
-        <p style="margin:0;font-size:11px;line-height:1.5;color:#9CA3AF;">
-          ${linkFallback}<br><a href="${ctaUrl}" target="_blank" rel="noopener" style="color:#8B7355;text-decoration:underline;word-break:break-all;">${ctaUrl}</a>
+        <p style="margin:22px 0 0;">
+          <a href="${ctaUrl}" target="_blank" rel="noopener" style="display:inline-block;padding:13px 24px;font-size:15px;font-weight:700;line-height:1;color:#FFFFFF;background:#C4A576;text-decoration:none;border-radius:8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">${ctaText}</a>
         </p>
-      </td></tr>
-      <tr><td style="padding:6px 28px 22px;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-          <tr><td style="padding:14px 16px;background:#FAFAFA;border-radius:10px;">
-            <p style="margin:0;font-size:13px;line-height:1.55;color:#6B7280;">${footerHint}</p>
-          </td></tr>
-        </table>
-      </td></tr>
-      <tr><td style="padding:14px 28px;background:#FAFAFA;border-top:1px solid #F0EBE3;">
-        <p style="margin:0;font-size:11px;line-height:1.6;color:#9CA3AF;text-align:center;">
+        <p style="margin:12px 0 0;font-size:11px;line-height:1.5;color:#9CA3AF;">${linkFallback}<br><a href="${ctaUrl}" target="_blank" rel="noopener" style="color:#8B7355;text-decoration:underline;word-break:break-all;">${ctaUrl}</a></p>
+        <p style="margin:18px 0 0;font-size:13px;line-height:1.55;color:#6B7280;">${footerHint}</p>
+        <p style="margin:22px 0 0;padding-top:14px;border-top:1px solid #EEEAE3;font-size:11px;line-height:1.6;color:#9CA3AF;">
           ${brand} · <a href="${BASE}/mitglieder" style="color:#8B7355;text-decoration:underline;">${myArea}</a> · <a href="mailto:support@pfoten-plan.de" style="color:#8B7355;text-decoration:underline;">support@pfoten-plan.de</a><br><a href="${unsubUrl || "{{ unsubscribe }}"}" style="color:#9CA3AF;text-decoration:underline;">${unsub}</a>
         </p>
       </td></tr>
