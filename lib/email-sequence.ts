@@ -167,6 +167,16 @@ function buildHtml(opts: {
     : isIt
     ? "Annulla l'iscrizione a queste e-mail"
     : "Aus diesen E-Mails abmelden";
+  // WhatsApp-Hilfe: nur DE, mittig unter dem Body
+  const waHelp =
+    isPl || isIt
+      ? ""
+      : `
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:16px 0 0;">
+          <tr><td style="padding:14px 16px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;">
+            <p style="margin:0;font-size:14px;line-height:1.6;color:#166534;"><img src="${BASE}/whatsapp-logo.png" width="18" height="18" alt="WhatsApp" style="width:18px;height:18px;vertical-align:-4px;margin-right:5px;border:0;" /><strong>Fragen zu deinem Hund?</strong> Schreib uns direkt auf <a href="https://wa.me/4915129892586?text=Hallo%2C%20ich%20habe%20eine%20Frage" style="color:#166534;font-weight:800;text-decoration:underline;">WhatsApp</a> — wir helfen dir persönlich weiter, meist innerhalb weniger Stunden.</p>
+          </td></tr>
+        </table>`;
   return `<!DOCTYPE html>
 <html lang="${htmlLang}">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${subject}</title></head>
@@ -185,6 +195,7 @@ function buildHtml(opts: {
         <h1 style="margin:0 0 14px;font-size:23px;line-height:1.28;font-weight:800;color:#1a1a1a;">${headline}</h1>
         <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">${intro}</p>
         ${bodyHtml}
+        ${waHelp}
       </td></tr>
       <tr><td align="center" style="padding:24px 28px 12px;">
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;">

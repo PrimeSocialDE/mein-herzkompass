@@ -779,11 +779,17 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
       <a href="${lebensretterUrl}" style="display:inline-block;padding:12px 22px;font-size:14px;font-weight:700;line-height:1;color:#FFFFFF;background:#C0392B;text-decoration:none;border-radius:10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">Lebensretter-Training ansehen →</a>
     </div>`;
 
+  // WhatsApp-Hilfe: mittig zwischen PDF-Hinweis und Mitglieder-Showcase
+  const waHelpBox = `
+    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:16px 18px;margin:22px 0;">
+      <p style="margin:0;font-size:14px;line-height:1.6;color:#166534;"><img src="${SITE_URL}/whatsapp-logo.png" width="18" height="18" alt="WhatsApp" style="width:18px;height:18px;vertical-align:-4px;margin-right:5px;border:0;" /><strong>Eine Frage zu ${escapeHtml(dogName)}s Plan — oder kommst du bei einer Übung nicht weiter?</strong> Schreib uns direkt auf <a href="https://wa.me/4915129892586?text=Hallo%2C%20ich%20habe%20eine%20Frage%20zu%20meinem%20Trainingsplan" style="color:#166534;font-weight:800;text-decoration:underline;">WhatsApp</a> — wir antworten persönlich, meist innerhalb weniger Stunden.</p>
+    </div>`;
+
   html = wrapTemplate({
     preheader: `Dein ${monthsLabel} für ${dogName} ist fertig.`,
     headline: `Dein ${monthsLabel} für ${dogName} ist fertig`,
     intro: `${greeting} dein persönlicher Trainings-Plan ist soeben für dich erstellt worden — komplett zugeschnitten auf ${dogName} und euer Haupt-Thema. ${weeksTotal} Wochen, mit konkreten Übungen für jeden Tag, Wochenzielen, Fortschritts-Markern und einem klaren roten Faden.`,
-    bodyHtml: `${pdfHinweis}${mitgliederShowcase}${lebensretterTeaser}`,
+    bodyHtml: `${pdfHinweis}${waHelpBox}${mitgliederShowcase}${lebensretterTeaser}`,
     ctaText: "Mitglieder-Bereich öffnen →",
     ctaUrl,
     footerHint: `Der Button enthält einen Einmal-Login — du landest direkt eingeloggt im Mitglieder-Bereich. Der Link gilt 1 Stunde und ist nur für dich.`,
@@ -1230,11 +1236,26 @@ export async function sendCheckoutRecoveryMail(args: {
     ? `${problemLabel ? `${escapeHtml(problemLabel)} bei ${escapeHtml(dog)}` : `Das Thema mit ${escapeHtml(dog)}`} ist nichts, was du alleine in den Griff kriegen musst. Schau dir in Ruhe an, was wir <strong>individuell für ${escapeHtml(dog)}</strong> zusammengestellt haben — <strong>kostenfrei zum Testen</strong>.`
     : `Das Thema mit deinem Hund ist nichts, was du alleine in den Griff kriegen musst. Schau dir in Ruhe an, was wir vorbereitet haben — <strong>kostenfrei zum Testen</strong>.`;
 
+  // UGC-Foto (echte Kundin mit ausgedrucktem Plan) — Social Proof mittig, wie in der Kampagne
+  const ugcPhotoBlock = `
+    <div style="text-align:center;margin:22px 0;">
+      <img src="${SITE_URL}/Scylla-Foto.jpg" width="440" alt="Kundin mit dem ausgedruckten Pfoten-Plan für ihren Hund" style="width:100%;max-width:440px;height:auto;border-radius:14px;display:block;margin:0 auto;border:1px solid #F0EBE3;" />
+      <p style="margin:10px auto 0;max-width:440px;font-size:13px;line-height:1.55;color:#6E655A;font-style:italic;">Jette &amp; Scylla — mitten im Training mit dem ausgedruckten Pfoten-Plan. 🐾 Über 2.000 Hundehalter trainieren schon so mit uns.</p>
+    </div>`;
+
+  // WhatsApp-Hilfe: persönlicher Draht, mittig
+  const waHelpBox = `
+    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 16px;margin:18px 0;">
+      <p style="margin:0;font-size:14px;line-height:1.6;color:#166534;"><img src="${SITE_URL}/whatsapp-logo.png" width="18" height="18" alt="WhatsApp" style="width:18px;height:18px;vertical-align:-4px;margin-right:5px;border:0;" /><strong>Eine Frage zu ${escapeHtml(dog)} oder brauchst du kurz Hilfe?</strong> Schreib uns direkt auf <a href="https://wa.me/4915129892586?text=Hallo%2C%20ich%20habe%20eine%20Frage%20zu%20meinem%20Trainingsplan" style="color:#166534;font-weight:800;text-decoration:underline;">WhatsApp</a> — wir antworten persönlich, meist innerhalb weniger Stunden.</p>
+    </div>`;
+
   const bodyHtml = `
     ${bulletsHtml}
+    ${ugcPhotoBlock}
     <p style="margin:14px 0 0;font-size:14px;line-height:1.6;color:#4B5563;">
       Ein Klick auf den Button und du bist direkt drin — kein Passwort, keine erneute Anmeldung.
     </p>
+    ${waHelpBox}
     ${trustBoxHtml}`;
 
   const html = wrapTemplate({
