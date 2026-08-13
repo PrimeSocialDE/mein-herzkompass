@@ -4737,7 +4737,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 cancelPath: cancelPath,
                 source_page: 'deinplan3',
                 ab_test_trust: localStorage.getItem('ab_test_trust') || '',
-                ab_variant: localStorage.getItem('ab_test_pricing') || '',
+                ab_variant: (localStorage.getItem('ab_test_pricing')||'A2').replace(/^A$/,'A2').replace(/^B$/,'B2'),
                 ab_intro: localStorage.getItem('ab_intro') || '',
                 ab_badge: localStorage.getItem('ab_badge_v1') || '',
                 entry_page: localStorage.getItem('entry_page') || '',
