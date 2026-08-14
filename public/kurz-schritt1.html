@@ -29,6 +29,8 @@
                 if (v === 'B' && fresh) document.documentElement.classList.add('intro-b');
                 var sid = localStorage.getItem('ab_sid'); if(!sid){ sid = Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem('ab_sid', sid); }
                 fetch('/api/ab-ping',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({test:'intro',variant:v,step:'ks1_view',sid:sid})}).catch(function(){});
+                var sid = localStorage.getItem('ab_sid'); if(!sid){ sid = Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem('ab_sid', sid); }
+                fetch('/api/ab-ping',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({test:'intro',variant:v,step:'ks1_view',sid:sid})}).catch(function(){});
             } catch (e) {}
         })();
     </script>

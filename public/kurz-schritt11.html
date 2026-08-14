@@ -365,6 +365,7 @@
             // (sonst wuerde der PATCH die answers-JSONB-Spalte ueberschreiben).
             localStorage.setItem('quizAnswersCache', JSON.stringify(answers));
             try { fetch('/api/ab-ping',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({test:'intro',variant:localStorage.getItem('ab_intro'),step:'quiz_done',sid:localStorage.getItem('ab_sid')})}).catch(function(){}); } catch(e){}
+            try { fetch('/api/ab-ping',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({test:'intro',variant:localStorage.getItem('ab_intro'),step:'quiz_done',sid:localStorage.getItem('ab_sid')})}).catch(function(){}); } catch(e){}
 
             // 1. Supabase speichern
             try {
