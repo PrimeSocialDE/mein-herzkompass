@@ -4198,7 +4198,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                             price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price,
                             timer_expired: timerExpired,
                             status: 'pending',
-                            answers: answers
+                            ...((answers && (answers.dog_name || answers.dog_problem || answers.dog_breed || answers.dog_age)) ? { answers: answers } : {})
                         })
                     });
                     
@@ -4628,7 +4628,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                             'Prefer': 'return=minimal'
                         },
                         body: JSON.stringify({ 
-                            answers: currentAnswers
+                            ...((currentAnswers && (currentAnswers.dog_name || currentAnswers.dog_problem || currentAnswers.dog_breed || currentAnswers.dog_age)) ? { answers: currentAnswers } : {})
                         })
                     });
                     
