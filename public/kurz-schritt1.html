@@ -24,9 +24,8 @@
         (function () {
             try {
                 var v = localStorage.getItem('ab_intro');
-                if (v !== 'A' && v !== 'B') { v = Math.random() < 0.5 ? 'A' : 'B'; localStorage.setItem('ab_intro', v); }
+                if (v !== 'A' && v !== 'B') { v = 'A'; localStorage.setItem('ab_intro', v); }
                 var fresh = !document.referrer.includes('kurz-schritt');
-                if (v === 'B' && fresh) document.documentElement.classList.add('intro-b');
                 var sid = localStorage.getItem('ab_sid'); if(!sid){ sid = Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem('ab_sid', sid); }
                 fetch('/api/ab-ping',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({test:'intro',variant:v,step:'ks1_view',sid:sid})}).catch(function(){});
             } catch (e) {}
