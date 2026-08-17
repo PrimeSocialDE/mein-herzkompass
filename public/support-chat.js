@@ -101,8 +101,10 @@
     } catch (e) {
       reply = "Oje, gerade hakt's. Schreib uns kurz auf WhatsApp, dann helfen wir dir sofort. 🐾";
     }
-    // erst nach ~2 Sek antworten (wirkt menschlicher)
-    var waitMs = Math.max(0, 2000 - (Date.now() - t0));
+    // menschliches Tempo: "denken + tippen", skaliert mit Antwortlänge —
+    // und IMMER ein sichtbarer Tipp-Beat nach dem Fetch, damit die Animation nie übersprungen wird
+    var think = 1400 + Math.min(3000, (reply ? reply.length : 40) * 28); // ~1,6–4,4 s
+    var waitMs = Math.max(1200, think - (Date.now() - t0));
     setTimeout(function () {
       t.remove(); bubble(reply, "ai"); history.push({ role: "assistant", content: reply });
       busy = false; sendBtn.disabled = false; input.focus();
