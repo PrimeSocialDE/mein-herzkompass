@@ -8,13 +8,14 @@
 
   var dog = "";
   try { dog = (localStorage.getItem("dogName") || "").trim(); } catch (e) {}
-  var DOG = dog || "deinem Hund";
+  var DOG = dog || "deinen Hund";
+  function sess(k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } }
   var WA = "https://wa.me/4915129892586?text=" + encodeURIComponent("Hallo, ich habe eine Frage zu meinem Trainingsplan 🐾");
 
   // Quick-Fragen mit sofortiger (kostenloser) Antwort
   var FAQ = [
     { q: "Wann kommt mein Plan?", a: "Sofort nach dem Kauf per E-Mail — als PDF und mit Login zum Mitgliederbereich. Falls er nicht ankommt, schau bitte kurz im Spam-Ordner. 🐾" },
-    { q: "Kann ich Antworten ändern?", a: "Ja klar! Nach dem Kauf passen wir " + DOG + "s Plan jederzeit an, wenn etwas nicht passt. Schreib uns einfach, wir machen das." },
+    { q: "Kann ich Antworten ändern?", a: "Ja klar! Sag mir einfach hier, was du ändern möchtest — z.B. das Hauptthema, das Alter oder die Rasse. Zur Sicherheit frage ich noch kurz deine E-Mail ab, dann passe ich den Plan für " + DOG + " direkt an. 🐾" },
     { q: "So funktioniert's", a: "Du beantwortest ein kurzes Quiz zu deinem Hund, und wir erstellen daraus einen individuellen Schritt-für-Schritt-Plan. Kleine Übungen für jeden Tag, in deinem Tempo." },
     { q: "Ist das ein Abo?", a: "Nein, du zahlst einmalig. Kein Abo, keine Folgekosten." },
     { q: "Garantie & Geld zurück", a: "30 Tage Geld-zurück-Garantie. Wenn du nicht zufrieden bist, bekommst du dein Geld zurück — kein Risiko." },
@@ -91,15 +92,21 @@
     busy = true; sendBtn.disabled = true; input.value = "";
     bubble(text, "me"); history.push({ role: "user", content: text });
     var t = typing();
+    var t0 = Date.now();
+    var reply;
     try {
-      var r = await fetch("/api/support-chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: history }) });
-      var j = await r.json(); t.remove();
-      var reply = (j && j.reply) || "Schreib uns am besten kurz auf WhatsApp, dann helfen wir dir sofort. 🐾";
-      bubble(reply, "ai"); history.push({ role: "assistant", content: reply });
+      var r = await fetch("/api/support-chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: history, leadId: sess("leadId"), email: sess("email") || sess("wauwerk_email") || sess("userEmail") }) });
+      var j = await r.json();
+      reply = (j && j.reply) || "Schreib uns am besten kurz auf WhatsApp, dann helfen wir dir sofort. 🐾";
     } catch (e) {
-      t.remove(); bubble("Oje, gerade hakt's. Schreib uns kurz auf WhatsApp, dann helfen wir dir sofort. 🐾", "ai");
+      reply = "Oje, gerade hakt's. Schreib uns kurz auf WhatsApp, dann helfen wir dir sofort. 🐾";
     }
-    busy = false; sendBtn.disabled = false; input.focus();
+    // erst nach ~2 Sek antworten (wirkt menschlicher)
+    var waitMs = Math.max(0, 2000 - (Date.now() - t0));
+    setTimeout(function () {
+      t.remove(); bubble(reply, "ai"); history.push({ role: "assistant", content: reply });
+      busy = false; sendBtn.disabled = false; input.focus();
+    }, waitMs);
   }
   function open() {
     panel.classList.add("open"); if (badge) badge.style.display = "none";
