@@ -51,7 +51,7 @@
 
   var wrap = document.createElement("div");
   wrap.innerHTML =
-    '<button id="pf-btn" aria-label="Support-Chat öffnen"><span id="pf-badge">1</span>' +
+    '<button id="pf-btn" aria-label="Support-Chat öffnen">' +
     '<svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.2 1 4.2 2.7 5.7-.1 1-.5 2.4-1.4 3.3 1.5-.1 3-.6 4.2-1.5 1.4.5 2.9.8 4.5.8 5.5 0 10-3.8 10-8.6S17.5 3 12 3z"/></svg></button>' +
     '<div id="pf-panel" role="dialog" aria-label="Support-Chat">' +
     '<div class="pf-hd"><span class="pf-av">🐾<span class="dot"></span></span><div><b>Emma vom Pfoten-Plan Team</b><small>antwortet sofort</small></div><button class="pf-x" aria-label="Schließen">&times;</button></div>' +
