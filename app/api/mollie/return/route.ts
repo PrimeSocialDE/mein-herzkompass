@@ -153,6 +153,50 @@ export async function GET(req: NextRequest) {
             .update(updateData)
             .eq("id", leadId);
 
+          // Beleg (Kleinbetragsrechnung) nachziehen: der Mollie-Webhook erzeugt ihn
+          // normalerweise, aber wenn DIESER Safety-Net-Pfad zuerst prozessiert, fehlt
+          // er sonst in der Plan-Mail. Idempotent ueber p_mollie_payment_id, daher
+          // kein Doppel-Beleg falls der Webhook nachkommt. Fehler brechen den Kauf nicht.
+          try {
+            const bruttoCents = Math.round(
+              parseFloat(payment.amount?.value || "0") * 100
+            );
+            if (bruttoCents > 0) {
+              const {
+                belegDescription,
+                belegDescriptionPl,
+                belegDescriptionIt,
+                PL_VAT_RATE,
+                IT_VAT_RATE,
+              } = await import("@/lib/beleg");
+              const isPlSale = (freshAnswers as any)?.lang === "pl";
+              const isItSale = (freshAnswers as any)?.lang === "it";
+              const belegMeta = (payment.metadata || {}) as Record<string, any>;
+              await supabase.rpc("create_beleg", {
+                p_mollie_payment_id: payment.id,
+                p_lead_id: leadId,
+                p_email: lead.email || payment?.metadata?.email || null,
+                p_beschreibung: isPlSale
+                  ? belegDescriptionPl(belegMeta)
+                  : isItSale
+                  ? belegDescriptionIt(belegMeta)
+                  : belegDescription(belegMeta),
+                p_brutto_cents: bruttoCents,
+                p_leistungsdatum: new Date().toISOString(),
+                ...(isPlSale
+                  ? { p_ust_satz: PL_VAT_RATE, p_markt: "PL", p_waehrung: "PLN" }
+                  : isItSale
+                  ? { p_ust_satz: IT_VAT_RATE, p_markt: "IT", p_waehrung: "EUR" }
+                  : {}),
+              });
+            }
+          } catch (e) {
+            console.error(
+              "[mollie-return] Beleg-Erstellung (Safety-Net) fehlgeschlagen (Zahlung laeuft weiter):",
+              e
+            );
+          }
+
           // Direct-Sync member_users falls schon Profil vorhanden
           const leadEmail = lead.email || payment?.metadata?.email || null;
           if (leadEmail) {
