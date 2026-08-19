@@ -237,6 +237,116 @@ function ctaUrlFor(lead: SequenceLead): string {
   return `${BASE}/rueckhol.html?lead_id=${encodeURIComponent(lead.id)}&email=${encodeURIComponent(lead.email)}`;
 }
 
+// ── email_captured-Nurture: problem-personalisierte Bausteine (DE) ──
+// Pro Quiz-Problem: Betreff-Hook, Schmerz-Satz, Gratis-Sofort-Übung (Punkt 2),
+// und ein "Warum es nicht von allein weggeht"-Satz. Fallback deckt alles ab.
+type EcBits = { label: string; subj: string; pain: string; tipTitle: string; tip: string; why: string };
+function ecProblemBits(lead: SequenceLead): EcBits {
+  const dn = (lead.dog_name || "dein Hund").trim() || "dein Hund";
+  const a = lead.answers || {};
+  const key = String(a.custom_problem_key || a.dog_problem || "").toLowerCase();
+  const M: Record<string, EcBits> = {
+    pulling: {
+      label: "Ziehen an der Leine",
+      subj: `${dn} zieht an der Leine? Fang mit dieser einen Sache an`,
+      pain: `Ziehen an der Leine macht jeden Spaziergang zum Kraftakt, für dich und für ${dn}.`,
+      tipTitle: "Sofort-Übung: Stehenbleiben",
+      tip: `Sobald die Leine straff wird, bleibst du sofort stehen. Kein Wort, kein Gegenziehen. Erst wenn die Leine wieder locker durchhängt, geht es weiter. 5 Minuten pro Spaziergang reichen. ${dn} lernt so: Ziehen führt zu Stillstand, lockere Leine führt vorwärts.`,
+      why: `Ziehen ist keine Sturheit. Für ${dn} hat es sich bisher immer gelohnt, denn es ging ja jedes Mal weiter. Der Plan dreht genau diese Logik konsequent um.`,
+    },
+    recall: {
+      label: "Rückruf",
+      subj: `${dn} kommt nicht zuverlässig? Das ändert sich hiermit`,
+      pain: `Wenn ${dn} nicht zuverlässig kommt, wird jeder Freilauf zur Zitterpartie.`,
+      tipTitle: "Sofort-Übung: Der Lohn-Rückruf",
+      tip: `Ruf ${dn} zuerst nur im Haus, in fröhlichem Ton. Kommt er, gibt es sofort etwas richtig Gutes (Lieblingsleckerli, kurzes Spiel). 3× am Tag. Wichtig: Schimpf nie, wenn er zögert. Rückruf muss sich für ${dn} immer lohnen, dann kommt er später auch draußen.`,
+      why: `${dn} kommt nicht, weil das Kommen sich bisher seltener gelohnt hat als das Weiterschnüffeln. Der Plan baut den Rückruf systematisch als das bessere Angebot auf.`,
+    },
+    aggression: {
+      label: "Aggression",
+      subj: `Ein wichtiger erster Schritt bei ${dn}`,
+      pain: `Wenn ${dn} in bestimmten Momenten ausrastet, ist das für alle stressig und oft auch beschämend.`,
+      tipTitle: "Sofort-Übung: Abstand ist dein Werkzeug",
+      tip: `Vergrößere bei einem Auslöser sofort den Abstand, BEVOR ${dn} reagiert. Belohne ruhiges Verhalten schon unterhalb der Schwelle, an der er sonst hochgeht. Lauf nie in die Reaktion hinein, das verfestigt sie nur.`,
+      why: `Aggression ist meist Überforderung, kein Charakter. ${dn} braucht mehr Abstand und klare Führung, genau das trainiert der Plan in kleinen, sicheren Schritten.`,
+    },
+    "dog-reactive": {
+      label: "Reaktivität gegen Hunde",
+      subj: `Wenn ${dn} bei anderen Hunden ausrastet`,
+      pain: `Anderen Hunden ausweichen, die Straßenseite wechseln, das kostet Nerven bei jedem Gang.`,
+      tipTitle: "Sofort-Übung: Abstand + Belohnung",
+      tip: `Sieh den anderen Hund früh und vergrößere sofort den Abstand, so weit, dass ${dn} noch ruhig bleibt. Genau dort fütterst du ruhig weiter. Du trainierst: anderer Hund in Sicht bedeutet gute Dinge, nicht Alarm.`,
+      why: `Reaktivität ist Stress, nicht Bosheit. ${dn} lernt über wachsende, kontrollierte Nähe, dass andere Hunde keine Bedrohung sind. Der Plan führt das Schritt für Schritt.`,
+    },
+    anxiety: {
+      label: "Trennungsangst",
+      subj: `${dn} allein zu Hause? Fang klein an`,
+      pain: `Wenn ${dn} nicht allein bleiben kann, wird jeder Weg aus dem Haus zum schlechten Gewissen.`,
+      tipTitle: "Sofort-Übung: Die 30-Sekunden-Regel",
+      tip: `Verlass den Raum für nur 30 Sekunden und komm ruhig wieder rein, ohne große Begrüßung. Steigere die Zeit langsam über Tage. ${dn} lernt in kleinen Dosen: Alleinsein ist kurz und ungefährlich, du kommst immer zurück.`,
+      why: `Trennungsangst löst man nicht mit „durchhalten", sondern mit winzigen, positiven Schritten. Genau so ist der Plan aufgebaut.`,
+    },
+    barking: {
+      label: "übermäßiges Bellen",
+      subj: `${dn} bellt zu viel? Das hilft sofort`,
+      pain: `Dauerbellen zerrt an den Nerven, und an denen der Nachbarn gleich mit.`,
+      tipTitle: "Sofort-Übung: Ruhe belohnen",
+      tip: `In der Sekunde, in der ${dn} aufhört zu bellen, lobst du ruhig und belohnst. Schimpfen befeuert das Bellen oft noch, weil es Aufmerksamkeit ist. Du belohnst gezielt die Stille, nicht den Lärm.`,
+      why: `Bellen hat immer einen Auslöser. ${dn} hört nicht auf, weil er merkt, dass Bellen wirkt. Der Plan zeigt dir, wie du den Auslöser entschärfst und Ruhe zur besseren Option machst.`,
+    },
+    jumping: {
+      label: "Anspringen",
+      subj: `${dn} springt Menschen an? Eine einfache Regel`,
+      pain: `Anspringen ist niedlich beim Welpen und unangenehm beim ausgewachsenen Hund, vor allem bei Gästen.`,
+      tipTitle: "Sofort-Übung: Vier Pfoten am Boden",
+      tip: `Springt ${dn} hoch, dreh dich wortlos weg und ignoriere ihn. Erst wenn alle vier Pfoten am Boden sind, gibt es Aufmerksamkeit und Lob. Wichtig: alle im Haushalt machen es genau gleich, sonst lernt er es nie.`,
+      why: `Anspringen ist ein Gruß, der bisher belohnt wurde (mit Aufmerksamkeit). ${dn} braucht eine klare Alternative, die sich mehr lohnt. Der Plan baut die auf.`,
+    },
+    energy: {
+      label: "zu viel Energie",
+      subj: `${dn} kommt nie zur Ruhe? Probier das`,
+      pain: `Ein Hund, der nie runterfährt, macht müde, nicht der Hund, sondern dich.`,
+      tipTitle: "Sofort-Übung: Kopfarbeit statt nur Rennen",
+      tip: `Verstecke eine Handvoll Leckerli in der Wohnung oder im Garten und lass ${dn} suchen. 10 Minuten Schnüffeln ermüden ihn mehr als eine Stunde Rennen, und danach ist er wirklich zufrieden ruhig.`,
+      why: `Mehr Auspowern macht oft nur einen fitteren, unruhigeren Hund. ${dn} braucht die richtige Mischung aus Kopf und Körper plus echte Ruhe-Signale. Genau das strukturiert der Plan.`,
+    },
+    destructive: {
+      label: "zerstörerisches Verhalten",
+      subj: `${dn} zerkaut alles? Der erste Schritt`,
+      pain: `Zerkaute Schuhe und Möbel sind teuer und frustrierend, besonders wenn es immer wieder passiert.`,
+      tipTitle: "Sofort-Übung: Erlaubte Alternative",
+      tip: `Biete ${dn} eine klar erlaubte Kau-Alternative an (Kauartikel, gefüllte Kong) und lobe ruhig, wenn er sie nutzt. Zerstörung ist fast immer Langeweile oder Stress, eine gute Beschäftigung nimmt den Druck raus.`,
+      why: `${dn} zerstört nicht aus Trotz, sondern weil ihm etwas fehlt. Der Plan deckt Auslastung und Ruhe ab, damit gar nicht erst Frust entsteht.`,
+    },
+    soiling: {
+      label: "Unsauberkeit",
+      subj: `${dn} macht in die Wohnung? Das hilft`,
+      pain: `Immer wieder Pfützen oder Häufchen drinnen, das zermürbt und macht ratlos.`,
+      tipTitle: "Sofort-Übung: Feste Zeiten plus sofort loben",
+      tip: `Bring ${dn} nach Fressen, Schlafen und Spielen sofort raus. Löst er sich draußen, lobst du im selben Moment ruhig. Drinnen niemals schimpfen, das macht nur ängstlich und verschlimmert es oft.`,
+      why: `Unsauberkeit ist meist eine Frage von Timing und Routine, nicht von Ungehorsam. Der Plan gibt dir genau diese verlässliche Struktur.`,
+    },
+    mouthing: {
+      label: "Zwicken und Beißen",
+      subj: `${dn} zwickt mit den Zähnen? Fang hier an`,
+      pain: `Zwicken tut weh und wird mit einem größeren Hund schnell zum echten Problem.`,
+      tipTitle: "Sofort-Übung: Zähne beenden das Spiel",
+      tip: `Zwickt ${dn}, sag einmal kurz „Autsch", zieh die Hand ruhig weg und ignoriere ihn 10 Sekunden. Er lernt: Zähne an der Haut beenden sofort den Spaß. Danach ruhig weitermachen mit einem erlaubten Spielzeug.`,
+      why: `Zwicken ist normales Erkunden, muss aber klare Grenzen bekommen. Der Plan zeigt dir, wie ${dn} lernt, sein Maul kontrolliert einzusetzen.`,
+    },
+  };
+  return (
+    M[key] || {
+      label: "das Verhalten",
+      subj: `${dn}s persönlicher Trainingsplan wartet noch`,
+      pain: `Das Verhalten, das dich bei ${dn} stört, lässt sich mit den richtigen kleinen Schritten wirklich ändern.`,
+      tipTitle: "Sofort-Übung: Die 3-Minuten-Regel",
+      tip: `Übe lieber 3× am Tag je 3 Minuten als einmal lang am Stück. Kurze, erfolgreiche Einheiten bauen bei ${dn} viel schneller Verlässlichkeit auf als lange, frustige Sessions.`,
+      why: `Verhalten ändert sich über klare, wiederholte Muster, nicht über Strenge. Genau das macht der Plan mit ${dn} Schritt für Schritt.`,
+    }
+  );
+}
+
 function buildMailDef(
   n: number,
   lead: SequenceLead,
@@ -255,6 +365,113 @@ function buildMailDef(
       : lang === "it"
       ? pluralBreedIt(lead.dog_breed)
       : pluralBreed(lead.dog_breed);
+
+  // ── email_captured-Nurture (Mails 101–104), problem-personalisiert, DE only ──
+  if (n >= 101 && n <= 106) {
+    if (lang !== "de") return null;
+    const pb = ecProblemBits(lead);
+    const cta = `${dogName}s Plan ansehen`;
+    // Proof: aggregiert + problem-bezogen, grammatik-sicher über "wenn es um … geht"
+    const proof = `Über 3.400 Hunde wurden mit Pfoten-Plan schon trainiert. Wenn es um ${pb.label} geht, berichten die meisten Halter schon nach wenigen Tagen von den ersten spürbaren Veränderungen bei ${dogName}.`;
+    const tipBox = `
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-left:3px solid #C4A576;background:#FAF6EE;border-radius:6px;margin:16px 0;">
+          <tr><td style="padding:15px 18px;">
+            <p style="margin:0 0 5px;font-size:12px;font-weight:700;color:#8B7355;text-transform:uppercase;letter-spacing:.3px;">${pb.tipTitle}</p>
+            <p style="margin:0;font-size:14px;line-height:1.65;color:#3a3a3a;">${pb.tip}</p>
+          </td></tr>
+        </table>`;
+
+    // 101 — Tag 0 (~10 Min nach Eingabe): Problem-Hook + Gratis-Übung + Proof
+    if (n === 101) {
+      return {
+        subject: pb.subj,
+        preheader: `Eine Sache, die du heute schon gratis ausprobieren kannst.`,
+        headline: pb.pain,
+        intro: `Du hast gerade das Quiz zu ${dogName} gemacht, also kennen wir das Thema: ${pb.label}. Bevor du überhaupt etwas kaufst, hier eine Übung, die du heute sofort ausprobieren kannst.`,
+        bodyHtml: `${tipBox}
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">Das ist bewusst nur EIN Baustein. Der vollständige, auf ${dogName} zugeschnittene Schritt-für-Schritt-Plan setzt genau hier an und führt dich Woche für Woche weiter.</p>
+        <p style="margin:0;font-size:13.5px;line-height:1.6;color:#6B7280;">${proof}</p>`,
+        ctaText: cta,
+        footerHint: `Antworte einfach auf diese Mail, wenn du eine Frage zu ${dogName} hast. Wir lesen jede persönlich.`,
+      };
+    }
+
+    // 102 — Tag 1: Warum es nicht von allein weggeht
+    if (n === 102) {
+      return {
+        subject: `Warum ${dogName} das nicht „einfach so" ablegt`,
+        preheader: `Es liegt fast nie am Hund.`,
+        headline: `${dogName} ist nicht stur. Es fehlt nur ein klarer Weg.`,
+        intro: `Die meisten denken, ihr Hund „müsste es doch langsam kapieren". Aber ${dogName} macht nichts falsch.`,
+        bodyHtml: `
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">${pb.why}</p>
+        <p style="margin:0;font-size:15px;line-height:1.6;color:#3a3a3a;">Genau deshalb funktionieren einzelne YouTube-Tipps oft nicht dauerhaft: Sie sind Puzzleteile ohne Reihenfolge. Ein Plan gibt ${dogName} die Reihenfolge, in der ein Schritt auf dem nächsten aufbaut.</p>`,
+        ctaText: cta,
+        footerHint: `Fragen zu ${dogName}? Antworte einfach, wir helfen dir gern weiter.`,
+      };
+    }
+
+    // 103 — Tag 3: Proof / Social Proof, problem-bezogen
+    if (n === 103) {
+      return {
+        subject: `Du bist mit ${dogName}s Thema nicht allein`,
+        preheader: `Kurz, warum das kein Zufall ist.`,
+        headline: `${pb.label.charAt(0).toUpperCase() + pb.label.slice(1)} ist eins der häufigsten Themen bei uns.`,
+        intro: proof,
+        bodyHtml: `
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">Der Unterschied war bei ihnen nie ein „besserer Hund" oder mehr Strenge. Es war jedes Mal das Gleiche: ein klarer Plan, kleine tägliche Schritte, in der richtigen Reihenfolge.</p>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Genau das liegt für ${dogName} bereit, zugeschnitten auf ${pb.label}.</p>`,
+        ctaText: cta,
+        footerHint: `Fragen zu ${dogName}? Antworte einfach auf diese Mail.`,
+      };
+    }
+
+    // 104 — Tag 5: Check-in (Reaktivierung, zweiter Value-Touch)
+    if (n === 104) {
+      return {
+        subject: `Hast du die Übung mit ${dogName} probiert?`,
+        preheader: `Kurzer Check-in.`,
+        headline: `Wie lief es mit ${dogName}?`,
+        intro: `Vor ein paar Tagen hast du von uns die Sofort-Übung für ${dogName} bekommen. Hast du sie ausprobiert?`,
+        bodyHtml: `
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">Falls ja: super, das ist genau der richtige Anfang. Falls noch nicht: völlig okay, hier ist sie nochmal.</p>
+        ${tipBox}
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Diese eine Übung ist Schritt 1 von vielen. Der komplette Plan gibt dir den Rest, in der Reihenfolge, in der ${dogName} ihn wirklich braucht.</p>`,
+        ctaText: cta,
+        footerHint: `Steckst du irgendwo fest? Antworte einfach, wir helfen persönlich.`,
+      };
+    }
+
+    // 105 — Tag 8: Einwände räumen
+    if (n === 105) {
+      return {
+        subject: `Kurz gefragt zu ${dogName}`,
+        preheader: `Falls dich noch etwas zögern lässt.`,
+        headline: `Was hält dich noch zurück?`,
+        intro: `Viele zögern aus den gleichen drei Gründen. Vielleicht ist deiner dabei.`,
+        bodyHtml: `
+        <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#3a3a3a;"><strong>„Ich hab vielleicht was falsch angegeben."</strong><br>Kein Problem, das lässt sich jederzeit anpassen, auch nach dem Kauf. Schreib uns einfach.</p>
+        <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#3a3a3a;"><strong>„Ist das ein Abo?"</strong><br>Nein. Einmal zahlen, der komplette Plan für ${dogName} gehört dir. Keine Folgekosten.</p>
+        <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#3a3a3a;"><strong>„Und wenn es nicht passt?"</strong><br>30 Tage Geld-zurück-Garantie. Du gehst also kein Risiko ein.</p>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Wenn dich sonst noch etwas zurückhält, antworte einfach auf diese Mail.</p>`,
+        ctaText: cta,
+        footerHint: `Wir lesen jede Antwort persönlich, meist meldet sich jemand innerhalb von 12 Stunden.`,
+      };
+    }
+
+    // 106 — Tag 12: letzter Anstoß
+    return {
+      subject: `${dogName}s Plan liegt noch bereit`,
+      preheader: `Der letzte Anstoß, dann lassen wir dich in Ruhe.`,
+      headline: `Der erste Schritt ist oft der schwerste.`,
+      intro: `Du wolltest etwas für ${dogName} ändern, sonst hättest du das Quiz nicht gemacht. Dieses Gefühl war richtig.`,
+      bodyHtml: `
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">${pb.label.charAt(0).toUpperCase() + pb.label.slice(1)} wird selten von allein besser. Aber mit einem klaren Plan und ein paar Minuten am Tag verändert sich erstaunlich schnell etwas, für ${dogName} und für euer Zusammenleben.</p>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Der auf ${dogName} zugeschnittene Plan wartet. Heute anfangen heißt, in einer Woche schon einen Unterschied zu sehen.</p>`,
+      ctaText: `Jetzt ${dogName}s Plan starten`,
+      footerHint: `Das ist die letzte Mail dieser Reihe. Kein Interesse mehr? Über den Abmelde-Link unten bist du sofort raus.`,
+    };
+  }
 
   if (n === 2) {
     if (lang === "pl") {
@@ -842,6 +1059,29 @@ export function getDueMail(daysAfterPaid: number): number | null {
   let due: number | null = null;
   for (const s of EMAIL_SEQUENCE_SCHEDULE) {
     if (daysAfterPaid >= s.daysAfterPaid - 1) due = s.num;
+  }
+  return due;
+}
+
+// ── email_captured-Nurture Schedule (Tage nach Quiz-Abschluss = created_at) ──
+// Versendet über sendSequenceMail (Mail-Nr 101–104). Gated im Cron via EC_SEQUENCE_LIVE.
+export const EC_SEQUENCE_SCHEDULE: Array<{
+  num: number;
+  daysAfterCaptured: number;
+  label: string;
+}> = [
+  { num: 101, daysAfterCaptured: 0, label: "EC Tag 0 (~10 Min) — Problem-Hook + Gratis-Übung + Proof" },
+  { num: 102, daysAfterCaptured: 1, label: "EC Tag 1 — Warum es nicht von allein weggeht" },
+  { num: 103, daysAfterCaptured: 3, label: "EC Tag 3 — Proof (problem-bezogen)" },
+  { num: 104, daysAfterCaptured: 5, label: "EC Tag 5 — Check-in / zweiter Value-Touch" },
+  { num: 105, daysAfterCaptured: 8, label: "EC Tag 8 — Einwände räumen" },
+  { num: 106, daysAfterCaptured: 12, label: "EC Tag 12 — letzter Anstoß" },
+];
+
+export function getDueEcMail(daysAfterCaptured: number): number | null {
+  let due: number | null = null;
+  for (const s of EC_SEQUENCE_SCHEDULE) {
+    if (daysAfterCaptured >= s.daysAfterCaptured) due = s.num;
   }
   return due;
 }
