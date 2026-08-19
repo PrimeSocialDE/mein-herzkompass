@@ -86,6 +86,7 @@ export async function GET(req: NextRequest) {
     skipped_unsubscribed: 0,
     skipped_already_sent: 0,
     skipped_no_due_mail: 0,
+    skipped_too_fresh: 0,
     skipped_no_content: 0,
     skipped_test_email: 0,
     failed: 0,
@@ -120,10 +121,19 @@ export async function GET(req: NextRequest) {
     }
 
     const createdAt = new Date(lead.created_at);
-    const daysAfterCaptured = Math.floor((Date.now() - createdAt.getTime()) / 86_400_000);
+    const msAgo = Date.now() - createdAt.getTime();
+    const daysAfterCaptured = Math.floor(msAgo / 86_400_000);
     const dueMailNum = getDueEcMail(daysAfterCaptured);
     if (!dueMailNum) {
       stats.skipped_no_due_mail++;
+      continue;
+    }
+
+    // Tag-0-Mail (101): erst ~10 Min nach Eingabe senden. Warm, aber nicht im
+    // selben Moment (vermeidet Rennen mit dem Checkout: wer sofort kauft, wird
+    // pending/paid und fällt hier ohnehin raus).
+    if (dueMailNum === 101 && !emailFilter && msAgo < 10 * 60_000) {
+      stats.skipped_too_fresh++;
       continue;
     }
 

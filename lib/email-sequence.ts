@@ -367,9 +367,12 @@ function buildMailDef(
       : pluralBreed(lead.dog_breed);
 
   // ── email_captured-Nurture (Mails 101–104), problem-personalisiert, DE only ──
-  if (n >= 101 && n <= 104) {
+  if (n >= 101 && n <= 106) {
     if (lang !== "de") return null;
     const pb = ecProblemBits(lead);
+    const cta = `${dogName}s Plan ansehen`;
+    // Proof: aggregiert + problem-bezogen, grammatik-sicher über "wenn es um … geht"
+    const proof = `Über 3.400 Hunde wurden mit Pfoten-Plan schon trainiert. Wenn es um ${pb.label} geht, berichten die meisten Halter schon nach wenigen Tagen von den ersten spürbaren Veränderungen bei ${dogName}.`;
     const tipBox = `
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-left:3px solid #C4A576;background:#FAF6EE;border-radius:6px;margin:16px 0;">
           <tr><td style="padding:15px 18px;">
@@ -377,19 +380,23 @@ function buildMailDef(
             <p style="margin:0;font-size:14px;line-height:1.65;color:#3a3a3a;">${pb.tip}</p>
           </td></tr>
         </table>`;
+
+    // 101 — Tag 0 (~10 Min nach Eingabe): Problem-Hook + Gratis-Übung + Proof
     if (n === 101) {
       return {
         subject: pb.subj,
         preheader: `Eine Sache, die du heute schon gratis ausprobieren kannst.`,
         headline: pb.pain,
-        intro: `Du hast das Quiz zu ${dogName} gemacht, also kennen wir das Thema: ${pb.label}. Bevor du überhaupt etwas kaufst, hier eine Übung, die du heute sofort ausprobieren kannst.`,
+        intro: `Du hast gerade das Quiz zu ${dogName} gemacht, also kennen wir das Thema: ${pb.label}. Bevor du überhaupt etwas kaufst, hier eine Übung, die du heute sofort ausprobieren kannst.`,
         bodyHtml: `${tipBox}
         <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">Das ist bewusst nur EIN Baustein. Der vollständige, auf ${dogName} zugeschnittene Schritt-für-Schritt-Plan setzt genau hier an und führt dich Woche für Woche weiter.</p>
-        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Probier die Übung ein paar Tage. Und wenn du den kompletten Plan für ${dogName} sehen willst, ist er nur einen Klick entfernt.</p>`,
-        ctaText: `${dogName}s Plan ansehen`,
+        <p style="margin:0;font-size:13.5px;line-height:1.6;color:#6B7280;">${proof}</p>`,
+        ctaText: cta,
         footerHint: `Antworte einfach auf diese Mail, wenn du eine Frage zu ${dogName} hast. Wir lesen jede persönlich.`,
       };
     }
+
+    // 102 — Tag 1: Warum es nicht von allein weggeht
     if (n === 102) {
       return {
         subject: `Warum ${dogName} das nicht „einfach so" ablegt`,
@@ -398,13 +405,45 @@ function buildMailDef(
         intro: `Die meisten denken, ihr Hund „müsste es doch langsam kapieren". Aber ${dogName} macht nichts falsch.`,
         bodyHtml: `
         <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">${pb.why}</p>
-        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">Genau deshalb funktionieren einzelne YouTube-Tipps oft nicht dauerhaft: Sie sind Puzzleteile ohne Reihenfolge. Ein Plan gibt ${dogName} die Reihenfolge, in der ein Schritt auf dem nächsten aufbaut.</p>
-        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Über 3.000 Halter haben genau so angefangen. Der Unterschied war nie ein „besserer Hund", sondern ein klarer Weg.</p>`,
-        ctaText: `${dogName}s Plan ansehen`,
+        <p style="margin:0;font-size:15px;line-height:1.6;color:#3a3a3a;">Genau deshalb funktionieren einzelne YouTube-Tipps oft nicht dauerhaft: Sie sind Puzzleteile ohne Reihenfolge. Ein Plan gibt ${dogName} die Reihenfolge, in der ein Schritt auf dem nächsten aufbaut.</p>`,
+        ctaText: cta,
         footerHint: `Fragen zu ${dogName}? Antworte einfach, wir helfen dir gern weiter.`,
       };
     }
+
+    // 103 — Tag 3: Proof / Social Proof, problem-bezogen
     if (n === 103) {
+      return {
+        subject: `Du bist mit ${dogName}s Thema nicht allein`,
+        preheader: `Kurz, warum das kein Zufall ist.`,
+        headline: `${pb.label.charAt(0).toUpperCase() + pb.label.slice(1)} ist eins der häufigsten Themen bei uns.`,
+        intro: proof,
+        bodyHtml: `
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">Der Unterschied war bei ihnen nie ein „besserer Hund" oder mehr Strenge. Es war jedes Mal das Gleiche: ein klarer Plan, kleine tägliche Schritte, in der richtigen Reihenfolge.</p>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Genau das liegt für ${dogName} bereit, zugeschnitten auf ${pb.label}.</p>`,
+        ctaText: cta,
+        footerHint: `Fragen zu ${dogName}? Antworte einfach auf diese Mail.`,
+      };
+    }
+
+    // 104 — Tag 5: Check-in (Reaktivierung, zweiter Value-Touch)
+    if (n === 104) {
+      return {
+        subject: `Hast du die Übung mit ${dogName} probiert?`,
+        preheader: `Kurzer Check-in.`,
+        headline: `Wie lief es mit ${dogName}?`,
+        intro: `Vor ein paar Tagen hast du von uns die Sofort-Übung für ${dogName} bekommen. Hast du sie ausprobiert?`,
+        bodyHtml: `
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">Falls ja: super, das ist genau der richtige Anfang. Falls noch nicht: völlig okay, hier ist sie nochmal.</p>
+        ${tipBox}
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Diese eine Übung ist Schritt 1 von vielen. Der komplette Plan gibt dir den Rest, in der Reihenfolge, in der ${dogName} ihn wirklich braucht.</p>`,
+        ctaText: cta,
+        footerHint: `Steckst du irgendwo fest? Antworte einfach, wir helfen persönlich.`,
+      };
+    }
+
+    // 105 — Tag 8: Einwände räumen
+    if (n === 105) {
       return {
         subject: `Kurz gefragt zu ${dogName}`,
         preheader: `Falls dich noch etwas zögern lässt.`,
@@ -415,11 +454,12 @@ function buildMailDef(
         <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#3a3a3a;"><strong>„Ist das ein Abo?"</strong><br>Nein. Einmal zahlen, der komplette Plan für ${dogName} gehört dir. Keine Folgekosten.</p>
         <p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#3a3a3a;"><strong>„Und wenn es nicht passt?"</strong><br>30 Tage Geld-zurück-Garantie. Du gehst also kein Risiko ein.</p>
         <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Wenn dich sonst noch etwas zurückhält, antworte einfach auf diese Mail.</p>`,
-        ctaText: `${dogName}s Plan ansehen`,
+        ctaText: cta,
         footerHint: `Wir lesen jede Antwort persönlich, meist meldet sich jemand innerhalb von 12 Stunden.`,
       };
     }
-    // n === 104
+
+    // 106 — Tag 12: letzter Anstoß
     return {
       subject: `${dogName}s Plan liegt noch bereit`,
       preheader: `Der letzte Anstoß, dann lassen wir dich in Ruhe.`,
@@ -1030,10 +1070,12 @@ export const EC_SEQUENCE_SCHEDULE: Array<{
   daysAfterCaptured: number;
   label: string;
 }> = [
-  { num: 101, daysAfterCaptured: 0, label: "EC Tag 0 — Problem-Hook + Gratis-Übung" },
-  { num: 102, daysAfterCaptured: 2, label: "EC Tag 2 — Warum es funktioniert" },
-  { num: 103, daysAfterCaptured: 5, label: "EC Tag 5 — Einwände räumen" },
-  { num: 104, daysAfterCaptured: 9, label: "EC Tag 9 — letzter Anstoß" },
+  { num: 101, daysAfterCaptured: 0, label: "EC Tag 0 (~10 Min) — Problem-Hook + Gratis-Übung + Proof" },
+  { num: 102, daysAfterCaptured: 1, label: "EC Tag 1 — Warum es nicht von allein weggeht" },
+  { num: 103, daysAfterCaptured: 3, label: "EC Tag 3 — Proof (problem-bezogen)" },
+  { num: 104, daysAfterCaptured: 5, label: "EC Tag 5 — Check-in / zweiter Value-Touch" },
+  { num: 105, daysAfterCaptured: 8, label: "EC Tag 8 — Einwände räumen" },
+  { num: 106, daysAfterCaptured: 12, label: "EC Tag 12 — letzter Anstoß" },
 ];
 
 export function getDueEcMail(daysAfterCaptured: number): number | null {
