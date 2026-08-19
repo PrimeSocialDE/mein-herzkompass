@@ -2390,6 +2390,17 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 </head>
 
 <body>
+    <!-- A/B ab_urlaub: 50/50 Ferien-Hook oben (B) vs. Kontrolle (A) -->
+    <script>
+    (function(){
+      try {
+        var u = localStorage.getItem('ab_urlaub');
+        if (u !== 'A' && u !== 'B') { u = (Math.random() < 0.5) ? 'A' : 'B'; localStorage.setItem('ab_urlaub', u); }
+        window.__abUrlaub = u;
+      } catch(e) { window.__abUrlaub = 'A'; }
+    })();
+    </script>
+    <div id="urlaubBanner" style="display:none;background:linear-gradient(135deg,#C4A576,#8B7355);color:#fff;text-align:center;padding:11px 16px;font-size:14.5px;font-weight:600;line-height:1.45;">🏖️ Ferienzeit = beste Trainingszeit — jetzt hast du Ruhe und Zeit, um mit <span id="urlaubDog">deinem Hund</span> durchzustarten.</div>
     <!-- Sticky Top-Header (Plan sichern, scrollt sanft zur Pricing-Section) -->
     <style>
       .dp3-sticky-header{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,0.97);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid #EADDC5;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;transform:translateY(-100%);transition:transform .3s ease;pointer-events:none;}
@@ -3271,6 +3282,14 @@ const dogProblem = customProblemKey || localStorage.getItem('dogProblem') || '';
         document.getElementById('dogName1').textContent = dogName;
         document.getElementById('dogName2').textContent = dogName;
         document.getElementById('dogName3').textContent = dogName;
+
+        // A/B ab_urlaub: Ferien-Banner nur in Variante B zeigen (+ Hundename)
+        if (window.__abUrlaub === 'B') {
+            var _ub = document.getElementById('urlaubBanner');
+            var _ud = document.getElementById('urlaubDog');
+            if (_ud) _ud.textContent = dogName;
+            if (_ub) _ub.style.display = 'block';
+        }
         const mockupTitleEl = document.getElementById('mockupTitle');
         if (mockupTitleEl) mockupTitleEl.textContent = 'Trainingsplan für ' + dogName;
         document.getElementById('dogNamePlan').textContent = dogName;
@@ -4169,6 +4188,7 @@ if (popularBadge) {
 custom_problem_text: localStorage.getItem('customProblem'),    // ← NEU
 custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 email: localStorage.getItem('userEmail') || null,
+                ab_urlaub: localStorage.getItem('ab_urlaub'),
                 ...utmParams
             };
 
