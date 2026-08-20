@@ -57,25 +57,49 @@ export async function GET(req: NextRequest) {
 
   const admin = createMemberAdminClient();
 
-  // Window: 14 Tage zurück (letzte Mail = Tag 9, +Toleranz)
-  const since = new Date(Date.now() - 14 * 86_400_000).toISOString();
+  // Window: 30 Tage zurück (letzte Mail = Tag 26, +Toleranz).
+  // EC_SEQUENCE_START (ISO-Datum) verhindert den Backfill-Blast bei Aktivierung:
+  // nur Leads AB diesem Datum durchlaufen die Sequenz. Bei Live-Schaltung auf
+  // "heute" setzen → Bestands-Leads bleiben außen vor, nur neue fließen rein.
+  const floor = Date.now() - 30 * 86_400_000;
+  const startEnv = process.env.EC_SEQUENCE_START;
+  const startMs = startEnv ? Date.parse(startEnv) : NaN;
+  const since = new Date(
+    Number.isNaN(startMs) ? floor : Math.max(floor, startMs)
+  ).toISOString();
 
-  let query = admin
-    .from("wauwerk_leads")
-    .select("id, email, dog_name, selected_plan, created_at, status, answers")
-    .gte("created_at", since)
-    .not("email", "is", null);
-
+  // Paginiert alle email_captured-Leads im Fenster holen (PostgREST liefert max
+  // 1000/Request). Bei ~290/Tag sind das ~8–9k, PostgREST-Range in 1000er-Schritten.
+  const leads: any[] = [];
   if (emailFilter) {
-    query = query.ilike("email", emailFilter);
+    const { data, error } = await admin
+      .from("wauwerk_leads")
+      .select("id, email, dog_name, selected_plan, created_at, status, answers")
+      .gte("created_at", since)
+      .not("email", "is", null)
+      .ilike("email", emailFilter);
+    if (error) {
+      console.error("[ec-nurture-cron] fetch error:", error.message);
+      return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+    }
+    leads.push(...(data || []));
   } else {
-    query = query.eq("status", "email_captured").limit(300);
-  }
-
-  const { data: leads, error } = await query;
-  if (error) {
-    console.error("[ec-nurture-cron] fetch error:", error.message);
-    return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+    for (let offset = 0; offset < 20000; offset += 1000) {
+      const { data, error } = await admin
+        .from("wauwerk_leads")
+        .select("id, email, dog_name, selected_plan, created_at, status, answers")
+        .gte("created_at", since)
+        .not("email", "is", null)
+        .eq("status", "email_captured")
+        .order("created_at", { ascending: false })
+        .range(offset, offset + 999);
+      if (error) {
+        console.error("[ec-nurture-cron] fetch error:", error.message);
+        return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+      }
+      leads.push(...(data || []));
+      if (!data || data.length < 1000) break;
+    }
   }
 
   const stats = {

@@ -347,6 +347,91 @@ function ecProblemBits(lead: SequenceLead): EcBits {
   );
 }
 
+// Zusatz-Bausteine für die längere EC-Sequenz: zweite Gratis-Übung, typischer
+// Fehler und der "was passiert, wenn nichts passiert"-Satz. DE, pro Quiz-Problem.
+type EcExtra = { tip2Title: string; tip2: string; mistake: string; cost: string };
+function ecProblemExtras(lead: SequenceLead): EcExtra {
+  const dn = (lead.dog_name || "dein Hund").trim() || "dein Hund";
+  const a = lead.answers || {};
+  const key = String(a.custom_problem_key || a.dog_problem || "").toLowerCase();
+  const M: Record<string, EcExtra> = {
+    pulling: {
+      tip2Title: "Übung 2: Richtungswechsel",
+      tip2: `Zieht ${dn} los, dreh dich kommentarlos um und geh in die andere Richtung. Er muss dir folgen und lernt: du bestimmst das Tempo, nicht die Nase. 2 bis 3 Wechsel pro Spaziergang reichen.`,
+      mistake: `Der häufigste Fehler ist, an der Leine gegenzuziehen. Das aktiviert bei ${dn} nur den Zug-Reflex, dann zieht ihr beide.`,
+      cost: `Ziehen wird selten von allein besser. Meist schleift es sich als feste Gewohnheit ein und die Spaziergänge werden für euch beide anstrengender statt schöner.`,
+    },
+    recall: {
+      tip2Title: "Übung 2: Nie das Ende einläuten",
+      tip2: `Ruf ${dn} nicht nur, wenn der Spaß vorbei ist (Leine dran, nach Hause). Sonst lernt er: Kommen heißt Freiheit weg. Ruf ihn oft zwischendurch, belohne, und lass ihn wieder los.`,
+      mistake: `Der häufigste Fehler ist, zu schimpfen, wenn er endlich kommt. Damit bestrafst du genau das Kommen, und beim nächsten Mal kommt er noch zögerlicher.`,
+      cost: `Ein unzuverlässiger Rückruf bedeutet, dass ${dn} nie wirklich frei laufen kann. Das schränkt euch beide dauerhaft ein und wird mit der Zeit selten besser.`,
+    },
+    aggression: {
+      tip2Title: "Übung 2: Auslöser-Tagebuch",
+      tip2: `Notier 3 Tage lang, wann genau ${dn} hochgeht: Situation, Abstand, Tageszeit. Das Muster zu erkennen ist der halbe Weg, denn dann kannst du gezielt unterhalb der Schwelle üben.`,
+      mistake: `Der häufigste Fehler ist, in die Situation hineinzulaufen und „durchzuziehen". Das erhöht den Stress und verfestigt die Reaktion.`,
+      cost: `Aggression, die unadressiert bleibt, weitet sich mit der Zeit oft auf neue Situationen aus. Früh anzusetzen ist deutlich leichter als später gegenzusteuern.`,
+    },
+    "dog-reactive": {
+      tip2Title: "Übung 2: Bogen laufen",
+      tip2: `Geh anderen Hunden nicht frontal entgegen, sondern in einem Bogen drumherum. Das nimmt ${dn} den Druck und wirkt wie ein Entspannungssignal.`,
+      mistake: `Der häufigste Fehler ist, kurz zu halten und den anderen Hund anzustarren. Straffe Leine plus Blickkontakt bedeutet für ${dn} maximale Anspannung.`,
+      cost: `Reaktivität wächst sich selten aus. Ohne Training wird jeder Spaziergang zur Anspannung, und ${dn} verknüpft andere Hunde immer fester mit Stress.`,
+    },
+    anxiety: {
+      tip2Title: "Übung 2: Kein Drama beim Gehen",
+      tip2: `Verabschiede dich nicht groß und begrüße nicht überschwänglich. Je unspektakulärer dein Kommen und Gehen, desto weniger Bedeutung hat das Alleinsein für ${dn}.`,
+      mistake: `Der häufigste Fehler ist, zu schnell zu lange weg zu sein. Ein einziges „zu viel" wirft euch Tage zurück. Lieber kürzer und öfter.`,
+      cost: `Trennungsangst wird ohne gezieltes Training oft schlimmer, nicht besser. Für ${dn} bedeutet das echten Dauerstress, sobald du zur Tür gehst.`,
+    },
+    barking: {
+      tip2Title: "Übung 2: Reiz reduzieren",
+      tip2: `Bellt ${dn} am Fenster? Ein Sichtschutz auf Hundehöhe (Folie, Vorhang) nimmt schon den halben Auslöser weg. Weniger Trigger heißt weniger Bellen zum Üben.`,
+      mistake: `Der häufigste Fehler ist, mitzuschreien („Ruhe!"). Für ${dn} klingt das wie Mitbellen, du befeuerst es.`,
+      cost: `Dauerbellen wird zur festen Gewohnheit und oft zum Nachbarschaftsthema. Je länger es läuft, desto tiefer sitzt das Muster bei ${dn}.`,
+    },
+    jumping: {
+      tip2Title: "Übung 2: Alternative anbieten",
+      tip2: `Bring ${dn} ein „Sitz" zur Begrüßung bei. Ein Hund, der sitzt, kann nicht gleichzeitig springen. Belohne das Sitzen bei jeder Begrüßung.`,
+      mistake: `Der häufigste Fehler ist, mal zu schimpfen und mal doch zu kraulen. Uneinheitlich heißt: ${dn} probiert es einfach immer weiter.`,
+      cost: `Anspringen wird beim ausgewachsenen Hund schnell unangenehm bis gefährlich, gerade bei Kindern und älteren Gästen. Früh abgewöhnt ist es viel leichter.`,
+    },
+    energy: {
+      tip2Title: "Übung 2: Ruhe trainieren",
+      tip2: `Ruhe ist auch Training. Übe eine feste Decke, auf der ${dn} zur Ruhe kommt, und belohne das Liegenbleiben. Nur Auspowern macht ihn am Ende nur fitter.`,
+      mistake: `Der häufigste Fehler ist, immer noch mehr Bewegung draufzulegen. Das züchtet einen Ausdauersportler, der noch schlechter abschalten kann.`,
+      cost: `Ein Hund, der nie gelernt hat abzuschalten, kommt auch mit den Jahren selten von allein zur Ruhe. Das zehrt an euch beiden.`,
+    },
+    destructive: {
+      tip2Title: "Übung 2: Langeweile vorbeugen",
+      tip2: `Gib ${dn} vor dem Alleinsein eine gefüllte Kong oder ein Schnüffelspiel. Ein beschäftigter Kopf zerstört nichts.`,
+      mistake: `Der häufigste Fehler ist, nach dem Nachhausekommen zu schimpfen. ${dn} verbindet das nicht mit der Tat von vorhin, nur mit deiner Rückkehr, also mit mehr Stress.`,
+      cost: `Zerstörung aus Langeweile oder Stress verfestigt sich und wird teuer. Der Auslöser bleibt, solange die Ursache (Auslastung, Ruhe) nicht angegangen wird.`,
+    },
+    soiling: {
+      tip2Title: "Übung 2: Erfolg statt Unfall",
+      tip2: `Führ ein kleines Protokoll, wann ${dn} muss. Bring ihn zu diesen Zeiten gezielt raus, so produzierst du Erfolge statt Unfälle.`,
+      mistake: `Der häufigste Fehler ist, mit der Nase reinzustupsen oder zu schimpfen. Das macht ${dn} nur ängstlich und heimlich, nie sauber.`,
+      cost: `Unsauberkeit hält sich hartnäckig, solange Timing und Routine fehlen. Jeder „Unfall" drinnen festigt das Muster ein Stück mehr.`,
+    },
+    mouthing: {
+      tip2Title: "Übung 2: Energie umlenken",
+      tip2: `Zwickt ${dn}, biete sofort ein erlaubtes Kau- oder Zerrspielzeug an. Die Beißenergie muss irgendwo hin, gib ihr ein legales Ziel.`,
+      mistake: `Der häufigste Fehler ist, die Hand ruckartig wegzureißen und wild zu werden. Das wirkt wie ein Spielsignal und macht das Zwicken für ${dn} nur spannender.`,
+      cost: `Was beim Welpen niedlich ist, tut mit ausgewachsenem Gebiss richtig weh. Ohne klare Grenzen bleibt das Zwicken, nur mit mehr Kraft dahinter.`,
+    },
+  };
+  return (
+    M[key] || {
+      tip2Title: "Übung 2: Kleine Schritte",
+      tip2: `Zerleg das Ziel in winzige Etappen und belohne jede einzelne. ${dn} lernt über viele kleine Erfolge schneller als über einen großen Anspruch.`,
+      mistake: `Der häufigste Fehler ist, zu viel auf einmal zu wollen. Überforderung führt zu Frust, bei dir und bei ${dn}.`,
+      cost: `Verhalten, das man laufen lässt, wird zur Gewohnheit. Je länger es besteht, desto mehr Geduld braucht es, um es wieder zu ändern.`,
+    }
+  );
+}
+
 function buildMailDef(
   n: number,
   lead: SequenceLead,
@@ -367,9 +452,10 @@ function buildMailDef(
       : pluralBreed(lead.dog_breed);
 
   // ── email_captured-Nurture (Mails 101–104), problem-personalisiert, DE only ──
-  if (n >= 101 && n <= 106) {
+  if (n >= 101 && n <= 110) {
     if (lang !== "de") return null;
     const pb = ecProblemBits(lead);
+    const px = ecProblemExtras(lead);
     const cta = `${dogName}s Plan ansehen`;
     // Proof: aggregiert + problem-bezogen, grammatik-sicher über "wenn es um … geht"
     const proof = `Über 3.400 Hunde wurden mit Pfoten-Plan schon trainiert. Wenn es um ${pb.label} geht, berichten die meisten Halter schon nach wenigen Tagen von den ersten spürbaren Veränderungen bei ${dogName}.`;
@@ -459,7 +545,77 @@ function buildMailDef(
       };
     }
 
-    // 106 — Tag 12: letzter Anstoß
+    // 107 — häufiger Fehler (problem-spezifisch)
+    if (n === 107) {
+      return {
+        subject: `Der eine Fehler, der es bei ${dogName} schlimmer macht`,
+        preheader: `Fast alle machen ihn, ohne es zu merken.`,
+        headline: `Ein Fehler, den fast jeder macht.`,
+        intro: `Bei ${pb.label} gibt es eine Sache, die es unbeabsichtigt verschlimmert. Wenn du sie kennst, bist du ${dogName} schon einen großen Schritt voraus.`,
+        bodyHtml: `
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-left:3px solid #E0A96D;background:#FBF3EA;border-radius:6px;margin:8px 0 16px;">
+          <tr><td style="padding:15px 18px;">
+            <p style="margin:0 0 5px;font-size:12px;font-weight:700;color:#B07B3E;text-transform:uppercase;letter-spacing:.3px;">Häufiger Fehler</p>
+            <p style="margin:0;font-size:14px;line-height:1.65;color:#3a3a3a;">${px.mistake}</p>
+          </td></tr>
+        </table>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Der Plan führt dich genau an solchen Fallen vorbei, Schritt für Schritt, damit du bei ${dogName} nicht aus Versehen das Gegenteil trainierst.</p>`,
+        ctaText: cta,
+        footerHint: `Fragen zu ${dogName}? Antworte einfach auf diese Mail.`,
+      };
+    }
+
+    // 108 — zweite Gratis-Übung (problem-spezifisch)
+    if (n === 108) {
+      return {
+        subject: `Noch eine Übung für ${dogName}`,
+        preheader: `Kostenlos, wie beim letzten Mal.`,
+        headline: `Übung zwei für ${dogName}.`,
+        intro: `Die erste Übung hast du jetzt ein paar Tage. Hier ist die nächste, die perfekt darauf aufbaut.`,
+        bodyHtml: `
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-left:3px solid #C4A576;background:#FAF6EE;border-radius:6px;margin:8px 0 16px;">
+          <tr><td style="padding:15px 18px;">
+            <p style="margin:0 0 5px;font-size:12px;font-weight:700;color:#8B7355;text-transform:uppercase;letter-spacing:.3px;">${px.tip2Title}</p>
+            <p style="margin:0;font-size:14px;line-height:1.65;color:#3a3a3a;">${px.tip2}</p>
+          </td></tr>
+        </table>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Zwei Übungen sind ein guter Anfang. Der komplette Plan hat den ganzen Weg für ${dogName}, in der richtigen Reihenfolge.</p>`,
+        ctaText: cta,
+        footerHint: `Steckst du fest? Antworte einfach, wir helfen persönlich.`,
+      };
+    }
+
+    // 109 — Kosten des Wartens (problem-spezifisch, ehrlich)
+    if (n === 109) {
+      return {
+        subject: `Was aus ${dogName}s Thema wird, wenn nichts passiert`,
+        preheader: `Kein Drama, nur ehrlich.`,
+        headline: `Warten macht es selten leichter.`,
+        intro: `Ich will dir kein schlechtes Gewissen machen. Aber ehrlich ist ehrlich:`,
+        bodyHtml: `
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">${px.cost}</p>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Die gute Nachricht: es ist nie zu spät. Aber je früher du anfängst, desto weniger musst du bei ${dogName} später „umlernen".</p>`,
+        ctaText: cta,
+        footerHint: `Fragen? Antworte einfach, wir sind für dich da.`,
+      };
+    }
+
+    // 110 — realistischer Zeithorizont
+    if (n === 110) {
+      return {
+        subject: `Wie schnell tut sich bei ${dogName} etwas?`,
+        preheader: `Realistisch, ohne Versprechen aus der Luft.`,
+        headline: `Kein Zaubertrick, aber schneller als du denkst.`,
+        intro: `Eine faire Frage, bevor du dich entscheidest: wie lange dauert es eigentlich?`,
+        bodyHtml: `
+        <p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3a3a3a;">Die meisten Halter sehen in der ersten Woche die ersten kleinen Veränderungen. Nach etwa 3 bis 4 Wochen fühlt sich das neue Verhalten für ${dogName} oft schon wie Alltag an. Kein Hexenwerk, sondern kleine Schritte, die sich summieren.</p>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;">Die einzige Voraussetzung ist Dranbleiben. Genau dafür gibt dir der Plan die Struktur, damit du nicht raten musst, was als Nächstes dran ist.</p>`,
+        ctaText: cta,
+        footerHint: `Fragen zu ${dogName}? Antworte einfach auf diese Mail.`,
+      };
+    }
+
+    // 106 — Tag 26: letzter Anstoß
     return {
       subject: `${dogName}s Plan liegt noch bereit`,
       preheader: `Der letzte Anstoß, dann lassen wir dich in Ruhe.`,
@@ -1070,12 +1226,17 @@ export const EC_SEQUENCE_SCHEDULE: Array<{
   daysAfterCaptured: number;
   label: string;
 }> = [
-  { num: 101, daysAfterCaptured: 0, label: "EC Tag 0 (~10 Min) — Problem-Hook + Gratis-Übung + Proof" },
-  { num: 102, daysAfterCaptured: 1, label: "EC Tag 1 — Warum es nicht von allein weggeht" },
-  { num: 103, daysAfterCaptured: 3, label: "EC Tag 3 — Proof (problem-bezogen)" },
-  { num: 104, daysAfterCaptured: 5, label: "EC Tag 5 — Check-in / zweiter Value-Touch" },
-  { num: 105, daysAfterCaptured: 8, label: "EC Tag 8 — Einwände räumen" },
-  { num: 106, daysAfterCaptured: 12, label: "EC Tag 12 — letzter Anstoß" },
+  // In Tages-Reihenfolge (getDueEcMail nimmt die letzte fällige). Mail-Nr = Inhalt, nicht Reihenfolge.
+  { num: 101, daysAfterCaptured: 0, label: "Tag 0 (~10 Min) — Hook + Gratis-Übung + Proof" },
+  { num: 102, daysAfterCaptured: 1, label: "Tag 1 — Warum es nicht von allein weggeht" },
+  { num: 107, daysAfterCaptured: 2, label: "Tag 2 — häufiger Fehler" },
+  { num: 103, daysAfterCaptured: 4, label: "Tag 4 — Proof (problem-bezogen)" },
+  { num: 108, daysAfterCaptured: 6, label: "Tag 6 — zweite Gratis-Übung" },
+  { num: 104, daysAfterCaptured: 8, label: "Tag 8 — Check-in" },
+  { num: 109, daysAfterCaptured: 11, label: "Tag 11 — Kosten des Wartens" },
+  { num: 105, daysAfterCaptured: 15, label: "Tag 15 — Einwände räumen" },
+  { num: 110, daysAfterCaptured: 20, label: "Tag 20 — realistischer Zeithorizont" },
+  { num: 106, daysAfterCaptured: 26, label: "Tag 26 — letzter Anstoß" },
 ];
 
 export function getDueEcMail(daysAfterCaptured: number): number | null {
