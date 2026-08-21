@@ -835,10 +835,13 @@ function buildMailDef(
       `${BASE}/bewertung?sterne=${n}&lead_id=${encodeURIComponent(
         lead.id
       )}&email=${encodeURIComponent(lead.email)}`;
+    // Wichtig für Mobile: KEIN <a> um eine <table> (Gmail-App & Co. machen das
+    // nicht klickbar → "passiert nichts"). Stattdessen je ein <a> IN der Zelle,
+    // um Bild und Label — bulletproof tap-bar auf allen Clients.
     const starRow = (n: number, label: string, color: string) =>
-      `<tr><td style="padding:5px 0;"><a href="${revLink(
+      `<tr><td style="padding:6px 0;"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td><a href="${revLink(
         n
-      )}" target="_blank" style="text-decoration:none;"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td><img src="${BASE}/review-stars-${n}.png" alt="${n} von 5 Sternen" width="150" height="28" style="display:block;width:150px;height:28px;border:0;"></td><td style="vertical-align:middle;padding-left:10px;"><span style="color:${color};font-size:14px;font-weight:600;">${label}</span></td></tr></table></a></td></tr>`;
+      )}" target="_blank" style="display:block;text-decoration:none;line-height:0;font-size:0;"><img src="${BASE}/review-stars-${n}.png" alt="${n} von 5 Sternen" width="150" height="28" style="display:block;width:150px;height:28px;border:0;"></a></td><td style="vertical-align:middle;padding-left:10px;"><a href="${revLink(n)}" target="_blank" style="display:inline-block;text-decoration:none;color:${color};font-size:14px;font-weight:600;">${label}</a></td></tr></table></td></tr>`;
     const starsTable = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px;">${starRow(
       5,
       "Hervorragend",
