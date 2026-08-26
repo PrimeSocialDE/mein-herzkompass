@@ -150,8 +150,30 @@
         <h1><span id="dogName">Dein Hund</span><span style="color:#C4A576">s</span> persönliche Verhaltensanalyse ist fertig.</h1>
         <p style="font-size:17px;color:#6B6B6B;margin-bottom:40px;line-height:1.5">Gib deine E-Mail ein, um dein Ergebnis zu sehen und deinen Trainingsplan freizuschalten — <strong>zum Ausdrucken &amp; Abhaken, Tag für Tag.</strong></p>
 
+        <!-- A/B ab_notes: 40% sehen das Sonderfall-Feld (B), 60% Kontrolle (A). Optional, additiv, flow-sicher. -->
+        <div id="specialNotesBox" style="display:none;text-align:left;background:#F4EFE6;border:1px solid #E7DBC6;border-radius:12px;padding:15px 16px;margin:0 auto 18px;max-width:440px;">
+            <label for="specialNotes" style="display:block;font-size:14.5px;font-weight:700;color:#5f4b34;line-height:1.5;margin-bottom:4px;">Gibt es etwas Besonderes an <span id="dogNameNotes">deinem Hund</span> oder an deiner Situation?</label>
+            <p style="margin:0 0 10px;font-size:13px;color:#8a7d6a;line-height:1.5;">z.&nbsp;B. aus dem Tierschutz, taub, Angst vor M&auml;nnern, reagiert nicht auf Leckerli &mdash; oder: du sitzt im <b style="color:#5f4b34;">Rollstuhl</b> / bist wenig mobil. <b style="color:#5f4b34;">Wir passen den Plan darauf an.</b></p>
+            <textarea id="specialNotes" maxlength="600" placeholder="Erz&auml;hl uns kurz, was wichtig ist&hellip;" style="width:100%;box-sizing:border-box;min-height:72px;border:1px solid #D9C7A6;border-radius:10px;padding:11px 12px;font-size:14px;font-family:inherit;resize:vertical;outline:none;color:#2c2c2e;"></textarea>
+        </div>
+        <script>
+        (function(){
+            try{
+                var n = localStorage.getItem('ab_notes');
+                if (n !== 'A' && n !== 'B') { n = (Math.random() < 0.4) ? 'B' : 'A'; localStorage.setItem('ab_notes', n); }
+                if (n === 'B') {
+                    var dn = (localStorage.getItem('dogName') || '').trim();
+                    var el = document.getElementById('dogNameNotes');
+                    if (dn && el) el.textContent = dn;
+                    var box = document.getElementById('specialNotesBox');
+                    if (box) box.style.display = 'block';
+                }
+            }catch(e){}
+        })();
+        </script>
+
         <form id="emailForm">
-            <input type="email" class="email-input" id="emailInput" placeholder="Deine E-Mail eingeben" required>
+            <input type="email" class="email-input" id="emailInput" placeholder="Deine E-Mail eingeben" required style="border:2px solid #C4A576;background:#FDF9F0;">
             <button type="submit" class="submit-btn" id="submitBtn">Plan anfordern</button>
         </form>
 
@@ -357,6 +379,8 @@
                 ab_variant: localStorage.getItem('ab_test_pricing') || null,
                 ab_intro: localStorage.getItem('ab_intro') || null,
                 ab_test_trust: localStorage.getItem('ab_test_trust') || null,
+                ab_notes: localStorage.getItem('ab_notes') || null,
+                special_notes: (function(){ try { var el = document.getElementById('specialNotes'); var v = el && el.value ? el.value.trim() : ''; return v ? v.slice(0, 600) : null; } catch(e){ return null; } })(),
                 entry_page: localStorage.getItem('entry_page') || null
             };
 
@@ -364,6 +388,7 @@
             // Cache komplette answers fuer spaeteren source-Pick PATCH
             // (sonst wuerde der PATCH die answers-JSONB-Spalte ueberschreiben).
             localStorage.setItem('quizAnswersCache', JSON.stringify(answers));
+            try { if (answers.special_notes) { localStorage.setItem('specialNotes', answers.special_notes); } else { localStorage.removeItem('specialNotes'); } } catch(e){}
             try { fetch('/api/ab-ping',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({test:'intro',variant:localStorage.getItem('ab_intro'),step:'quiz_done',sid:localStorage.getItem('ab_sid')})}).catch(function(){}); } catch(e){}
 
             // 1. Supabase speichern

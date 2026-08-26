@@ -213,6 +213,24 @@ export async function POST(req: NextRequest) {
               ? answers.daily_training_minutes
               : 15;
         const zusatzKontextLines: string[] = [];
+        // Sonderfall-Feld aus dem Quiz (ab_notes-Test): Besonderheiten an Hund ODER
+        // Halter (z.B. Rollstuhl, wenig mobil). Muss im Plan wirklich berücksichtigt
+        // werden. Text gesäubert + gekappt (gegen Prompt-Manipulation).
+        if (
+          typeof answers.special_notes === "string" &&
+          answers.special_notes.trim().length > 0
+        ) {
+          const sn = answers.special_notes
+            .replace(/[\r\n]+/g, " ")
+            .replace(/[`<>{}]/g, "")
+            .trim()
+            .slice(0, 600);
+          if (sn) {
+            zusatzKontextLines.push(
+              `WICHTIG - vom Halter angegebene Besonderheit (Hund und/oder Halter-Situation), im gesamten Plan berücksichtigen: "${sn}". Passe Ansprache UND Übungsauswahl konkret daran an. Bei eingeschränkter Mobilität des Halters (z.B. Rollstuhl) wähle Übungen, die im Sitzen, aus der Distanz oder mit Hilfsmitteln (Schleppleine) funktionieren, statt Lauf-/Renn-Übungen. Bei gesundheitlichen Themen gib einen freundlichen Hinweis, im Zweifel Tierarzt/Arzt hinzuzuziehen, und gib keine medizinischen Ratschläge.`
+            );
+          }
+        }
         if (answers.dog_energy)
           zusatzKontextLines.push(`Energielevel: ${answers.dog_energy}`);
 
