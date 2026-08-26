@@ -2390,6 +2390,21 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
 </head>
 
 <body>
+    <!-- Sonderfall-Rückspiegelung (ab_notes-Test): zeigt die Halter-Angabe kurz am Checkout -->
+    <script>
+    (function(){
+      try{
+        var sn=(localStorage.getItem('specialNotes')||'').trim();
+        if(!sn) return;
+        if(sn.length>180) sn=sn.slice(0,180)+'…';
+        sn=sn.replace(/</g,'&lt;');
+        var d=document.createElement('div');
+        d.style.cssText='max-width:520px;margin:12px auto 0;padding:0 14px;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;';
+        d.innerHTML='<div style="display:flex;gap:10px;align-items:flex-start;background:#EEF6EF;border:1px solid #CFE6D2;border-radius:12px;padding:12px 14px;"><span style="color:#1E8A4C;font-weight:800;font-size:16px;line-height:1.4;">✓</span><div style="font-size:13.5px;color:#2c3a2e;line-height:1.5;"><b>Wir berücksichtigen:</b> „'+sn+'“ Dein Plan wird darauf angepasst.</div></div>';
+        document.body.insertBefore(d, document.body.firstChild);
+      }catch(e){}
+    })();
+    </script>
     <!-- Sticky Top-Header (Plan sichern, scrollt sanft zur Pricing-Section) -->
     <style>
       .dp3-sticky-header{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,0.97);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid #EADDC5;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;transform:translateY(-100%);transition:transform .3s ease;pointer-events:none;}
