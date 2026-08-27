@@ -2393,16 +2393,21 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
     <!-- Sonderfall-Rückspiegelung (ab_notes-Test): zeigt die Halter-Angabe kurz am Checkout -->
     <script>
     (function(){
-      try{
-        var sn=(localStorage.getItem('specialNotes')||'').trim();
-        if(!sn) return;
-        if(sn.length>180) sn=sn.slice(0,180)+'…';
-        sn=sn.replace(/</g,'&lt;');
-        var d=document.createElement('div');
-        d.style.cssText='max-width:520px;margin:12px auto 0;padding:0 14px;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;';
-        d.innerHTML='<div style="display:flex;gap:10px;align-items:flex-start;background:#EEF6EF;border:1px solid #CFE6D2;border-radius:12px;padding:12px 14px;"><span style="color:#1E8A4C;font-weight:800;font-size:16px;line-height:1.4;">✓</span><div style="font-size:13.5px;color:#2c3a2e;line-height:1.5;"><b>Wir berücksichtigen:</b> „'+sn+'“ Dein Plan wird darauf angepasst.</div></div>';
-        document.body.insertBefore(d, document.body.firstChild);
-      }catch(e){}
+      function place(){
+        try{
+          var sn=(localStorage.getItem('specialNotes')||'').trim();
+          if(!sn) return;
+          if(sn.length>180) sn=sn.slice(0,180)+'…';
+          sn=sn.replace(/</g,'&lt;');
+          var anchor=document.querySelector('.main-title');
+          if(!anchor||!anchor.parentNode) return;
+          var d=document.createElement('div');
+          d.style.cssText='max-width:560px;margin:6px auto 20px;padding:0 16px;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;';
+          d.innerHTML='<div style="display:flex;gap:10px;align-items:flex-start;background:#EEF6EF;border:1px solid #CFE6D2;border-radius:12px;padding:13px 15px;"><span style="color:#1E8A4C;font-weight:800;font-size:16px;line-height:1.4;">✓</span><div style="font-size:14px;color:#2c3a2e;line-height:1.55;"><b>Wir berücksichtigen:</b> „'+sn+'“ Dein Plan wird darauf angepasst.</div></div>';
+          anchor.parentNode.insertBefore(d, anchor);
+        }catch(e){}
+      }
+      if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', place); } else { place(); }
     })();
     </script>
     <!-- Sticky Top-Header (Plan sichern, scrollt sanft zur Pricing-Section) -->
@@ -4184,6 +4189,8 @@ if (popularBadge) {
 custom_problem_text: localStorage.getItem('customProblem'),    // ← NEU
 custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 email: localStorage.getItem('userEmail') || null,
+                ab_notes: localStorage.getItem('ab_notes') || null,
+                special_notes: localStorage.getItem('specialNotes') || null,
                 ...utmParams
             };
 
