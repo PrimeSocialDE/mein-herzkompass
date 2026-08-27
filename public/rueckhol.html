@@ -1577,6 +1577,9 @@
                 <span style="color: #22C55E; font-size: 18px;">✓</span>
                 <span style="font-size: 14px; color: #166534; font-weight: 500;">Deine Antworten für <strong id="dogNameBanner">deinen Hund</strong> sind gespeichert</span>
             </div>
+            <div id="rhSpecialNote" style="display:none; background:#EEF6EF; border:1px solid #CFE6D2; border-radius:10px; padding:12px 16px; margin-top:10px;">
+                <span style="font-size:14px; color:#2c3a2e; line-height:1.55;"><strong>Auch das ist gespeichert:</strong> „<span id="rhSpecialNoteText"></span>“ Wir passen den Plan darauf an.</span>
+            </div>
         </div>
 
         <!-- Plan-Inhalt iPad -->
@@ -2357,7 +2360,11 @@
                         if (data[0]) {
                             const lead = data[0];
                             const answers = lead.answers || {};
-                            
+                            // Sonderfall-Angabe aus dem Lead übernehmen (auch wenn über Link von anderem Gerät)
+                            if (answers.special_notes && String(answers.special_notes).trim()) {
+                                try { localStorage.setItem('specialNotes', String(answers.special_notes).trim()); } catch(e){}
+                            }
+
                             // Top-Level-Spalten haben Vorrang vor answers-JSONB (wo answers oft leer ist)
                             const resolvedDogName = lead.dog_name || answers.dog_name;
                             const resolvedDogProblem = lead.dog_problem || answers.dog_problem;
@@ -2417,6 +2424,15 @@
 
             // Banner personalisieren
             document.getElementById('dogNameBanner').textContent = dogName;
+            // Sonderfall-Angabe zurückspiegeln (falls vorhanden)
+            try {
+                var rhSn = (localStorage.getItem('specialNotes') || '').trim();
+                if (rhSn) {
+                    if (rhSn.length > 200) rhSn = rhSn.slice(0, 200) + '…';
+                    document.getElementById('rhSpecialNoteText').textContent = rhSn;
+                    document.getElementById('rhSpecialNote').style.display = 'block';
+                }
+            } catch(e){}
             const dogNameTopBannerEl = document.getElementById('dogNameTopBanner');
             if (dogNameTopBannerEl) dogNameTopBannerEl.textContent = dogName;
 
