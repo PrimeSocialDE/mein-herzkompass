@@ -161,7 +161,7 @@
             try{
                 var qp = new URLSearchParams(location.search).get('ab_notes');
                 var n = (qp === 'A' || qp === 'B') ? qp : localStorage.getItem('ab_notes');
-                if (n !== 'A' && n !== 'B') { n = (Math.random() < 0.4) ? 'B' : 'A'; }
+                if (n !== 'A' && n !== 'B') { n = (Math.random() < 0.7) ? 'B' : 'A'; }
                 localStorage.setItem('ab_notes', n);
                 if (n === 'B') {
                     var dn = (localStorage.getItem('dogName') || '').trim();
