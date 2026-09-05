@@ -385,6 +385,10 @@
                 console.log('✅ Meta Purchase gefeuert (Event ID:', eventId, ')');
             }
 
+            if (typeof oaiq !== 'undefined') {
+                oaiq('measure', 'order_created', { type: 'contents', value: purchaseValue, currency: 'EUR' });
+            }
+
             if (typeof ttq !== 'undefined') {
                 ttq.track('CompletePayment', {
                     value: purchaseValue,

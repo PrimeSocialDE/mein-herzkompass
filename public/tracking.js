@@ -6,7 +6,16 @@
     window.fbq=window.fbq||function(){};
     fbq('init','864109602683515');
     fbq('track','PageView');
-    
+
+    /* ================== OPENAI / CHATGPT ADS PIXEL (oaiq) ================== */
+    !function(w,d,s,u){if(w.oaiq)return;var q=function(){q.q.push(arguments)};q.q=[];w.oaiq=q;
+      var j=d.createElement(s);j.async=1;j.src=u;var f=d.getElementsByTagName(s)[0];
+      f.parentNode.insertBefore(j,f)}(window,document,"script","https://bzrcdn.openai.com/sdk/oaiq.min.js");
+    oaiq("init",{pixelId:"EqCK4x27xqXvid8k7ctioD",debug:true});
+    /* Kleiner Helfer, damit oaiq nie einen Fehler wirft, wenn das SDK (noch) fehlt. */
+    function safeOaiq(){ try{ if(typeof oaiq==='function'){ oaiq.apply(null, arguments); } }catch(e){} }
+    safeOaiq('measure','page_viewed',{ type:'contents' });
+
     /* ================== CLARITY ================== */
     (function(c,l,a,r,i,t,y){
       c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -108,6 +117,7 @@
         fbq('track','Purchase',{ value: amount, currency: 'EUR' });
         safeClarity('purchase',{ amount: amount, source:'stripe_checkout', session_id: hasSession });
         try{ ttq.track('Purchase',{ value: amount, currency: 'EUR' }); }catch(e){}
+        safeOaiq('measure','order_created',{ type:'contents', value: amount, currency:'EUR' });
 
         sendServerEvent(META_CAPI_URL,{ event_name:'Purchase', value: amount, currency:'EUR', session_id: hasSession });
         sendServerEvent(TIKTOK_CAPI_URL,{ event_name:'Purchase', value: amount, currency:'EUR', session_id: hasSession });

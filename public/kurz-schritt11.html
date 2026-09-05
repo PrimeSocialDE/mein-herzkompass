@@ -139,6 +139,8 @@
   data-domain="pfoten-plan.de"
   src="https://datafa.st/js/script.js">
 </script>
+<!-- OpenAI / ChatGPT Ads Pixel -->
+<script src="/oaiq.js" defer></script>
 </head>
 <body>
     <div class="logo">
@@ -324,6 +326,9 @@
             
             // E-Mail in localStorage
             localStorage.setItem('userEmail', email);
+
+            // OpenAI/ChatGPT-Pixel: Lead erfasst
+            if (window.oaiqMeasure) window.oaiqMeasure('lead_created', { type: 'customer_action' });
             
             // A/B Test Seite bestimmen
             const targetPage = getABTestPage();
