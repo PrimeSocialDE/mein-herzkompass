@@ -73,8 +73,9 @@ function subjectFor(dog: string, id: string): string {
     : `Ich weiß genau, wie du dich mit ${dog} fühlst`;
 }
 
-function buildHtml(dog: string, id: string): string {
+function buildHtml(dog: string, id: string, email: string): string {
   const unsub = `https://www.pfoten-plan.de/api/unsubscribe?lead=${encodeURIComponent(id)}`;
+  const cta = `https://www.pfoten-plan.de/rueckhol.html?lead_id=${encodeURIComponent(id)}&email=${encodeURIComponent(email)}`;
   return `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#FAF8F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;line-height:1.7;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAF8F5;"><tr><td align="center" style="padding:28px 16px;">
@@ -89,7 +90,7 @@ function buildHtml(dog: string, id: string): string {
 <p style="margin:0 0 16px;font-size:16px;">Und genau deshalb schreibe ich dir. Ich weiß, wie du dich mit ${dog} gerade vielleicht fühlst. Du musst das nicht alleine schaffen, und du bist ganz sicher nicht zu ungeschickt dafür. Ihr braucht nur einen klaren Weg, den ihr in eurem Tempo gehen könnt.</p>
 <p style="margin:0 0 20px;font-size:16px;">Wenn du magst, machen wir dir den Plan für ${dog} fertig, genau auf euer Thema abgestimmt.</p>
 </td></tr>
-<tr><td style="padding:4px 36px 8px;text-align:center;"><a href="https://www.pfoten-plan.de/" style="display:inline-block;background:#8B7355;color:#ffffff;text-decoration:none;font-size:17px;font-weight:700;padding:16px 34px;border-radius:12px;">Jetzt ${dog}s Plan starten</a></td></tr>
+<tr><td style="padding:4px 36px 8px;text-align:center;"><a href="${cta}" style="display:inline-block;background:#8B7355;color:#ffffff;text-decoration:none;font-size:17px;font-weight:700;padding:16px 34px;border-radius:12px;">Jetzt ${dog}s Plan starten</a></td></tr>
 <tr><td style="padding:16px 36px 6px;"><p style="margin:0 0 6px;font-size:16px;">Ich drücke euch von Herzen die Daumen.</p><p style="margin:0 0 4px;font-size:16px;"><strong>Laura</strong> vom Pfoten-Plan-Team</p></td></tr>
 <tr><td style="padding:14px 36px 30px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#EEF6EF;border:2px solid #B8DDBE;border-radius:14px;"><tr><td style="padding:18px 20px;">
 <p style="margin:0;font-size:16px;color:#166534;font-weight:800;">✓ Du gehst kein Risiko ein.</p>
@@ -99,8 +100,9 @@ function buildHtml(dog: string, id: string): string {
 </table></td></tr></table></body></html>`;
 }
 
-function buildText(dog: string, id: string): string {
+function buildText(dog: string, id: string, email: string): string {
   const unsub = `https://www.pfoten-plan.de/api/unsubscribe?lead=${encodeURIComponent(id)}`;
+  const cta = `https://www.pfoten-plan.de/rueckhol.html?lead_id=${encodeURIComponent(id)}&email=${encodeURIComponent(email)}`;
   return `Hallo, na wie geht es ${dog}?
 
 ich bin Laura, und weil ich selbst weiß, wie sehr so ein Hund einem ans Herz wächst, wollte ich dir heute mal ganz persönlich schreiben.
@@ -111,7 +113,7 @@ Eine Freundin hat mir dann den Pfoten-Plan gezeigt. Ich war ehrlich skeptisch. A
 
 Ich war so begeistert, dass ich mich bei Max beworben habe. Heute arbeite ich hier im Pfoten-Plan-Team und helfe anderen genau so, wie damals mir geholfen wurde.
 
-Wenn du magst, machen wir dir den Plan für ${dog} fertig: https://www.pfoten-plan.de/
+Wenn du magst, machen wir dir den Plan für ${dog} fertig: ${cta}
 
 Ich drücke euch von Herzen die Daumen.
 Laura vom Pfoten-Plan-Team
@@ -132,8 +134,8 @@ async function sendOne(email: string, dog: string, id: string) {
       Simple: {
         Subject: { Data: subjectFor(dog, id), Charset: "UTF-8" },
         Body: {
-          Html: { Data: buildHtml(dog, id), Charset: "UTF-8" },
-          Text: { Data: buildText(dog, id), Charset: "UTF-8" },
+          Html: { Data: buildHtml(dog, id, email), Charset: "UTF-8" },
+          Text: { Data: buildText(dog, id, email), Charset: "UTF-8" },
         },
         Headers: [
           { Name: "List-Unsubscribe", Value: `<https://www.pfoten-plan.de/api/unsubscribe?lead=${encodeURIComponent(id)}>, <mailto:hallo@pfoten-post.de?subject=unsubscribe>` },
