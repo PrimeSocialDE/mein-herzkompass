@@ -295,6 +295,7 @@
             try {
                 const eid = 'hv_' + (leadId || userEmail || Date.now());
                 if (typeof fbq !== 'undefined') fbq('track', 'Purchase', { value: 14.99, currency: 'EUR', content_name: 'Hund verstehen Profil', content_ids: ['hund-verstehen'], content_type: 'product' }, { eventID: eid });
+                if (typeof oaiq !== 'undefined') oaiq('measure', 'order_created', { type: 'contents', value: 14.99, currency: 'EUR' });
                 if (typeof gtag !== 'undefined') gtag('event', 'conversion', { send_to: 'AW-17806525009/I3FdCL3O1NEbENGE6KpC', value: 14.99, currency: 'EUR', transaction_id: eid });
             } catch (e) {}
         }
