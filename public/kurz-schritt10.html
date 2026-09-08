@@ -384,7 +384,7 @@ fbq('track', 'PageView');
 
     <div class="container">
         <h1 class="page-title"><span id="dogNameH1Possessive">Dein</span> Plan ist so gut wie fertig</h1>
-        <p class="page-subtitle">Mit dem Plan, den wir für <strong id="dogNameTitle">deinen Hund</strong> erstellen, lässt sich <span class="problem-highlight" id="problemText">das Problem</span> innerhalb der nächsten 30 Tage lösen.</p>
+        <p class="page-subtitle">Wir erstellen den Plan für <strong id="dogNameTitle">deinen Hund</strong> so, dass du die ersten Fortschritte schon in den nächsten Tagen siehst. So bekommt ihr <span class="problem-highlight" id="problemText">das Problem</span> innerhalb von 30 Tagen in den Griff.</p>
         <p class="target-date" id="targetDate">20. Januar 2026</p>
 
         <!-- iPad Plan Preview -->
@@ -410,7 +410,7 @@ fbq('track', 'PageView');
 
                     <!-- Phase 1: Chart -->
                     <div class="ipad-chart" id="ipadChart">
-                        <div class="ipad-chart-title">Fortschritt: Mit Plan vs. Ohne Plan</div>
+                        <div class="ipad-chart-title"><span id="chartProblem">Dein Hund</span>: mit Plan vs. ohne Plan</div>
                         <div class="ipad-chart-bars">
                             <div class="ipad-bar-group">
                                 <div class="ipad-bar-pair">
@@ -527,6 +527,30 @@ fbq('track', 'PageView');
 
     <script>
         // Load dog name
+        // ===== VORSCHAU-MODUS (nur lokal/Preview; Produktion unberührt) =====
+        // Aktiv nur bei file:// oder localhost (Demo, wenn kein Quiz-Datensatz da),
+        // oder wenn ?preview=leine|bellen|allein|hunde in der URL steht.
+        (function(){
+            try {
+                var pv = new URLSearchParams(location.search).get('preview');
+                var isPreviewEnv = location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+                if (!pv && !(isPreviewEnv && !localStorage.getItem('dogName'))) return;
+                var demos = {
+                    leine:  {n:'Bella', p:'pulling',     b:'Labrador',    a:'adult'},
+                    bellen: {n:'Rosi',  p:'barking',      b:'Mischling',   a:'adult'},
+                    allein: {n:'Max',   p:'separation',   b:'Mischling',   a:'young'},
+                    hunde:  {n:'Rocky', p:'dog-reactive', b:'Schäferhund', a:'adult'}
+                };
+                var d = demos[pv] || demos.leine;
+                localStorage.setItem('dogName', d.n);
+                localStorage.setItem('dogProblem', d.p);
+                localStorage.setItem('dogBreed', d.b);
+                localStorage.setItem('dogAge', d.a);
+                localStorage.setItem('trainingTime', '10');
+                localStorage.setItem('dogCommands', JSON.stringify(['name','sit']));
+                localStorage.removeItem('dogBehaviors');
+            } catch(e) {}
+        })();
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         document.getElementById('dogNameTitle').textContent = dogName;
         // Headline-Possessive: "Brunos" wenn Hundename da, sonst "Dein"
@@ -575,6 +599,7 @@ fbq('track', 'PageView');
         }
 
         document.getElementById('problemText').textContent = problemText;
+        var _cp = document.getElementById('chartProblem'); if (_cp) _cp.textContent = problemText;
 
         // Emotionale Rückversicherung personalisieren (Hundename + Problem)
         (function () {
@@ -662,7 +687,29 @@ fbq('track', 'PageView');
             cmdDesc = missingLabels.slice(0, 4).join(', ') + (missingCmds.length > 4 ? ' & mehr' : '');
         }
 
+        // Tag-1-Teaser (problem-spezifisch): was schon am ersten Tag passiert
+        const day1Map = {
+            'pulling': 'Der erste Trick gegen das Ziehen an der Leine',
+            'leash-reactive': 'Der erste Schritt, ruhig an der Leine zu bleiben',
+            'barking': 'Die erste Übung, damit ' + dogName + ' ruhig bleibt statt zu bellen',
+            'aggression': 'Der erste Schritt, entspannt an anderen Hunden vorbeizugehen',
+            'dog-reactive': 'Der erste Schritt, bei anderen Hunden ruhig zu bleiben',
+            'anxiety': 'Die erste kleine Übung fürs entspannte Alleinebleiben',
+            'separation': 'Die erste kleine Übung fürs entspannte Alleinebleiben',
+            'jumping': 'Die erste Übung, damit ' + dogName + ' Besuch ruhig begrüßt',
+            'recall': 'Der erste Schritt, damit ' + dogName + ' zuverlässig kommt',
+            'energy': 'Die erste Übung für mehr Ruhe im Alltag',
+            'destructive': 'Die erste Übung für mehr Impulskontrolle',
+            'mouthing': 'Die erste Übung für mehr Impulskontrolle',
+            'soiling': 'Der erste Schritt zur Stubenreinheit',
+            'chasing': 'Der erste Schritt gegen das Jagen',
+            'resource-guarding': 'Die erste Übung fürs entspannte Abgeben',
+            'biting': 'Die erste Übung zur Beißhemmung'
+        };
+        const day1Text = day1Map[dogProblem] || ('Deine erste Übung gegen ' + problemText);
+
         const valueItems = [
+            { text: 'Tag 1: ' + day1Text, desc: 'Schon der erste Tag macht den Unterschied · nur ' + trainingTime + ' Min.' },
             { text: '20 Übungen gegen ' + problemText, desc: 'Schritt für Schritt aufgebaut · ' + trainingTime + ' Min. pro Tag' },
             { text: breedAgeText, desc: breedAgeDesc },
             { text: 'Nur ' + trainingTime + ' Min. am Tag nötig', desc: 'Kurze Einheiten, die in jeden Alltag passen' },
