@@ -235,8 +235,8 @@
             </div>
         </div>
 
-        <!-- Upsell: Notfall-Karten als ERSTER Slot -->
-        <div class="upsell-card">
+        <!-- Upsell: Notfall-Karten als ERSTER Slot (A-Variante) -->
+        <div class="upsell-card" id="cardA">
             <p class="eyebrow">Empfehlung für dich</p>
             <h2>10 Notfall-Karten für deine Hunde-Tasche</h2>
 
@@ -290,6 +290,62 @@
             </div>
         </div>
 
+        <!-- Upsell: Persönliche Video-Analyse (B-Variante, 49,99 €) -->
+        <div class="upsell-card" id="cardB" style="display:none;">
+            <p class="eyebrow">Nur für dich · persönlich</p>
+            <h2>Persönliche Video-Analyse für <span class="dog-name">deinen Hund</span></h2>
+
+            <p class="upsell-desc">
+                Du filmst eine typische Situation, <strong>wir schauen persönlich drüber</strong>.
+                Unser Trainer erklärt dir <strong>genau, warum <span class="dog-name">dein Hund</span>
+                sich so verhält</strong>, und gibt dir dann <strong>spezielle Übungen, exakt auf
+                <span class="dog-name">deinen Hund</span> zugeschnitten</strong>. Kein Ratgeber von
+                der Stange, sondern echte Augen auf euer Problem und ein Plan, der wirklich zu euch passt.
+            </p>
+
+            <div class="examples">
+                <div class="example-card">
+                    <div class="example-icon">🎥</div>
+                    <div class="example-info">
+                        <div class="example-title">Du filmst, wir analysieren</div>
+                        <div class="example-steps">Kurzes Handy-Video reicht</div>
+                    </div>
+                </div>
+                <div class="example-card">
+                    <div class="example-icon">🧠</div>
+                    <div class="example-info">
+                        <div class="example-title">Genau warum dein Hund das tut</div>
+                        <div class="example-steps">Ursache statt nur Symptom</div>
+                    </div>
+                </div>
+                <div class="example-card">
+                    <div class="example-icon">📋</div>
+                    <div class="example-info">
+                        <div class="example-title">Spezielle Übungen für euch</div>
+                        <div class="example-steps">Exakt auf deinen Hund zugeschnitten</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="how-it-works">
+                <span>📧</span>
+                <span>Nach dem Kauf kommt sofort per E-Mail dein Upload-Link · persönliche Antwort in ca. 24 bis 48 Std.</span>
+            </div>
+
+            <div class="price-section">
+                <div class="price-amount">€49,99</div>
+                <div class="price-info">Einmalzahlung · persönliche Auswertung durch unseren Trainer</div>
+            </div>
+
+            <button class="cta-btn" id="ctaBtnB" onclick="buyAnalyse()">
+                Persönliche Analyse dazu nehmen – €49,99
+            </button>
+
+            <div class="guarantee-text">
+                🛡️ Du lädst dein Video ganz in Ruhe hoch, wann es dir passt
+            </div>
+        </div>
+
         <!-- Skip → weiter zu /downsell.html (Module als nächste Stufe) -->
         <button class="skip-btn" id="skipBtn" onclick="skipToModules()">
             Nein danke, andere Trainings-Module ansehen →
@@ -297,6 +353,21 @@
     </div>
 
     <script>
+        // Vorschau-Modus: lokal (file://) oder ?preview → Demo-Daten + B-Variante sichtbar.
+        // Greift NIE in Produktion (nur file:// / localhost / ?preview).
+        (function initPreview() {
+            var p = new URLSearchParams(location.search);
+            var isPreview = location.protocol === 'file:'
+                || /localhost|127\.0\.0\.1/.test(location.hostname)
+                || p.has('preview');
+            if (!isPreview) return;
+            if (!localStorage.getItem('dogName')) localStorage.setItem('dogName', 'Bella');
+            if (!localStorage.getItem('userEmail')) localStorage.setItem('userEmail', 'demo@pfoten-plan.de');
+            if (!localStorage.getItem('leadId')) localStorage.setItem('leadId', 'preview');
+            // Vorschau zeigt standardmäßig die neue 49,99-Analyse (B). ?ab=A zeigt die Karten.
+            if (!p.get('ab')) localStorage.setItem('zusatzAB', 'B');
+        })();
+
         // Daten aus localStorage / URL
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         const userEmail = localStorage.getItem('userEmail') || '';
@@ -310,6 +381,25 @@
 
         // Hundenamen in Banner ersetzen
         document.querySelectorAll('.dog-name').forEach(el => { el.textContent = dogName; });
+
+        // ==================== A/B-TEST: Slot 1 ====================
+        // A = Notfall-Karten (9,99 €) · B = Persönliche Video-Analyse (49,99 €)
+        // Vorschau erzwingen: ?ab=A oder ?ab=B. Sonst stabile 50/50-Zuteilung.
+        (function initAB() {
+            let variant = (urlParamsInit.get('ab') || '').toUpperCase();
+            if (variant !== 'A' && variant !== 'B') {
+                variant = localStorage.getItem('zusatzAB') || '';
+                if (variant !== 'A' && variant !== 'B') {
+                    variant = Math.random() < 0.50 ? 'B' : 'A';
+                    localStorage.setItem('zusatzAB', variant);
+                }
+            }
+            const a = document.getElementById('cardA');
+            const b = document.getElementById('cardB');
+            if (variant === 'B') { if (a) a.style.display = 'none'; if (b) b.style.display = ''; }
+            else { if (a) a.style.display = ''; if (b) b.style.display = 'none'; }
+            console.log('Zusatz-Slot Variante:', variant);
+        })();
 
         // Skip-Button nach 3 Sekunden einblenden
         setTimeout(() => {
@@ -549,6 +639,82 @@
                 window.location.href = result.url;
             } catch (err) {
                 console.error('Notfall-Karten Error:', err);
+                alert('Fehler beim Laden.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // ==================== PERSÖNLICHE VIDEO-ANALYSE (49,99 €) ====================
+        // Kauf 1-Klick wie Notfall-Karten (KEIN Seitenwechsel). Upload-Link kommt per E-Mail.
+        function showAnalyseSuccess() {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;animation:upsellFadeIn 0.2s ease-out;';
+            overlay.innerHTML = `
+                <div style="background:#fff;border-radius:16px;padding:32px 28px;max-width:400px;width:100%;text-align:center;box-shadow:0 24px 48px rgba(0,0,0,0.22);animation:upsellPop 0.35s cubic-bezier(0.34,1.56,0.64,1);">
+                    <div style="width:64px;height:64px;background:#DCFCE7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12" stroke-dasharray="60" style="animation:upsellCheck 0.4s ease-out 0.2s both;"/>
+                        </svg>
+                    </div>
+                    <h3 style="font-size:18px;font-weight:800;color:#1a1a1a;margin:0 0 8px;">Persönliche Analyse gesichert!</h3>
+                    <p style="font-size:14px;color:#4B5563;line-height:1.55;margin:0;">Wir haben dir gerade eine <strong>E-Mail mit deinem Upload-Link</strong> geschickt. Dort lädst du in Ruhe dein Video oder Fotos hoch, wann es dir passt. Unser Trainer meldet sich <strong>persönlich innerhalb von ca. 24 bis 48 Stunden</strong> bei dir.</p>
+                </div>`;
+            document.body.appendChild(overlay);
+            // Upload-Link-Mail wird server-seitig im Mollie-Webhook ausgelöst
+            // (feuert bei bestätigter Zahlung, auch wenn der Tab geschlossen wird).
+            // Danach weiter im Funnel (Folge-Angebot), wie bei den Karten
+            setTimeout(() => {
+                window.location.href = 'upsell-plan-bundle.html?lead_id=' + encodeURIComponent(leadId || '');
+            }, 3800);
+        }
+
+        async function buyAnalyse() {
+            const btn = document.getElementById('ctaBtnB');
+            const originalText = btn.textContent;
+            btn.innerHTML = '<span class="spinner"></span> Lädt...';
+            btn.disabled = true;
+
+            if (!userEmail) {
+                alert('Fehler: Keine E-Mail gefunden.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            // 1-Click via Mandate versuchen (wie Notfall-Karten)
+            try {
+                const r = await fetch('/api/mollie/upsell-recurring', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ module: 'video-analyse', leadId: leadId, email: userEmail, dogName: dogName, price: 4999 })
+                });
+                const j = await r.json();
+                if (j.ok) {
+                    console.log('✓ 1-Click Analyse ok:', j.paymentId);
+                    showAnalyseSuccess();
+                    return;
+                }
+            } catch (e) { console.warn('1-Click Analyse exception:', e?.message || e); }
+
+            // Fallback: klassischer Mollie-Redirect-Flow
+            try {
+                const returnUrl = window.location.origin + '/upsell-plan-bundle.html?lead_id=' + encodeURIComponent(leadId || '') + '&analyse=1';
+                const response = await fetch('/api/mollie/upsell-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ module: 'video-analyse', leadId: leadId, email: userEmail, dogName: dogName, price: 4999, returnUrl: returnUrl })
+                });
+                const result = await response.json();
+                if (result.error || !result.url) {
+                    alert('Fehler beim Laden. Bitte versuche es erneut.');
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+                window.location.href = result.url;
+            } catch (err) {
+                console.error('Analyse Error:', err);
                 alert('Fehler beim Laden.');
                 btn.textContent = originalText;
                 btn.disabled = false;

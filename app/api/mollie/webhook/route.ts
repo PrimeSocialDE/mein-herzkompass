@@ -769,6 +769,61 @@ async function handleUpsellPaid(payment: any) {
     }
   }
 
+  // Persönliche Video-Analyse (49,99 €): keine PDF-Auslieferung, sondern der
+  // Kunde bekommt seinen persönlichen Upload-Link per Mail (kontakt@ in CC).
+  // Server-seitig hier, damit die Mail auch dann sicher rausgeht, wenn der
+  // Kunde nach dem 1-Klick-Kauf den Tab schließt. Atomarer Claim gegen Doppel-
+  // versand (Mollie feuert mehrfach).
+  if (module === "video-analyse" && (email || leadData.email)) {
+    try {
+      const { data: fresh } = await supabase
+        .from("wauwerk_leads")
+        .select("answers, dog_name")
+        .eq("id", leadData.id)
+        .maybeSingle();
+      const ans = ((fresh?.answers as any) || (leadData.answers as any) || {}) as Record<string, any>;
+      let claimed = false;
+      if (!ans.analyse_invite_sent_at) {
+        const { data: claimRows } = await supabase
+          .from("wauwerk_leads")
+          .update({ answers: { ...ans, analyse_invite_sent_at: new Date().toISOString() } })
+          .eq("id", leadData.id)
+          .is("answers->>analyse_invite_sent_at", null)
+          .select("id");
+        claimed = !!(claimRows && claimRows.length);
+      }
+      if (claimed) {
+        const baseUrl =
+          process.env.NEXT_PUBLIC_BASE_URL &&
+          !process.env.NEXT_PUBLIC_BASE_URL.includes("localhost")
+            ? process.env.NEXT_PUBLIC_BASE_URL
+            : "https://www.pfoten-plan.de";
+        const res = await fetch(`${baseUrl}/api/analyse-upload`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "invite",
+            lead: leadData.id || "",
+            email: email || leadData.email,
+            dog: meta.dog_name || fresh?.dog_name || leadData.dog_name || "",
+          }),
+        });
+        if (!res.ok) {
+          console.error("[mollie-webhook] Analyse-Invite non-ok:", res.status);
+          const { data: cur } = await supabase
+            .from("wauwerk_leads").select("answers").eq("id", leadData.id).maybeSingle();
+          const curAns = ((cur?.answers as any) || {}) as Record<string, any>;
+          delete curAns.analyse_invite_sent_at;
+          await supabase.from("wauwerk_leads").update({ answers: curAns }).eq("id", leadData.id);
+        } else {
+          console.log("[mollie-webhook] Analyse-Invite verschickt an", email || leadData.email);
+        }
+      }
+    } catch (e) {
+      console.error("[mollie-webhook] Analyse-Invite Delivery Error:", e);
+    }
+  }
+
   // Coach-Foto-Premium: schaltet 30 Tage Foto/Video-Analyse im KI-Trainer
   // frei. Speicherung in answers.coach_premium_until (kein Schema-Änderung).
   // Fresh-Read, damit der upsell_paid_at-Write oben nicht überschrieben wird.
