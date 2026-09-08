@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Video hochladen · Deine persönliche Analyse</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#FAF8F5; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif; color:#2C2C2E; line-height:1.6; }
+  .wrap { max-width:600px; margin:0 auto; padding:28px 18px 60px; }
+  .card { background:#fff; border:1px solid #EADDC5; border-radius:18px; padding:30px 26px; }
+  .logo { text-align:center; font-size:20px; font-weight:800; color:#8B7355; margin-bottom:18px; }
+  h1 { font-size:23px; line-height:1.3; margin:0 0 10px; }
+  h1 .dog { color:#C4A576; }
+  p.lead { font-size:16px; color:#555; margin:0 0 22px; }
+  label.field { display:block; font-size:15px; font-weight:700; margin:18px 0 8px; }
+  .hint { font-size:13.5px; color:#777; font-weight:400; margin-top:2px; }
+  .dropzone { border:2px dashed #C4A576; border-radius:14px; background:#FFFBF5; padding:26px 18px; text-align:center; cursor:pointer; transition:background .15s; }
+  .dropzone:hover { background:#FFF4E3; }
+  .dropzone .big { font-size:34px; }
+  .dropzone .t { font-size:16px; font-weight:700; color:#8B7355; margin-top:6px; }
+  .dropzone .s { font-size:13.5px; color:#888; margin-top:4px; }
+  input[type=file] { display:none; }
+  #fileList { margin:12px 0 0; padding:0; list-style:none; }
+  #fileList li { font-size:14px; background:#F5EFE6; border-radius:8px; padding:8px 12px; margin-bottom:6px; display:flex; justify-content:space-between; gap:8px; }
+  textarea { width:100%; border:1px solid #E0D5C2; border-radius:12px; padding:14px; font-size:16px; font-family:inherit; resize:vertical; min-height:100px; }
+  .cta { display:block; width:100%; background:#8B7355; color:#fff; border:0; border-radius:14px; padding:18px; font-size:18px; font-weight:800; cursor:pointer; margin-top:22px; }
+  .cta:disabled { opacity:.6; cursor:default; }
+  .reassure { background:#EEF6EF; border:1px solid #B8DDBE; border-radius:12px; padding:14px 16px; margin-top:18px; font-size:14px; color:#166534; }
+  .foot { text-align:center; font-size:12px; color:#9CA3AF; margin-top:20px; }
+  #done { display:none; text-align:center; padding:20px 0; }
+  #done .big { font-size:52px; }
+  #done h2 { font-size:22px; margin:10px 0 8px; }
+  .bar { height:8px; background:#EADDC5; border-radius:6px; overflow:hidden; margin-top:14px; display:none; }
+  .bar > div { height:100%; width:0; background:#8B7355; transition:width .2s; }
+  .err { color:#B91C1C; font-size:14px; margin-top:10px; display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="logo">🐾 Pfoten-Plan</div>
+
+    <div id="form">
+      <h1>Lade jetzt dein Video für <span class="dog" id="dogName">deinen Hund</span> hoch</h1>
+      <p class="lead">Lass dir ruhig Zeit. Film eine typische Situation (z. B. an der Leine, beim Klingeln, bei Begegnungen) oder lade Fotos hoch. Unser Trainer schaut sich alles persönlich an, erklärt dir genau warum dein Hund sich so verhält, und gibt dir spezielle Übungen, exakt auf ihn zugeschnitten. Antwort per E-Mail meist innerhalb von 24 bis 48 Stunden.</p>
+
+      <label class="field">Video oder Fotos
+        <span class="hint">Ein kurzes Handy-Video reicht völlig. Mehrere Dateien möglich.</span>
+      </label>
+      <div class="dropzone" id="drop">
+        <div class="big">📹</div>
+        <div class="t">Hier tippen zum Auswählen</div>
+        <div class="s">Video (mp4, mov) oder Fotos (jpg, png)</div>
+      </div>
+      <input type="file" id="file" accept="video/*,image/*" multiple>
+      <ul id="fileList"></ul>
+
+      <label class="field" for="note">Beschreib kurz die Situation
+        <span class="hint">Was passiert genau? Wann tritt es auf? Was hast du schon versucht?</span>
+      </label>
+      <textarea id="note" placeholder="Zum Beispiel: Sobald es an der Tür klingelt, bellt er wie verrückt und ist kaum zu beruhigen ..."></textarea>
+
+      <div class="bar" id="bar"><div id="barfill"></div></div>
+      <div class="err" id="err"></div>
+      <button class="cta" id="send">Absenden und Analyse starten</button>
+
+      <div class="reassure">🛡️ Deine Daten werden vertraulich behandelt und nur für deine persönliche Analyse verwendet.</div>
+    </div>
+
+    <div id="done">
+      <div class="big">✅</div>
+      <h2>Danke, wir haben alles bekommen!</h2>
+      <p class="lead">Unser Trainer schaut sich <span id="dogName2">deinen Hund</span> in Ruhe an und meldet sich <strong>per E-Mail</strong> bei dir, meist innerhalb von 24 bis 48 Stunden. Du kannst dieses Fenster jetzt schließen.</p>
+    </div>
+  </div>
+  <div class="foot">Pfoten-Plan · Persönliches Hundetraining</div>
+</div>
+
+<script>
+  var params = new URLSearchParams(location.search);
+  var lead = params.get('lead') || params.get('lead_id') || localStorage.getItem('leadId') || '';
+  var email = params.get('email') || localStorage.getItem('userEmail') || '';
+  var dog = params.get('dog') || localStorage.getItem('dogName') || '';
+  if (dog) { document.getElementById('dogName').textContent = dog; document.getElementById('dogName2').textContent = dog; }
+
+  var fileInput = document.getElementById('file');
+  var files = [];
+  document.getElementById('drop').addEventListener('click', function(){ fileInput.click(); });
+  fileInput.addEventListener('change', function(){
+    files = Array.prototype.slice.call(fileInput.files).slice(0, 6);
+    var ul = document.getElementById('fileList'); ul.innerHTML = '';
+    files.forEach(function(f){
+      var li = document.createElement('li');
+      li.innerHTML = '<span>'+f.name+'</span><span>'+(f.size/1048576).toFixed(1)+' MB</span>';
+      ul.appendChild(li);
+    });
+  });
+
+  function showErr(m){ var e=document.getElementById('err'); e.textContent=m; e.style.display='block'; }
+
+  document.getElementById('send').addEventListener('click', async function(){
+    var btn = this;
+    document.getElementById('err').style.display='none';
+    if (files.length === 0) { showErr('Bitte lade zuerst ein Video oder ein Foto hoch.'); return; }
+    btn.disabled = true; btn.textContent = 'Wird hochgeladen ...';
+    var bar = document.getElementById('bar'), fill = document.getElementById('barfill');
+    bar.style.display='block';
+    var uploaded = [];
+    try {
+      for (var i=0; i<files.length; i++) {
+        var f = files[i];
+        var signRes = await fetch('/api/analyse-upload', { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ action:'sign', lead:lead, filename:f.name, ts: Date.now() }) });
+        var sign = await signRes.json();
+        if (!sign.ok) throw new Error('Signatur fehlgeschlagen');
+        var put = await fetch(sign.uploadUrl, { method:'PUT', headers:{'Content-Type': f.type || 'application/octet-stream'}, body: f });
+        if (!put.ok) throw new Error('Upload fehlgeschlagen ('+put.status+')');
+        uploaded.push(sign.path);
+        fill.style.width = Math.round(((i+1)/files.length)*100) + '%';
+      }
+      var notifyRes = await fetch('/api/analyse-upload', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ action:'notify', lead:lead, email:email, dog:dog, note: document.getElementById('note').value, paths: uploaded }) });
+      var notify = await notifyRes.json();
+      if (!notify.ok) throw new Error('Benachrichtigung fehlgeschlagen');
+      document.getElementById('form').style.display='none';
+      document.getElementById('done').style.display='block';
+      window.scrollTo(0,0);
+    } catch (e) {
+      showErr('Da ging leider etwas schief: ' + (e.message||e) + '. Bitte versuch es nochmal oder antworte einfach auf unsere E-Mail.');
+      btn.disabled = false; btn.textContent = 'Absenden und Analyse starten';
+    }
+  });
+</script>
+</body>
+</html>
