@@ -1439,6 +1439,94 @@
 </style>
 </head>
 <body>
+    <script>
+    // Vorschau-Modus (file:// / localhost / ?preview): Demo-Daten VOR der
+    // Personalisierung setzen, damit Seite + Band befüllt sind. NIE in Produktion.
+    (function () {
+        var p = new URLSearchParams(location.search);
+        var isPreview = location.protocol === 'file:'
+            || /localhost|127\.0\.0\.1/.test(location.hostname)
+            || p.has('preview');
+        if (!isPreview) return;
+        if (!localStorage.getItem('dogName')) localStorage.setItem('dogName', 'Bella');
+        if (!localStorage.getItem('dogProblem')) localStorage.setItem('dogProblem', 'pulling');
+        if (!localStorage.getItem('dogBreed')) localStorage.setItem('dogBreed', 'mixed');
+        if (!localStorage.getItem('dogAge')) localStorage.setItem('dogAge', 'adult');
+    })();
+    </script>
+
+    <!-- Toast: Bestätigung nach Änderung -->
+    <div id="rhToast" style="display:none; position:fixed; top:12px; left:50%; transform:translateX(-50%); z-index:100000; background:#166534; color:#fff; padding:7px 14px; border-radius:999px; font-size:13px; font-weight:700; white-space:nowrap; box-shadow:0 6px 18px rgba(0,0,0,0.2);">
+        <span id="rhToastText">✓ Übernommen</span>
+    </div>
+
+    <!-- Modal: Angaben ändern -->
+    <div id="rhModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99999; align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto;">
+        <div style="background:#fff; border-radius:18px; max-width:520px; width:100%; margin-top:24px; box-shadow:0 24px 60px rgba(0,0,0,0.3);">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; padding:22px 24px 14px; border-bottom:1px solid #EEE;">
+                <div>
+                    <div style="font-size:20px; font-weight:800; color:#2C2C2E;">Angaben ändern</div>
+                    <div style="font-size:14px; color:#888; margin-top:3px;">Danach schreiben wir deinen Plan neu.</div>
+                </div>
+                <button id="rhCloseEdit" style="border:1px solid #E0D5C2; background:#fff; border-radius:10px; width:40px; height:40px; font-size:20px; cursor:pointer; color:#666;">✕</button>
+            </div>
+            <div style="padding:20px 24px 4px;">
+                <label style="display:block; font-size:15px; font-weight:700; margin:6px 0 8px; color:#2C2C2E;">Name deines Hundes</label>
+                <input id="rhName" type="text" placeholder="z. B. Bella" style="width:100%; border:1px solid #E0D5C2; border-radius:12px; padding:13px 14px; font-size:16px; font-family:inherit; box-sizing:border-box;">
+
+                <label style="display:block; font-size:15px; font-weight:700; margin:20px 0 8px; color:#2C2C2E;">Das Hauptproblem</label>
+                <div id="rhProblemChips" style="display:flex; flex-wrap:wrap; gap:8px;">
+                    <span class="rh-chip" data-problem="pulling">Leinenziehen</span>
+                    <span class="rh-chip" data-problem="barking">Bellen</span>
+                    <span class="rh-chip" data-problem="anxiety">Alleine bleiben</span>
+                    <span class="rh-chip" data-problem="aggression">Aggression</span>
+                    <span class="rh-chip" data-problem="recall">Rückruf</span>
+                    <span class="rh-chip" data-problem="jumping">Anspringen</span>
+                    <span class="rh-chip" data-problem="energy">Zu viel Energie</span>
+                    <span class="rh-chip" data-problem="destructive">Zerstört Dinge</span>
+                    <span class="rh-chip" data-problem="mouthing">Nimmt alles ins Maul</span>
+                </div>
+
+                <label style="display:block; font-size:15px; font-weight:700; margin:20px 0 8px; color:#2C2C2E;">Rasse (optional)</label>
+                <select id="rhBreed" style="width:100%; border:1px solid #E0D5C2; border-radius:12px; padding:13px 14px; font-size:16px; font-family:inherit; box-sizing:border-box; background:#fff;">
+                    <option value="">Keine Angabe</option>
+                    <option value="mixed">Mischling</option>
+                    <option value="labrador">Labrador</option>
+                    <option value="german_shepherd">Deutscher Schäferhund</option>
+                    <option value="golden_retriever">Golden Retriever</option>
+                    <option value="french_bulldog">Französische Bulldogge</option>
+                    <option value="chihuahua">Chihuahua</option>
+                    <option value="poodle">Pudel</option>
+                    <option value="dachshund">Dackel</option>
+                    <option value="beagle">Beagle</option>
+                    <option value="husky">Husky</option>
+                    <option value="border_collie">Border Collie</option>
+                    <option value="other">Andere Rasse</option>
+                </select>
+
+                <label style="display:block; font-size:15px; font-weight:700; margin:20px 0 8px; color:#2C2C2E;">Alter (optional)</label>
+                <select id="rhAge" style="width:100%; border:1px solid #E0D5C2; border-radius:12px; padding:13px 14px; font-size:16px; font-family:inherit; box-sizing:border-box; background:#fff;">
+                    <option value="">Keine Angabe</option>
+                    <option value="puppy">Welpe (unter 6 Monate)</option>
+                    <option value="young">6–12 Monate</option>
+                    <option value="adult">1–3 Jahre</option>
+                    <option value="mature">3–7 Jahre</option>
+                    <option value="senior">Über 7 Jahre</option>
+                </select>
+            </div>
+            <div style="padding:18px 24px 24px;">
+                <button id="rhSave" style="width:100%; background:linear-gradient(135deg,#C4A576,#8B7355); color:#fff; border:0; border-radius:14px; padding:17px; font-size:17px; font-weight:800; cursor:pointer;">Änderungen übernehmen</button>
+                <div style="text-align:center; margin-top:14px;">
+                    <a href="kurz-schritt1.html" style="color:#8B7355; font-size:14px; text-decoration:underline;">Alle Fragen noch einmal durchgehen</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .rh-chip { border:1px solid #E0D5C2; border-radius:999px; padding:9px 15px; font-size:14.5px; cursor:pointer; user-select:none; color:#3a3128; background:#fff; }
+        .rh-chip.selected { background:#8B7355; color:#fff; border-color:#8B7355; font-weight:700; }
+    </style>
+
     <!-- Banner oben (nicht sticky): Sommer-Motivation -->
     <div id="bonusBanner" style="background: linear-gradient(135deg, #C4A576, #8B7355); color: white; padding: 10px 16px; text-align: center; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
         <span>Der Sommer ist die perfekte Zeit, um mit <strong id="dogNameTopBanner">deinem Hund</strong> richtig durchzustarten.</span>
@@ -1461,6 +1549,14 @@
               <svg viewBox="0 0 24 24" width="22" height="22" fill="#25D366" style="flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.695.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884M20.463 3.488A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
               <span><strong>Individuelle Fragen zu deinem Plan oder Schwierigkeiten?</strong> Schreib uns direkt auf <span style="text-decoration:underline;font-weight:800;">WhatsApp</span> &ndash; wir sind f&uuml;r dich da.</span>
             </a>
+
+            <!-- Willkommen-zurück-Band: Angaben ändern (Rückkehrer) -->
+            <div id="rhWelcomeBar" style="max-width:520px; margin:10px auto 0; padding:9px 14px; background:#FBF7F0; border:1px solid #EADDC5; border-radius:14px; color:#3a3128; text-align:center; font-size:12.5px; line-height:1.5;">
+                Willkommen zurück. Dein Plan für <strong id="rhWelcomeDogName">deinen Hund</strong> steht noch.
+                <a href="#" id="rhOpenEdit" style="color:#8B7355; font-weight:800; text-decoration:underline; cursor:pointer;">Angaben ändern</a>
+                <span style="color:#b8a88f;"> oder </span>
+                <a href="kurz-schritt1.html" id="rhNewDog" style="color:#8B7355; font-weight:800; text-decoration:underline;">Plan für einen anderen Hund</a>
+            </div>
         </div>
 
         <!-- Proof Slider -->
@@ -2353,8 +2449,11 @@
             leadId = leadIdParam || localStorage.getItem('leadId') || '';
             userEmail = localStorage.getItem('userEmail') || '';
             
-            // Aus Supabase laden wenn Parameter vorhanden
-            if (leadIdParam || emailParam) {
+            // Aus Supabase laden wenn Parameter vorhanden.
+            // Ausnahme: Wenn der Besucher seine Angaben selbst geändert hat
+            // (rh_edited), NICHT mehr aus Supabase überschreiben – sonst würde
+            // die manuelle Änderung nach dem Neuladen wieder verworfen.
+            if ((leadIdParam || emailParam) && localStorage.getItem('rh_edited') !== '1') {
                 let queryParam = '';
                 if (leadIdParam) {
                     queryParam = 'id=eq.' + leadIdParam;
@@ -2451,6 +2550,9 @@
             } catch(e){}
             const dogNameTopBannerEl = document.getElementById('dogNameTopBanner');
             if (dogNameTopBannerEl) dogNameTopBannerEl.textContent = dogName;
+            // Willkommen-zurück-Band mit aktualisiertem Namen (auch nach Supabase-Load)
+            const rhWelcomeEl = document.getElementById('rhWelcomeDogName');
+            if (rhWelcomeEl) rhWelcomeEl.textContent = dogName;
 
             // Dog names überall ersetzen
             document.getElementById('dogNameFinal').textContent = dogName;
@@ -3687,6 +3789,85 @@ let currentLeadId = null;
                 btn.disabled = false; btn.textContent = 'Weiter zu Klarna';
             }
         }
+</script>
+
+<!-- Rückkehrer: Angaben ändern (Willkommen-zurück-Band + Modal) -->
+<script>
+(function () {
+    var modal = document.getElementById('rhModal');
+    var nameInput = document.getElementById('rhName');
+    var breedSel = document.getElementById('rhBreed');
+    var ageSel = document.getElementById('rhAge');
+    var chips = Array.prototype.slice.call(document.querySelectorAll('#rhProblemChips .rh-chip'));
+    var selectedProblem = '';
+
+    function currentDogName() {
+        var n = localStorage.getItem('dogName') || '';
+        return (n && n !== 'deinen Hund') ? n : '';
+    }
+
+    // Band-Name füllen
+    var nm = currentDogName();
+    var welcomeNameEl = document.getElementById('rhWelcomeDogName');
+    if (welcomeNameEl) welcomeNameEl.textContent = nm || 'deinen Hund';
+
+    function openModal() {
+        // Felder aus localStorage vorbefüllen
+        nameInput.value = currentDogName();
+        breedSel.value = localStorage.getItem('dogBreed') || '';
+        ageSel.value = localStorage.getItem('dogAge') || '';
+        selectedProblem = localStorage.getItem('dogProblem') || '';
+        chips.forEach(function (c) {
+            c.classList.toggle('selected', c.getAttribute('data-problem') === selectedProblem);
+        });
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    var openLink = document.getElementById('rhOpenEdit');
+    if (openLink) openLink.addEventListener('click', function (e) { e.preventDefault(); openModal(); });
+    var closeBtn = document.getElementById('rhCloseEdit');
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+
+    chips.forEach(function (c) {
+        c.addEventListener('click', function () {
+            selectedProblem = c.getAttribute('data-problem');
+            chips.forEach(function (x) { x.classList.remove('selected'); });
+            c.classList.add('selected');
+        });
+    });
+
+    var saveBtn = document.getElementById('rhSave');
+    if (saveBtn) saveBtn.addEventListener('click', function () {
+        var newName = (nameInput.value || '').trim();
+        if (newName) localStorage.setItem('dogName', newName);
+        if (selectedProblem) localStorage.setItem('dogProblem', selectedProblem);
+        localStorage.setItem('dogBreed', breedSel.value || '');
+        localStorage.setItem('dogAge', ageSel.value || '');
+        // Merken, dass der Besucher selbst geändert hat -> kein Supabase-Override
+        localStorage.setItem('rh_edited', '1');
+        // Bestätigung nach dem Neuladen anzeigen
+        try { sessionStorage.setItem('rh_just_updated', '1'); } catch (e) {}
+        location.reload();
+    });
+
+    // Nach dem Neuladen: kurze Bestätigung einblenden
+    try {
+        if (sessionStorage.getItem('rh_just_updated') === '1') {
+            sessionStorage.removeItem('rh_just_updated');
+            var toast = document.getElementById('rhToast');
+            if (toast) {
+                toast.style.display = 'block';
+                setTimeout(function () { toast.style.display = 'none'; }, 3000);
+            }
+        }
+    } catch (e) {}
+})();
 </script>
 </body>
 </html>
