@@ -406,6 +406,74 @@
                 </div>
             </div>
         </div>
+                <!-- Was der Plan abdeckt: nennt die tatsächlich angekreuzten Probleme und
+             gibt den Freitext wörtlich zurück. -->
+        <div id="deckungBox" style="display:none; background: var(--white); border-radius: var(--border-radius); padding: 16px 18px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid var(--border-light); text-align:center;">
+            <p style="font-size: 13px; font-weight: 800; color: var(--warm-brown); margin: 0 0 6px; letter-spacing: 0.02em;">Dein Plan deckt ab</p>
+            <p id="deckungZeile" style="font-size: 15px; font-weight: 700; color: var(--text-dark); margin: 0 0 8px; line-height: 1.5;"><span id="deckungListe"></span></p>
+            <p id="deckungCustom" style="display:none; font-size: 13.5px; color: var(--text-dark); margin: 0 0 8px; line-height: 1.55;">Dazu dein Hinweis: <em style="color: var(--dark-brown); font-style: normal; font-weight: 700;">&bdquo;<span id="deckungCustomText"></span>&ldquo;</em></p>
+            <p style="font-size: 13px; color: var(--text-medium); margin: 0; line-height: 1.55;">Alles, was du angegeben hast, ist eingeplant. Eins nach dem anderen, mit dem Wichtigsten zuerst.</p>
+        </div>
+        <script>
+            (function () {
+                try {
+                    var L = {
+                        pulling:'Leinenziehen', 'leash-reactive':'Leinenziehen',
+                        barking:'Bellen', vocalization:'Bellen',
+                        aggression:'Aggression bei Begegnungen', 'dog-reactive':'Aggression bei Begegnungen',
+                        'postman-reactive':'Aggression bei Begegnungen', overreaction:'Impulskontrolle',
+                        'anxious-overreaction':'Impulskontrolle',
+                        recall:'Rückruf', chasing:'Jagdverhalten', 'chasing-movement':'Jagdverhalten',
+                        'chasing-cars':'Jagdverhalten', 'prey-drive':'Jagdverhalten',
+                        energy:'Hyperaktivität', destructive:'Zerstören', digging:'Buddeln',
+                        jumping:'Anspringen',
+                        anxiety:'Trennungsangst', separation:'Trennungsangst',
+                        'general-anxiety':'Ängstlichkeit', 'stranger-anxiety':'Angst vor Fremden',
+                        'visitor-anxiety':'Unruhe bei Besuch', 'thunder-anxiety':'Gewitterangst',
+                        'noise-sensitivity':'Geräuschangst',
+                        mouthing:'Aufnehmen vom Boden', 'eating-unwanted':'Aufnehmen vom Boden',
+                        'eating-trash':'Aufnehmen vom Boden', 'eating-objects':'Aufnehmen vom Boden',
+                        soiling:'Stubenreinheit', marking:'Markieren',
+                        'resource-guarding':'Ressourcen abgeben', biting:'Beißhemmung'
+                    };
+                    var alle = [];
+                    var haupt = (localStorage.getItem('dogProblem') || '').toLowerCase();
+                    if (haupt) alle.push(haupt);
+                    try { (JSON.parse(localStorage.getItem('dogBehaviors') || '[]') || []).forEach(function (b) { alle.push(b); }); } catch (e) {}
+
+                    // Freitext des Kunden woertlich zurueckgeben, das ist das Persoenlichste.
+                    var frei = (localStorage.getItem('customProblem') || '').trim();
+                    if (frei.length > 140) frei = frei.slice(0, 140).replace(/\s+\S*$/, '') + '…';
+                    var ck = (localStorage.getItem('customProblemKey') || '').toLowerCase();
+                    if (ck && !frei) alle.push(ck);   // ohne Freitext wenigstens das Label
+
+                    var gesehen = {}, liste = [];
+                    
+                    alle.forEach(function (b) {
+                        var name = L[String(b || '').toLowerCase()];
+                        if (name && !gesehen[name]) { gesehen[name] = 1; liste.push(name); }
+                    });
+
+                    if (!liste.length && !frei) return;
+
+                    var zeile = document.getElementById('deckungZeile');
+                    if (liste.length) {
+                        var text = liste.length > 4
+                            ? liste.slice(0, 4).join(' \u00b7 ') + ' und ' + (liste.length - 4) + ' weitere'
+                            : liste.join(' \u00b7 ');
+                        document.getElementById('deckungListe').textContent = text;
+                    } else if (zeile) {
+                        zeile.style.display = 'none';
+                    }
+                    if (frei) {
+                        document.getElementById('deckungCustomText').textContent = frei;
+                        document.getElementById('deckungCustom').style.display = 'block';
+                    }
+                    document.getElementById('deckungBox').style.display = 'block';
+                } catch (e) {}
+            })();
+        </script>
+
 
         <div class="testimonials-section">
             <div class="testimonials-header">

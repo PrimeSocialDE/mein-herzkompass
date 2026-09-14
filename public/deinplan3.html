@@ -2522,6 +2522,74 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                 </div>
             </div>
         </div>
+                        <!-- Weitere angegebene Probleme + Freitext: nimmt die Sorge "kommt mein
+                 zweites Thema auch dran?" (78 % der Leads geben mehr als eins an)
+                 und sagt gleich, dass der Plan änderbar ist. -->
+            <div id="alsoCovered" style="display:none;max-width:560px;margin:14px auto 0;background:#FFFBF5;border:1px solid #EBDDC4;border-radius:14px;padding:14px 16px;text-align:center;">
+                <p id="alsoCoveredLine" style="margin:0 0 6px;font-size:15px;font-weight:800;color:#3a342b;line-height:1.45;">Auch dabei: <span id="alsoCoveredList" style="color:#8B7355;"></span></p>
+                <p id="alsoCoveredCustom" style="display:none;margin:0 0 8px;font-size:14px;color:#3a342b;line-height:1.5;">Und was du uns geschrieben hast: <em style="color:#8B7355;font-style:normal;font-weight:700;">&bdquo;<span id="alsoCoveredCustomText"></span>&ldquo;</em> Steht in deinen Notizen und fliesst in den Plan ein.</p>
+                <p style="margin:0;font-size:13.5px;color:#6B6B6B;line-height:1.55;">Wird im Plan mit behoben, eins nach dem anderen. Und wenn später etwas nicht passt, schreib uns kurz. Dann bauen wir deinen Plan um.</p>
+            </div>
+            <script>
+            (function () {
+                try {
+                    var L = {
+                        pulling:'Leinenziehen', 'leash-reactive':'Leinenziehen',
+                        barking:'Bellen', vocalization:'Bellen',
+                        aggression:'Aggression bei Begegnungen', 'dog-reactive':'Aggression bei Begegnungen',
+                        'postman-reactive':'Aggression bei Begegnungen', overreaction:'Impulskontrolle',
+                        'anxious-overreaction':'Impulskontrolle',
+                        recall:'Rückruf', chasing:'Jagdverhalten', 'chasing-movement':'Jagdverhalten',
+                        'chasing-cars':'Jagdverhalten', 'prey-drive':'Jagdverhalten',
+                        energy:'Hyperaktivität', destructive:'Zerstören', digging:'Buddeln',
+                        jumping:'Anspringen',
+                        anxiety:'Trennungsangst', separation:'Trennungsangst',
+                        'general-anxiety':'Ängstlichkeit', 'stranger-anxiety':'Angst vor Fremden',
+                        'visitor-anxiety':'Unruhe bei Besuch', 'thunder-anxiety':'Gewitterangst',
+                        'noise-sensitivity':'Geräuschangst',
+                        mouthing:'Aufnehmen vom Boden', 'eating-unwanted':'Aufnehmen vom Boden',
+                        'eating-trash':'Aufnehmen vom Boden', 'eating-objects':'Aufnehmen vom Boden',
+                        soiling:'Stubenreinheit', marking:'Markieren',
+                        'resource-guarding':'Ressourcen abgeben', biting:'Beißhemmung'
+                    };
+                    var alle = [];
+                    var haupt = (localStorage.getItem('dogProblem') || '').toLowerCase();
+                    if (haupt) alle.push(haupt);
+                    try { (JSON.parse(localStorage.getItem('dogBehaviors') || '[]') || []).forEach(function (b) { alle.push(b); }); } catch (e) {}
+
+                    // Freitext des Kunden woertlich zurueckgeben, das ist das Persoenlichste.
+                    var frei = (localStorage.getItem('customProblem') || '').trim();
+                    if (frei.length > 140) frei = frei.slice(0, 140).replace(/\s+\S*$/, '') + '…';
+                    var ck = (localStorage.getItem('customProblemKey') || '').toLowerCase();
+                    if (ck && !frei) alle.push(ck);   // ohne Freitext wenigstens das Label
+
+                    var gesehen = {}, liste = [];
+                    if (haupt && L[haupt]) gesehen[L[haupt]] = 1;   // steht schon im Vorher-Nachher
+                    alle.forEach(function (b) {
+                        var name = L[String(b || '').toLowerCase()];
+                        if (name && !gesehen[name]) { gesehen[name] = 1; liste.push(name); }
+                    });
+
+                    if (!liste.length && !frei) return;
+
+                    var zeile = document.getElementById('alsoCoveredLine');
+                    if (liste.length) {
+                        var text = liste.length > 3
+                            ? liste.slice(0, 3).join(' \u00b7 ') + ' und ' + (liste.length - 3) + ' weitere'
+                            : liste.join(' \u00b7 ');
+                        document.getElementById('alsoCoveredList').textContent = text;
+                    } else if (zeile) {
+                        zeile.style.display = 'none';
+                    }
+                    if (frei) {
+                        document.getElementById('alsoCoveredCustomText').textContent = frei;
+                        document.getElementById('alsoCoveredCustom').style.display = 'block';
+                    }
+                    document.getElementById('alsoCovered').style.display = 'block';
+                } catch (e) {}
+            })();
+            </script>
+
     </section>
 
     <div class="container">
