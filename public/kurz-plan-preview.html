@@ -458,6 +458,22 @@
             .selection-tags { gap: 6px; }
             .selection-tag { font-size: 11px; padding: 5px 10px; }
         }
+
+        /* ── A/B "Jobs to be done" (Variante B) ───────────────────────── */
+        .jtbd-notes { max-width: 420px; margin: 0 auto 20px; text-align: left; }
+        .jtbd-eyebrow {
+            font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+            text-transform: uppercase; color: #8B7355;
+            text-align: center; margin: 0 0 10px;
+        }
+        .jtbd-note {
+            display: flex; align-items: baseline; gap: 8px;
+            padding: 7px 0; font-size: 12.5px; line-height: 1.45;
+            color: #6B6B6B; border-bottom: 1px solid #F2EEE7;
+        }
+        .jtbd-note:last-child { border-bottom: none; }
+        .jtbd-key { flex-shrink: 0; font-weight: 700; color: #3a342b; }
+        .jtbd-arrow { flex-shrink: 0; color: #C4A576; }
     </style>
 <script
   defer
@@ -600,6 +616,24 @@
         const dogProblem = dogBehaviors[0] || localStorage.getItem('dogProblem') || '';
         const customProblem = localStorage.getItem('customProblem') || '';
         const customProblemKey = localStorage.getItem('customProblemKey') || '';
+
+        // ── A/B-Test "Jobs to be done" (Start 10.09.2026) ─────────────────
+        // A = bisherige Seite: generische Feature-Häkchen + reine Auswahl-Tags.
+        // B = Job-Häkchen (was im Alltag danach anders ist) + Anmerkungen,
+        //     was jede Angabe konkret für den Plan bedeutet.
+        // Verteilung: 40 % B (neu) / 60 % A (Kontrolle) — vorsichtig anfahren,
+        // die bestehende Seite bleibt die Mehrheits-Variante.
+        // Vorschau erzwingen: ?jtbd=A bzw. ?jtbd=B.
+        // Die Variante wandert über localStorage['ab_jtbd'] in answers
+        // (kurz-schritt11 + Checkout) — Messung wie beim bestehenden
+        // ab_test_trust, ohne den laufenden Preis-Test A2/B2 zu stören.
+        const AB_JTBD = (function () {
+            const forced = (new URLSearchParams(location.search).get('jtbd') || '').toUpperCase();
+            let v = (forced === 'A' || forced === 'B') ? forced : (localStorage.getItem('ab_jtbd') || '');
+            if (v !== 'A' && v !== 'B') v = Math.random() < 0.40 ? 'B' : 'A';
+            localStorage.setItem('ab_jtbd', v);
+            return v;
+        })();
 
         // Labels
         const ageLabels = {
@@ -771,6 +805,110 @@
                 stepEl.textContent = 'Übungen individuell auf deinen Mischling aufgebaut & angepasst';
             } else {
                 stepEl.textContent = 'Übungen auf ' + dogBreed + ' aufgebaut & angepasst';
+            }
+        }
+
+        // ── Variante B: Jobs statt Features ──────────────────────────────
+        // Nutzt bewusst NUR schon vorhandene Daten (resolvedProblem,
+        // firstExercise, Rasse/Alter) — keine neuen Fragen, kein neuer Klick.
+        if (AB_JTBD === 'B') {
+            const jobFamily = {
+                pulling: 'leine', 'leash-reactive': 'leine',
+                barking: 'bellen', vocalization: 'bellen',
+                aggression: 'reaktiv', 'dog-reactive': 'reaktiv', overreaction: 'reaktiv',
+                'anxious-overreaction': 'reaktiv', 'postman-reactive': 'reaktiv',
+                anxiety: 'allein', separation: 'allein',
+                'general-anxiety': 'angst', 'stranger-anxiety': 'angst', 'visitor-anxiety': 'angst',
+                'thunder-anxiety': 'angst', 'noise-sensitivity': 'angst',
+                energy: 'energie', destructive: 'energie', digging: 'energie',
+                mouthing: 'impuls', 'eating-unwanted': 'impuls', 'eating-trash': 'impuls', 'eating-objects': 'impuls',
+                chasing: 'jagd', 'chasing-movement': 'jagd', 'prey-drive': 'jagd', 'chasing-cars': 'jagd',
+                recall: 'rueckruf',
+                soiling: 'stubenrein', marking: 'stubenrein',
+                jumping: 'anspringen',
+                'resource-guarding': 'ressourcen', biting: 'ressourcen'
+            };
+            const jobLines = {
+                leine: ['Locker an der Leine, ab der Haustür',
+                        'Ruhig bleiben, wenn ein Hund entgegenkommt',
+                        'Erste Erfolge in Woche 1 bis 2'],
+                bellen: ['Es klingelt und im Flur bleibt es ruhig',
+                         'Ein Signal, das das Bellen zuverlässig beendet',
+                         'Merklich weniger Bellen in Woche 1 bis 2'],
+                reaktiv: ['Hundebegegnungen ohne Drama an der Leine',
+                          'Du erkennst die Situation, bevor sie kippt',
+                          'Erste ruhige Begegnung in Woche 1 bis 2'],
+                allein: ['Du kannst die Tür zumachen, ohne schlechtes Gewissen',
+                         'Ein fester Anker, der deinem Hund Sicherheit gibt',
+                         'Erste entspannte Minuten allein in Woche 1 bis 2'],
+                angst: ['Dein Hund bleibt ruhig, wenn es um ihn herum laut wird',
+                        'Ein Anker, auf den er sich verlassen kann',
+                        'Erste gelassene Momente schon in Woche 1 bis 2'],
+                energie: ['Abends kommt dein Hund runter statt aufzudrehen',
+                          'Ruhe-Rituale, die in deinen Alltag passen',
+                          'Spürbar ausgeglichener in Woche 1 bis 2'],
+                impuls: ['Er lässt liegen, was am Wegrand liegt',
+                         'Ein „Lass es", auf das du dich verlassen kannst',
+                         'Sicherer Spaziergang schon in Woche 1 bis 2'],
+                jagd: ['Er bleibt bei dir, auch wenn etwas wegläuft',
+                       'Ein Abbruch-Signal, das im Ernstfall sitzt',
+                       'Erste kontrollierte Situationen in Woche 1 bis 2'],
+                rueckruf: ['Er kommt, wenn du rufst, auch bei Ablenkung',
+                           'Du kannst ihn wieder ableinen, ohne Bauchweh',
+                           'Erster zuverlässiger Rückruf in Woche 1 bis 2'],
+                stubenrein: ['Morgens keine Pfütze mehr im Flur',
+                             'Eine Routine, die dein Hund wirklich versteht',
+                             'Deutlich weniger Unfälle in Woche 1 bis 2'],
+                anspringen: ['Besuch kommt rein, ohne Pfoten am Mantel',
+                             'Eine Begrüßung, die du steuern kannst',
+                             'Ruhigere Begrüßung schon in Woche 1 bis 2'],
+                ressourcen: ['Du kannst ihm etwas abnehmen, ohne Knurren',
+                             'Ein Tausch-Ritual, das Vertrauen aufbaut',
+                             'Erste entspannte Situationen in Woche 1 bis 2'],
+                fallback: ['Dein Alltag mit deinem Hund wird planbar',
+                           'Du weißt jeden Tag, was zu üben ist',
+                           'Erste sichtbare Fortschritte in Woche 1 bis 2']
+            };
+            const lines = jobLines[jobFamily[resolvedProblem] || 'fallback'] || jobLines.fallback;
+            const checklist = document.querySelector('.plan-checklist');
+            if (checklist) {
+                checklist.innerHTML = lines.map(t =>
+                    `<div class="check-item animate"><div class="check-icon">✓</div><span>${t}</span></div>`
+                ).join('');
+            }
+
+            // Auswahl-Tags → "Angabe → das macht der Plan daraus"
+            const note = (k, v) =>
+                `<div class="jtbd-note"><span class="jtbd-key">${k}</span><span class="jtbd-arrow">→</span><span class="jtbd-val">${v}</span></div>`;
+            const ageNote = {
+                puppy: 'Aufbau in Mini-Schritten, welpengerecht kurz',
+                young: 'kurze Einheiten gegen den Junghund-Übermut',
+                adult: 'direkter Einstieg mit festen Alltags-Routinen',
+                senior: 'ruhiges Tempo, schonend aufgebaut'
+            };
+            // Reihenfolge nach Aussagekraft, höchstens 3 Zeilen. Die Rasse steht
+            // bewusst NICHT drin — sie wiederholt nur den Mockup-Titel darunter.
+            const zeilen = [];
+            if (resolvedProblem && problemLabels[resolvedProblem]) {
+                zeilen.push(note('⚡ ' + problemLabels[resolvedProblem],
+                    'Woche 1 startet mit „' + (firstExercise[resolvedProblem] || 'Basis-Ritual aufbauen') + '"'));
+            }
+            const secondProblem = standardBehaviors.filter(b => b !== resolvedProblem && problemLabels[b])[0];
+            if (secondProblem) {
+                zeilen.push(note('⚡ ' + problemLabels[secondProblem], 'ab Woche 2 fest mit eingeplant'));
+            }
+            if (customProblem && customProblemKey && customProblemKey !== resolvedProblem) {
+                zeilen.push(note('✏️ ' + (problemLabels[customProblemKey] || 'Individuelles Verhalten'),
+                    'als Sonderfall im Plan berücksichtigt'));
+            }
+            if (dogAge && ageNote[dogAge]) zeilen.push(note('📅 ' + ageLabels[dogAge], ageNote[dogAge]));
+            const notesHTML = zeilen.slice(0, 3).join('');
+            // Die Step-Zeile im Mockup sagt dasselbe wie die Anmerkungen -> in B weg
+            if (stepEl && stepEl.parentElement) stepEl.parentElement.style.display = 'none';
+
+            if (notesHTML) {
+                selectionTags.className = 'jtbd-notes';
+                selectionTags.innerHTML = '<p class="jtbd-eyebrow">Deshalb sieht dein Plan so aus</p>' + notesHTML;
             }
         }
 
