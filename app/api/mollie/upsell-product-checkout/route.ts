@@ -33,6 +33,20 @@ const PRODUCT_PRICES: Record<string, number> = {
   // Komplettpaket: Charakterprofil + 12 Themen-Module + Notfall-Karten.
   // Einzelwert ueber 200 EUR, wird ueber 13 Tage ausgeliefert.
   paket: 9900,
+  // Notfall-Karten: laeuft als Order-Bump im Funnel sehr gut, war im
+  // Mitgliederbereich aber gar nicht kaufbar.
+  "notfall-karten": 1499,
+};
+
+// Alt-Slugs aus member_upsells. Die Shop-Karte schickt ihren DB-Slug als
+// type; "zweithund-guide" kannte der Checkout nicht und antwortete mit
+// "Unknown product type" — die beiden Guides waren dadurch unverkaeuflich.
+const PRODUCT_ALIASES: Record<string, string> = {
+  "zweithund-guide": "zweithund",
+  "reise-guide": "reise",
+  "ernaehrungs-guide": "ernaehrung",
+  "erste-hilfe-guide": "erstehilfe",
+  "notfallkarten": "notfall-karten",
 };
 
 const PRODUCT_NAMES: Record<string, string> = {
@@ -54,6 +68,7 @@ const PRODUCT_NAMES: Record<string, string> = {
   "thema-aufnehmen": "Themen-Modul Nichts vom Boden",
   charakterprofil: "Charakterprofil fuer deinen Hund",
   paket: "Komplettpaket fuer deinen Hund",
+  "notfall-karten": "Notfall-Karten zum Ausdrucken",
 };
 
 export async function POST(req: NextRequest) {
@@ -67,7 +82,8 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const type = body.type as string | undefined;
+    const typeRoh = body.type as string | undefined;
+    const type = typeRoh ? PRODUCT_ALIASES[typeRoh] || typeRoh : typeRoh;
     const email = body.email as string | undefined;
     const leadId = body.leadId as string | undefined;
     const dogName = body.dogName as string | undefined;
