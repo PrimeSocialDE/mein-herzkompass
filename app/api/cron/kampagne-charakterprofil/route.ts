@@ -11,10 +11,15 @@
 //   answers.unsubscribed IS NULL         -> nicht abgemeldet
 //   answers.charakterprofil_sent_at NULL -> hat das Profil noch nicht gekauft
 //   answers.kampagne_cp_sent NULL        -> eigener Dedup-Marker
-//   paid_at älter als KARENZ_TAGE        -> frische Käufer bekommen erst ihren Plan
+//   paid_at älter als der Karenz-Wert     -> frische Käufer bekommen erst ihren Plan
 //   + Dedup ÜBER E-MAIL: Wiederholungskäufer haben mehrere paid-Zeilen. Ohne
 //     diese Prüfung bekommt dieselbe Person die Mail mehrfach (Fehler aus der
 //     Mail-1-Kampagne: 1.436 Personen, 1.665 überzählige Mails).
+//
+// DAUER-WORKFLOW: Nach dem einmaligen Versand an den Bestand laeuft der Cron
+// einfach weiter. Jeder neue Kaeufer bekommt die Mail automatisch, sobald sein
+// Kauf den Karenz-Wert ueberschritten hat. Kein zweiter Mechanismus noetig.
+//   system_settings.kampagne_cp_karenz_tage (Standard 7) steuert das Alter.
 //
 // SEGMENT: system_settings.kampagne_cp_segment steuert, wer drankommt:
 //   "rasse" (Standard) -> nur Käufer mit konkreter Rasse. Die sehen auf der
@@ -46,7 +51,8 @@ const CONFIG_SET = process.env.SES_CONFIGURATION_SET || "pfoten-tracking";
 const FROM = "Laura vom Pfoten-Plan <hallo@pfoten-post.de>";
 const CAMPAIGN = "charakterprofil-crosssell";
 const BATCH = 100;      // pro Lauf, SES erlaubt 14/s
-const KARENZ_TAGE = 3;  // so lange nach dem Kauf schreiben wir nicht an
+const KARENZ_TAGE_STANDARD = 7; // so lange nach dem Kauf schreiben wir nicht an
+const KARENZ_TAGE_MAX = 3650;   // Sicherheitsnetz gegen Tippfehler im Schalter
 
 const hmac = (k: crypto.BinaryLike | crypto.KeyObject, d: string) =>
   crypto.createHmac("sha256", k as any).update(d).digest();
@@ -218,7 +224,12 @@ export async function GET(req: NextRequest) {
   const { data: flags } = await supabase
     .from("system_settings")
     .select("key,value")
-    .in("key", ["kampagne_cp_live", "kampagne_cp_stop", "kampagne_cp_segment"]);
+    .in("key", [
+      "kampagne_cp_live",
+      "kampagne_cp_stop",
+      "kampagne_cp_segment",
+      "kampagne_cp_karenz_tage",
+    ]);
   const flag = (k: string) => String((flags || []).find((f: any) => f.key === k)?.value || "");
   if (!dry && flag("kampagne_cp_live") !== "true") {
     return NextResponse.json({ ok: true, wartet: true, hinweis: "system_settings.kampagne_cp_live ist nicht auf true" });
@@ -235,7 +246,14 @@ export async function GET(req: NextRequest) {
     return segment === "misch" ? m : !m;
   };
 
-  const karenz = new Date(Date.now() - KARENZ_TAGE * 86400000).toISOString();
+  // Karenz ohne Deploy verstellbar. Unsinnige Werte fallen auf den Standard
+  // zurueck, damit ein Tippfehler im Schalter nicht die halbe Liste anschreibt.
+  const karenzRoh = Number(flag("kampagne_cp_karenz_tage"));
+  const karenzTage =
+    Number.isFinite(karenzRoh) && karenzRoh >= 0 && karenzRoh <= KARENZ_TAGE_MAX
+      ? karenzRoh
+      : KARENZ_TAGE_STANDARD;
+  const karenz = new Date(Date.now() - karenzTage * 86400000).toISOString();
 
   // Bewusst any: supabase-js laeuft bei der Neuzuweisung in der Schleife in
   // "Type instantiation is excessively deep and possibly infinite".
@@ -312,6 +330,7 @@ export async function GET(req: NextRequest) {
       modus: "DRY-RUN",
       freigabe: flag("kampagne_cp_live") === "true",
       segment,
+      karenz_tage: karenzTage,
       roh_geladen: roh,
       im_batch: imBatch.length,
       davon_dubletten_oder_schon_versendet: imBatch.length - offen.length,
@@ -367,5 +386,5 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, modus: "LIVE", segment, gesendet: ok, uebersprungen_dublette: skip, fehler: err, batch: imBatch.length });
+  return NextResponse.json({ ok: true, modus: "LIVE", segment, karenz_tage: karenzTage, gesendet: ok, uebersprungen_dublette: skip, fehler: err, batch: imBatch.length });
 }
