@@ -4,7 +4,7 @@
 // Mollie-Checkout.
 
 import Link from "next/link";
-import { getCurrentMember } from "@/lib/member-auth-server";
+import { getCurrentMember, createMemberAdminClient } from "@/lib/member-auth-server";
 import {
   getOrCreateMemberProfile,
   listActiveUpsells,
@@ -12,6 +12,7 @@ import {
 import { THEMEN_MODULES, sortByUserRelevance } from "@/lib/member-themen";
 import UpsellFlipCard from "@/components/mitglieder/UpsellFlipCard";
 import ClubAboCard from "@/components/mitglieder/ClubAboCard";
+import ShopHighlights from "@/components/mitglieder/ShopHighlights";
 import { getClubStateForEmail } from "@/lib/club";
 import { getMemberLang } from "@/lib/member-lang";
 
@@ -50,6 +51,12 @@ const UPSELL_FEATURES_DE: Record<string, string[]> = {
     "Saisonale Trainings-Tipps",
     "Frühling, Sommer, Herbst, Winter",
     "Quartalsweise neue Inhalte",
+  ],
+  "notfall-karten": [
+    "Sieben Karten für Geldbeutel und Hundetasche",
+    "Giftköder, Hitzschlag, Vergiftung, Bisswunde",
+    "Was sofort zu tun ist, Schritt für Schritt",
+    "Zum Ausdrucken, sofort als PDF im Postfach",
   ],
   tagebuch: [
     "Trainings-Tagebuch zum Eintragen",
@@ -268,6 +275,7 @@ const UPSELL_EMOJI: Record<string, string> = {
   zweithund: "🐕",
   abo: "📅",
   tagebuch: "📖",
+  "notfall-karten": "🆘",
 };
 
 // Slug-basiertes Image-Override fuer DB-Upsells (member_upsells.image_url
@@ -275,6 +283,7 @@ const UPSELL_EMOJI: Record<string, string> = {
 const UPSELL_IMAGE: Record<string, string> = {
   zweithund: "/zweithund.png",
   reise: "/reise.png",
+  "notfall-karten": "/notfallkarten.jpg",
 };
 
 function featuresFor(
@@ -429,6 +438,31 @@ export default async function ModulShopPage() {
     return t.image_url;
   }
 
+  // Empfehlungs-Karten oben: neuester bezahlter Lead (fuer die Links) und
+  // was der Kunde schon hat. Defensiv — faellt bei jedem Fehler auf "zeigen"
+  // zurueck, lieber eine Karte zu viel als eine kaputte Seite.
+  let shopLeadId: string | null = null;
+  let hatProfil = false;
+  let hatPaket = false;
+  if (lang === "de" && member.email) {
+    try {
+      const admin = createMemberAdminClient();
+      const { data: bezahlte } = await admin
+        .from("wauwerk_leads")
+        .select("id, answers, paid_at")
+        .ilike("email", member.email)
+        .not("paid_at", "is", null)
+        .order("paid_at", { ascending: false })
+        .limit(5);
+      const zeilen = (bezahlte || []) as any[];
+      shopLeadId = zeilen[0]?.id || null;
+      hatProfil = zeilen.some((z) => (z.answers || {}).charakterprofil_sent_at);
+      hatPaket = zeilen.some((z) => (z.answers || {}).paket_gekauft_at);
+    } catch (e) {
+      console.error("[module-page] Shop-Highlights-Lookup fehlgeschlagen:", (e as any)?.message);
+    }
+  }
+
   // Club-Status (defensiv — darf die Seite fuer Nicht-Club-Mitglieder NIE
   // beeinflussen; bei jedem Fehler fallen wir auf "kein Club" zurueck).
   let hasClub = false;
@@ -496,6 +530,17 @@ export default async function ModulShopPage() {
             </p>
           </div>
         </div>
+      )}
+
+      {/* ── Empfohlen fuer diesen Hund: die neuen Produkte ──────────── */}
+      {lang === "de" && (
+        <ShopHighlights
+          dogName={member.dog_name}
+          email={member.email}
+          leadId={shopLeadId}
+          hatProfil={hatProfil}
+          hatPaket={hatPaket}
+        />
       )}
 
       {/* Plan-Status-Section entfernt — Upgrade-CTA gibts schon auf

@@ -1118,6 +1118,29 @@ async function handleUpsellProductPaid(payment: any) {
     });
   }
 
+  // Notfall-Karten aus dem Modul-Shop -> statisches PDF direkt schicken.
+  if (product === "notfall-karten") {
+    after(async () => {
+      try {
+        const baseUrl =
+          process.env.NEXT_PUBLIC_SITE_URL ||
+          (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+          "https://www.pfoten-plan.de";
+        const r = await fetch(`${baseUrl}/api/notfall-karten/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            dogName: dogName === "deinen Hund" ? undefined : dogName,
+          }),
+        });
+        console.log(`[mollie-webhook] notfall-karten ${email}: HTTP ${r.status}`);
+      } catch (e: any) {
+        console.error("[mollie-webhook] notfall-karten fehlgeschlagen:", e?.message);
+      }
+    });
+  }
+
   // Komplettpaket -> eigener Auslieferer (sofort Profil + Karten, danach
   // taeglich ein Modul ueber /api/cron/paket-drip).
   if (product === "paket") {
