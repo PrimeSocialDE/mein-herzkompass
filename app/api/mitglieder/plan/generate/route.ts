@@ -33,7 +33,7 @@ import {
   generateTrainingPlan,
   planLengthFromSelectedPlan,
 } from "@/lib/plan-generator";
-import { getLatestPlanContent } from "@/lib/member-plan-content";
+import { findPlanForPurchase } from "@/lib/member-plan-content";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -134,7 +134,7 @@ export async function POST(req: NextRequest) {
         let leadQuery = admin
           .from("wauwerk_leads")
           .select(
-            "id, email, customer_name, dog_name, answers, status, selected_plan, created_at"
+            "id, email, customer_name, dog_name, answers, status, selected_plan, created_at, paid_at"
           );
         if (leadId) leadQuery = leadQuery.eq("id", leadId);
         else
@@ -169,30 +169,25 @@ export async function POST(req: NextRequest) {
           return;
         }
 
-        // ── 2) Existierender Plan? ─────────────────────────────────
+        // ── 2) Existierender Plan FUER DIESEN KAUF? ────────────────
+        // Frueher wurde geprueft, ob die E-Mail irgendeinen Plan hat. Bei
+        // Wiederholungskaeufern hat sie das immer, dadurch blieb jeder
+        // zweite Kauf unbeliefert. Jetzt zaehlt nur der Plan zu diesem Kauf.
         if (!force) {
-          const { data: existingMember } = await admin
-            .from("member_users")
-            .select("id")
-            .ilike("email", targetEmail)
-            .maybeSingle();
-          const userId = (existingMember as any)?.id || null;
-          if (userId) {
-            const existing = await getLatestPlanContent(
-              userId,
-              targetEmail,
-              "trainingsplan"
-            );
-            if (existing) {
-              emit(ctx, {
-                event: "done",
-                ok: false,
-                error: "skipped_existing",
-                existing_plan_id: existing.id,
-                existing_created_at: existing.created_at,
-              });
-              return;
-            }
+          const existing = await findPlanForPurchase(
+            targetEmail,
+            lead.id,
+            (lead as any).paid_at
+          );
+          if (existing) {
+            emit(ctx, {
+              event: "done",
+              ok: false,
+              error: "skipped_existing",
+              existing_plan_id: existing.id,
+              existing_created_at: existing.created_at,
+            });
+            return;
           }
         }
 

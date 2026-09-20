@@ -83,6 +83,58 @@ export function isTrainingPlanContent(
   );
 }
 
+// ── Gehoert ein Plan-Eintrag zu genau DIESEM Kauf? ────────────────────────
+// Wiederholungskaeufer haben mehrere bezahlte Leads unter derselben Adresse.
+// Frueher wurde nur geprueft "hat diese E-Mail irgendeinen Plan?" — damit
+// blieb jeder zweite Kauf ohne Plan (Kundin mit 6-Monats-Plan sah weiter
+// ihren 4-Wochen-Plan vom ersten Kauf).
+//
+//   A) source_payment_id ist die lead_id des Kaufs. Trifft auf die intern
+//      erzeugten Plaene zu (96 % aller Zeilen).
+//   B) Zeitfenster um paid_at. Faengt Altzeilen ohne passende id ab und
+//      verhindert Doppel-Plaene, wenn zu einem Kauf zwei Lead-Zeilen
+//      existieren. Gemessen: Median 0,4 Min nach dem Kauf, 95 % unter 1 Min.
+export const PLAN_FENSTER_VOR_MS = 30 * 60 * 1000;
+export const PLAN_FENSTER_NACH_MS = 6 * 60 * 60 * 1000;
+
+export function planGehoertZuKauf(
+  plan: { source_payment_id?: string | null; created_at?: string | null },
+  leadId: string,
+  paidAt?: string | null
+): boolean {
+  if (leadId && plan?.source_payment_id && plan.source_payment_id === leadId) {
+    return true;
+  }
+  if (!paidAt || !plan?.created_at) return false;
+  const kauf = new Date(paidAt).getTime();
+  const erstellt = new Date(plan.created_at).getTime();
+  if (!Number.isFinite(kauf) || !Number.isFinite(erstellt)) return false;
+  return (
+    erstellt >= kauf - PLAN_FENSTER_VOR_MS &&
+    erstellt <= kauf + PLAN_FENSTER_NACH_MS
+  );
+}
+
+// Sucht den Plan, der zu genau diesem Kauf gehoert (nicht irgendeinen der
+// E-Mail). Gibt null zurueck, wenn fuer diesen Kauf noch keiner existiert.
+export async function findPlanForPurchase(
+  email: string,
+  leadId: string,
+  paidAt?: string | null,
+  slug = "trainingsplan"
+): Promise<PlanContent | null> {
+  const admin = createMemberAdminClient();
+  const { data } = await admin
+    .from("member_plan_content")
+    .select("*")
+    .ilike("email", email)
+    .eq("plan_slug", slug)
+    .order("created_at", { ascending: false })
+    .limit(20);
+  const zeilen = (data || []) as PlanContent[];
+  return zeilen.find((z) => planGehoertZuKauf(z, leadId, paidAt)) || null;
+}
+
 // Holt den neuesten Inhalt fuer einen User+Slug.
 // Versucht erst user_id-Match, dann Email-Fallback (falls Make.com
 // noch nicht weiss, dass der User auch einen member_users-Eintrag hat).

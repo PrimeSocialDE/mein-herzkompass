@@ -4,6 +4,10 @@
 // member_plan_content haben (= Plan wurde nicht generiert / Mail kam nicht
 // raus). Triggert fuer diese Leads die Plan-Generation nach.
 //
+// Prueft pro KAUF, nicht pro E-Mail: Wiederholungskaeufer haben mehrere
+// bezahlte Leads unter derselben Adresse. Vorher wurde jeder zweite Kauf
+// uebersprungen, weil zu der E-Mail ja schon ein Plan existierte.
+//
 // Faengt drei Failure-Modes ab:
 //   1. Webhook ist nicht angekommen (Mollie-Outage)
 //   2. Webhook kam, aber Trigger-Fetch im Webhook hat gefailed
@@ -14,6 +18,7 @@
 
 import { NextRequest } from "next/server";
 import { createMemberAdminClient } from "@/lib/member-auth-server";
+import { planGehoertZuKauf } from "@/lib/member-plan-content";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -74,18 +79,27 @@ export async function GET(req: NextRequest) {
   );
   const { data: existing } = await admin
     .from("member_plan_content")
-    .select("email")
+    .select("email, source_payment_id, created_at")
     .in("email", emailsLower)
     .eq("plan_slug", "trainingsplan");
 
-  const emailsWithPlan = new Set(
-    (existing || []).map((e: any) => String(e.email).toLowerCase())
-  );
+  // Plaene nach E-Mail gruppieren, damit je Kauf geprueft werden kann.
+  const plaeneProMail = new Map<string, any[]>();
+  for (const e of existing || []) {
+    const mail = String((e as any).email || "").toLowerCase();
+    if (!mail) continue;
+    const liste = plaeneProMail.get(mail) || [];
+    liste.push(e);
+    plaeneProMail.set(mail, liste);
+  }
 
-  // 3) Unbehandelte Leads filtern (case-insensitive Vergleich)
-  const todo = paidLeads.filter(
-    (l: any) => l.email && !emailsWithPlan.has(String(l.email).toLowerCase())
-  );
+  // 3) Unbehandelte Leads filtern. Entscheidend ist, ob fuer DIESEN Kauf
+  //    schon ein Plan existiert — nicht, ob die E-Mail irgendeinen hat.
+  const todo = paidLeads.filter((l: any) => {
+    if (!l.email) return false;
+    const plaene = plaeneProMail.get(String(l.email).toLowerCase()) || [];
+    return !plaene.some((p: any) => planGehoertZuKauf(p, l.id, l.paid_at));
+  });
 
   if (todo.length === 0) {
     return Response.json({
