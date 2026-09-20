@@ -16,6 +16,14 @@
 //     diese Prüfung bekommt dieselbe Person die Mail mehrfach (Fehler aus der
 //     Mail-1-Kampagne: 1.436 Personen, 1.665 überzählige Mails).
 //
+// SEGMENT: system_settings.kampagne_cp_segment steuert, wer drankommt:
+//   "rasse" (Standard) -> nur Käufer mit konkreter Rasse. Die sehen auf der
+//                         Landingpage KEINE Frage, sondern direkt ihr Profil.
+//   "misch"            -> nur Mischlinge (eine Frage dazwischen)
+//   "alle"             -> beide
+// Die beiden Gruppen haben unterschiedliche Seiten-Logik, deshalb getrennt
+// messen statt in einem Rutsch verschicken.
+//
 // FREIGABE: Der Cron sendet NUR, wenn system_settings.kampagne_cp_live = "true".
 // Solange das fehlt, läuft er leer mit. Not-Aus: kampagne_cp_stop = "true".
 //   ?dry=1          -> zeigt nur, wer dran wäre
@@ -210,7 +218,7 @@ export async function GET(req: NextRequest) {
   const { data: flags } = await supabase
     .from("system_settings")
     .select("key,value")
-    .in("key", ["kampagne_cp_live", "kampagne_cp_stop"]);
+    .in("key", ["kampagne_cp_live", "kampagne_cp_stop", "kampagne_cp_segment"]);
   const flag = (k: string) => String((flags || []).find((f: any) => f.key === k)?.value || "");
   if (!dry && flag("kampagne_cp_live") !== "true") {
     return NextResponse.json({ ok: true, wartet: true, hinweis: "system_settings.kampagne_cp_live ist nicht auf true" });
@@ -218,10 +226,18 @@ export async function GET(req: NextRequest) {
   if (flag("kampagne_cp_stop") === "true") {
     return NextResponse.json({ ok: true, gestoppt: true, hinweis: "system_settings.kampagne_cp_stop ist gesetzt" });
   }
+  const segment = ["rasse", "misch", "alle"].includes(flag("kampagne_cp_segment"))
+    ? flag("kampagne_cp_segment")
+    : "rasse";
+  const imSegment = (a: Record<string, any>) => {
+    if (segment === "alle") return true;
+    const m = istMisch(String(a?.dog_breed || "").trim());
+    return segment === "misch" ? m : !m;
+  };
 
   const karenz = new Date(Date.now() - KARENZ_TAGE * 86400000).toISOString();
 
-  const { data: leads, error } = await supabase
+  let abfrage = supabase
     .from("wauwerk_leads")
     .select("id, email, dog_name, answers, paid_at")
     .eq("status", "paid")
@@ -230,17 +246,37 @@ export async function GET(req: NextRequest) {
     .is("answers->>lang", null)
     .is("answers->>unsubscribed", null)
     .is("answers->>charakterprofil_sent_at", null)
-    .is("answers->>kampagne_cp_sent", null)
+    .is("answers->>kampagne_cp_sent", null);
+
+  // Segment "rasse" schon in der Abfrage eingrenzen. Sonst koennten am Ende der
+  // Runde einzelne Rasse-Kaeufer hinter einer Wand von Mischlingen haengen
+  // bleiben und nie eine Mail bekommen. Der JS-Filter unten bleibt als zweite
+  // Sicherung (faengt z.B. leere Strings).
+  if (segment === "rasse") {
+    for (const wort of ["mischling", "mieszaniec", "meticcio", "andere rasse", "unbekannt"]) {
+      abfrage = abfrage.not("answers->>dog_breed", "ilike", `%${wort}%`);
+    }
+    abfrage = abfrage.not("answers->>dog_breed", "is", null);
+  }
+
+  const { data: leads, error } = await abfrage
     .order("paid_at", { ascending: false })
-    .limit(BATCH);
+    .limit(BATCH * 4); // grob ziehen, danach auf das Segment filtern
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (!leads || leads.length === 0) {
     return NextResponse.json({ ok: true, fertig: true, gesendet: 0, grund: "keine_offenen" });
   }
+  // Nur das freigegebene Segment, dann auf die Batch-Groesse kuerzen.
+  // Uebersprungene werden NICHT markiert, die kommen in ihrer eigenen Runde dran.
+  const roh = leads.length;
+  const imBatch = leads.filter((l) => imSegment((l.answers || {}) as any)).slice(0, BATCH);
+  if (imBatch.length === 0) {
+    return NextResponse.json({ ok: true, fertig: true, gesendet: 0, segment, grund: "segment_leer", roh });
+  }
 
   // Dedup über die E-Mail: Wiederholungskäufer haben mehrere paid-Zeilen.
-  const mails = leads.map((l) => (l.email || "").toLowerCase()).filter(Boolean);
+  const mails = imBatch.map((l) => (l.email || "").toLowerCase()).filter(Boolean);
   const { data: schonMal } = await supabase
     .from("wauwerk_leads")
     .select("email, answers")
@@ -253,7 +289,7 @@ export async function GET(req: NextRequest) {
 
   if (dry) {
     const gesehen = new Set<string>();
-    const offen = leads.filter((l) => {
+    const offen = imBatch.filter((l) => {
       const m = (l.email || "").toLowerCase();
       if (bereits.has(m) || gesehen.has(m)) return false;
       gesehen.add(m);
@@ -264,8 +300,10 @@ export async function GET(req: NextRequest) {
       ok: true,
       modus: "DRY-RUN",
       freigabe: flag("kampagne_cp_live") === "true",
-      im_batch: leads.length,
-      davon_dubletten_oder_schon_versendet: leads.length - offen.length,
+      segment,
+      roh_geladen: roh,
+      im_batch: imBatch.length,
+      davon_dubletten_oder_schon_versendet: imBatch.length - offen.length,
       beispiel: b
         ? {
             email: b.email,
@@ -279,7 +317,7 @@ export async function GET(req: NextRequest) {
 
   let ok = 0, err = 0, skip = 0;
   const gesehen = new Set<string>();
-  for (const l of leads) {
+  for (const l of imBatch) {
     const mail = (l.email || "").toLowerCase();
     const prev = (l.answers || {}) as Record<string, any>;
     if (bereits.has(mail) || gesehen.has(mail)) {
@@ -318,5 +356,5 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, modus: "LIVE", gesendet: ok, uebersprungen_dublette: skip, fehler: err, batch: leads.length });
+  return NextResponse.json({ ok: true, modus: "LIVE", segment, gesendet: ok, uebersprungen_dublette: skip, fehler: err, batch: imBatch.length });
 }
