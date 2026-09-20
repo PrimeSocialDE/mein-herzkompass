@@ -116,9 +116,7 @@ function buildHtml(dog: string, rasse: string, id: string, email: string): strin
 </td></tr>
 <tr><td style="padding:4px 36px 6px;text-align:center;">
 <a href="${cta}" style="display:inline-block;background:#8B7355;color:#ffffff;text-decoration:none;font-size:17px;font-weight:700;padding:16px 34px;border-radius:12px;">${dog}s Charakterprofil ansehen</a>
-<p style="margin:12px 0 0;font-size:15px;color:#3a342b;"><strong>24,90 €</strong> <span style="color:#9CA3AF;text-decoration:line-through;">39,90 €</span> · einmalig, kein Abo</p>
-<p style="margin:6px 0 0;font-size:14px;color:#166534;font-weight:700;">🛡️ 30 Tage Geld-zurück-Garantie</p>
-<p style="margin:4px 0 0;font-size:13px;color:#6B7280;">Ohne Wenn und Aber. Eine kurze E-Mail genügt.</p>
+<p style="margin:10px 0 0;font-size:13.5px;color:#6B7280;">Einmalig, kein Abo. Kommt sofort per E-Mail.</p>
 </td></tr>
 <tr><td style="padding:20px 36px 4px;">
 <p style="margin:0 0 6px;font-size:16px;">Viele Grüße an ${dog},</p>
@@ -158,8 +156,7 @@ Dazu vier Übungen mit Schritt-für-Schritt-Anleitung und ein 7-Tage-Start zum A
 Zwei Fragen beantworten reicht, das Profil kommt anschließend als PDF per E-Mail:
 ${cta}
 
-24,90 statt 39,90 Euro, einmalig, kein Abo.
-30 Tage Geld-zurück-Garantie. Ohne Wenn und Aber, eine kurze E-Mail genügt.
+Einmalig, kein Abo. Kommt sofort per E-Mail.
 
 Viele Grüße an ${dog},
 Laura vom Pfoten-Plan-Team
