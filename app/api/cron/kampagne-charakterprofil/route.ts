@@ -237,7 +237,9 @@ export async function GET(req: NextRequest) {
 
   const karenz = new Date(Date.now() - KARENZ_TAGE * 86400000).toISOString();
 
-  let abfrage = supabase
+  // Bewusst any: supabase-js laeuft bei der Neuzuweisung in der Schleife in
+  // "Type instantiation is excessively deep and possibly infinite".
+  let abfrage: any = supabase
     .from("wauwerk_leads")
     .select("id, email, dog_name, answers, paid_at")
     .eq("status", "paid")
@@ -259,12 +261,21 @@ export async function GET(req: NextRequest) {
     abfrage = abfrage.not("answers->>dog_breed", "is", null);
   }
 
-  const { data: leads, error } = await abfrage
+  const { data, error } = await abfrage
     .order("paid_at", { ascending: false })
     .limit(BATCH * 4); // grob ziehen, danach auf das Segment filtern
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  if (!leads || leads.length === 0) {
+
+  type Lead = {
+    id: string;
+    email: string | null;
+    dog_name: string | null;
+    answers: Record<string, any> | null;
+    paid_at: string | null;
+  };
+  const leads = (data || []) as Lead[];
+  if (leads.length === 0) {
     return NextResponse.json({ ok: true, fertig: true, gesendet: 0, grund: "keine_offenen" });
   }
   // Nur das freigegebene Segment, dann auf die Batch-Groesse kuerzen.
@@ -282,9 +293,9 @@ export async function GET(req: NextRequest) {
     .select("email, answers")
     .in("email", mails);
   const bereits = new Set(
-    (schonMal || [])
-      .filter((r: any) => (r.answers || {}).kampagne_cp_sent || (r.answers || {}).charakterprofil_sent_at)
-      .map((r: any) => (r.email || "").toLowerCase())
+    ((schonMal || []) as Array<{ email: string | null; answers: Record<string, any> | null }>)
+      .filter((r) => (r.answers || {}).kampagne_cp_sent || (r.answers || {}).charakterprofil_sent_at)
+      .map((r) => (r.email || "").toLowerCase())
   );
 
   if (dry) {
@@ -333,7 +344,7 @@ export async function GET(req: NextRequest) {
     const rasse = String(prev.dog_breed || "").trim();
     let res;
     try {
-      res = await sendOne(l.email, dog, rasse, l.id);
+      res = await sendOne(String(l.email), dog, rasse, l.id);
     } catch {
       err++;
       continue; // nicht markieren -> nächster Lauf versucht es erneut
