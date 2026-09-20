@@ -28,6 +28,8 @@ const PRODUCT_PRICES: Record<string, number> = {
   "thema-zerstoerung": 1499,
   "thema-stubenrein": 1499,
   "thema-aufnehmen": 1499,
+  // Charakterprofil (rasse-zentriertes PDF mit Uebungen, eigene Landingpage)
+  charakterprofil: 2490,
 };
 
 const PRODUCT_NAMES: Record<string, string> = {
@@ -47,6 +49,7 @@ const PRODUCT_NAMES: Record<string, string> = {
   "thema-zerstoerung": "Themen-Modul Zerstoerungsverhalten",
   "thema-stubenrein": "Themen-Modul Stubenreinheit",
   "thema-aufnehmen": "Themen-Modul Nichts vom Boden",
+  charakterprofil: "Charakterprofil fuer deinen Hund",
 };
 
 export async function POST(req: NextRequest) {
@@ -65,6 +68,8 @@ export async function POST(req: NextRequest) {
     const leadId = body.leadId as string | undefined;
     const dogName = body.dogName as string | undefined;
     const returnUrl = body.returnUrl as string | undefined;
+    // Charakterprofil: Rasse-Angaben von der Landingpage mitschicken
+    const profil = (body.profil || {}) as Record<string, any>;
     // Optional: direkter Karten-Flow ohne Mollie-Hosted-Page
     const method = body.method as string | undefined; // 'creditcard' | undefined
     const cardToken = body.cardToken as string | undefined;
@@ -150,6 +155,11 @@ export async function POST(req: NextRequest) {
         lead_id: leadId || "",
         dog_name: dogName || "",
         ...utmMeta,
+        ...(profil.rasse ? { profil_rasse: String(profil.rasse).slice(0, 60) } : {}),
+        ...(Array.isArray(profil.misch_rassen) && profil.misch_rassen.length
+          ? { profil_misch: profil.misch_rassen.slice(0, 3).map((r: any) => String(r)).join(" | ").slice(0, 120) }
+          : {}),
+        ...(profil.rasse_unbekannt ? { profil_rasse_unbekannt: "true" } : {}),
       },
     };
     if (method === "creditcard" && cardToken) {

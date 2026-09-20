@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charakterprofil für deinen Hund | Pfoten-Plan</title>
+<link rel="icon" type="image/png" href="/favconHund.png">
+<style>
+:root{--text-dark:#2C2C2E;--text-medium:#6B6B6B;--text-light:#999;--white:#fff;--border-light:#E8E4DF;
+--light-brown:#D4B996;--warm-brown:#C4A576;--dark-brown:#8B7355;--accent-green:#A8C5A0;--radius:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#FAF8F5;color:var(--text-dark);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+.promo{background:linear-gradient(90deg,#C4A576,#D4B888,#C4A576);color:#fff;text-align:center;padding:9px 12px;font-size:13.5px;font-weight:700}
+.header{display:flex;align-items:center;gap:9px;justify-content:center;padding:18px 16px 4px}
+.header img{width:30px;height:30px;border-radius:7px}
+.header span{font-weight:800;color:var(--dark-brown);font-size:17px}
+.wrap{max-width:640px;margin:0 auto;padding:6px 18px 120px}
+.eyebrow{text-align:center;font-size:11.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--warm-brown);margin:10px 0 6px}
+h1{font-size:29px;line-height:1.2;letter-spacing:-.6px;margin:0 0 10px;text-align:center;text-wrap:balance}
+h1 em{font-style:normal;color:var(--dark-brown)}
+.lead{font-size:17px;color:var(--text-medium);margin:0 auto 18px;text-align:center;max-width:520px;text-wrap:balance}
+.hero{position:relative;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(139,115,85,.16);margin-bottom:8px;background:#EFE9E1;aspect-ratio:3/2}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero .tag{position:absolute;left:14px;bottom:14px;background:rgba(255,255,255,.94);backdrop-filter:blur(4px);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:800;color:var(--dark-brown);box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.unterbild{text-align:center;font-size:12.5px;color:var(--text-light);margin:0 0 22px}
+.karte{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.karte.fokus{border-color:var(--light-brown);box-shadow:0 6px 22px rgba(196,165,118,.18)}
+.schritt{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--warm-brown);background:#FFF6E9;border-radius:999px;padding:4px 10px;margin-bottom:9px}
+.frage{font-size:18.5px;font-weight:800;margin-bottom:6px;letter-spacing:-.2px}
+.hinweis{font-size:14px;color:var(--text-medium);margin-bottom:14px}
+.warum{background:#FFFBF5;border:1px solid #F0E3CE;border-left:3px solid var(--warm-brown);border-radius:10px;padding:12px 14px;font-size:14px;color:#5F5344;margin-bottom:14px}
+.warum b{color:var(--dark-brown)}
+.wahl{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--border-light);background:#fff;border-radius:10px;padding:12px 18px;font-size:15px;font-weight:700;cursor:pointer;color:var(--text-dark);font-family:inherit;transition:.15s}
+.btn:hover{border-color:var(--warm-brown)}
+.btn.aktiv{background:#FFF6E9;border-color:var(--warm-brown);color:var(--dark-brown)}
+.btn.gross{flex:1;min-width:180px;text-align:left}
+.btn:focus-visible{outline:2px solid var(--dark-brown);outline-offset:2px}
+input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--border-light);border-radius:10px;font-size:16px;font-family:inherit;margin-bottom:10px;background:#fff}
+input[type=text]:focus{outline:none;border-color:var(--warm-brown);box-shadow:0 0 0 3px rgba(196,165,118,.15)}
+.liste{max-height:230px;overflow-y:auto;border:1px solid var(--border-light);border-radius:10px}
+.zeile{padding:11px 14px;cursor:pointer;border-bottom:1px solid #F4F1EC;font-size:15px}
+.zeile:last-child{border-bottom:none}
+.zeile:hover{background:#FFFBF5}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+.chip{background:#FFF6E9;border:1px solid var(--light-brown);color:var(--dark-brown);border-radius:20px;padding:7px 13px;font-size:14px;font-weight:700}
+.chip button{background:none;border:none;color:var(--dark-brown);cursor:pointer;font-size:15px;margin-left:6px;font-family:inherit}
+.fertig{display:none;align-items:center;gap:8px;background:#F2F8F0;border:1px solid #D6E8D0;color:#2F6B34;border-radius:10px;padding:10px 13px;font-size:14px;font-weight:700;margin-top:12px}
+.fertig.an{display:flex}
+.inhalt{display:grid;gap:2px}
+.inhalt li{list-style:none;display:flex;gap:12px;padding:11px 0;border-bottom:1px solid #F4F1EC;font-size:15.5px;align-items:flex-start}
+.inhalt li:last-child{border-bottom:none}
+.inhalt .ic{flex:0 0 34px;height:34px;border-radius:9px;background:#FFF6E9;display:flex;align-items:center;justify-content:center;font-size:17px}
+.inhalt b{display:block;font-size:15.5px}
+.inhalt small{color:var(--text-medium);font-size:13.5px;line-height:1.45}
+.preis{text-align:center;padding:24px 20px;position:relative;overflow:hidden}
+.preis::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,#C4A576,#E3CBA4,#C4A576)}
+.preis .alt{color:var(--text-light);text-decoration:line-through;font-size:16px}
+.preis .jetzt{font-size:42px;font-weight:800;letter-spacing:-1.4px;margin:0;line-height:1.1}
+.preis .art{color:var(--text-medium);font-size:14px;margin-top:4px}
+.kaufen{width:100%;background:linear-gradient(180deg,#CBAE80,#BE9D67);color:#fff;border:none;border-radius:12px;padding:17px;font-size:17px;font-weight:800;cursor:pointer;margin-top:16px;font-family:inherit;box-shadow:0 6px 16px rgba(190,157,103,.35);transition:.15s}
+.kaufen:hover:not(:disabled){transform:translateY(-1px)}
+.kaufen:disabled{opacity:.42;cursor:not-allowed;box-shadow:none}
+.kaufen small{display:block;font-weight:600;font-size:12.5px;opacity:.92;margin-top:3px}
+.payment-logos{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;margin:15px 0 4px}
+.payment-logos img{height:23px;width:auto;opacity:.75;border-radius:5px}
+.garantie{font-size:13.5px;color:#166534;font-weight:700;margin-top:12px}
+.garantie small{display:block;color:var(--text-medium);font-weight:400;margin-top:2px}
+.trust{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:16px 0 4px;font-size:13px;color:var(--text-medium)}
+.sterne{color:#E8A93A;letter-spacing:1px}
+.stimme{background:#fff;border:1px solid var(--border-light);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.stimme p{font-size:14.5px;margin-bottom:6px}
+.stimme cite{font-style:normal;font-size:12.5px;color:var(--text-medium)}
+.faq details{border-bottom:1px solid var(--border-light);padding:13px 0}
+.faq details:last-child{border-bottom:none}
+.faq summary{font-weight:700;cursor:pointer;font-size:15.5px;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";float:right;color:var(--warm-brown);font-weight:800}
+.faq details[open] summary::after{content:"–"}
+.faq p{font-size:14.5px;color:var(--text-medium);padding-top:8px}
+.fuss{text-align:center;font-size:12px;color:var(--text-light);margin-top:26px}
+.fehler{background:#FDF2F2;border:1px solid #F5C6C6;color:#B42318;border-radius:10px;padding:11px 14px;font-size:14px;margin-top:12px}
+.leiste{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);border-top:1px solid var(--border-light);padding:10px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 -4px 18px rgba(0,0,0,.07);transform:translateY(110%);transition:transform .25s;z-index:20}
+.leiste.an{transform:none}
+.leiste .lp{font-size:13px;color:var(--text-medium);line-height:1.25}
+.leiste .lp b{display:block;font-size:18px;color:var(--text-dark)}
+.leiste button{flex:1;background:linear-gradient(180deg,#CBAE80,#BE9D67);color:#fff;border:none;border-radius:11px;padding:14px;font-size:15.5px;font-weight:800;font-family:inherit;cursor:pointer}
+@media(min-width:620px){.leiste{max-width:640px;margin:0 auto;border-radius:16px 16px 0 0;border:1px solid var(--border-light)}}
+
+.rassekarte{background:#fff;border:1px solid var(--border-light);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.rk-kopf{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.rk-ic{flex:0 0 40px;height:40px;border-radius:11px;background:#FFF6E9;display:flex;align-items:center;justify-content:center;font-size:20px}
+.rk-titel{font-size:18.5px;font-weight:800;letter-spacing:-.2px;line-height:1.3}
+.rk-titel em{font-style:normal;color:var(--dark-brown)}
+.rk-korr{background:none;border:none;padding:0;margin-top:3px;font-family:inherit;font-size:13px;color:var(--text-medium);text-decoration:underline;cursor:pointer}
+.rk-korr:hover{color:var(--dark-brown)}
+.rk-fakt{display:flex;gap:10px;padding:9px 0;border-top:1px solid #F4F1EC;font-size:15px;line-height:1.5}
+.rk-fakt span:first-child{color:var(--warm-brown);font-weight:800}
+.rk-lock{display:flex;gap:10px;align-items:flex-start;margin-top:10px;background:#FBF8F3;border:1px dashed var(--light-brown);border-radius:10px;padding:11px 13px;font-size:14px;color:var(--text-medium)}
+.rk-lock b{color:var(--dark-brown)}
+</style>
+</head>
+<body>
+<div class="promo">🐾 Nur für Pfoten-Plan-Kunden · Profil kommt sofort per E-Mail</div>
+<div class="header"><img src="logo.png" alt="" onerror="this.style.display='none'"><span>Pfoten-Plan</span></div>
+
+<div class="wrap">
+  <div class="eyebrow">Das Charakterprofil</div>
+  <h1 id="ueberschrift"><em id="hundName">Deinen Hund</em> näher kennenlernen</h1>
+  <p class="lead" id="lead">Verstehen, warum er so ist. Und was er jeden Tag wirklich braucht.</p>
+
+  <div class="hero">
+    <img id="heroBild" src="cp-hero.jpg" alt="Charakterprofil als gedrucktes PDF" onerror="this.closest('.hero').style.display='none'">
+    <span class="tag">🧬 Auf seine Rasse gerechnet</span>
+  </div>
+  <p class="unterbild">Kommt als PDF per E-Mail. Am Handy lesen oder ausdrucken.</p>
+
+  <!-- PERSONALISIERTER RASSE-KOPF (alle mit bekannter Rasse) -->
+  <div class="rassekarte" id="kopfKarte" hidden>
+    <div class="rk-kopf">
+      <div class="rk-ic">🧬</div>
+      <div>
+        <div class="rk-titel" id="rkTitel">—</div>
+        <button class="rk-korr" id="rkKorr" type="button">Stimmt nicht? Rasse ändern</button>
+      </div>
+    </div>
+    <div id="rkFakten"></div>
+    <div class="rk-lock"><span>🔒</span><span id="rkLockText">Im Profil außerdem: seine Gassi-Zeiten, sein Schlafbedarf, seine typischen Baustellen und die drei Dinge, die du ihm besser ersparst.</span></div>
+  </div>
+
+  <!-- RASSE KORRIGIEREN (nur auf Klick) -->
+  <div class="karte fokus" id="karteKorrektur" hidden>
+    <div class="frage">Welche Rasse ist <span class="dogname">dein Hund</span>?</div>
+    <p class="hinweis">Such sie einmal heraus, das Profil wird komplett daraus gerechnet.</p>
+    <input type="text" id="sucheFeld" placeholder="Rasse suchen, z. B. Labrador" autocomplete="off">
+    <div class="liste" id="rasseListe"></div>
+  </div>
+
+  <!-- FRAGE: nur bei Mischling -->
+  <div class="karte fokus" id="karteMisch" hidden>
+    <div class="schritt">Eine Frage, dann geht's los</div>
+    <div class="frage">Was steckt in <span class="dogname">deinem Hund</span> drin?</div>
+    <div class="warum"><b>Bei dir steht „Mischling“ im Fragebogen.</b> Da brauchen wir noch ein paar Infos mehr. Das ganze Profil wird aus den Rassen gerechnet: Bewegung, Schlaf, typische Baustellen. Sag uns, was vermutlich drinsteckt, und wir zeigen dir, welcher Anteil sich in welchem Verhalten zeigt.</div>
+    <p class="hinweis">Bis zu drei Rassen. Was Tierarzt oder Tierheim gesagt haben, oder wonach er aussieht.</p>
+    <input type="text" id="mischSuche" placeholder="Rasse suchen" autocomplete="off">
+    <div class="liste" id="mischListe"></div>
+    <div class="chips" id="mischChips"></div>
+    <div class="wahl" style="margin-top:10px">
+      <button class="btn" id="weissNicht" type="button">Ich weiß es nicht</button>
+    </div>
+    <p class="hinweis" id="weissNichtInfo" hidden style="margin-top:10px">Kein Problem. Dann bauen wir das Profil über Größe, Alter und sein Verhalten auf.</p>
+  </div>
+
+  <!-- INHALT -->
+  <div class="karte" style="margin-top:14px">
+    <div class="frage" style="margin-bottom:10px">Das steht drin</div>
+    <ul class="inhalt">
+      <li><span class="ic">🧬</span><span><b>Rasse-Steckbrief</b><small>Wofür sie gezüchtet wurde und was das bei dir zu Hause bedeutet.</small></span></li>
+      <li><span class="ic">🚶</span><span><b>Gassi-Zeiten, die passen</b><small>Wie lange, wie oft, welches Tempo.</small></span></li>
+      <li><span class="ic">😴</span><span><b>Schlaf und Ruhe</b><small>Wie viel er braucht und woran du Übermüdung erkennst.</small></span></li>
+      <li><span class="ic">🧠</span><span><b>Kopfarbeit</b><small>Welche Beschäftigung zu seinem Kopf passt und wie viel genug ist.</small></span></li>
+      <li><span class="ic">⚠️</span><span><b>Typische Baustellen</b><small>Was bei diesem Typ Hund erfahrungsgemäß schwierig wird.</small></span></li>
+      <li><span class="ic">🚫</span><span><b>Was du ihm ersparst</b><small>Drei Dinge, die gut gemeint sind und trotzdem schaden.</small></span></li>
+    </ul>
+  </div>
+
+  <!-- PREIS -->
+  <div class="karte preis" id="preisKarte">
+    <div class="alt">39,90 €</div>
+    <div class="jetzt">24,90 €</div>
+    <div class="art">Einmalig · kein Abo · sofort per E-Mail</div>
+    <button class="kaufen" id="kaufBtn" type="button" disabled>Profil für <span class="dogname">meinen Hund</span> erstellen<small>Dauert keine Minute</small></button>
+    <div id="fehler" class="fehler" hidden></div>
+    <div class="payment-logos">
+      <img src="sepa-logo.png" alt="SEPA" onerror="this.style.display='none'">
+      <img src="visa-logo.png" alt="Visa" onerror="this.style.display='none'">
+      <img src="mastercard-logo.png" alt="Mastercard" onerror="this.style.display='none'">
+      <img src="paypal-logo.png" alt="PayPal" onerror="this.style.display='none'">
+      <img src="klarna-logo.png" alt="Klarna" onerror="this.style.display='none'">
+      <img src="applepay.png" alt="Apple Pay" onerror="this.style.display='none'">
+      <img src="googlepay.png" alt="Google Pay" onerror="this.style.display='none'">
+    </div>
+    <div class="garantie">🛡️ 30 Tage Geld-zurück-Garantie<small>Bringt dich das Profil nicht weiter, schreib uns eine Zeile.</small></div>
+    <div class="trust">
+      <span><span class="sterne">★★★★★</span> 4,8 von 5</span>
+      <span>🔒 Sichere Zahlung</span>
+      <span>📩 Sofort per E-Mail</span>
+    </div>
+  </div>
+
+  <div class="stimme"><p>„Der Teil über den Schlafbedarf hat mir die Augen geöffnet. Sie war einfach dauernd übermüdet.“</p><cite>Renate, 61 · mit Mischling Emma</cite></div>
+  <div class="stimme"><p>„Endlich erklärt mir mal jemand, warum er so ist.“</p><cite>Karl-Heinz, 64 · mit Terrier-Mix Paula</cite></div>
+
+  <div class="karte faq" style="margin-top:16px">
+    <details><summary>Woher wisst ihr die Rasse?</summary><p>Aus deinem Fragebogen von damals. Wenn sich das geändert hat oder etwas nicht stimmt, kannst du es oben mit einem Klick korrigieren.</p></details>
+    <details><summary>Ist das dasselbe wie mein Trainingsplan?</summary><p>Nein. Der Plan sagt, was ihr übt. Das Profil erklärt, warum dein Hund so tickt.</p></details>
+    <details><summary>Wann bekomme ich es?</summary><p>Sofort nach dem Kauf per E-Mail als PDF. Kein Abo, keine Folgekosten.</p></details>
+  </div>
+
+  <p class="fuss">Pfoten-Plan · <a href="impressum.html" style="color:var(--text-light)">Impressum</a> · <a href="datenschutz.html" style="color:var(--text-light)">Datenschutz</a> · <a href="agb.html" style="color:var(--text-light)">AGB</a></p>
+</div>
+
+<div class="leiste" id="leiste">
+  <div class="lp">Charakterprofil<b>24,90 €</b></div>
+  <button type="button" id="leisteBtn">Profil erstellen</button>
+</div>
+<script>
+const RASSEN = ["Labrador Retriever", "Deutscher Schäferhund", "Golden Retriever", "Französische Bulldogge", "Chihuahua", "Australian Shepherd", "Border Collie", "Beagle", "Pudel", "Dackel", "Rottweiler", "Boxer", "Siberian Husky", "Malteser", "Jack Russell Terrier", "Shih Tzu", "Yorkshire Terrier", "Airedale Terrier", "Akita", "Alaskan Malamute", "American Staffordshire Terrier", "Australian Cattle Dog", "Aussiedoodle", "Basenji", "Basset Hound", "Belgischer Schäferhund", "Berner Sennenhund", "Bernedoodle", "Bichon Frisé", "Bloodhound", "Bobtail", "Bolonka Zwetna", "Bordeauxdogge", "Boston Terrier", "Briard", "Englische Bulldogge", "Bullmastiff", "Bull Terrier", "Cairn Terrier", "Cane Corso", "Cavalier King Charles Spaniel", "Chow Chow", "Cockapoo", "Cocker Spaniel", "Collie", "Welsh Corgi", "Dalmatiner", "Deutsche Dogge", "Deutsch Drahthaar", "Deutsch Kurzhaar", "Dobermann", "Englischer Setter", "Englischer Springer Spaniel", "Eurasier", "Flat Coated Retriever", "Foxterrier", "Goldendoodle", "Gordon Setter", "Greyhound", "Großer Schweizer Sennenhund", "Havaneser", "Hovawart", "Irish Setter", "Irish Wolfhound", "Italienisches Windspiel", "Japan Spitz", "Kangal", "Kaukasischer Owtscharka", "Kleinspitz", "Kromfohrländer", "Labradoodle", "Lagotto Romagnolo", "Landseer", "Leonberger", "Lhasa Apso", "Maltipoo", "Maremmen-Abruzzen-Schäferhund", "Zwergschnauzer", "Mittelspitz", "Mops", "Münsterländer", "Neufundländer", "Nova Scotia Duck Tolling Retriever", "Österreichischer Pinscher", "Papillon", "Parson Russell Terrier", "Pekinese", "Deutscher Pinscher", "Pitbull", "Podenco", "Pointer", "Pomeranian", "Portugiesischer Wasserhund", "Prager Rattler", "Rhodesian Ridgeback", "Riesenschnauzer", "Samojede", "Schapendoes", "Schipperke", "Schnauzer", "Scottish Terrier", "Shar Pei", "Shetland Sheepdog", "Shiba Inu", "Deutscher Spitz", "Staffordshire Bullterrier", "Standardpudel", "St. Bernhardshund", "Tibet Terrier", "Toy Pudel", "Vizsla", "Weimaraner", "Weißer Schweizer Schäferhund", "West Highland White Terrier", "Whippet", "Zwergpinscher", "Zwergpudel"];
+const RASSE_INFO = {"Collie": ["Hütehund. Gezüchtet, um Vieh über weite Strecken zu kontrollieren.", "Er scannt ununterbrochen die Umgebung. Mehr Auslastung macht ihn oft nur noch wacher."], "Bobtail": ["Hütehund. Gezüchtet, um Vieh über weite Strecken zu kontrollieren.", "Er scannt ununterbrochen die Umgebung. Mehr Auslastung macht ihn oft nur noch wacher."], "Shetland Sheepdog": ["Hütehund. Gezüchtet, um Vieh über weite Strecken zu kontrollieren.", "Er scannt ununterbrochen die Umgebung. Mehr Auslastung macht ihn oft nur noch wacher."], "Briard": ["Hütehund. Gezüchtet, um Vieh über weite Strecken zu kontrollieren.", "Er scannt ununterbrochen die Umgebung. Mehr Auslastung macht ihn oft nur noch wacher."], "Schapendoes": ["Hütehund. Gezüchtet, um Vieh über weite Strecken zu kontrollieren.", "Er scannt ununterbrochen die Umgebung. Mehr Auslastung macht ihn oft nur noch wacher."], "Belgischer Schäferhund": ["Diensthund mit dem höchsten Arbeitswillen unter den Hütehunden.", "Ohne Aufgabe erfindet er sich eine. Meist eine, die dir nicht gefällt."], "Weißer Schweizer Schäferhund": ["Hütehund. Gezüchtet, um Vieh über weite Strecken zu kontrollieren.", "Er scannt ununterbrochen die Umgebung. Mehr Auslastung macht ihn oft nur noch wacher."], "Australian Cattle Dog": ["Hütehund. Gezüchtet, um Vieh über weite Strecken zu kontrollieren.", "Er scannt ununterbrochen die Umgebung. Mehr Auslastung macht ihn oft nur noch wacher."], "Welsh Corgi": ["Hütehund. Gezüchtet, um Vieh über weite Strecken zu kontrollieren.", "Er scannt ununterbrochen die Umgebung. Mehr Auslastung macht ihn oft nur noch wacher."], "Maremmen-Abruzzen-Schäferhund": ["Hütehund. Gezüchtet, um Vieh über weite Strecken zu kontrollieren.", "Er scannt ununterbrochen die Umgebung. Mehr Auslastung macht ihn oft nur noch wacher."], "Flat Coated Retriever": ["Apportierhund. Gezüchtet, um erlegtes Wild zu bringen. Stundenlang, auch aus dem Wasser.", "Er arbeitet über das Maul. Alles, was am Weg liegt, ist für ihn erst mal Arbeitsmaterial."], "Nova Scotia Duck Tolling Retriever": ["Apportierhund. Gezüchtet, um erlegtes Wild zu bringen. Stundenlang, auch aus dem Wasser.", "Er arbeitet über das Maul. Alles, was am Weg liegt, ist für ihn erst mal Arbeitsmaterial."], "Englischer Springer Spaniel": ["Apportierhund. Gezüchtet, um erlegtes Wild zu bringen. Stundenlang, auch aus dem Wasser.", "Er arbeitet über das Maul. Alles, was am Weg liegt, ist für ihn erst mal Arbeitsmaterial."], "Airedale Terrier": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "Foxterrier": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "Cairn Terrier": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "Scottish Terrier": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "West Highland White Terrier": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "Parson Russell Terrier": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "Bull Terrier": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "Boston Terrier": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "Kromfohrländer": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "Schipperke": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "Malteser": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Cavalier King Charles Spaniel": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Bichon Frisé": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Papillon": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Shih Tzu": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Lhasa Apso": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Pomeranian": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Kleinspitz": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Mittelspitz": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Deutscher Spitz": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Japan Spitz": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Italienisches Windspiel": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Hovawart": ["Schutz- und Diensthund. Gezüchtet fürs Aufpassen.", "Er meldet und kontrolliert. Bekommt er keine Aufgabe, sucht er sich selbst eine."], "Dobermann": ["Schutz- und Diensthund. Gezüchtet fürs Aufpassen.", "Er meldet und kontrolliert. Bekommt er keine Aufgabe, sucht er sich selbst eine."], "Riesenschnauzer": ["Schutz- und Diensthund. Gezüchtet fürs Aufpassen.", "Er meldet und kontrolliert. Bekommt er keine Aufgabe, sucht er sich selbst eine."], "Österreichischer Pinscher": ["Schutz- und Diensthund. Gezüchtet fürs Aufpassen.", "Er meldet und kontrolliert. Bekommt er keine Aufgabe, sucht er sich selbst eine."], "Kangal": ["Herdenschutzhund. Arbeitet seit Jahrhunderten ohne Anweisung vom Menschen.", "Er entscheidet selbst, was Gefahr ist. Das ist kein Erziehungsfehler, das ist Zucht."], "Kaukasischer Owtscharka": ["Herdenschutzhund. Arbeitet seit Jahrhunderten ohne Anweisung vom Menschen.", "Er entscheidet selbst, was Gefahr ist. Das ist kein Erziehungsfehler, das ist Zucht."], "Basset Hound": ["Nasenjäger. Gezüchtet, um einer Spur stundenlang zu folgen.", "Die Nase schlägt das Ohr. Rückruf ist bei ihm ein eigenes Projekt."], "Bloodhound": ["Nasenjäger. Gezüchtet, um einer Spur stundenlang zu folgen.", "Die Nase schlägt das Ohr. Rückruf ist bei ihm ein eigenes Projekt."], "Deutsch Drahthaar": ["Jagdgebrauchshund. Gezüchtet für die enge Arbeit mit dem Jäger.", "Sehr fein und sehr anhänglich. Und schnell überdreht, wenn ihm Ruhe fehlt."], "Deutsch Kurzhaar": ["Jagdgebrauchshund. Gezüchtet für die enge Arbeit mit dem Jäger.", "Sehr fein und sehr anhänglich. Und schnell überdreht, wenn ihm Ruhe fehlt."], "Münsterländer": ["Jagdgebrauchshund. Gezüchtet für die enge Arbeit mit dem Jäger.", "Sehr fein und sehr anhänglich. Und schnell überdreht, wenn ihm Ruhe fehlt."], "Pointer": ["Jagdgebrauchshund. Gezüchtet für die enge Arbeit mit dem Jäger.", "Sehr fein und sehr anhänglich. Und schnell überdreht, wenn ihm Ruhe fehlt."], "Englischer Setter": ["Jagdgebrauchshund. Gezüchtet für die enge Arbeit mit dem Jäger.", "Sehr fein und sehr anhänglich. Und schnell überdreht, wenn ihm Ruhe fehlt."], "Irish Setter": ["Jagdgebrauchshund. Gezüchtet für die enge Arbeit mit dem Jäger.", "Sehr fein und sehr anhänglich. Und schnell überdreht, wenn ihm Ruhe fehlt."], "Gordon Setter": ["Jagdgebrauchshund. Gezüchtet für die enge Arbeit mit dem Jäger.", "Sehr fein und sehr anhänglich. Und schnell überdreht, wenn ihm Ruhe fehlt."], "Whippet": ["Sichtjäger. Gezüchtet, um Wild auf Sicht zu hetzen.", "Bewegung zieht ihn magisch an. Freilauf ist bei ihm eine reine Vertrauensfrage."], "Greyhound": ["Sichtjäger. Gezüchtet, um Wild auf Sicht zu hetzen.", "Bewegung zieht ihn magisch an. Freilauf ist bei ihm eine reine Vertrauensfrage."], "Irish Wolfhound": ["Sichtjäger. Gezüchtet, um Wild auf Sicht zu hetzen.", "Bewegung zieht ihn magisch an. Freilauf ist bei ihm eine reine Vertrauensfrage."], "Podenco": ["Sichtjäger. Gezüchtet, um Wild auf Sicht zu hetzen.", "Bewegung zieht ihn magisch an. Freilauf ist bei ihm eine reine Vertrauensfrage."], "Siberian Husky": ["Schlittenhund. Gezüchtet, um stundenlang nach vorn zu ziehen.", "Vorwärts ist sein Grundzustand. Rückruf gegen Lauffreude bleibt Lebensaufgabe."], "Alaskan Malamute": ["Schlittenhund. Gezüchtet, um stundenlang nach vorn zu ziehen.", "Vorwärts ist sein Grundzustand. Rückruf gegen Lauffreude bleibt Lebensaufgabe."], "Shiba Inu": ["Ursprünglicher Typ. Kaum auf Gehorsam selektiert.", "Kooperation muss man sich bei ihm verdienen. Befehlen lässt sie sich nicht."], "Akita": ["Ursprünglicher Typ. Kaum auf Gehorsam selektiert.", "Kooperation muss man sich bei ihm verdienen. Befehlen lässt sie sich nicht."], "Chow Chow": ["Ursprünglicher Typ. Kaum auf Gehorsam selektiert.", "Kooperation muss man sich bei ihm verdienen. Befehlen lässt sie sich nicht."], "Eurasier": ["Ursprünglicher Typ. Kaum auf Gehorsam selektiert.", "Kooperation muss man sich bei ihm verdienen. Befehlen lässt sie sich nicht."], "Samojede": ["Ursprünglicher Typ. Kaum auf Gehorsam selektiert.", "Kooperation muss man sich bei ihm verdienen. Befehlen lässt sie sich nicht."], "Basenji": ["Ursprünglicher Typ. Kaum auf Gehorsam selektiert.", "Kooperation muss man sich bei ihm verdienen. Befehlen lässt sie sich nicht."], "Shar Pei": ["Ursprünglicher Typ. Kaum auf Gehorsam selektiert.", "Kooperation muss man sich bei ihm verdienen. Befehlen lässt sie sich nicht."], "Cane Corso": ["Schwerer Wach- und Schutzhund. Gezüchtet für Präsenz, nicht für Tempo.", "Ruhig im Kern, aber kräftig. Begegnungen und faire Regeln entscheiden alles."], "Bullmastiff": ["Schwerer Wach- und Schutzhund. Gezüchtet für Präsenz, nicht für Tempo.", "Ruhig im Kern, aber kräftig. Begegnungen und faire Regeln entscheiden alles."], "Bordeauxdogge": ["Schwerer Wach- und Schutzhund. Gezüchtet für Präsenz, nicht für Tempo.", "Ruhig im Kern, aber kräftig. Begegnungen und faire Regeln entscheiden alles."], "Deutsche Dogge": ["Schwerer Wach- und Schutzhund. Gezüchtet für Präsenz, nicht für Tempo.", "Ruhig im Kern, aber kräftig. Begegnungen und faire Regeln entscheiden alles."], "Englische Bulldogge": ["Schwerer Wach- und Schutzhund. Gezüchtet für Präsenz, nicht für Tempo.", "Ruhig im Kern, aber kräftig. Begegnungen und faire Regeln entscheiden alles."], "Leonberger": ["Schwerer Wach- und Schutzhund. Gezüchtet für Präsenz, nicht für Tempo.", "Ruhig im Kern, aber kräftig. Begegnungen und faire Regeln entscheiden alles."], "St. Bernhardshund": ["Schwerer Wach- und Schutzhund. Gezüchtet für Präsenz, nicht für Tempo.", "Ruhig im Kern, aber kräftig. Begegnungen und faire Regeln entscheiden alles."], "Labradoodle": ["Pudel-Kreuzung. Er erbt aus zwei Richtungen gleichzeitig.", "Welcher Anteil bei ihm durchschlägt, entscheidet, woran ihr wirklich arbeiten müsst."], "Goldendoodle": ["Pudel-Kreuzung. Er erbt aus zwei Richtungen gleichzeitig.", "Welcher Anteil bei ihm durchschlägt, entscheidet, woran ihr wirklich arbeiten müsst."], "Maltipoo": ["Pudel-Kreuzung. Er erbt aus zwei Richtungen gleichzeitig.", "Welcher Anteil bei ihm durchschlägt, entscheidet, woran ihr wirklich arbeiten müsst."], "Cockapoo": ["Pudel-Kreuzung. Er erbt aus zwei Richtungen gleichzeitig.", "Welcher Anteil bei ihm durchschlägt, entscheidet, woran ihr wirklich arbeiten müsst."], "Bernedoodle": ["Pudel-Kreuzung. Er erbt aus zwei Richtungen gleichzeitig.", "Welcher Anteil bei ihm durchschlägt, entscheidet, woran ihr wirklich arbeiten müsst."], "Aussiedoodle": ["Pudel-Kreuzung. Er erbt aus zwei Richtungen gleichzeitig.", "Welcher Anteil bei ihm durchschlägt, entscheidet, woran ihr wirklich arbeiten müsst."], "Pudel": ["Ursprünglich ein Wasser-Apportierhund, kein Schoßhund.", "Kopfarbeit macht ihn zufriedener als jede zusätzliche Runde."], "Zwergpudel": ["Ursprünglich ein Wasser-Apportierhund, kein Schoßhund.", "Kopfarbeit macht ihn zufriedener als jede zusätzliche Runde."], "Toy Pudel": ["Ursprünglich ein Wasser-Apportierhund, kein Schoßhund.", "Kopfarbeit macht ihn zufriedener als jede zusätzliche Runde."], "Standardpudel": ["Ursprünglich ein Wasser-Apportierhund, kein Schoßhund.", "Kopfarbeit macht ihn zufriedener als jede zusätzliche Runde."], "Berner Sennenhund": ["Bauernhof- und Zughund aus den Alpen.", "Ruhig, aber schwer. Tempo und Gelenke wollen in den ersten Jahren geschont werden."], "Großer Schweizer Sennenhund": ["Bauernhof- und Zughund aus den Alpen.", "Ruhig, aber schwer. Tempo und Gelenke wollen in den ersten Jahren geschont werden."], "Appenzeller Sennenhund": ["Bauernhof- und Zughund aus den Alpen.", "Ruhig, aber schwer. Tempo und Gelenke wollen in den ersten Jahren geschont werden."], "Entlebucher Sennenhund": ["Bauernhof- und Zughund aus den Alpen.", "Ruhig, aber schwer. Tempo und Gelenke wollen in den ersten Jahren geschont werden."], "Portugiesischer Wasserhund": ["Wasser- und Sucharbeit, oft über Stunden.", "Suchen macht ihn ruhig. Reine Bewegung dreht ihn eher auf."], "Neufundländer": ["Wasser- und Sucharbeit, oft über Stunden.", "Suchen macht ihn ruhig. Reine Bewegung dreht ihn eher auf."], "Landseer": ["Wasser- und Sucharbeit, oft über Stunden.", "Suchen macht ihn ruhig. Reine Bewegung dreht ihn eher auf."], "Mops": ["Begleithund mit kurzer Nase.", "Hitze und Tempo sind seine echten Grenzen, nicht sein Wille."], "Pekinese": ["Begleithund mit kurzer Nase.", "Hitze und Tempo sind seine echten Grenzen, nicht sein Wille."], "Zwergschnauzer": ["Hof- und Rattenhund. Gezüchtet fürs Melden und fürs Zupacken.", "Wachsam, meinungsstark und sehr schnell am Bellen."], "Schnauzer": ["Hof- und Rattenhund. Gezüchtet fürs Melden und fürs Zupacken.", "Wachsam, meinungsstark und sehr schnell am Bellen."], "Deutscher Pinscher": ["Hof- und Rattenhund. Gezüchtet fürs Melden und fürs Zupacken.", "Wachsam, meinungsstark und sehr schnell am Bellen."], "Zwergpinscher": ["Hof- und Rattenhund. Gezüchtet fürs Melden und fürs Zupacken.", "Wachsam, meinungsstark und sehr schnell am Bellen."], "Prager Rattler": ["Hof- und Rattenhund. Gezüchtet fürs Melden und fürs Zupacken.", "Wachsam, meinungsstark und sehr schnell am Bellen."], "Labrador Retriever": ["Gezüchtet, um Enten aus kaltem Wasser zu apportieren.", "Er arbeitet über Maul und Futter. Alles, was am Weg liegt, ist erst mal seins."], "Australian Shepherd": ["Gezüchtet, um Vieh über weite Strecken zu treiben.", "Er scannt ununterbrochen. Mehr Bewegung macht ihn oft nur noch wacher, nicht müder."], "Golden Retriever": ["Apportierhund aus dem schottischen Hochland.", "Er will gefallen und sucht Nähe. Alleinsein ist bei ihm oft das eigentliche Thema."], "Deutscher Schäferhund": ["Hüte- und Diensthund, gezüchtet fürs Aufpassen.", "Er meldet, kontrolliert und arbeitet gern. Ohne Job erfindet er sich einen."], "Dackel": ["Gezüchtet, um allein im Bau gegen Fuchs und Dachs zu arbeiten.", "Er entscheidet selbst. Was wie Sturheit aussieht, ist seine Jobbeschreibung."], "Border Collie": ["Hütehund, der Schafe über den Blick steuert.", "Er denkt schneller, als du reagieren kannst. Reize runterfahren schlägt Auslasten."], "Französische Bulldogge": ["Begleithund, gezüchtet für das Leben in der Wohnung.", "Kurze Nase, wenig Reserve bei Hitze. Sie bestimmt das Tempo, nicht die Runde."], "Jack Russell Terrier": ["Jagdterrier für die Arbeit am Fuchsbau.", "Hohe Erregung, kurze Zündschnur. Runterkommen muss man mit ihm üben."], "Havaneser": ["Alter Gesellschaftshund aus Kuba.", "Sehr menschenbezogen und schnell am Melden. Ruhe ist sein größtes Thema."], "Bolonka Zwetna": ["Russischer Gesellschaftshund, gezüchtet für die Stadtwohnung.", "Hängt eng am Menschen und meldet gern. Alleinbleiben will geübt sein."], "Chihuahua": ["Der kleinste Hund der Welt, ein reiner Begleithund.", "Unsicherheit zeigt er über Bellen und Schnappen, nicht über Rückzug."], "Rhodesian Ridgeback": ["Gezüchtet, um Großwild aufzuspüren und zu stellen.", "Selbstständig und stark. Über Druck erreichst du bei ihm gar nichts."], "Vizsla": ["Ungarischer Vorstehhund, arbeitet eng am Jäger.", "Klebt am Menschen und dreht schnell hoch, wenn ihm Ruhe fehlt."], "Boxer": ["Ursprünglich Bullenbeißer, später Familien- und Diensthund.", "Bleibt lange kindlich und sehr körperbetont im Spiel."], "Beagle": ["Meutehund, der einer Spur über Stunden folgt.", "Die Nase schlägt das Ohr. Rückruf ist bei ihm ein eigenes Projekt."], "Lagotto Romagnolo": ["Trüffelsucher aus der Romagna.", "Suchen macht ihn ruhig. Reine Bewegung dreht ihn eher auf."], "Yorkshire Terrier": ["Rattenfänger aus den englischen Fabriken.", "Terrier im Kleinformat: mutig, laut und sehr schnell auf 180."], "Cocker Spaniel": ["Stöberhund für dichtes Gelände.", "Er arbeitet mit der Nase im Unterholz und dreht ohne Suchaufgabe schnell auf."], "Rottweiler": ["Treib- und Schutzhund aus Rottweil.", "Ruhig im Kern, braucht aber früh faire und klare Regeln."], "Dalmatiner": ["Lief früher kilometerweit neben der Kutsche.", "Ausdauer ohne Ende, dazu sehr feine Antennen für Unruhe im Haushalt."], "Tibet Terrier": ["Klosterhund aus Tibet. Trotz Namen kein Terrier.", "Er meldet und entscheidet selbst. Gehorsam auf Zuruf ist nicht sein Ding."], "Weimaraner": ["Vorstehhund für die Arbeit am Wild.", "Hängt extrem am Menschen und leidet schnell beim Alleinbleiben."], "American Staffordshire Terrier": ["Kräftiger Terrier, sehr stark auf Menschenbezug gezüchtet.", "Sein Thema sind Hundebegegnungen, nicht der Mensch."], "Staffordshire Bullterrier": ["Kräftiger Terrier, sehr stark auf Menschenbezug gezüchtet.", "Sein Thema sind Hundebegegnungen, nicht der Mensch."], "Pitbull": ["Kräftiger Terrier, sehr stark auf Menschenbezug gezüchtet.", "Sein Thema sind Hundebegegnungen, nicht der Mensch."], "Border Terrier": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "Elo": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Kooikerhondje": ["Apportierhund. Gezüchtet, um erlegtes Wild zu bringen. Stundenlang, auch aus dem Wasser.", "Er arbeitet über das Maul. Alles, was am Weg liegt, ist für ihn erst mal Arbeitsmaterial."], "Spanischer Wasserhund": ["Wasser- und Sucharbeit, oft über Stunden.", "Suchen macht ihn ruhig. Reine Bewegung dreht ihn eher auf."], "Altdeutscher Hütehund": ["Hütehund. Gezüchtet, um Vieh über weite Strecken zu kontrollieren.", "Er scannt ununterbrochen die Umgebung. Mehr Auslastung macht ihn oft nur noch wacher."], "Bracke": ["Nasenjäger. Gezüchtet, um einer Spur stundenlang zu folgen.", "Die Nase schlägt das Ohr. Rückruf ist bei ihm ein eigenes Projekt."], "Havapoo": ["Pudel-Kreuzung. Er erbt aus zwei Richtungen gleichzeitig.", "Welcher Anteil bei ihm durchschlägt, entscheidet, woran ihr wirklich arbeiten müsst."], "Cavapoo": ["Pudel-Kreuzung. Er erbt aus zwei Richtungen gleichzeitig.", "Welcher Anteil bei ihm durchschlägt, entscheidet, woran ihr wirklich arbeiten müsst."], "Cavachon": ["Pudel-Kreuzung. Er erbt aus zwei Richtungen gleichzeitig.", "Welcher Anteil bei ihm durchschlägt, entscheidet, woran ihr wirklich arbeiten müsst."], "Kokoni": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Deutscher Wachtelhund": ["Nasenjäger. Gezüchtet, um einer Spur stundenlang zu folgen.", "Die Nase schlägt das Ohr. Rückruf ist bei ihm ein eigenes Projekt."], "Pyrenäenberghund": ["Hütehund. Gezüchtet, um Vieh über weite Strecken zu kontrollieren.", "Er scannt ununterbrochen die Umgebung. Mehr Auslastung macht ihn oft nur noch wacher."], "Bearded Collie": ["Hütehund. Gezüchtet, um Vieh über weite Strecken zu kontrollieren.", "Er scannt ununterbrochen die Umgebung. Mehr Auslastung macht ihn oft nur noch wacher."], "Irish Terrier": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "Norfolk Terrier": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "Norwich Terrier": ["Jagdterrier. Gezüchtet, um allein und ohne Anweisung im Bau zu arbeiten.", "Schnell auf 180, schwer wieder runter. Selbst entscheiden gehört bei ihm zum Job."], "Russkiy Toy": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Chinese Crested Dog": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Coton de Tuléar": ["Gesellschaftshund. Seit Jahrhunderten für die Nähe zum Menschen gezüchtet, nicht für die Arbeit.", "Klein heißt nicht anspruchslos: Er meldet viel und braucht echte Ruhezeiten."], "Kleiner Münsterländer": ["Apportierhund. Gezüchtet, um erlegtes Wild zu bringen. Stundenlang, auch aus dem Wasser.", "Er arbeitet über das Maul. Alles, was am Weg liegt, ist für ihn erst mal Arbeitsmaterial."]};
+const RASSE_ALIAS = {"owczarek niemiecki": "Deutscher Schäferhund", "maltanczyk": "Malteser", "maltańczyk": "Malteser", "labrador": "Labrador Retriever", "aussie": "Australian Shepherd", "golden": "Golden Retriever", "schäferhund": "Deutscher Schäferhund", "franzosische bulldogge": "Französische Bulldogge", "border collie": "Border Collie", "parson russell terrier": "Jack Russell Terrier", "malinois": "Belgischer Schäferhund", "westie": "West Highland White Terrier", "viszla": "Vizsla", "vizla": "Vizsla", "australian sheperd": "Australian Shepherd", "franzoesische bulldogge": "Französische Bulldogge", "aussie shepherd": "Australian Shepherd", "zwerg schnauzer": "Zwergschnauzer", "golden doodle": "Goldendoodle", "labra doodle": "Labradoodle"};
+const THEMEN = {recall:'der Rückruf', pulling:'die Leinenführigkeit', barking:'das Bellen', aggression:'Hundebegegnungen',
+  anxiety:'Unsicherheit und Angst', separation:'das Alleinbleiben', mouthing:'das Zwicken', destructive:'das Zerstören',
+  jumping:'das Anspringen', energy:'die Unruhe', obedience:'der Grundgehorsam', behavior:'sein Verhalten', potty:'die Stubenreinheit'};
+
+const P = new URLSearchParams(location.search);
+const leadId = P.get('lead_id') || localStorage.getItem('leadId') || '';
+const email  = (P.get('email') || localStorage.getItem('userEmail') || '').trim();
+let hund = P.get('dog') || localStorage.getItem('dogName') || '';
+let rasse = P.get('rasse') || localStorage.getItem('dogBreed') || '';
+let geschlecht = P.get('g') || '';
+let thema = P.get('thema') || '';
+let mischRassen = [], weissNicht = false;
+
+const SUPABASE_URL='https://xomsibpyksrzrnixbdwf.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+const $ = function(id){ return document.getElementById(id); };
+function norm(s){ return (s||'').toLowerCase().replace(/[^a-zäöüß ]/g,' ').replace(/\s+/g,' ').trim(); }
+const INFO_IDX = {};
+Object.keys(RASSE_INFO).forEach(function(k){ INFO_IDX[norm(k)] = RASSE_INFO[k]; });
+const ALIAS_IDX = {};
+Object.keys(RASSE_ALIAS).forEach(function(k){ ALIAS_IDX[norm(k)] = RASSE_ALIAS[k]; });
+
+function istMisch(r){ return !r || /mischling|mieszaniec|meticcio|inna rasa|andere rasse|unbekannt|keine ahnung|^mix$|-mix|mischung/i.test(r); }
+function infoFuer(r){
+  const n = norm(r);
+  if (INFO_IDX[n]) return INFO_IDX[n];
+  if (ALIAS_IDX[n] && INFO_IDX[norm(ALIAS_IDX[n])]) return INFO_IDX[norm(ALIAS_IDX[n])];
+  const treffer = Object.keys(INFO_IDX).filter(function(k){ return n && (n.indexOf(k) !== -1 || k.indexOf(n) !== -1); })
+    .sort(function(a,b){ return b.length - a.length; })[0];
+  return treffer ? INFO_IDX[treffer] : null;
+}
+function w(){ return geschlecht === 'female'
+  ? {er:'sie', ihm:'ihr', sein:'ihr', seine:'ihre', seinen:'ihren'}
+  : {er:'er', ihm:'ihm', sein:'sein', seine:'seine', seinen:'seinen'}; }
+function artikel(r){ return /dogge\b/i.test(r) ? 'eine' : 'ein'; }
+function esc(s){ const d=document.createElement('div'); d.textContent = s==null?'':String(s); return d.innerHTML; }
+
+function zeichne(){
+  const name = hund || 'dein Hund';
+  const Name = hund || 'Dein Hund';
+  const p = w();
+  $('hundName').textContent = Name;
+  $('lead').innerHTML = 'Verstehen, warum ' + p.er + ' so ist. Und was ' + p.er + ' jeden Tag wirklich braucht.';
+  document.querySelectorAll('.dogname').forEach(function(el){ el.textContent = name; });
+  document.title = 'Charakterprofil für ' + Name + ' | Pfoten-Plan';
+
+  const misch = istMisch(rasse);
+  $('karteMisch').hidden = !misch;
+
+  // Welche Rasse liefert die Fakten?
+  const basis = !misch ? rasse : (mischRassen[0] || '');
+  const zeigen = !!basis || (misch && weissNicht);
+  $('kopfKarte').hidden = !zeigen;
+
+  if (zeigen) {
+    let titel;
+    if (!misch) {
+      titel = '<em>' + esc(Name) + '</em> ist ' + artikel(rasse) + ' ' + esc(rasse) + '.';
+    } else if (mischRassen.length) {
+      const l = mischRassen.map(esc);
+      const auf = l.length === 1 ? l[0] : l.slice(0,-1).join(', ') + ' und ' + l[l.length-1];
+      titel = '<em>' + esc(Name) + '</em> ist ein Mischling aus ' + auf + '.';
+    } else {
+      titel = '<em>' + esc(Name) + '</em> ist ein Mischling.';
+    }
+    $('rkTitel').innerHTML = titel;
+
+    let fakten;
+    if (misch && !mischRassen.length && weissNicht) {
+      fakten = [['Ohne bekannte Rassen', 'gehen wir über Größe, Alter und das Verhalten, das du uns beschrieben hast.'],
+                ['Ehrlich bleibt ehrlich', 'wir sagen dir dazu, was sich ohne Rasse nicht sicher sagen lässt.']];
+    } else {
+      const inf = infoFuer(basis);
+      if (inf) fakten = [['Dafür wurde ' + (misch ? 'der ' + esc(basis) + '-Anteil' : p.er) + ' gezüchtet', inf[0]],
+                         ['Was das im Alltag heißt', inf[1]]];
+      else fakten = [['Jede Rasse hat einen Auftrag', esc(basis) + ' macht da keine Ausnahme.'],
+                     ['Was das im Alltag heißt', 'Genau das ordnen wir im Profil für ' + esc(name) + ' ein.']];
+    }
+    $('rkFakten').innerHTML = fakten.map(function(f){
+      return '<div class="rk-fakt"><span>✓</span><span><b>' + f[0] + ':</b> ' + f[1] + '</span></div>'; }).join('');
+
+    const themaTxt = THEMEN[thema] ? ' Und warum ausgerechnet ' + THEMEN[thema] + ' bei diesem Typ Hund schwerfällt.' : '';
+    $('rkLockText').innerHTML = 'Im Profil außerdem: <b>' + p.seine + ' Gassi-Zeiten</b>, ' + p.sein + ' Schlafbedarf, ' + p.seine + ' typischen Baustellen und die drei Dinge, die du ' + p.ihm + ' besser ersparst.' + themaTxt;
+  }
+  pruefeKauf();
+}
+
+function liste(ziel, feld, treffer){
+  const q = feld.value.toLowerCase().trim();
+  const r = RASSEN.filter(function(x){ return !q || x.toLowerCase().indexOf(q) !== -1; }).slice(0, 60);
+  ziel.innerHTML = r.map(function(x){ return '<div class="zeile" data-r="' + x + '">' + x + '</div>'; }).join('')
+    || '<div class="zeile" style="color:#999">Nichts gefunden</div>';
+  ziel.querySelectorAll('.zeile[data-r]').forEach(function(z){ z.onclick = function(){ treffer(z.dataset.r); }; });
+}
+
+const sucheFeld = $('sucheFeld'), rasseListe = $('rasseListe');
+$('rkKorr').onclick = function(){
+  $('karteKorrektur').hidden = false;
+  liste(rasseListe, sucheFeld, waehleRasse);
+  $('karteKorrektur').scrollIntoView({behavior:'smooth', block:'center'});
+  sucheFeld.focus();
+};
+sucheFeld.oninput = function(){ liste(rasseListe, sucheFeld, waehleRasse); };
+function waehleRasse(r){
+  rasse = r; mischRassen = []; weissNicht = false;
+  $('weissNicht').classList.remove('aktiv'); $('weissNichtInfo').hidden = true;
+  $('karteKorrektur').hidden = true; sucheFeld.value = '';
+  zeichneChips(); zeichne();
+}
+
+const mischFeld = $('mischSuche'), mischListe = $('mischListe');
+mischFeld.oninput = function(){ liste(mischListe, mischFeld, waehleMisch); };
+function waehleMisch(r){
+  weissNicht = false; $('weissNichtInfo').hidden = true; $('weissNicht').classList.remove('aktiv');
+  if (mischRassen.indexOf(r) === -1 && mischRassen.length < 3) mischRassen.push(r);
+  mischFeld.value = ''; liste(mischListe, mischFeld, waehleMisch); zeichneChips(); zeichne();
+}
+function zeichneChips(){
+  $('mischChips').innerHTML = mischRassen.map(function(r, i){
+    return '<span class="chip">' + esc(r) + '<button type="button" data-i="' + i + '" aria-label="entfernen">×</button></span>'; }).join('');
+  document.querySelectorAll('#mischChips button').forEach(function(b){
+    b.onclick = function(){ mischRassen.splice(+b.dataset.i, 1); zeichneChips(); zeichne(); };
+  });
+}
+$('weissNicht').onclick = function(){
+  weissNicht = true; mischRassen = []; zeichneChips();
+  this.classList.add('aktiv'); $('weissNichtInfo').hidden = false; zeichne();
+};
+
+function pruefeKauf(){
+  const ok = rasse && (!istMisch(rasse) || mischRassen.length > 0 || weissNicht);
+  $('kaufBtn').disabled = !ok;
+}
+
+(async function laden(){
+  liste(mischListe, mischFeld, waehleMisch);
+  if (leadId) {
+    try {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + encodeURIComponent(leadId) + '&select=dog_name,answers',
+        {headers:{apikey:SUPABASE_KEY, Authorization:'Bearer ' + SUPABASE_KEY}});
+      const d = await r.json();
+      if (d && d[0]) {
+        const a = d[0].answers || {};
+        hund = hund || d[0].dog_name || a.dog_name || '';
+        rasse = rasse || a.dog_breed || '';
+        geschlecht = geschlecht || a.dog_gender || '';
+        thema = thema || a.dog_problem || (Array.isArray(a.dog_behaviors) ? a.dog_behaviors[0] : '') || '';
+      }
+    } catch(e) {}
+  }
+  if (!rasse) { $('karteKorrektur').hidden = false; liste(rasseListe, sucheFeld, waehleRasse); }
+  zeichne();
+})();
+
+$('kaufBtn').onclick = async function(){
+  const b = this, alt = b.innerHTML; b.disabled = true; b.textContent = 'Einen Moment …';
+  $('fehler').hidden = true;
+  try {
+    const res = await fetch('/api/mollie/upsell-product-checkout', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        type:'charakterprofil', email:email, leadId:leadId, dogName:hund || 'deinen Hund',
+        profil:{ rasse:rasse, misch_rassen:mischRassen, rasse_unbekannt:weissNicht },
+        returnUrl: location.origin + '/charakterprofil-danke.html?lead_id=' + encodeURIComponent(leadId) + '&dog=' + encodeURIComponent(hund || '')
+      })
+    });
+    const j = await res.json();
+    if (j && j.url) { location.href = j.url; return; }
+    throw new Error(j && j.error ? j.error : 'Keine Zahlungsseite erhalten');
+  } catch(e) {
+    const f = $('fehler');
+    f.textContent = 'Das hat gerade nicht geklappt. Bitte versuch es noch einmal, oder schreib uns an support@pfoten-plan.de, wir kümmern uns.';
+    f.hidden = false; b.disabled = false; b.innerHTML = alt;
+  }
+};
+
+/* Sticky-Leiste */
+(function(){
+  const leiste = $('leiste'), preis = $('preisKarte'), kauf = $('kaufBtn');
+  $('leisteBtn').onclick = function(){
+    if (kauf.disabled) {
+      const ziel = !$('karteMisch').hidden ? $('karteMisch') : $('karteKorrektur');
+      ziel.hidden = false;
+      ziel.scrollIntoView({behavior:'smooth', block:'center'});
+    } else { kauf.click(); }
+  };
+  function pruefe(){
+    const r = preis.getBoundingClientRect();
+    leiste.classList.toggle('an', window.scrollY > 340 && r.top > window.innerHeight - 40);
+  }
+  window.addEventListener('scroll', pruefe, {passive:true});
+  window.addEventListener('resize', pruefe);
+  pruefe();
+})();
+</script>
+</body>
+</html>

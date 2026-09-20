@@ -1079,6 +1079,45 @@ async function handleUpsellProductPaid(payment: any) {
     });
   }
 
+  // Charakterprofil → eigener Generator (KI-Content + PDF + Mail).
+  // Laeuft wie die Themen-Module intern, nicht ueber Make.
+  if (product === "charakterprofil") {
+    after(async () => {
+      try {
+        const baseUrl =
+          process.env.NEXT_PUBLIC_SITE_URL ||
+          (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+          "https://www.pfoten-plan.de";
+        const mischRassen = String(meta.profil_misch || "")
+          .split("|")
+          .map((s: string) => s.trim())
+          .filter(Boolean)
+          .slice(0, 3);
+        const r = await fetch(`${baseUrl}/api/charakterprofil/generate`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.WORKER_TOKEN || ""}`,
+          },
+          body: JSON.stringify({
+            leadId: leadData?.id || leadId || "",
+            email,
+            dogName: dogName === "deinen Hund" ? undefined : dogName,
+            breed: meta.profil_rasse || undefined,
+            mischRassen,
+            rasseUnbekannt: meta.profil_rasse_unbekannt === "true",
+          }),
+        });
+        const j: any = await r.json().catch(() => ({}));
+        console.log(
+          `[mollie-webhook] charakterprofil/generate ${email}: HTTP ${r.status} ok=${j.ok} skipped=${j.skipped || ""}`
+        );
+      } catch (e: any) {
+        console.error("[mollie-webhook] charakterprofil/generate fehlgeschlagen:", e?.message);
+      }
+    });
+  }
+
   // Notify Make.com — Make übernimmt ggf. ergaenzende Aktionen + ist die
   // Pipeline fuer Nicht-Theme-Upsells (ernaehrung, zweithund, abo, reise, erstehilfe).
   await notifyMake(leadData?.id || email, {
