@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Komplettpaket | Pfoten-Plan</title>
+<link rel="icon" type="image/png" href="/favconHund.png">
+<style>
+:root{--text-dark:#2C2C2E;--text-medium:#6B6B6B;--text-light:#999;--white:#fff;--border-light:#E8E4DF;
+--light-brown:#D4B996;--warm-brown:#C4A576;--dark-brown:#8B7355;--radius:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#FAF8F5;color:var(--text-dark);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+.promo{background:linear-gradient(90deg,#C4A576,#D4B888,#C4A576);color:#fff;text-align:center;padding:9px 12px;font-size:13.5px;font-weight:700}
+.header{display:flex;align-items:center;gap:9px;justify-content:center;padding:18px 16px 4px}
+.header img{width:30px;height:30px;border-radius:7px}
+.header span{font-weight:800;color:var(--dark-brown);font-size:17px}
+.wrap{max-width:640px;margin:0 auto;padding:6px 18px 120px}
+.eyebrow{text-align:center;font-size:11.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--warm-brown);margin:10px 0 6px}
+h1{font-size:29px;line-height:1.2;letter-spacing:-.6px;margin:0 0 10px;text-align:center;text-wrap:balance}
+h1 em{font-style:normal;color:var(--dark-brown)}
+.lead{font-size:17px;color:var(--text-medium);margin:0 auto 20px;text-align:center;max-width:520px;text-wrap:balance}
+.karte{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.frage{font-size:18.5px;font-weight:800;margin-bottom:10px;letter-spacing:-.2px}
+.zeile{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #F4F1EC;font-size:15.5px}
+.zeile:last-child{border-bottom:none}
+.zeile b{font-weight:700}
+.zeile small{display:block;color:var(--text-medium);font-size:13.5px;line-height:1.45;font-weight:400}
+.zeile .wert{white-space:nowrap;color:var(--text-light);text-decoration:line-through;font-size:14px;padding-top:2px}
+.summe{display:flex;justify-content:space-between;padding:14px 0 0;margin-top:6px;border-top:2px solid var(--border-light);font-size:16px;font-weight:800}
+.summe .wert{color:var(--text-light);text-decoration:line-through;font-weight:700}
+.ablauf li{list-style:none;display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #F4F1EC;font-size:15.5px;align-items:flex-start}
+.ablauf li:last-child{border-bottom:none}
+.ablauf .tag{flex:0 0 74px;font-weight:800;color:var(--dark-brown);font-size:14px;padding-top:1px}
+.ablauf small{display:block;color:var(--text-medium);font-size:13.5px;line-height:1.45}
+.preis{text-align:center;padding:24px 20px;position:relative;overflow:hidden}
+.preis::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,#C4A576,#E3CBA4,#C4A576)}
+.preis .alt{color:var(--text-light);text-decoration:line-through;font-size:16px}
+.preis .jetzt{font-size:42px;font-weight:800;letter-spacing:-1.4px;line-height:1.1}
+.preis .art{color:var(--text-medium);font-size:14px;margin-top:4px}
+.sparen{display:inline-block;background:#F2F8F0;border:1px solid #D6E8D0;color:#2F6B34;border-radius:999px;padding:5px 13px;font-size:13.5px;font-weight:800;margin-top:10px}
+.kaufen{width:100%;background:linear-gradient(180deg,#CBAE80,#BE9D67);color:#fff;border:none;border-radius:12px;padding:17px;font-size:17px;font-weight:800;cursor:pointer;margin-top:16px;font-family:inherit;box-shadow:0 6px 16px rgba(190,157,103,.35)}
+.kaufen:disabled{opacity:.45;cursor:not-allowed}
+.kaufen small{display:block;font-weight:600;font-size:12.5px;opacity:.92;margin-top:3px}
+.payment-logos{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;margin:15px 0 4px}
+.payment-logos img{height:23px;width:auto;opacity:.75;border-radius:5px}
+.garantie{font-size:13.5px;color:#166534;font-weight:700;margin-top:12px}
+.garantie small{display:block;color:var(--text-medium);font-weight:400;margin-top:2px}
+.faq details{border-bottom:1px solid var(--border-light);padding:13px 0}
+.faq details:last-child{border-bottom:none}
+.faq summary{font-weight:700;cursor:pointer;font-size:15.5px;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";float:right;color:var(--warm-brown);font-weight:800}
+.faq details[open] summary::after{content:"–"}
+.faq p{font-size:14.5px;color:var(--text-medium);padding-top:8px}
+.fuss{text-align:center;font-size:12px;color:var(--text-light);margin-top:26px}
+.fehler{background:#FDF2F2;border:1px solid #F5C6C6;color:#B42318;border-radius:10px;padding:11px 14px;font-size:14px;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="promo">🐾 Nur für Pfoten-Plan-Kunden</div>
+<div class="header"><img src="logo.png" alt="" onerror="this.style.display='none'"><span>Pfoten-Plan</span></div>
+
+<div class="wrap">
+  <div class="eyebrow">Das Komplettpaket</div>
+  <h1>Alles für <em id="hundName">deinen Hund</em>, in einem Paket</h1>
+  <p class="lead">Jedes Thema, an dem ihr arbeiten könntet. Einzeln über 200 Euro, zusammen 99.</p>
+
+  <div class="karte">
+    <div class="frage">Was drin ist</div>
+    <div class="zeile"><span><b>Das Charakterprofil</b><small>Warum <span class="dogname">dein Hund</span> so ist: Rasse, Gassi-Zeiten, Schlaf, Kopfarbeit, plus vier Übungen.</small></span><span class="wert">24,90 €</span></div>
+    <div class="zeile"><span><b>Zwölf Themen-Pläne</b><small>Leine, Rückruf, Bellen, Hundebegegnungen, Energie, Alleinbleiben, Anspringen, Aufnehmen, Zerstören, Stubenreinheit, Freilauf und die 10 Sicherheits-Kommandos. Jeder mit acht Übungen.</small></span><span class="wert">179,88 €</span></div>
+    <div class="zeile"><span><b>Die Notfall-Karten</b><small>Zum Ausdrucken für Geldbeutel und Hundetasche. Was tun bei Giftköder, Hitzschlag, Vergiftung.</small></span><span class="wert">14,99 €</span></div>
+    <div class="summe"><span>Einzeln zusammen</span><span class="wert">219,77 €</span></div>
+  </div>
+
+  <div class="karte">
+    <div class="frage">Wie es ankommt</div>
+    <ul class="ablauf">
+      <li><span class="tag">Sofort</span><span><b>Charakterprofil und Notfall-Karten</b><small>Beides direkt per E-Mail, das Profil wird für <span class="dogname">deinen Hund</span> erstellt.</small></span></li>
+      <li><span class="tag">Ab morgen</span><span><b>Jeden Tag ein Thema</b><small>Angefangen mit dem, das du im Fragebogen selbst angegeben hast.</small></span></li>
+      <li><span class="tag">Nach 12 Tagen</span><span><b>Alles beisammen</b><small>Dreizehn PDFs, die du behältst. Kein Abo, keine Folgekosten.</small></span></li>
+    </ul>
+    <p style="font-size:14px;color:var(--text-medium);margin-top:12px">Wir schicken bewusst nicht alles auf einmal. Dreizehn Mails an einem Tag arbeitet niemand ab.</p>
+  </div>
+
+  <div class="karte preis" id="preisKarte">
+    <div class="alt">219,77 €</div>
+    <div class="jetzt">99,00 €</div>
+    <div class="art">Einmalig · kein Abo · alles bleibt deins</div>
+    <div class="sparen">Du sparst 120,77 €</div>
+    <button class="kaufen" id="kaufBtn" type="button">Paket für <span class="dogname">meinen Hund</span> holen<small>Profil und Karten kommen sofort</small></button>
+    <div id="fehler" class="fehler" hidden></div>
+    <div class="payment-logos">
+      <img src="sepa-logo.png" alt="SEPA" onerror="this.style.display='none'">
+      <img src="visa-logo.png" alt="Visa" onerror="this.style.display='none'">
+      <img src="mastercard-logo.png" alt="Mastercard" onerror="this.style.display='none'">
+      <img src="paypal-logo.png" alt="PayPal" onerror="this.style.display='none'">
+      <img src="klarna-logo.png" alt="Klarna" onerror="this.style.display='none'">
+      <img src="applepay.png" alt="Apple Pay" onerror="this.style.display='none'">
+      <img src="googlepay.png" alt="Google Pay" onerror="this.style.display='none'">
+    </div>
+    <div class="garantie">🛡️ 30 Tage Geld-zurück-Garantie<small>Bringt es dich nicht weiter, schreib uns eine Zeile.</small></div>
+  </div>
+
+  <div class="karte faq">
+    <details><summary>Brauche ich wirklich alle zwölf Themen?</summary><p>Nein. Die meisten arbeiten an zwei oder drei. Der Rest liegt da, wenn er gebraucht wird, und das ist bei Hunden öfter der Fall als einem lieb ist.</p></details>
+    <details><summary>Ich habe schon einzelne Module gekauft</summary><p>Die bekommst du im Paket noch einmal mit. Rechne kurz nach, ob sich das für dich trotzdem lohnt, meistens tut es das ab drei Themen.</p></details>
+    <details><summary>Ist das ein Abo?</summary><p>Nein. Einmal zahlen, alles behalten. Keine Verlängerung, keine Folgekosten.</p></details>
+    <details><summary>Wie lange habe ich Zugriff?</summary><p>Unbegrenzt. Du bekommst PDFs per E-Mail, die gehören dir.</p></details>
+  </div>
+
+  <p class="fuss">Pfoten-Plan · <a href="impressum.html" style="color:var(--text-light)">Impressum</a> · <a href="datenschutz.html" style="color:var(--text-light)">Datenschutz</a> · <a href="agb.html" style="color:var(--text-light)">AGB</a></p>
+</div>
+
+<script>
+const P = new URLSearchParams(location.search);
+const leadId = P.get('lead_id') || localStorage.getItem('leadId') || '';
+const email  = (P.get('email') || localStorage.getItem('userEmail') || '').trim();
+let hund = P.get('dog') || localStorage.getItem('dogName') || '';
+
+const SUPABASE_URL='https://xomsibpyksrzrnixbdwf.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+
+function setzeNamen(){
+  document.getElementById('hundName').textContent = hund || 'deinen Hund';
+  document.querySelectorAll('.dogname').forEach(function(el){ el.textContent = hund || 'deinen Hund'; });
+  if (hund) document.title = 'Alles für ' + hund + ' | Pfoten-Plan';
+}
+
+(async function laden(){
+  if (leadId && !hund) {
+    try{
+      const r = await fetch(SUPABASE_URL+'/rest/v1/wauwerk_leads?id=eq.'+encodeURIComponent(leadId)+'&select=dog_name',
+        {headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY}});
+      const d = await r.json();
+      if (d && d[0]) hund = d[0].dog_name || '';
+    }catch(e){}
+  }
+  setzeNamen();
+})();
+
+document.getElementById('kaufBtn').onclick = async function(){
+  const b=this, alt=b.innerHTML; b.disabled=true; b.textContent='Einen Moment …';
+  document.getElementById('fehler').hidden=true;
+  try{
+    const res = await fetch('/api/mollie/upsell-product-checkout',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        type:'paket', email:email, leadId:leadId, dogName:hund||'deinen Hund',
+        returnUrl: location.origin + '/paket-danke.html?lead_id=' + encodeURIComponent(leadId) + '&dog=' + encodeURIComponent(hund||'')
+      })
+    });
+    const j = await res.json();
+    if (j && j.url) { location.href = j.url; return; }
+    throw new Error(j && j.error ? j.error : 'Keine Zahlungsseite erhalten');
+  }catch(e){
+    const f=document.getElementById('fehler');
+    f.textContent='Das hat gerade nicht geklappt. Bitte versuch es noch einmal, oder schreib uns an support@pfoten-plan.de.';
+    f.hidden=false; b.disabled=false; b.innerHTML=alt;
+  }
+};
+</script>
+</body>
+</html>

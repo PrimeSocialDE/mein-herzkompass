@@ -30,6 +30,9 @@ const PRODUCT_PRICES: Record<string, number> = {
   "thema-aufnehmen": 1499,
   // Charakterprofil (rasse-zentriertes PDF mit Uebungen, eigene Landingpage)
   charakterprofil: 2490,
+  // Komplettpaket: Charakterprofil + 12 Themen-Module + Notfall-Karten.
+  // Einzelwert ueber 200 EUR, wird ueber 13 Tage ausgeliefert.
+  paket: 9900,
 };
 
 const PRODUCT_NAMES: Record<string, string> = {
@@ -50,6 +53,7 @@ const PRODUCT_NAMES: Record<string, string> = {
   "thema-stubenrein": "Themen-Modul Stubenreinheit",
   "thema-aufnehmen": "Themen-Modul Nichts vom Boden",
   charakterprofil: "Charakterprofil fuer deinen Hund",
+  paket: "Komplettpaket fuer deinen Hund",
 };
 
 export async function POST(req: NextRequest) {

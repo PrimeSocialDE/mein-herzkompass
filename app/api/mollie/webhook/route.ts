@@ -1118,6 +1118,37 @@ async function handleUpsellProductPaid(payment: any) {
     });
   }
 
+  // Komplettpaket -> eigener Auslieferer (sofort Profil + Karten, danach
+  // taeglich ein Modul ueber /api/cron/paket-drip).
+  if (product === "paket") {
+    after(async () => {
+      try {
+        const baseUrl =
+          process.env.NEXT_PUBLIC_SITE_URL ||
+          (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+          "https://www.pfoten-plan.de";
+        const r = await fetch(`${baseUrl}/api/paket/deliver`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.WORKER_TOKEN || ""}`,
+          },
+          body: JSON.stringify({
+            leadId: leadData?.id || leadId || "",
+            email,
+            dogName: dogName === "deinen Hund" ? undefined : dogName,
+          }),
+        });
+        const j: any = await r.json().catch(() => ({}));
+        console.log(
+          `[mollie-webhook] paket/deliver ${email}: HTTP ${r.status} ok=${j.ok} module=${j.module_geplant || 0}`
+        );
+      } catch (e: any) {
+        console.error("[mollie-webhook] paket/deliver fehlgeschlagen:", e?.message);
+      }
+    });
+  }
+
   // Notify Make.com — Make übernimmt ggf. ergaenzende Aktionen + ist die
   // Pipeline fuer Nicht-Theme-Upsells (ernaehrung, zweithund, abo, reise, erstehilfe).
   await notifyMake(leadData?.id || email, {
