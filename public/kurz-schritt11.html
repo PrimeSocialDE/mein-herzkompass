@@ -379,6 +379,11 @@
                 dog_commands: parseJSON(localStorage.getItem('dogCommands')),
                 had_training: localStorage.getItem('hadTraining'),
                 territorial_aggression: localStorage.getItem('territorialAggression'),
+                // Antwort auf das erste Pop-up der Ladeseite ("Kommt dein Hund
+                // aus dem Tierheim oder Tierschutz?"). Wurde bisher nur in
+                // localStorage geschrieben und beim Speichern vergessen —
+                // rund 53.000 Antworten sind dadurch verloren gegangen.
+                from_shelter: localStorage.getItem('fromShelter'),
                 utm_source: localStorage.getItem('utm_source') || null,
                 utm_medium: localStorage.getItem('utm_medium') || null,
                 utm_campaign: localStorage.getItem('utm_campaign') || null,
