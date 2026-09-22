@@ -330,6 +330,7 @@ export async function POST(req: NextRequest) {
           dogName,
           dogBreed: answers.dog_breed || undefined,
           dogAgeMonths: parseAgeToMonths(answers.dog_age),
+          dogGender: answers.dog_gender || undefined,
           problemLabel: combinedProblemLabel || problemLabel,
           planLengthMonths,
           zusatzKontext: zusatzKontextLines.join("\n") || undefined,

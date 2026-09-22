@@ -9,6 +9,7 @@ interface IntroArgs {
   dogName: string;
   dogBreed?: string;
   dogAgeMonths?: number;
+  dogGender?: string | null;   // "male" | "female" — sonst raet die KI, meist falsch
   problemLabel: string;        // "Leinenziehen"
   planLengthMonths: 1 | 3 | 6;
   zusatzKontext?: string;       // freie Quiz-Antworten
@@ -52,6 +53,16 @@ export async function generatePersonalizedIntro(args: IntroArgs): Promise<IntroB
 
   const t0 = Date.now();
   const { dogName, dogBreed, dogAgeMonths, problemLabel, planLengthMonths } = args;
+  // Der Composer kennt das Geschlecht laengst, die KI-Texte bisher nicht.
+  // Ergebnis waren Plaene, die im selben Dokument "sie" UND "er" sagen.
+  // Betroffen: 43 % der Kundinnen und Kunden haben eine Huendin.
+  const g = String(args.dogGender || "").toLowerCase();
+  const geschlechtZeile =
+    g === "female" || g === "weiblich" || g === "huendin" || g === "hündin"
+      ? `- Geschlecht: Hündin (weiblich). Sprich im GESAMTEN Text durchgehend von "sie", "ihr", "ihre". NIEMALS "er" oder "sein".`
+      : g === "male" || g === "maennlich" || g === "männlich" || g === "ruede" || g === "rüde"
+        ? `- Geschlecht: Rüde (männlich). Sprich im GESAMTEN Text durchgehend von "er", "ihm", "sein". NIEMALS "sie" oder "ihr".`
+        : `- Geschlecht: nicht angegeben. Vermeide Pronomen so weit es geht und nutze stattdessen den Namen.`;
   const ageDesc =
     dogAgeMonths != null
       ? dogAgeMonths < 12
@@ -98,6 +109,7 @@ KEINE Markdown-Code-Fence, KEINE Erklaerung davor/danach. Nur das rohe JSON. New
 
 HUND:
 - Name: ${dogName}
+${geschlechtZeile}
 - Rasse: ${breedDesc}
 - Alter: ${ageDesc}
 - Hauptthema: ${problemLabel}
