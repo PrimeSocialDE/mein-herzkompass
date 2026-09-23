@@ -332,15 +332,18 @@
             A: { cents: 999,  label: '€9,99'  },
             B: { cents: 1499, label: '€14,99' }
         };
+        // TEST BEENDET am 23.09.2026. Ergebnis ueber 11 Tage Laufzeit:
+        //   A  9,99 EUR: 35 Kaeufe = 349,65 EUR
+        //   B 14,99 EUR: 13 Kaeufe = 194,87 EUR
+        // B verkaufte 37 % so oft wie A und brachte 56 % des Umsatzes. Die
+        // Stichprobe ist klein, aber A liegt vorn, deshalb dauerhaft 9,99.
+        // Die Zuteilung bleibt als Geruest stehen, ?ab=B zeigt weiter die
+        // Variante fuer einen spaeteren Test.
         let kartenVariant = 'A';
         (function initAB() {
             let variant = (urlParamsInit.get('ab') || '').toUpperCase();
             if (variant !== 'A' && variant !== 'B') {
-                variant = localStorage.getItem('zusatzKartenPreisAB') || '';
-                if (variant !== 'A' && variant !== 'B') {
-                    variant = Math.random() < 0.50 ? 'B' : 'A';
-                    localStorage.setItem('zusatzKartenPreisAB', variant);
-                }
+                variant = 'A';   // 100 % A, kein Wuerfeln mehr
             }
             kartenVariant = variant;
             const label = KARTEN_PREIS[variant].label;
