@@ -12,6 +12,18 @@ const PRICES = {
   "6month": { discount: 5999, normal: 11999 },
 };
 
+// DE-Preis-A/B: Variante B liegt je Stufe 10 EUR ueber A, die Ankerpreise
+// wandern mit. Hintergrund: CPA rund 34 EUR gegen 41,72 EUR Umsatz je Kauf
+// ist zu knapp. Bei +24 % Warenkorb darf die Kaufquote um 19,3 % fallen,
+// bevor es sich nicht mehr rechnet.
+// Wie beim PL-Test gilt: B NUR bei explizitem Flag vom Client, sonst A.
+// Damit kann der angezeigte Preis nie unter dem abgerechneten liegen.
+const PRICES_DE_B = {
+  "1month": { discount: 3999, normal: 6999 },
+  "3month": { discount: 4999, normal: 9999 },
+  "6month": { discount: 6999, normal: 13999 },
+};
+
 // PL-Preise in Groszy (PLN-Cent) — lapaplan.pl. Rabatt 89,99/119,99/169,99 zł,
 // Normal 149,99/239,99/349,99 zł (auf die hoehere Stufe angehoben; A/B beendet,
 // beide Varianten identisch teuer). Order-Bump 39 zł (siehe unten).
@@ -183,9 +195,10 @@ export async function POST(req: NextRequest) {
     // Preis ermitteln (identisch zu Stripe-Logik)
     // PL-Preis-A/B: Variante B nur bei explizitem Flag, sonst A (nie Ueberabbuchung).
     const plVariantB = isPL && String(body?.plPriceVariant || "") === "B";
+    const deVariantB = !isPL && !isIt && String(body?.dePriceVariant || "") === "B";
     const priceTable = isPL
       ? (plVariantB ? PRICES_PL_B : PRICES_PL)
-      : isIt ? PRICES_IT : PRICES;
+      : isIt ? PRICES_IT : (deVariantB ? PRICES_DE_B : PRICES);
     const priceData = priceTable[plan as keyof typeof priceTable] || priceTable["1month"];
     const baseAmount = timerExpired ? priceData.normal : priceData.discount;
     const planAmountCents = exitDiscountApplied

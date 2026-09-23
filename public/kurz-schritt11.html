@@ -379,6 +379,26 @@
                 dog_commands: parseJSON(localStorage.getItem('dogCommands')),
                 had_training: localStorage.getItem('hadTraining'),
                 territorial_aggression: localStorage.getItem('territorialAggression'),
+                // Antwort auf das erste Pop-up der Ladeseite. Wurde bisher nur
+                // in localStorage geschrieben und beim Speichern vergessen.
+                from_shelter: localStorage.getItem('fromShelter'),
+                // A/B "Angst + Haushalt": zwei zusaetzliche Pop-ups auf der
+                // Ladeseite. In Variante A sind die Felder leer.
+                ab_angst: localStorage.getItem('abAngst'),
+                // Preistest DE: A = bisherige Preise, B = je Stufe 10 EUR mehr.
+                // Hier zugewiesen, damit wir die AUSSPIELUNG kennen und nicht
+                // nur die Kaeufe je Preis (Lehre aus dem Karten-Preistest).
+                ab_preis: (function () {
+                    try {
+                        var v = localStorage.getItem('abPreis');
+                        if (v !== 'A' && v !== 'B') {
+                            v = Math.random() < 0.5 ? 'B' : 'A';
+                            localStorage.setItem('abPreis', v);
+                        }
+                        return v;
+                    } catch (e) { return 'A'; }
+                })(),
+                dog_fears: parseJSON(localStorage.getItem('dogFears')),
                 utm_source: localStorage.getItem('utm_source') || null,
                 utm_medium: localStorage.getItem('utm_medium') || null,
                 utm_campaign: localStorage.getItem('utm_campaign') || null,

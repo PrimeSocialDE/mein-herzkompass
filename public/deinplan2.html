@@ -4834,6 +4834,68 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         let cardComponents = null;
         let hybridContext = null; // hält Plan-Info für aktuellen Checkout-Versuch
 
+
+        // ── A/B Preistest DE ────────────────────────────────────────────
+        // A = bisherige Preise, B = je Stufe 10 EUR mehr, Ankerpreise wandern
+        // mit. Die Variante steht im Lead (answers.ab_preis) und wird hier nur
+        // angezeigt. Der Server rechnet NUR dann mit B, wenn wir das Flag
+        // mitschicken (dePriceVariant), Standard bleibt A. Damit kann der
+        // abgerechnete Preis nie ueber dem angezeigten liegen.
+        var AB_PREIS = 'A';
+        try {
+            var _p = localStorage.getItem('abPreis');
+            if (_p === 'A' || _p === 'B') AB_PREIS = _p;
+        } catch (e) {}
+
+        var PREIS_B = {
+            '1month': { amount: '39', cents: ',99', tag: '\u20ac1,33 pro Tag', price: '39.99',
+                        normalAmount: '69', normalTag: '\u20ac2,33 pro Tag', normalPrice: '69.99',
+                        label: '\u20ac39,99', labelNormal: '\u20ac69,99' },
+            '3month': { amount: '49', cents: ',99', tag: '\u20ac0,55 pro Tag', price: '49.99',
+                        normalAmount: '99', normalTag: '\u20ac1,11 pro Tag', normalPrice: '99.99',
+                        label: '\u20ac49,99', labelNormal: '\u20ac99,99' },
+            '6month': { amount: '69', cents: ',99', tag: '\u20ac0,38 pro Tag', price: '69.99',
+                        normalAmount: '139', normalTag: '\u20ac0,78 pro Tag', normalPrice: '139.99',
+                        label: '\u20ac69,99', labelNormal: '\u20ac139,99' }
+        };
+
+        function preisVarianteAnwenden() {
+            if (AB_PREIS !== 'B') return;
+            try {
+                document.querySelectorAll('.pricing-card').forEach(function (karte) {
+                    var plan = karte.dataset.plan;
+                    var p = PREIS_B[plan];
+                    if (!p) return;
+                    var a = karte.querySelector('.price-amount');
+                    var c = karte.querySelector('.price-cents');
+                    var t = karte.querySelector('.pricing-total');
+                    if (a) a.textContent = p.amount;
+                    if (c) c.textContent = p.cents;
+                    if (t) t.textContent = p.tag;
+                    karte.dataset.price = p.price;
+                });
+                // Kostenvergleich oben ("ab EUR29,99") mitziehen
+                document.querySelectorAll('span').forEach(function (s) {
+                    if (/^\s*ab\s*\u20ac\s*29,99\s*$/.test(s.textContent || '')) {
+                        s.textContent = 'ab \u20ac39,99';
+                    }
+                });
+                if (typeof planDetails === 'object' && planDetails) {
+                    Object.keys(PREIS_B).forEach(function (k) {
+                        if (planDetails[k]) {
+                            planDetails[k].price = PREIS_B[k].label;
+                            planDetails[k].priceNormal = PREIS_B[k].labelNormal;
+                        }
+                    });
+                }
+            } catch (e) { console.error('Preisvariante:', e); }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', preisVarianteAnwenden);
+        } else {
+            preisVarianteAnwenden();
+        }
+
         function buildCheckoutPayload(extra) {
             const exitDiscount = localStorage.getItem('exit_discount_15') === 'true';
             const cancelPath = window.location.pathname + (window.location.search || '');
@@ -4851,6 +4913,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                 exitDiscount: exitDiscount,
                 cancelPath: cancelPath,
                 source_page: 'deinplan2',
+                dePriceVariant: AB_PREIS,
                 ab_test_trust: localStorage.getItem('ab_test_trust') || '',
                 ab_jtbd: localStorage.getItem('ab_jtbd') || '',
                 ab_variant: (localStorage.getItem('ab_test_pricing')||'B2').replace(/^A$/,'A2').replace(/^B$/,'B2'),
