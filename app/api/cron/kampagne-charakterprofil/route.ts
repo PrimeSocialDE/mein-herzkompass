@@ -248,9 +248,14 @@ export async function GET(req: NextRequest) {
 
   // Karenz ohne Deploy verstellbar. Unsinnige Werte fallen auf den Standard
   // zurueck, damit ein Tippfehler im Schalter nicht die halbe Liste anschreibt.
-  const karenzRoh = Number(flag("kampagne_cp_karenz_tage"));
+  // Achtung: Number("") ist 0, nicht NaN. Fehlte der Schalter, ergab die
+  // alte Pruefung eine Karenz von 0 Tagen, und es haetten auch Leute Post
+  // bekommen, die heute erst gekauft haben. Leerer Wert heisst jetzt
+  // "nicht gesetzt" und faellt auf den Standard zurueck.
+  const karenzText = flag("kampagne_cp_karenz_tage").trim();
+  const karenzRoh = karenzText === "" ? NaN : Number(karenzText);
   const karenzTage =
-    Number.isFinite(karenzRoh) && karenzRoh >= 0 && karenzRoh <= KARENZ_TAGE_MAX
+    Number.isFinite(karenzRoh) && karenzRoh > 0 && karenzRoh <= KARENZ_TAGE_MAX
       ? karenzRoh
       : KARENZ_TAGE_STANDARD;
   const karenz = new Date(Date.now() - karenzTage * 86400000).toISOString();
