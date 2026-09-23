@@ -3,7 +3,12 @@
   "rewrites": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "magazin.pfoten-plan.de" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "magazin.pfoten-plan.de"
+        }
+      ],
       "destination": "/magazin/:path*"
     }
   ],
@@ -119,6 +124,10 @@
     {
       "path": "/api/cron/kampagne-modulshop?secret=pfoten-cron-2024",
       "schedule": "* 9-12 * * *"
+    },
+    {
+      "path": "/api/cron/kampagne-modul-kalt?secret=pfoten-cron-2024",
+      "schedule": "* 11-16 * * *"
     }
   ]
 }
