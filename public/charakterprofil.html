@@ -36,8 +36,8 @@ h1 em{font-style:normal;color:var(--dark-brown)}
 .btn.aktiv{background:#FFF6E9;border-color:var(--warm-brown);color:var(--dark-brown)}
 .btn.gross{flex:1;min-width:180px;text-align:left}
 .btn:focus-visible{outline:2px solid var(--dark-brown);outline-offset:2px}
-input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--border-light);border-radius:10px;font-size:16px;font-family:inherit;margin-bottom:10px;background:#fff}
-input[type=text]:focus{outline:none;border-color:var(--warm-brown);box-shadow:0 0 0 3px rgba(196,165,118,.15)}
+input[type=text],input[type=email]{width:100%;padding:13px 14px;border:1px solid var(--border-light);border-radius:10px;font-size:16px;font-family:inherit;margin-bottom:10px;background:#fff}
+input[type=text]:focus,input[type=email]:focus{outline:none;border-color:var(--warm-brown);box-shadow:0 0 0 3px rgba(196,165,118,.15)}
 .liste{max-height:230px;overflow-y:auto;border:1px solid var(--border-light);border-radius:10px}
 .zeile{padding:11px 14px;cursor:pointer;border-bottom:1px solid #F4F1EC;font-size:15px}
 .zeile:last-child{border-bottom:none}
@@ -164,10 +164,22 @@ input[type=text]:focus{outline:none;border-color:var(--warm-brown);box-shadow:0 
     </ul>
   </div>
 
+  <!-- E-MAIL: nur wenn wir die Adresse nicht ohnehin kennen.
+       Wer ueber eine Anzeige kommt, hat weder lead_id in der URL noch eine
+       gespeicherte Adresse im Browser. Ohne E-Mail lehnt der Checkout
+       serverseitig ab ("Missing required fields") und der Kunde sieht nur
+       eine allgemeine Fehlermeldung. -->
+  <div class="karte fokus" id="karteMail" hidden>
+    <div class="frage">Wohin sollen wir das Profil schicken?</div>
+    <p class="hinweis">An diese Adresse geht das fertige PDF, direkt nach dem Kauf.</p>
+    <input type="email" id="mailFeld" placeholder="deine@email.de" autocomplete="email" inputmode="email" spellcheck="false">
+    <p class="hinweis" id="mailFehler" hidden style="color:#B4442F;margin:8px 0 0">Bitte prüf die Adresse noch einmal.</p>
+  </div>
+
   <!-- PREIS -->
   <div class="karte preis" id="preisKarte">
-    <div class="alt">39,90 €</div>
-    <div class="jetzt">24,90 €</div>
+    <div class="alt">49,90 €</div>
+    <div class="jetzt">34,90 €</div>
     <div class="art">Einmalig · kein Abo · sofort per E-Mail</div>
     <button class="kaufen" id="kaufBtn" type="button" disabled>Profil für <span class="dogname">meinen Hund</span> erstellen<small>Dauert keine Minute</small></button>
     <div id="fehler" class="fehler" hidden></div>
@@ -201,7 +213,7 @@ input[type=text]:focus{outline:none;border-color:var(--warm-brown);box-shadow:0 
 </div>
 
 <div class="leiste" id="leiste">
-  <div class="lp">Charakterprofil<b>24,90 €</b></div>
+  <div class="lp">Charakterprofil<b>34,90 €</b></div>
   <button type="button" id="leisteBtn">Profil erstellen</button>
 </div>
 <script>
@@ -214,7 +226,7 @@ const THEMEN = {recall:'der Rückruf', pulling:'die Leinenführigkeit', barking:
 
 const P = new URLSearchParams(location.search);
 const leadId = P.get('lead_id') || localStorage.getItem('leadId') || '';
-const email  = (P.get('email') || localStorage.getItem('userEmail') || '').trim();
+let email    = (P.get('email') || localStorage.getItem('userEmail') || '').trim();
 let hund = P.get('dog') || localStorage.getItem('dogName') || '';
 let rasse = P.get('rasse') || localStorage.getItem('dogBreed') || '';
 let geschlecht = P.get('g') || '';
@@ -321,6 +333,17 @@ function waehleRasse(r){
 
 const mischFeld = $('mischSuche'), mischListe = $('mischListe');
 mischFeld.oninput = function(){ liste(mischListe, mischFeld, waehleMisch); };
+
+const mailFeld = $('mailFeld');
+mailFeld.oninput = function(){
+  email = mailFeld.value.trim();
+  $('mailFehler').hidden = true;
+  pruefeKauf();
+};
+mailFeld.onblur = function(){
+  const v = mailFeld.value.trim();
+  $('mailFehler').hidden = !v || mailOk(v);
+};
 function waehleMisch(r){
   weissNicht = false; $('weissNichtInfo').hidden = true; $('weissNicht').classList.remove('aktiv');
   if (mischRassen.indexOf(r) === -1 && mischRassen.length < 3) mischRassen.push(r);
@@ -338,9 +361,13 @@ $('weissNicht').onclick = function(){
   this.classList.add('aktiv'); $('weissNichtInfo').hidden = false; zeichne();
 };
 
+function mailOk(m){ return /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test((m || '').trim()); }
+function rasseOk(){ return !!(rasse && (!istMisch(rasse) || mischRassen.length > 0 || weissNicht)); }
+
 function pruefeKauf(){
-  const ok = rasse && (!istMisch(rasse) || mischRassen.length > 0 || weissNicht);
-  $('kaufBtn').disabled = !ok;
+  // Ohne gueltige E-Mail bleibt der Knopf aus: der Checkout wuerde sie
+  // sonst annehmen und erst serverseitig abweisen.
+  $('kaufBtn').disabled = !(rasseOk() && mailOk(email));
 }
 
 (async function laden(){
@@ -360,12 +387,14 @@ function pruefeKauf(){
     } catch(e) {}
   }
   if (!rasse) { $('karteKorrektur').hidden = false; liste(rasseListe, sucheFeld, waehleRasse); }
+  if (!mailOk(email)) { $('karteMail').hidden = false; }
   zeichne();
 })();
 
 $('kaufBtn').onclick = async function(){
   const b = this, alt = b.innerHTML; b.disabled = true; b.textContent = 'Einen Moment …';
   $('fehler').hidden = true;
+  if (email) { try { localStorage.setItem('userEmail', email); } catch(e) {} }
   try {
     const res = await fetch('/api/mollie/upsell-product-checkout', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -390,9 +419,12 @@ $('kaufBtn').onclick = async function(){
   const leiste = $('leiste'), preis = $('preisKarte'), kauf = $('kaufBtn');
   $('leisteBtn').onclick = function(){
     if (kauf.disabled) {
-      const ziel = !$('karteMisch').hidden ? $('karteMisch') : $('karteKorrektur');
+      const ziel = !rasseOk()
+        ? (!$('karteMisch').hidden ? $('karteMisch') : $('karteKorrektur'))
+        : $('karteMail');
       ziel.hidden = false;
       ziel.scrollIntoView({behavior:'smooth', block:'center'});
+      if (ziel === $('karteMail')) setTimeout(function(){ $('mailFeld').focus(); }, 400);
     } else { kauf.click(); }
   };
   function pruefe(){
