@@ -98,6 +98,8 @@ input[type=text]:focus,input[type=email]:focus{outline:none;border-color:var(--w
 .rk-fakt span:first-child{color:var(--warm-brown);font-weight:800}
 .rk-lock{display:flex;gap:10px;align-items:flex-start;margin-top:10px;background:#FBF8F3;border:1px dashed var(--light-brown);border-radius:10px;padding:11px 13px;font-size:14px;color:var(--text-medium)}
 .rk-lock b{color:var(--dark-brown)}
+.mailstatus{font-size:14px;color:var(--text-medium);margin:10px 0 0;line-height:1.5}
+.mailstatus.treffer{background:#F2F8F0;border:1px solid #D6E8D0;color:#2F6B34;border-radius:10px;padding:10px 12px;font-weight:700}
 </style>
 </head>
 <body>
@@ -126,6 +128,21 @@ input[type=text]:focus,input[type=email]:focus{outline:none;border-color:var(--w
     </div>
     <div id="rkFakten"></div>
     <div class="rk-lock"><span>🔒</span><span id="rkLockText">Im Profil außerdem: seine Gassi-Zeiten, sein Schlafbedarf, seine typischen Baustellen und die drei Dinge, die du ihm besser ersparst.</span></div>
+  </div>
+
+  <!-- E-MAIL ZUERST: wer aus der Kampagnen-Mail kommt, hat lead_id in der
+       URL und sieht diese Karte nie. Alle anderen (Anzeige, anderes Geraet,
+       geleerter Speicher) werden hier abgeholt. Die Adresse ist doppelt
+       noetig: der Checkout weist ohne sie serverseitig ab, und sie ist der
+       Schluessel, um Name und Rasse aus dem Fragebogen zurueckzuholen —
+       dann entfaellt die Rassenfrage ganz. -->
+  <div class="karte fokus" id="karteMail" hidden>
+    <div class="schritt">Kurz zuordnen, dann geht's los</div>
+    <div class="frage">Wir holen deine Angaben aus dem Fragebogen zurück</div>
+    <p class="hinweis">Deine E-Mail genügt — Name und Rasse haben wir von letztem Mal noch. Dorthin geht danach auch das fertige Profil.</p>
+    <input type="email" id="mailFeld" placeholder="deine@email.de" autocomplete="email" inputmode="email" spellcheck="false">
+    <p class="mailstatus" id="mailStatus" hidden></p>
+    <p class="hinweis" id="mailFehler" hidden style="color:#B4442F;margin:8px 0 0">Bitte prüf die Adresse noch einmal.</p>
   </div>
 
   <!-- RASSE KORRIGIEREN (nur auf Klick) -->
@@ -162,18 +179,6 @@ input[type=text]:focus,input[type=email]:focus{outline:none;border-color:var(--w
       <li><span class="ic">⚠️</span><span><b>Typische Baustellen</b><small>Was bei diesem Typ Hund erfahrungsgemäß schwierig wird.</small></span></li>
       <li><span class="ic">🚫</span><span><b>Was du ihm ersparst</b><small>Drei Dinge, die gut gemeint sind und trotzdem schaden.</small></span></li>
     </ul>
-  </div>
-
-  <!-- E-MAIL: nur wenn wir die Adresse nicht ohnehin kennen.
-       Wer ueber eine Anzeige kommt, hat weder lead_id in der URL noch eine
-       gespeicherte Adresse im Browser. Ohne E-Mail lehnt der Checkout
-       serverseitig ab ("Missing required fields") und der Kunde sieht nur
-       eine allgemeine Fehlermeldung. -->
-  <div class="karte fokus" id="karteMail" hidden>
-    <div class="frage">Wohin sollen wir das Profil schicken?</div>
-    <p class="hinweis">An diese Adresse geht das fertige PDF, direkt nach dem Kauf.</p>
-    <input type="email" id="mailFeld" placeholder="deine@email.de" autocomplete="email" inputmode="email" spellcheck="false">
-    <p class="hinweis" id="mailFehler" hidden style="color:#B4442F;margin:8px 0 0">Bitte prüf die Adresse noch einmal.</p>
   </div>
 
   <!-- PREIS -->
@@ -232,6 +237,7 @@ let rasse = P.get('rasse') || localStorage.getItem('dogBreed') || '';
 let geschlecht = P.get('g') || '';
 let thema = P.get('thema') || '';
 let mischRassen = [], weissNicht = false;
+let mailSchrittOffen = false;
 
 const SUPABASE_URL='https://xomsibpyksrzrnixbdwf.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
@@ -267,8 +273,11 @@ function zeichne(){
   document.querySelectorAll('.dogname').forEach(function(el){ el.textContent = name; });
   document.title = 'Charakterprofil für ' + Name + ' | Pfoten-Plan';
 
+  // Solange der E-Mail-Schritt laeuft, bleiben die Rassenfragen zu. Sonst
+  // stapeln sich drei Karten uebereinander, bevor klar ist, ob wir die
+  // Rasse ohnehin schon kennen.
   const misch = istMisch(rasse);
-  $('karteMisch').hidden = !misch;
+  $('karteMisch').hidden = !misch || mailSchrittOffen;
 
   // Welche Rasse liefert die Fakten?
   const basis = !misch ? rasse : (mischRassen[0] || '');
@@ -335,6 +344,46 @@ const mischFeld = $('mischSuche'), mischListe = $('mischListe');
 mischFeld.oninput = function(){ liste(mischListe, mischFeld, waehleMisch); };
 
 const mailFeld = $('mailFeld');
+let schonGesucht = '';
+
+// Fragt serverseitig nach Name und Rasse zu dieser Adresse. Die Abfrage
+// liegt in /api/charakterprofil/lead-lookup hinter dem Service-Role-Key
+// und ist gedrosselt — mit dem Anon-Key hier in der Seite koennte sie
+// jeder gegen fremde Adressen laufen lassen.
+async function datenHolen(adresse){
+  if (schonGesucht === adresse) return;
+  schonGesucht = adresse;
+  const status = $('mailStatus');
+  status.hidden = false; status.className = 'mailstatus';
+  status.textContent = 'Einen Moment, wir schauen nach …';
+  try {
+    const r = await fetch('/api/charakterprofil/lead-lookup', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email: adresse })
+    });
+    const d = await r.json();
+    if (d && d.gefunden) {
+      hund = hund || d.dog_name || '';
+      rasse = rasse || d.dog_breed || '';
+      geschlecht = geschlecht || d.dog_gender || '';
+      status.className = 'mailstatus treffer';
+      status.textContent = rasse && !istMisch(rasse)
+        ? ('Da ist ' + (hund || 'dein Hund') + ' ja — ' + rasse + '. Alles noch gespeichert.')
+        : ('Da ist ' + (hund || 'dein Hund') + ' ja. Zur Rasse brauchen wir noch kurz was.');
+    } else {
+      status.className = 'mailstatus';
+      status.textContent = 'Zu dieser Adresse finden wir nichts. Kein Problem — sag uns einfach die Rasse.';
+    }
+  } catch (e) {
+    status.hidden = true;
+  }
+  // Ab hier duerfen die Rassenfragen wieder auftauchen, falls noetig.
+  mailSchrittOffen = false;
+  if (!rasse) { $('karteKorrektur').hidden = false; liste(rasseListe, sucheFeld, waehleRasse); }
+  else { $('karteKorrektur').hidden = true; }
+  zeichne();
+}
+
 mailFeld.oninput = function(){
   email = mailFeld.value.trim();
   $('mailFehler').hidden = true;
@@ -343,6 +392,10 @@ mailFeld.oninput = function(){
 mailFeld.onblur = function(){
   const v = mailFeld.value.trim();
   $('mailFehler').hidden = !v || mailOk(v);
+  if (mailOk(v)) datenHolen(v.toLowerCase());
+};
+mailFeld.onkeydown = function(e){
+  if (e.key === 'Enter') { e.preventDefault(); mailFeld.blur(); }
 };
 function waehleMisch(r){
   weissNicht = false; $('weissNichtInfo').hidden = true; $('weissNicht').classList.remove('aktiv');
@@ -386,8 +439,16 @@ function pruefeKauf(){
       }
     } catch(e) {}
   }
-  if (!rasse) { $('karteKorrektur').hidden = false; liste(rasseListe, sucheFeld, waehleRasse); }
-  if (!mailOk(email)) { $('karteMail').hidden = false; }
+  if (!mailOk(email)) {
+    // Adresse unbekannt: erst danach fragen. Die Rassenfragen kommen
+    // nur, wenn der Abgleich nichts gebracht hat.
+    mailSchrittOffen = true;
+    $('karteMail').hidden = false;
+  } else if (!rasse) {
+    // Adresse da, Rasse fehlt: denselben Abgleich still im Hintergrund.
+    // Klappt er, ist die Rassenfrage erledigt, bevor sie jemand sieht.
+    datenHolen(email.toLowerCase());
+  }
   zeichne();
 })();
 
