@@ -4214,7 +4214,54 @@ if (popularBadge) {
         }
 
         // ==================== GEFIXT: UPDATE statt INSERT ====================
-        async function saveToSupabase() {
+        // Die answers-Spalte enthaelt Felder, die es im localStorage gar nicht
+        // gibt: die Preis-Variante (ab_preis), die Angst-Antwort (dog_fears),
+        // die Tierschutz-Antwort (from_shelter), die Quelle aus dem Fragebogen.
+        // Ein PATCH mit dem hier lokal gebauten answers-Objekt hat die bisher
+        // alle geloescht. Darum: Server-Stand lesen, lokale Werte drauflegen.
+        async function ladeServerAnswers(leadId) {
+            try {
+                const r = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + leadId + '&select=answers', {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                    }
+                });
+                if (!r.ok) return null;
+                const rows = await r.json();
+                return (rows && rows[0] && rows[0].answers) || {};
+            } catch (e) {
+                // null = "konnte nicht lesen". Der Aufrufer laesst die
+                // answers-Spalte dann in Ruhe, statt sie zu ueberschreiben.
+                return null;
+            }
+        }
+
+        function mergeAnswers(server, lokal) {
+            const out = Object.assign({}, server || {});
+            Object.keys(lokal || {}).forEach(function (k) {
+                const v = lokal[k];
+                if (v === null || v === undefined || v === '') return;
+                if (Array.isArray(v) && v.length === 0) return;
+                out[k] = v;
+            });
+            return out;
+        }
+
+        // openCheckoutPopup() und der Mollie-Checkout rufen saveToSupabase
+        // fast gleichzeitig auf. Ohne Sperre liefen beide in den INSERT-Zweig
+        // und legten zwei Leads in derselben Sekunde an.
+        let leadSpeicherLauf = null;
+        function saveToSupabase() {
+            if (!leadSpeicherLauf) {
+                leadSpeicherLauf = leadSpeichern().finally(function () {
+                    leadSpeicherLauf = null;
+                });
+            }
+            return leadSpeicherLauf;
+        }
+
+        async function leadSpeichern() {
             // Prüfen ob bereits ein Lead existiert (aus kurz-schritt11.html)
             const existingLeadId = localStorage.getItem('leadId');
             
@@ -4293,6 +4340,20 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             // ========== WENN LEAD EXISTIERT: UPDATE STATT INSERT ==========
             if (existingLeadId) {
                 console.log('📝 Updating existing lead:', existingLeadId);
+
+                const serverAnswers = await ladeServerAnswers(existingLeadId);
+                const patchDaten = {
+                    selected_plan: selectedPlan,
+                    price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price,
+                    timer_expired: timerExpired,
+                    status: 'pending'
+                };
+                // Nur schreiben, wenn wir den Server-Stand wirklich haben.
+                if (serverAnswers) {
+                    patchDaten.answers = mergeAnswers(serverAnswers, answers);
+                    localStorage.setItem('wauwerk_answers', JSON.stringify(patchDaten.answers));
+                }
+
                 try {
                     const response = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + existingLeadId, {
                         method: 'PATCH',
@@ -4302,13 +4363,7 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                             'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
                             'Prefer': 'return=representation'
                         },
-                        body: JSON.stringify({
-                            selected_plan: selectedPlan,
-                            price: timerExpired ? planDetails[selectedPlan].priceNormal : planDetails[selectedPlan].price,
-                            timer_expired: timerExpired,
-                            status: 'pending',
-                            answers: answers
-                        })
+                        body: JSON.stringify(patchDaten)
                     });
                     
                     if (response.ok) {
@@ -4325,6 +4380,23 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
             }
 
             // ========== FALLBACK: NEUEN LEAD ERSTELLEN (sollte selten passieren) ==========
+            // Wer direkt hier landet, hat den Fragebogen nie gesehen: kein
+            // Hundename, kein Problem, keine Mail. Der Lead muss trotzdem
+            // entstehen, sonst haengt eine spaetere Zahlung an gar nichts.
+            // Aber er wird markiert — damit er aus den Conversion-Zahlen
+            // rausfaellt und auffaellt, falls so jemand wirklich kauft.
+            const hatQuizDaten = !!(
+                localStorage.getItem('dogName') ||
+                localStorage.getItem('userEmail') ||
+                localStorage.getItem('dogProblem')
+            );
+            if (!hatQuizDaten) {
+                answers.lead_unvollstaendig = true;
+                answers.lead_quelle = 'deinplan2-direkt';
+                localStorage.setItem('wauwerk_answers', JSON.stringify(answers));
+                console.warn('⚠️ Lead ohne Fragebogen-Daten — wird markiert');
+            }
+
             const leadData = {
                 dog_name: localStorage.getItem('dogName'),
                 selected_plan: selectedPlan,
@@ -4727,21 +4799,25 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
                     const currentAnswers = JSON.parse(localStorage.getItem('wauwerk_answers') || '{}');
                     currentAnswers.event_id = data.paymentIntentId;
                     currentAnswers.fb_event_id = localStorage.getItem('fb_event_id') || '';
-                    
-                    fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + currentLeadId, {
-                        method: 'PATCH',
-                        headers: {
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-                            'Content-Type': 'application/json',
-                            'Prefer': 'return=minimal'
-                        },
-                        body: JSON.stringify({ 
-                            answers: currentAnswers
-                        })
-                    });
-                    
-                    localStorage.setItem('wauwerk_answers', JSON.stringify(currentAnswers));
+
+                    // Auch hier mergen, sonst faellt die Preis-Variante raus.
+                    const serverAnswers = await ladeServerAnswers(currentLeadId);
+                    if (serverAnswers) {
+                        const zuSchreiben = mergeAnswers(serverAnswers, currentAnswers);
+                        fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + currentLeadId, {
+                            method: 'PATCH',
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                                'Content-Type': 'application/json',
+                                'Prefer': 'return=minimal'
+                            },
+                            body: JSON.stringify({ answers: zuSchreiben })
+                        });
+                        localStorage.setItem('wauwerk_answers', JSON.stringify(zuSchreiben));
+                    } else {
+                        localStorage.setItem('wauwerk_answers', JSON.stringify(currentAnswers));
+                    }
                 }
                 
                 // Stripe Elements erstellen
