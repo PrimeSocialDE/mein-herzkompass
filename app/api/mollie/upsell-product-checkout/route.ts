@@ -29,7 +29,7 @@ const PRODUCT_PRICES: Record<string, number> = {
   "thema-stubenrein": 1499,
   "thema-aufnehmen": 1499,
   // Charakterprofil (rasse-zentriertes PDF mit Uebungen, eigene Landingpage)
-  charakterprofil: 2490,
+  charakterprofil: 3490,
   // Komplettpaket: Charakterprofil + 12 Themen-Module + Notfall-Karten.
   // Einzelwert ueber 200 EUR, wird ueber 13 Tage ausgeliefert.
   paket: 9900,
