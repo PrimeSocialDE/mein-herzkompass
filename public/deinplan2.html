@@ -4220,8 +4220,17 @@ if (popularBadge) {
         // Ein PATCH mit dem hier lokal gebauten answers-Objekt hat die bisher
         // alle geloescht. Darum: Server-Stand lesen, lokale Werte drauflegen.
         async function ladeServerAnswers(leadId) {
+            // Harte Grenze von 2,5 Sekunden. Dieser Aufruf sitzt direkt vor
+            // dem Checkout — ohne Abbruch wuerde eine lahme Datenbank den
+            // Kunden vor dem Bezahlen warten lassen. Laeuft die Zeit ab,
+            // bleibt die answers-Spalte eben unberuehrt; der Kauf geht
+            // trotzdem durch. Lieber ein fehlendes Flag als ein verlorener
+            // Kauf.
+            const stop = new AbortController();
+            const uhr = setTimeout(function () { stop.abort(); }, 2500);
             try {
                 const r = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + leadId + '&select=answers', {
+                    signal: stop.signal,
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
                         'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
@@ -4231,9 +4240,12 @@ if (popularBadge) {
                 const rows = await r.json();
                 return (rows && rows[0] && rows[0].answers) || {};
             } catch (e) {
-                // null = "konnte nicht lesen". Der Aufrufer laesst die
-                // answers-Spalte dann in Ruhe, statt sie zu ueberschreiben.
+                // null = "konnte nicht lesen" (Netzfehler oder Zeitablauf).
+                // Der Aufrufer laesst die answers-Spalte dann in Ruhe,
+                // statt sie zu ueberschreiben.
                 return null;
+            } finally {
+                clearTimeout(uhr);
             }
         }
 
