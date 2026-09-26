@@ -289,7 +289,7 @@ function buildHtmlShop(dog: string, modulKey: string, id: string, email: string)
 </td></tr></table>
 </td></tr>
 <tr><td style="padding:16px 36px 6px;text-align:center;">
-<a href="${shop}" style="display:inline-block;background:#8B7355;color:#ffffff;text-decoration:none;font-size:17px;font-weight:700;padding:16px 34px;border-radius:12px;">Module ansehen</a>
+<a href="${shop}" style="display:inline-block;background:#8B7355;color:#ffffff;text-decoration:none;font-size:17px;font-weight:700;padding:16px 34px;border-radius:12px;">Alle Module entdecken</a>
 <p style="margin:10px 0 0;font-size:13.5px;color:#6B7280;">Einmalig, kein Abo. Sofort im Postfach.</p>
 </td></tr>
 <tr><td style="padding:10px 36px 6px;">
@@ -338,7 +338,7 @@ eines, das sich ueber Monate festgesetzt hat.
 19 EUR pro Modul statt 29. Mehrere zusammen kosten deutlich weniger:
 2 Module 25 EUR, 3 fuer 35 EUR, 5 fuer 55 EUR, alle acht fuer 85 EUR statt 152.
 
-Module ansehen:
+Alle Module entdecken:
 ${shop}
 
 Oder gleich alles: Im Komplettpaket sind alle zwoelf Themen-Plaene, das
