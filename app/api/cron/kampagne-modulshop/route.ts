@@ -232,6 +232,128 @@ auf WhatsApp: +49 151 29892586
 Keine Post mehr? Hier abmelden: ${unsub}`;
 }
 
+// Welche Vorlage verschickt wird. "einzel" = ein Modul passend zum
+// Fragebogen-Thema (Standard). "shop" = der ganze Shop auf einen Blick, fuer
+// Kaeufer, deren Fragebogen-Thema laengst erledigt sein kann.
+// Umschaltbar ueber system_settings.kampagne_shop_variante.
+let VARIANTE: "einzel" | "shop" = "einzel";
+
+function subjectForShop(dog: string, id: string): string {
+  const c = (id || "").replace(/[^0-9a-f]/gi, "").slice(-1).toLowerCase();
+  return parseInt(c || "0", 16) % 2 === 1
+    ? `Acht Module für ${dog}, jedes mit acht Übungen`
+    : `Was bei ${dog} als Nächstes dran wäre`;
+}
+
+/** Das Thema des Kunden steht oben, der Rest folgt. */
+function shopReihenfolge(modulKey: string): string[] {
+  const alle = Object.keys(MODULE);
+  return [modulKey, ...alle.filter((k) => k !== modulKey)];
+}
+
+function buildHtmlShop(dog: string, modulKey: string, id: string, email: string): string {
+  const unsub = `https://www.pfoten-plan.de/api/unsubscribe?lead=${encodeURIComponent(id)}`;
+  const shop = `https://www.pfoten-plan.de/modul-shop.html?lead_id=${encodeURIComponent(id)}&email=${encodeURIComponent(email)}`;
+  const paket = `https://www.pfoten-plan.de/paket.html?lead_id=${encodeURIComponent(id)}&email=${encodeURIComponent(email)}`;
+  const wa = "https://wa.me/4915129892586?text=Hallo%2C%20ich%20habe%20eine%20Frage%20zu%20den%20Modulen%20%F0%9F%90%BE";
+  const p = "margin:0 0 16px;font-size:16px;";
+  const zeilen = shopReihenfolge(modulKey)
+    .map((k, i) => {
+      const m = MODULE[k];
+      const deins =
+        i === 0
+          ? `<span style="display:inline-block;background:#F2F8F0;border:1px solid #D6E8D0;color:#2F6B34;border-radius:999px;padding:1px 8px;font-size:11.5px;font-weight:800;margin-left:6px;">dein Thema</span>`
+          : "";
+      return `<tr><td style="padding:9px 0;border-bottom:1px solid #F2EDE4;">
+<p style="margin:0 0 2px;font-size:15.5px;font-weight:700;color:#3a342b;">${m.name}${deins}</p>
+<p style="margin:0;font-size:14px;color:#4B5563;line-height:1.5;">${m.versprechen}</p></td></tr>`;
+    })
+    .join("");
+  return `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pfoten-Plan</title></head>
+<body style="margin:0;padding:0;background:#FAF8F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;line-height:1.7;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Acht Themen, je acht Übungen. Mehrere zusammen kosten weniger.</div>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAF8F5;"><tr><td align="center" style="padding:28px 16px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #EADDC5;border-radius:18px;overflow:hidden;">
+<tr><td style="padding:26px 36px 6px;text-align:center;"><div style="font-size:20px;font-weight:800;color:#8B7355;">🐾 Pfoten-Plan</div></td></tr>
+<tr><td style="padding:14px 36px 8px;">
+<p style="${p}">Hallo,</p>
+<p style="${p}">${dog}s Trainingsplan deckt das Thema ab, das du im Fragebogen angegeben hast. Für acht Themen gibt es zusätzlich ein eigenes Modul, das tiefer geht: <strong>je acht Übungen</strong>, über zwei Wochen aufeinander aufgebaut und auf ${dog} zugeschnitten.</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">${zeilen}</table>
+<p style="margin:18px 0 6px;font-size:16px;"><strong>Warum die meisten mehr als ein Modul nehmen</strong></p>
+<p style="margin:0 0 16px;font-size:15.5px;color:#4B5563;line-height:1.6;">Viele Themen hängen zusammen. Ein Hund, der schlecht allein bleibt, bellt oft auch mehr. Wer zu viel Energie hat, zieht meistens auch an der Leine. Das zweite Modul ist deshalb selten Luxus — es ist das, was das erste hält. Und ein Thema, das noch klein ist, bekommt man deutlich leichter in den Griff als eines, das sich über Monate festgesetzt hat.</p>
+<p style="margin:18px 0 0;font-size:16px;"><strong>19 €</strong> pro Modul <span style="color:#9CA3AF;text-decoration:line-through;">29 €</span> — mehrere zusammen kosten deutlich weniger:</p>
+</td></tr>
+<tr><td style="padding:10px 36px 6px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFFBF5;border:1px solid #F0E3CE;border-radius:14px;"><tr><td style="padding:16px 18px;text-align:center;">
+<p style="margin:0;font-size:15.5px;color:#3a342b;line-height:1.9;"><strong>2 Module 25 €</strong> · <strong>3 für 35 €</strong> · <strong>5 für 55 €</strong><br><strong>alle acht für 85 €</strong> statt 152 €</p>
+</td></tr></table>
+</td></tr>
+<tr><td style="padding:16px 36px 6px;text-align:center;">
+<a href="${shop}" style="display:inline-block;background:#8B7355;color:#ffffff;text-decoration:none;font-size:17px;font-weight:700;padding:16px 34px;border-radius:12px;">Module ansehen</a>
+<p style="margin:10px 0 0;font-size:13.5px;color:#6B7280;">Einmalig, kein Abo. Sofort im Postfach.</p>
+</td></tr>
+<tr><td style="padding:10px 36px 6px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFFBF5;border:1px solid #F0E3CE;border-radius:14px;"><tr><td style="padding:16px 18px;">
+<p style="margin:0 0 6px;font-size:15px;color:#1f2937;"><strong>Oder gleich alles.</strong></p>
+<p style="margin:0 0 10px;font-size:14.5px;color:#4B5563;">Im Komplettpaket sind alle zwölf Themen-Pläne, das Charakterprofil und die Notfall-Karten enthalten — für 99 €.</p>
+<a href="${paket}" style="font-size:15px;font-weight:700;color:#8B7355;text-decoration:underline;">Paket ansehen</a>
+</td></tr></table>
+</td></tr>
+<tr><td style="padding:16px 36px 4px;">
+<p style="margin:0 0 6px;font-size:16px;">Viele Grüße an ${dog},</p>
+<p style="margin:0;font-size:16px;"><strong>Laura</strong> vom Pfoten-Plan-Team</p>
+</td></tr>
+<tr><td style="padding:6px 36px 26px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#F1FAF2;border:1px solid #C9E7CE;border-radius:14px;"><tr><td style="padding:16px 18px;">
+<p style="margin:0 0 10px;font-size:15px;color:#1f2937;">Unsicher, welches Modul zu ${dog} passt? Schreib uns, wir sagen es dir ehrlich.</p>
+<a href="${wa}" style="display:inline-block;background:#25D366;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:11px 20px;border-radius:10px;">💬 Auf WhatsApp schreiben</a>
+</td></tr></table>
+</td></tr>
+<tr><td style="padding:16px 32px;background:#FAFAFA;border-top:1px solid #F0EBE3;"><p style="margin:0;font-size:11px;color:#9CA3AF;text-align:center;line-height:1.7;">Pfoten-Plan · Persönliches Hundetraining<br>Keine Post mehr? <a href="${unsub}" style="color:#9CA3AF;text-decoration:underline;">Hier abmelden</a>.</p></td></tr>
+</table></td></tr></table></body></html>`;
+}
+
+function buildTextShop(dog: string, modulKey: string, id: string, email: string): string {
+  const unsub = `https://www.pfoten-plan.de/api/unsubscribe?lead=${encodeURIComponent(id)}`;
+  const shop = `https://www.pfoten-plan.de/modul-shop.html?lead_id=${encodeURIComponent(id)}&email=${encodeURIComponent(email)}`;
+  const paket = `https://www.pfoten-plan.de/paket.html?lead_id=${encodeURIComponent(id)}&email=${encodeURIComponent(email)}`;
+  const liste = shopReihenfolge(modulKey)
+    .map((k, i) => `- ${MODULE[k].name}${i === 0 ? " (dein Thema)" : ""}: ${MODULE[k].versprechen}`)
+    .join("\n");
+  return `Hallo,
+
+${dog}s Trainingsplan deckt das Thema ab, das du im Fragebogen angegeben hast.
+Für acht Themen gibt es zusätzlich ein eigenes Modul, das tiefer geht: je acht
+Übungen, über zwei Wochen aufeinander aufgebaut und auf ${dog} zugeschnitten.
+
+${liste}
+
+WARUM DIE MEISTEN MEHR ALS EIN MODUL NEHMEN
+Viele Themen haengen zusammen. Ein Hund, der schlecht allein bleibt, bellt oft
+auch mehr. Wer zu viel Energie hat, zieht meistens auch an der Leine. Das
+zweite Modul ist deshalb selten Luxus, es ist das, was das erste haelt. Und
+ein Thema, das noch klein ist, bekommt man deutlich leichter in den Griff als
+eines, das sich ueber Monate festgesetzt hat.
+
+19 EUR pro Modul statt 29. Mehrere zusammen kosten deutlich weniger:
+2 Module 25 EUR, 3 fuer 35 EUR, 5 fuer 55 EUR, alle acht fuer 85 EUR statt 152.
+
+Module ansehen:
+${shop}
+
+Oder gleich alles: Im Komplettpaket sind alle zwoelf Themen-Plaene, das
+Charakterprofil und die Notfall-Karten enthalten, fuer 99 EUR:
+${paket}
+
+Viele Gruesse an ${dog},
+Laura vom Pfoten-Plan-Team
+
+Unsicher, welches Modul passt? Schreib uns, per Antwort auf diese Mail oder
+auf WhatsApp: +49 151 29892586
+
+Keine Post mehr? Hier abmelden: ${unsub}`;
+}
+
 async function sendOne(email: string, dog: string, modulKey: string, id: string) {
   return ses("POST", "/v2/email/outbound-emails", {
     FromEmailAddress: FROM,
@@ -244,10 +366,25 @@ async function sendOne(email: string, dog: string, modulKey: string, id: string)
     ],
     Content: {
       Simple: {
-        Subject: { Data: subjectFor(dog, modulKey, id), Charset: "UTF-8" },
+        Subject: {
+          Data: VARIANTE === "shop" ? subjectForShop(dog, id) : subjectFor(dog, modulKey, id),
+          Charset: "UTF-8",
+        },
         Body: {
-          Html: { Data: buildHtml(dog, modulKey, id, email), Charset: "UTF-8" },
-          Text: { Data: buildText(dog, modulKey, id, email), Charset: "UTF-8" },
+          Html: {
+            Data:
+              VARIANTE === "shop"
+                ? buildHtmlShop(dog, modulKey, id, email)
+                : buildHtml(dog, modulKey, id, email),
+            Charset: "UTF-8",
+          },
+          Text: {
+            Data:
+              VARIANTE === "shop"
+                ? buildTextShop(dog, modulKey, id, email)
+                : buildText(dog, modulKey, id, email),
+            Charset: "UTF-8",
+          },
         },
         Headers: [
           { Name: "List-Unsubscribe", Value: `<https://www.pfoten-plan.de/api/unsubscribe?lead=${encodeURIComponent(id)}>, <mailto:hallo@pfoten-post.de?subject=unsubscribe>` },
@@ -269,8 +406,11 @@ export async function GET(req: NextRequest) {
   if (testTo) {
     const thema = searchParams.get("thema") || "pulling";
     const modul = MODULE[thema] ? thema : "pulling";
+    // Vorlage fuer den Test direkt waehlen, ohne den Schalter fuer den
+    // echten Versand anzufassen: ?variante=shop
+    VARIANTE = searchParams.get("variante") === "shop" ? "shop" : "einzel";
     const res = await sendOne(testTo, "Bella", modul, "test-lead-000s");
-    return NextResponse.json({ test: testTo, modul, status: res.status, data: res.data.slice(0, 200) });
+    return NextResponse.json({ test: testTo, modul, variante: VARIANTE, status: res.status, data: res.data.slice(0, 200) });
   }
 
   const dry = searchParams.get("dry") === "1";
@@ -278,7 +418,12 @@ export async function GET(req: NextRequest) {
   const { data: flags } = await supabase
     .from("system_settings")
     .select("key,value")
-    .in("key", ["kampagne_shop_live", "kampagne_shop_stop", "kampagne_shop_karenz_tage"]);
+    .in("key", [
+      "kampagne_shop_live",
+      "kampagne_shop_stop",
+      "kampagne_shop_karenz_tage",
+      "kampagne_shop_variante",
+    ]);
   const flag = (k: string) => String((flags || []).find((f: any) => f.key === k)?.value || "");
   if (!dry && flag("kampagne_shop_live") !== "true") {
     return NextResponse.json({ ok: true, wartet: true, hinweis: "system_settings.kampagne_shop_live ist nicht auf true" });
@@ -291,6 +436,8 @@ export async function GET(req: NextRequest) {
   // alte Pruefung eine Karenz von 0 Tagen, und es haetten auch Leute Post
   // bekommen, die heute erst gekauft haben. Leerer Wert heisst jetzt
   // "nicht gesetzt" und faellt auf den Standard zurueck.
+  VARIANTE = flag("kampagne_shop_variante").trim() === "shop" ? "shop" : "einzel";
+
   const karenzText = flag("kampagne_shop_karenz_tage").trim();
   const karenzRoh = karenzText === "" ? NaN : Number(karenzText);
   const karenzTage =
