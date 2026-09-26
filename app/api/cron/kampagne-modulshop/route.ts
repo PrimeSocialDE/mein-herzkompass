@@ -146,7 +146,7 @@ function subjectFor(dog: string, modulKey: string, id: string): string {
   const m = MODULE[modulKey];
   const c = (id || "").replace(/[^0-9a-f]/gi, "").slice(-1).toLowerCase();
   return parseInt(c || "0", 16) % 2 === 1
-    ? `${dog} und ${m.name.toLowerCase()}: 6 Übungen`
+    ? `${dog} und ${m.name.toLowerCase()}: 8 Übungen`
     : `Das Thema, das du bei ${dog} angegeben hast`;
 }
 
@@ -162,14 +162,14 @@ function buildHtml(dog: string, modulKey: string, id: string, email: string): st
     .join("");
   return `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pfoten-Plan</title></head>
 <body style="margin:0;padding:0;background:#FAF8F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;line-height:1.7;">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Sechs Übungen für genau das eine Thema.</div>
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Acht Übungen für genau das eine Thema.</div>
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAF8F5;"><tr><td align="center" style="padding:28px 16px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #EADDC5;border-radius:18px;overflow:hidden;">
 <tr><td style="padding:26px 36px 6px;text-align:center;"><div style="font-size:20px;font-weight:800;color:#8B7355;">🐾 Pfoten-Plan</div></td></tr>
 <tr><td style="padding:14px 36px 8px;">
 <p style="${p}">Hallo,</p>
-<p style="${p}">${dog}s Trainingsplan ist jetzt ein paar Wochen bei euch im Alltag. Meistens merkt man nach drei Wochen ziemlich genau, was schon läuft und was noch hakt.</p>
-<p style="${p}">Bei dir stand damals im Fragebogen: <strong>${m.name}</strong>. Genau dafür gibt es ein eigenes Modul mit sechs Übungen, aufeinander aufgebaut über zwei Wochen.</p>
+<p style="${p}">als du ${dog}s Plan geholt hast, stand im Fragebogen: <strong>${m.name}</strong>. Der Plan deckt das Thema ab — für genau diesen einen Punkt gibt es aber acht weitere Übungen, die tiefer gehen und über zwei Wochen aufeinander aufbauen.</p>
+<p style="${p}">Auch die werden auf ${dog} zugeschnitten, nicht von der Stange.</p>
 <p style="margin:0 0 10px;font-size:16px;font-weight:700;color:#3a342b;">${m.name}</p>
 <p style="${p}">${m.versprechen}</p>
 ${punkte}
@@ -207,9 +207,9 @@ function buildText(dog: string, modulKey: string, id: string, email: string): st
   const paket = `https://www.pfoten-plan.de/paket.html?lead_id=${encodeURIComponent(id)}&email=${encodeURIComponent(email)}`;
   return `Hallo,
 
-${dog}s Trainingsplan ist jetzt ein paar Wochen bei euch im Alltag. Meistens merkt man nach drei Wochen ziemlich genau, was schon läuft und was noch hakt.
+als du ${dog}s Plan geholt hast, stand im Fragebogen: ${m.name}. Der Plan deckt das Thema ab — für genau diesen einen Punkt gibt es aber acht weitere Übungen, die tiefer gehen und über zwei Wochen aufeinander aufbauen.
 
-Bei dir stand damals im Fragebogen: ${m.name}. Genau dafür gibt es ein eigenes Modul mit sechs Übungen, aufeinander aufgebaut über zwei Wochen.
+Auch die werden auf ${dog} zugeschnitten, nicht von der Stange.
 
 ${m.name.toUpperCase()}
 ${m.versprechen}
