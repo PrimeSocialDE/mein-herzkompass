@@ -63,9 +63,9 @@ export default function ShopHighlights({ dogName, email, leadId, hatProfil, hatP
             </p>
             <div className="flex items-baseline gap-2 mt-3">
               <span className="text-[26px] font-extrabold text-[#1a1a1a]">99 €</span>
-              <span className="text-[14px] text-[#9CA3AF] line-through">219,77 €</span>
+              <span className="text-[14px] text-[#9CA3AF] line-through">229,77 €</span>
               <span className="text-[12px] font-extrabold text-[#2F6B34] bg-[#F2F8F0] border border-[#D6E8D0] rounded-full px-2.5 py-0.5">
-                120 € gespart
+                130 € gespart
               </span>
             </div>
             <p className="text-[13px] font-bold text-[#8B7355] mt-3 group-hover:underline">
@@ -94,8 +94,8 @@ export default function ShopHighlights({ dogName, email, leadId, hatProfil, hatP
               Schlafbedarf, Kopfarbeit, typische Baustellen. Mit vier Übungen.
             </p>
             <div className="flex items-baseline gap-2 mt-3">
-              <span className="text-[26px] font-extrabold text-[#1a1a1a]">24,90 €</span>
-              <span className="text-[14px] text-[#9CA3AF] line-through">39,90 €</span>
+              <span className="text-[26px] font-extrabold text-[#1a1a1a]">34,90 €</span>
+              <span className="text-[14px] text-[#9CA3AF] line-through">49,90 €</span>
             </div>
             <p className="text-[13px] font-bold text-[#8B7355] mt-3 group-hover:underline">
               Profil ansehen →
