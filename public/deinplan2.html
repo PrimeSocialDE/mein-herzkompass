@@ -4929,11 +4929,28 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         // angezeigt. Der Server rechnet NUR dann mit B, wenn wir das Flag
         // mitschicken (dePriceVariant), Standard bleibt A. Damit kann der
         // abgerechnete Preis nie ueber dem angezeigten liegen.
+        // Preistest DE beendet am 27.09.2026 — dauerhaft Variante A.
+        //
+        // B (je Stufe 10 EUR mehr) hat auf KEINER Stufe getragen. Gemessen
+        // ueber die Mollie-Betraege ab Teststart, Order-Bump eingerechnet:
+        //
+        //   Stufe        A      B     B erreicht   noetig
+        //   4 Wochen     26     16       62 %       75 %
+        //   12 Wochen    29     12       41 %       80 %
+        //   6 Monate     34     20       59 %       86 %
+        //
+        // Umsatz je Lead: rund 10,60 EUR bei A gegen 7,10 EUR bei B.
+        // Der hoehere Schnitt (57,90 statt 46,62) hat den Einbruch bei der
+        // Abschlussquote nicht ansatzweise ausgeglichen.
+        //
+        // Achtung bei einer Wiederholung: ohne den answers-Merge-Fix wird
+        // ab_preis beim Kauf ueberschrieben, dann bleibt nur die Rechnung
+        // ueber die Betraege. Und die Zuteilung faellt bei fehlendem
+        // localStorage auf A zurueck, was A leicht bevorteilt.
+        //
+        // Die B-Tabelle und preisVarianteAnwenden() bleiben stehen, damit
+        // ein spaeterer Test nicht neu gebaut werden muss.
         var AB_PREIS = 'A';
-        try {
-            var _p = localStorage.getItem('abPreis');
-            if (_p === 'A' || _p === 'B') AB_PREIS = _p;
-        } catch (e) {}
 
         var PREIS_B = {
             '1month': { amount: '39', cents: ',99', tag: '\u20ac1,33 pro Tag', price: '39.99',
