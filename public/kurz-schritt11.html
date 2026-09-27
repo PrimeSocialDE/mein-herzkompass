@@ -385,19 +385,11 @@
                 // A/B "Angst + Haushalt": zwei zusaetzliche Pop-ups auf der
                 // Ladeseite. In Variante A sind die Felder leer.
                 ab_angst: localStorage.getItem('abAngst'),
-                // Preistest DE: A = bisherige Preise, B = je Stufe 10 EUR mehr.
-                // Hier zugewiesen, damit wir die AUSSPIELUNG kennen und nicht
-                // nur die Kaeufe je Preis (Lehre aus dem Karten-Preistest).
-                ab_preis: (function () {
-                    try {
-                        var v = localStorage.getItem('abPreis');
-                        if (v !== 'A' && v !== 'B') {
-                            v = Math.random() < 0.5 ? 'B' : 'A';
-                            localStorage.setItem('abPreis', v);
-                        }
-                        return v;
-                    } catch (e) { return 'A'; }
-                })(),
+                // Preistest DE beendet am 27.09.2026: B hat auf keiner Stufe
+                // getragen, dauerhaft A. Keine Zuteilung mehr, das Feld bleibt
+                // aber gefuellt, damit Auswertungen ueber alte Leads weiter
+                // funktionieren. Details stehen in deinplan2/3.
+                ab_preis: 'A',
                 dog_fears: parseJSON(localStorage.getItem('dogFears')),
                 utm_source: localStorage.getItem('utm_source') || null,
                 utm_medium: localStorage.getItem('utm_medium') || null,
