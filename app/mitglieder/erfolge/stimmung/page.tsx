@@ -15,7 +15,8 @@ import {
   indexByWeek,
   type Mood,
 } from "@/lib/member-mood";
-import { getPlanIntro } from "@/lib/member-plan-intro";
+import { getPlanIntro, type PlanWeek } from "@/lib/member-plan-intro";
+import { getLatestPlanContent } from "@/lib/member-plan-content";
 import WeeklyCheckIn from "@/components/mitglieder/WeeklyCheckIn";
 import { getMemberLang } from "@/lib/member-lang";
 
@@ -156,10 +157,32 @@ export default async function StimmungPage() {
   const problemKey =
     member.quiz_result?.dog_problem || member.quiz_result?.problem || null;
   const planIntro = getPlanIntro(problemKey, dog);
-  const totalWeeks = planIntro?.weeks.length || 4;
+
+  // Die Wochenzahl kommt aus dem GEKAUFTEN Plan, nicht aus der festen Liste
+  // in member-plan-intro. Die kennt je Thema nur 3 bis 4 Wochen — dadurch
+  // blieb der Wochen-Check bei jedem Kunden ab Woche 4 stehen, auch bei
+  // einem 6-Monats-Plan mit 24 Wochen (gemeldet von einer Kundin in Woche 11).
+  const planContent = await getLatestPlanContent(
+    user.id,
+    member.email || user.email || "",
+    "trainingsplan"
+  );
+  const planWeeks: PlanWeek[] = Array.isArray(planContent?.content?.weeks)
+    ? planContent.content.weeks
+        .filter((w: any) => Number.isFinite(Number(w?.num)))
+        .map((w: any) => ({
+          num: Number(w.num),
+          title: String(w.title || "").trim() || `${t.week} ${w.num}`,
+          body: String(w.schwerpunkt || w.tagesplan || "").trim(),
+        }))
+    : [];
+
+  // Vorrang hat der echte Plan. Sonst die hinterlegten Texte, sonst vier.
+  const wochen: PlanWeek[] =
+    planWeeks.length > 0 ? planWeeks : planIntro?.weeks || [];
+  const totalWeeks = wochen.length || 4;
   const currentWeek = getCurrentPlanWeek(member.created_at, totalWeeks);
-  const currentWeekDef =
-    planIntro?.weeks.find((w) => w.num === currentWeek) || null;
+  const currentWeekDef = wochen.find((w) => w.num === currentWeek) || null;
   const weeklyQuestions = getWeeklyQuestions(problemKey);
 
   // Alle Daten holen
@@ -221,13 +244,13 @@ export default async function StimmungPage() {
       </section>
 
       {/* Plan-Wochen-Verlauf mit KI-Zusammenfassungen */}
-      {planIntro && (
+      {wochen.length > 0 && (
         <section className="mb-6">
           <h2 className="text-[16px] font-bold text-[#1a1a1a] mb-3">
             {t.planProgress}
           </h2>
           <div className="space-y-2">
-            {planIntro.weeks.map((w) => {
+            {wochen.map((w) => {
               const entry = weekMap.get(w.num);
               const isCurrent = w.num === currentWeek;
               const isFuture = w.num > currentWeek;
