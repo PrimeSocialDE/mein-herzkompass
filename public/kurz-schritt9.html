@@ -143,6 +143,24 @@
     </div>
     
     <a href="kurz-schritt10.html" class="continue-btn" id="ctaBtn"><span id="ctaDogName">Dein Hund</span>s Plan jetzt ansehen →</a>
+    <script>
+    // A/B ab_notizseite: 50/50. B bekommt nach der Analyse eine eigene Seite
+    // fuer "Gibt es etwas Besonderes?", A geht direkt weiter. Gemessen wird
+    // ueber den Variantenanteil bei den entstandenen Leads.
+    (function(){
+        try{
+            var qp = new URLSearchParams(location.search).get('ab_notizseite');
+            var v = (qp === 'A' || qp === 'B') ? qp : localStorage.getItem('ab_notizseite');
+            if (v !== 'A' && v !== 'B') { v = (Math.random() < 0.5) ? 'B' : 'A'; }
+            localStorage.setItem('ab_notizseite', v);
+            if (v === 'B') {
+                var cta = document.getElementById('ctaBtn');
+                if (cta) cta.setAttribute('href', 'kurz-schritt9b.html');
+            }
+            if (window.clarity) { window.clarity('set', 'ab_notizseite', v); }
+        }catch(e){}
+    })();
+    </script>
     
     <script>
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';

@@ -258,6 +258,40 @@
         .wf-metric b { font-size:15px; font-weight:800; color:#1a1a1a; display:block; line-height:1.1; }
         .wf-metric.muted { color:#9CA3AF; }
         .wf-note { font-size:11px; color:#9CA3AF; margin-top:8px; font-style:italic; }
+        /* ---- Support-Dashboard ---- */
+        .sc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+        .sc-stat{background:#fff;border:1px solid #E6E0D6;border-radius:10px;padding:12px 14px;}
+        .sc-stat b{display:block;font-size:22px;line-height:1.1;color:#2B2B2B;}
+        .sc-stat span{font-size:12px;color:#6B6B6B;}
+        .sc-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+        .sc-chip{border:1px solid #E6E0D6;background:#fff;border-radius:999px;padding:7px 13px;font-size:13px;
+                 cursor:pointer;display:inline-flex;align-items:center;gap:6px;color:#2B2B2B;}
+        .sc-chip.active{background:#2B2B2B;color:#fff;border-color:#2B2B2B;}
+        .sc-chip i{width:8px;height:8px;border-radius:50%;display:inline-block;}
+        .sc-refresh{margin-left:auto;border:none;background:none;color:#8A7A5C;font-size:13px;cursor:pointer;}
+        .sc-card{background:#fff;border:1px solid #E6E0D6;border-left:5px solid #6b7280;border-radius:10px;
+                 padding:14px 16px;margin-bottom:10px;}
+        .sc-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;cursor:pointer;}
+        .sc-who{font-weight:600;font-size:15px;color:#2B2B2B;word-break:break-word;}
+        .sc-meta{font-size:12px;color:#6B6B6B;margin-top:3px;word-break:break-word;}
+        .sc-pill{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;color:#fff;white-space:nowrap;}
+        .sc-quote{background:#F7F5F1;border-radius:8px;padding:10px 12px;margin:12px 0;font-size:14px;
+                  color:#3A3A3A;white-space:pre-wrap;max-height:220px;overflow:auto;}
+        .sc-body textarea{width:100%;min-height:170px;border:1px solid #E6E0D6;border-radius:8px;padding:11px;
+                          font-family:inherit;font-size:14px;line-height:1.55;resize:vertical;}
+        .sc-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+        .sc-btn{border:none;border-radius:8px;padding:10px 15px;font-size:14px;font-weight:600;cursor:pointer;}
+        .sc-btn.primary{background:#C4A576;color:#fff;}
+        .sc-btn.ghost{background:#F2EEE7;color:#2B2B2B;}
+        .sc-btn:disabled{opacity:.5;cursor:default;}
+        .sc-warn{display:inline-block;background:#FEF3C7;color:#92400E;font-size:11px;font-weight:600;
+                 padding:3px 8px;border-radius:999px;margin-left:6px;}
+        @media(max-width:700px){
+            .sc-stats{grid-template-columns:repeat(2,1fr);}
+            .sc-head{flex-direction:column;gap:6px;}
+            .sc-refresh{margin-left:0;}
+            .sc-actions .sc-btn{flex:1 1 auto;}
+        }
     </style>
 </head>
 <body>
@@ -281,6 +315,7 @@
             <button class="wf-tab active" id="tabbtn-tools" onclick="switchTab('tools')">🛠️ Tools</button>
             <button class="wf-tab" id="tabbtn-workflow" onclick="switchTab('workflow')">📧 E-Mail-Workflow</button>
             <button class="wf-tab" id="tabbtn-steuer" onclick="switchTab('steuer')">🧾 Steuer-Report</button>
+            <button class="wf-tab" id="tabbtn-support" onclick="switchTab('support')">💬 Support</button>
         </div>
 
         <!-- ============ TAB: E-Mail-Workflow ============ -->
@@ -324,6 +359,30 @@
             <p style="font-size:11px;color:#9CA3AF;margin-top:18px;line-height:1.5;">
                 Quelle: Mollie EUR-Konto (DE/AT/CH/Sonstige) + PL-Konto (PLN). Gebühr = Brutto minus Settlement-Betrag (was Mollie einbehält). CH als Nicht-EU-Export mit 0% EU-USt. PayPal-Zahlungen, die über Mollie laufen, sind enthalten; ein separates PayPal-Konto ist hier NICHT enthalten.
             </p>
+        </div>
+
+        <!-- ============ TAB: Support ============ -->
+        <div id="tab-support" style="display:none">
+            <h1 style="margin-bottom:2px;">Support</h1>
+            <p style="font-size:13px;color:#6B6B6B;margin-bottom:16px;">
+                Jede Kundenmail an support@ wird eingeordnet und bekommt einen fertigen Entwurf.
+                Verschickt wird nur, was du hier freigibst.
+            </p>
+
+            <div id="sc-stats" class="sc-stats"></div>
+
+            <div class="sc-filter" id="sc-filter">
+                <button class="sc-chip active" data-f="offen" onclick="scFilter('offen')">Offen</button>
+                <button class="sc-chip" data-f="neu" onclick="scFilter('neu')"><i style="background:#6b7280"></i>Neu</button>
+                <button class="sc-chip" data-f="plankorrektur" onclick="scFilter('plankorrektur')"><i style="background:#2563eb"></i>Plankorrektur</button>
+                <button class="sc-chip" data-f="rettung_angeboten" onclick="scFilter('rettung_angeboten')"><i style="background:#d97706"></i>Rettung läuft</button>
+                <button class="sc-chip" data-f="gerettet" onclick="scFilter('gerettet')"><i style="background:#16a34a"></i>Gerettet</button>
+                <button class="sc-chip" data-f="erstattung" onclick="scFilter('erstattung')"><i style="background:#dc2626"></i>Erstattung</button>
+                <button class="sc-chip" data-f="alle" onclick="scFilter('alle')">Alle</button>
+                <button class="sc-refresh" onclick="loadSupport(true)">↻ Aktualisieren</button>
+            </div>
+
+            <div id="sc-list"><p style="color:#6B6B6B;font-size:14px;">Lade …</p></div>
         </div>
 
         <!-- ============ TAB: Tools ============ -->
@@ -471,14 +530,187 @@
     // ===================== E-Mail-Workflow Tab =====================
     let wfLoaded = false;
     function switchTab(name) {
-        document.getElementById('tab-tools').style.display    = name === 'tools' ? 'block' : 'none';
-        document.getElementById('tab-workflow').style.display = name === 'workflow' ? 'block' : 'none';
-        document.getElementById('tab-steuer').style.display   = name === 'steuer' ? 'block' : 'none';
-        document.getElementById('tabbtn-tools').classList.toggle('active', name === 'tools');
-        document.getElementById('tabbtn-workflow').classList.toggle('active', name === 'workflow');
-        document.getElementById('tabbtn-steuer').classList.toggle('active', name === 'steuer');
+        const tabs = ['tools', 'workflow', 'steuer', 'support'];
+        tabs.forEach(function (t) {
+            const pane = document.getElementById('tab-' + t);
+            const btn = document.getElementById('tabbtn-' + t);
+            if (pane) pane.style.display = (t === name) ? 'block' : 'none';
+            if (btn) btn.classList.toggle('active', t === name);
+        });
         if (name === 'workflow' && !wfLoaded) { wfLoaded = true; loadWorkflow(); }
         if (name === 'steuer') initSteuerMonths();
+        if (name === 'support') loadSupport();
+    }
+
+    // ===================== Support-Dashboard =====================
+    const SC_FARBE = {
+        neu: '#6b7280', plankorrektur: '#2563eb', rettung_angeboten: '#d97706',
+        gerettet: '#16a34a', erstattung: '#dc2626', erledigt: '#9ca3af'
+    };
+    const SC_LABEL = {
+        neu: 'Neu', plankorrektur: 'Plankorrektur', rettung_angeboten: 'Rettung angeboten',
+        gerettet: 'Gerettet', erstattung: 'Erstattung', erledigt: 'Erledigt'
+    };
+    const SC_OFFEN = ['neu', 'plankorrektur', 'rettung_angeboten'];
+    let SC_DATA = null, SC_F = 'offen', SC_OPEN = null, scLoaded = false;
+
+    function scEsc(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function scZeit(iso) {
+        if (!iso) return '';
+        const d = new Date(iso), n = new Date();
+        const tage = Math.floor((n - d) / 86400000);
+        const uhr = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+        if (tage === 0) return 'heute ' + uhr;
+        if (tage === 1) return 'gestern ' + uhr;
+        return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }) + ' ' + uhr;
+    }
+
+    function scFilter(f) {
+        SC_F = f;
+        document.querySelectorAll('#sc-filter .sc-chip').forEach(function (b) {
+            b.classList.toggle('active', b.dataset.f === f);
+        });
+        scRender();
+    }
+
+    async function loadSupport(force) {
+        if (scLoaded && !force) return;
+        scLoaded = true;
+        const list = document.getElementById('sc-list');
+        list.innerHTML = '<p style="color:#6B6B6B;font-size:14px;">Lade …</p>';
+        try {
+            const r = await fetch('/api/admin/support-cases', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: PASS, action: 'list', tage: 30 })
+            });
+            const j = await r.json();
+            if (!r.ok || !j.ok) {
+                list.innerHTML = '<div class="sc-card" style="border-left-color:#dc2626">'
+                    + '<b>Konnte nicht laden.</b><div class="sc-meta">' + scEsc(j.detail || j.error || r.status)
+                    + (j.hinweis ? '<br>' + scEsc(j.hinweis) : '') + '</div></div>';
+                return;
+            }
+            SC_DATA = j;
+            scRenderStats();
+            scRender();
+        } catch (e) {
+            list.innerHTML = '<p style="color:#dc2626">Fehler: ' + scEsc(e.message) + '</p>';
+        }
+    }
+
+    function scRenderStats() {
+        const z = SC_DATA.zaehler || {};
+        const quote = SC_DATA.rettungsquote;
+        document.getElementById('sc-stats').innerHTML =
+            '<div class="sc-stat"><b>' + (SC_DATA.offen || 0) + '</b><span>offen</span></div>'
+            + '<div class="sc-stat"><b style="color:#d97706">' + (z.rettung_angeboten || 0) + '</b><span>Rettung läuft</span></div>'
+            + '<div class="sc-stat"><b style="color:#16a34a">' + (z.gerettet || 0) + '</b><span>gerettet'
+            + (SC_DATA.gerettet_eur ? ' · ' + SC_DATA.gerettet_eur + ' €' : '') + '</span></div>'
+            + '<div class="sc-stat"><b style="color:#dc2626">' + (z.erstattung || 0) + '</b><span>Erstattung'
+            + (quote === null || quote === undefined ? '' : ' · ' + quote + ' % gehalten') + '</span></div>';
+    }
+
+    function scRender() {
+        const list = document.getElementById('sc-list');
+        if (!SC_DATA) return;
+        let faelle = SC_DATA.faelle || [];
+        if (SC_F === 'offen') faelle = faelle.filter(function (f) { return SC_OFFEN.indexOf(f.status) >= 0; });
+        else if (SC_F !== 'alle') faelle = faelle.filter(function (f) { return f.status === SC_F; });
+
+        if (!faelle.length) {
+            list.innerHTML = '<p style="color:#6B6B6B;font-size:14px;padding:20px 0;">Nichts hier. 🎉</p>';
+            return;
+        }
+        list.innerHTML = faelle.map(scCard).join('');
+    }
+
+    function scCard(f) {
+        const farbe = SC_FARBE[f.status] || '#6b7280';
+        const offen = SC_OPEN === f.id;
+        const betrag = f.betrag_cent ? ' · ' + (f.betrag_cent / 100).toFixed(2).replace('.', ',') + ' €' : '';
+        const hund = f.dog_name ? ' · ' + scEsc(f.dog_name) : '';
+
+        let body = '';
+        if (offen) {
+            body = '<div class="sc-body">'
+                + '<div class="sc-quote">' + scEsc(f.letzte_nachricht || '(kein Text)') + '</div>'
+                + '<textarea id="sc-t-' + f.id + '">' + scEsc(f.entwurf || '') + '</textarea>'
+                + '<div class="sc-actions">'
+                + '<button class="sc-btn primary" onclick="scSend(\'' + f.id + '\')">Antwort senden</button>'
+                + '<button class="sc-btn ghost" onclick="scSaveDraft(\'' + f.id + '\')">Entwurf sichern</button>'
+                + (f.lead_id ? '<button class="sc-btn ghost" onclick="scResendPlan(\'' + f.id + '\')">Plan neu senden</button>' : '')
+                + '<button class="sc-btn ghost" onclick="scStatus(\'' + f.id + '\',\'erstattung\')">Als Erstattung</button>'
+                + '<button class="sc-btn ghost" onclick="scStatus(\'' + f.id + '\',\'erledigt\')">Erledigt</button>'
+                + '</div></div>';
+        }
+
+        return '<div class="sc-card" style="border-left-color:' + farbe + '">'
+            + '<div class="sc-head" onclick="scToggle(\'' + f.id + '\')">'
+            + '<div><div class="sc-who">' + scEsc(f.from_name || f.from_email) + hund
+            + (f.heikel ? '<span class="sc-warn">prüfen</span>' : '') + '</div>'
+            + '<div class="sc-meta">' + scEsc(f.kurz || f.subject || '') + '</div>'
+            + '<div class="sc-meta">' + scEsc(f.from_email) + ' · ' + scZeit(f.received_at) + betrag + '</div></div>'
+            + '<span class="sc-pill" style="background:' + farbe + '">' + (SC_LABEL[f.status] || f.status) + '</span>'
+            + '</div>' + body + '</div>';
+    }
+
+    function scToggle(id) {
+        SC_OPEN = (SC_OPEN === id) ? null : id;
+        scRender();
+    }
+
+    async function scPost(payload, btnText) {
+        const r = await fetch('/api/admin/support-cases', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Object.assign({ password: PASS }, payload))
+        });
+        const j = await r.json().catch(function () { return {}; });
+        if (!r.ok || j.error) throw new Error(j.detail || j.error || ('HTTP ' + r.status));
+        return j;
+    }
+
+    async function scSend(id) {
+        const ta = document.getElementById('sc-t-' + id);
+        const text = ta ? ta.value.trim() : '';
+        if (text.length < 10) { alert('Der Entwurf ist leer.'); return; }
+        const f = (SC_DATA.faelle || []).find(function (x) { return x.id === id; });
+        if (!confirm('Diese Antwort jetzt an ' + (f ? f.from_email : '') + ' senden?')) return;
+        try {
+            await scPost({ action: 'send', id: id, text: text });
+            SC_OPEN = null;
+            await loadSupport(true);
+        } catch (e) { alert('Versand fehlgeschlagen: ' + e.message); }
+    }
+
+    async function scSaveDraft(id) {
+        const ta = document.getElementById('sc-t-' + id);
+        try {
+            await scPost({ action: 'entwurf', id: id, text: ta ? ta.value : '' });
+            await loadSupport(true);
+        } catch (e) { alert('Speichern fehlgeschlagen: ' + e.message); }
+    }
+
+    async function scStatus(id, status) {
+        try {
+            await scPost({ action: 'status', id: id, status: status });
+            SC_OPEN = null;
+            await loadSupport(true);
+        } catch (e) { alert('Ging nicht: ' + e.message); }
+    }
+
+    async function scResendPlan(id) {
+        if (!confirm('Plan für diesen Kunden neu generieren und verschicken?')) return;
+        try {
+            const j = await scPost({ action: 'resend_plan', id: id });
+            alert(j.hinweis || (j.ok ? 'Ausgelöst.' : 'Hat nicht geklappt.'));
+        } catch (e) { alert('Ging nicht: ' + e.message); }
     }
 
     // ===================== Steuer-Report (Mollie) =====================
