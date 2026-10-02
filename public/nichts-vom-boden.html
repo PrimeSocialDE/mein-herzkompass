@@ -51,8 +51,10 @@
   .kaufkarte{background:var(--white);border:2px solid var(--warm-brown);border-radius:18px;padding:28px 24px;text-align:center}
   .preis{font-size:42px;font-weight:800;color:var(--text-dark);line-height:1}
   .preis small{font-size:17px;font-weight:600;color:var(--text-light);display:block;margin-top:6px}
-  input[type=email]{width:100%;padding:16px 16px;font-size:17px;border:2px solid var(--warm-brown);
-                    border-radius:12px;background:#FDF9F0;font-family:inherit;margin:18px 0 10px;outline:none}
+  input[type=email],input[type=text]{width:100%;padding:16px 16px;font-size:17px;border:2px solid var(--warm-brown);
+                    border-radius:12px;background:#FDF9F0;font-family:inherit;margin:10px 0 0;outline:none}
+  #hund{margin-top:18px}
+  #mail{margin-bottom:12px}
   .btn{display:block;width:100%;background:var(--text-dark);color:var(--white);border:none;border-radius:999px;
        padding:19px;font-size:19px;font-weight:800;cursor:pointer;font-family:inherit}
   .btn:disabled{opacity:.55;cursor:default}
@@ -142,7 +144,9 @@
       <div class="eyebrow" style="margin-bottom:8px">Für deinen Hund erstellt</div>
       <div class="preis">24,99 €<small>einmalig · kein Abo · PDF zum Ausdrucken</small></div>
       <p style="margin:18px 0 0;font-size:16.5px">Das Handbuch wird auf deinen Hund zugeschnitten: Name, Rasse, Alter
-        und das, was bei euch gerade schwierig ist.</p>
+        und das, was bei euch gerade schwierig ist. Hast du schon einen Plan bei uns geholt, kennen wir den Rest
+        bereits — der Name genügt.</p>
+      <input type="text" id="hund" placeholder="Wie heißt dein Hund?" autocomplete="off" maxlength="30">
       <input type="email" id="mail" placeholder="Deine E-Mail-Adresse" autocomplete="email">
       <button class="btn" id="kaufBtn">Für meinen Hund erstellen</button>
       <div class="klein">(Keine Sorge, du schließt hier kein Abo ab.)<br>30 Tage Geld-zurück-Garantie.</div>
@@ -177,12 +181,14 @@
     var m = p.get('email') || localStorage.getItem('userEmail') || '';
     if (m) $('mail').value = m;
     hund = localStorage.getItem('dogName') || '';
+    if (hund) $('hund').value = hund;
   } catch(e) {}
 
   function mailOk(v){ return /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test((v||'').trim()); }
 
   $('kaufBtn').onclick = async function(){
     var b = this, email = ($('mail').value || '').trim().toLowerCase();
+    var name = ($('hund').value || '').trim().slice(0, 30);
     $('fehler').hidden = true;
     if (!mailOk(email)) {
       $('fehler').textContent = 'Bitte gib zuerst deine E-Mail-Adresse ein — dorthin schicken wir das Handbuch.';
@@ -191,7 +197,10 @@
       return;
     }
     b.disabled = true; b.textContent = 'Einen Moment …';
-    try { localStorage.setItem('userEmail', email); } catch(e) {}
+    try {
+      localStorage.setItem('userEmail', email);
+      if (name) localStorage.setItem('dogName', name);
+    } catch(e) {}
     try {
       var res = await fetch('/api/mollie/upsell-product-checkout', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -199,7 +208,7 @@
           type: 'nichts-vom-boden',
           email: email,
           leadId: leadId,
-          dogName: hund || 'deinen Hund',
+          dogName: name || hund || 'deinen Hund',
           returnUrl: location.origin + '/danke-zusatz.html?lead_id=' + encodeURIComponent(leadId)
         })
       });
