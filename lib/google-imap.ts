@@ -38,6 +38,8 @@ export interface FetchResult {
   mails: InboundMail[];
   maxUid: number;
   uidValidity: number;
+  /** UIDs, die nicht lesbar waren. Werden im Digest gemeldet statt verschluckt. */
+  skipped: number[];
 }
 
 export function googleImapConfigured(): boolean {
@@ -48,23 +50,36 @@ export function googleImapConfigured(): boolean {
 // Minimaler IMAP-Client
 // ---------------------------------------------------------------------------
 
+const CRLF = Buffer.from("\r\n", "ascii");
+
 interface ImapConn {
-  send: (tag: string, cmd: string) => Promise<string>;
+  send: (tag: string, cmd: string) => Promise<Buffer>;
   close: () => void;
 }
 
 function connect(): Promise<ImapConn> {
   return new Promise((resolve, reject) => {
     const sock = tls.connect(IMAP_PORT, IMAP_HOST, { servername: IMAP_HOST });
-    sock.setEncoding("utf8");
-    let buf = "";
+    // BEWUSST kein setEncoding: IMAP-Literale ({n}) zaehlen BYTES. Als
+    // UTF-8-String gelesen verschiebt jeder Umlaut die Laengenrechnung um ein
+    // Byte — daran sind bisher alle deutschen Mails stillschweigend verloren
+    // gegangen. Deshalb bleibt der Puffer ein Buffer, alle Offsets sind Bytes.
+    let buf: Buffer = Buffer.alloc(0);
     let settledOpen = false;
     let onData: (() => void) | null = null;
+    // Bricht die Verbindung nach dem Aufbau ab, darf das laufende Kommando
+    // nicht als haengendes Promise zurueckbleiben.
+    let pendingRej: ((e: Error) => void) | null = null;
 
     const fail = (e: Error) => {
       if (!settledOpen) {
         settledOpen = true;
         reject(e);
+      } else if (pendingRej) {
+        const r = pendingRej;
+        pendingRej = null;
+        onData = null;
+        r(e);
       }
       try { sock.destroy(); } catch {}
     };
@@ -72,16 +87,16 @@ function connect(): Promise<ImapConn> {
     sock.setTimeout(25000, () => fail(new Error("imap_timeout")));
     sock.on("error", (e) => fail(e instanceof Error ? e : new Error(String(e))));
 
-    sock.on("data", (d: string) => {
-      buf += d;
+    sock.on("data", (d: Buffer) => {
+      buf = buf.length ? Buffer.concat([buf, d]) : Buffer.from(d);
       if (onData) onData();
     });
 
     // Auf Server-Greeting (* OK ...) warten.
     const waitGreeting = () => {
-      const nl = buf.indexOf("\r\n");
+      const nl = buf.indexOf(CRLF);
       if (nl === -1) return;
-      buf = buf.slice(nl + 2);
+      buf = Buffer.from(buf.subarray(nl + 2));
       onData = null;
       settledOpen = true;
       resolve({ send, close: () => { try { sock.end(); } catch {} } });
@@ -91,26 +106,30 @@ function connect(): Promise<ImapConn> {
 
     // Liest die vollständige Antwort auf ein Kommando (literal-bewusst) bis zur
     // getaggten Abschlusszeile "<tag> OK|NO|BAD ...".
-    function send(tag: string, cmd: string): Promise<string> {
+    function send(tag: string, cmd: string): Promise<Buffer> {
       return new Promise((res, rej) => {
+        const settle = () => { onData = null; pendingRej = null; };
+        pendingRej = rej;
         const check = () => {
           let i = 0;
           while (true) {
-            const nl = buf.indexOf("\r\n", i);
-            if (nl === -1) return; // mehr Daten nötig
-            const line = buf.slice(i, nl);
+            const nl = buf.indexOf(CRLF, i);
+            if (nl === -1) return; // mehr Daten noetig
+            // latin1 == genau ein Zeichen je Byte, damit bleiben alle
+            // Offsets aus Regex-Treffern gueltige Byte-Offsets.
+            const line = buf.subarray(i, nl).toString("latin1");
             const lit = line.match(/\{(\d+)\}$/);
             if (lit) {
               const litLen = parseInt(lit[1], 10);
               const litStart = nl + 2;
-              if (buf.length < litStart + litLen) return; // Literal noch unvollständig
-              i = litStart + litLen; // Literal überspringen, weiterscannen
+              if (buf.length < litStart + litLen) return; // Literal noch unvollstaendig
+              i = litStart + litLen; // Literal ueberspringen, weiterscannen
               continue;
             }
             if (line.startsWith(tag + " ")) {
-              const full = buf.slice(0, nl);
-              buf = buf.slice(nl + 2);
-              onData = null;
+              const full = Buffer.from(buf.subarray(0, nl));
+              buf = Buffer.from(buf.subarray(nl + 2));
+              settle();
               if (/^\S+\s+OK/i.test(line)) res(full);
               else rej(new Error("imap_cmd_failed: " + line.slice(0, 200)));
               return;
@@ -131,15 +150,37 @@ function connect(): Promise<ImapConn> {
 // ---------------------------------------------------------------------------
 
 /** Zieht die Literale ({n}\r\n<n bytes>) in Reihenfolge aus einer Antwort. */
-function extractLiterals(resp: string): string[] {
-  const out: string[] = [];
+interface NamedLiteral {
+  /** "header", "text" oder "unbekannt" — nach dem Namen VOR dem Literal. */
+  name: string;
+  data: Buffer;
+}
+
+/**
+ * Zieht die Literale ({n}\r\n<n bytes>) samt ihrer Bezeichnung aus einer
+ * Antwort. Wichtig: Gmail liefert die Teile NICHT in der Reihenfolge der
+ * Anfrage — BODY[TEXT] kommt regelmaessig vor BODY[HEADER.FIELDS]. Wer hier
+ * nach Position zugreift, haelt den Mailtext fuer den Header und findet dann
+ * keinen Absender mehr. Deshalb wird nach Namen zugeordnet.
+ */
+function extractLiterals(resp: Buffer): NamedLiteral[] {
+  const out: NamedLiteral[] = [];
+  // latin1 bildet jedes Byte auf genau ein Zeichen ab, daher sind die
+  // Regex-Indizes hier echte Byte-Offsets in den Buffer.
+  const scan = resp.toString("latin1");
   const re = /\{(\d+)\}\r\n/g;
   let m: RegExpExecArray | null;
-  while ((m = re.exec(resp)) !== null) {
+  let guard = 0;
+  while ((m = re.exec(scan)) !== null) {
     const len = parseInt(m[1], 10);
     const start = m.index + m[0].length;
-    out.push(resp.slice(start, start + len));
+    if (start + len > resp.length) break; // abgeschnittene Antwort -> Rest verwerfen
+    const prev = scan.lastIndexOf("\r\n", m.index);
+    const prefix = scan.slice(prev === -1 ? 0 : prev + 2, m.index);
+    const name = /HEADER/i.test(prefix) ? "header" : /TEXT/i.test(prefix) ? "text" : "unbekannt";
+    out.push({ name, data: resp.subarray(start, start + len) });
     re.lastIndex = start + len;
+    if (++guard > 16) break;
   }
   return out;
 }
@@ -156,14 +197,21 @@ function headerField(headerBlock: string, name: string): string {
 function decodeMimeWords(s: string): string {
   return s.replace(/=\?([^?]+)\?([bBqQ])\?([^?]*)\?=/g, (_all, cs, enc, txt) => {
     try {
+      // Der Zeichensatz im Kopf ist nicht Dekoration: aus ISO-8859-1 als UTF-8
+      // gelesen wird aus "Übung" ein "?bung". Also auswerten statt annehmen.
+      const charset = String(cs).toLowerCase();
+      const target: BufferEncoding = /utf-?8/.test(charset) ? "utf8" : "latin1";
+      let raw: Buffer;
       if (enc.toUpperCase() === "B") {
-        return Buffer.from(txt, "base64").toString("utf8");
+        raw = Buffer.from(txt, "base64");
+      } else {
+        // Q-Encoding
+        const bytes = txt.replace(/_/g, " ").replace(/=([0-9A-Fa-f]{2})/g, (_m: string, h: string) =>
+          String.fromCharCode(parseInt(h, 16))
+        );
+        raw = Buffer.from(bytes, "latin1");
       }
-      // Q-Encoding
-      const bytes = txt.replace(/_/g, " ").replace(/=([0-9A-Fa-f]{2})/g, (_m: string, h: string) =>
-        String.fromCharCode(parseInt(h, 16))
-      );
-      return Buffer.from(bytes, "binary").toString("utf8");
+      return raw.toString(target);
     } catch {
       return txt;
     }
@@ -217,6 +265,10 @@ function cleanBody(rawText: string, cte: string, contentType: string): string {
     try { body = Buffer.from(body.replace(/\s+/g, ""), "base64").toString("utf8"); } catch {}
   } else if (enc.includes("quoted-printable")) {
     body = decodeQuotedPrintable(body);
+  } else {
+    // 7bit/8bit: der Rohtext kommt byte-treu (latin1) an und muss noch als
+    // UTF-8 gelesen werden, sonst werden aus Umlauten Kraehenfuesse.
+    try { body = Buffer.from(body, "latin1").toString("utf8"); } catch {}
   }
 
   if (/text\/html/i.test(contentType) || /<[a-z][\s\S]*>/i.test(body)) {
@@ -268,7 +320,7 @@ export async function fetchInbound(sinceDays: number, lastUid: number): Promise<
   const conn = await connect();
   try {
     await conn.send("a1", `LOGIN "${USER}" "${PASS.replace(/"/g, '\\"')}"`);
-    const examine = await conn.send("a2", "EXAMINE INBOX");
+    const examine = (await conn.send("a2", "EXAMINE INBOX")).toString("latin1");
     const uvMatch = examine.match(/UIDVALIDITY (\d+)/i);
     const uidValidity = uvMatch ? parseInt(uvMatch[1], 10) : 0;
 
@@ -277,7 +329,7 @@ export async function fetchInbound(sinceDays: number, lastUid: number): Promise<
     const mon = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getUTCMonth()];
     const sinceStr = `${d.getUTCDate()}-${mon}-${d.getUTCFullYear()}`;
 
-    const searchResp = await conn.send("a3", `UID SEARCH SINCE ${sinceStr}`);
+    const searchResp = (await conn.send("a3", `UID SEARCH SINCE ${sinceStr}`)).toString("latin1");
     const searchLine = searchResp.split("\r\n").find((l) => /^\*\s+SEARCH/i.test(l)) || "";
     const uids = (searchLine.match(/\d+/g) || [])
       .map((n) => parseInt(n, 10))
@@ -286,25 +338,43 @@ export async function fetchInbound(sinceDays: number, lastUid: number): Promise<
       .slice(-40); // Sicherheitslimit pro Lauf
 
     const mails: InboundMail[] = [];
+    const skipped: number[] = [];
     let maxUid = lastUid;
 
     for (const uid of uids) {
-      if (uid > maxUid) maxUid = uid;
-      const resp = await conn.send(
-        "a" + (100 + uid),
-        `UID FETCH ${uid} (UID INTERNALDATE BODY.PEEK[HEADER.FIELDS (FROM TO SUBJECT DATE MESSAGE-ID IN-REPLY-TO CONTENT-TYPE CONTENT-TRANSFER-ENCODING)] BODY.PEEK[TEXT])`
-      );
+      // maxUid wird bewusst erst weitergestellt, wenn die Mail wirklich
+      // gelesen wurde. Was scheitert, landet in skipped und wird gemeldet —
+      // still verschlucken ist genau der Fehler, der hier mal drin war.
+      let resp: Buffer;
+      try {
+        resp = await conn.send(
+          "a" + (100 + uid),
+          `UID FETCH ${uid} (UID INTERNALDATE BODY.PEEK[HEADER.FIELDS (FROM TO SUBJECT DATE MESSAGE-ID IN-REPLY-TO CONTENT-TYPE CONTENT-TRANSFER-ENCODING)] BODY.PEEK[TEXT])`
+        );
+      } catch {
+        skipped.push(uid);
+        if (uid > maxUid) maxUid = uid;
+        continue;
+      }
+      const respText = resp.toString("latin1");
       const lits = extractLiterals(resp);
-      if (lits.length < 1) continue;
-      const headerBlock = lits[0];
-      const rawText = lits[1] || "";
-      const idate = (resp.match(/INTERNALDATE "([^"]+)"/) || [])[1] || "";
+      const headerLit = lits.find((l) => l.name === "header") || null;
+      const textLit = lits.find((l) => l.name === "text") || null;
+      const headerBlock = headerLit ? headerLit.data.toString("utf8") : "";
+      const rawText = textLit ? textLit.data.toString("latin1") : "";
+      const idate = (respText.match(/INTERNALDATE "([^"]+)"/) || [])[1] || "";
 
       const fromRaw = headerField(headerBlock, "From");
       const { email, name } = parseFromEmail(fromRaw);
+      if (!email) {
+        skipped.push(uid);
+        if (uid > maxUid) maxUid = uid;
+        continue;
+      }
       const contentType = headerField(headerBlock, "Content-Type");
       const cte = headerField(headerBlock, "Content-Transfer-Encoding");
 
+      if (uid > maxUid) maxUid = uid;
       mails.push({
         uid,
         fromRaw,
@@ -320,7 +390,7 @@ export async function fetchInbound(sinceDays: number, lastUid: number): Promise<
       });
     }
 
-    return { mails, maxUid, uidValidity };
+    return { mails, maxUid, uidValidity, skipped };
   } finally {
     conn.close();
   }
@@ -340,7 +410,7 @@ export async function fetchFlaggedUids(sinceDays: number): Promise<Set<number>> 
     const d = new Date(Date.now() - sinceDays * 86_400_000);
     const mon = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getUTCMonth()];
     const sinceStr = `${d.getUTCDate()}-${mon}-${d.getUTCFullYear()}`;
-    const resp = await conn.send("b3", `UID SEARCH FLAGGED SINCE ${sinceStr}`);
+    const resp = (await conn.send("b3", `UID SEARCH FLAGGED SINCE ${sinceStr}`)).toString("latin1");
     const line = resp.split("\r\n").find((l) => /^\*\s+SEARCH/i.test(l)) || "";
     return new Set((line.match(/\d+/g) || []).map((n) => parseInt(n, 10)));
   } catch {

@@ -12,7 +12,13 @@
 
 const TRIAGE_MODEL = "claude-opus-4-8";
 
-export type SupportCategory = "widerruf" | "plan_fehlt" | "frage" | "rechnung" | "sonstiges";
+export type SupportCategory =
+  | "widerruf"
+  | "plankorrektur"
+  | "plan_fehlt"
+  | "frage"
+  | "rechnung"
+  | "sonstiges";
 export type SupportAction = "plan_neu_senden" | "keine";
 
 export interface TriageLeadContext {
@@ -66,6 +72,7 @@ Deine Aufgabe: die Mail einordnen und – außer bei Widerruf – eine fertige, 
 
 KATEGORIEN:
 - "widerruf": Kunde will widerrufen / Geld zurück / stornieren / "passt nicht, will zurück".
+- "plankorrektur": Kunde HAT den Plan, aber er passt nicht — sein eigentliches Problem kommt nicht vor, die Übungen kann der Hund längst, Rasse/Alter/Situation passen nicht. Er will eine Anpassung, ausdrücklich KEIN Geld zurück.
 - "plan_fehlt": Kunde hat bezahlt, aber Plan / PDF / Zugang / Login-Code nicht bekommen bzw. findet ihn nicht.
 - "rechnung": Kunde möchte eine Rechnung / Beleg.
 - "frage": inhaltliche oder technische Frage (zu einer Übung, zum Ablauf, zum Mitglieder-Bereich usw.).
@@ -81,6 +88,7 @@ ANTWORT-STIL (Feld "antwort"): Deutsch, per "Du", warm und persönlich, einfache
 Dein Pfotenplan-Team"
 Bei Kategorie "widerruf" kannst du das Feld "antwort" leer lassen (die Vorlage wird separat eingesetzt).
 Bei "plan_fehlt" mit Aktion plan_neu_senden: schreib, dass der Plan gerade erneut verschickt wurde und in wenigen Minuten im Postfach (ggf. Spam-Ordner prüfen) ankommt.
+Bei "plankorrektur": nimm das Anliegen ernst, entschuldige dich kurz dafür, dass der Plan danebenlag, und bitte um 3 bis 4 Sätze, wo genau es gerade hakt — daraus wird kostenlos ein individuelles Zusatzmodul erstellt. Biete von dir aus KEINE Rückerstattung an.
 
 Antworte mit EXAKT EINEM JSON-Objekt, keine Markdown-Fences:
 {"kategorie": "...", "heikel": true/false, "aktion": "plan_neu_senden|keine", "antwort": "...", "kurz": "worum es in einem Satz geht"}`;
@@ -134,7 +142,14 @@ export async function triageInbound(
       jsonStart >= 0 && jsonEnd > jsonStart ? rawText.slice(jsonStart, jsonEnd + 1) : rawText
     );
 
-    const kategorie: SupportCategory = ["widerruf", "plan_fehlt", "rechnung", "frage", "sonstiges"].includes(
+    const kategorie: SupportCategory = [
+      "widerruf",
+      "plankorrektur",
+      "plan_fehlt",
+      "rechnung",
+      "frage",
+      "sonstiges",
+    ].includes(
       parsed.kategorie
     )
       ? parsed.kategorie
@@ -172,6 +187,118 @@ export async function triageInbound(
       aktion: "keine",
       antwort: fallbackReply(lead.vorname),
       kurz: "Triage-Fehler – manuell prüfen",
+    };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Folgemail auf ein bereits versendetes Rettungsangebot
+// ---------------------------------------------------------------------------
+//
+// Wenn bei einem Widerruf die Vorlage raus ist ("erst Zusatzmodul, sonst Geld
+// zurück"), entscheidet die nächste Kundenmail über Geld bleibt oder Geld weg.
+// Das ist eine viel engere Frage als die Erstklassifikation — und damit auch
+// deutlich zuverlässiger zu beantworten.
+
+export type FollowUpOutcome = "annahme" | "ablehnung" | "offen";
+
+export interface FollowUpResult {
+  ergebnis: FollowUpOutcome;
+  antwort: string;
+  kurz: string;
+  heikel: boolean;
+}
+
+const FOLLOWUP_SYSTEM = `Du bist der Support-Assistent von Pfoten-Plan. Einem Kunden, der widerrufen wollte, haben wir angeboten: Er beschreibt uns in 3 bis 4 Sätzen, wo es hakt, und bekommt kostenlos ein individuelles Zusatzmodul — andernfalls erstatten wir im Rahmen der Geld-zurück-Garantie.
+
+Jetzt liegt seine Antwort darauf vor. Ordne NUR ein, wie er sich entschieden hat.
+
+ERGEBNIS:
+- "annahme": Er will das Zusatzmodul (sagt zu, beschreibt sein Problem, fragt nach, zeigt Interesse).
+- "ablehnung": Er besteht auf der Rückerstattung ("trotzdem zurücktreten", "will mein Geld", "keine Option", "bitte erstatten").
+- "offen": Weder noch, unklar, oder es geht um etwas ganz anderes.
+
+ANTWORT-STIL (Feld "antwort"): Deutsch, per "Du", warm, einfache kurze Sätze (viele Kundinnen sind ältere Menschen). Nichts erfinden — keine Beträge, Fristen oder Termine behaupten.
+- Bei "annahme": bedanke dich, bestätige, dass das Zusatzmodul erstellt wird. Fehlt die Problembeschreibung noch, bitte um 3 bis 4 Sätze.
+- Bei "ablehnung": akzeptiere die Entscheidung ohne weiteres Nachfassen, bestätige, dass die Erstattung veranlasst wird. KEINE Frist und KEINEN Betrag nennen.
+- Bei "offen": geh freundlich auf das ein, was er schreibt.
+Unterschrift immer:
+"Viele Grüße
+Dein Pfotenplan-Team"
+
+Antworte mit EXAKT EINEM JSON-Objekt, keine Markdown-Fences:
+{"ergebnis": "annahme|ablehnung|offen", "antwort": "...", "kurz": "worum es in einem Satz geht"}`;
+
+export async function triageFollowUp(
+  mail: { fromEmail: string; fromName: string; subject: string; text: string },
+  lead: TriageLeadContext
+): Promise<FollowUpResult> {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return {
+      ergebnis: "offen",
+      antwort: fallbackReply(lead.vorname),
+      kurz: "API-Key fehlt – manuell prüfen",
+      heikel: true,
+    };
+  }
+
+  const kontext = [
+    `Kunde: ${lead.vorname || mail.fromName || mail.fromEmail}`,
+    lead.hundename ? `Hund: ${lead.hundename}` : "",
+    lead.plan ? `Gekaufter Plan: ${lead.plan}` : "",
+    `Betreff: ${mail.subject}`,
+    "",
+    "Seine Antwort:",
+    mail.text,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  try {
+    const Anthropic = (await import("@anthropic-ai/sdk")).default;
+    const client = new Anthropic({ apiKey });
+    const response = await client.messages.create({
+      model: TRIAGE_MODEL,
+      max_tokens: 1200,
+      system: FOLLOWUP_SYSTEM,
+      messages: [{ role: "user", content: kontext }],
+    });
+    const rawText = response.content
+      .filter((b: any) => b.type === "text")
+      .map((b: any) => b.text)
+      .join("\n")
+      .trim();
+
+    const jsonStart = rawText.indexOf("{");
+    const jsonEnd = rawText.lastIndexOf("}");
+    const parsed = JSON.parse(
+      jsonStart >= 0 && jsonEnd > jsonStart ? rawText.slice(jsonStart, jsonEnd + 1) : rawText
+    );
+
+    const ergebnis: FollowUpOutcome = ["annahme", "ablehnung", "offen"].includes(parsed.ergebnis)
+      ? parsed.ergebnis
+      : "offen";
+
+    const antwort =
+      typeof parsed.antwort === "string" && parsed.antwort.trim().length > 20
+        ? parsed.antwort.trim()
+        : fallbackReply(lead.vorname);
+
+    return {
+      ergebnis,
+      antwort,
+      kurz: typeof parsed.kurz === "string" ? parsed.kurz.slice(0, 200) : "",
+      // Eine Erstattung ist eine Geldentscheidung — die geht nie ohne Freigabe raus.
+      heikel: ergebnis !== "annahme",
+    };
+  } catch (e: any) {
+    console.error("[support-triage] Folgemail-Fehler:", e?.message);
+    return {
+      ergebnis: "offen",
+      antwort: fallbackReply(lead.vorname),
+      kurz: "Triage-Fehler – manuell prüfen",
+      heikel: true,
     };
   }
 }
