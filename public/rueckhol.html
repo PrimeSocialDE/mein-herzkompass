@@ -1573,7 +1573,7 @@
         <!-- Trust Stats -->
         <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; text-align: center;">
             <div>
-                <div style="font-size: 22px; font-weight: 800; color: #C4A576;">3.447+</div>
+                <div style="font-size: 22px; font-weight: 800; color: #C4A576;">9.552+</div>
                 <div style="font-size: 11px; color: #888;">Hunde trainiert</div>
             </div>
             <div style="width: 1px; background: #E8E8E8;"></div>
@@ -1672,9 +1672,6 @@
             <div style="background: #F0FDF4; border-radius: 10px; padding: 14px 16px; margin-top: 16px; display: flex; align-items: center; gap: 10px;">
                 <span style="color: #22C55E; font-size: 18px;">✓</span>
                 <span style="font-size: 14px; color: #166534; font-weight: 500;">Deine Antworten für <strong id="dogNameBanner">deinen Hund</strong> sind gespeichert</span>
-            </div>
-            <div id="rhSpecialNote" style="display:none; background:#EEF6EF; border:1px solid #CFE6D2; border-radius:10px; padding:12px 16px; margin-top:10px;">
-                <span style="font-size:14px; color:#2c3a2e; line-height:1.55;"><strong>Auch das ist gespeichert:</strong> „<span id="rhSpecialNoteText"></span>“ Wir passen den Plan darauf an.</span>
             </div>
         </div>
 
@@ -1950,7 +1947,6 @@
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">Dein 4-Wochen-Plan</div>
-                            <div class="pricing-uebungen" style="font-size:12.5px;font-weight:700;color:#8B7355;margin:1px 0 2px;letter-spacing:0.01em;">8 Übungen</div>
                             <div class="pricing-total" style="font-size:12px;color:#666;margin-top:3px;">Intensiv & fokussiert — schnellster Weg zum Ergebnis</div>
                         </div>
                     </div>
@@ -1968,7 +1964,6 @@
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">Dein 12-Wochen-Plan</div>
-                            <div class="pricing-uebungen" style="font-size:12.5px;font-weight:700;color:#8B7355;margin:1px 0 2px;letter-spacing:0.01em;">24 Übungen</div>
                             <div class="pricing-total" style="font-size:12px;color:#666;margin-top:3px;">Intensiv über 12 Wochen — für nachhaltige Veränderung</div>
                         </div>
                     </div>
@@ -1985,7 +1980,6 @@
                         <div class="pricing-radio"></div>
                         <div>
                             <div class="pricing-name">Dein 6-Monats-Plan</div>
-                            <div class="pricing-uebungen" style="font-size:12.5px;font-weight:700;color:#8B7355;margin:1px 0 2px;letter-spacing:0.01em;">48 Übungen</div>
                             <div class="pricing-total" style="font-size:12px;color:#666;margin-top:3px;">Sanft & nachhaltig — in deinem Tempo aufgebaut</div>
                         </div>
                     </div>
@@ -2019,7 +2013,6 @@
                 <div style="font-size:13px; color:#166534; line-height:1.45;">🛡️ <strong>30 Tage Geld-zurück-Garantie</strong> – du gehst kein Risiko ein.</div>
             </div>
         </div>
-
 
         <!-- Sofort-Vorteil: Speed vs. Hundeschule (kein Warten auf Termin) -->
         <div style="background: linear-gradient(135deg,#FFF7EC 0%,#FDEFD8 100%); border:2px solid #C4A576; border-radius:14px; padding:16px 18px; margin:16px 0;">
@@ -2478,11 +2471,7 @@
                         if (data[0]) {
                             const lead = data[0];
                             const answers = lead.answers || {};
-                            // Sonderfall-Angabe aus dem Lead übernehmen (auch wenn über Link von anderem Gerät)
-                            if (answers.special_notes && String(answers.special_notes).trim()) {
-                                try { localStorage.setItem('specialNotes', String(answers.special_notes).trim()); } catch(e){}
-                            }
-
+                            
                             // Top-Level-Spalten haben Vorrang vor answers-JSONB (wo answers oft leer ist)
                             const resolvedDogName = lead.dog_name || answers.dog_name;
                             const resolvedDogProblem = lead.dog_problem || answers.dog_problem;
@@ -2542,15 +2531,6 @@
 
             // Banner personalisieren
             document.getElementById('dogNameBanner').textContent = dogName;
-            // Sonderfall-Angabe zurückspiegeln (falls vorhanden)
-            try {
-                var rhSn = (localStorage.getItem('specialNotes') || '').trim();
-                if (rhSn) {
-                    if (rhSn.length > 200) rhSn = rhSn.slice(0, 200) + '…';
-                    document.getElementById('rhSpecialNoteText').textContent = rhSn;
-                    document.getElementById('rhSpecialNote').style.display = 'block';
-                }
-            } catch(e){}
             const dogNameTopBannerEl = document.getElementById('dogNameTopBanner');
             if (dogNameTopBannerEl) dogNameTopBannerEl.textContent = dogName;
             // Willkommen-zurück-Band mit aktualisiertem Namen (auch nach Supabase-Load)
@@ -3200,6 +3180,7 @@
                 <button type="button" class="hybrid-klarna-small" onclick="openKlarnaAddress()" aria-label="Später zahlen mit Klarna">
                     <span class="hybrid-klarna-small-text">Später zahlen mit <strong>Klarna.</strong></span>
                 </button>
+                <p style="text-align:center;font-size:12px;color:#6B7280;margin:6px 0 4px;line-height:1.4;">Auch in <strong style="color:#4B5563;">Raten</strong> oder auf <strong style="color:#4B5563;">Rechnung</strong> zahlbar</p>
 
                 <div class="hybrid-divider">oder mit Karte</div>
 
@@ -3855,7 +3836,10 @@ let currentLeadId = null;
         // Merken, dass der Besucher selbst geändert hat -> kein Supabase-Override
         localStorage.setItem('rh_edited', '1');
         // Bestätigung nach dem Neuladen anzeigen
-        try { sessionStorage.setItem('rh_just_updated', '1'); } catch (e) {}
+        try {
+            sessionStorage.setItem('rh_just_updated', '1');
+            sessionStorage.setItem('rh_updated_name', localStorage.getItem('dogName') || '');
+        } catch (e) {}
         location.reload();
     });
 
@@ -3863,8 +3847,12 @@ let currentLeadId = null;
     try {
         if (sessionStorage.getItem('rh_just_updated') === '1') {
             sessionStorage.removeItem('rh_just_updated');
+            var uname = sessionStorage.getItem('rh_updated_name') || '';
+            sessionStorage.removeItem('rh_updated_name');
             var toast = document.getElementById('rhToast');
-            if (toast) {
+            var toastText = document.getElementById('rhToastText');
+            if (toast && toastText) {
+                toastText.textContent = '✓ Übernommen';
                 toast.style.display = 'block';
                 setTimeout(function () { toast.style.display = 'none'; }, 3000);
             }

@@ -2675,7 +2675,7 @@ src="https://www.facebook.com/tr?id=864109602683515&ev=PageView&noscript=1"
                     <div style="width: 18px; height: 18px; background: #00B67A; display: flex; align-items: center; justify-content: center; border-radius: 2px;"><svg viewBox="0 0 24 24" width="11" height="11" fill="white"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
                     <div style="width: 18px; height: 18px; background: #00B67A; display: flex; align-items: center; justify-content: center; border-radius: 2px;"><svg viewBox="0 0 24 24" width="11" height="11" fill="white"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
                 </div>
-                <span style="font-size: 12px; color: var(--text-light);">4.8/5 · 3.447+ Trainings</span>
+                <span style="font-size: 12px; color: var(--text-light);">4.8/5 · 9.552+ Trainings</span>
             </div>
             <p id="miniTestimonialText" style="font-size: 13px; color: #2C2C2E; margin: 0 0 3px 0; font-style: italic;">"Plan kam sofort per E-Mail – nach 2 Wochen zieht Luna nicht mehr!"</p>
             <p id="miniTestimonialAuthor" style="font-size: 11px; color: var(--text-light); margin: 0; font-weight: 600;">– Sandra M.</p>
@@ -4214,17 +4214,8 @@ if (popularBadge) {
         // Ein PATCH mit dem hier lokal gebauten answers-Objekt hat die bisher
         // alle geloescht. Darum: Server-Stand lesen, lokale Werte drauflegen.
         async function ladeServerAnswers(leadId) {
-            // Harte Grenze von 2,5 Sekunden. Dieser Aufruf sitzt direkt vor
-            // dem Checkout — ohne Abbruch wuerde eine lahme Datenbank den
-            // Kunden vor dem Bezahlen warten lassen. Laeuft die Zeit ab,
-            // bleibt die answers-Spalte eben unberuehrt; der Kauf geht
-            // trotzdem durch. Lieber ein fehlendes Flag als ein verlorener
-            // Kauf.
-            const stop = new AbortController();
-            const uhr = setTimeout(function () { stop.abort(); }, 2500);
             try {
                 const r = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + leadId + '&select=answers', {
-                    signal: stop.signal,
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
                         'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
@@ -4234,12 +4225,9 @@ if (popularBadge) {
                 const rows = await r.json();
                 return (rows && rows[0] && rows[0].answers) || {};
             } catch (e) {
-                // null = "konnte nicht lesen" (Netzfehler oder Zeitablauf).
-                // Der Aufrufer laesst die answers-Spalte dann in Ruhe,
-                // statt sie zu ueberschreiben.
+                // null = "konnte nicht lesen". Der Aufrufer laesst die
+                // answers-Spalte dann in Ruhe, statt sie zu ueberschreiben.
                 return null;
-            } finally {
-                clearTimeout(uhr);
             }
         }
 
@@ -4923,28 +4911,11 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         // angezeigt. Der Server rechnet NUR dann mit B, wenn wir das Flag
         // mitschicken (dePriceVariant), Standard bleibt A. Damit kann der
         // abgerechnete Preis nie ueber dem angezeigten liegen.
-        // Preistest DE beendet am 27.09.2026 — dauerhaft Variante A.
-        //
-        // B (je Stufe 10 EUR mehr) hat auf KEINER Stufe getragen. Gemessen
-        // ueber die Mollie-Betraege ab Teststart, Order-Bump eingerechnet:
-        //
-        //   Stufe        A      B     B erreicht   noetig
-        //   4 Wochen     26     16       62 %       75 %
-        //   12 Wochen    29     12       41 %       80 %
-        //   6 Monate     34     20       59 %       86 %
-        //
-        // Umsatz je Lead: rund 10,60 EUR bei A gegen 7,10 EUR bei B.
-        // Der hoehere Schnitt (57,90 statt 46,62) hat den Einbruch bei der
-        // Abschlussquote nicht ansatzweise ausgeglichen.
-        //
-        // Achtung bei einer Wiederholung: ohne den answers-Merge-Fix wird
-        // ab_preis beim Kauf ueberschrieben, dann bleibt nur die Rechnung
-        // ueber die Betraege. Und die Zuteilung faellt bei fehlendem
-        // localStorage auf A zurueck, was A leicht bevorteilt.
-        //
-        // Die B-Tabelle und preisVarianteAnwenden() bleiben stehen, damit
-        // ein spaeterer Test nicht neu gebaut werden muss.
         var AB_PREIS = 'A';
+        try {
+            var _p = localStorage.getItem('abPreis');
+            if (_p === 'A' || _p === 'B') AB_PREIS = _p;
+        } catch (e) {}
 
         var PREIS_B = {
             '1month': { amount: '39', cents: ',99', tag: '\u20ac1,33 pro Tag', price: '39.99',

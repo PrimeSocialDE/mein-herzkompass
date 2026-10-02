@@ -158,10 +158,11 @@
             <button type="submit" class="submit-btn" id="submitBtn">Plan anfordern</button>
         </form>
 
-        <!-- Entwarnung fuer alle: bewusst KEIN A/B. Eine graue Sieben-Wort-Zeile
-             braeuchte bei ~290 Leads/Tag rund vier Monate bis zu einem belastbaren
-             Ergebnis. Bewusst nicht versprochen: "keine Werbung" — die Nurture-Mails
-             gehen an genau dieses Segment, das waere unwahr. -->
+
+        <!-- Entwarnung fuer alle: kein A/B mehr. Eine graue Sieben-Wort-Zeile
+             braeuchte bei ~290 Leads/Tag rund vier Monate bis zu einem
+             belastbaren Ergebnis — nicht messbar, also keinen Testslot wert.
+             Der Slot gehoert ab_notizseite. -->
         <div style="max-width:440px;margin:12px auto 0;text-align:center;font-size:13.5px;color:#6B6B6B;line-height:1.45;">
             (Keine Sorge, du schlie&szlig;t hier nichts ab.)
         </div>
@@ -240,7 +241,7 @@
                 <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
                 <div class="star-box"><svg viewBox="0 0 24 24"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></div>
             </div>
-            <p class="rating-text">4,8 von 5 bei 2.078+ Hunden</p>
+            <p class="rating-text">4,8 von 5 bei 9.552+ Hunden</p>
         </div>
     </div>
 
@@ -370,11 +371,19 @@
                 // A/B "Angst + Haushalt": zwei zusaetzliche Pop-ups auf der
                 // Ladeseite. In Variante A sind die Felder leer.
                 ab_angst: localStorage.getItem('abAngst'),
-                // Preistest DE beendet am 27.09.2026: B hat auf keiner Stufe
-                // getragen, dauerhaft A. Keine Zuteilung mehr, das Feld bleibt
-                // aber gefuellt, damit Auswertungen ueber alte Leads weiter
-                // funktionieren. Details stehen in deinplan2/3.
-                ab_preis: 'A',
+                // Preistest DE: A = bisherige Preise, B = je Stufe 10 EUR mehr.
+                // Hier zugewiesen, damit wir die AUSSPIELUNG kennen und nicht
+                // nur die Kaeufe je Preis (Lehre aus dem Karten-Preistest).
+                ab_preis: (function () {
+                    try {
+                        var v = localStorage.getItem('abPreis');
+                        if (v !== 'A' && v !== 'B') {
+                            v = Math.random() < 0.5 ? 'B' : 'A';
+                            localStorage.setItem('abPreis', v);
+                        }
+                        return v;
+                    } catch (e) { return 'A'; }
+                })(),
                 dog_fears: parseJSON(localStorage.getItem('dogFears')),
                 utm_source: localStorage.getItem('utm_source') || null,
                 utm_medium: localStorage.getItem('utm_medium') || null,
