@@ -36,6 +36,11 @@ const PRODUCT_PRICES: Record<string, number> = {
   // Notfall-Karten: laeuft als Order-Bump im Funnel sehr gut, war im
   // Mitgliederbereich aber gar nicht kaufbar.
   "notfall-karten": 1499,
+  // Anti-Giftkoeder-Handbuch: 20 Uebungen in 4 Stufen, eigener Opus-Generator
+  // (lib/giftkoeder-content.ts) und eigene Landingpage. Teurer als das
+  // Themen-Modul "thema-aufnehmen" (14,99), weil es ein vollstaendiger
+  // Lehrgang ist und kein Mini-Plan.
+  "nichts-vom-boden": 2499,
 };
 
 // Alt-Slugs aus member_upsells. Die Shop-Karte schickt ihren DB-Slug als
@@ -69,6 +74,7 @@ const PRODUCT_NAMES: Record<string, string> = {
   charakterprofil: "Charakterprofil fuer deinen Hund",
   paket: "Komplettpaket fuer deinen Hund",
   "notfall-karten": "Notfall-Karten zum Ausdrucken",
+  "nichts-vom-boden": "Nichts vom Boden — Anti-Giftkoeder-Training",
 };
 
 export async function POST(req: NextRequest) {

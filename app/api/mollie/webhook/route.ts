@@ -1118,6 +1118,38 @@ async function handleUpsellProductPaid(payment: any) {
     });
   }
 
+  // "Nichts vom Boden" (Anti-Giftkoeder, 20 Uebungen) -> eigener Generator.
+  // Opus braucht fuer das Handbuch rund vier Minuten, deshalb laeuft der Aufruf
+  // in after() und die Route dort hat maxDuration 300.
+  if (product === "nichts-vom-boden") {
+    after(async () => {
+      try {
+        const baseUrl =
+          process.env.NEXT_PUBLIC_SITE_URL ||
+          (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+          "https://www.pfoten-plan.de";
+        const r = await fetch(`${baseUrl}/api/giftkoeder/generate`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.WORKER_TOKEN || ""}`,
+          },
+          body: JSON.stringify({
+            leadId: leadData?.id || leadId || "",
+            email,
+            dogName: dogName === "deinen Hund" ? undefined : dogName,
+          }),
+        });
+        const j: any = await r.json().catch(() => ({}));
+        console.log(
+          `[mollie-webhook] giftkoeder/generate ${email}: HTTP ${r.status} ok=${j.ok} skipped=${j.skipped || ""}`
+        );
+      } catch (e: any) {
+        console.error("[mollie-webhook] giftkoeder/generate fehlgeschlagen:", e?.message);
+      }
+    });
+  }
+
   // Notfall-Karten aus dem Modul-Shop -> statisches PDF direkt schicken.
   if (product === "notfall-karten") {
     after(async () => {
