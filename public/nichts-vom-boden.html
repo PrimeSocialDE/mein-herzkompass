@@ -209,7 +209,7 @@
           email: email,
           leadId: leadId,
           dogName: name || hund || 'deinen Hund',
-          returnUrl: location.origin + '/danke-zusatz.html?lead_id=' + encodeURIComponent(leadId)
+          returnUrl: location.origin + '/nichts-vom-boden-danke.html?lead_id=' + encodeURIComponent(leadId) + (name ? '&dog=' + encodeURIComponent(name) : '')
         })
       });
       var j = await res.json();

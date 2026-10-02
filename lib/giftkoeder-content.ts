@@ -56,20 +56,21 @@ const UEBUNGEN: Array<[number, string, string]> = [
 ];
 
 const SYS =
-  "Du bist Ben, ein ruhiger, erfahrener Hundetrainer. Warme, gesprochene DU-Sprache, sehr konkret und praktisch, fuer Laien. Viele Leserinnen sind ueber 50 — kurze Saetze, kein Fachjargon, kein Markdown. KEINE echten Zeilenumbrueche in JSON-Strings. Gueltiges JSON. Antworte NUR mit JSON. SCHREIBWEISE: Der Text fuer den Kunden ist korrektes Deutsch MIT Umlauten und ss-Laut: ä, ö, ü, Ä, Ö, Ü, ß. Niemals ae, oe, ue oder ss als Ersatz schreiben, auch nicht, wenn die Anweisung oben so geschrieben ist.";
+  "Du bist Ben, ein ruhiger, erfahrener Hundetrainer. Warme, gesprochene DU-Sprache, sehr konkret und praktisch, für Laien. Viele Leserinnen sind über 50 — kurze Sätze, kein Fachjargon, kein Markdown. KEINE echten Zeilenumbrüche in JSON-Strings. Gültiges JSON. Antworte NUR mit JSON. SCHREIBWEISE: Rechtschreibung mit echten Umlauten und ß (ä, ö, ü, Ä, Ö, Ü, ß). Schreib niemals ae, oe, ue oder ss als Ersatz — also Handfläche statt Handflaeche, regelmäßig statt regelmaessig, für statt fuer, Übung statt Uebung. ANFÜHRUNGSZEICHEN: innerhalb der Texte niemals ein gerades \" verwenden, sondern immer die deutschen Zeichen „ und “ — ein gerades Anführungszeichen zerstört das JSON. Auch keine Backslashes.";
 
 // Ein Uebungs-Geruest als JSON-Vorlage. Opus fuellt die Felder, erfindet aber
 // weder Titel noch Reihenfolge.
 function uebungsVorlage([n, stufe, titel]: [number, string, string]): string {
-  return `{"key":"uebung","nummer":${n},"stufe":"${stufe}","title":"${titel}","intro":"1-2 Saetze warum diese Uebung jetzt dran ist","vorbereitung":"1-2 Saetze: was du brauchst und wo","aufbau":["5-7 konkrete Schritte, jeder einzeln ausfuehrbar, mit Handbewegung und Zeitangabe"],"wenn_nicht":"2-3 Saetze: was tun, wenn er nicht reagiert — sanft zurueck eine Stufe","wiederholung":"konkret: wie viele Wiederholungen je Einheit, wie oft am Tag, ueber wie viele Tage","erfolg":"1 Satz: woran du merkst, dass es sitzt","fehler":"1 Satz: der haeufigste Fehler dabei"}`;
+  return `{"key":"uebung","nummer":${n},"stufe":"${stufe}","title":"${titel}","intro":"1-2 Sätze, warum diese Übung jetzt dran ist","vorbereitung":"1-2 Sätze: was du brauchst und wo","aufbau":["5-7 konkrete Schritte, jeder einzeln ausführbar, mit Handbewegung und Zeitangabe"],"wenn_nicht":"2-3 Sätze: was tun, wenn er nicht reagiert — sanft eine Stufe zurück","wiederholung":"konkret: wie viele Wiederholungen je Einheit, wie oft am Tag, über wie viele Tage","erfolg":"1 Satz: woran du merkst, dass es sitzt","fehler":"1 Satz: der häufigste Fehler dabei"}`;
 }
 
 const LEITLINIEN = `LEITLINIEN:
-- Jede Uebung ist ein echtes Schritt-fuer-Schritt-Tutorial. Der Leser soll sie heute Nachmittag machen koennen, ohne Vorwissen.
-- Immer konkret HINFUEHREN: wo steht man, was macht die Hand, was sagt man, wann belohnt man.
-- Realistische Erwartung: nicht beim ersten Mal, konkrete Zahlen ueber Tage.
-- Kein Zwang, kein Schimpfen, kein Ruck an der Leine. Mit einem Erfolg aufhoeren.
-- Herbst ausdruecklich mitdenken: Laub, Fallobst, feuchtes Gebuesch, frueh dunkel.`;
+- Jede Übung ist ein echtes Schritt-für-Schritt-Tutorial. Der Leser soll sie heute Nachmittag machen können, ohne Vorwissen.
+- Immer konkret hinführen: wo steht man, was macht die Hand, was sagt man, wann belohnt man.
+- Realistische Erwartung: nicht beim ersten Mal, konkrete Zahlen über Tage.
+- Kein Zwang, kein Schimpfen, kein Ruck an der Leine. Mit einem Erfolg aufhören.
+- Herbst ausdrücklich mitdenken: Laub, Fallobst, feuchtes Gebüsch, früh dunkel.
+- Schreibweise: echte Umlaute und ß, niemals ae/oe/ue/ss als Ersatz.`;
 
 // Das Handbuch entsteht in zwei Haelften, die PARALLEL laufen.
 //
@@ -81,9 +82,9 @@ const LEITLINIEN = `LEITLINIEN:
 // 14-Tage-Plan in Teil 2 die richtigen Nummern nennt.
 function buildUserPrompt(teil: 1 | 2, dog: string, breed: string, age: string, problem: string): string {
   const alle = UEBUNGEN.map(([n, , titel]) => `${n}. ${titel}`).join("; ");
-  const kopf = `Erstelle ein sehr ausfuehrliches Praxis-Handbuch "Nichts vom Boden — Anti-Giftkoeder-Training" fuer ${dog} (${breed}, ${age}). Bekanntes Thema im Alltag: ${problem}.
+  const kopf = `Erstelle ein sehr ausführliches Praxis-Handbuch "Nichts vom Boden — Anti-Giftköder-Training" für ${dog} (${breed}, ${age}). Bekanntes Thema im Alltag: ${problem}.
 
-Das ganze Handbuch hat 20 Uebungen in vier Stufen: ${alle}.
+Das ganze Handbuch hat 20 Übungen in vier Stufen: ${alle}.
 Du schreibst jetzt NUR Teil ${teil} von 2.
 
 ${LEITLINIEN}
@@ -95,9 +96,9 @@ Gib NUR JSON, jeder Wert eine Zeile:`;
     const liste = UEBUNGEN.slice(0, 10).map(uebungsVorlage).join(",\n ");
     return `${kopf}
 {"dogName":"${dog}","subtitle":"...","sections":[
- {"key":"warum","title":"Warum Hunde alles aufnehmen","body":"4-5 Saetze, erklaert ohne Schuldzuweisung"},
- {"key":"sicherheit","title":"Zuerst: die Sicherheitsregeln","body":"2-3 Saetze","points":["5 klare Regeln fuer unterwegs"]},
- {"key":"methode","title":"So lernt ${dog} — dein Werkzeugkasten","body":"2-3 Saetze","bausteine":[{"name":"Tauschen statt wegnehmen","text":"..."},{"name":"Das Ja-Wort (Markern)","text":"..."},{"name":"Die Schleppleine","text":"..."},{"name":"Kleine Schritte","text":"..."},{"name":"Timing","text":"..."},{"name":"Mit Erfolg aufhören","text":"..."}]},
+ {"key":"warum","title":"Warum Hunde alles aufnehmen","body":"4-5 Sätze, erklärt ohne Schuldzuweisung"},
+ {"key":"sicherheit","title":"Zuerst: die Sicherheitsregeln","body":"2-3 Sätze","points":["5 klare Regeln für unterwegs"]},
+ {"key":"methode","title":"So lernt ${dog} — dein Werkzeugkasten","body":"2-3 Sätze","bausteine":[{"name":"Tauschen statt wegnehmen","text":"..."},{"name":"Das Ja-Wort (Markern)","text":"..."},{"name":"Die Schleppleine","text":"..."},{"name":"Kleine Schritte","text":"..."},{"name":"Timing","text":"..."},{"name":"Mit Erfolg aufhören","text":"..."}]},
  ${liste}
 ]}`;
   }
@@ -106,7 +107,7 @@ Gib NUR JSON, jeder Wert eine Zeile:`;
   return `${kopf}
 {"sections":[
  ${liste},
- {"key":"notfall","title":"Notfall: Verdacht auf Giftköder","body":"3-4 Saetze. Sag ausdruecklich, dass dieses Training vorbeugt und keinen Tierarzt ersetzt.","anzeichen":["6 konkrete Anzeichen einer Vergiftung"],"schritte":["5 Schritte in der richtigen Reihenfolge, Tierarzt zuerst"]},
+ {"key":"notfall","title":"Notfall: Verdacht auf Giftköder","body":"3-4 Sätze. Sag ausdrücklich, dass dieses Training vorbeugt und keinen Tierarzt ersetzt.","anzeichen":["6 konkrete Anzeichen einer Vergiftung"],"schritte":["5 Schritte in der richtigen Reihenfolge, Tierarzt zuerst"]},
  {"key":"plan","title":"Dein 14-Tage-Startplan","days":[{"tag":"Tag 1-2","fokus":"...","uebungen":"Nummern"},{"tag":"Tag 3-4","fokus":"...","uebungen":"..."},{"tag":"Tag 5-7","fokus":"...","uebungen":"..."},{"tag":"Tag 8-10","fokus":"...","uebungen":"..."},{"tag":"Tag 11-14","fokus":"...","uebungen":"..."}],"check":["5 Ja/Nein-Checks am Ende"]},
  {"key":"wenn","title":"Was tun, wenn…","cases":[{"fall":"${dog} frisst schneller als du reagieren kannst","tun":"..."},{"fall":"Drinnen klappt es, draußen nicht","tun":"..."},{"fall":"Er hört nur, wenn Futter sichtbar ist","tun":"..."},{"fall":"Rückschritt nach guter Woche","tun":"..."},{"fall":"Er knurrt, wenn du an sein Maul willst","tun":"..."}]}
 ]}`;
@@ -122,7 +123,19 @@ function parseAntwort(text: string): any {
     /("(?:wenn_nicht|wiederholung|erfolg|fehler|intro|vorbereitung|tun|body|text|subtitle|title|fokus|uebungen)"\s*:\s*"[^"]*")\s*\]/g,
     "$1"
   );
-  return JSON.parse(raw);
+  try {
+    return JSON.parse(raw);
+  } catch (err: any) {
+    // Die Stelle mit ins Log: fast immer ein gerades Anfuehrungszeichen mitten
+    // im Text. Ohne den Ausschnitt sucht man im naechsten Fall wieder blind.
+    const pos = Number(String(err?.message || "").match(/position (\d+)/)?.[1] || 0);
+    console.error(
+      "[giftkoeder-content] JSON kaputt:",
+      err?.message,
+      "…" + raw.slice(Math.max(0, pos - 90), pos + 90) + "…"
+    );
+    throw err;
+  }
 }
 
 export async function generateGiftkoederContent(input: {
@@ -140,15 +153,27 @@ export async function generateGiftkoederContent(input: {
   const problem = (input.problem || "nimmt Sachen vom Boden auf").trim();
 
   const anthropic = new Anthropic({ apiKey });
+  // Ein zweiter Versuch je Haelfte: wenn das Modell einmal ein Zeichen setzt,
+  // das das JSON zerlegt, haengt sonst die ganze Auslieferung eines Kaufs daran.
+  // Der zweite Anlauf wuerfelt neu und geht erfahrungsgemaess durch.
   const haelfte = async (teil: 1 | 2) => {
-    const stream = anthropic.messages.stream({
-      model: "claude-opus-4-8",
-      max_tokens: 20000,
-      system: SYS,
-      messages: [{ role: "user", content: buildUserPrompt(teil, dog, breed, age, problem) }],
-    });
-    const msg = await stream.finalMessage();
-    return parseAntwort(msg.content.map((b: any) => (b.type === "text" ? b.text : "")).join(""));
+    let letzterFehler: any = null;
+    for (let versuch = 1; versuch <= 2; versuch++) {
+      try {
+        const stream = anthropic.messages.stream({
+          model: "claude-opus-4-8",
+          max_tokens: 20000,
+          system: SYS,
+          messages: [{ role: "user", content: buildUserPrompt(teil, dog, breed, age, problem) }],
+        });
+        const msg = await stream.finalMessage();
+        return parseAntwort(msg.content.map((b: any) => (b.type === "text" ? b.text : "")).join(""));
+      } catch (e: any) {
+        letzterFehler = e;
+        console.warn(`[giftkoeder-content] Teil ${teil}, Versuch ${versuch} fehlgeschlagen:`, e?.message);
+      }
+    }
+    throw letzterFehler;
   };
 
   const [eins, zwei] = await Promise.all([haelfte(1), haelfte(2)]);
