@@ -617,20 +617,33 @@
         const customProblem = localStorage.getItem('customProblem') || '';
         const customProblemKey = localStorage.getItem('customProblemKey') || '';
 
-        // ── A/B-Test "Jobs to be done" (Start 10.09.2026) ─────────────────
-        // A = bisherige Seite: generische Feature-Häkchen + reine Auswahl-Tags.
-        // B = Job-Häkchen (was im Alltag danach anders ist) + Anmerkungen,
-        //     was jede Angabe konkret für den Plan bedeutet.
-        // Verteilung: 40 % B (neu) / 60 % A (Kontrolle) — vorsichtig anfahren,
-        // die bestehende Seite bleibt die Mehrheits-Variante.
-        // Vorschau erzwingen: ?jtbd=A bzw. ?jtbd=B.
-        // Die Variante wandert über localStorage['ab_jtbd'] in answers
-        // (kurz-schritt11 + Checkout) — Messung wie beim bestehenden
-        // ab_test_trust, ohne den laufenden Preis-Test A2/B2 zu stören.
+        // ── A/B-Test "Jobs to be done" — BEENDET 02.10.2026, A gewinnt ────
+        // A = Feature-Häkchen + reine Auswahl-Tags (die bisherige Seite).
+        // B = Job-Häkchen + Anmerkungen, was jede Angabe für den Plan bedeutet.
+        //
+        // Ergebnis nach 4.517 Leads (10.09. bis 02.10.):
+        //
+        //                        Leads   Anteil   Käufe  Kaufrate      AOV
+        //   A Feature-Häkchen     2814    62,3%     474    16,84%   43,62€
+        //   B Job-Häkchen         1703    37,7%     301    17,67%   44,21€
+        //
+        // Die Verteilung war per Code 60 A / 40 B. Angekommen sind 37,70 % B
+        // statt der erwarteten 40 % — z = -3,15, also belastbar: Wer B sieht,
+        // gibt die E-Mail 9,2 % seltener ab. Die höhere Kaufrate von B
+        // (+4,9 %) ist mit z = +0,71 Rauschen und gleicht das nicht aus.
+        //
+        // Je 1.000 Besucher der Seite:  A = 28,3 Käufe / 1.234 €
+        //                               B = 27,0 Käufe / 1.192 €
+        // B liegt 4,7 % unter A bei den Käufen und 3,5 % beim Umsatz.
+        //
+        // Lehre: Diese Seite verträgt keine zusätzliche Erklärung. Wer hier
+        // steht, will weiter, nicht lesen.
+        //
+        // Deshalb bekommen jetzt alle A. Die alte Variante bleibt zur
+        // Ansicht erreichbar über ?jtbd=B.
         const AB_JTBD = (function () {
             const forced = (new URLSearchParams(location.search).get('jtbd') || '').toUpperCase();
-            let v = (forced === 'A' || forced === 'B') ? forced : (localStorage.getItem('ab_jtbd') || '');
-            if (v !== 'A' && v !== 'B') v = Math.random() < 0.40 ? 'B' : 'A';
+            const v = (forced === 'A' || forced === 'B') ? forced : 'A';
             localStorage.setItem('ab_jtbd', v);
             return v;
         })();
