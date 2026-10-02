@@ -160,7 +160,9 @@ export async function buildGiftkoederPDF(
       st.p.drawText(ln, { x: MARGIN + 14, y: ty, size: 10.5, font: F.regular, color: MUT });
       ty -= 14;
     }
-    st.y = top - bh - 8;
+    // 16 statt 8: die Grossbuchstaben der naechsten Zeile ragen nach oben und
+    // sassen sonst auf dem unteren Rahmen der Box.
+    st.y = top - bh - 16;
   };
   const numberedSteps = (steps: string[]) => {
     for (let i = 0; i < steps.length; i++) {
@@ -317,7 +319,7 @@ export async function buildGiftkoederPDF(
     rrect(st.p, MARGIN, st.y - kopfH, CONTENT_W, kopfH, 8, RED_BG, RED_BD);
     st.p.drawRectangle({ x: MARGIN, y: st.y - kopfH, width: 3.5, height: kopfH, color: RED });
     st.p.drawText("IM NOTFALL - BITTE JETZT LESEN, NICHT ERST DANN", { x: MARGIN + 14, y: st.y - 22, size: 10.5, font: F.bold, color: RED });
-    st.y -= kopfH + 16;
+    st.y -= kopfH + 28;
     heading(S(notfall.title));
     if (notfall.body) lines(notfall.body);
     gap(8);
@@ -347,13 +349,21 @@ export async function buildGiftkoederPDF(
     ensure(60);
     eyebrow("Dein Start");
     heading(S(plan.title));
-    for (const d of plan.days || []) {
+    // Eine gemeinsame Spaltenbreite fuer alle Tage: sonst ruecken die Texte je
+    // nach Laenge des Tag-Labels unterschiedlich weit ein und die linke Kante
+    // franst aus.
+    const tage = (plan.days || []) as any[];
+    const labelW = Math.max(
+      54,
+      ...tage.map((d: any) => F.bold.widthOfTextAtSize(S(d.tag), 10) + 14)
+    );
+    for (const d of tage) {
       const text = S(d.fokus) + (d.uebungen ? "  (Übungen " + S(d.uebungen) + ")" : "");
-      const bl = wrap(text, F.regular, 10.5, CONTENT_W - 110);
+      const bl = wrap(text, F.regular, 10.5, CONTENT_W - labelW - 24);
       const h = Math.max(22, bl.length * 14 + 8);
       ensure(h);
       const top = st.y;
-      const lw = F.bold.widthOfTextAtSize(S(d.tag), 10) + 14;
+      const lw = labelW;
       rrect(st.p, MARGIN, top - 16, lw, 18, 4, BROWN);
       st.p.drawText(S(d.tag), { x: MARGIN + 7, y: top - 12, size: 10, font: F.bold, color: WHITE });
       let ty = top - 3;

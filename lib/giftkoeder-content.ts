@@ -38,25 +38,25 @@ const UEBUNGEN: Array<[number, string, string]> = [
   [3,  "Stufe 1 — Die Grundlage, drinnen", "AUS an der offenen Hand"],
   [4,  "Stufe 1 — Die Grundlage, drinnen", "AUS am abgedeckten Leckerli auf dem Boden"],
   [5,  "Stufe 1 — Die Grundlage, drinnen", "AUS am offen liegenden Leckerli"],
-  [6,  "Stufe 2 — Vom Flur in den Garten", "Das Ja-Wort fuer Nicht-Anruehren"],
+  [6,  "Stufe 2 — Vom Flur in den Garten", "Das Ja-Wort für Nicht-Anrühren"],
   [7,  "Stufe 2 — Vom Flur in den Garten", "Blickkontakt statt Boden: der Schau-Wechsel"],
   [8,  "Stufe 2 — Vom Flur in den Garten", "PFUI als klares Stopp-Signal aufbauen"],
-  [9,  "Stufe 2 — Vom Flur in den Garten", "An einer praeparierten Stelle vorbeigehen"],
+  [9,  "Stufe 2 — Vom Flur in den Garten", "An einer präparierten Stelle vorbeigehen"],
   [10, "Stufe 2 — Vom Flur in den Garten", "Anzeigen statt fressen: finden und melden"],
-  [11, "Stufe 3 — Draussen, echte Reize",  "Der Laubhaufen im Herbst"],
-  [12, "Stufe 3 — Draussen, echte Reize",  "Gebuesch und Wegrand an der Schleppleine"],
-  [13, "Stufe 3 — Draussen, echte Reize",  "Die Hotspots: Muelleimer, Parkbank, Grillplatz"],
-  [14, "Stufe 3 — Draussen, echte Reize",  "Echte Essensreste auf dem Gehweg"],
-  [15, "Stufe 3 — Draussen, echte Reize",  "Ablenkung durch andere Hunde und Menschen"],
+  [11, "Stufe 3 — Draußen, echte Reize",  "Der Laubhaufen im Herbst"],
+  [12, "Stufe 3 — Draußen, echte Reize",  "Gebüsch und Wegrand an der Schleppleine"],
+  [13, "Stufe 3 — Draußen, echte Reize",  "Die Hotspots: Mülleimer, Parkbank, Grillplatz"],
+  [14, "Stufe 3 — Draußen, echte Reize",  "Echte Essensreste auf dem Gehweg"],
+  [15, "Stufe 3 — Draußen, echte Reize",  "Ablenkung durch andere Hunde und Menschen"],
   [16, "Stufe 4 — Notfall und Alltag",     "Der Notfall-Abbruch, wenn es schnell gehen muss"],
   [17, "Stufe 4 — Notfall und Alltag",     "Er hat schon etwas im Maul — was jetzt"],
-  [18, "Stufe 4 — Notfall und Alltag",     "Maulkorb als Bruecke, ohne Drama aufgebaut"],
+  [18, "Stufe 4 — Notfall und Alltag",     "Maulkorb als Brücke, ohne Drama aufgebaut"],
   [19, "Stufe 4 — Notfall und Alltag",     "Die erste Runde ohne Leine in sicherer Zone"],
   [20, "Stufe 4 — Notfall und Alltag",     "Wartung: damit es in sechs Monaten noch sitzt"],
 ];
 
 const SYS =
-  "Du bist Ben, ein ruhiger, erfahrener Hundetrainer. Warme, gesprochene DU-Sprache, sehr konkret und praktisch, fuer Laien. Viele Leserinnen sind ueber 50 — kurze Saetze, kein Fachjargon, kein Markdown. KEINE echten Zeilenumbrueche in JSON-Strings. Gueltiges JSON. Antworte NUR mit JSON.";
+  "Du bist Ben, ein ruhiger, erfahrener Hundetrainer. Warme, gesprochene DU-Sprache, sehr konkret und praktisch, fuer Laien. Viele Leserinnen sind ueber 50 — kurze Saetze, kein Fachjargon, kein Markdown. KEINE echten Zeilenumbrueche in JSON-Strings. Gueltiges JSON. Antworte NUR mit JSON. SCHREIBWEISE: Der Text fuer den Kunden ist korrektes Deutsch MIT Umlauten und ss-Laut: ä, ö, ü, Ä, Ö, Ü, ß. Niemals ae, oe, ue oder ss als Ersatz schreiben, auch nicht, wenn die Anweisung oben so geschrieben ist.";
 
 // Ein Uebungs-Geruest als JSON-Vorlage. Opus fuellt die Felder, erfindet aber
 // weder Titel noch Reihenfolge.
@@ -97,7 +97,7 @@ Gib NUR JSON, jeder Wert eine Zeile:`;
 {"dogName":"${dog}","subtitle":"...","sections":[
  {"key":"warum","title":"Warum Hunde alles aufnehmen","body":"4-5 Saetze, erklaert ohne Schuldzuweisung"},
  {"key":"sicherheit","title":"Zuerst: die Sicherheitsregeln","body":"2-3 Saetze","points":["5 klare Regeln fuer unterwegs"]},
- {"key":"methode","title":"So lernt ${dog} — dein Werkzeugkasten","body":"2-3 Saetze","bausteine":[{"name":"Tauschen statt wegnehmen","text":"..."},{"name":"Das Ja-Wort (Markern)","text":"..."},{"name":"Die Schleppleine","text":"..."},{"name":"Kleine Schritte","text":"..."},{"name":"Timing","text":"..."},{"name":"Mit Erfolg aufhoeren","text":"..."}]},
+ {"key":"methode","title":"So lernt ${dog} — dein Werkzeugkasten","body":"2-3 Saetze","bausteine":[{"name":"Tauschen statt wegnehmen","text":"..."},{"name":"Das Ja-Wort (Markern)","text":"..."},{"name":"Die Schleppleine","text":"..."},{"name":"Kleine Schritte","text":"..."},{"name":"Timing","text":"..."},{"name":"Mit Erfolg aufhören","text":"..."}]},
  ${liste}
 ]}`;
   }
@@ -106,9 +106,9 @@ Gib NUR JSON, jeder Wert eine Zeile:`;
   return `${kopf}
 {"sections":[
  ${liste},
- {"key":"notfall","title":"Notfall: Verdacht auf Giftkoeder","body":"3-4 Saetze. Sag ausdruecklich, dass dieses Training vorbeugt und keinen Tierarzt ersetzt.","anzeichen":["6 konkrete Anzeichen einer Vergiftung"],"schritte":["5 Schritte in der richtigen Reihenfolge, Tierarzt zuerst"]},
+ {"key":"notfall","title":"Notfall: Verdacht auf Giftköder","body":"3-4 Saetze. Sag ausdruecklich, dass dieses Training vorbeugt und keinen Tierarzt ersetzt.","anzeichen":["6 konkrete Anzeichen einer Vergiftung"],"schritte":["5 Schritte in der richtigen Reihenfolge, Tierarzt zuerst"]},
  {"key":"plan","title":"Dein 14-Tage-Startplan","days":[{"tag":"Tag 1-2","fokus":"...","uebungen":"Nummern"},{"tag":"Tag 3-4","fokus":"...","uebungen":"..."},{"tag":"Tag 5-7","fokus":"...","uebungen":"..."},{"tag":"Tag 8-10","fokus":"...","uebungen":"..."},{"tag":"Tag 11-14","fokus":"...","uebungen":"..."}],"check":["5 Ja/Nein-Checks am Ende"]},
- {"key":"wenn","title":"Was tun, wenn…","cases":[{"fall":"${dog} frisst schneller als du reagieren kannst","tun":"..."},{"fall":"Drinnen klappt es, draussen nicht","tun":"..."},{"fall":"Er hoert nur, wenn Futter sichtbar ist","tun":"..."},{"fall":"Rueckschritt nach guter Woche","tun":"..."},{"fall":"Er knurrt, wenn du an sein Maul willst","tun":"..."}]}
+ {"key":"wenn","title":"Was tun, wenn…","cases":[{"fall":"${dog} frisst schneller als du reagieren kannst","tun":"..."},{"fall":"Drinnen klappt es, draußen nicht","tun":"..."},{"fall":"Er hört nur, wenn Futter sichtbar ist","tun":"..."},{"fall":"Rückschritt nach guter Woche","tun":"..."},{"fall":"Er knurrt, wenn du an sein Maul willst","tun":"..."}]}
 ]}`;
 }
 
@@ -160,7 +160,7 @@ export async function generateGiftkoederContent(input: {
 
   return {
     dogName: eins?.dogName || dog,
-    subtitle: eins?.subtitle || "Vom Kuechentisch bis zum Laubhaufen - Schritt fuer Schritt",
+    subtitle: eins?.subtitle || "Vom Küchentisch bis zum Laubhaufen — Schritt für Schritt",
     sections,
   };
 }
