@@ -186,10 +186,11 @@ export async function buildGiftkoederPDF(
     ensure(size + 34);
     let s = size;
     while (F.bold.widthOfTextAtSize(S(title), s) > st.w && s > 15) s -= 1;
-    st.p.drawText(S(title), { x: st.x, y: st.y, size: s, font: F.bold, color: DARK_BROWN });
+    const basis = st.y - s;
+    st.p.drawText(S(title), { x: st.x, y: basis, size: s, font: F.bold, color: DARK_BROWN });
     const underlineW = Math.min(220, F.bold.widthOfTextAtSize(S(title), s) * 0.45);
-    st.p.drawRectangle({ x: st.x, y: st.y - 10, width: underlineW, height: 2, color: GOLD });
-    st.y -= s + 22;
+    st.p.drawRectangle({ x: st.x, y: basis - 10, width: underlineW, height: 2, color: GOLD });
+    st.y = basis - 20;
   };
 
   const absatz = (
@@ -200,9 +201,12 @@ export async function buildGiftkoederPDF(
     const font = o.font ?? F.regular;
     const color = o.color ?? TEXT_DARK;
     const lineGap = size + 6;
+    // st.y ist die Oberkante der naechsten Zeile — dasselbe Modell wie bei
+    // `zeile`. Vorher war es mal die Grundlinie, mal die Oberkante, und beim
+    // Mischen beider Bausteine lagen Titel und Text uebereinander.
     for (const ln of wrap(text, font, size, o.width ?? st.w)) {
       ensure(lineGap);
-      st.p.drawText(ln, { x: st.x, y: st.y, size, font, color });
+      st.p.drawText(ln, { x: st.x, y: st.y - size, size, font, color });
       st.y -= lineGap;
     }
     st.y -= o.gapAfter ?? 8;
@@ -234,85 +238,84 @@ export async function buildGiftkoederPDF(
     st.y -= h + gapBelow;
   };
 
-  const pfeilPunkt = (text: string, size = 12.5) => {
-    const lineGap = size + 5;
-    const arrowW = F.bold.widthOfTextAtSize("->", size);
-    const lines = wrap(text, F.regular, size, st.w - (arrowW + 10));
-    ensure(lines.length * lineGap + 4);
-    st.p.drawText("->", { x: st.x, y: st.y, size, font: F.bold, color: GOLD_DARK });
-    let ty = st.y;
+  // Eine Zeile mit Icon — EIN Bausatz fuer Schritte, Haken, Warnungen und
+  // Pfeile. Zwei Regeln halten die Seite ruhig:
+  //   1. Nichts wird oberhalb von st.y gezeichnet. Vorher ragte der Nummern-
+  //      kreis nach oben raus und lag auf der Pill darueber.
+  //   2. Alle Icons teilen sich dieselbe Textspalte (ZEILE_EINZUG), egal ob
+  //      Kreis, Haken oder Pfote — dadurch steht jede Zeile auf derselben Kante.
+  const ZEILE_EINZUG = 26;
+  const zeile = (
+    icon: { art: "nummer"; n: number } | { art: "haken" | "warnung" | "pfote" | "pfeil" },
+    text: string,
+    o: { size?: number; gapAfter?: number; color?: any; font?: PDFFont } = {}
+  ) => {
+    const size = o.size ?? 12.5;
+    const font = o.font ?? F.regular;
+    const lineGap = size + 6;
+    const lines = wrap(text, font, size, st.w - ZEILE_EINZUG);
+    const gapAfter = o.gapAfter ?? 8;
+    ensure(lines.length * lineGap + gapAfter);
+
+    const oben = st.y;              // obere Kante der Zeile
+    const basis = oben - size;      // Grundlinie der ersten Textzeile
+    const mitte = basis + size * 0.33;
+
+    if (icon.art === "nummer") {
+      const r = size * 0.68;        // Kreis genau so hoch wie die Zeile
+      const cx = st.x + r + 1;
+      st.p.drawCircle({ x: cx, y: mitte, size: r, color: GOLD });
+      const numSize = size * 0.82;
+      const nw = F.bold.widthOfTextAtSize(String(icon.n), numSize);
+      st.p.drawText(String(icon.n), {
+        x: cx - nw / 2,
+        y: mitte - numSize * 0.35,
+        size: numSize,
+        font: F.bold,
+        color: WHITE,
+      });
+    } else if (icon.art === "haken") {
+      const cx = st.x + 7;
+      const k = size / 12.5;
+      st.p.drawLine({ start: { x: cx - 4 * k, y: mitte - k }, end: { x: cx - k, y: mitte - 5 * k }, thickness: 2.1, color: PILL_AC_GREEN });
+      st.p.drawLine({ start: { x: cx - k, y: mitte - 5 * k }, end: { x: cx + 6 * k, y: mitte + 5 * k }, thickness: 2.1, color: PILL_AC_GREEN });
+    } else if (icon.art === "warnung") {
+      const cx = st.x + 7;
+      const tri = size * 0.52;
+      st.p.drawSvgPath(`M 0 -${tri} L -${tri} ${tri * 0.6} L ${tri} ${tri * 0.6} Z`, {
+        x: cx,
+        y: mitte + tri * 0.4,
+        color: WARN_RED,
+        borderColor: WARN_RED,
+        borderWidth: 0.5,
+      });
+      st.p.drawText("!", { x: cx - 1.3, y: mitte - tri * 0.5, size: size * 0.7, font: F.regular, color: WHITE });
+    } else if (icon.art === "pfote") {
+      drawPaw(st.p, st.x + 7, mitte - 1, size * 0.037, GOLD);
+    } else {
+      st.p.drawText("->", { x: st.x, y: basis, size, font: F.bold, color: GOLD_DARK });
+    }
+
+    let ty = basis;
     for (const ln of lines) {
-      st.p.drawText(ln, { x: st.x + arrowW + 10, y: ty, size, font: F.regular, color: TEXT_DARK });
+      st.p.drawText(ln, { x: st.x + ZEILE_EINZUG, y: ty, size, font, color: o.color ?? TEXT_DARK });
       ty -= lineGap;
     }
-    st.y = ty - 4;
+    st.y = oben - lines.length * lineGap - gapAfter;
   };
 
-  const nummerSchritt = (n: number, text: string, size = 12.5) => {
-    const lineGap = size + 5;
-    const r = 11;
-    const lines = wrap(text, F.regular, size, st.w - (r * 2 + 12));
-    ensure(Math.max(lines.length * lineGap, r * 2 + 4) + 8);
-    const cx = st.x + r;
-    const cy = st.y + size * 0.32; // Kreismitte auf die erste Textzeile
-    st.p.drawCircle({ x: cx, y: cy, size: r, color: GOLD });
-    const num = String(n);
-    const numSize = 12;
-    const nw = F.bold.widthOfTextAtSize(num, numSize);
-    st.p.drawText(num, { x: cx - nw / 2, y: cy - numSize * 0.34, size: numSize, font: F.bold, color: WHITE });
-    let ty = st.y;
-    for (const ln of lines) {
-      st.p.drawText(ln, { x: st.x + r * 2 + 12, y: ty, size, font: F.regular, color: TEXT_DARK });
-      ty -= lineGap;
-    }
-    st.y = ty - 8;
-  };
-
-  const hakenPunkt = (text: string, size = 12.5) => {
-    const lineGap = size + 5;
-    const lines = wrap(text, F.regular, size, st.w - 26);
-    ensure(lines.length * lineGap + 6);
-    const cx = st.x + 5;
-    const cy = st.y + size * 0.32;
-    st.p.drawLine({ start: { x: cx - 4, y: cy - 1 }, end: { x: cx - 1, y: cy - 5 }, thickness: 2.2, color: GOLD_DARK });
-    st.p.drawLine({ start: { x: cx - 1, y: cy - 5 }, end: { x: cx + 6, y: cy + 5 }, thickness: 2.2, color: GOLD_DARK });
-    let ty = st.y;
-    for (const ln of lines) {
-      st.p.drawText(ln, { x: st.x + 24, y: ty, size, font: F.regular, color: TEXT_DARK });
-      ty -= lineGap;
-    }
-    st.y = ty - 5;
-  };
-
-  const warnPunkt = (text: string, size = 12.5) => {
-    const lineGap = size + 5;
-    const lines = wrap(text, F.regular, size, st.w - 26);
-    ensure(lines.length * lineGap + 6);
-    const cx = st.x + 7;
-    const cy = st.y + size * 0.32;
-    const tri = 7;
-    st.p.drawSvgPath(`M 0 -${tri} L -${tri} ${tri * 0.6} L ${tri} ${tri * 0.6} Z`, {
-      x: cx,
-      y: cy + tri * 0.4,
-      color: WARN_RED,
-      borderColor: WARN_RED,
-      borderWidth: 0.5,
-    });
-    st.p.drawText("!", { x: cx - 1.5, y: cy - tri * 0.45, size: 9, font: F.regular, color: WHITE });
-    let ty = st.y;
-    for (const ln of lines) {
-      st.p.drawText(ln, { x: st.x + 24, y: ty, size, font: F.regular, color: TEXT_DARK });
-      ty -= lineGap;
-    }
-    st.y = ty - 5;
-  };
+  const pfeilPunkt = (text: string, size = 12.5) => zeile({ art: "pfeil" }, text, { size, gapAfter: 6 });
+  const nummerSchritt = (n: number, text: string, size = 12.5, gapAfter = 7) =>
+    zeile({ art: "nummer", n }, text, { size, gapAfter });
+  const hakenPunkt = (text: string, size = 12.5) => zeile({ art: "haken" }, text, { size, gapAfter: 6 });
+  const warnPunkt = (text: string, size = 12.5) => zeile({ art: "warnung" }, text, { size, gapAfter: 6 });
 
   // Kleine Zwischenueberschrift (ohne Pill), z.B. Uebungstitel
   const unterTitel = (text: string, size = 17) => {
     const lines = wrap(text, F.bold, size, st.w);
     ensure(lines.length * (size + 6) + 10);
     for (const ln of lines) {
-      st.p.drawText(ln, { x: st.x, y: st.y, size, font: F.bold, color: DARK_BROWN });
+      st.p.drawText(ln, { x: st.x, y: st.y - size, size, font: F.bold, color: DARK_BROWN });
       st.y -= size + 6;
     }
     st.y -= 8;
@@ -327,18 +330,21 @@ export async function buildGiftkoederPDF(
     const ersteZeile = wrap(text, F.regular, size, breite - labelW).slice(0, 1)[0] || "";
     const rest = S(text).slice(ersteZeile.length).trim();
     ensure(lg * 2);
-    st.p.drawText(S(label), { x: st.x, y: st.y, size, font: F.bold, color: DARK_BROWN });
-    st.p.drawText(ersteZeile, { x: st.x + labelW, y: st.y, size, font: F.regular, color: TEXT_DARK });
+    st.p.drawText(S(label), { x: st.x, y: st.y - size, size, font: F.bold, color: DARK_BROWN });
+    st.p.drawText(ersteZeile, { x: st.x + labelW, y: st.y - size, size, font: F.regular, color: TEXT_DARK });
     st.y -= lg;
     for (const ln of wrap(rest, F.regular, size, breite)) {
       ensure(lg);
-      st.p.drawText(ln, { x: st.x, y: st.y, size, font: F.regular, color: TEXT_DARK });
+      st.p.drawText(ln, { x: st.x, y: st.y - size, size, font: F.regular, color: TEXT_DARK });
       st.y -= lg;
     }
   };
 
   // Icon + fettes Label + Text. Ersetzt in der schmalen Spalte die Pills:
   // vier Pills kosteten ueber 100 Punkt Hoehe, die der Seite dann fehlten.
+  // Icon + fettes Label + Fliesstext, auf demselben Raster wie `zeile`.
+  // Ersetzt in der schmalen Spalte die Pills: vier Pills kosteten ueber
+  // 100 Punkt Hoehe, die der Seite dann fehlten.
   const punktBlock = (
     icon: "punkt" | "haken" | "warnung",
     label: string,
@@ -346,44 +352,45 @@ export async function buildGiftkoederPDF(
     size = 11.5,
     gapAfter = 14
   ) => {
-    const lg = size + 5.5;
-    const ein = 20; // Textspalte neben dem Icon
+    const lineGap = size + 6;
     const labelW = F.bold.widthOfTextAtSize(S(label), size) + 5;
-    const ersteBreite = st.w - ein - labelW;
-    const erste = wrap(text, F.regular, size, ersteBreite)[0] || "";
+    const erste = wrap(text, F.regular, size, st.w - ZEILE_EINZUG - labelW)[0] || "";
     const rest = S(text).slice(erste.length).trim();
-    const restZeilen = wrap(rest, F.regular, size, st.w - ein);
-    ensure((restZeilen.length + 1) * lg + gapAfter);
+    const restZeilen = wrap(rest, F.regular, size, st.w - ZEILE_EINZUG);
+    ensure((restZeilen.length + 1) * lineGap + gapAfter);
 
-    const cy = st.y + size * 0.32;
+    const oben = st.y;
+    const basis = oben - size;
+    const mitte = basis + size * 0.33;
+
     if (icon === "haken") {
-      const cx = st.x + 5;
-      st.p.drawLine({ start: { x: cx - 4, y: cy - 1 }, end: { x: cx - 1, y: cy - 5 }, thickness: 2.2, color: PILL_AC_GREEN });
-      st.p.drawLine({ start: { x: cx - 1, y: cy - 5 }, end: { x: cx + 6, y: cy + 5 }, thickness: 2.2, color: PILL_AC_GREEN });
+      const cx = st.x + 7;
+      const k = size / 12.5;
+      st.p.drawLine({ start: { x: cx - 4 * k, y: mitte - k }, end: { x: cx - k, y: mitte - 5 * k }, thickness: 2.1, color: PILL_AC_GREEN });
+      st.p.drawLine({ start: { x: cx - k, y: mitte - 5 * k }, end: { x: cx + 6 * k, y: mitte + 5 * k }, thickness: 2.1, color: PILL_AC_GREEN });
     } else if (icon === "warnung") {
       const cx = st.x + 7;
-      const tri = 6.5;
+      const tri = size * 0.52;
       st.p.drawSvgPath(`M 0 -${tri} L -${tri} ${tri * 0.6} L ${tri} ${tri * 0.6} Z`, {
         x: cx,
-        y: cy + tri * 0.4,
+        y: mitte + tri * 0.4,
         color: WARN_RED,
         borderColor: WARN_RED,
         borderWidth: 0.5,
       });
-      st.p.drawText("!", { x: cx - 1.5, y: cy - tri * 0.45, size: 8.5, font: F.regular, color: WHITE });
+      st.p.drawText("!", { x: cx - 1.3, y: mitte - tri * 0.5, size: size * 0.7, font: F.regular, color: WHITE });
     } else {
-      drawPaw(st.p, st.x + 6, cy - 1, 0.42, GOLD);
+      drawPaw(st.p, st.x + 7, mitte - 1, size * 0.037, GOLD);
     }
 
-    st.p.drawText(S(label), { x: st.x + ein, y: st.y, size, font: F.bold, color: DARK_BROWN });
-    st.p.drawText(erste, { x: st.x + ein + labelW, y: st.y, size, font: F.regular, color: TEXT_DARK });
-    st.y -= lg;
+    st.p.drawText(S(label), { x: st.x + ZEILE_EINZUG, y: basis, size, font: F.bold, color: DARK_BROWN });
+    st.p.drawText(erste, { x: st.x + ZEILE_EINZUG + labelW, y: basis, size, font: F.regular, color: TEXT_DARK });
+    let ty = basis - lineGap;
     for (const ln of restZeilen) {
-      ensure(lg);
-      st.p.drawText(ln, { x: st.x + ein, y: st.y, size, font: F.regular, color: TEXT_DARK });
-      st.y -= lg;
+      st.p.drawText(ln, { x: st.x + ZEILE_EINZUG, y: ty, size, font: F.regular, color: TEXT_DARK });
+      ty -= lineGap;
     }
-    st.y -= gapAfter;
+    st.y = oben - (restZeilen.length + 1) * lineGap - gapAfter;
   };
 
   const sec = (k: string) => content.sections.find((x: any) => x?.key === k);
@@ -498,20 +505,12 @@ export async function buildGiftkoederPDF(
     sectionTitle(S(methode.title) || "Dein Werkzeugkasten");
     if (methode.body) absatz(methode.body, { gapAfter: 14 });
     for (const [i, b] of (methode.bausteine || []).entries()) {
-      const lines = wrap(b.text, F.regular, 12.5, TEXT_W - 46);
-      ensure(lines.length * 17.5 + 26);
-      const r = 11;
-      const cy = st.y + 12.5 * 0.32;
-      st.p.drawCircle({ x: MARGIN + r, y: cy, size: r, color: GOLD });
-      const nw = F.bold.widthOfTextAtSize(String(i + 1), 12);
-      st.p.drawText(String(i + 1), { x: MARGIN + r - nw / 2, y: cy - 12 * 0.34, size: 12, font: F.bold, color: WHITE });
-      st.p.drawText(S(b.name), { x: MARGIN + 34, y: st.y, size: 13, font: F.bold, color: DARK_BROWN });
-      let ty = st.y - 19;
-      for (const ln of lines) {
-        st.p.drawText(ln, { x: MARGIN + 34, y: ty, size: 12.5, font: F.regular, color: TEXT_MEDIUM });
-        ty -= 17.5;
-      }
-      st.y = ty - 10;
+      const altX = st.x;
+      const altW = st.w;
+      zeile({ art: "nummer", n: i + 1 }, S(b.name), { size: 12.5, font: F.bold, color: DARK_BROWN, gapAfter: 1 });
+      spalte(altX + ZEILE_EINZUG, altW - ZEILE_EINZUG);
+      absatz(b.text, { size: 12, color: TEXT_MEDIUM, gapAfter: 13 });
+      spalte(altX, altW);
     }
   }
 
@@ -552,6 +551,7 @@ export async function buildGiftkoederPDF(
 
     // Titel über die ganze Breite, alles andere in die Spalten
     unterTitel(S(u.title), 22);
+    gap(8);
 
     const spaltenTop = st.y;
     const spaltenSeite = st.p;
@@ -561,12 +561,9 @@ export async function buildGiftkoederPDF(
     // die Uebung auf EINE Seite passt. Vorher lief bei den langen Uebungen aus
     // Stufe 3 und 4 jeweils ein Rest auf eine fast leere Folgeseite.
     const schritte: string[] = (u.aufbau || []).map((x: any) => S(x));
-    const hoeheSchritte = (size: number) => {
-      const lg = size + 5;
-      return schritte.reduce(
-        (a, t) => a + Math.max(wrap(t, F.regular, size, SP_L_W - 34).length * lg, 26) + 8,
-        0
-      );
+    const hoeheSchritte = (size: number, abstand: number) => {
+      const lg = size + 6;
+      return schritte.reduce((a, t) => a + wrap(t, F.regular, size, SP_L_W - ZEILE_EINZUG).length * lg + abstand, 0);
     };
     const rechtsBloecke: Array<[string, string]> = [];
     if (u.wenn_nicht) rechtsBloecke.push(["Wenn es nicht klappt: ", S(u.wenn_nicht)]);
@@ -574,31 +571,33 @@ export async function buildGiftkoederPDF(
     if (u.erfolg) rechtsBloecke.push(["Geschafft, wenn: ", S(u.erfolg)]);
     if (u.fehler) rechtsBloecke.push(["Häufigster Fehler: ", S(u.fehler)]);
     const hoeheRechts = (size: number, abstand: number) => {
-      const lg = size + 5.5;
+      const lg = size + 6;
       let vorlauf = 0;
       if (u.intro) vorlauf += wrap(S(u.intro), F.italic, size, SP_R_W).length * (size + 6) + 14;
       if (u.vorbereitung) {
         const lw = F.bold.widthOfTextAtSize("Das brauchst du: ", size) + 5;
-        const e = wrap(S(u.vorbereitung), F.regular, size, SP_R_W - 20 - lw)[0] || "";
-        vorlauf += (wrap(S(u.vorbereitung).slice(e.length).trim(), F.regular, size, SP_R_W - 20).length + 1) * lg + abstand;
+        const e = wrap(S(u.vorbereitung), F.regular, size, SP_R_W - ZEILE_EINZUG - lw)[0] || "";
+        vorlauf += (wrap(S(u.vorbereitung).slice(e.length).trim(), F.regular, size, SP_R_W - ZEILE_EINZUG).length + 1) * lg + abstand;
       }
       return vorlauf + rechtsBloecke.reduce((a, [label, text]) => {
         const labelW = F.bold.widthOfTextAtSize(label, size) + 5;
-        const erste = wrap(text, F.regular, size, SP_R_W - 20 - labelW)[0] || "";
+        const erste = wrap(text, F.regular, size, SP_R_W - ZEILE_EINZUG - labelW)[0] || "";
         const rest = text.slice(erste.length).trim();
-        return a + (wrap(rest, F.regular, size, SP_R_W - 20).length + 1) * lg + abstand;
+        return a + (wrap(rest, F.regular, size, SP_R_W - ZEILE_EINZUG).length + 1) * lg + abstand;
       }, 0);
     };
 
     const PILL_H = 37; // Pill "So gehst du vor" inkl. Abstand
-    let szL = 10.5;
-    for (const k of [12, 11.5, 11, 10.5]) {
+    let szL = 10;
+    let abstandL = 5;
+    for (const [k, ab] of [[12, 7], [11.5, 7], [11, 6], [10.5, 6], [10, 5]] as Array<[number, number]>) {
       szL = k;
-      if (hoeheSchritte(k) + PILL_H <= platz) break;
+      abstandL = ab;
+      if (hoeheSchritte(k, ab) + PILL_H <= platz) break;
     }
-    let szR = 10;
-    let abstandR = 14;
-    for (const [k, ab] of [[11.5, 14], [11, 13], [10.5, 12], [10, 10]] as Array<[number, number]>) {
+    let szR = 9.5;
+    let abstandR = 7;
+    for (const [k, ab] of [[11.5, 14], [11, 12], [10.5, 10], [10, 9], [9.5, 7]] as Array<[number, number]>) {
       szR = k;
       abstandR = ab;
       if (hoeheRechts(k, ab) <= platz) break;
@@ -619,7 +618,7 @@ export async function buildGiftkoederPDF(
     st.y = spaltenTop;
     spalte(SP_L_X, SP_L_W);
     pill("So gehst du vor", GOLD_DARK, BG_BAR, 12);
-    for (const [i, schritt] of schritte.entries()) nummerSchritt(i + 1, schritt, szL);
+    for (const [i, schritt] of schritte.entries()) nummerSchritt(i + 1, schritt, szL, abstandL);
     st.y = Math.min(st.y, endeRechts);
     vollBreite();
   }
@@ -628,7 +627,7 @@ export async function buildGiftkoederPDF(
   if (notfall) {
     newPage();
     vollBreite();
-    st.y = A4_H - BANNER_H - 80;
+    st.y = A4_H - BANNER_H - 56;
     const warnH = 34;
     roundedRect(st.p, MARGIN, st.y - warnH, CONTENT_W, warnH, 6, PILL_BG_RED);
     st.p.drawRectangle({ x: MARGIN + 5, y: st.y - warnH + 7, width: 3, height: warnH - 14, color: WARN_RED });
@@ -649,7 +648,7 @@ export async function buildGiftkoederPDF(
     spalte(MARGIN + 390, A4_W - (MARGIN + 390) - MARGIN);
     if ((notfall.schritte || []).length) {
       pill("In dieser Reihenfolge handeln", WARN_RED, PILL_BG_RED, 12);
-      for (const [i, schritt] of notfall.schritte.entries()) nummerSchritt(i + 1, schritt, 11.5);
+      for (const [i, schritt] of notfall.schritte.entries()) nummerSchritt(i + 1, schritt, 11);
       gap(4);
     }
     absatz(
@@ -660,10 +659,10 @@ export async function buildGiftkoederPDF(
     st.p = nSeite;
     st.y = nTop;
     spalte(MARGIN, 350);
-    if (notfall.body) absatz(notfall.body, { size: 11.5, gapAfter: 16 });
+    if (notfall.body) absatz(notfall.body, { size: 11, gapAfter: 14 });
     if ((notfall.anzeichen || []).length) {
       pill("Daran erkennst du eine Vergiftung", WARN_RED, PILL_BG_RED, 12);
-      for (const a of notfall.anzeichen) warnPunkt(a, 11.5);
+      for (const a of notfall.anzeichen) warnPunkt(a, 11);
     }
     st.y = Math.min(st.y, nEndeRechts);
     vollBreite();
@@ -673,29 +672,30 @@ export async function buildGiftkoederPDF(
   if (plan) {
     newPage();
     vollBreite();
-    st.y = A4_H - BANNER_H - 80;
+    st.y = A4_H - BANNER_H - 56;
     sectionTitle(S(plan.title) || "Dein 14-Tage-Startplan", 24);
     const tage = (plan.days || []) as any[];
     const labelW = Math.max(74, ...tage.map((d) => F.bold.widthOfTextAtSize(S(d.tag), 12) + 26));
     for (const d of tage) {
       const text = S(d.fokus) + (d.uebungen ? "  (Übungen " + S(d.uebungen) + ")" : "");
       const lines = wrap(text, F.regular, 12.5, TEXT_W - labelW - 16);
-      ensure(Math.max(26, lines.length * 17.5) + 12);
-      const top = st.y;
-      roundedRect(st.p, MARGIN, top - 7, labelW, 24, 4, BG_BAR);
-      st.p.drawText(S(d.tag), { x: MARGIN + 13, y: top, size: 12, font: F.bold, color: DARK_BROWN });
-      let ty = top;
+      const zeilen = Math.max(26, lines.length * 18.5);
+      ensure(zeilen + 10);
+      const top = st.y;                      // Oberkante der Zeile
+      roundedRect(st.p, MARGIN, top - 24, labelW, 24, 4, BG_BAR);
+      st.p.drawText(S(d.tag), { x: MARGIN + 13, y: top - 16.5, size: 12, font: F.bold, color: DARK_BROWN });
+      let ty = top - 12.5;
       for (const ln of lines) {
         st.p.drawText(ln, { x: MARGIN + labelW + 16, y: ty, size: 12.5, font: F.regular, color: TEXT_DARK });
-        ty -= 17.5;
+        ty -= 18.5;
       }
-      st.y = Math.min(top - 26, ty) - 7;
+      st.y = top - zeilen - 10;
     }
     const checks: string[] = plan.check || [];
     if (checks.length) {
       gap(8);
       pill("Erfolgs-Check nach 14 Tagen", PILL_AC_GREEN, PILL_BG_GREEN, 12);
-      for (const c of checks) hakenPunkt(c, 11.5);
+      for (const c of checks) hakenPunkt(c, 11);
     }
   }
 
@@ -703,7 +703,7 @@ export async function buildGiftkoederPDF(
   if (wenn) {
     newPage();
     vollBreite();
-    st.y = A4_H - BANNER_H - 80;
+    st.y = A4_H - BANNER_H - 56;
     sectionTitle(S(wenn.title) || "Was tun, wenn...", 24);
     const faelle = (wenn.cases || []) as any[];
     const haelfte = Math.ceil(faelle.length / 2);
