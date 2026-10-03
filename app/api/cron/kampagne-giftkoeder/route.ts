@@ -108,7 +108,7 @@ function buildHtml(dog: string, id: string, email: string): string {
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Im Herbst liegt alles unter dem Laub. Was du jetzt üben kannst.</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4EFE6;padding:28px 12px;">
 <tr><td align="center">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#FFFDF9;border-radius:16px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#FFFDF9;border-radius:16px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
 
   <tr><td style="padding:30px 34px 0;">
     <div style="font-size:15px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#C4A576;">Herbst-Training</div>
