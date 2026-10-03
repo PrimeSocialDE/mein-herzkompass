@@ -24,6 +24,19 @@ const PRICES_DE_B = {
   "6month": { discount: 6999, normal: 13999 },
 };
 
+// DE-Preistest C (ab 03.10.2026): NUR der 3-Monats-Plan steigt von 39,99 auf
+// 44,99, Ankerpreis und die beiden anderen Stufen bleiben. Hintergrund: bei
+// 43 EUR Umsatz bleiben 5,09 EUR Marge je Verkauf. +5 EUR brutto sind netto
+// rund +4,20 EUR und verdoppeln die Marge fast — die Kaufquote duerfte um
+// 45 % fallen, bevor es sich nicht mehr rechnet. Der alte B-Test (+10 EUR auf
+// allen Stufen) war zu grob und wurde am 27.09. beendet.
+// Wie bei B gilt: C NUR bei explizitem Flag vom Client, sonst A.
+const PRICES_DE_C = {
+  "1month": { discount: 2999, normal: 4999 },
+  "3month": { discount: 4499, normal: 7999 },
+  "6month": { discount: 5999, normal: 11999 },
+};
+
 // PL-Preise in Groszy (PLN-Cent) — lapaplan.pl. Rabatt 89,99/119,99/169,99 zł,
 // Normal 149,99/239,99/349,99 zł (auf die hoehere Stufe angehoben; A/B beendet,
 // beide Varianten identisch teuer). Order-Bump 39 zł (siehe unten).
@@ -196,9 +209,16 @@ export async function POST(req: NextRequest) {
     // PL-Preis-A/B: Variante B nur bei explizitem Flag, sonst A (nie Ueberabbuchung).
     const plVariantB = isPL && String(body?.plPriceVariant || "") === "B";
     const deVariantB = !isPL && !isIt && String(body?.dePriceVariant || "") === "B";
+    const deVariantC = !isPL && !isIt && String(body?.dePriceVariant || "") === "C";
     const priceTable = isPL
       ? (plVariantB ? PRICES_PL_B : PRICES_PL)
-      : isIt ? PRICES_IT : (deVariantB ? PRICES_DE_B : PRICES);
+      : isIt
+        ? PRICES_IT
+        : deVariantC
+          ? PRICES_DE_C
+          : deVariantB
+            ? PRICES_DE_B
+            : PRICES;
     const priceData = priceTable[plan as keyof typeof priceTable] || priceTable["1month"];
     const baseAmount = timerExpired ? priceData.normal : priceData.discount;
     const planAmountCents = exitDiscountApplied

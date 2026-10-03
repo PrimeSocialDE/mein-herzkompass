@@ -371,15 +371,26 @@
                 // A/B "Angst + Haushalt": zwei zusaetzliche Pop-ups auf der
                 // Ladeseite. In Variante A sind die Felder leer.
                 ab_angst: localStorage.getItem('abAngst'),
-                // Preistest DE: A = bisherige Preise, B = je Stufe 10 EUR mehr.
-                // Hier zugewiesen, damit wir die AUSSPIELUNG kennen und nicht
-                // nur die Kaeufe je Preis (Lehre aus dem Karten-Preistest).
-                ab_preis: (function () {
+                // Preistest DE beendet am 27.09.2026: B hat auf keiner Stufe
+                // getragen, dauerhaft A. Keine Zuteilung mehr, das Feld bleibt
+                // aber gefuellt, damit Auswertungen ueber alte Leads weiter
+                // funktionieren. Details stehen in deinplan2/3.
+                // 03.10.2026: Der Zufallsblock war am 02.10. versehentlich
+                // wieder reingerutscht (alter Stand der Datei mitgepusht) und
+                // hat zwei Tage lang wieder B-Preise ausgespielt. Nicht erneut
+                // aktivieren, ohne den Test bewusst neu zu starten.
+                ab_preis: 'A',
+                // Preistest C (ab 03.10.2026): nur der 3-Monats-Plan 5 EUR
+                // teurer (39,99 -> 44,99). Eigener Schluessel, eigener Wuerfel,
+                // unabhaengig von ab_notizseite — beide Tests laufen parallel
+                // und stoeren sich nicht, weil sie an verschiedenen Stellen
+                // sitzen (Schritt 9 vs. Planseite).
+                ab_preis3m: (function () {
                     try {
-                        var v = localStorage.getItem('abPreis');
-                        if (v !== 'A' && v !== 'B') {
-                            v = Math.random() < 0.5 ? 'B' : 'A';
-                            localStorage.setItem('abPreis', v);
+                        var v = localStorage.getItem('abPreis3m');
+                        if (v !== 'A' && v !== 'C') {
+                            v = Math.random() < 0.5 ? 'C' : 'A';
+                            localStorage.setItem('abPreis3m', v);
                         }
                         return v;
                     } catch (e) { return 'A'; }
