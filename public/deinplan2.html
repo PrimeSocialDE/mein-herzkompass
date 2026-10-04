@@ -4917,11 +4917,11 @@ custom_problem_key: localStorage.getItem('customProblemKey'),  // ← NEU
         // angezeigt. Der Server rechnet NUR dann mit B, wenn wir das Flag
         // mitschicken (dePriceVariant), Standard bleibt A. Damit kann der
         // abgerechnete Preis nie ueber dem angezeigten liegen.
+        // 27.09.2026 beendet, 04.10. endgueltig: 'abPreis' wird NICHT mehr
+        // gelesen. Sonst saehen die am 02./03.10. versehentlich zugeteilten
+        // Leute dauerhaft die um 10 EUR hoeheren B-Preise — localStorage
+        // vergisst das von allein nicht.
         var AB_PREIS = 'A';
-        try {
-            var _p = localStorage.getItem('abPreis');
-            if (_p === 'A' || _p === 'B') AB_PREIS = _p;
-        } catch (e) {}
 
         var PREIS_B = {
             '1month': { amount: '39', cents: ',99', tag: '\u20ac1,33 pro Tag', price: '39.99',
