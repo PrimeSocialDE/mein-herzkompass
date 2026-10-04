@@ -385,16 +385,7 @@
                 // unabhaengig von ab_notizseite — beide Tests laufen parallel
                 // und stoeren sich nicht, weil sie an verschiedenen Stellen
                 // sitzen (Schritt 9 vs. Planseite).
-                ab_preis3m: (function () {
-                    try {
-                        var v = localStorage.getItem('abPreis3m');
-                        if (v !== 'A' && v !== 'C') {
-                            v = Math.random() < 0.5 ? 'C' : 'A';
-                            localStorage.setItem('abPreis3m', v);
-                        }
-                        return v;
-                    } catch (e) { return 'A'; }
-                })(),
+ab_preis3m: 'A', // 04.10. gestoppt: siehe Commit-Text
                 dog_fears: parseJSON(localStorage.getItem('dogFears')),
                 utm_source: localStorage.getItem('utm_source') || null,
                 utm_medium: localStorage.getItem('utm_medium') || null,
