@@ -141,7 +141,7 @@ function buildHtml(dog: string, problem: string, id: string, email: string): str
 </td></tr>
 <tr><td style="padding:4px 36px 6px;text-align:center;">
 <a href="${cta}" style="display:inline-block;background:#8B7355;color:#ffffff;text-decoration:none;font-size:17px;font-weight:700;padding:16px 34px;border-radius:12px;">Video-Analyse für ${dog} ansehen</a>
-<p style="margin:10px 0 0;font-size:13.5px;color:#6B7280;">54,99 € einmalig, kein Abo. 14 Tage Geld-zurück-Garantie.</p>
+<p style="margin:10px 0 0;font-size:13.5px;color:#6B7280;">Einmalig, kein Abo. 14 Tage Geld-zurück-Garantie.</p>
 </td></tr>
 <tr><td style="padding:20px 36px 4px;">
 <p style="margin:0 0 6px;font-size:16px;">Viele Grüße an ${dog},</p>
@@ -180,7 +180,7 @@ Du brauchst das Video jetzt noch nicht. Du buchst heute und filmst, wann die Sit
 Deine Angaben zu ${dog} sind schon hinterlegt, du musst nichts noch einmal ausfüllen:
 ${cta}
 
-54,99 € einmalig, kein Abo. 14 Tage Geld-zurück-Garantie.
+Einmalig, kein Abo. 14 Tage Geld-zurück-Garantie.
 
 Viele Grüße an ${dog},
 Laura vom Pfoten-Plan-Team
