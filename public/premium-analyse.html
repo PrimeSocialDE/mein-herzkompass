@@ -28,6 +28,11 @@
   .hero h1{font-size:26px;line-height:1.18;font-weight:800;letter-spacing:-.01em}
   .hero h1 .dog{color:var(--brown)}
   .hero-sub{color:var(--muted);font-size:15px;margin-top:8px}
+  .mehr{margin:4px 0 2px;border-top:1px solid var(--line);padding-top:12px}
+  .mehr>summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--muted);list-style:none;padding:6px 0}
+  .mehr>summary::-webkit-details-marker{display:none}
+  .mehr>summary::after{content:" ▾";color:#b7945a}
+  .mehr[open]>summary::after{content:" ▴"}
   .laterbox{display:flex;gap:12px;align-items:flex-start;margin-top:16px;padding:14px 16px;
     background:#EAF6EE;border:1px solid #CBE6D5;border-radius:14px;font-size:14px;line-height:1.55;color:#245B38}
   .laterbox b{color:#17412A}
@@ -173,7 +178,7 @@
       <h1>Schick uns ein Video.<br>Wir sagen dir, was <span class="dog" id="dogH">dein Hund</span> gerade braucht.</h1>
       <p class="hero-sub">Du schickst uns ein kurzes Handy-Video und erzählst uns per Sprachnachricht, was passiert. Wir schauen es uns an und melden uns <b>innerhalb von 24 Stunden</b> persönlich zurück — mit dem, was wir sehen, und einem <b>Zusatzplan</b> für genau diese Situation.</p>
       <div class="pricebar">
-        <div class="price">54,99&nbsp;€ <small>einmalig</small></div>
+        <span class="chip-soft">Ein Mensch schaut drauf</span>
         <span class="chip-soft">Kein Abo</span>
         <span class="chip-soft">Rückmeldung in 24&nbsp;h</span>
         <span class="chip-soft">Video später nachreichen</span>
@@ -182,19 +187,15 @@
         <div class="laterico">🎥</div>
         <div>
           <b>Du brauchst das Video jetzt noch nicht.</b><br>
-          Du kannst heute buchen und das Video in Ruhe aufnehmen, wann es passt — beim nächsten Spaziergang,
-          morgen früh, wann auch immer die Situation wieder auftritt. Direkt nach dem Kauf bekommst du einen
-          Link, über den du Video und Sprachnachricht jederzeit vom Handy hochlädst.
-          Die 24 Stunden laufen erst, wenn dein Material bei uns ist.
+          Buch heute und film, wann die Situation das nächste Mal auftritt. Den Upload-Link bekommst du direkt nach dem Kauf — die 24 Stunden laufen erst, wenn dein Material da ist.
         </div>
       </div>
       <div class="value-grid">
-        <div class="vcard"><div class="vico">🔍</div><div class="vt">Verstehen, warum</div><div class="vd">Die echte Ursache hinter dem Verhalten — nicht nur das Symptom.</div></div>
-        <div class="vcard"><div class="vico">🐾</div><div class="vt">Sein wahrer Charakter</div><div class="vd">Welcher Typ Hund er ist, wie er tickt und was er wirklich braucht.</div></div>
-        <div class="vcard"><div class="vico">🩺</div><div class="vt">Antwort in 24 Stunden</div><div class="vd">Keine Wartezeit — am nächsten Tag weißt du, woran du bist.</div></div>
-        <div class="vcard"><div class="vico">💬</div><div class="vt">Zusatzplan dazu</div><div class="vd">Konkrete Übungen für die Situation, die du uns gezeigt hast.</div></div>
+        <div class="vcard"><div class="vico">👀</div><div class="vt">Wir schauen persönlich drauf</div><div class="vd">Kein Automat: Ein Mensch sieht sich dein Video an und hört deine Sprachnachricht.</div></div>
+        <div class="vcard"><div class="vico">⏱️</div><div class="vt">Antwort in 24 Stunden</div><div class="vd">Am nächsten Tag weißt du, woran du bist.</div></div>
+        <div class="vcard"><div class="vico">📋</div><div class="vt">Zusatzplan dazu</div><div class="vd">Konkrete Übungen für genau die Situation, die du uns zeigst.</div></div>
+      </div></div>
       </div>
-      <p style="font-size:13px;color:var(--muted);margin-top:14px;line-height:1.5">Du bekommst eine persönliche Rückmeldung zu dem, was wir im Video sehen — und einen Zusatzplan mit konkreten Übungen für genau diese Situation. Innerhalb von 24 Stunden, nachdem dein Material bei uns ist.</p>
     </div>
   </div>
 
@@ -229,10 +230,7 @@
           <div class="ico">📷</div><div class="t">Foto hochladen</div><div class="s">Körpersprache &amp; Körperbau</div>
           <input type="file" id="upFoto" accept="image/*" multiple>
         </label>
-        <label class="up">
-          <div class="ico">🎬</div><div class="t">Video hochladen</div><div class="s">zeig die Situation</div>
-          <input type="file" id="upVideo" accept="video/*" disabled>
-        </label>
+        <input type="file" id="upVideo" accept="video/*" style="display:none" disabled>
         <label class="up full">
           <div class="ico">🎙️</div><div class="t">Video &amp; Sprachnachricht</div><div class="s">lädst du direkt nach dem Kauf hoch — in Ruhe, vom Handy</div>
           <input type="file" id="upAudio" accept="audio/*" disabled>
@@ -241,6 +239,8 @@
       <div class="filelist" id="fileList"></div>
     </div>
 
+    <details class="mehr">
+      <summary>Noch ein paar Details — optional, hilft uns beim Einordnen</summary>
     <div class="block">
       <label class="q">Wie schnell dreht <span class="dogN">dein Hund</span> auf?</label>
       <div class="slider-wrap">
@@ -275,13 +275,15 @@
       <input type="text" id="wish" placeholder="z. B. Macht er das aus Angst oder will er nur kontrollieren?">
     </div>
   </div>
+    </details>
+
 
   <!-- TESTIMONIAL — PLATZHALTER: vor dem Live-Gang durch ein echtes Kunden-Zitat ersetzen! -->
   
 
   <!-- CTA -->
   <div class="cta-card">
-    <div class="cta-price">Deine persönliche Video-Analyse — <b>54,99 €</b> einmalig</div>
+    <div class="cta-price">Deine persönliche Video-Analyse<br><b style="font-size:26px">54,99 €</b> <span style="font-size:15px">einmalig, kein Abo</span></div>
     <div class="guarantee">
       <div class="g-ico">🛡️</div>
       <div><b>14 Tage Geld-zurück-Garantie</b><br><span>Wenn dir die Analyse nicht weiterhilft, schreib uns — du bekommst dein Geld zurück, ohne Diskussion.</span></div>
