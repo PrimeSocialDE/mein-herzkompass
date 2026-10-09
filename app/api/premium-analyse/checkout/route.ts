@@ -15,7 +15,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-const PRICE_CENTS = 7900;
+const PRICE_CENTS = 5499; // 54,99 EUR — Video-Analyse mit Rueckmeldung in 24 h
 const ALLOWED_IMG = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 const MAX_PHOTOS = 4;
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Video hochladen · Deine persönliche Analyse</title>
+<title>Video &amp; Sprachnachricht hochladen · Deine Video-Analyse</title>
 <style>
   * { box-sizing: border-box; }
   body { margin:0; background:#FAF8F5; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif; color:#2C2C2E; line-height:1.6; }
@@ -42,18 +42,18 @@
     <div class="logo">🐾 Pfoten-Plan</div>
 
     <div id="form">
-      <h1>Lade jetzt dein Video für <span class="dog" id="dogName">deinen Hund</span> hoch</h1>
+      <h1>Lade jetzt Video und Sprachnachricht für <span class="dog" id="dogName">deinen Hund</span> hoch</h1>
       <p class="lead">Lass dir ruhig Zeit. Film eine typische Situation (z. B. an der Leine, beim Klingeln, bei Begegnungen) oder lade Fotos hoch. Unser Trainer schaut sich alles persönlich an, erklärt dir genau warum dein Hund sich so verhält, und gibt dir spezielle Übungen, exakt auf ihn zugeschnitten. Antwort per E-Mail meist innerhalb von 24 bis 48 Stunden.</p>
 
-      <label class="field">Video oder Fotos
-        <span class="hint">Ein kurzes Handy-Video reicht völlig. Mehrere Dateien möglich.</span>
+      <label class="field">Video, Sprachnachricht oder Fotos
+        <span class="hint">Ein Handy-Video von ein bis zwei Minuten reicht völlig. Dazu gern eine Sprachnachricht, in der du erzählst, was passiert — das sagt uns mehr als jedes Formular. Mehrere Dateien möglich.</span>
       </label>
       <div class="dropzone" id="drop">
         <div class="big">📹</div>
         <div class="t">Hier tippen zum Auswählen</div>
-        <div class="s">Video (mp4, mov) oder Fotos (jpg, png)</div>
+        <div class="s">Video (mp4, mov) · Sprachnachricht (m4a, mp3, ogg) · Fotos (jpg, png)</div>
       </div>
-      <input type="file" id="file" accept="video/*,image/*" multiple>
+      <input type="file" id="file" accept="video/*,audio/*,image/*" multiple>
       <ul id="fileList"></ul>
 
       <label class="field" for="note">Beschreib kurz die Situation
@@ -71,6 +71,7 @@
     <div id="done">
       <div class="big">✅</div>
       <h2>Danke, wir haben alles bekommen!</h2>
+      <p style="font-size:15px;line-height:1.6">Innerhalb von <b>24 Stunden</b> bekommst du von uns eine persönliche Rückmeldung und einen Zusatzplan, der auf genau diese Situation zugeschnitten ist.</p>
       <p class="lead">Unser Trainer schaut sich <span id="dogName2">deinen Hund</span> in Ruhe an und meldet sich <strong>per E-Mail</strong> bei dir, meist innerhalb von 24 bis 48 Stunden. Du kannst dieses Fenster jetzt schließen.</p>
     </div>
   </div>
@@ -102,7 +103,7 @@
   document.getElementById('send').addEventListener('click', async function(){
     var btn = this;
     document.getElementById('err').style.display='none';
-    if (files.length === 0) { showErr('Bitte lade zuerst ein Video oder ein Foto hoch.'); return; }
+    if (files.length === 0) { showErr('Bitte lade zuerst ein Video, eine Sprachnachricht oder ein Foto hoch.'); return; }
     btn.disabled = true; btn.textContent = 'Wird hochgeladen ...';
     var bar = document.getElementById('bar'), fill = document.getElementById('barfill');
     bar.style.display='block';
