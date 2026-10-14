@@ -16,6 +16,13 @@
 //   - Wenn andere Stage in letzten 20h gesendet → skip (kein Spam-Tag)
 //
 // Optional: ?email=foo@bar.de für manuellen Test einzelner Leads.
+//
+// 14.10.2026 Fix: vorher .limit(40) OHNE Sortierung -> pro Lauf immer dieselben
+// ~40 Zeilen, aeltere Leads wurden nie geladen. Ergebnis seit August: Stage 1
+// an ~1.600 Leads, Stage 3 an 220, Stage 4/5 an je 4. Jetzt: alle faelligen
+// Leads paginiert, aeltester zuerst, Sende-Deckel pro Lauf. Dazu Kaeufer-Sperre
+// per E-Mail (Kaeufer legen meist eine neue Lead-Zeile an, die abgebrochene
+// bleibt auf pending/failed) und max. 1 Mail je E-Mail und 20h.
 
 import { NextRequest, NextResponse } from "next/server";
 import { createMemberAdminClient } from "@/lib/member-auth-server";
@@ -77,27 +84,77 @@ export async function GET(req: NextRequest) {
   const lookbackUntil = new Date(Date.now() - 2 * 3_600_000).toISOString();
   const lookbackFrom = new Date(Date.now() - 14 * 86_400_000).toISOString();
 
-  let query = admin
-    .from("wauwerk_leads")
-    .select(
-      "id, email, dog_name, status, selected_plan, ab_variant, answers, created_at"
-    )
-    .not("email", "is", null)
-    .in("status", ["pending", "failed"]);
+  // Pro Lauf max. so viele echte Sends (jede Mail generiert einen KI-Text,
+  // maxDuration 300 s). Bei 48 Laeufen/Tag reicht das weit fuer den Bestand.
+  const MAX_SENDS_PER_RUN = 40;
+  const PAGE = 1000;
 
+  const base = () =>
+    admin
+      .from("wauwerk_leads")
+      .select(
+        "id, email, dog_name, status, selected_plan, ab_variant, answers, created_at"
+      )
+      .not("email", "is", null)
+      .in("status", ["pending", "failed"]);
+
+  const leads: any[] = [];
   if (emailFilter) {
-    query = query.ilike("email", emailFilter);
+    const { data, error } = await base().ilike("email", emailFilter);
+    if (error) {
+      console.error("[warm-recovery-drip] query error:", error.message);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    leads.push(...(data || []));
   } else {
-    query = query
-      .lte("created_at", lookbackUntil)
-      .gte("created_at", lookbackFrom)
-      .limit(40);
+    for (let offset = 0; ; offset += PAGE) {
+      const { data, error } = await base()
+        .lte("created_at", lookbackUntil)
+        .gte("created_at", lookbackFrom)
+        .order("created_at", { ascending: true })
+        .range(offset, offset + PAGE - 1);
+      if (error) {
+        console.error("[warm-recovery-drip] query error:", error.message);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      if (!data || data.length === 0) break;
+      leads.push(...data);
+      if (data.length < PAGE) break;
+    }
   }
 
-  const { data: leads, error } = await query;
-  if (error) {
-    console.error("[warm-recovery-drip] query error:", error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  // Kaeufer-Sperre: E-Mails mit bezahltem Lead (ab 90 Tage vor dem Fenster).
+  const paidEmails = new Set<string>();
+  {
+    const paidFrom = new Date(new Date(lookbackFrom).getTime() - 90 * 86_400_000).toISOString();
+    for (let offset = 0; ; offset += PAGE) {
+      const { data, error } = await admin
+        .from("wauwerk_leads")
+        .select("email")
+        .eq("status", "paid")
+        .gte("created_at", paidFrom)
+        .order("created_at", { ascending: true })
+        .range(offset, offset + PAGE - 1);
+      if (error) {
+        // Ohne Kaeufer-Liste lieber gar nicht senden als Kaeufer anzuschreiben.
+        console.error("[warm-recovery-drip] paid query error:", error.message);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      if (!data || data.length === 0) break;
+      for (const r of data) if (r.email) paidEmails.add(String(r.email).trim().toLowerCase());
+      if (data.length < PAGE) break;
+    }
+  }
+
+  // Pro E-Mail max. 1 Warm-Mail je 20h, auch ueber mehrere Lead-Zeilen hinweg
+  // (Abbrecher haben oft eine pending- UND eine failed-Zeile).
+  const lastSentByEmail = new Map<string, number>();
+  for (const l of leads) {
+    const e = String(l.email || "").trim().toLowerCase();
+    for (let s = 1; s <= 5; s++) {
+      const ts = l.answers?.[`warm_recovery_stage${s}_sent_at`];
+      if (ts) lastSentByEmail.set(e, Math.max(lastSentByEmail.get(e) || 0, new Date(ts).getTime()));
+    }
   }
 
   const results: any[] = [];
@@ -105,7 +162,8 @@ export async function GET(req: NextRequest) {
   let skipped = 0;
   let failed = 0;
 
-  for (const lead of leads || []) {
+  for (const lead of leads) {
+    if (!dryRun && sent >= MAX_SENDS_PER_RUN) break;
     const stage = pickStage(lead.created_at);
     if (!stage) {
       skipped++;
@@ -128,8 +186,21 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
+    const emailKey = String(lead.email || "").trim().toLowerCase();
+    if (paidEmails.has(emailKey)) {
+      skipped++;
+      results.push({ id: lead.id, email: lead.email, skip: "already_customer" });
+      continue;
+    }
+    if ((lastSentByEmail.get(emailKey) || 0) > Date.now() - 20 * 3_600_000) {
+      skipped++;
+      results.push({ id: lead.id, email: lead.email, skip: "anti_spam_same_email" });
+      continue;
+    }
+
     if (dryRun) {
       sent++;
+      lastSentByEmail.set(emailKey, Date.now());
       results.push({
         id: lead.id,
         email: lead.email,
@@ -167,9 +238,16 @@ export async function GET(req: NextRequest) {
 
     if (sendRes.ok) {
       sent++;
-      // Flag setzen — answers JSONB-Merge muss komplette answers behalten
+      lastSentByEmail.set(emailKey, Date.now());
+      // Flag setzen — Fresh-Read + Merge, damit ein zeitgleicher Kauf-Webhook
+      // (der answers/status aendert) nicht ueberschrieben wird.
+      const { data: fresh } = await admin
+        .from("wauwerk_leads")
+        .select("answers")
+        .eq("id", lead.id)
+        .single();
       const updatedAnswers = {
-        ...answers,
+        ...(fresh?.answers || answers),
         [flagKey]: new Date().toISOString(),
       };
       const { error: updErr } = await admin
@@ -203,7 +281,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     ok: true,
     dryRun,
-    counted: leads?.length || 0,
+    counted: leads.length,
     sent,
     skipped,
     failed,

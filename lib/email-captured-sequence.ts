@@ -12,7 +12,9 @@
 //
 // Takt ab created_at (Cron /api/cron/email-captured):
 //   1:+10 Min · 2:+6 Std · 3:+1 Tag · 4:+2 Tage · 5:+3 Tage · 6:+4 Tage
-//   7:+5 Tage · 8:+7 Tage
+//   7:+5 Tage · 8:+7 Tage · 9:+10 Tage · 10:+14 Tage · 11:+21 Tage
+// 9-11 seit 14.10.2026: 144 von 422 Kaeufern dieses Segments kauften erst
+// NACH Mail 8 (ueber andere Kanaele) — die Nachfrage ist danach noch da.
 // Stoppt automatisch bei Kauf (status wechselt weg von email_captured).
 // PL unberuehrt — der Cron filtert strikt auf NICHT-pl.
 
@@ -20,7 +22,8 @@ import { sendBrevoMail, wrapTemplate, escapeHtml } from "./member-mail";
 
 const BASE = "https://www.pfoten-plan.de";
 
-export type EcStage = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+export type EcStage = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+export const EC_LAST_STAGE: EcStage = 11;
 
 // Deutsche Problem-Labels (klein, im Satz).
 const PROBLEM_DE: Record<string, string> = {
@@ -271,19 +274,22 @@ export function buildEmailCaptured(
       };
 
     case 6:
+      // 14.10.2026 ersetzt: "Aber mein Hund ist anders" war die schwaechste Mail
+      // (13,9 % Oeffnung / 2,7 % Klick). Neu: die echten Fragen aus WhatsApp und
+      // Support, als Betreff in Kundensprache.
       return {
-        subject: `„Aber mein Hund ist anders"`,
+        subject: `Kann ich erst mal klein anfangen?`,
         html: wrapTemplate({
           ...common,
-          preheader: "Kurz und ehrlich.",
-          headline: `„Aber ${dog} ist anders"`,
-          intro: `Hören wir oft. Und ja, jeder Hund ist anders, deshalb ist der Plan kein Standard-PDF, sondern entsteht aus deinen Antworten.`,
+          preheader: "Die vier Fragen, die uns am häufigsten gestellt werden.",
+          headline: `Deine Fragen, ehrlich beantwortet`,
+          intro: `Viele schreiben uns vor dem Kauf dieselben vier Fragen. Hier sind unsere ehrlichen Antworten, damit du in Ruhe entscheiden kannst.`,
           bodyHtml:
-            p(`Der Plan ist keine Schablone: ${breedLabel ? `${dogCap}s Rasse (${breedLabel}), ` : ""}Alter, Charakter und genau dein Thema (${problem}) fließen direkt ein. Die Übungen sind so gemacht, dass du sie <strong>ohne Vorerfahrung</strong> schaffst.`) +
-            p(`Und du gehst kein Risiko ein:`) +
-            p(`🔒 <strong>Einmal zahlen</strong>, kein Abo, kein Vertrag, der weiterläuft.<br>
-               🛡️ <strong>30 Tage Geld-zurück.</strong> Passt der Plan nicht, schreib uns kurz, du bekommst dein Geld zurück.<br>
-               💬 Wenn du nicht weiterweißt, hilft dir der <strong>Trainer-Chat rund um die Uhr</strong>, und echte Menschen per Mail.`),
+            p(`<strong>„Kann ich erst mal klein anfangen?“</strong><br>Ja. Viele starten mit dem 4-Wochen-Plan. Die ersten vier Wochen sind das Fundament, auf dem alles Weitere aufbaut, du verpasst also nichts Wichtiges. Wenn ihr danach weitermachen wollt, schreib uns einfach, wir finden mit dir den passenden nächsten Schritt.`) +
+            p(`<strong>„Ich war mir beim Alter unsicher.“</strong><br>Kein Problem. Als Faustregel: unter 6 Monaten ist Welpe, 6 bis 18 Monate Junghund. Hast du dich vertan, antworte einfach auf diese Mail, wir passen die Angaben an. Und auch nach dem Kauf gilt: Passt etwas nicht, bauen wir ${dog}s Plan um.`) +
+            p(`<strong>„Unser Problem stand gar nicht in der Liste.“</strong><br>Das hören wir oft, jeder Hund ist anders. Wähl das, was am nächsten dran ist, und schreib uns kurz, was bei euch los ist. Der Plan wird aus deinen Antworten gebaut, und für alles Besondere gibt es den Trainer-Chat und echte Menschen per Mail.`) +
+            p(`<strong>„Ist das ein Abo?“</strong><br>Nein. Du zahlst <strong>einmal</strong>, es verlängert sich nichts, es gibt keinen Vertrag. Und wenn der Plan nicht passt: <strong>30 Tage Geld-zurück</strong>.`) +
+            p(`Noch eine andere Frage? Antworte einfach auf diese Mail, ein echter Mensch liest mit.`),
           ctaText: `${dogCap}s Plan ansehen`,
         }),
       };
@@ -312,10 +318,59 @@ export function buildEmailCaptured(
           ...common,
           preheader: "Kein Druck, nur ein ehrlicher Gedanke.",
           headline: `Der beste Tag, mit ${dog} zu starten, ist heute`,
-          intro: `Das ist die letzte Mail dieser Reihe, wir wollen dein Postfach nicht vollmachen.`,
+          intro: `Ab jetzt melden wir uns seltener, wir wollen dein Postfach nicht vollmachen.`,
           bodyHtml:
             p(`Vielleicht denkst du: es wird von allein besser, oder ich schaffe es später. Verständlich. Aber jeder Tag mit klaren Regeln macht es für ${dog} <strong>leichter, nicht schwerer</strong>.`) +
             p(`Du musst dich heute nicht festlegen. Aber du kannst dir ${dog}s Plan in Ruhe ansehen. Alles kommt sofort per Mail, <strong>zum Ausdrucken</strong>, einmal zahlen, kein Abo. Und wenn es doch nicht passt: 30 Tage Geld-zurück.`),
+          ctaText: `${dogCap}s Plan ansehen`,
+        }),
+      };
+
+    case 9:
+      return {
+        subject: `Was sich bei ${dog} in der ersten Woche ändert`,
+        html: wrapTemplate({
+          ...common,
+          preheader: "Ehrlich: keine Wunder, aber spürbare kleine Schritte.",
+          headline: `Die erste Woche mit dem Plan`,
+          intro: `Viele fragen uns: Was passiert eigentlich, wenn wir anfangen? Hier ist ein ehrlicher Blick auf die ersten sieben Tage.`,
+          bodyHtml:
+            p(`<strong>Tag 1 bis 2:</strong> Ihr lernt ein einziges, klares Signal. Fünf bis zehn Minuten, mehr nicht. ${dogCap} merkt: Wenn ich zu dir schaue, passiert etwas Gutes.`) +
+            p(`<strong>Tag 3 bis 5:</strong> Das Signal klappt zu Hause zuverlässig. Jetzt nehmt ihr es mit vor die Tür, erst dort, wo wenig los ist.`) +
+            p(`<strong>Tag 6 bis 7:</strong> Die meisten merken einen ersten kleinen Unterschied, zum Beispiel einen ruhigeren Start in den Spaziergang. Kein Wunder, aber ein Anfang, auf dem alles aufbaut.`) +
+            p(`Jeder Tag steht im Plan, zum <strong>Ausdrucken und Abhaken</strong>. Du musst dir nichts merken.`),
+          ctaText: `${dogCap}s Plan ansehen`,
+        }),
+      };
+
+    case 10:
+      return {
+        subject: `Noch eine Übung für ${dog}: das SCHAU-Signal`,
+        html: wrapTemplate({
+          ...common,
+          preheader: "Kostenlos, dauert 3 Minuten, funktioniert überall.",
+          headline: `Das SCHAU-Signal, in 3 Minuten erklärt`,
+          intro: `Die Übung vor der Haustür kennst du schon. Hier ist die zweite, die bei fast allen Themen hilft, ob Leine, Bellen oder andere Hunde.`,
+          bodyHtml:
+            p(`<strong>So geht es:</strong> Nimm ein Leckerli in die Hand und halte es kurz neben dein Gesicht. In dem Moment, in dem ${dog} dir in die Augen schaut, sagst du ruhig „Schau" und gibst das Leckerli.`) +
+            p(`Fünfmal hintereinander, dann Pause. Nach ein paar Tagen schaut ${dog} schon auf das Wort hin zu dir, ganz ohne Leckerli neben dem Gesicht.`) +
+            p(`<strong>Warum das so viel bringt:</strong> Wer zu dir schaut, kann nicht gleichzeitig nach vorne ziehen, bellen oder fixieren. Im Plan baut ihr das Woche für Woche aus, bis es auch draußen klappt.`),
+          ctaText: `Alle Übungen für ${dog}`,
+        }),
+      };
+
+    case 11:
+      return {
+        subject: `Wie läuft es mit ${dog}?`,
+        html: wrapTemplate({
+          ...common,
+          preheader: "Eine kurze, persönliche Frage.",
+          headline: `Wie läuft es bei euch?`,
+          intro: `Vor drei Wochen hast du das Quiz für ${dog} ausgefüllt. Uns interessiert ehrlich, wie es euch seitdem geht.`,
+          bodyHtml:
+            p(`Ist es besser geworden, gleich geblieben oder schwieriger? Antworte einfach mit einem Satz auf diese Mail. Ein echter Mensch liest mit und gibt dir, wenn du magst, einen Tipp für ${dog}.`) +
+            p(`Und falls du doch noch starten willst: ${dog}s Plan liegt weiter für dich bereit. Einmal zahlen, kein Abo, 30 Tage Geld-zurück.`) +
+            p(`Das ist die letzte Mail dieser Reihe. Danke, dass du dir die Zeit genommen hast.`),
           ctaText: `${dogCap}s Plan ansehen`,
         }),
       };

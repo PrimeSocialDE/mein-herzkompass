@@ -1,8 +1,11 @@
 // GET /api/cron/email-captured?secret=pfoten-cron-2024
 //
 // DE-Nurture-Sequenz fuer email_captured-Leads (pfoten-plan.de).
-// Ersetzt den Brevo-UI-Automation-Workflow. 8 Stufen ab created_at:
-//   +10 Min, +6 Std, +1..+7 Tage. Laeuft alle ~10 Min (fuer die 10-Min-Mail).
+// Ersetzt den Brevo-UI-Automation-Workflow. 11 Stufen ab created_at:
+//   +10 Min, +6 Std, +1..+7 Tage, +10, +14, +21 Tage. Laeuft alle ~10 Min.
+// Kaeufer-Sperre: Wer unter derselben E-Mail schon einen bezahlten Lead hat,
+// bekommt nichts mehr (Kaeufer legen meist eine NEUE Lead-Zeile an, die alte
+// bleibt auf email_captured stehen).
 // Idempotent (Flag pro Stufe in answers), stoppt automatisch bei Kauf
 // (status wechselt weg von email_captured). PL unberuehrt — strikt NICHT-pl.
 //
@@ -11,7 +14,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createMemberAdminClient } from "@/lib/member-auth-server";
-import { sendEmailCapturedMail, type EcStage } from "@/lib/email-captured-sequence";
+import { sendEmailCapturedMail, EC_LAST_STAGE, type EcStage } from "@/lib/email-captured-sequence";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,8 +30,14 @@ const STAGE_WINDOWS: { stage: EcStage; minH: number; maxH: number }[] = [
   { stage: 5, minH: 72, maxH: 96 },
   { stage: 6, minH: 96, maxH: 120 },
   { stage: 7, minH: 120, maxH: 156 },
-  { stage: 8, minH: 156, maxH: 264 },
+  { stage: 8, minH: 156, maxH: 240 },
+  { stage: 9, minH: 240, maxH: 336 },   // Tag 10
+  { stage: 10, minH: 336, maxH: 504 },  // Tag 14
+  { stage: 11, minH: 504, maxH: 600 },  // Tag 21 (Fenster bis Tag 25)
 ];
+
+// Fenster-Ende der letzten Stufe in Tagen (Lookback des Crons).
+const LOOKBACK_DAYS = 25;
 
 function pickStage(createdAt: string): EcStage | null {
   const ageH = (Date.now() - new Date(createdAt).getTime()) / 3_600_000;
@@ -44,7 +53,7 @@ const flagKey = (s: EcStage) => `ec_seq_stage${s}_sent_at`;
 // faengt aber nie eine faellige Stufe ab — die liegen >=5h auseinander).
 function recentlySent(answers: any): boolean {
   const cutoff = Date.now() - 4 * 3_600_000;
-  for (let s = 1; s <= 8; s++) {
+  for (let s = 1; s <= EC_LAST_STAGE; s++) {
     const ts = answers?.[`ec_seq_stage${s}_sent_at`];
     if (ts && new Date(ts).getTime() > cutoff) return true;
   }
@@ -61,7 +70,7 @@ export async function GET(req: NextRequest) {
   const preview = searchParams.get("preview")?.toLowerCase();
   if (preview) {
     const out: any[] = [];
-    for (let s = 1 as EcStage; s <= 8; s = (s + 1) as EcStage) {
+    for (let s = 1 as EcStage; s <= EC_LAST_STAGE; s = (s + 1) as EcStage) {
       const r = await sendEmailCapturedMail(s, {
         to: preview,
         dogName: searchParams.get("dog") || "Balu",
@@ -102,10 +111,10 @@ export async function GET(req: NextRequest) {
 
   const admin = createMemberAdminClient();
 
-  // Fenster: 10 Min alt bis 11 Tage alt. Bei gesetzter Go-Live-Grenze ab dem
-  // spaeteren der beiden (Startdatum), damit kein alter Backlog erwischt wird.
-  const elevenDaysAgo = new Date(Date.now() - 11 * 86_400_000).toISOString();
-  const from = startCutoff && startCutoff > elevenDaysAgo ? startCutoff : elevenDaysAgo;
+  // Fenster: 10 Min alt bis LOOKBACK_DAYS alt. Bei gesetzter Go-Live-Grenze ab
+  // dem spaeteren der beiden (Startdatum), damit kein alter Backlog erwischt wird.
+  const lookbackStart = new Date(Date.now() - LOOKBACK_DAYS * 86_400_000).toISOString();
+  const from = startCutoff && startCutoff > lookbackStart ? startCutoff : lookbackStart;
   const until = new Date(Date.now() - 10 * 60_000).toISOString();
 
   // Sende-Deckel/Lauf: Burst-Schutz + gleichmaessiger Backlog-Abbau. Steady-
@@ -150,6 +159,40 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  // Kaeufer-Sperre: alle E-Mails mit bezahltem Lead (ab 90 Tage vor dem
+  // Fenster, deckt auch Bestandskunden ab, die das Quiz erneut machen).
+  const paidEmails = new Set<string>();
+  {
+    const paidFrom = new Date(new Date(from).getTime() - 90 * 86_400_000).toISOString();
+    for (let offset = 0; ; offset += PAGE) {
+      const { data, error } = await admin
+        .from("wauwerk_leads")
+        .select("email")
+        .eq("status", "paid")
+        .gte("created_at", paidFrom)
+        .order("created_at", { ascending: true })
+        .range(offset, offset + PAGE - 1);
+      if (error) {
+        // Ohne Kaeufer-Liste lieber gar nicht senden als Kaeufer anzuschreiben.
+        console.error("[email-captured] paid query error:", error.message);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      if (!data || data.length === 0) break;
+      for (const r of data) if (r.email) paidEmails.add(String(r.email).trim().toLowerCase());
+      if (data.length < PAGE) break;
+    }
+  }
+
+  // Pro E-Mail max. 1 Mail je 4h, auch ueber mehrere Lead-Zeilen hinweg.
+  const lastSentByEmail = new Map<string, number>();
+  for (const l of leads) {
+    const e = String(l.email || "").trim().toLowerCase();
+    for (let s = 1; s <= EC_LAST_STAGE; s++) {
+      const ts = l.answers?.[`ec_seq_stage${s}_sent_at`];
+      if (ts) lastSentByEmail.set(e, Math.max(lastSentByEmail.get(e) || 0, new Date(ts).getTime()));
+    }
+  }
+
   const results: any[] = [];
   let sent = 0,
     skipped = 0,
@@ -186,9 +229,21 @@ export async function GET(req: NextRequest) {
       results.push({ id: lead.id, skip: "anti_spam_4h" });
       continue;
     }
+    const emailKey = String(lead.email || "").trim().toLowerCase();
+    if (paidEmails.has(emailKey)) {
+      skipped++;
+      results.push({ id: lead.id, skip: "already_customer" });
+      continue;
+    }
+    if ((lastSentByEmail.get(emailKey) || 0) > Date.now() - 4 * 3_600_000) {
+      skipped++;
+      results.push({ id: lead.id, skip: "anti_spam_same_email" });
+      continue;
+    }
 
     if (dryRun) {
       sent++;
+      lastSentByEmail.set(emailKey, Date.now());
       results.push({ id: lead.id, email: lead.email, would_send: stage, dog: lead.dog_name });
       continue;
     }
@@ -204,6 +259,7 @@ export async function GET(req: NextRequest) {
 
     if (res.ok) {
       sent++;
+      lastSentByEmail.set(emailKey, Date.now());
       // Fresh-Read + Merge: nur das Flag additiv setzen, damit ein zeitgleicher
       // Kauf-Webhook (der answers/status aendert) NICHT ueberschrieben wird.
       const { data: fresh } = await admin
