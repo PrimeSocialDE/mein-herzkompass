@@ -1527,10 +1527,31 @@
         .rh-chip.selected { background:#8B7355; color:#fff; border-color:#8B7355; font-weight:700; }
     </style>
 
-    <!-- Banner oben (nicht sticky): Sommer-Motivation -->
+    <!-- Banner oben (nicht sticky). A/B ab_rh_bonus (ab 14.10.2026, 50/50):
+         A = Herbst-Motivation, B = Rueckkehrer-Bonus "Notfall-Karten gratis dazu".
+         Auslieferung der Karten: Checkout setzt answers.exit_bonus_notfallkarten,
+         der Mollie-Webhook (sendNotfallkartenIfBonus) verschickt sie nach Zahlung. -->
+    <script>
+        (function(){
+            var f = (new URLSearchParams(location.search).get('rhb') || '').toUpperCase();
+            var v = (f === 'A' || f === 'B') ? f : null;
+            if (!v) { try { v = localStorage.getItem('ab_rh_bonus'); } catch (e) {} }
+            if (v !== 'A' && v !== 'B') { v = Math.random() < 0.5 ? 'A' : 'B'; }
+            try { localStorage.setItem('ab_rh_bonus', v); } catch (e) {}
+            window.__rhBonus = v;
+            window.addEventListener('load', function(){ if (window.clarity) window.clarity('set', 'ab_rh_bonus', v); });
+        })();
+    </script>
     <div id="bonusBanner" style="background: linear-gradient(135deg, #C4A576, #8B7355); color: white; padding: 10px 16px; text-align: center; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
-        <span>Der Sommer ist die perfekte Zeit, um mit <strong id="dogNameTopBanner">deinem Hund</strong> richtig durchzustarten.</span>
+        <span id="rhBannerA">Der Herbst ist die perfekte Zeit, um mit <strong id="dogNameTopBanner">deinem Hund</strong> richtig durchzustarten.</span>
+        <span id="rhBannerB" style="display:none;">🎁 Weil du wiederkommst: die 10 Notfall-Karten gratis zu deinem Plan dazu (Wert 9,99&nbsp;€).</span>
     </div>
+    <script>
+        if (window.__rhBonus === 'B') {
+            document.getElementById('rhBannerA').style.display = 'none';
+            document.getElementById('rhBannerB').style.display = '';
+        }
+    </script>
 
     <header class="header">
         <a href="index.html" class="logo">
@@ -1686,8 +1707,9 @@
             <script>
                 (function(){
                     var force = new URLSearchParams(location.search).get('rhv');
-                    var ab = (force==='A'||force==='B') ? force : localStorage.getItem('ab_rueckhol_v');
-                    if(ab!=='A' && ab!=='B'){ ab = Math.random()<0.5?'A':'B'; localStorage.setItem('ab_rueckhol_v', ab); }
+                    // 14.10.2026 beendet: ohne Mockup lag vorn (82,5 % vs 77,5 % der Checkout-Starter).
+                    // Alle bekommen A, ?rhv=B zeigt die alte Variante weiter zur Ansicht.
+                    var ab = (force==='A'||force==='B') ? force : 'A';
                     window.__rhVariant = ab;
                     if(ab==='B'){
                         var m=document.getElementById('rhMockup'); if(m) m.style.display='block';
@@ -2046,6 +2068,11 @@
                 </div>
             </div>
         </label>
+
+        <div id="rhBonusLine" style="display:none;background:#F0FDF4;border:2px solid #86EFAC;border-radius:12px;padding:12px 14px;margin:0 0 14px;font-size:14px;line-height:1.5;color:#14532D;">
+            🎁 <strong>Gratis dazu: 10 Notfall-Karten</strong> (Wert 9,99&nbsp;€) – fertige Anleitungen für brenzlige Situationen, kommen mit deinem Plan per E-Mail.
+        </div>
+        <script>if (window.__rhBonus === 'B') document.getElementById('rhBonusLine').style.display = '';</script>
 
         <button class="cta-button" id="ctaButton" onclick="openCheckout()">
             Trainingsplan freischalten
@@ -3298,6 +3325,11 @@ let currentLeadId = null;
                 source_page: 'rueckhol',
                 ab_test_trust: localStorage.getItem('ab_test_trust') || '',
                 ab_variant: (window.__rhVariant === 'B' ? 'rueckhol-mockup' : 'rueckhol-control'),
+                ab_rh_bonus: (function(){
+                    // Bei B merken, damit /zusatz die Karten nicht noch einmal verkauft
+                    if (window.__rhBonus === 'B') { try { localStorage.setItem('rh_bonus_karten_at', String(Date.now())); } catch (e) {} }
+                    return window.__rhBonus || '';
+                })(),
                 entry_page: localStorage.getItem('entry_page') || '',
                 orderBump: bumpChecked,
                 bumpType: bumpChecked ? 'sommer' : undefined,
@@ -3435,7 +3467,7 @@ let currentLeadId = null;
 
             hybridContext = {
                 plan: selectedPlan,
-                planName: planInfo.name + (_bumpChecked ? ' + Notfall-Grundkommando-Plan' : ''),
+                planName: planInfo.name + (_bumpChecked ? ' + Notfall-Grundkommando-Plan' : '') + (window.__rhBonus === 'B' ? ' + Notfall-Karten gratis' : ''),
                 price: priceVal,
                 priceLabel: priceVal.toFixed(2).replace('.', ',') + ' €'
             };

@@ -357,6 +357,20 @@
             if (sb) sb.style.opacity = '1';
         }, 3000);
 
+        // Rueckhol-Bonus (ab_rh_bonus = B): die Karten kommen gratis mit dem Plan.
+        // Dann hier nicht noch einmal fuer 9,99 anbieten, sondern nach dem
+        // Purchase-Tracking (laeuft synchron weiter unten) direkt weiterleiten.
+        // Flag nur 3 h gueltig, damit ein spaeterer normaler Kauf nicht betroffen ist.
+        (function () {
+            try {
+                var t = parseInt(localStorage.getItem('rh_bonus_karten_at') || '0', 10);
+                if (t && Date.now() - t < 3 * 3600 * 1000) {
+                    localStorage.removeItem('rh_bonus_karten_at');
+                    setTimeout(function () { skipToModules(); }, 1500);
+                }
+            } catch (e) {}
+        })();
+
         function skipToModules() {
             // Relativer Pfad — funktioniert sowohl lokal (file://) als auch live (Vercel)
             window.location.href = 'downsell.html?lead_id=' + encodeURIComponent(leadId || '');

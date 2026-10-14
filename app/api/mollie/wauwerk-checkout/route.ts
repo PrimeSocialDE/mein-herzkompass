@@ -133,6 +133,8 @@ export async function POST(req: NextRequest) {
       ab_jtbd,
       ab_badge,
       ab_checkout,
+      // Rueckhol-Bonus-Test (A = ohne, B = Notfall-Karten gratis), nur von rueckhol
+      ab_rh_bonus,
       entry_page,
     } = body;
 
@@ -606,6 +608,13 @@ export async function POST(req: NextRequest) {
       if (ab_variant) ansMerge.ab_variant = ab_variant;
       if (ab_badge) ansMerge.ab_badge = String(ab_badge).slice(0, 8);
       if (ab_checkout) ansMerge.ab_checkout = String(ab_checkout).slice(0, 8);
+      // Rueckhol-Bonus: Variante persistieren; bei B liefert der Webhook nach
+      // Zahlung die Notfall-Karten aus (sendNotfallkartenIfBonus, idempotent
+      // ueber notfallkarten_sent_at). Nur fuer Kaeufe von der Rueckholseite.
+      if (source_page === "rueckhol" && (ab_rh_bonus === "A" || ab_rh_bonus === "B")) {
+        ansMerge.ab_rh_bonus = ab_rh_bonus;
+        if (ab_rh_bonus === "B") ansMerge.exit_bonus_notfallkarten = true;
+      }
       if (entry_page) ansMerge.entry_page = entry_page;
       if (clientCountry) ansMerge.country = clientCountry;
       // PL-Herkunft (lapaplan.pl / PLN-Checkout) am Lead persistieren, damit
