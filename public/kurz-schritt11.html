@@ -265,11 +265,12 @@
         function getABTestPage() {
             let variant = localStorage.getItem('ab_test_pricing_v6');
             if (!variant) {
-                // 20% A=deinplan3 NEU (Handy-Animation, Kein-Abo-Zeile, Digital/Ausdrucken),
-                // 80% B=deinplan2 (bisheriger Gewinner + Testimonial-Block). Von 50/50 auf
-                // 20/80 zugunsten B2 gezogen (A2/B2 zuletzt Gleichstand, B2 wird bevorzugt
-                // ausgespielt). A2 bleibt mit 20% als Kontroll-Rest laufen.
-                variant = Math.random() < 0.20 ? 'A' : 'B';
+                // 14.10.2026 zurueck auf 50/50: Auswertung per E-Mail ueber Mollie seit
+                // 11.08. zeigt A2 (deinplan3) 24,1 % Kaufquote / 11,44 EUR je Teilnehmer
+                // vs. B2 (deinplan2) 16,1 % / 7,63 EUR (n 3.164 vs 11.429). Seit 03.10.
+                // fast gleichauf, daher erst 50/50 statt sofort 100 % deinplan3.
+                // Bestehende Zuteilungen (localStorage) bleiben unveraendert.
+                variant = Math.random() < 0.50 ? 'A' : 'B';
                 localStorage.setItem('ab_test_pricing_v6', variant); // Routing + sawPlan-Flag (Key bleibt v6!)
                 // DB-Label (ab_variant): neue deinplan3 = 'A2' (sauber trennbar von alten 'A'-Daten), B = 'B2'
                 localStorage.setItem('ab_test_pricing', variant === 'A' ? 'A2' : 'B2');
