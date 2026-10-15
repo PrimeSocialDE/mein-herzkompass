@@ -149,8 +149,10 @@ export async function GET(req: NextRequest) {
   // Pro E-Mail max. 1 Warm-Mail je 20h, auch ueber mehrere Lead-Zeilen hinweg
   // (Abbrecher haben oft eine pending- UND eine failed-Zeile).
   const lastSentByEmail = new Map<string, number>();
+  const unsubEmails = new Set<string>();
   for (const l of leads) {
     const e = String(l.email || "").trim().toLowerCase();
+    if (l.answers?.unsubscribed) unsubEmails.add(e);
     for (let s = 1; s <= 5; s++) {
       const ts = l.answers?.[`warm_recovery_stage${s}_sent_at`];
       if (ts) lastSentByEmail.set(e, Math.max(lastSentByEmail.get(e) || 0, new Date(ts).getTime()));
@@ -187,6 +189,11 @@ export async function GET(req: NextRequest) {
     }
 
     const emailKey = String(lead.email || "").trim().toLowerCase();
+    if (unsubEmails.has(emailKey)) {
+      skipped++;
+      results.push({ id: lead.id, email: lead.email, skip: "unsubscribed" });
+      continue;
+    }
     if (paidEmails.has(emailKey)) {
       skipped++;
       results.push({ id: lead.id, email: lead.email, skip: "already_customer" });

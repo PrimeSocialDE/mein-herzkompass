@@ -184,9 +184,13 @@ export async function GET(req: NextRequest) {
   }
 
   // Pro E-Mail max. 1 Mail je 4h, auch ueber mehrere Lead-Zeilen hinweg.
+  // Abgemeldet (answers.unsubscribed, z. B. manuell auf Kundenwunsch) gilt
+  // fuer die ganze E-Mail, auch wenn nur eine der Lead-Zeilen das Flag traegt.
   const lastSentByEmail = new Map<string, number>();
+  const unsubEmails = new Set<string>();
   for (const l of leads) {
     const e = String(l.email || "").trim().toLowerCase();
+    if (l.answers?.unsubscribed) unsubEmails.add(e);
     for (let s = 1; s <= EC_LAST_STAGE; s++) {
       const ts = l.answers?.[`ec_seq_stage${s}_sent_at`];
       if (ts) lastSentByEmail.set(e, Math.max(lastSentByEmail.get(e) || 0, new Date(ts).getTime()));
@@ -230,6 +234,11 @@ export async function GET(req: NextRequest) {
       continue;
     }
     const emailKey = String(lead.email || "").trim().toLowerCase();
+    if (unsubEmails.has(emailKey)) {
+      skipped++;
+      results.push({ id: lead.id, skip: "unsubscribed" });
+      continue;
+    }
     if (paidEmails.has(emailKey)) {
       skipped++;
       results.push({ id: lead.id, skip: "already_customer" });
