@@ -1527,7 +1527,7 @@
         .rh-chip.selected { background:#8B7355; color:#fff; border-color:#8B7355; font-weight:700; }
     </style>
 
-    <!-- Banner oben (nicht sticky). A/B ab_rh_bonus (ab 14.10.2026, 50/50):
+    <!-- Banner oben (nicht sticky). A/B ab_rh_bonus (ab 14.10.2026, 50/50; seit 16.10. 30 % A / 70 % B):
          A = Herbst-Motivation, B = Rueckkehrer-Bonus "Notfall-Karten gratis dazu".
          Auslieferung der Karten: Checkout setzt answers.exit_bonus_notfallkarten,
          der Mollie-Webhook (sendNotfallkartenIfBonus) verschickt sie nach Zahlung. -->
@@ -1536,7 +1536,8 @@
             var f = (new URLSearchParams(location.search).get('rhb') || '').toUpperCase();
             var v = (f === 'A' || f === 'B') ? f : null;
             if (!v) { try { v = localStorage.getItem('ab_rh_bonus'); } catch (e) {} }
-            if (v !== 'A' && v !== 'B') { v = Math.random() < 0.5 ? 'A' : 'B'; }
+            // 16.10.2026: B (Bonus) auf 70 % hochgezogen, nachdem B in den ersten 2 Tagen vorn lag.
+            if (v !== 'A' && v !== 'B') { v = Math.random() < 0.3 ? 'A' : 'B'; }
             try { localStorage.setItem('ab_rh_bonus', v); } catch (e) {}
             window.__rhBonus = v;
             window.addEventListener('load', function(){ if (window.clarity) window.clarity('set', 'ab_rh_bonus', v); });
