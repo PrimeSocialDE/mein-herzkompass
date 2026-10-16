@@ -271,7 +271,8 @@ export async function GET(req: NextRequest) {
       continue;
     }
     gesehen.add(mail);
-    const dog = (l.dog_name || "").trim() || "deinem Hund";
+    const roh = (l.dog_name || "").trim();
+    const dog = roh ? roh.charAt(0).toUpperCase() + roh.slice(1) : "deinem Hund";
     let res;
     try { res = await sendOne(String(l.email), dog, String(prev.dog_problem || ""), l.id); } catch { err++; continue; }
     if (res.status < 300) {
