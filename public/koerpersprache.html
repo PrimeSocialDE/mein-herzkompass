@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Körpersprache lesen | Pfoten-Plan</title>
+<link rel="icon" type="image/png" href="/favconHund.png">
+<style>
+:root{--text-dark:#2C2C2E;--text-medium:#6B6B6B;--text-light:#999;--white:#fff;--border-light:#E8E4DF;
+--light-brown:#D4B996;--warm-brown:#C4A576;--dark-brown:#8B7355;--accent-green:#A8C5A0;--radius:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#FAF8F5;color:var(--text-dark);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+.promo{background:linear-gradient(90deg,#C4A576,#D4B888,#C4A576);color:#fff;text-align:center;padding:9px 12px;font-size:13.5px;font-weight:700}
+.header{display:flex;align-items:center;gap:9px;justify-content:center;padding:18px 16px 4px}
+.header img{width:30px;height:30px;border-radius:7px}
+.header span{font-weight:800;color:var(--dark-brown);font-size:17px}
+.wrap{max-width:640px;margin:0 auto;padding:6px 18px 120px}
+.eyebrow{text-align:center;font-size:11.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;color:var(--warm-brown);margin:10px 0 6px}
+h1{font-size:29px;line-height:1.2;letter-spacing:-.6px;margin:0 0 10px;text-align:center;text-wrap:balance}
+h1 em{font-style:normal;color:var(--dark-brown)}
+.lead{font-size:17px;color:var(--text-medium);margin:0 auto 18px;text-align:center;max-width:520px;text-wrap:balance}
+.hero{position:relative;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(139,115,85,.16);margin-bottom:8px;background:#EFE9E1;aspect-ratio:3/2}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero .tag{position:absolute;left:14px;bottom:14px;background:rgba(255,255,255,.94);backdrop-filter:blur(4px);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:800;color:var(--dark-brown);box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.unterbild{text-align:center;font-size:12.5px;color:var(--text-light);margin:0 0 22px}
+.karte{background:var(--white);border:1px solid var(--border-light);border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.karte.fokus{border-color:var(--light-brown);box-shadow:0 6px 22px rgba(196,165,118,.18)}
+.schritt{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--warm-brown);background:#FFF6E9;border-radius:999px;padding:4px 10px;margin-bottom:9px}
+.frage{font-size:18.5px;font-weight:800;margin-bottom:6px;letter-spacing:-.2px}
+.hinweis{font-size:14px;color:var(--text-medium);margin-bottom:14px}
+.warum{background:#FFFBF5;border:1px solid #F0E3CE;border-left:3px solid var(--warm-brown);border-radius:10px;padding:12px 14px;font-size:14px;color:#5F5344;margin-bottom:14px}
+.warum b{color:var(--dark-brown)}
+.wahl{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--border-light);background:#fff;border-radius:10px;padding:12px 18px;font-size:15px;font-weight:700;cursor:pointer;color:var(--text-dark);font-family:inherit;transition:.15s}
+.btn:hover{border-color:var(--warm-brown)}
+.btn.aktiv{background:#FFF6E9;border-color:var(--warm-brown);color:var(--dark-brown)}
+.btn.gross{flex:1;min-width:180px;text-align:left}
+.btn:focus-visible{outline:2px solid var(--dark-brown);outline-offset:2px}
+input[type=text],input[type=email]{width:100%;padding:13px 14px;border:1px solid var(--border-light);border-radius:10px;font-size:16px;font-family:inherit;margin-bottom:10px;background:#fff}
+input[type=text]:focus,input[type=email]:focus{outline:none;border-color:var(--warm-brown);box-shadow:0 0 0 3px rgba(196,165,118,.15)}
+.liste{max-height:230px;overflow-y:auto;border:1px solid var(--border-light);border-radius:10px}
+.zeile{padding:11px 14px;cursor:pointer;border-bottom:1px solid #F4F1EC;font-size:15px}
+.zeile:last-child{border-bottom:none}
+.zeile:hover{background:#FFFBF5}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+.chip{background:#FFF6E9;border:1px solid var(--light-brown);color:var(--dark-brown);border-radius:20px;padding:7px 13px;font-size:14px;font-weight:700}
+.chip button{background:none;border:none;color:var(--dark-brown);cursor:pointer;font-size:15px;margin-left:6px;font-family:inherit}
+.fertig{display:none;align-items:center;gap:8px;background:#F2F8F0;border:1px solid #D6E8D0;color:#2F6B34;border-radius:10px;padding:10px 13px;font-size:14px;font-weight:700;margin-top:12px}
+.fertig.an{display:flex}
+.inhalt{display:grid;gap:2px}
+.inhalt li{list-style:none;display:flex;gap:12px;padding:11px 0;border-bottom:1px solid #F4F1EC;font-size:15.5px;align-items:flex-start}
+.inhalt li:last-child{border-bottom:none}
+.inhalt .ic{flex:0 0 34px;height:34px;border-radius:9px;background:#FFF6E9;display:flex;align-items:center;justify-content:center;font-size:17px}
+.inhalt b{display:block;font-size:15.5px}
+.inhalt small{color:var(--text-medium);font-size:13.5px;line-height:1.45}
+.preis{text-align:center;padding:24px 20px;position:relative;overflow:hidden}
+.preis::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,#C4A576,#E3CBA4,#C4A576)}
+.preis .alt{color:var(--text-light);text-decoration:line-through;font-size:16px}
+.preis .jetzt{font-size:42px;font-weight:800;letter-spacing:-1.4px;margin:0;line-height:1.1}
+.preis .art{color:var(--text-medium);font-size:14px;margin-top:4px}
+.kaufen{width:100%;background:linear-gradient(180deg,#CBAE80,#BE9D67);color:#fff;border:none;border-radius:12px;padding:17px;font-size:17px;font-weight:800;cursor:pointer;margin-top:16px;font-family:inherit;box-shadow:0 6px 16px rgba(190,157,103,.35);transition:.15s}
+.kaufen:hover:not(:disabled){transform:translateY(-1px)}
+.kaufen:disabled{opacity:.42;cursor:not-allowed;box-shadow:none}
+.kaufen small{display:block;font-weight:600;font-size:12.5px;opacity:.92;margin-top:3px}
+.payment-logos{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;margin:15px 0 4px}
+.payment-logos img{height:23px;width:auto;opacity:.75;border-radius:5px}
+.garantie{font-size:13.5px;color:#166534;font-weight:700;margin-top:12px}
+.garantie small{display:block;color:var(--text-medium);font-weight:400;margin-top:2px}
+.trust{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:16px 0 4px;font-size:13px;color:var(--text-medium)}
+.sterne{color:#E8A93A;letter-spacing:1px}
+.stimme{background:#fff;border:1px solid var(--border-light);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.stimme p{font-size:14.5px;margin-bottom:6px}
+.stimme cite{font-style:normal;font-size:12.5px;color:var(--text-medium)}
+.faq details{border-bottom:1px solid var(--border-light);padding:13px 0}
+.faq details:last-child{border-bottom:none}
+.faq summary{font-weight:700;cursor:pointer;font-size:15.5px;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";float:right;color:var(--warm-brown);font-weight:800}
+.faq details[open] summary::after{content:"–"}
+.faq p{font-size:14.5px;color:var(--text-medium);padding-top:8px}
+.fuss{text-align:center;font-size:12px;color:var(--text-light);margin-top:26px}
+.fehler{background:#FDF2F2;border:1px solid #F5C6C6;color:#B42318;border-radius:10px;padding:11px 14px;font-size:14px;margin-top:12px}
+.leiste{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);border-top:1px solid var(--border-light);padding:10px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 -4px 18px rgba(0,0,0,.07);transform:translateY(110%);transition:transform .25s;z-index:20}
+.leiste.an{transform:none}
+.leiste .lp{font-size:13px;color:var(--text-medium);line-height:1.25}
+.leiste .lp b{display:block;font-size:18px;color:var(--text-dark)}
+.leiste button{flex:1;background:linear-gradient(180deg,#CBAE80,#BE9D67);color:#fff;border:none;border-radius:11px;padding:14px;font-size:15.5px;font-weight:800;font-family:inherit;cursor:pointer}
+@media(min-width:620px){.leiste{max-width:640px;margin:0 auto;border-radius:16px 16px 0 0;border:1px solid var(--border-light)}}
+
+.rassekarte{background:#fff;border:1px solid var(--border-light);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.rk-kopf{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.rk-ic{flex:0 0 40px;height:40px;border-radius:11px;background:#FFF6E9;display:flex;align-items:center;justify-content:center;font-size:20px}
+.rk-titel{font-size:18.5px;font-weight:800;letter-spacing:-.2px;line-height:1.3}
+.rk-titel em{font-style:normal;color:var(--dark-brown)}
+.rk-korr{background:none;border:none;padding:0;margin-top:3px;font-family:inherit;font-size:13px;color:var(--text-medium);text-decoration:underline;cursor:pointer}
+.rk-korr:hover{color:var(--dark-brown)}
+.rk-fakt{display:flex;gap:10px;padding:9px 0;border-top:1px solid #F4F1EC;font-size:15px;line-height:1.5}
+.rk-fakt span:first-child{color:var(--warm-brown);font-weight:800}
+.rk-lock{display:flex;gap:10px;align-items:flex-start;margin-top:10px;background:#FBF8F3;border:1px dashed var(--light-brown);border-radius:10px;padding:11px 13px;font-size:14px;color:var(--text-medium)}
+.rk-lock b{color:var(--dark-brown)}
+.mailstatus{font-size:14px;color:var(--text-medium);margin:10px 0 0;line-height:1.5}
+.mailstatus.treffer{background:#F2F8F0;border:1px solid #D6E8D0;color:#2F6B34;border-radius:10px;padding:10px 12px;font-weight:700}
+.sig{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid var(--border-light);border-radius:12px;padding:12px;margin-bottom:10px}
+.sig img{width:112px;height:84px;object-fit:cover;border-radius:8px;flex:0 0 112px}
+.sig b{display:block;font-size:15.5px;margin-bottom:3px}
+.sig .amp{display:inline-block;font-size:11px;font-weight:800;color:#fff;border-radius:999px;padding:2px 9px;margin-bottom:5px}
+.sig p{font-size:14px;color:var(--text-medium);line-height:1.45}
+.bonus{background:#F2F8F0;border:1px solid #D6E8D0;border-radius:12px;padding:14px 16px;font-size:14.5px;color:#2F6B34;margin:14px 0}
+</style>
+
+</head>
+<body>
+<div class="promo">🐾 Nur für Pfoten-Plan-Kunden · Heft kommt sofort per E-Mail</div>
+<div class="header"><img src="logo.png" alt="" onerror="this.style.display='none'"><span>Pfoten-Plan</span></div>
+<div class="wrap">
+  <div class="eyebrow">Körpersprache lesen</div>
+  <h1>Was <em id="hundName">dein Hund</em> dir sagen will</h1>
+  <p class="lead">24 Signale, die du ab heute verstehst, und was du dann tust. Damit du früher siehst, wann <span class="hn">deinem Hund</span> etwas zu viel wird, und eingreifst, bevor es knallt.</p>
+  <div class="hero"><img src="/koerpersprache/k20.jpg" alt="Halterin beobachtet ihren Hund in Ruhe"><div class="tag">Mit Zeichnung zu jedem Signal</div></div>
+  <p class="unterbild">Zum Ausdrucken, Nachschlagen und Mitnehmen</p>
+
+  <div class="karte">
+    <div class="schritt">Kostprobe</div>
+    <div class="frage">Drei Signale, die fast alle übersehen</div>
+    <div class="sig"><img src="/koerpersprache/k03.jpg" alt="Gähnender Hund"><div><span class="amp" style="background:#C99628">Gelb</span><b>Gähnen</b><p>Ist er dabei nicht müde, beruhigt er sich selbst: „Ich will keinen Ärger.“ Nimm Druck raus.</p></div></div>
+    <div class="sig"><img src="/koerpersprache/k08.jpg" alt="Hund zeigt das Weiße im Auge"><div><span class="amp" style="background:#C99628">Gelb</span><b>Das Weiße im Auge</b><p>Kopf weg, Blick zurück: deutliches Unwohlsein, oft kurz vor dem Erstarren. Sofort loslassen.</p></div></div>
+    <div class="sig"><img src="/koerpersprache/k14.jpg" alt="Knurrender Hund am Napf"><div><span class="amp" style="background:#B23A2C">Rot</span><b>Knurren</b><p>Keine Unart, sondern seine Warnung. Wer Knurren bestraft, bekommt einen Hund, der ohne Vorwarnung schnappt.</p></div></div>
+  </div>
+
+  <div class="karte">
+    <div class="schritt">Das steckt drin</div>
+    <ul class="inhalt">
+      <li><span class="ic">🚦</span><div><b>18 Körpersignale mit Ampel</b><small>Grün, Gelb, Rot: Du siehst auf einen Blick, wie dringend es ist, und was du jetzt tust.</small></div></li>
+      <li><span class="ic">🎯</span><div><b id="fokusTitel">Deine wichtigsten 4 Signale</b><small id="fokusText">Passend zu dem, was du bei deinem Hund angegeben hast.</small></div></li>
+      <li><span class="ic">🚪</span><div><b>Was er von dir will</b><small>Kratzen an der Tür, Winseln, Leine bringen, Unruhe: was er dir damit sagt und wie du klug reagierst.</small></div></li>
+      <li><span class="ic">🛋️</span><div><b>So bringst du ihn zur Ruhe</b><small>Sechs Wege Schritt für Schritt, vom Kauen bis zur Ruhedecke.</small></div></li>
+      <li><span class="ic">🌳</span><div><b>Wenn er Auslauf braucht</b><small>Richtig auslasten mit Nase und Kopf, und warum mehr Ballwerfen oft nicht ruhiger macht.</small></div></li>
+      <li><span class="ic">🩺</span><div><b>Keine Panik</b><small>Rückwärtsniesen, Zucken im Schlaf und Co.: was harmlos ist und wann du zum Tierarzt solltest.</small></div></li>
+      <li><span class="ic">💡</span><div><b>Fünf Irrtümer, die fast alle glauben</b><small>Warum Wedeln nicht immer Freude ist und der „schuldbewusste Blick“ keine Reue.</small></div></li>
+      <li><span class="ic">🏡</span><div><b>Vier Alltagssituationen</b><small>Hundebegegnung, Besuch, Kinder und Enkel, Tierarzt: was du dort konkret beachtest.</small></div></li>
+      <li><span class="ic">📝</span><div><b>Dein 7-Tage-Beobachtungsplan</b><small>Jeden Tag ein kleiner Blick. Nach einer Woche siehst du deinen Hund mit anderen Augen.</small></div></li>
+    </ul>
+    <div class="bonus">🎁 <b>Gratis dazu: Spickzettel für die Jackentasche</b> mit den 5 Warnsignalen, bei denen du sofort handeln solltest.</div>
+  </div>
+
+  <div class="karte preis" id="preisKarte">
+    <div class="jetzt">19,90 €</div>
+    <div class="art">einmalig · kein Abo · als PDF sofort per E-Mail</div>
+    <div id="karteMail" hidden style="margin-top:14px;text-align:left">
+      <div class="hinweis">An welche E-Mail-Adresse sollen wir das Heft schicken?</div>
+      <input type="email" id="mailFeld" placeholder="deine@email.de" autocomplete="email">
+    </div>
+    <button class="kaufen" id="kaufBtn">Heft für <span class="hn">deinen Hund</span> holen<small>Sicher bezahlen · sofort per E-Mail</small></button>
+    <div class="fehler" id="fehler" hidden></div>
+    <div class="payment-logos">
+      <img src="sepa-logo.png" alt="SEPA" onerror="this.style.display='none'">
+      <img src="visa-logo.png" alt="Visa" onerror="this.style.display='none'">
+      <img src="mastercard-logo.png" alt="Mastercard" onerror="this.style.display='none'">
+      <img src="paypal-logo.png" alt="PayPal" onerror="this.style.display='none'">
+      <img src="klarna-logo.png" alt="Klarna" onerror="this.style.display='none'">
+      <img src="applepay.png" alt="Apple Pay" onerror="this.style.display='none'">
+      <img src="googlepay.png" alt="Google Pay" onerror="this.style.display='none'">
+    </div>
+    <div class="garantie">🛡️ 30 Tage Geld-zurück-Garantie<small>Hilft dir das Heft nicht weiter, schreib uns eine Zeile.</small></div>
+  </div>
+
+  <div class="karte faq">
+    <details><summary>Für wen ist das Heft?</summary><p>Für alle, die ihren Hund besser verstehen wollen, egal ob Welpe, Tierschutzhund oder Senior. Besonders hilfreich, wenn dein Hund an der Leine reagiert, unsicher ist oder du Kinder und Enkel im Haus hast.</p></details>
+    <details><summary>Ist das ein Abo?</summary><p>Nein. Du zahlst einmal 19,90 € und bekommst das Heft als PDF. Nichts verlängert sich.</p></details>
+    <details><summary>Wie bekomme ich das Heft?</summary><p>Direkt nach der Zahlung per E-Mail als PDF, zum Ausdrucken oder fürs Handy.</p></details>
+  </div>
+  <p class="fuss">Pfoten-Plan · Debkowski &amp; Moritz GbR · <a href="/impressum.html" style="color:inherit">Impressum</a> · <a href="/datenschutz.html" style="color:inherit">Datenschutz</a></p>
+</div>
+<div class="leiste" id="leiste"><div class="lp">Körpersprache-Heft<b>19,90 €</b></div><button id="leisteBtn">Heft holen</button></div>
+<script>
+const SUPABASE_URL='https://xomsibpyksrzrnixbdwf.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbXNpYnB5a3NyenJuaXhiZHdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NjMxMjIsImV4cCI6MjA3MjIzOTEyMn0.ZgCwog94HUHz39lbGMJkFPeZ6c-nL4AMFFTz5AgwnKE';
+const $ = (id) => document.getElementById(id);
+const qp = new URLSearchParams(location.search);
+const leadId = qp.get('lead_id') || '';
+let email = (qp.get('email') || '').trim();
+if (!email) { try { email = localStorage.getItem('userEmail') || ''; } catch(e) {} }
+let hund = qp.get('dog') || '', thema = '';
+const FOKUS = {
+  pulling:'beim Ziehen an der Leine', 'leash-reactive':'beim Pöbeln an der Leine', 'dog-reactive':'bei Begegnungen mit anderen Hunden',
+  aggression:'bei aggressivem Verhalten', barking:'beim Bellen', anxiety:'bei Angst', separation:'beim Alleinbleiben', jumping:'beim Anspringen',
+  recall:'beim Rückruf', energy:'bei viel Energie', destructive:'beim Zerstören', soiling:'bei der Stubenreinheit', mouthing:'beim Aufnehmen vom Boden'
+};
+function mailOk(m){ return /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test((m || '').trim()); }
+function zeichne(){
+  const h = hund || 'dein Hund';
+  $('hundName').textContent = h;
+  document.querySelectorAll('.hn').forEach(el => { el.textContent = hund ? hund : el.textContent; });
+  if (FOKUS[thema]) {
+    $('fokusTitel').textContent = 'Die 4 wichtigsten Signale ' + FOKUS[thema];
+    $('fokusText').textContent = 'Eigene Seite für ' + h + ': die Signale, die dir genau bei eurem Thema den Moment zum Eingreifen zeigen.';
+  }
+  $('karteMail').hidden = mailOk(email);
+}
+(async function laden(){
+  if (leadId) {
+    try {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/wauwerk_leads?id=eq.' + encodeURIComponent(leadId) + '&select=dog_name,answers',
+        {headers:{apikey:SUPABASE_KEY, Authorization:'Bearer ' + SUPABASE_KEY}});
+      const d = await r.json();
+      if (d && d[0]) { const a = d[0].answers || {}; hund = hund || d[0].dog_name || a.dog_name || ''; thema = a.dog_problem || ''; }
+    } catch(e) {}
+  }
+  zeichne();
+})();
+$('kaufBtn').onclick = async function(){
+  if (!mailOk(email)) { const m = ($('mailFeld').value || '').trim(); if (!mailOk(m)) { $('karteMail').hidden = false; $('mailFeld').focus(); return; } email = m; }
+  const b = this, alt = b.innerHTML; b.disabled = true; b.textContent = 'Einen Moment …';
+  $('fehler').hidden = true;
+  try { localStorage.setItem('userEmail', email); } catch(e) {}
+  try {
+    const res = await fetch('/api/mollie/upsell-product-checkout', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ type:'koerpersprache', email:email, leadId:leadId, dogName:hund || 'deinen Hund',
+        returnUrl: location.origin + '/koerpersprache-danke.html?dog=' + encodeURIComponent(hund || '') })
+    });
+    const j = await res.json();
+    if (j && j.url) { location.href = j.url; return; }
+    throw new Error(j && j.error ? j.error : 'Keine Zahlungsseite erhalten');
+  } catch(e) {
+    const f = $('fehler');
+    f.textContent = 'Das hat gerade nicht geklappt. Bitte versuch es noch einmal, oder schreib uns an support@pfoten-plan.de, wir kümmern uns.';
+    f.hidden = false; b.disabled = false; b.innerHTML = alt;
+  }
+};
+(function(){
+  const leiste = $('leiste'), preis = $('preisKarte');
+  $('leisteBtn').onclick = function(){ preis.scrollIntoView({behavior:'smooth', block:'center'}); };
+  function pruefe(){ const r = preis.getBoundingClientRect(); leiste.classList.toggle('an', window.scrollY > 340 && r.top > window.innerHeight - 40); }
+  window.addEventListener('scroll', pruefe, {passive:true}); window.addEventListener('resize', pruefe); pruefe();
+})();
+</script>
+</body>
+</html>

@@ -41,6 +41,9 @@ const PRODUCT_PRICES: Record<string, number> = {
   // Themen-Modul "thema-aufnehmen" (14,99), weil es ein vollstaendiger
   // Lehrgang ist und kein Mini-Plan.
   "nichts-vom-boden": 2499,
+  // Koerpersprache-Heft (18 Signale mit Zeichnungen, fester Inhalt +
+  // Personalisierung nach dog_problem, lib/koerpersprache-*.ts)
+  koerpersprache: 1990,
 };
 
 // Alt-Slugs aus member_upsells. Die Shop-Karte schickt ihren DB-Slug als
@@ -75,6 +78,7 @@ const PRODUCT_NAMES: Record<string, string> = {
   paket: "Komplettpaket fuer deinen Hund",
   "notfall-karten": "Notfall-Karten zum Ausdrucken",
   "nichts-vom-boden": "Nichts vom Boden — Anti-Giftkoeder-Training",
+  koerpersprache: "Koerpersprache-Heft fuer deinen Hund",
 };
 
 export async function POST(req: NextRequest) {

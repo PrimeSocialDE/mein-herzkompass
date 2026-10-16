@@ -1118,6 +1118,40 @@ async function handleUpsellProductPaid(payment: any) {
     });
   }
 
+  // Koerpersprache-Heft -> eigener Generator (fester Inhalt + Personalisierung,
+  // keine KI, wenige Sekunden). Problem/Rasse kommen aus dem Lead.
+  if (product === "koerpersprache") {
+    after(async () => {
+      try {
+        const baseUrl =
+          process.env.NEXT_PUBLIC_SITE_URL ||
+          (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+          "https://www.pfoten-plan.de";
+        const a = ((leadData?.answers as any) || {}) as Record<string, any>;
+        const r = await fetch(`${baseUrl}/api/koerpersprache/generate`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.WORKER_TOKEN || ""}`,
+          },
+          body: JSON.stringify({
+            leadId: leadData?.id || leadId || "",
+            email,
+            dogName: dogName === "deinen Hund" ? undefined : dogName,
+            breed: a.dog_breed || undefined,
+            problem: a.dog_problem || undefined,
+          }),
+        });
+        const j: any = await r.json().catch(() => ({}));
+        console.log(
+          `[mollie-webhook] koerpersprache/generate ${email}: HTTP ${r.status} ok=${j.ok} skipped=${j.skipped || ""}`
+        );
+      } catch (e: any) {
+        console.error("[mollie-webhook] koerpersprache/generate fehlgeschlagen:", e?.message);
+      }
+    });
+  }
+
   // "Nichts vom Boden" (Anti-Giftkoeder, 20 Uebungen) -> eigener Generator.
   // Opus braucht fuer das Handbuch rund vier Minuten, deshalb laeuft der Aufruf
   // in after() und die Route dort hat maxDuration 300.
