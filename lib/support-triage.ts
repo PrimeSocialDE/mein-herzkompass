@@ -38,22 +38,21 @@ export interface TriageResult {
   kurz: string;
 }
 
-/** Feste Widerruf-Vorlage (von Max vorgegeben). */
-export function widerrufTemplate(vorname: string, hundename: string): string {
+/** Feste Widerruf-Vorlage (von Max vorgegeben, Fassung 19.10.2026). */
+export function widerrufTemplate(vorname: string, _hundename?: string): string {
   const anrede = vorname ? `Hallo ${vorname},` : "Hallo,";
-  const hund = hundename || "euren Hund";
   return `${anrede}
 
 vielen Dank für deine Nachricht.
 
-Bevor wir die Rückerstattung veranlassen, würden wir dir gerne noch anbieten, den Pfotenplan für ${hund} individuell anzupassen. Beschreib uns dafür gerne in 3 bis 4 Sätzen, wo genau eure aktuellen Herausforderungen liegen und was du dir vom Training erhofft hast.
+Bevor wir die Rückerstattung einleiten, würden wir dir gerne die Möglichkeit geben, deinen PfotenPlan kostenfrei individuell anzupassen.
 
-Wir können dir dann kostenlos ein individuelles Zusatzmodul mit passenden Übungen erstellen, die noch nicht in eurem bisherigen Plan enthalten sind.
+Beschreibe uns dafür bitte kurz in 3–4 Sätzen, was genau bei deinem Hund aktuell nicht funktioniert, welche Probleme ihr im Alltag habt und was du dir vom Training gewünscht hättest. Auf dieser Grundlage erstellen wir dir kostenlos einen individuellen Zusatzplan mit passenden Übungen.
 
-Falls du das nicht möchtest, ist das natürlich auch kein Problem. Dann erstatten wir dir den Betrag im Rahmen unserer Geld-zurück-Garantie zurück.
+Sollte dir dieser ebenfalls nicht weiterhelfen, kannst du natürlich weiterhin unsere 30-Tage-Geld-zurück-Garantie in Anspruch nehmen.
 
-Viele Grüße
-Dein Pfotenplan-Team`;
+Liebe Grüße
+Dein PfotenPlan-Team`;
 }
 
 function fallbackReply(vorname: string): string {
@@ -300,5 +299,49 @@ export async function triageFollowUp(
       kurz: "Triage-Fehler – manuell prüfen",
       heikel: true,
     };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reicht die Beschreibung für einen Zusatzplan?
+// ---------------------------------------------------------------------------
+// Wird genutzt, wenn jemand das Rettungsangebot annimmt oder eine Plankorrektur
+// wünscht. Nur wenn konkret beschrieben ist, was beim Hund nicht klappt, wird
+// automatisch ein Zusatzplan gebaut — sonst fragen wir nach.
+
+export interface ProblemCheck {
+  ausreichend: boolean;
+  beschreibung: string; // knappe Zusammenfassung des Problems in Kundensicht
+}
+
+const PROBLEM_SYSTEM = `Du prüfst Kundenmails an einen Anbieter von Hunde-Trainingsplänen. Entscheide, ob die Mail(s) genug Informationen enthalten, um daraus einen individuellen Zusatz-Trainingsplan zu erstellen.
+
+"ausreichend" = true, wenn mindestens EIN konkretes Verhaltensproblem oder eine konkrete Situation beschrieben ist (z.B. "zieht an der Leine, sobald andere Hunde kommen", "kommt draußen nicht zurück, wenn er Wild riecht", "bellt jeden Besuch an", "im Plan fehlen Übungen zum Alleinbleiben"). Allgemeine Aussagen wie "hilft nicht", "passt nicht", "will mein Geld zurück" reichen NICHT.
+
+"beschreibung": fasse in 2 bis 5 Sätzen zusammen, was beim Hund nicht klappt, in welchen Situationen, und was sich die Person wünscht. Nur was in der Mail steht, nichts erfinden.
+
+Antworte mit EXAKT EINEM JSON-Objekt, keine Markdown-Fences:
+{"ausreichend": true|false, "beschreibung": "..."}`;
+
+export async function triageProblem(texte: string): Promise<ProblemCheck> {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey || !texte.trim()) return { ausreichend: false, beschreibung: "" };
+  try {
+    const Anthropic = (await import("@anthropic-ai/sdk")).default;
+    const client = new Anthropic({ apiKey });
+    const response = await client.messages.create({
+      model: TRIAGE_MODEL,
+      max_tokens: 600,
+      system: PROBLEM_SYSTEM,
+      messages: [{ role: "user", content: texte.slice(0, 6000) }],
+    });
+    const raw = response.content.filter((b: any) => b.type === "text").map((b: any) => b.text).join("\n").trim();
+    const a = raw.indexOf("{"), e = raw.lastIndexOf("}");
+    const parsed = JSON.parse(a >= 0 && e > a ? raw.slice(a, e + 1) : raw);
+    const beschreibung = typeof parsed.beschreibung === "string" ? parsed.beschreibung.trim() : "";
+    return { ausreichend: parsed.ausreichend === true && beschreibung.length > 30, beschreibung };
+  } catch (e: any) {
+    console.error("[support-triage] Problem-Check-Fehler:", e?.message);
+    return { ausreichend: false, beschreibung: "" };
   }
 }

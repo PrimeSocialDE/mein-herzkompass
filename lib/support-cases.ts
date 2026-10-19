@@ -14,6 +14,7 @@ export type CaseStatus =
   | "rettung_angeboten"
   | "gerettet"
   | "erstattung"
+  | "zusatzplan_offen"
   | "erledigt";
 
 export interface VerlaufEintrag {
@@ -54,6 +55,7 @@ export const FARBE: Record<CaseStatus, string> = {
   rettung_angeboten: "#d97706",
   gerettet: "#16a34a",
   erstattung: "#dc2626",
+  zusatzplan_offen: "#7c3aed",
   erledigt: "#9ca3af",
 };
 
@@ -63,6 +65,7 @@ export const LABEL: Record<CaseStatus, string> = {
   rettung_angeboten: "Rettung angeboten",
   gerettet: "Gerettet",
   erstattung: "Erstattung",
+  zusatzplan_offen: "Zusatzplan in Arbeit",
   erledigt: "Erledigt",
 };
 

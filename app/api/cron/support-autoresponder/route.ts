@@ -9,15 +9,27 @@
 //
 // Versand:
 //   Standard = SCHATTEN. Der Cron sendet NICHTS an Kunden, er bereitet nur vor.
-//   Mit SUPPORT_AUTO_LIVE=1 verschickt er unkritische Entwürfe nach einer
-//   Stunde Nachfrist selbst. Veto: die Kundenmail in Gmail mit einem Stern
-//   markieren. Heikle Fälle und alles rund ums Geld bleiben immer Entwurf.
+//   LIVE über SUPPORT_AUTO_LIVE=1 (Vercel) ODER system_settings.support_auto_live
+//   = "true". Ab dann gehen unkritische Antworten nach 2 Std raus, "Plan nicht
+//   angekommen" nach 20 Min. Nur Mails, die NACH system_settings.support_live_ab
+//   eingegangen sind (kein Altbestand). Veto: Kundenmail in Gmail mit Stern.
+//
+// Ablauf (Vorgabe Max, 19.10.2026):
+//   - Storno OHNE vorherigen Support-Kontakt -> feste Vorlage (Zusatzplan statt
+//     Erstattung), geht automatisch raus.
+//   - Storno MIT vorherigem Kontakt -> bleibt Entwurf + sofortige Meldung an Max.
+//   - Antwort auf die Vorlage bzw. Plankorrektur mit konkreter Problemschilderung
+//     -> Status zusatzplan_offen; /api/cron/support-zusatzplan baut den Plan
+//     und schickt ihn mit "Wir haben den Plan angepasst…".
+//   - Kunde lehnt ab / besteht auf Erstattung -> Status erstattung + sofortige
+//     Meldung an Max (Geld geht nie automatisch raus).
+//   - Normale Fälle (Zahlung, Fragen …) -> KI-Antwort nach 2 Std.
 
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
 import { fetchInbound, fetchFlaggedUids, googleImapConfigured, type InboundMail } from "@/lib/google-imap";
 import { sendViaGoogleSmtp, googleSmtpConfigured } from "@/lib/google-smtp";
-import { triageInbound, triageFollowUp, type TriageLeadContext } from "@/lib/support-triage";
+import { triageInbound, triageFollowUp, triageProblem, widerrufTemplate, type TriageLeadContext } from "@/lib/support-triage";
 import {
   FARBE,
   LABEL,
@@ -34,7 +46,8 @@ export const maxDuration = 120;
 
 const CRON_SECRET = process.env.CRON_SECRET || "pfoten-cron-2024";
 const DIGEST_TO = "kontakt@primesocial.de";
-const GRACE_MS = 60 * 60 * 1000;      // Nachfrist bis zum Auto-Versand
+const GRACE_MS = 2 * 60 * 60 * 1000;      // Nachfrist bis zum Auto-Versand (Standard 2 Std)
+const GRACE_PLAN_FEHLT_MS = 20 * 60 * 1000; // Plan nicht angekommen: 20 Min
 const MAX_PER_RUN = 12;               // Triage-Budget pro Lauf
 const OWN_DOMAINS = ["pfoten-plan.de", "primesocial.de", "lapaplan.pl", "zampaplan.it", "pfoten-post.de"];
 const AUTO_SENDERS = /(mailer-daemon|no-?reply|postmaster|notification|newsletter|do-?not-?reply)@/i;
@@ -131,7 +144,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
   const forceShadow = searchParams.get("dry") === "1";
-  const LIVE = process.env.SUPPORT_AUTO_LIVE === "1" && !forceShadow;
+  const liveSetting = String(await loadSetting<any>("support_auto_live", "")).trim();
+  const LIVE = (process.env.SUPPORT_AUTO_LIVE === "1" || liveSetting === "true") && !forceShadow;
+  // Nur Mails nach diesem Zeitpunkt werden automatisch beantwortet (kein Altbestand).
+  const liveAb = String(await loadSetting<any>("support_live_ab", "")).trim() || new Date().toISOString();
+  const alarme: string[] = [];
   // Einmaliges Nachladen älterer Mails, damit das Dashboard nicht leer startet.
   const backfillDays = Math.min(parseInt(searchParams.get("backfill") || "0", 10) || 0, 30);
 
@@ -210,16 +227,36 @@ export async function GET(req: NextRequest) {
         { fromEmail: m.fromEmail, fromName: m.fromName, subject: m.subject, text: m.text },
         leadCtx
       );
-      const neuerStatus: CaseStatus =
-        f.ergebnis === "annahme" ? "gerettet" : f.ergebnis === "ablehnung" ? "erstattung" : "rettung_angeboten";
+      let neuerStatus: CaseStatus =
+        f.ergebnis === "annahme" ? "rettung_angeboten" : f.ergebnis === "ablehnung" ? "erstattung" : "rettung_angeboten";
+      let entwurfA: string | null = f.antwort;
+      let heikelA = f.heikel;
+      let kurzA = f.kurz;
+      if (f.ergebnis === "annahme") {
+        // Reicht die Schilderung für einen Zusatzplan? Dann baut ihn der
+        // Zusatzplan-Cron, und dessen Mail ist die Antwort.
+        const bisher = (bestehend.verlauf || []).filter((v) => v.richtung === "ein").map((v) => v.text);
+        const p = await triageProblem([...bisher.slice(-2), m.text].join("\n\n---\n\n"));
+        if (p.ausreichend) {
+          neuerStatus = "zusatzplan_offen";
+          entwurfA = null;
+          heikelA = false;
+          kurzA = `Zusatzplan wird erstellt: ${p.beschreibung.slice(0, 160)}`;
+        } else {
+          heikelA = false; // Nachfrage nach 3–4 Sätzen ist unkritisch
+        }
+      }
+      if (f.ergebnis === "ablehnung") {
+        alarme.push(`💸 Erstattung gewünscht: ${m.fromName || ""} <${m.fromEmail}> — lehnt den Zusatzplan ab bzw. besteht auf Geld zurück. ${f.kurz || ""}`);
+      }
 
       const { data: upd } = await supabase
         .from("support_cases")
         .update({
           status: neuerStatus,
-          heikel: f.heikel,
-          kurz: f.kurz,
-          entwurf: f.antwort,
+          heikel: heikelA,
+          kurz: kurzA,
+          entwurf: entwurfA,
           letzte_nachricht: m.text,
           received_at: new Date().toISOString(),
           uid: m.uid,
@@ -234,14 +271,75 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
+    // --- Fall A2: Antwort auf unsere Nachfrage zur Plankorrektur ------------
+    if (bestehend && bestehend.status === "plankorrektur" && bestehend.gesendet_at) {
+      const bisher = (bestehend.verlauf || []).filter((v) => v.richtung === "ein").map((v) => v.text);
+      const p = await triageProblem([...bisher.slice(-2), m.text].join("\n\n---\n\n"));
+      if (p.ausreichend) {
+        const { data: upd } = await supabase
+          .from("support_cases")
+          .update({
+            status: "zusatzplan_offen",
+            heikel: false,
+            kurz: `Zusatzplan wird erstellt: ${p.beschreibung.slice(0, 160)}`,
+            entwurf: null,
+            letzte_nachricht: m.text,
+            received_at: new Date().toISOString(),
+            uid: m.uid,
+            message_id: m.messageId,
+            gesendet_at: null,
+            verlauf: [...(bestehend.verlauf || []), eingang],
+          })
+          .eq("id", bestehend.id)
+          .select("*")
+          .maybeSingle();
+        if (upd) neu.push({ fall: upd as SupportCase, folge: true });
+        continue;
+      }
+    }
+
     // --- Fall B: Erstklassifikation ----------------------------------------
     const t = await triageInbound(
       { fromEmail: m.fromEmail, fromName: m.fromName, subject: m.subject, text: m.text },
       leadCtx
     );
 
+    // Hatte diese Person schon Support-Kontakt? (Eigener Fall mit früherer Mail
+    // oder irgendein anderer Fall derselben Adresse.)
+    const { count: andereFaelle } = await supabase
+      .from("support_cases")
+      .select("id", { count: "exact", head: true })
+      .eq("from_email", m.fromEmail)
+      .neq("id", bestehend?.id || "00000000-0000-0000-0000-000000000000");
+    const hatteKontakt = (andereFaelle || 0) > 0 || (bestehend?.verlauf || []).length > 0;
+
+    let status: CaseStatus = statusFuerKategorie(t.kategorie);
+    let entwurf: string | null = t.antwort;
+    let heikel = t.heikel;
+    let kurz = t.kurz;
+
+    if (t.kategorie === "widerruf") {
+      if (!hatteKontakt) {
+        // Erster Kontakt -> feste Vorlage, geht automatisch raus (auch wenn die
+        // Absenderadresse nicht in der DB steht, z.B. andere Mail als beim Kauf).
+        entwurf = widerrufTemplate(leadCtx.vorname || firstName(null, m.fromName));
+        heikel = false;
+      } else {
+        heikel = true;
+        alarme.push(`↩️ Storno von jemandem, der schon Kontakt hatte: ${m.fromName || ""} <${m.fromEmail}> — ${t.kurz || ""}`);
+      }
+    } else if (t.kategorie === "plankorrektur") {
+      const p = await triageProblem(m.text);
+      if (p.ausreichend) {
+        status = "zusatzplan_offen";
+        entwurf = null;
+        heikel = false;
+        kurz = `Zusatzplan wird erstellt: ${p.beschreibung.slice(0, 160)}`;
+      }
+    }
+
     let aktionAusgefuehrt = false;
-    if (LIVE && !t.heikel && t.aktion === "plan_neu_senden" && lead?.id) {
+    if (LIVE && !heikel && t.aktion === "plan_neu_senden" && lead?.id) {
       aktionAusgefuehrt = await resendPlan(lead.id, lead.email || m.fromEmail);
     }
 
@@ -253,10 +351,10 @@ export async function GET(req: NextRequest) {
       subject: m.subject,
       received_at: new Date().toISOString(),
       kategorie: t.kategorie,
-      status: statusFuerKategorie(t.kategorie),
-      heikel: t.heikel,
-      kurz: aktionAusgefuehrt ? `${t.kurz} · Plan neu ausgelöst` : t.kurz,
-      entwurf: t.antwort,
+      status,
+      heikel,
+      kurz: aktionAusgefuehrt ? `${kurz} · Plan neu ausgelöst` : kurz,
+      entwurf,
       letzte_nachricht: m.text,
       lead_id: lead?.id || null,
       dog_name: lead?.dog_name || null,
@@ -285,21 +383,26 @@ export async function GET(req: NextRequest) {
   // 2) Auto-Versand (nur LIVE) ----------------------------------------------
   const gesendet: string[] = [];
   if (LIVE) {
-    const grenze = new Date(now - GRACE_MS).toISOString();
+    const grenzeKurz = new Date(now - GRACE_PLAN_FEHLT_MS).toISOString();
     const { data: faellig } = await supabase
       .from("support_cases")
       .select("*")
-      .in("status", ["neu", "plankorrektur"])
+      .in("status", ["neu", "plankorrektur", "rettung_angeboten", "gerettet"])
       .eq("heikel", false)
       .is("gesendet_at", null)
-      .lte("received_at", grenze)
-      .limit(10);
+      .not("entwurf", "is", null)
+      .gte("received_at", liveAb)
+      .lte("received_at", grenzeKurz)
+      .order("received_at", { ascending: true })
+      .limit(15);
 
     const flagged = await fetchFlaggedUids(3).catch(() => new Set<number>());
 
     for (const f of (faellig || []) as SupportCase[]) {
       if (flagged.has(f.uid)) continue;           // Stern in Gmail = Veto
       if (!f.entwurf) continue;
+      const frist = f.kategorie === "plan_fehlt" ? GRACE_PLAN_FEHLT_MS : GRACE_MS;
+      if (new Date(f.received_at).getTime() > now - frist) continue;
       const ok = await sendeAntwort(f, f.entwurf);
       if (ok) gesendet.push(f.from_email);
     }
@@ -314,14 +417,16 @@ export async function GET(req: NextRequest) {
   }
 
   // 4) Digest an Max ---------------------------------------------------------
-  if (neu.length > 0 || gesendet.length > 0 || fetched.skipped.length > 0) {
+  if (neu.length > 0 || gesendet.length > 0 || fetched.skipped.length > 0 || alarme.length > 0) {
     const rows = neu
       .map(({ fall, folge }) => {
         const farbe = FARBE[fall.status] || "#6b7280";
         const badge = fall.heikel
           ? "⚠️ bleibt Entwurf"
+          : fall.status === "zusatzplan_offen"
+          ? "🛠️ Zusatzplan wird automatisch erstellt"
           : LIVE
-          ? "➡️ geht in ~1 Std raus"
+          ? (fall.kategorie === "plan_fehlt" ? "➡️ geht in ~20 Min raus" : "➡️ geht in ~2 Std raus")
           : "👁️ Schatten – kein Versand";
         return `<div style="margin:0 0 18px;padding:12px 14px;border:1px solid #e5e7eb;border-left:4px solid ${farbe};border-radius:8px">
           <div style="font-size:13px;color:#6b7280">${esc(LABEL[fall.status] || fall.status)}${folge ? " · Folgemail" : ""} · ${badge}</div>
@@ -332,7 +437,10 @@ export async function GET(req: NextRequest) {
       })
       .join("");
 
-    const modus = LIVE ? "LIVE (Auto-Versand nach 1 Std aktiv)" : "SCHATTEN-MODUS (es wird nichts an Kunden gesendet)";
+    const modus = LIVE ? "LIVE (Auto-Versand nach 2 Std, Plan fehlt nach 20 Min)" : "SCHATTEN-MODUS (es wird nichts an Kunden gesendet)";
+    const alarmBlock = alarme.length
+      ? `<div style="margin:0 0 16px;padding:12px 14px;background:#FEF2F2;border:1px solid #FCA5A5;border-radius:8px;color:#991B1B">${alarme.map((a) => `<p style="margin:4px 0">${esc(a)}</p>`).join("")}</div>`
+      : "";
     const skippedLine = fetched.skipped.length
       ? `<p style="color:#b45309">⚠️ ${fetched.skipped.length} Mail(s) konnten nicht gelesen werden (UID ${fetched.skipped.join(", ")}) — bitte im Postfach nachsehen.</p>`
       : "";
@@ -343,6 +451,7 @@ export async function GET(req: NextRequest) {
     const html = `<div style="font-family:Arial,sans-serif;max-width:680px;margin:0 auto;color:#111">
       <h2 style="margin:0 0 4px">🐾 Support-Autoresponder</h2>
       <p style="color:#6b7280;margin:0 0 16px">Modus: <b>${modus}</b> · ${neu.length} neue${neu.length === 1 ? "r Fall" : " Fälle"}</p>
+      ${alarmBlock}
       ${skippedLine}
       ${sentLine}
       ${rows || "<p>Keine neuen Fälle.</p>"}
@@ -352,7 +461,7 @@ export async function GET(req: NextRequest) {
     try {
       await sendViaGoogleSmtp({
         to: DIGEST_TO,
-        subject: `🐾 Support: ${neu.length} neu${gesendet.length ? `, ${gesendet.length} gesendet` : ""}`,
+        subject: `${alarme.length ? "⚠️ Aktion nötig · " : ""}🐾 Support: ${neu.length} neu${gesendet.length ? `, ${gesendet.length} gesendet` : ""}`,
         html,
         fromName: "Pfoten-Autoresponder",
       });
