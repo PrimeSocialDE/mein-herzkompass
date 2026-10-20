@@ -44,6 +44,10 @@ const PRODUCT_PRICES: Record<string, number> = {
   // Koerpersprache-Heft (18 Signale mit Zeichnungen, fester Inhalt +
   // Personalisierung nach dog_problem, lib/koerpersprache-*.ts)
   koerpersprache: 1990,
+  // Plan-Verlängerung nach Planende (Bestandskunden-Preis): Check-in auf
+  // /weiter.html, Aufbauplan mit frischen Übungen per Cron verlaengerung-generate
+  "verlaengerung-3": 2999,
+  "verlaengerung-6": 4499,
 };
 
 // Alt-Slugs aus member_upsells. Die Shop-Karte schickt ihren DB-Slug als
@@ -79,6 +83,8 @@ const PRODUCT_NAMES: Record<string, string> = {
   "notfall-karten": "Notfall-Karten zum Ausdrucken",
   "nichts-vom-boden": "Nichts vom Boden — Anti-Giftkoeder-Training",
   koerpersprache: "Koerpersprache-Heft fuer deinen Hund",
+  "verlaengerung-3": "Aufbauplan 3 Monate (Verlaengerung)",
+  "verlaengerung-6": "Aufbauplan 6 Monate (Verlaengerung)",
 };
 
 export async function POST(req: NextRequest) {
@@ -171,7 +177,7 @@ export async function POST(req: NextRequest) {
     // Hosted-Checkout, processed direkt (ggf. mit 3DS-Redirect).
     const paymentBody: any = {
       amount: { currency: "EUR", value: formatAmountEUR(amountCents) },
-      description: `Pfoten-Plan ${productName} fuer ${dogName || "Hund"} · kommt sofort per E-Mail`.slice(
+      description: `Pfoten-Plan ${productName} fuer ${dogName || "Hund"} · ${type.startsWith("verlaengerung-") ? "kommt in ca. 30 Min. per E-Mail" : "kommt sofort per E-Mail"}`.slice(
         0,
         255
       ),

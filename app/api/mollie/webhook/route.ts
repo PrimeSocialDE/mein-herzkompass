@@ -1152,6 +1152,47 @@ async function handleUpsellProductPaid(payment: any) {
     });
   }
 
+  // Plan-Verlängerung (Aufbauplan 3/6 Monate): nur vormerken. Die Erstellung
+  // dauert pro 3-Monats-Teil 3-4 Minuten und läuft im Cron
+  // /api/cron/verlaengerung-generate (alle 10 Min.), der auch ausliefert.
+  // Idempotent: derselbe Payment wird nur einmal vorgemerkt.
+  if (typeof product === "string" && product.startsWith("verlaengerung-") && leadData?.id) {
+    const monate = product === "verlaengerung-6" ? 6 : 3;
+    try {
+      const { data: frisch } = await supabase
+        .from("wauwerk_leads").select("answers").eq("id", leadData.id).maybeSingle();
+      const a = ((frisch?.answers as any) || {}) as Record<string, any>;
+      if (a.verl_bestellt?.payment_id !== payment.id) {
+        await supabase.from("wauwerk_leads").update({
+          answers: {
+            ...a,
+            verl_bestellt: { monate, payment_id: payment.id, betrag: payment.amount?.value || null, at: new Date().toISOString() },
+            verl_geliefert_at: null,
+            verl_teil1: null,
+            verl_lock: null,
+          },
+        }).eq("id", leadData.id);
+      }
+    } catch (e: any) {
+      console.error("[mollie-webhook] verlaengerung vormerken fehlgeschlagen:", e?.message);
+    }
+    const bruttoCents = Math.round(parseFloat(payment.amount?.value || "0") * 100);
+    if ((leadData?.answers as any)?.lang !== "pl" && bruttoCents > 0) {
+      try {
+        await supabase.rpc("create_beleg", {
+          p_mollie_payment_id: payment.id,
+          p_lead_id: leadData.id,
+          p_email: email,
+          p_beschreibung: `Aufbauplan ${monate} Monate (Verlängerung Trainingsplan)`,
+          p_brutto_cents: bruttoCents,
+          p_leistungsdatum: new Date().toISOString(),
+        });
+      } catch (e: any) {
+        console.error("[mollie-webhook] Beleg (verlaengerung) fehlgeschlagen:", e?.message);
+      }
+    }
+  }
+
   // "Nichts vom Boden" (Anti-Giftkoeder, 20 Uebungen) -> eigener Generator.
   // Opus braucht fuer das Handbuch rund vier Minuten, deshalb laeuft der Aufruf
   // in after() und die Route dort hat maxDuration 300.

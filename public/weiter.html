@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wie geht es weiter? | Pfoten-Plan</title>
+<link rel="icon" type="image/png" href="/favconHund.png">
+<meta name="robots" content="noindex">
+<style>
+:root{--text-dark:#2C2C2E;--text-medium:#6B6B6B;--text-light:#999;--white:#fff;--border-light:#E8E4DF;
+--light-brown:#D4B996;--warm-brown:#C4A576;--dark-brown:#8B7355;--green:#5E8C55;--radius:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#FAF8F5;color:var(--text-dark);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+.header{display:flex;align-items:center;gap:9px;justify-content:center;padding:18px 16px 4px}
+.header img{width:30px;height:30px;border-radius:7px}
+.header span{font-weight:800;font-size:19px}
+.wrap{max-width:540px;margin:0 auto;padding:10px 16px 48px}
+h1{font-size:25px;line-height:1.25;text-align:center;margin:14px 0 6px}
+.sub{color:var(--text-medium);text-align:center;font-size:15px;margin-bottom:20px}
+.karte{background:#fff;border:1px solid var(--border-light);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(196,165,118,.10)}
+.frage{font-weight:700;font-size:16.5px;margin-bottom:4px}
+.hinweis{color:var(--text-medium);font-size:13.5px;margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.chip{border:1.5px solid var(--border-light);background:#fff;border-radius:999px;padding:7px 13px;font-size:14px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.chip.an{border-color:var(--dark-brown);background:#F6EFE4;font-weight:600}
+textarea{width:100%;border:1.5px solid var(--border-light);border-radius:10px;padding:11px 12px;font:inherit;font-size:15px;resize:vertical;min-height:84px;background:#fff}
+textarea:focus{outline:none;border-color:var(--warm-brown)}
+.btn{display:block;width:100%;border:0;border-radius:12px;background:var(--dark-brown);color:#fff;font-size:17px;font-weight:700;padding:16px;cursor:pointer;text-align:center}
+.btn:disabled{opacity:.6;cursor:default}
+.fehler{color:#B23A2C;font-size:14px;margin-top:10px;text-align:center}
+.danke{text-align:center;color:var(--green);font-weight:700;margin-bottom:6px}
+.angebote{display:grid;gap:12px;margin:16px 0}
+.ang{position:relative;border:2px solid var(--border-light);border-radius:var(--radius);background:#fff;padding:16px 16px 14px;cursor:pointer}
+.ang.an{border-color:var(--dark-brown);box-shadow:0 6px 20px rgba(139,115,85,.18)}
+.ang .badge{position:absolute;top:-11px;right:14px;background:var(--dark-brown);color:#fff;font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px}
+.ang .zeile{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.ang .name{font-weight:700;font-size:17px}
+.ang .preis{font-weight:800;font-size:21px}
+.ang .klein{color:var(--text-medium);font-size:13.5px}
+.liste{list-style:none;margin:6px 0 4px}
+.liste li{padding-left:24px;position:relative;margin:7px 0;font-size:15px}
+.liste li:before{content:"✓";position:absolute;left:2px;color:var(--green);font-weight:800}
+.frist{background:#FFF9F0;border:1px solid #EADDC5;border-radius:10px;padding:10px 12px;font-size:14px;text-align:center;margin-bottom:14px}
+.sicher{color:var(--text-medium);font-size:13px;text-align:center;margin-top:10px}
+.fuss{color:var(--text-light);font-size:12px;text-align:center;margin-top:26px}
+.fuss a{color:var(--text-light)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="header"><img src="/logo.png" alt=""><span>Pfoten-Plan</span></div>
+<div class="wrap">
+
+  <div id="fehlerSeite" hidden class="karte" style="text-align:center;margin-top:20px">
+    <p>Dieser Link funktioniert leider nicht. Bitte öffne ihn direkt aus der E-Mail oder schreib uns an <b>support@pfoten-plan.de</b>.</p>
+  </div>
+
+  <!-- Schritt 1: Check-in -->
+  <div id="checkin" hidden>
+    <h1>Wie läuft es mit <span class="hund">deinem Hund</span>?</h1>
+    <p class="sub">3 kurze Fragen. Daraus bauen wir den Aufbauplan für <span class="hund">deinen Hund</span>.</p>
+
+    <div class="karte">
+      <div class="frage">1. Was klappt schon besser?</div>
+      <div class="hinweis">Tippe an, was passt. Gern auch ergänzen.</div>
+      <div class="chips" id="chipsKlappt">
+        <span class="chip">Leinenführigkeit</span><span class="chip">Hundebegegnungen</span><span class="chip">Rückruf</span>
+        <span class="chip">Ruhe zu Hause</span><span class="chip">Weniger Bellen</span><span class="chip">Alleinbleiben</span>
+        <span class="chip">Anspringen</span><span class="chip">Aufmerksamkeit</span>
+      </div>
+      <textarea id="klappt" placeholder="z. B. An der Leine zieht sie kaum noch, solange nichts los ist."></textarea>
+    </div>
+
+    <div class="karte">
+      <div class="frage">2. Wo hakt es noch?</div>
+      <div class="hinweis">Je genauer, desto besser passen die neuen Übungen. Wann, wo, wie reagiert <span class="hund">dein Hund</span>?</div>
+      <textarea id="klapptNicht" placeholder="z. B. Wenn uns auf engem Weg ein anderer Hund entgegenkommt, bellt er und springt in die Leine."></textarea>
+    </div>
+
+    <div class="karte">
+      <div class="frage">3. Ist etwas Neues dazugekommen? <span style="font-weight:400;color:var(--text-medium)">(optional)</span></div>
+      <textarea id="neu" placeholder="z. B. Seit kurzem hat sie Angst vor Silvester-Knallern."></textarea>
+    </div>
+
+    <button class="btn" id="weiterBtn">Weiter zum Aufbauplan</button>
+    <p class="fehler" id="fehler1" hidden></p>
+  </div>
+
+  <!-- Schritt 2: Angebot -->
+  <div id="angebot" hidden>
+    <p class="danke">✓ Danke, das hilft uns sehr!</p>
+    <h1>Der Aufbauplan für <span class="hund">deinen Hund</span></h1>
+    <p class="sub">Frische Übungen, die auf dem aufbauen, was <span class="hund">dein Hund</span> schon kann, und genau da ansetzen, wo es noch hakt.</p>
+
+    <div class="karte">
+      <ul class="liste">
+        <li><b>9 neue Übungen pro 3 Monate</b>, keine Wiederholung aus deinem bisherigen Plan</li>
+        <li>Zugeschnitten auf das, was du uns gerade geschrieben hast</li>
+        <li>Mit Monats-Fahrplan, Schritt-für-Schritt-Anleitung, Go's und No-Go's</li>
+        <li>Als PDF zum Ausdrucken und Abhaken, in ca. 30 Minuten per E-Mail</li>
+      </ul>
+    </div>
+
+    <div class="frist" id="frist" hidden></div>
+
+    <div class="angebote">
+      <div class="ang an" data-typ="verlaengerung-6">
+        <span class="badge">Beliebteste Wahl</span>
+        <div class="zeile"><span class="name">6 Monate</span><span class="preis">44,99 €</span></div>
+        <div class="klein">18 neue Übungen in zwei Etappen · nur 1,87 € pro Woche</div>
+      </div>
+      <div class="ang" data-typ="verlaengerung-3">
+        <div class="zeile"><span class="name">3 Monate</span><span class="preis">29,99 €</span></div>
+        <div class="klein">9 neue Übungen · 2,50 € pro Woche</div>
+      </div>
+    </div>
+
+    <button class="btn" id="kaufBtn">Aufbauplan für 6 Monate holen</button>
+    <p class="fehler" id="fehler2" hidden></p>
+    <p class="sicher">Einmalzahlung, kein Abo · Sicher bezahlen mit PayPal, Karte, Klarna &amp; Co.</p>
+  </div>
+
+  <div id="schonBestellt" hidden class="karte" style="text-align:center;margin-top:20px">
+    <p><b>Du hast den Aufbauplan schon bestellt.</b> Er kommt per E-Mail. Schau bitte auch im Spam-Ordner nach. Fragen? <b>support@pfoten-plan.de</b></p>
+  </div>
+
+  <p class="fuss"><a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a> · <a href="/agb.html">AGB</a></p>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const q = new URLSearchParams(location.search);
+const leadId = q.get('lead_id') || '';
+const email = q.get('email') || '';
+let hund = '';
+let typ = 'verlaengerung-6';
+
+function setzeHund(name) {
+  if (!name) return;
+  document.querySelectorAll('.hund').forEach((el) => { el.textContent = name; });
+}
+
+function zeige(id) {
+  ['checkin', 'angebot', 'schonBestellt', 'fehlerSeite'].forEach((x) => { $(x).hidden = x !== id; });
+  window.scrollTo(0, 0);
+}
+
+document.querySelectorAll('#chipsKlappt .chip').forEach((c) => {
+  c.onclick = () => c.classList.toggle('an');
+});
+
+document.querySelectorAll('.ang').forEach((k) => {
+  k.onclick = () => {
+    document.querySelectorAll('.ang').forEach((x) => x.classList.remove('an'));
+    k.classList.add('an');
+    typ = k.dataset.typ;
+    $('kaufBtn').textContent = 'Aufbauplan für ' + (typ === 'verlaengerung-6' ? '6' : '3') + ' Monate holen';
+  };
+});
+
+$('weiterBtn').onclick = async () => {
+  const chips = Array.from(document.querySelectorAll('#chipsKlappt .chip.an')).map((c) => c.textContent);
+  const klappt = [chips.join(', '), $('klappt').value.trim()].filter(Boolean).join('. ');
+  const klapptNicht = $('klapptNicht').value.trim();
+  const f = $('fehler1');
+  if (klapptNicht.length < 5) {
+    f.textContent = 'Schreib uns bitte kurz, wo es noch hakt. Darauf bauen die neuen Übungen auf.';
+    f.hidden = false; $('klapptNicht').focus(); return;
+  }
+  f.hidden = true;
+  const b = $('weiterBtn'); b.disabled = true; b.textContent = 'Einen Moment …';
+  try {
+    const r = await fetch('/api/verlaengerung/checkin', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lead_id: leadId, email: email, klappt: klappt, klappt_nicht: klapptNicht, neu: $('neu').value.trim() }),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error('checkin');
+    try { window.clarity && clarity('event', 'verl_checkin'); } catch (e) {}
+    zeige('angebot');
+  } catch (e) {
+    f.textContent = 'Das hat gerade nicht geklappt. Bitte versuch es noch einmal.';
+    f.hidden = false;
+  } finally {
+    b.disabled = false; b.textContent = 'Weiter zum Aufbauplan';
+  }
+};
+
+$('kaufBtn').onclick = async () => {
+  const b = $('kaufBtn'); const alt = b.textContent; b.disabled = true; b.textContent = 'Weiter zur Zahlung …';
+  try {
+    const res = await fetch('/api/mollie/upsell-product-checkout', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: typ, email: email, leadId: leadId, dogName: hund || 'deinen Hund',
+        returnUrl: location.origin + '/weiter-danke.html?dog=' + encodeURIComponent(hund || '') + '&m=' + (typ === 'verlaengerung-6' ? '6' : '3') }),
+    });
+    const j = await res.json();
+    if (j && j.url) { location.href = j.url; return; }
+    throw new Error('keine url');
+  } catch (e) {
+    const f = $('fehler2');
+    f.textContent = 'Das hat gerade nicht geklappt. Bitte versuch es noch einmal, oder schreib uns an support@pfoten-plan.de.';
+    f.hidden = false; b.disabled = false; b.textContent = alt;
+  }
+};
+
+(async function start() {
+  if (!leadId || !email) { zeige('fehlerSeite'); return; }
+  try {
+    const r = await fetch('/api/verlaengerung/checkin?lead_id=' + encodeURIComponent(leadId) + '&email=' + encodeURIComponent(email));
+    const j = await r.json();
+    if (!j.ok) { zeige('fehlerSeite'); return; }
+    hund = j.dog || '';
+    setzeHund(hund);
+    if (j.frist && new Date(j.frist).getTime() > Date.now()) {
+      const d = new Date(j.frist).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+      $('frist').innerHTML = '🎁 <b>Bestandskunden-Preis</b> gilt noch bis ' + d;
+      $('frist').hidden = false;
+    }
+    if (j.bestellt) zeige('schonBestellt');
+    else if (j.checkin_da) zeige('angebot');
+    else zeige('checkin');
+  } catch (e) {
+    zeige('fehlerSeite');
+  }
+})();
+</script>
+<script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","ufxcf43805");</script>
+</body>
+</html>

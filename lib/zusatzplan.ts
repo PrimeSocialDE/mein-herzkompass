@@ -207,9 +207,17 @@ const RECHTS_START = /^(Wie oft und wie lange|Worauf du achten solltest|Go's|No 
 const UEBERSCHRIFT = /^(So nutzt du diesen Plan|Dein 3-Monats-Fahrplan|Tipps für den Erfolg|Abschluss|Worum es geht|Bereit für mehr\?.*|Schritt für Schritt|Wie oft und wie lange|Worauf du achten solltest|Go's|No Go's)\s*$/;
 const MONAT = /^(Monat \d+ .+|Bonus: .+)$/;
 
-export async function zusatzplanPDF(text: string, dogName: string): Promise<Uint8Array> {
+export async function zusatzplanPDF(
+  text: string,
+  dogName: string,
+  // Optional: eigene Titel für Ableger (z. B. Aufbauplan der Verlängerung)
+  opts: { titel?: string; untertitel?: string; fuss?: string } = {}
+): Promise<Uint8Array> {
+  const titel = opts.titel || `${dogName}s persönlicher Zusatz-Plan`;
+  const untertitel = opts.untertitel || "Angepasst an eure Situation: neue Übungen, die genau dort ansetzen, wo es bei euch gerade hakt. Zum Ausdrucken und Abhaken.";
+  const fuss = opts.fuss || `${dogName}s Zusatz-Plan · Pfoten-Plan`;
   const doc = await PDFDocument.create();
-  doc.setTitle(`${dogName}s persönlicher Zusatz-Plan`);
+  doc.setTitle(titel);
   doc.setAuthor("Pfoten-Plan");
   const r = await doc.embedFont(StandardFonts.Helvetica);
   const b = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -219,7 +227,7 @@ export async function zusatzplanPDF(text: string, dogName: string): Promise<Uint
     page.drawRectangle({ x: 0, y: 0, width: W, height: H, color: HELL });
     page.drawRectangle({ x: 0, y: H - 6, width: W, height: 6, color: GOLD });
     if (nr > 1) {
-      page.drawText(S(`${dogName}s Zusatz-Plan · Pfoten-Plan`), { x: M, y: 26, size: 8, font: r, color: GRAU });
+      page.drawText(S(fuss), { x: M, y: 26, size: 8, font: r, color: GRAU });
       page.drawText(String(nr), { x: W - M - 10, y: 26, size: 8, font: r, color: GRAU });
     }
   };
@@ -265,15 +273,15 @@ export async function zusatzplanPDF(text: string, dogName: string): Promise<Uint
   page.drawRectangle({ x: 0, y: H - 6, width: W, height: 6, color: GOLD });
   page.drawText("PFOTEN-PLAN", { x: M, y: H - 120, size: 12, font: b, color: BRAUN });
   let ty = H - 300;
-  for (const z of wrap(`${dogName}s persönlicher Zusatz-Plan`, b, 34, W - 2 * M)) { page.drawText(z, { x: M, y: ty, size: 34, font: b, color: DUNKEL }); ty -= 42; }
+  for (const z of wrap(titel, b, 34, W - 2 * M)) { page.drawText(z, { x: M, y: ty, size: 34, font: b, color: DUNKEL }); ty -= 42; }
   page.drawRectangle({ x: M, y: ty + 18, width: 64, height: 3, color: GOLD });
-  for (const z of wrap("Angepasst an eure Situation: neue Übungen, die genau dort ansetzen, wo es bei euch gerade hakt. Zum Ausdrucken und Abhaken.", r, 13, W - 2 * M)) {
+  for (const z of wrap(untertitel, r, 13, W - 2 * M)) {
     ty -= 22; page.drawText(z, { x: M, y: ty, size: 13, font: r, color: GRAU });
   }
 
   for (const s of seiten) {
     const zeilen = s.split("\n");
-    if (/Zusatz-Plan\s*$/.test(zeilen[0] || "") && zeilen.length <= 3) continue; // KI-Titelseite überspringen
+    if (/(Zusatz-Plan|Aufbauplan|Teil 2.*)\s*$/.test(zeilen[0] || "") && zeilen.length <= 3) continue; // KI-Titelseite überspringen
     neue();
     const erste = (zeilen[0] || "").trim();
     if (/^Übung \d+:/.test(erste)) {
