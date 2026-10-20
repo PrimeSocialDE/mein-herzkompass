@@ -101,6 +101,42 @@ function planUrl(leadId: string | null | undefined, stage: EcStage): string {
   return `${BASE}/deinplan3?${p.toString()}`;
 }
 
+// A/B Mail 3 (seit 20.10.2026): 80 % bekommen "Notfall-Karten gratis zum Plan".
+// Der Link geht dann auf die Rückhol-Seite mit ?rhb=B — dort ist der Bonus schon
+// eingebaut (Auslieferung über answers.exit_bonus_notfallkarten wie beim
+// Rückhol-Test). 20 % Kontrolle bekommen Mail 3 unverändert (Link deinplan3).
+// Zuteilung fest über die Lead-ID; utm_content mail-3-bonus / mail-3 zum Auswerten.
+// Achtung Rückhol-Test-Auswertung: Käufe mit utm_campaign=ec-sequence ausklammern.
+export function ec3Bonus(leadId: string | null | undefined): boolean {
+  const hex = String(leadId || "").replace(/[^0-9a-f]/gi, "");
+  if (hex.length < 4) return true;
+  return parseInt(hex.slice(-4), 16) % 10 < 8;
+}
+
+function bonusUrl(leadId: string | null | undefined, email: string): string {
+  const q = new URLSearchParams();
+  if (leadId) q.set("lead_id", leadId);
+  if (email) q.set("email", email);
+  q.set("rhb", "B");
+  q.set("utm_source", "email");
+  q.set("utm_medium", "nurture");
+  q.set("utm_campaign", "ec-sequence");
+  q.set("utm_content", "mail-3-bonus");
+  return `${BASE}/rueckhol.html?${q.toString()}`;
+}
+
+function bonusBlock(dog: string): string {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#FFF9F0;border:2px solid #C4A576;border-radius:14px;margin:6px 0 16px;">
+    <tr><td style="padding:16px 18px;">
+      <div style="font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#8B7355;margin-bottom:6px;">🎁 Geschenk für ${dog}</div>
+      <div style="font-size:16px;line-height:1.6;color:#2A2723;">Wenn du jetzt mit dem Plan startest, bekommst du die <strong>Notfall-Karten gratis dazu</strong>: die wichtigsten Kommandos für brenzlige Momente, zum Ausdrucken für die Jackentasche.</div>
+    </td></tr>
+  </table>
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td align="center" style="padding:0 0 14px;">
+    <img src="${BASE}/notfall-karten-vorschau.jpg" alt="Notfall-Karten zum Ausdrucken" width="300" style="width:300px;max-width:88%;height:auto;border-radius:12px;display:block;">
+  </td></tr></table>`;
+}
+
 function p(text: string): string {
   return `<p style="margin:0 0 14px;font-size:16px;line-height:1.65;color:#374151;">${text}</p>`;
 }
@@ -217,21 +253,25 @@ export function buildEmailCaptured(
         }),
       };
 
-    case 3:
+    case 3: {
+      const bonus = ec3Bonus(args.leadId);
       return {
         subject: `Eine Übung für ${dog}, die du heute machen kannst`,
         html: wrapTemplate({
           ...common,
+          ...(bonus ? { ctaUrl: bonusUrl(args.leadId, args.to) } : {}),
           preheader: "Kostenlos, dauert 5 Minuten.",
           headline: `Die 5-Minuten-Übung vor der Haustür`,
           intro: `Bevor du irgendetwas kaufst, hier eine Übung, die du sofort ausprobieren kannst, ganz umsonst.`,
           bodyHtml:
             p(`<strong>So geht es:</strong> Bevor ihr rausgeht, bleib an der geschlossenen Tür ruhig stehen. Erst wenn ${dog} kurz ruhig ist, öffnest du. Zieht er wieder an, schließt du die Tür. Ruhig sein heißt: die Tür geht auf.`) +
             p(`Das klingt klein, aber es setzt den Ton für den ganzen Spaziergang. Viele merken schon nach ein paar Tagen einen Unterschied.`) +
-            p(`Im Plan bekommst du <strong>Woche für Woche</strong> solche Übungen, zum Ausdrucken und Abhaken.`),
-          ctaText: `Mehr Übungen für ${dog}`,
+            p(`Im Plan bekommst du <strong>Woche für Woche</strong> solche Übungen, zum Ausdrucken und Abhaken.`) +
+            (bonus ? bonusBlock(dog) : ""),
+          ctaText: bonus ? `Plan + Notfall-Karten gratis` : `Mehr Übungen für ${dog}`,
         }),
       };
+    }
 
     case 4:
       return {
