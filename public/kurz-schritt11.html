@@ -270,7 +270,10 @@
                 // vs. B2 (deinplan2) 16,1 % / 7,63 EUR (n 3.164 vs 11.429). Seit 03.10.
                 // fast gleichauf, daher erst 50/50 statt sofort 100 % deinplan3.
                 // Bestehende Zuteilungen (localStorage) bleiben unveraendert.
-                variant = Math.random() < 0.50 ? 'A' : 'B';
+                // 20.10.2026: 80/20 fuer deinplan3. Seit 50/50 (14.10.): A2 17,1 % / 8,88 EUR
+                // je Teilnehmer vs. B2 14,9 % / 7,76 EUR (n 764 vs 747, z 1,2) — Richtung wie
+                // seit August; deinplan2 laeuft mit 20 % als Kontrolle weiter.
+                variant = Math.random() < 0.80 ? 'A' : 'B';
                 localStorage.setItem('ab_test_pricing_v6', variant); // Routing + sawPlan-Flag (Key bleibt v6!)
                 // DB-Label (ab_variant): neue deinplan3 = 'A2' (sauber trennbar von alten 'A'-Daten), B = 'B2'
                 localStorage.setItem('ab_test_pricing', variant === 'A' ? 'A2' : 'B2');
