@@ -18,6 +18,21 @@
                 }
             } catch (e) { /* localStorage blockiert -> normaler Funnel */ }
         })();
+        // A/B ab_ks1 (seit 10/2026): B = kompakter Kopf, alle 4 Antworten ohne Scrollen
+        // sichtbar + Hinweis "PDF zum Ausdrucken". Frage/Antworten identisch.
+        // Override: ?ks1v=A|B. Messung: /api/ab-ping (ks1_view, ks1_click, quiz_done in ks11).
+        (function () {
+            var v = null;
+            try {
+                var q = new URLSearchParams(window.location.search).get('ks1v');
+                v = (q === 'A' || q === 'B') ? q : localStorage.getItem('ab_ks1');
+                if (v !== 'A' && v !== 'B') v = Math.random() < 0.5 ? 'A' : 'B';
+                localStorage.setItem('ab_ks1', v);
+                if (!localStorage.getItem('ab_sid')) localStorage.setItem('ab_sid', Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
+            } catch (e) { v = v || 'A'; }
+            window.__abKs1 = v;
+            if (v === 'B') document.documentElement.classList.add('ks1-b');
+        })();
     </script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favconHund.png">
@@ -73,6 +88,23 @@
         .option-title { font-size: 16px; font-weight: 600; color: var(--text-dark); margin-bottom: 4px; }
         .option-subtitle { font-size: 13px; color: var(--text-medium); }
         .quiz-hint { text-align: center; color: var(--text-medium); font-size: 13px; margin-top: 20px; }
+        .hook-b { display: none; }
+        .ks1-b .hook-a { display: none; }
+        .ks1-b .hook-b { display: inline; }
+        .ks1-b .header { padding: 10px 0; }
+        .ks1-b .logo-image { width: 30px; height: 30px; }
+        .ks1-b .logo-text { font-size: 20px; }
+        .ks1-b .container { padding: 16px 15px 25px; }
+        .ks1-b .quiz-header { margin-bottom: 14px; }
+        .ks1-b .quiz-hook { margin-bottom: 6px; font-weight: 600; color: var(--text-dark); }
+        .ks1-b .quiz-title { margin-bottom: 8px; }
+        .ks1-b .badge-row { flex-wrap: nowrap !important; gap: 6px !important; }
+        .ks1-b .quiz-duration { font-size: 11px; padding: 4px 9px; }
+        .ks1-b .progress-container { margin-bottom: 16px; }
+        .ks1-b .options-grid { gap: 10px; }
+        .ks1-b .option-card { padding: 12px 10px; }
+        .ks1-b .option-image { width: 64px; height: 64px; margin-bottom: 8px; }
+        .ks1-b .quiz-hint { margin-top: 14px; }
         @media (max-width: 480px) {
             .container { padding: 25px 15px; }
             .quiz-title { font-size: 22px; }
@@ -100,10 +132,10 @@
     </header>
     <div class="container">
         <div class="quiz-header">
-            <p class="quiz-hook">🐕 Erhalte einen individuellen Trainingsplan mit gezielten Übungen für deinen Hund</p>
+            <p class="quiz-hook"><span class="hook-a">🐕 Erhalte einen individuellen Trainingsplan mit gezielten Übungen für deinen Hund</span><span class="hook-b">📄 Dein Plan als PDF – zum Ausdrucken &amp; Abhaken</span></p>
             <h1 class="quiz-title">Wie alt ist dein Hund?</h1>
-            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
-                <span class="quiz-duration"><span style="display: inline-flex; align-items: center; gap: 2px; vertical-align: middle;"><span style="width: 16px; height: 16px; background: #00B67A; display: inline-flex; align-items: center; justify-content: center; border-radius: 2px;"><svg viewBox="0 0 24 24" width="10" height="10" fill="white"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span> Bereits 9.552+ Hunde erfolgreich trainiert</span>
+            <div class="badge-row" style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                <span class="quiz-duration"><span style="display: inline-flex; align-items: center; gap: 2px; vertical-align: middle;"><span style="width: 16px; height: 16px; background: #00B67A; display: inline-flex; align-items: center; justify-content: center; border-radius: 2px;"><svg viewBox="0 0 24 24" width="10" height="10" fill="white"><polygon points="12,1 15,9 23,9 17,14 19,22 12,17 5,22 7,14 1,9 9,9"/></svg></span></span> <span class="hook-a">Bereits 9.552+ Hunde erfolgreich trainiert</span><span class="hook-b">9.552+ Hunde trainiert</span></span>
                 <span class="quiz-duration">🕐 Quizdauer: 2 Min.</span>
             </div>
         </div>
@@ -136,6 +168,11 @@
         <p class="quiz-hint">Basierend auf deiner Auswahl passen wir den Trainingsplan genau auf deinen Hund an.</p>
     </div>
     <script>
+        function abPing(step) {
+            try { fetch('/api/ab-ping', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ test: 'ks1', variant: window.__abKs1, step: step, sid: localStorage.getItem('ab_sid') }) }).catch(function () {}); } catch (e) {}
+        }
+        abPing('ks1_view');
+
         // Clear previous quiz data on fresh start
         if (!document.referrer.includes('kurz-schritt')) {
             localStorage.removeItem('dogAge');
@@ -157,6 +194,7 @@
                 isNavigating = true;
                 this.classList.add('clicked');
                 localStorage.setItem('dogAge', this.dataset.age);
+                abPing('ks1_click');
                 setTimeout(() => {
                     window.location.href = 'kurz-schritt2.html';
                 }, 150);
@@ -176,6 +214,7 @@
     <script src="cookie-banner.js" defer></script>
     <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','864109602683515');fbq('track','PageView');</script>
     <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","ufxcf43805");</script>
+    <script>try { clarity('set', 'ab_ks1', window.__abKs1); } catch (e) {}</script>
     <script>!function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};ttq.load('D4RFSQBC77U7SM7UL8A0');ttq.page();}(window,document,'ttq');</script>
 </body>
 </html>

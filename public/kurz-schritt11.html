@@ -398,6 +398,7 @@ ab_preis3m: 'A', // 04.10. gestoppt: siehe Commit-Text
                 ab_jtbd: localStorage.getItem('ab_jtbd') || null,
                 ab_notes: localStorage.getItem('ab_notes') || null,
                 ab_notizseite: localStorage.getItem('ab_notizseite') || null,
+                ab_ks1: localStorage.getItem('ab_ks1') || null,
                 special_notes: (function(){ try { var el = document.getElementById('specialNotes'); var v = (el && el.value ? el.value : (localStorage.getItem('special_notes') || '')).trim(); return v ? v.slice(0, 600) : null; } catch(e){ return null; } })(),
                 entry_page: localStorage.getItem('entry_page') || null
             };
@@ -407,6 +408,7 @@ ab_preis3m: 'A', // 04.10. gestoppt: siehe Commit-Text
             // (sonst wuerde der PATCH die answers-JSONB-Spalte ueberschreiben).
             localStorage.setItem('quizAnswersCache', JSON.stringify(answers));
             try { if (answers.special_notes) { localStorage.setItem('specialNotes', answers.special_notes); } else { localStorage.removeItem('specialNotes'); } } catch(e){}
+            try { if (localStorage.getItem('ab_ks1')) fetch('/api/ab-ping',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({test:'ks1',variant:localStorage.getItem('ab_ks1'),step:'quiz_done',sid:localStorage.getItem('ab_sid')})}).catch(function(){}); } catch(e){}
             try { fetch('/api/ab-ping',{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({test:'intro',variant:localStorage.getItem('ab_intro'),step:'quiz_done',sid:localStorage.getItem('ab_sid')})}).catch(function(){}); } catch(e){}
 
             // 1. Supabase speichern
