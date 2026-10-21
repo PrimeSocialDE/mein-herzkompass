@@ -89,8 +89,10 @@ textarea:focus{outline:none;border-color:var(--warm-brown)}
   <!-- Schritt 2: Angebot -->
   <div id="angebot" hidden>
     <p class="danke">✓ Danke, das hilft uns sehr!</p>
-    <h1>Der Aufbauplan für <span class="hund">deinen Hund</span></h1>
-    <p class="sub">Frische Übungen, die auf dem aufbauen, was <span class="hund">dein Hund</span> schon kann, und genau da ansetzen, wo es noch hakt.</p>
+    <h1 id="normTitel">Der Aufbauplan für <span class="hund">deinen Hund</span></h1>
+    <h1 id="upTitel" hidden>Erweitere auf 6 Monate</h1>
+    <p class="sub" id="normSub">Frische Übungen, die auf dem aufbauen, was <span class="hund">dein Hund</span> schon kann, und genau da ansetzen, wo es noch hakt.</p>
+    <p class="sub" id="upSub" hidden>Monat 4 bis 6 mit frischen Übungen, die nahtlos an Woche 12 deines jetzigen Plans anschließen.</p>
 
     <div class="karte">
       <ul class="liste">
@@ -103,7 +105,15 @@ textarea:focus{outline:none;border-color:var(--warm-brown)}
 
     <div class="frist" id="frist" hidden></div>
 
-    <div class="angebote">
+    <div class="angebote" id="angUp" hidden>
+      <div class="ang an" data-typ="verlaengerung-up">
+        <span class="badge">Nur für dich</span>
+        <div class="zeile"><span class="name">Monat 4–6 dazu</span><span class="preis">14,99 €</span></div>
+        <div class="klein">Dein Plan wird zum 6-Monats-Plan · 9 neue Übungen · statt 20 € Aufpreis</div>
+      </div>
+    </div>
+
+    <div class="angebote" id="angNormal">
       <div class="ang an" data-typ="verlaengerung-6">
         <span class="badge">Beliebteste Wahl</span>
         <div class="zeile"><span class="name">6 Monate</span><span class="preis">44,99 €</span></div>
@@ -133,7 +143,8 @@ const q = new URLSearchParams(location.search);
 const leadId = q.get('lead_id') || '';
 const email = q.get('email') || '';
 let hund = '';
-let typ = 'verlaengerung-6';
+const istUp = q.get('t') === 'up';
+let typ = istUp ? 'verlaengerung-up' : 'verlaengerung-6';
 
 function setzeHund(name) {
   if (!name) return;
@@ -154,7 +165,7 @@ document.querySelectorAll('.ang').forEach((k) => {
     document.querySelectorAll('.ang').forEach((x) => x.classList.remove('an'));
     k.classList.add('an');
     typ = k.dataset.typ;
-    $('kaufBtn').textContent = 'Aufbauplan für ' + (typ === 'verlaengerung-6' ? '6' : '3') + ' Monate holen';
+    $('kaufBtn').textContent = typ === 'verlaengerung-up' ? 'Auf 6 Monate erweitern' : 'Aufbauplan für ' + (typ === 'verlaengerung-6' ? '6' : '3') + ' Monate holen';
   };
 });
 
@@ -192,7 +203,7 @@ $('kaufBtn').onclick = async () => {
     const res = await fetch('/api/mollie/upsell-product-checkout', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: typ, email: email, leadId: leadId, dogName: hund || 'deinen Hund',
-        returnUrl: location.origin + '/weiter-danke.html?dog=' + encodeURIComponent(hund || '') + '&m=' + (typ === 'verlaengerung-6' ? '6' : '3') }),
+        returnUrl: location.origin + '/weiter-danke.html?dog=' + encodeURIComponent(hund || '') + '&m=' + (typ === 'verlaengerung-6' ? '6' : typ === 'verlaengerung-up' ? 'up' : '3') }),
     });
     const j = await res.json();
     if (j && j.url) { location.href = j.url; return; }
@@ -212,8 +223,17 @@ $('kaufBtn').onclick = async () => {
     if (!j.ok) { zeige('fehlerSeite'); return; }
     hund = j.dog || '';
     setzeHund(hund);
-    if (j.frist && new Date(j.frist).getTime() > Date.now()) {
-      const d = new Date(j.frist).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
+    if (istUp) {
+      $('angUp').hidden = false; $('angNormal').hidden = true;
+      $('kaufBtn').textContent = 'Auf 6 Monate erweitern';
+      $('upTitel').hidden = false; $('normTitel').hidden = true;
+      $('upSub').hidden = false; $('normSub').hidden = true;
+      document.querySelector('#checkin h1').innerHTML = 'Ein Monat geschafft! Wie läuft es mit <span class="hund"></span>?';
+      setzeHund(hund || 'deinem Hund');
+    }
+    const fr = istUp ? j.up_frist : j.frist;
+    if (fr && new Date(fr).getTime() > Date.now()) {
+      const d = new Date(fr).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
       $('frist').innerHTML = '🎁 <b>Bestandskunden-Preis</b> gilt noch bis ' + d;
       $('frist').hidden = false;
     }

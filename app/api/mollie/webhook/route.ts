@@ -1157,6 +1157,7 @@ async function handleUpsellProductPaid(payment: any) {
   // /api/cron/verlaengerung-generate (alle 10 Min.), der auch ausliefert.
   // Idempotent: derselbe Payment wird nur einmal vorgemerkt.
   if (typeof product === "string" && product.startsWith("verlaengerung-") && leadData?.id) {
+    const upgrade = product === "verlaengerung-up";
     const monate = product === "verlaengerung-6" ? 6 : 3;
     try {
       const { data: frisch } = await supabase
@@ -1166,7 +1167,7 @@ async function handleUpsellProductPaid(payment: any) {
         await supabase.from("wauwerk_leads").update({
           answers: {
             ...a,
-            verl_bestellt: { monate, payment_id: payment.id, betrag: payment.amount?.value || null, at: new Date().toISOString() },
+            verl_bestellt: { monate, ...(upgrade ? { upgrade: true } : {}), payment_id: payment.id, betrag: payment.amount?.value || null, at: new Date().toISOString() },
             verl_geliefert_at: null,
             verl_teil1: null,
             verl_lock: null,
@@ -1183,7 +1184,7 @@ async function handleUpsellProductPaid(payment: any) {
           p_mollie_payment_id: payment.id,
           p_lead_id: leadData.id,
           p_email: email,
-          p_beschreibung: `Aufbauplan ${monate} Monate (Verlängerung Trainingsplan)`,
+          p_beschreibung: upgrade ? "Erweiterung Trainingsplan auf 6 Monate (Monat 4-6)" : `Aufbauplan ${monate} Monate (Verlängerung Trainingsplan)`,
           p_brutto_cents: bruttoCents,
           p_leistungsdatum: new Date().toISOString(),
         });

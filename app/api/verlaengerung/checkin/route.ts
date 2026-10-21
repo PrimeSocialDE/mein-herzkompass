@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
     dog: kap(String(lead.dog_name || a.dog_name || "").trim()) || null,
     gender: a.dog_gender || null,
     frist: a.verl_frist || null,
+    up_frist: a.verl_up_frist || null,
     checkin_da: !!a.verl_checkin,
     bestellt: !!a.verl_bestellt,
   });

@@ -2,7 +2,11 @@
 //
 // WANN: 1-Monats-Plan an Tag 31 nach Planerstellung (= 1 Tag nach Ablauf der
 //   30-Tage-Garantie), 3-Monats-Plan an Tag 85, 6-Monats-Plan an Tag 169
-//   (jeweils 1 Tag nach Planende). Maßgeblich ist der NEUESTE Trainingsplan
+//   (jeweils 1 Tag nach Planende).
+// UPGRADE (seit 21.10.2026): 3-Monats-Käufer bekommen zusätzlich an Tag 31
+//   „Monat 4–6 dazu für 14,99 €“ (Produkt verlaengerung-up, Aufbauplan Teil 2,
+//   schließt an den laufenden Plan an). Marker answers.verl_up_ab / verl_up_angebot_at.
+//   Wer das Upgrade kauft (verl_bestellt), bekommt an Tag 85 kein Angebot mehr. Maßgeblich ist der NEUESTE Trainingsplan
 //   der E-Mail (wer zwischendurch neu gekauft hat, läuft nach dem neuen Plan).
 // WER NICHT: nicht bezahlt, PL/IT, abgemeldet, schon angeschrieben/in der
 //   Kontrollgruppe, schon verlängert, Erstattungsfall im Support, in Mollie
@@ -32,6 +36,7 @@ const FROM = "Laura vom Pfoten-Plan <hallo@pfoten-post.de>";
 const CAMPAIGN = "verlaengerung-angebot";
 const TAG = 86400000;
 const FAELLIG_NACH_TAGEN: Record<number, number> = { 1: 31, 3: 85, 6: 169 };
+const UPGRADE_NACH_TAGEN = 31; // nur 3-Monats-Pläne
 const PLAN_NAME: Record<number, string> = { 1: "4-Wochen-Plan", 3: "3-Monats-Plan", 6: "6-Monats-Plan" };
 
 const hmac = (k: crypto.BinaryLike | crypto.KeyObject, d: string) =>
@@ -67,8 +72,54 @@ const gruppe = (email: string) =>
 const fristText = (iso: string) =>
   new Date(iso).toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Berlin" });
 
-function link(id: string, email: string) {
-  return `https://www.pfoten-plan.de/weiter.html?lead_id=${encodeURIComponent(id)}&email=${encodeURIComponent(email)}&utm_source=email&utm_medium=verlaengerung&utm_campaign=verl-angebot`;
+function link(id: string, email: string, upgrade = false) {
+  return `https://www.pfoten-plan.de/weiter.html?lead_id=${encodeURIComponent(id)}&email=${encodeURIComponent(email)}${upgrade ? "&t=up" : ""}&utm_source=email&utm_medium=verlaengerung&utm_campaign=${upgrade ? "verl-upgrade" : "verl-angebot"}`;
+}
+
+function buildUpgradeHtml(dog: string, id: string, email: string, frist: string): string {
+  const unsub = `https://www.pfoten-plan.de/api/unsubscribe?lead=${encodeURIComponent(id)}`;
+  const cta = link(id, email, true);
+  const p = "margin:0 0 16px;font-size:16px;";
+  return `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pfoten-Plan</title></head>
+<body style="margin:0;padding:0;background:#FAF8F5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#1f2937;line-height:1.7;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Ein Monat geschafft. So geht es nach Woche 12 für ${dog} weiter.</div>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAF8F5;"><tr><td align="center" style="padding:28px 16px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #EADDC5;border-radius:18px;overflow:hidden;">
+<tr><td style="padding:26px 36px 6px;text-align:center;"><div style="font-size:20px;font-weight:800;color:#8B7355;">🐾 Pfoten-Plan</div></td></tr>
+<tr><td style="padding:14px 36px 4px;">
+<p style="${p}">Hallo,</p>
+<p style="${p}">ihr seid jetzt einen Monat mit ${dog}s Plan dabei. Schön, dass ihr dranbleibt!</p>
+<p style="${p}">Viele merken nach dem ersten Monat: Es tut sich etwas, aber ein paar Dinge brauchen noch Zeit. Deshalb kannst du ${dog}s Plan jetzt <strong>auf 6 Monate erweitern</strong>: Monat 4 bis 6 mit frischen Übungen, die nahtlos an Woche 12 anschließen und genau da ansetzen, wo es bei euch noch hakt.</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;margin:0 0 18px;"><tr><td style="padding:14px 18px;font-size:15px;color:#3a342b;">
+<strong>Monat 4–6 dazu für nur 14,99 €</strong> (statt 20 € Aufpreis zum 6-Monats-Plan)<br><span style="color:#6B7280;font-size:13.5px;">Nur bis ${frist}. Einmalzahlung, kein Abo. Als PDF zum Ausdrucken.</span>
+</td></tr></table>
+</td></tr>
+<tr><td style="padding:0 36px 6px;text-align:center;">
+<a href="${cta}" style="display:inline-block;background:#8B7355;color:#ffffff;text-decoration:none;font-size:17px;font-weight:700;padding:16px 34px;border-radius:12px;">Auf 6 Monate erweitern</a>
+</td></tr>
+<tr><td style="padding:20px 36px 26px;">
+<p style="margin:0 0 6px;font-size:16px;">Viele Grüße an ${dog},</p>
+<p style="margin:0;font-size:16px;"><strong>Laura</strong> vom Pfoten-Plan-Team</p>
+</td></tr>
+<tr><td style="padding:16px 32px;background:#FAFAFA;border-top:1px solid #F0EBE3;"><p style="margin:0;font-size:11px;color:#9CA3AF;text-align:center;line-height:1.7;">Pfoten-Plan · Persönliches Hundetraining<br>Keine Post mehr? <a href="${unsub}" style="color:#9CA3AF;text-decoration:underline;">Hier abmelden</a>.</p></td></tr>
+</table></td></tr></table></body></html>`;
+}
+
+function buildUpgradeText(dog: string, id: string, email: string, frist: string): string {
+  return `Hallo,
+
+ihr seid jetzt einen Monat mit ${dog}s Plan dabei. Schön, dass ihr dranbleibt!
+
+Viele merken nach dem ersten Monat: Es tut sich etwas, aber ein paar Dinge brauchen noch Zeit. Deshalb kannst du ${dog}s Plan jetzt auf 6 Monate erweitern: Monat 4 bis 6 mit frischen Übungen, die nahtlos an Woche 12 anschließen.
+
+Monat 4–6 dazu für nur 14,99 € (statt 20 € Aufpreis). Nur bis ${frist}. Einmalzahlung, kein Abo.
+
+${link(id, email, true)}
+
+Viele Grüße an ${dog},
+Laura vom Pfoten-Plan-Team
+
+Keine Post mehr? Hier abmelden: https://www.pfoten-plan.de/api/unsubscribe?lead=${encodeURIComponent(id)}`;
 }
 
 function buildHtml(dog: string, monate: number, id: string, email: string, frist: string): string {
@@ -120,19 +171,19 @@ Laura vom Pfoten-Plan-Team
 Keine Post mehr? Hier abmelden: https://www.pfoten-plan.de/api/unsubscribe?lead=${encodeURIComponent(id)}`;
 }
 
-async function sendOne(to: string, dog: string, monate: number, id: string, email: string, frist: string) {
+async function sendOne(to: string, dog: string, monate: number, id: string, email: string, frist: string, upgrade = false) {
   return ses("POST", "/v2/email/outbound-emails", {
     FromEmailAddress: FROM,
     Destination: { ToAddresses: [to] },
     ReplyToAddresses: ["support@pfoten-plan.de"],
     ConfigurationSetName: CONFIG_SET,
-    EmailTags: [{ Name: "campaign", Value: CAMPAIGN }],
+    EmailTags: [{ Name: "campaign", Value: upgrade ? "verlaengerung-upgrade" : CAMPAIGN }],
     Content: {
       Simple: {
-        Subject: { Data: `Wie geht es ${dog} nach dem Plan?`, Charset: "UTF-8" },
+        Subject: { Data: upgrade ? `Ein Monat mit ${dog}s Plan: so geht es weiter` : `Wie geht es ${dog} nach dem Plan?`, Charset: "UTF-8" },
         Body: {
-          Html: { Data: buildHtml(dog, monate, id, email, frist), Charset: "UTF-8" },
-          Text: { Data: buildText(dog, monate, id, email, frist), Charset: "UTF-8" },
+          Html: { Data: upgrade ? buildUpgradeHtml(dog, id, email, frist) : buildHtml(dog, monate, id, email, frist), Charset: "UTF-8" },
+          Text: { Data: upgrade ? buildUpgradeText(dog, id, email, frist) : buildText(dog, monate, id, email, frist), Charset: "UTF-8" },
         },
         Headers: [
           { Name: "List-Unsubscribe", Value: `<https://www.pfoten-plan.de/api/unsubscribe?lead=${encodeURIComponent(id)}>, <mailto:hallo@pfoten-post.de?subject=unsubscribe>` },
@@ -173,8 +224,9 @@ export async function GET(req: NextRequest) {
     const { data: l } = await supabase.from("wauwerk_leads").select("id, email, dog_name").eq("id", id).maybeSingle();
     const dog = kap(String(l?.dog_name || "Bella").trim());
     const monate = Number(searchParams.get("monate") || 1);
-    const res = await sendOne(testTo, dog, monate, l?.id || "test", String(l?.email || testTo), fristText(new Date(Date.now() + 7 * TAG).toISOString()));
-    return NextResponse.json({ test: testTo, status: res.status, link: l ? link(l.id, String(l.email)) : null });
+    const up = searchParams.get("up") === "1";
+    const res = await sendOne(testTo, dog, monate, l?.id || "test", String(l?.email || testTo), fristText(new Date(Date.now() + 7 * TAG).toISOString()), up);
+    return NextResponse.json({ test: testTo, status: res.status, link: l ? link(l.id, String(l.email), up) : null });
   }
 
   const dry = searchParams.get("dry") === "1";
@@ -216,14 +268,18 @@ export async function GET(req: NextRequest) {
   }
 
   // ── 2) Fällig im Lookback-Fenster? ──
-  const faellig: Array<{ email: string; plan: Plan; monate: number }> = [];
+  const faellig: Array<{ email: string; plan: Plan; monate: number; upgrade: boolean }> = [];
+  const imFenster = (p: Plan, tage: number) => {
+    const due = new Date(p.created_at).getTime() + tage * TAG;
+    return due <= jetzt && due > jetzt - lookback * TAG;
+  };
   for (const [email, p] of neuester) {
     const m = /^(\d+)-Monats/.exec(p.plan_title || "");
     const monate = m ? Number(m[1]) : 0;
     const nachTagen = FAELLIG_NACH_TAGEN[monate];
     if (!nachTagen || !p.source_payment_id) continue;
-    const due = new Date(p.created_at).getTime() + nachTagen * TAG;
-    if (due <= jetzt && due > jetzt - lookback * TAG) faellig.push({ email, plan: p, monate });
+    if (imFenster(p, nachTagen)) faellig.push({ email, plan: p, monate, upgrade: false });
+    else if (monate === 3 && imFenster(p, UPGRADE_NACH_TAGEN)) faellig.push({ email, plan: p, monate, upgrade: true });
   }
   if (faellig.length === 0) return NextResponse.json({ ok: true, faellig: 0 });
 
@@ -239,6 +295,7 @@ export async function GET(req: NextRequest) {
   }
   const mails = faellig.map((f) => f.email);
   const schonDran = new Set<string>();
+  const upSchonDran = new Set<string>();
   const abgemeldet = new Set<string>();
   for (let i = 0; i < mails.length; i += 100) {
     const { data } = await supabase.from("wauwerk_leads").select("email, answers").in("email", mails.slice(i, i + 100));
@@ -246,6 +303,7 @@ export async function GET(req: NextRequest) {
       const a = r.answers || {};
       const m = String(r.email || "").toLowerCase();
       if (a.verl_ab || a.verl_bestellt) schonDran.add(m);
+      if (a.verl_up_ab || a.verl_bestellt) upSchonDran.add(m);
       if (a.unsubscribed) abgemeldet.add(m);
     }
   }
@@ -257,7 +315,7 @@ export async function GET(req: NextRequest) {
 
   const grund: Record<string, number> = {};
   const zaehle = (g: string) => { grund[g] = (grund[g] || 0) + 1; };
-  const kandidaten: Array<{ lead: Lead; email: string; monate: number }> = [];
+  const kandidaten: Array<{ lead: Lead; email: string; monate: number; upgrade: boolean }> = [];
   for (const f of faellig) {
     const l = leads.get(f.plan.source_payment_id!);
     const a = l?.answers || {};
@@ -265,9 +323,9 @@ export async function GET(req: NextRequest) {
     if (l.status !== "paid") { zaehle("nicht_bezahlt"); continue; }
     if (a.lang === "pl" || a.lang === "it") { zaehle("ausland"); continue; }
     if (a.unsubscribed || abgemeldet.has(f.email)) { zaehle("abgemeldet"); continue; }
-    if (schonDran.has(f.email)) { zaehle("schon_dran"); continue; }
+    if ((f.upgrade ? upSchonDran : schonDran).has(f.email)) { zaehle("schon_dran"); continue; }
     if (erstattung.has(f.email)) { zaehle("erstattung_support"); continue; }
-    kandidaten.push({ lead: l, email: f.email, monate: f.monate });
+    kandidaten.push({ lead: l, email: f.email, monate: f.monate, upgrade: f.upgrade });
   }
 
   if (dry) {
@@ -276,7 +334,7 @@ export async function GET(req: NextRequest) {
       ok: true, modus: "DRY-RUN", freigabe: flag("verl_live") === "true", lookback_tage: lookback,
       faellig: faellig.length, ausgeschlossen: grund, kandidaten: kandidaten.length,
       davon_mail: kandidaten.length - kontrolle, davon_kontrolle: kontrolle,
-      nach_planlaenge: kandidaten.reduce((o: Record<string, number>, k) => { o[k.monate] = (o[k.monate] || 0) + 1; return o; }, {}),
+      nach_planlaenge: kandidaten.reduce((o: Record<string, number>, k) => { const key = k.upgrade ? "3_upgrade_tag31" : String(k.monate); o[key] = (o[key] || 0) + 1; return o; }, {}),
       beispiel: kandidaten[0] ? { email: kandidaten[0].email, hund: kandidaten[0].lead.dog_name, monate: kandidaten[0].monate } : null,
     });
   }
@@ -286,22 +344,26 @@ export async function GET(req: NextRequest) {
   for (const k of kandidaten.slice(0, maxProLauf)) {
     if (await mollieErstattet(k.lead.mollie_payment_id)) {
       erstattet++;
-      await mergeAnswers(k.lead.id, { verl_ab: "ausgeschlossen_erstattet" });
+      await mergeAnswers(k.lead.id, k.upgrade ? { verl_up_ab: "ausgeschlossen_erstattet" } : { verl_ab: "ausgeschlossen_erstattet" });
       continue;
     }
     const g = gruppe(k.email);
     if (g === "kontrolle") {
       kontrolle++;
-      await mergeAnswers(k.lead.id, { verl_ab: "kontrolle", verl_kontrolle_at: new Date().toISOString(), verl_planlaenge: k.monate });
+      await mergeAnswers(k.lead.id, k.upgrade
+        ? { verl_up_ab: "kontrolle", verl_up_kontrolle_at: new Date().toISOString(), verl_planlaenge: k.monate }
+        : { verl_ab: "kontrolle", verl_kontrolle_at: new Date().toISOString(), verl_planlaenge: k.monate });
       continue;
     }
     const dog = kap(String(k.lead.dog_name || "").trim()) || "deinem Hund";
     const fristIso = new Date(Date.now() + 7 * TAG).toISOString();
     let res;
-    try { res = await sendOne(String(k.lead.email), dog, k.monate, k.lead.id, String(k.lead.email), fristText(fristIso)); } catch { fehler++; continue; }
+    try { res = await sendOne(String(k.lead.email), dog, k.monate, k.lead.id, String(k.lead.email), fristText(fristIso), k.upgrade); } catch { fehler++; continue; }
     if (res.status < 300) {
       gesendet++;
-      await mergeAnswers(k.lead.id, { verl_ab: "mail", verl_angebot_at: new Date().toISOString(), verl_frist: fristIso, verl_planlaenge: k.monate });
+      await mergeAnswers(k.lead.id, k.upgrade
+        ? { verl_up_ab: "mail", verl_up_angebot_at: new Date().toISOString(), verl_up_frist: fristIso, verl_planlaenge: k.monate }
+        : { verl_ab: "mail", verl_angebot_at: new Date().toISOString(), verl_frist: fristIso, verl_planlaenge: k.monate });
     } else fehler++;
   }
   return NextResponse.json({ ok: true, modus: "LIVE", faellig: faellig.length, ausgeschlossen: grund, gesendet, kontrolle, erstattet, fehler });

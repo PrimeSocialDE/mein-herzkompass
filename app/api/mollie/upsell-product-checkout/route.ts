@@ -48,6 +48,8 @@ const PRODUCT_PRICES: Record<string, number> = {
   // /weiter.html, Aufbauplan mit frischen Übungen per Cron verlaengerung-generate
   "verlaengerung-3": 2999,
   "verlaengerung-6": 4499,
+  // Upgrade 3 -> 6 Monate an Tag 31 (Monat 4-6 als Aufbauplan Teil 2)
+  "verlaengerung-up": 1499,
 };
 
 // Alt-Slugs aus member_upsells. Die Shop-Karte schickt ihren DB-Slug als
@@ -85,6 +87,7 @@ const PRODUCT_NAMES: Record<string, string> = {
   koerpersprache: "Koerpersprache-Heft fuer deinen Hund",
   "verlaengerung-3": "Aufbauplan 3 Monate (Verlaengerung)",
   "verlaengerung-6": "Aufbauplan 6 Monate (Verlaengerung)",
+  "verlaengerung-up": "Erweiterung auf 6 Monate (Monat 4-6)",
 };
 
 export async function POST(req: NextRequest) {

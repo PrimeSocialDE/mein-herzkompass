@@ -5,6 +5,7 @@
 // braucht:
 //   3 Monate: Teil 1 -> PDF -> Mail -> fertig
 //   6 Monate: Lauf 1 Teil 1 (Text in answers.verl_teil1), Lauf 2 Teil 2 -> beide PDFs in einer Mail
+//   Upgrade (3-Monats-Käufer, Tag 31): ein Lauf, Teil 2 = Monat 4-6 im Anschluss an den laufenden Plan
 // Sperre answers.verl_lock (15 Min.), damit sich überlappende Läufe nicht doppeln.
 // Kopie jeder Auslieferung an kontakt@primesocial.de. Nach 3 Fehlversuchen (verl_fehler)
 // bleibt der Auftrag liegen und muss von Hand angestoßen werden.
@@ -70,7 +71,8 @@ async function teilErstellen(lead: Lead, g: Awaited<ReturnType<typeof grundlagen
   });
 }
 
-async function ausliefern(lead: Lead, g: Awaited<ReturnType<typeof grundlagen>>, monate: 3 | 6, texte: string[], dry: boolean) {
+async function ausliefern(lead: Lead, g: Awaited<ReturnType<typeof grundlagen>>, monate: 3 | 6, texte: string[], dry: boolean, upgrade = false) {
+  if (upgrade) return ausliefernUpgrade(lead, g, texte[0], dry);
   const anhaenge = [];
   for (let i = 0; i < texte.length; i++) {
     const teil = (i + 1) as 1 | 2;
@@ -103,6 +105,31 @@ Dein PfotenPlan-Team`;
   return anhaenge.length;
 }
 
+async function ausliefernUpgrade(lead: Lead, g: Awaited<ReturnType<typeof grundlagen>>, text2: string, dry: boolean) {
+  const pdf = await aufbauplanPDF(text2, g.dog, 2, 6);
+  const text = `${g.vorname ? `Hallo ${g.vorname}` : "Hallo"},
+
+${g.dog}s Plan ist jetzt auf 6 Monate erweitert. Im Anhang findest du Monat 4 bis 6: frische Übungen, die nahtlos an Woche 12 deines jetzigen Plans anschließen.
+
+Mach mit deinem jetzigen Plan ganz normal weiter. Wenn du Woche 12 geschafft hast, startest du mit diesem PDF, Übung 10. Druck es dir am besten jetzt schon aus.
+
+Wenn du Fragen hast, antworte einfach auf diese Mail.
+
+Liebe Grüße
+Dein PfotenPlan-Team`;
+  const html = `<div style="font-family:Arial,sans-serif;font-size:15px;color:#111;line-height:1.6">${text
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")}</div>`;
+  await sendViaGoogleSmtp({
+    to: dry ? KOPIE : lead.email,
+    ...(dry ? {} : { cc: KOPIE }),
+    subject: `${dry ? "[TEST] " : ""}${g.dog}s Plan: Monat 4 bis 6 ist da`,
+    html,
+    fromName: "Pfoten-Plan",
+    attachments: [{ name: dateiName(g.dog, "-Monat-4-6"), contentBase64: Buffer.from(pdf).toString("base64") }],
+  } as any);
+  return 1;
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   if (searchParams.get("secret") !== CRON_SECRET) {
@@ -123,6 +150,11 @@ export async function GET(req: NextRequest) {
         klappt_nicht: searchParams.get("hakt") || "Bei Hundebegegnungen auf engem Weg wird es noch schwierig.",
         neu: searchParams.get("neu") || "",
       };
+    }
+    if (searchParams.get("up") === "1") {
+      const t2 = await teilErstellen(lead, g, 2);
+      await ausliefern(lead, g, 6, [t2], true, true);
+      return NextResponse.json({ ok: true, dry: true, upgrade: true, an: KOPIE, uebungen: uebungsNamen(t2) });
     }
     const t1 = await teilErstellen(lead, g, 1);
     const texte = [t1];
@@ -155,6 +187,12 @@ export async function GET(req: NextRequest) {
 
   try {
     const g = await grundlagen(lead);
+    if (a.verl_bestellt?.upgrade) {
+      const t2 = await teilErstellen(lead, g, 2);
+      await ausliefern(lead, g, 6, [t2], false, true);
+      await merge(lead.id, { verl_lock: null, verl_geliefert_at: new Date().toISOString() });
+      return NextResponse.json({ ok: true, geliefert: lead.id, upgrade: true });
+    }
     if (!a.verl_teil1) {
       const t1 = await teilErstellen(lead, g, 1);
       if (monate === 3) {
