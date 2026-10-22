@@ -2150,8 +2150,10 @@
 
             // Kommandos
             if (dogCommands.length > 0) {
-                const allCmds = ['sitz', 'platz', 'bleib', 'hier', 'aus', 'nein', 'fuss'];
-                const cmdLabels = { 'sitz': 'Sitz', 'platz': 'Platz', 'bleib': 'Bleib', 'hier': 'Hier', 'aus': 'Aus', 'nein': 'Nein', 'fuss': 'Fuß' };
+                // Keys wie im Quiz (kurz-schritt6 speichert sit/place/come/... ), vorher
+                // standen hier deutsche Keys, dadurch war nie ein Kommando als bekannt markiert.
+                const allCmds = ['sit', 'place', 'stay', 'come', 'heel', 'wait', 'leave', 'stop', 'slow'];
+                const cmdLabels = { 'sit': 'Sitz', 'place': 'Platz', 'stay': 'Bleib', 'come': 'Hier', 'heel': 'Fuß', 'wait': 'Warte', 'leave': 'Lass es', 'stop': 'Stopp', 'slow': 'Langsam' };
                 const tagsHtml = allCmds.map(cmd => {
                     const isKnown = dogCommands.includes(cmd);
                     return '<span class="command-tag' + (isKnown ? ' known' : '') + '">' + (cmdLabels[cmd] || cmd) + '</span>';
