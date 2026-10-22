@@ -21,6 +21,7 @@ export const COMMAND_LABELS: Record<string, string> = {
   stop: "Stopp",
   leave: "Aus/Lass es",
   down: "Platz (hinlegen)",
+  slow: "Langsam",
 };
 
 // Kern-Kommandos, die das Produkt IMMER abdeckt (auch nicht ausgewaehlte).

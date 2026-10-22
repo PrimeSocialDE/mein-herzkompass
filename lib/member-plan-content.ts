@@ -68,6 +68,8 @@ export interface TrainingPlanContent {
   abschluss?: string;
   // Bonus-Spiele am Ende
   zusatz_spiele?: TrainingPlanZusatzSpiel[];
+  // Zwei Zusatzseiten "Kommandos üben" (lib/kommando-training.ts), ganz am Ende
+  kommando_training?: Array<{ key: string; titel: string; alltag: string; schritte: string[]; tipp: string; neu: boolean }>;
 }
 
 // Type-Guard fuer die Coaching-Page

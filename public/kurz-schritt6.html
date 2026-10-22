@@ -46,6 +46,7 @@
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .option-card { background: var(--white); border: 2px solid var(--border-light); border-radius: var(--border-radius); padding: 16px 12px; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow-light); text-align: center; }
         .option-card:hover { border-color: var(--light-brown); }
+        .option-card[data-command="none"] { grid-column: 1 / -1; }
         .option-card.selected { border-color: var(--primary-brown); background: linear-gradient(135deg, rgba(212, 185, 150, 0.1), rgba(212, 185, 150, 0.15)); }
         .option-text { font-size: 16px; font-weight: 600; color: var(--text-dark); }
         .continue-btn { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 40px); max-width: 460px; background: var(--primary-brown); color: var(--white); border: none; border-radius: var(--border-radius); padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer; opacity: 0.5; pointer-events: none; transition: all 0.2s ease; }
@@ -117,6 +118,9 @@
             </div>
             <div class="option-card" data-command="stop">
                 <div class="option-text">Stopp</div>
+            </div>
+            <div class="option-card" data-command="slow">
+                <div class="option-text">Langsam</div>
             </div>
             <div class="option-card" data-command="none">
                 <div class="option-text">Noch keine</div>

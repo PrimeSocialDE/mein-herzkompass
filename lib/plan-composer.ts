@@ -16,6 +16,7 @@ import {
   type Phase,
 } from "./exercise-library";
 import type { TrainingPlanContent } from "./member-plan-content";
+import { buildKommandoTraining } from "./kommando-training";
 
 export interface DogProfile {
   dogName: string;
@@ -6417,6 +6418,9 @@ export function composePlan(args: ComposeArgs): TrainingPlanContent {
         `Du hast ${dogName} über ${weeksTotal} Wochen systematisch begleitet, das ist eine echte Leistung. Halte die Routinen aufrecht, beobachte die kleinen Fortschritte und bleib geduldig mit euch beiden. Veränderung ist keine Linie, sondern eine Welle.`,
       dog
     ),
+    // Zwei Zusatzseiten "Kommandos üben" am Ende des PDFs (nur DE-Renderer),
+    // Auswahl nach den im Quiz NICHT angekreuzten Kommandos (dog_commands).
+    kommando_training: buildKommandoTraining(dog.dogName, dog.bekannteSignale || []),
     zusatz_spiele: orderedProbs
       .flatMap((p) => BONUS_BY_PROBLEM[p] || [])
       .map((bs) => ({

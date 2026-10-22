@@ -1326,6 +1326,81 @@ export async function buildPdfFromContent(params = {}) {
     }
   }
 
+  // ===== Kommandos üben (2 Zusatzseiten, nur DE) =====
+  // Ganz am Ende angehängt, damit sich keine bestehende Seite verschiebt.
+  // Inhalt aus plan.kommando_training (lib/kommando-training.ts): 4 Kommandos,
+  // die der Hund laut Quiz noch nicht kann, je 2 pro Seite, mit Abhak-Tracker.
+  const kommandos = !isPl && !isIt && Array.isArray(plan.kommando_training) ? plan.kommando_training.slice(0, 4) : [];
+  for (let seite = 0; seite < 2 && seite * 2 < kommandos.length; seite++) {
+    const p = newPage();
+    const titel = seite === 0 ? `Kommandos üben mit ${DOG_NAME}` : `Kommandos üben, Teil 2`;
+    drawSectionTitle(p, titel, MARGIN, A4_H - BANNER_H - 50, fontBold, 26);
+    p.drawText(
+      seite === 0
+        ? "Kurze Einheiten zwischendurch: 3 bis 5 Minuten am Tag reichen. Nach jeder Einheit ein Kästchen abhaken."
+        : "Erst wenn ein Kommando drinnen sicher klappt, übst du es draußen mit mehr Ablenkung.",
+      { x: MARGIN, y: A4_H - BANNER_H - 92, size: 11, font: fontReg, color: TEXT_MEDIUM }
+    );
+    const colW = (CONTENT_W - 24) / 2;
+    const top = A4_H - BANNER_H - 112;
+    const bottom = 52;
+    for (let i = 0; i < 2; i++) {
+      const k = kommandos[seite * 2 + i];
+      if (!k) continue;
+      const x = MARGIN + i * (colW + 24);
+      drawRoundedRect(p, x, bottom, colW, top - bottom, 10, WHITE);
+      const ix = x + 16;
+      const iw = colW - 32;
+      let y = top - 34;
+      drawSectionPill(p, k.neu ? `Neu für ${DOG_NAME}` : "Zum Auffrischen", ix, y, fontBold, k.neu ? PILL_AC_GREEN : PILL_AC_GOLD, k.neu ? PILL_BG_GREEN : PILL_BG_GOLD, 0);
+      y -= 30;
+      p.drawText(String(k.titel || ""), { x: ix, y, size: 20, font: fontBold, color: DARK_BROWN });
+      y -= 20;
+      // Schriftgröße so wählen, dass Text + Tipp über der Abhak-Leiste enden
+      // (Schutz bei langen Hundenamen): 11 pt, sonst stufenweise kleiner.
+      const schritteRoh = Array.isArray(k.schritte) ? k.schritte.slice(0, 5) : [];
+      const platz = y - (bottom + 50);
+      let fs = 11;
+      for (const kand of [11, 10.4, 9.8, 9.2]) {
+        fs = kand;
+        const lg = kand * 1.3;
+        let h = wrapText(String(k.alltag || ""), fontItalic, kand, iw).length * lg + 10;
+        for (const st of schritteRoh) h += wrapText(String(st), fontReg, kand, iw - (9 * 2 + 10)).length * lg + 4;
+        h += 6 + wrapText(String(k.tipp || ""), fontReg, kand - 0.4, iw - fontBold.widthOfTextAtSize("Tipp: ", kand)).length * lg;
+        if (h <= platz) break;
+      }
+      const lgap = fs * 1.3;
+      for (const l of wrapText(String(k.alltag || ""), fontItalic, fs, iw)) {
+        p.drawText(l, { x: ix, y, size: fs, font: fontItalic, color: TEXT_MEDIUM });
+        y -= lgap;
+      }
+      y -= 10;
+      schritteRoh.forEach((st, n) => {
+        y = drawNumberedStep(p, n + 1, String(st), ix, y, iw, fontReg, fontBold, fs, TEXT_DARK, lgap, 9);
+      });
+      y -= 6;
+      p.drawText("Tipp:", { x: ix, y, size: fs, font: fontBold, color: GOLD_DARK });
+      const tippW = fontBold.widthOfTextAtSize("Tipp: ", fs);
+      const tippLines = wrapText(String(k.tipp || ""), fontReg, fs - 0.4, iw - tippW);
+      for (const l of tippLines) {
+        p.drawText(l, { x: ix + tippW, y, size: fs - 0.4, font: fontReg, color: TEXT_DARK });
+        y -= lgap;
+      }
+      // Abhak-Tracker unten in der Karte
+      const by = bottom + 16;
+      p.drawText("Geübt:", { x: ix, y: by + 6, size: 10, font: fontBold, color: DARK_BROWN });
+      const bx0 = ix + fontBold.widthOfTextAtSize("Geübt:", 10) + 10;
+      const box = 17;
+      const gap = Math.min(10, (iw - (bx0 - ix) - 7 * box) / 6);
+      for (let d = 0; d < 7; d++) {
+        const bx = bx0 + d * (box + gap);
+        p.drawRectangle({ x: bx, y: by, width: box, height: box, color: WHITE, borderColor: GOLD, borderWidth: 1.2 });
+        const lbl = String(d + 1);
+        p.drawText(lbl, { x: bx + box / 2 - fontReg.widthOfTextAtSize(lbl, 7) / 2, y: by - 9, size: 7, font: fontReg, color: TEXT_LIGHT });
+      }
+    }
+  }
+
   // ========= Speichern =========
   const bytes = await doc.save();
   if (params.verbose !== false) {
