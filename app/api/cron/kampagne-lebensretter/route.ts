@@ -1,4 +1,4 @@
-// Cross-Sell-Kampagne "Lebensretter-Training" (24,99 €, 10 Sicherheits-Kommandos) — Batch-Versand über Amazon SES.
+// Cross-Sell-Kampagne "Lebensretter-Training" (10 Sicherheits-Kommandos, Preis nur auf der Seite) — Batch-Versand über Amazon SES, sonntags 14-16 Uhr (13-14 UTC).
 // Aufbau wie kampagne-koerpersprache. Ersetzt ab 25.10.2026 die Giftköder-Kampagne
 // (8.705 Empfänger, nur 4 Käufe) und passt zum Kommando-Angle der Meta-Anzeigen.
 //
@@ -76,6 +76,17 @@ function link(id: string, email: string): string {
   return `${SITE}/lebensretter.html?${p.toString()}`;
 }
 
+
+function uebung(nr: number, titel: string, wofuer: string, schritte: string[]): string {
+  const li = schritte.map((s, i) => `<tr><td valign="top" style="padding:3px 8px 3px 0;font-size:14px;font-weight:800;color:#8B7355;">${i + 1}.</td><td style="padding:3px 0;font-size:14.5px;color:#374151;line-height:1.5;">${s}</td></tr>`).join("");
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFF9F0;border:1px solid #EADDC5;border-left:4px solid #C4A576;border-radius:12px;margin:0 0 14px;"><tr><td style="padding:14px 16px;">
+<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8B7355;">Gratis-Übung · Kommando ${nr} von 10</div>
+<div style="font-size:17px;font-weight:700;margin:4px 0 2px;color:#2A2118;">${titel}</div>
+<div style="font-size:14px;color:#6B7280;margin:0 0 8px;">${wofuer}</div>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0">${li}</table>
+</td></tr></table>`;
+}
+
 function buildHtml(dog: string, id: string, email: string): string {
   const unsub = `${SITE}/api/unsubscribe?lead=${encodeURIComponent(id)}`;
   const cta = link(id, email);
@@ -91,18 +102,26 @@ function buildHtml(dog: string, id: string, email: string): string {
 <p style="${p}">Hallo,</p>
 <p style="${p}">eine offene Autotür. Die Leine rutscht dir aus der Hand. Ein Reh springt über den Weg, oder im Gebüsch liegt etwas, das ${dog} sofort im Maul hat.</p>
 <p style="${p}">In solchen Sekunden nützt kein normales „Sitz“. Was zählt, ist ein Kommando, das so tief sitzt, dass ${dog} es auch dann befolgt, wenn alles um euch herum aufregend ist.</p>
-<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFF9F0;border:1px solid #EADDC5;border-left:4px solid #C4A576;border-radius:12px;margin:0 0 18px;"><tr><td style="padding:14px 16px;">
-<div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8B7355;">Gratis-Tipp für heute</div>
-<div style="font-size:16px;font-weight:700;margin:4px 0 4px;color:#2A2118;">Das Notfall-Wort</div>
-<div style="font-size:14.5px;color:#4B5563;line-height:1.55;">Nimm für den Notfall-Rückruf ein eigenes Wort, das ${dog} noch nie gehört hat, zum Beispiel „Turbo“. Sag es die ersten zwei Wochen nur drinnen, und jedes Mal gibt es etwas Besonderes wie Käse oder Hähnchen. So wird das Wort zum stärksten Signal überhaupt, und es ist noch nicht „verbraucht“ wie der normale Rückruf.</div>
-</td></tr></table>
-<p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#3a342b;">Im Lebensretter-Training für ${dog}:</p>
+<p style="margin:0 0 12px;font-size:16px;font-weight:700;color:#3a342b;">Zwei der zehn Kommandos kannst du heute schon ausprobieren:</p>
+${uebung(1, "Der Notfall-Rückruf", "Damit " + dog + " auch dann kommt, wenn ein Reh oder die Straße lockt.", [
+  `Wähle ein neues Wort, das ${dog} noch nie gehört hat, zum Beispiel „Turbo“. Der normale Rückruf ist meist schon „verbraucht“.`,
+  `Drinnen, aus 1 bis 2 Metern: Wort sagen und sofort etwas ganz Besonderes geben, Käse oder Hähnchen. Fünfmal am Tag.`,
+  `Nach einer Woche sagst du das Wort, wenn ${dog} gerade abgelenkt ist. Kommt ${dog}, gibt es einen Jackpot: mehrere Stücke nacheinander.`,
+  `Erst wenn das drinnen sicher klappt, geht es nach draußen, zuerst an der Schleppleine.`,
+])}
+${uebung(8, "Warte an Tür & Auto", "Damit " + dog + " nicht durch die offene Tür oder aus dem Kofferraum schießt.", [
+  `Stell dich mit ${dog} an die geschlossene Haustür und sag ruhig „Warte“.`,
+  `Öffne die Tür einen Spalt. Drängt ${dog} nach vorne, geht die Tür wieder zu, ganz ohne Schimpfen.`,
+  `Bleibt ${dog} stehen oder sitzen: Tür weiter auf, kurz warten, dann mit „Okay“ freigeben.`,
+  `Genauso am Auto: Kofferraum auf, „Warte“, erst anleinen, dann „Okay“.`,
+])}
+<p style="margin:6px 0 8px;font-size:16px;font-weight:700;color:#3a342b;">Alle 10 Kommandos im Lebensretter-Training für ${dog}:</p>
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 14px;">${liste}</table>
 <p style="${p}">Jedes Kommando in 5 klaren Schritten, mit Übungsplan und No-Gos, dazu eine persönliche Einleitung für ${dog}. Ein sicheres Kommando entsteht nicht an dem Tag, an dem man es braucht, sondern in den Wochen davor.</p>
 </td></tr>
 <tr><td style="padding:4px 36px 6px;text-align:center;">
 <a href="${cta}" style="display:inline-block;background:#8B7355;color:#ffffff;text-decoration:none;font-size:17px;font-weight:700;padding:16px 34px;border-radius:12px;">Lebensretter-Training für ${dog}</a>
-<p style="margin:10px 0 0;font-size:13.5px;color:#6B7280;">Für Pfoten-Plan-Kunden 24,99 € statt 34,99 €. Einmalig, kein Abo. Kommt als PDF per E-Mail.</p>
+<p style="margin:10px 0 0;font-size:13.5px;color:#6B7280;">Einmalig, kein Abo. Kommt als PDF per E-Mail.</p>
 </td></tr>
 <tr><td style="padding:20px 36px 26px;">
 <p style="margin:0 0 6px;font-size:16px;">Viele Grüße an ${dog},</p>
@@ -119,13 +138,17 @@ eine offene Autotür. Die Leine rutscht dir aus der Hand. Ein Reh springt über 
 
 In solchen Sekunden nützt kein normales "Sitz". Was zählt, ist ein Kommando, das so tief sitzt, dass ${dog} es auch dann befolgt, wenn alles aufregend ist.
 
-Gratis-Tipp: Nimm für den Notfall-Rückruf ein eigenes Wort, das ${dog} noch nie gehört hat, zum Beispiel "Turbo". Die ersten zwei Wochen nur drinnen, und jedes Mal gibt es etwas Besonderes.
+Zwei der zehn Kommandos kannst du heute schon ausprobieren:
+
+1) Der Notfall-Rückruf: Wähle ein neues Wort, das ${dog} noch nie gehört hat, zum Beispiel "Turbo". Drinnen aus 1 bis 2 Metern sagen und sofort etwas Besonderes geben, fünfmal am Tag. Nach einer Woche auch, wenn ${dog} abgelenkt ist, dann Jackpot. Erst danach draußen an der Schleppleine.
+
+2) Warte an Tür & Auto: An der geschlossenen Tür ruhig "Warte" sagen, Tür einen Spalt öffnen. Drängt ${dog} vor, Tür wieder zu. Bleibt ${dog} stehen, Tür weiter auf und mit "Okay" freigeben. Genauso am Kofferraum.
 
 Im Lebensretter-Training für ${dog}: ${KOMMANDOS.join(" · ")}
 
 ${link(id, email)}
 
-Für Pfoten-Plan-Kunden 24,99 € statt 34,99 €. Einmalig, kein Abo. Kommt als PDF per E-Mail.
+Einmalig, kein Abo. Kommt als PDF per E-Mail.
 
 Viele Grüße an ${dog},
 Laura vom Pfoten-Plan-Team
