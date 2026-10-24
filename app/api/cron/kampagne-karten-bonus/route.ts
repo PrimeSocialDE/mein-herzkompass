@@ -87,6 +87,17 @@ function variantB(id: string): boolean {
   return parseInt(c || "0", 16) % 2 === 1;
 }
 type Segment = "nichtkaeufer" | "checkout";
+
+// Kein echter Hundename? Dann lieber nicht anschreiben, statt "deinem Hunds Plan"
+// oder den Namen der Halterin als Hundenamen zu verwenden (ältere Leads haben im
+// Feld dog_name teils den eigenen Namen, z. B. "Alfred Ritter" bei alfred.ritter@gmx.de).
+function hundenameUnbrauchbar(dogName: string | null, email: string | null): boolean {
+  const d = (dogName || "").trim().toLowerCase();
+  if (!d) return true;
+  const lokal = (email || "").toLowerCase().split("@")[0].replace(/[^a-zäöüß]+/g, " ");
+  const woerter = d.split(/\s+/).filter((w) => w.length >= 3);
+  return woerter.length >= 2 && woerter.every((w) => lokal.includes(w));
+}
 function subjectFor(dog: string, id: string, seg: Segment = "nichtkaeufer"): string {
   if (seg === "checkout") return variantB(id) ? `${dog}s Plan liegt noch für dich bereit (mit Geschenk)` : `Du warst fast fertig: ${dog}s Plan + Notfall-Karten gratis`;
   return variantB(id) ? `Was tun, wenn ${dog} wieder loslegt?` : `${dog}s Plan + 10 Notfall-Karten gratis dazu`;
@@ -263,7 +274,7 @@ export async function GET(req: NextRequest) {
 
   if (dry) {
     const g = new Set<string>();
-    const offen = batch.filter((l) => { const m = (l.email || "").toLowerCase(); if (gesperrt.has(m) || g.has(m)) return false; g.add(m); return true; });
+    const offen = batch.filter((l) => { const m = (l.email || "").toLowerCase(); if (gesperrt.has(m) || g.has(m) || hundenameUnbrauchbar(l.dog_name, l.email)) return false; g.add(m); return true; });
     const b = offen[0];
     return NextResponse.json({
       ok: true, modus: "DRY-RUN", segment: seg, freigabe: flag("kampagne_kb_live") === "true", max_gesamt: maxGesamt, gesendet_gesamt: schonGesendet,
@@ -277,7 +288,7 @@ export async function GET(req: NextRequest) {
   for (const l of batch) {
     const mail = (l.email || "").toLowerCase();
     const prev = (l.answers || {}) as Record<string, any>;
-    if (gesperrt.has(mail) || gesehen.has(mail)) {
+    if (gesperrt.has(mail) || gesehen.has(mail) || hundenameUnbrauchbar(l.dog_name, l.email)) {
       skip++;
       await supabase.from("wauwerk_leads").update({ answers: { ...prev, kampagne_kb_sent: "skip" } }).eq("id", l.id);
       continue;
