@@ -8,6 +8,10 @@
 //   am Kaufknopf, Auslieferung der Karten über exit_bonus_notfallkarten +
 //   Sicherheitsnetz-Cron bonus-karten). utm_campaign=karten-bonus trennt die
 //   Kampagnen-Käufe vom laufenden Rückhol-A/B-Test.
+// SEGMENT (seit 24.10.2026): system_settings.kampagne_kb_segment = "checkout" schaltet
+//   auf Checkout-Abbrecher um (status pending/failed, 3-120 Tage alt), eigener Text
+//   ("Du warst schon fast fertig"), eigener Deckel kampagne_kb_max_checkout (Standard 3000),
+//   Marker answers.kampagne_kb_segment = "checkout". Standard bleibt email_captured.
 // FREIGABE: system_settings.kampagne_kb_live = "true", Not-Aus kampagne_kb_stop,
 //   Gesamtdeckel kampagne_kb_max_gesamt (Standard 5000). ?dry=1 · ?test=mail@x.de
 
@@ -82,17 +86,19 @@ function variantB(id: string): boolean {
   const c = (id || "").replace(/[^0-9a-f]/gi, "").slice(-1).toLowerCase();
   return parseInt(c || "0", 16) % 2 === 1;
 }
-function subjectFor(dog: string, id: string): string {
+type Segment = "nichtkaeufer" | "checkout";
+function subjectFor(dog: string, id: string, seg: Segment = "nichtkaeufer"): string {
+  if (seg === "checkout") return variantB(id) ? `${dog}s Plan liegt noch für dich bereit (mit Geschenk)` : `Du warst fast fertig: ${dog}s Plan + Notfall-Karten gratis`;
   return variantB(id) ? `Was tun, wenn ${dog} wieder loslegt?` : `${dog}s Plan + 10 Notfall-Karten gratis dazu`;
 }
-function ctaUrl(id: string, email: string): string {
-  const p = new URLSearchParams({ lead_id: id, email, rhb: "B", utm_source: "email", utm_medium: "kampagne", utm_campaign: "karten-bonus" });
+function ctaUrl(id: string, email: string, seg: Segment = "nichtkaeufer"): string {
+  const p = new URLSearchParams({ lead_id: id, email, rhb: "B", utm_source: "email", utm_medium: "kampagne", utm_campaign: seg === "checkout" ? "karten-bonus-checkout" : "karten-bonus" });
   return `${SITE}/rueckhol.html?${p.toString()}`;
 }
 
-function buildHtml(dog: string, problem: string, id: string, email: string): string {
+function buildHtml(dog: string, problem: string, id: string, email: string, seg: Segment = "nichtkaeufer"): string {
   const unsub = `${SITE}/api/unsubscribe?lead=${encodeURIComponent(id)}`;
-  const cta = ctaUrl(id, email);
+  const cta = ctaUrl(id, email, seg);
   const k = KARTE[problem];
   const p = "margin:0 0 16px;font-size:16px;";
   const karteBox = k
@@ -111,7 +117,9 @@ function buildHtml(dog: string, problem: string, id: string, email: string): str
 <tr><td style="padding:26px 36px 6px;text-align:center;"><div style="font-size:20px;font-weight:800;color:#8B7355;">🐾 Pfoten-Plan</div></td></tr>
 <tr><td style="padding:14px 36px 4px;">
 <p style="${p}">Hallo,</p>
-<p style="${p}">vor einiger Zeit hast du das Quiz für <strong>${dog}</strong> gemacht. Dein persönlicher Trainingsplan liegt noch für dich bereit.</p>
+${seg === "checkout"
+  ? `<p style="${p}">du warst schon fast fertig: <strong>${dog}s</strong> persönlicher Trainingsplan lag bereits im Warenkorb, aber die Bestellung wurde nicht abgeschlossen. Vielleicht kam etwas dazwischen, oder die Zahlung hat nicht geklappt.</p><p style="${p}">Kein Problem, der Plan liegt noch für dich bereit. Du kannst ganz einfach mit <strong>PayPal, Karte oder Überweisung</strong> bezahlen.</p>`
+  : `<p style="${p}">vor einiger Zeit hast du das Quiz für <strong>${dog}</strong> gemacht. Dein persönlicher Trainingsplan liegt noch für dich bereit.</p>`}
 <p style="${p}">Damit sich der Start jetzt richtig lohnt, bekommst du zu ${dog}s Plan <strong>die 10 Notfall-Karten gratis dazu</strong> (sonst 9,99 €). Das sind Sofort-Hilfen für genau die Momente, in denen man sonst nicht weiß, was man tun soll.</p>
 </td></tr>
 <tr><td style="padding:0 36px 14px;"><img src="${SITE}/notfall-karten-vorschau.jpg" width="528" alt="Die Notfall-Karten von Pfoten-Plan" style="width:100%;max-width:528px;height:auto;border-radius:12px;display:block;"></td></tr>
@@ -138,12 +146,12 @@ ${karteBox}
 </table></td></tr></table></body></html>`;
 }
 
-function buildText(dog: string, problem: string, id: string, email: string): string {
+function buildText(dog: string, problem: string, id: string, email: string, seg: Segment = "nichtkaeufer"): string {
   const unsub = `${SITE}/api/unsubscribe?lead=${encodeURIComponent(id)}`;
   const k = KARTE[problem];
   return `Hallo,
 
-vor einiger Zeit hast du das Quiz für ${dog} gemacht. Dein persönlicher Trainingsplan liegt noch für dich bereit.
+${seg === "checkout" ? `du warst schon fast fertig: ${dog}s persönlicher Trainingsplan lag bereits im Warenkorb, aber die Bestellung wurde nicht abgeschlossen. Kein Problem, der Plan liegt noch für dich bereit. Du kannst ganz einfach mit PayPal, Karte oder Überweisung bezahlen.` : `vor einiger Zeit hast du das Quiz für ${dog} gemacht. Dein persönlicher Trainingsplan liegt noch für dich bereit.`}
 
 Damit sich der Start jetzt richtig lohnt, bekommst du zu ${dog}s Plan die 10 Notfall-Karten gratis dazu (sonst 9,99 €): Sofort-Hilfen für genau die Momente, in denen man sonst nicht weiß, was man tun soll.
 ${k ? `\nFür euch besonders wichtig: Karte ${k.nr}, "${k.titel}". Kurz gesagt: ${k.schritt}\n` : ""}
@@ -151,7 +159,7 @@ Jede Karte erklärt: die Situation, 5 klare Schritte, einen Tipp aus der Praxis 
 
 Alle 10 Karten: ${KARTEN_LISTE.join(" · ")}
 
-${ctaUrl(id, email)}
+${ctaUrl(id, email, seg)}
 
 Einmal zahlen, kein Abo. 30 Tage Geld-zurück. Die Karten kommen mit dem Plan per E-Mail.
 
@@ -161,19 +169,19 @@ Laura vom Pfoten-Plan-Team
 Keine Post mehr? Hier abmelden: ${unsub}`;
 }
 
-async function sendOne(email: string, dog: string, problem: string, id: string) {
+async function sendOne(email: string, dog: string, problem: string, id: string, seg: Segment = "nichtkaeufer") {
   return ses("POST", "/v2/email/outbound-emails", {
     FromEmailAddress: FROM,
     Destination: { ToAddresses: [email] },
     ReplyToAddresses: ["support@pfoten-plan.de"],
     ConfigurationSetName: CONFIG_SET,
-    EmailTags: [{ Name: "campaign", Value: CAMPAIGN }],
+    EmailTags: [{ Name: "campaign", Value: seg === "checkout" ? "karten-bonus-checkout" : CAMPAIGN }],
     Content: {
       Simple: {
-        Subject: { Data: subjectFor(dog, id), Charset: "UTF-8" },
+        Subject: { Data: subjectFor(dog, id, seg), Charset: "UTF-8" },
         Body: {
-          Html: { Data: buildHtml(dog, problem, id, email), Charset: "UTF-8" },
-          Text: { Data: buildText(dog, problem, id, email), Charset: "UTF-8" },
+          Html: { Data: buildHtml(dog, problem, id, email, seg), Charset: "UTF-8" },
+          Text: { Data: buildText(dog, problem, id, email, seg), Charset: "UTF-8" },
         },
         Headers: [
           { Name: "List-Unsubscribe", Value: `<${SITE}/api/unsubscribe?lead=${encodeURIComponent(id)}>, <mailto:hallo@pfoten-post.de?subject=unsubscribe>` },
@@ -193,7 +201,7 @@ export async function GET(req: NextRequest) {
 
   const testTo = searchParams.get("test");
   if (testTo) {
-    const res = await sendOne(testTo, searchParams.get("dog") || "Bella", searchParams.get("problem") || "leash-reactive", searchParams.get("id") || "test-lead-000a");
+    const res = await sendOne(testTo, searchParams.get("dog") || "Bella", searchParams.get("problem") || "leash-reactive", searchParams.get("id") || "test-lead-000a", searchParams.get("segment") === "checkout" ? "checkout" : "nichtkaeufer");
     return NextResponse.json({ test: testTo, status: res.status, data: res.data.slice(0, 200) });
   }
 
@@ -201,31 +209,35 @@ export async function GET(req: NextRequest) {
   const { data: flags } = await supabase
     .from("system_settings")
     .select("key,value")
-    .in("key", ["kampagne_kb_live", "kampagne_kb_stop", "kampagne_kb_max_gesamt"]);
+    .in("key", ["kampagne_kb_live", "kampagne_kb_stop", "kampagne_kb_max_gesamt", "kampagne_kb_segment", "kampagne_kb_max_checkout"]);
   const flag = (k: string) => String((flags || []).find((f: any) => f.key === k)?.value || "");
   if (!dry && flag("kampagne_kb_live") !== "true") {
     return NextResponse.json({ ok: true, wartet: true, hinweis: "system_settings.kampagne_kb_live ist nicht auf true" });
   }
   if (flag("kampagne_kb_stop") === "true") return NextResponse.json({ ok: true, gestoppt: true });
 
-  const maxText = flag("kampagne_kb_max_gesamt").trim();
+  const seg: Segment = (searchParams.get("segment") || flag("kampagne_kb_segment")).trim() === "checkout" ? "checkout" : "nichtkaeufer";
+  const maxText = flag(seg === "checkout" ? "kampagne_kb_max_checkout" : "kampagne_kb_max_gesamt").trim();
   const maxRoh = maxText === "" ? NaN : Number(maxText);
-  const maxGesamt = Number.isFinite(maxRoh) && maxRoh > 0 ? maxRoh : MAX_GESAMT_STANDARD;
-  const { count } = await supabase
+  const maxGesamt = Number.isFinite(maxRoh) && maxRoh > 0 ? maxRoh : seg === "checkout" ? 3000 : MAX_GESAMT_STANDARD;
+  let zaehler = (supabase as any)
     .from("wauwerk_leads")
     .select("id", { count: "exact", head: true })
     .eq("answers->>kampagne_kb_sent", "true");
+  zaehler = seg === "checkout" ? zaehler.eq("answers->>kampagne_kb_segment", "checkout") : zaehler.is("answers->>kampagne_kb_segment", null);
+  const { count } = await zaehler;
   const schonGesendet = count || 0;
   if (!dry && schonGesendet >= maxGesamt) {
     return NextResponse.json({ ok: true, deckel_erreicht: true, gesendet_gesamt: schonGesendet, max: maxGesamt });
   }
 
-  const bis = new Date(Date.now() - 26 * 86400000).toISOString();
-  const von = new Date(Date.now() - 180 * 86400000).toISOString();
-  const { data, error } = await (supabase as any)
+  const bis = new Date(Date.now() - (seg === "checkout" ? 3 : 26) * 86400000).toISOString();
+  const von = new Date(Date.now() - (seg === "checkout" ? 120 : 180) * 86400000).toISOString();
+  let abfrage = (supabase as any)
     .from("wauwerk_leads")
-    .select("id, email, dog_name, answers, created_at")
-    .eq("status", "email_captured")
+    .select("id, email, dog_name, answers, created_at");
+  abfrage = seg === "checkout" ? abfrage.in("status", ["pending", "failed"]) : abfrage.eq("status", "email_captured");
+  const { data, error } = await abfrage
     .not("email", "is", null)
     .gte("created_at", von)
     .lte("created_at", bis)
@@ -254,9 +266,9 @@ export async function GET(req: NextRequest) {
     const offen = batch.filter((l) => { const m = (l.email || "").toLowerCase(); if (gesperrt.has(m) || g.has(m)) return false; g.add(m); return true; });
     const b = offen[0];
     return NextResponse.json({
-      ok: true, modus: "DRY-RUN", freigabe: flag("kampagne_kb_live") === "true", max_gesamt: maxGesamt, gesendet_gesamt: schonGesendet,
+      ok: true, modus: "DRY-RUN", segment: seg, freigabe: flag("kampagne_kb_live") === "true", max_gesamt: maxGesamt, gesendet_gesamt: schonGesendet,
       im_batch: batch.length, offen: offen.length,
-      beispiel: b ? { email: b.email, hund: b.dog_name, problem: (b.answers as any)?.dog_problem || "", betreff: subjectFor(b.dog_name || "deinem Hund", b.id) } : null,
+      beispiel: b ? { email: b.email, hund: b.dog_name, problem: (b.answers as any)?.dog_problem || "", betreff: subjectFor(b.dog_name || "deinem Hund", b.id, seg) } : null,
     });
   }
 
@@ -274,13 +286,13 @@ export async function GET(req: NextRequest) {
     const roh = (l.dog_name || "").trim();
     const dog = roh ? roh.charAt(0).toUpperCase() + roh.slice(1) : "deinem Hund";
     let res;
-    try { res = await sendOne(String(l.email), dog, String(prev.dog_problem || ""), l.id); } catch { err++; continue; }
+    try { res = await sendOne(String(l.email), dog, String(prev.dog_problem || ""), l.id, seg); } catch { err++; continue; }
     if (res.status < 300) {
       ok++;
       await supabase.from("wauwerk_leads").update({
-        answers: { ...prev, kampagne_kb_sent: true, kampagne_kb_sent_at: new Date().toISOString(), kampagne_kb_variant: variantB(l.id) ? "B" : "A" },
+        answers: { ...prev, kampagne_kb_sent: true, kampagne_kb_sent_at: new Date().toISOString(), kampagne_kb_variant: variantB(l.id) ? "B" : "A", ...(seg === "checkout" ? { kampagne_kb_segment: "checkout" } : {}) },
       }).eq("id", l.id);
     } else err++;
   }
-  return NextResponse.json({ ok: true, modus: "LIVE", gesendet: ok, uebersprungen: skip, fehler: err, batch: batch.length });
+  return NextResponse.json({ ok: true, modus: "LIVE", segment: seg, gesendet: ok, uebersprungen: skip, fehler: err, batch: batch.length });
 }
