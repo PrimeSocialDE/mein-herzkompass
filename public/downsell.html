@@ -196,6 +196,11 @@
             <p>Dein Plan für <span class="dog-name">deinen Hund</span> ist gesichert</p>
         </div>
 
+        <!-- Nur nach Rückhol-Kauf mit Bonus (zusatz.html leitet mit rhb=1 hierher) -->
+        <div id="rhbHinweis" style="display:none;background:#FFF9F0;border:1px solid #EADDC5;border-radius:12px;padding:12px 14px;margin:0 0 16px;font-size:14.5px;line-height:1.5;color:#3a342b;text-align:center;">
+            🎁 Deine <strong>10 Notfall-Karten</strong> sind gratis dabei und kommen zusammen mit deinem Plan per E-Mail.
+        </div>
+
         <!-- Module Recommendation -->
         <div class="upsell-card">
             <p class="eyebrow">Eine ergänzende Empfehlung für <span class="dog-name">deinen Hund</span></p>
@@ -225,6 +230,7 @@
         const dogName = localStorage.getItem('dogName') || 'deinen Hund';
         const dogAge = localStorage.getItem('dogAge') || 'adult';
         const urlParamsInit = new URLSearchParams(window.location.search);
+        if (urlParamsInit.get('rhb') === '1') { try { document.getElementById('rhbHinweis').style.display = 'block'; } catch (e) {} }
         const leadId = urlParamsInit.get('lead_id') || localStorage.getItem('leadId') || '';
         const userEmail = localStorage.getItem('userEmail') || '';
 
