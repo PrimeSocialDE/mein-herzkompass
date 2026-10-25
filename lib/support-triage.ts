@@ -36,6 +36,22 @@ export interface TriageResult {
   aktion: SupportAction;
   antwort: string;
   kurz: string;
+  /** false = keine Antwort schicken (Abwesenheitsnotiz, reines Danke/Bestätigung, Werbung …) */
+  antwortNoetig: boolean;
+}
+
+/**
+ * Harte Erkennung automatischer Antworten (Abwesenheit/Urlaub/Ferien, Autoreply,
+ * Zustellfehler). Darauf antworten wir NIE — sonst entsteht eine Mail-Schleife
+ * (25.10.2026: vier Antworten auf eine Ferienabwesenheit).
+ */
+export function istAutoAntwort(subject: string, text: string): boolean {
+  const betreff = String(subject || "").toLowerCase();
+  const kopf = String(text || "").slice(0, 600).toLowerCase();
+  if (/(abwesenheit|out of office|automatische antwort|automatic reply|auto-?reply|autoreply|abwesend|urlaubsabwesenheit|ferienabwesenheit|not in the office|im urlaub|in den ferien|delivery status|unzustellbar|undeliverable|mail delivery)/.test(betreff)) return true;
+  // Im Text nur, wenn keine Frage drinsteht (echte Kunden fragen etwas, Autoreplies nicht).
+  if (String(text || "").includes("?")) return false;
+  return /(bin (bis|vom|ab) .{0,40}(nicht im büro|abwesend|nicht erreichbar|im urlaub|in den ferien)|bin derzeit (nicht im büro|abwesend|im urlaub|nicht erreichbar)|ich bin (zur zeit|zurzeit|momentan|aktuell) (nicht im büro|abwesend|im urlaub|in den ferien|nicht erreichbar)|erholungszeit|diese e-?mail wird (nicht|weder) .{0,30}(gelesen|weitergeleitet)|automatisch generiert|this is an automatic)/.test(kopf);
 }
 
 /** Feste Widerruf-Vorlage (von Max vorgegeben, Fassung 19.10.2026). */
@@ -89,8 +105,10 @@ Bei Kategorie "widerruf" kannst du das Feld "antwort" leer lassen (die Vorlage w
 Bei "plan_fehlt" mit Aktion plan_neu_senden: schreib, dass der Plan gerade erneut verschickt wurde und in wenigen Minuten im Postfach (ggf. Spam-Ordner prüfen) ankommt.
 Bei "plankorrektur": nimm das Anliegen ernst, entschuldige dich kurz dafür, dass der Plan danebenlag, und bitte um 3 bis 4 Sätze, wo genau es gerade hakt — daraus wird kostenlos ein individuelles Zusatzmodul erstellt. Biete von dir aus KEINE Rückerstattung an.
 
+"antwort_noetig" = false, wenn auf die Mail keine Antwort nötig ist und eine Antwort eher stören würde: automatische Abwesenheits-/Urlaubs-/Ferienmeldungen, Autoreplies, Zustellfehler, Newsletter/Werbung/Spam, reine Dank- oder Bestätigungsmails ohne Frage oder Bitte (z. B. "Danke, jetzt klappt es", "alles gut", "wir fangen nächste Woche an"). Sonst true. Bei "widerruf", "plan_fehlt" und "plankorrektur" immer true.
+
 Antworte mit EXAKT EINEM JSON-Objekt, keine Markdown-Fences:
-{"kategorie": "...", "heikel": true/false, "aktion": "plan_neu_senden|keine", "antwort": "...", "kurz": "worum es in einem Satz geht"}`;
+{"kategorie": "...", "heikel": true/false, "aktion": "plan_neu_senden|keine", "antwort_noetig": true/false, "antwort": "...", "kurz": "worum es in einem Satz geht"}`;
 
 export async function triageInbound(
   mail: { fromEmail: string; fromName: string; subject: string; text: string },
@@ -116,6 +134,7 @@ export async function triageInbound(
       heikel: true,
       aktion: "keine",
       antwort: fallbackReply(lead.vorname),
+      antwortNoetig: true,
       kurz: "API-Key fehlt – manuell prüfen",
     };
   }
@@ -171,12 +190,16 @@ export async function triageInbound(
     // Unbekannter Absender → immer heikel (nichts automatisch senden).
     const heikel = parsed.heikel === true || !lead.found;
 
+    const antwortNoetig =
+      ["widerruf", "plan_fehlt", "plankorrektur"].includes(kategorie) || parsed.antwort_noetig !== false;
+
     return {
       kategorie,
       heikel,
       aktion,
       antwort,
       kurz: typeof parsed.kurz === "string" ? parsed.kurz.slice(0, 200) : "",
+      antwortNoetig,
     };
   } catch (e: any) {
     console.error("[support-triage] Fehler:", e?.message);
@@ -185,6 +208,7 @@ export async function triageInbound(
       heikel: true,
       aktion: "keine",
       antwort: fallbackReply(lead.vorname),
+      antwortNoetig: true,
       kurz: "Triage-Fehler – manuell prüfen",
     };
   }

@@ -29,7 +29,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
 import { fetchInbound, fetchFlaggedUids, googleImapConfigured, type InboundMail } from "@/lib/google-imap";
 import { sendViaGoogleSmtp, googleSmtpConfigured } from "@/lib/google-smtp";
-import { triageInbound, triageFollowUp, triageProblem, widerrufTemplate, type TriageLeadContext } from "@/lib/support-triage";
+import { istAutoAntwort, triageInbound, triageFollowUp, triageProblem, widerrufTemplate, type TriageLeadContext } from "@/lib/support-triage";
 import {
   FARBE,
   LABEL,
@@ -195,6 +195,24 @@ export async function GET(req: NextRequest) {
     if (triagiert >= MAX_PER_RUN) break;
     triagiert++;
 
+    // Automatische Antwort (Abwesenheit/Urlaub/Autoreply)? Nur protokollieren,
+    // NIE antworten und keinen bestehenden Fall verändern (sonst Mail-Schleife).
+    if (istAutoAntwort(m.subject, m.text)) {
+      const eingangAuto = { mid: m.messageId, richtung: "ein" as const, text: m.text, at: new Date().toISOString() };
+      if (bestehend) {
+        await supabase.from("support_cases").update({ verlauf: [...(bestehend.verlauf || []), eingangAuto] }).eq("id", bestehend.id);
+      } else {
+        await supabase.from("support_cases").insert({
+          thread_key: m.messageId || `uid:${m.uid}`, uid: m.uid, message_id: m.messageId,
+          from_email: m.fromEmail, from_name: m.fromName, subject: m.subject,
+          received_at: new Date().toISOString(), kategorie: "sonstiges", status: "erledigt",
+          heikel: false, kurz: "Automatische Antwort/Abwesenheit, keine Antwort", entwurf: null,
+          letzte_nachricht: m.text, verlauf: [eingangAuto], erledigt_at: new Date().toISOString(),
+        });
+      }
+      continue;
+    }
+
     // Lead nachschlagen (neueste Zeile zu dieser E-Mail).
     const { data: lead } = await supabase
       .from("wauwerk_leads")
@@ -318,6 +336,14 @@ export async function GET(req: NextRequest) {
     let heikel = t.heikel;
     let kurz = t.kurz;
 
+    // Keine Antwort nötig (reines Danke/Bestätigung, Werbung …) -> still erledigen.
+    if (!t.antwortNoetig) {
+      status = "erledigt";
+      entwurf = null;
+      heikel = false;
+      kurz = `Keine Antwort nötig: ${t.kurz || ""}`.slice(0, 200);
+    }
+
     if (t.kategorie === "widerruf") {
       if (!hatteKontakt) {
         // Erster Kontakt -> feste Vorlage, geht automatisch raus (auch wenn die
@@ -403,6 +429,19 @@ export async function GET(req: NextRequest) {
       if (!f.entwurf) continue;
       const frist = f.kategorie === "plan_fehlt" ? GRACE_PLAN_FEHLT_MS : GRACE_MS;
       if (new Date(f.received_at).getTime() > now - frist) continue;
+      // Schleifenschutz: dieselbe Adresse hat in den letzten 12 Std schon eine
+      // automatische Antwort bekommen -> nicht noch einmal, Max entscheidet.
+      const { count: kuerzlich } = await supabase
+        .from("support_cases")
+        .select("id", { count: "exact", head: true })
+        .eq("from_email", f.from_email)
+        .neq("id", f.id)
+        .gte("gesendet_at", new Date(now - 12 * 3600 * 1000).toISOString());
+      if ((kuerzlich || 0) > 0) {
+        await supabase.from("support_cases").update({ heikel: true }).eq("id", f.id);
+        alarme.push(`🔁 Zweite Mail von ${f.from_email} innerhalb von 12 Std — bitte selbst prüfen (Schleifenschutz).`);
+        continue;
+      }
       const ok = await sendeAntwort(f, f.entwurf);
       if (ok) gesendet.push(f.from_email);
     }
