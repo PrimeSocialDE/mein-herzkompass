@@ -461,6 +461,8 @@ interface PlanReadyArgs {
   customerName?: string | null;
   lang?: Lang;
   beleg?: BelegRow | null;
+  // Persönlicher Danke-Code für den Modul-Shop (nur DE, siehe lib/danke-code.ts)
+  dankeCode?: { code: string; bis: string; prozent: number; shopUrl: string } | null;
 }
 
 export async function sendPlanReadyEmail(args: PlanReadyArgs) {
@@ -815,6 +817,22 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
       <a href="${lebensretterUrl}" style="display:inline-block;padding:12px 22px;font-size:14px;font-weight:700;line-height:1;color:#FFFFFF;background:#C0392B;text-decoration:none;border-radius:10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">Lebensretter-Training ansehen →</a>
     </div>`;
 
+  // Danke-Code als Gutschein-Karte (nur wenn übergeben, Kontrollgruppe bekommt keinen)
+  const dc = args.dankeCode;
+  const dankeBox = dc
+    ? `
+    <div style="border-top:1px solid #F0EBE3;margin:24px 0 16px;"></div>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFF9F0;border:2px dashed #C4A576;border-radius:16px;">
+      <tr><td style="padding:22px 20px;text-align:center;">
+        <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">🎁 Dein Danke-Code für ${escapeHtml(dogName)}</p>
+        <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#4B5563;">Danke, dass du mit uns trainierst. Mit diesem Code bekommst du <strong>${dc.prozent}&nbsp;% auf alle Zusatzmodule</strong> im Modul-Shop, auch auf Bundles.</p>
+        <div style="display:inline-block;background:#FFFFFF;border:1px solid #EADDC5;border-radius:10px;padding:12px 20px;margin:0 0 12px;font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:22px;font-weight:800;letter-spacing:2px;color:#2A2118;">${escapeHtml(dc.code)}</div>
+        <p style="margin:0 0 16px;font-size:13px;color:#6B7280;">Gültig bis ${new Date(dc.bis).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Europe/Berlin" })}</p>
+        <a href="${dc.shopUrl}" style="display:inline-block;padding:13px 24px;font-size:15px;font-weight:700;line-height:1;color:#FFFFFF;background:#8B7355;text-decoration:none;border-radius:10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">Code im Modul-Shop einlösen →</a>
+      </td></tr>
+    </table>`
+    : "";
+
   // WhatsApp-Hilfe: mittig zwischen PDF-Hinweis und Mitglieder-Showcase
   const waHelpBox = `
     <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:16px 18px;margin:22px 0;">
@@ -825,7 +843,7 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
     preheader: `Dein ${monthsLabel} für ${dogName} ist fertig.`,
     headline: `Dein ${monthsLabel} für ${dogName} ist fertig`,
     intro: `${greeting} dein persönlicher Trainings-Plan ist soeben für dich erstellt worden — komplett zugeschnitten auf ${dogName} und euer Haupt-Thema. ${weeksTotal} Wochen, mit konkreten Übungen für jeden Tag, Wochenzielen, Fortschritts-Markern und einem klaren roten Faden.`,
-    bodyHtml: `${pdfHinweis}${waHelpBox}${mitgliederShowcase}${lebensretterTeaser}`,
+    bodyHtml: `${pdfHinweis}${waHelpBox}${mitgliederShowcase}${dankeBox}${lebensretterTeaser}`,
     ctaText: "Mitglieder-Bereich öffnen →",
     ctaUrl,
     footerHint: `Der Button enthält einen Einmal-Login — du landest direkt eingeloggt im Mitglieder-Bereich. Der Link gilt 1 Stunde und ist nur für dich.`,

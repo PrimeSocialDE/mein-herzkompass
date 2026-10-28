@@ -437,6 +437,26 @@ export async function POST(req: NextRequest) {
                 beleg = b || null;
               } catch {}
             }
+            // Danke-Code für den Modul-Shop (nur DE, bezahlt, 20 % Kontrollgruppe ohne,
+            // nur wenn noch mind. 2 Tage gültig — z. B. nicht bei späten Neuversänden)
+            let dankeCode: { code: string; bis: string; prozent: number; shopUrl: string } | null = null;
+            try {
+              const { buildDankeCode, dankeKontrolle, dankeBis, DANKE_PROZENT } = await import("@/lib/danke-code");
+              const bis = dankeBis(lead.paid_at, answers.danke_code_bis);
+              if (
+                planLang === "de" && lead.status === "paid" && lead.id && bis &&
+                bis.getTime() - Date.now() > 2 * 86400000 && !dankeKontrolle(targetEmail)
+              ) {
+                const code = buildDankeCode(dogName, lead.id);
+                const q = new URLSearchParams({
+                  code, lead_id: lead.id, email: targetEmail,
+                  utm_source: "email", utm_medium: "plan-mail", utm_campaign: "danke-code",
+                });
+                dankeCode = { code, bis: bis.toISOString(), prozent: DANKE_PROZENT, shopUrl: `https://www.pfoten-plan.de/modul-shop.html?${q.toString()}` };
+              }
+            } catch (e: any) {
+              console.warn("[plan/generate] danke-code:", e?.message);
+            }
             const mailRes = await sendPlanReadyEmail({
               to: recipientOverride || targetEmail,
               dogName,
@@ -448,6 +468,7 @@ export async function POST(req: NextRequest) {
               customerName: lead.customer_name || null,
               lang: planLang,
               beleg,
+              dankeCode,
             });
             emit(ctx, {
               event: "stage",
