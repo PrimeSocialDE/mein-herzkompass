@@ -144,14 +144,15 @@
     
     <a href="kurz-schritt10.html" class="continue-btn" id="ctaBtn"><span id="ctaDogName">Dein Hund</span>s Plan jetzt ansehen →</a>
     <script>
-    // A/B ab_notizseite: 50/50. B bekommt nach der Analyse eine eigene Seite
-    // fuer "Gibt es etwas Besonderes?", A geht direkt weiter. Gemessen wird
-    // ueber den Variantenanteil bei den entstandenen Leads.
+    // A/B ab_notizseite: B bekommt nach der Analyse eine eigene Seite
+    // fuer "Gibt es etwas Besonderes?", A geht direkt weiter.
+    // 28.10.2026: Test beendet, alle bekommen B. Seit 02.10.: B 20,0 % Kauf /
+    // 9,92 EUR je Teilnehmer vs. A 17,4 % / 8,88 EUR (n ~2.900 je Arm, z 2,5).
+    // A bleibt zur Ansicht ueber ?ab_notizseite=A erreichbar.
     (function(){
         try{
             var qp = new URLSearchParams(location.search).get('ab_notizseite');
-            var v = (qp === 'A' || qp === 'B') ? qp : localStorage.getItem('ab_notizseite');
-            if (v !== 'A' && v !== 'B') { v = (Math.random() < 0.5) ? 'B' : 'A'; }
+            var v = (qp === 'A' || qp === 'B') ? qp : 'B';
             localStorage.setItem('ab_notizseite', v);
             if (v === 'B') {
                 var cta = document.getElementById('ctaBtn');
