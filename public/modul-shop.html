@@ -876,6 +876,22 @@
             <p>Gezieltes Training für spezielle Herausforderungen</p>
         </div>
 
+        <!-- Code einlösen: Danke-Code (z. B. MATTES30-3F9AK7, 30 %) oder Gratis-Code (GRATIS-XXXX-XXXX) -->
+        <div id="codeBox" style="background:#FFF9F0;border:1.5px dashed #C4A576;border-radius:14px;padding:16px 18px;margin:0 0 22px;">
+            <div style="font-size:15px;color:#1a1a1a;margin:0 0 10px;">🎁 <strong>Hast du einen Code?</strong> Trag ihn ein, dann siehst du sofort deine Preise.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <input id="codeInput" type="text" placeholder="z. B. BELLA30-…" autocomplete="off" autocapitalize="characters" spellcheck="false" style="flex:1;min-width:170px;padding:12px 14px;border:1.5px solid #e0d5c0;border-radius:10px;font-size:16px;font-family:monospace;letter-spacing:1px;text-transform:uppercase;box-sizing:border-box;background:#fff;" />
+                <button id="codeBtn" onclick="einloesenCode()" style="background:#8B7355;color:white;border:none;padding:12px 20px;border-radius:10px;font-weight:700;cursor:pointer;font-size:15px;">Einlösen</button>
+            </div>
+            <div id="codeFeedback" style="font-size:13px;min-height:16px;margin-top:8px;"></div>
+        </div>
+        <div id="codeAktiv" style="display:none;background:linear-gradient(135deg,#8B7355,#6F5A41);color:#fff;border-radius:14px;padding:16px 18px;margin:0 0 22px;text-align:center;">
+            <div style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.85;">Dein Danke-Code ist aktiv</div>
+            <div id="codeAktivCode" style="font-family:monospace;font-size:20px;font-weight:800;letter-spacing:2px;margin:6px 0 4px;"></div>
+            <div style="font-size:14.5px;"><strong id="codeAktivProzent">30 %</strong> auf alle Module und Bundles · gültig bis <span id="codeAktivBis"></span></div>
+            <button onclick="entferneCode()" style="background:none;border:none;color:#fff;opacity:.75;text-decoration:underline;font-size:12px;margin-top:8px;cursor:pointer;">Code entfernen</button>
+        </div>
+
         <!-- Info Banner -->
         <div class="info-banner">
             <p><strong>Einmalig €19</strong> – kein Abo</p>
@@ -884,14 +900,6 @@
                 <span class="info-feature">⏱️ Mit Zeitangaben</span>
                 <span class="info-feature">✨ Erfolge in 2 Wochen</span>
             </div>
-        </div>
-
-        <!-- Gratis-Code einlösen -->
-        <div style="background:#FFF9F0;border:1px dashed #C4A576;border-radius:12px;padding:14px 18px;margin:0 0 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-            <div style="font-size:14px;color:#1a1a1a;">
-                🎁 <strong>Hast du einen Gratis-Code?</strong> Ein Modul deiner Wahl auf uns.
-            </div>
-            <button onclick="openRedeemModal()" style="background:#C4A576;color:white;border:none;padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px;">Code einlösen</button>
         </div>
 
         <!-- Category Tabs -->
@@ -1228,6 +1236,7 @@
                 if (!end || end < Date.now()) { end = Date.now() + 60 * 60 * 1000; localStorage.setItem(KEY, String(end)); }
                 if (end < Date.now()) return; // abgelaufen → normaler Shop
                 Object.keys(moduleData).forEach(function (k) { moduleData[k].oldPrice = 19; moduleData[k].price = 9.99; });
+                window.__rewardAktiv = true;
                 var ib = document.querySelector('.info-banner'); if (ib) ib.style.display = 'none';
                 var sd = document.querySelector('.section-divider'); if (sd) sd.style.display = 'none';
                 var bs = document.querySelector('.bundle-section'); if (bs) bs.style.display = 'none';
@@ -1245,10 +1254,96 @@
             // Initial rendern
             renderModules();
             renderBundleCheckboxes();
+
+            // Danke-Code aus Mail-Link (?code=) oder von einem früheren Besuch
+            var codeParam = (urlParams.get('code') || '').trim().toUpperCase();
+            var gespeichert = '';
+            try { gespeichert = localStorage.getItem('danke_code') || ''; } catch (e) {}
+            var startCode = codeParam || gespeichert;
+            if (startCode) {
+                document.getElementById('codeInput').value = startCode;
+                einloesenCode(true);
+            }
         }
 
+        // ==================== DANKE-CODE ====================
+        // Preise werden nur zur Anzeige angepasst; den echten Preis rechnet
+        // /api/mollie/upsell-checkout serverseitig aus dem Code.
+        let dankeAktiv = null;
+        const BUNDLE_BASIS = JSON.parse(JSON.stringify(bundlePricing));
+
+        function rabatt(n, p) { return Math.round(n * (100 - p)) / 100; }
+
+        function wendeDankeAn(d) {
+            dankeAktiv = d;
+            Object.keys(moduleData).forEach(function (k) { moduleData[k].oldPrice = 19; moduleData[k].price = rabatt(19, d.prozent); });
+            Object.keys(bundlePricing).forEach(function (n) {
+                var preis = rabatt(BUNDLE_BASIS[n].price, d.prozent);
+                bundlePricing[n] = { price: preis, savings: Math.round((n * 19 - preis) * 100) / 100 };
+            });
+            document.getElementById('codeBox').style.display = 'none';
+            document.getElementById('codeAktiv').style.display = 'block';
+            document.getElementById('codeAktivCode').textContent = d.code;
+            document.getElementById('codeAktivProzent').textContent = d.prozent + ' %';
+            document.getElementById('codeAktivBis').textContent = new Date(d.bis).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            var ib = document.querySelector('.info-banner p');
+            if (ib) ib.innerHTML = '<strong>Mit deinem Code: ' + eur(rabatt(19, d.prozent)) + ' statt €19</strong> – einmalig, kein Abo';
+            var activeTab = document.querySelector('.category-tab.active');
+            renderModules(activeTab ? activeTab.dataset.category : 'all');
+            renderBundleCheckboxes();
+            updateBundleSummary();
+            if (window.clarity) { window.clarity('set', 'danke_code', 'aktiv'); }
+        }
+
+        function entferneCode() {
+            try { localStorage.removeItem('danke_code'); } catch (e) {}
+            location.href = location.pathname + location.search.replace(/([?&])code=[^&]*&?/, '$1').replace(/[?&]$/, '');
+        }
+
+        async function einloesenCode(automatisch) {
+            const input = document.getElementById('codeInput');
+            const fb = document.getElementById('codeFeedback');
+            const btn = document.getElementById('codeBtn');
+            const code = (input.value || '').trim().toUpperCase().replace(/\s+/g, '');
+            fb.textContent = '';
+            if (!code) { fb.style.color = '#dc2626'; fb.textContent = 'Bitte gib deinen Code ein.'; return; }
+            // Gratis-Codes aus dem Empfehlungsprogramm laufen weiter über das bestehende Fenster
+            if (/^GRATIS-/.test(code)) { openRedeemModal(code); return; }
+            if (window.__rewardAktiv) {
+                fb.style.color = '#8B7355';
+                fb.textContent = 'Gerade gilt schon dein Dankeschön-Preis von 9,99 € – der ist noch günstiger.';
+                return;
+            }
+            btn.disabled = true; btn.textContent = 'Prüfe…';
+            try {
+                const res = await fetch('/api/danke-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: code })
+                });
+                const d = await res.json();
+                if (d.valid) {
+                    try { localStorage.setItem('danke_code', d.code); } catch (e) {}
+                    wendeDankeAn(d);
+                } else {
+                    if (automatisch) { try { localStorage.removeItem('danke_code'); } catch (e) {} }
+                    fb.style.color = '#dc2626';
+                    fb.textContent = d.reason === 'expired'
+                        ? 'Dieser Code ist leider abgelaufen.'
+                        : 'Diesen Code kennen wir nicht. Bitte prüf die Schreibweise.';
+                }
+            } catch (e) {
+                fb.style.color = '#dc2626';
+                fb.textContent = 'Das hat gerade nicht geklappt. Bitte versuch es gleich noch einmal.';
+            }
+            btn.disabled = false; btn.textContent = 'Einlösen';
+        }
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'codeInput') einloesenCode();
+        });
+
         // Preis-Formatter: deutsche Komma-Schreibweise (9.99 -> €9,99; 19 -> €19)
-        function eur(n) { return '€' + String(n).replace('.', ','); }
+        function eur(n) { return '€' + (Number.isInteger(n) ? String(n) : Number(n).toFixed(2)).replace('.', ','); }
 
         // Module rendern
         function renderModules(category = 'all') {
@@ -1301,7 +1396,7 @@
                     '<input type="checkbox" value="' + moduleKey + '" onchange="updateBundleSummary()">' +
                     '<span class="bundle-checkbox-icon">' + module.icon + '</span>' +
                     '<span class="bundle-checkbox-name">' + module.name + '</span>' +
-                    '<span class="bundle-checkbox-price">€' + module.price + '</span>' +
+                    '<span class="bundle-checkbox-price">' + eur(module.price) + '</span>' +
                 '</label>';
             });
 
@@ -1328,9 +1423,9 @@
                 bundleBtn.disabled = true;
             } else {
                 const pricing = bundlePricing[count] || bundlePricing[8];
-                document.getElementById('savingsAmount').textContent = '€' + pricing.savings;
-                document.getElementById('bundlePrice').textContent = '€' + pricing.price;
-                bundleBtn.textContent = 'Bundle für €' + pricing.price + ' kaufen';
+                document.getElementById('savingsAmount').textContent = eur(pricing.savings);
+                document.getElementById('bundlePrice').textContent = eur(pricing.price);
+                bundleBtn.textContent = 'Bundle für ' + eur(pricing.price) + ' kaufen';
                 bundleBtn.disabled = false;
             }
         }
@@ -1508,6 +1603,7 @@
                         email: userEmail,
                         dogName: dogName,
                         price: Math.round(module.price * 100),
+                        dankeCode: dankeAktiv ? dankeAktiv.code : '',
                         returnUrl: returnUrl,
                         referredByCode: localStorage.getItem('referred_by_code') || ''
                     })
@@ -1541,7 +1637,7 @@
             const btn = document.getElementById('bundleBtn');
             const count = selectedBundleModules.length;
             const pricing = bundlePricing[count] || bundlePricing[8];
-            const originalText = 'Bundle für €' + pricing.price + ' kaufen';
+            const originalText = 'Bundle für ' + eur(pricing.price) + ' kaufen';
 
             btn.textContent = 'Lädt...';
             btn.disabled = true;
@@ -1559,7 +1655,7 @@
             const btn = btnElement;
             const count = selectedBundleModules.length;
             const pricing = bundlePricing[count] || bundlePricing[8];
-            const originalText = 'Bundle für €' + pricing.price + ' kaufen';
+            const originalText = 'Bundle für ' + eur(pricing.price) + ' kaufen';
 
             currentModule = selectedBundleModules.join('+');
 
@@ -1567,7 +1663,7 @@
             document.getElementById('paymentIcon').textContent = '📦';
             document.getElementById('paymentModuleName').textContent = count + ' Module Bundle';
             document.getElementById('paymentModuleMeta').textContent = (count * 6) + ' Übungen insgesamt';
-            document.getElementById('paymentPrice').textContent = '€' + pricing.price;
+            document.getElementById('paymentPrice').textContent = eur(pricing.price);
 
             let allBenefits = [];
             selectedBundleModules.slice(0, 4).forEach(m => {
@@ -1601,7 +1697,8 @@
                         email: userEmail,
                         dogName: dogName,
                         bundle: true,
-                        price: pricing.price * 100,
+                        price: Math.round(pricing.price * 100),
+                        dankeCode: dankeAktiv ? dankeAktiv.code : '',
                         returnUrl: returnUrl,
                         referredByCode: localStorage.getItem('referred_by_code') || ''
                     })

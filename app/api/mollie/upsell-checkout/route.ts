@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getMollie, getMolliePL, formatAmountEUR, formatAmount, Locale } from "@/lib/mollie";
 import { createClient } from "@supabase/supabase-js";
 import { utmMetaFromAnswers } from "@/lib/attribution";
+import { checkDankeCode, shopBasisCent, rabattCent } from "@/lib/danke-code";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -76,6 +77,22 @@ export async function POST(req: NextRequest) {
     else if (isPremium) amountCents = 24999;
     else if (isBundle) amountCents = 2499;
     else amountCents = 1999;
+
+    // Danke-Code (Modul-Shop): Preis serverseitig aus dem Basispreis rechnen,
+    // nicht aus dem Browser übernehmen. Ungültiger Code → normaler Preis.
+    let dankeCode = "";
+    if (body.dankeCode && !isPL) {
+      const basis = shopBasisCent(module);
+      if (basis) {
+        const r = await checkDankeCode(String(body.dankeCode));
+        if (r.ok) {
+          amountCents = rabattCent(basis, r.prozent);
+          dankeCode = r.code;
+        } else {
+          amountCents = basis;
+        }
+      }
+    }
 
     let moduleName: string;
     if (isPremium) {
@@ -182,6 +199,7 @@ export async function POST(req: NextRequest) {
         is_bundle: isBundle ? "true" : "false",
         is_premium: isPremium ? "true" : "false",
         referred_by_code: referredByCode || "",
+        danke_code: dankeCode,
         lang: isPL ? "pl" : "de",
         datafast_visitor_id: datafastVisitorId,
         ...utmMeta,
