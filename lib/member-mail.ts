@@ -206,6 +206,8 @@ export function wrapTemplate(opts: {
   belegHtml?: string;
   /** plain: schlichter, persoenlicher Look (EC/Pending) statt Karten-Template. */
   plain?: boolean;
+  /** Optional: Bild ganz oben in der Karte (nur Karten-Template). */
+  heroHtml?: string;
 }): string {
   const {
     preheader,
@@ -219,6 +221,7 @@ export function wrapTemplate(opts: {
     lang = "de",
     belegHtml,
     plain,
+    heroHtml,
   } = opts;
   const htmlLang = lang === "pl" ? "pl" : lang === "it" ? "it" : "de";
   const brandLabel =
@@ -285,6 +288,7 @@ export function wrapTemplate(opts: {
             <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">${brandLabel}</p>
           </td>
         </tr>
+        ${heroHtml ? `<tr><td style="padding:0;line-height:0;background:#FEF2DC;">${heroHtml}</td></tr>` : ""}
         <tr>
           <td style="padding:28px 28px 8px;">
             <h1 style="margin:0 0 12px;font-size:22px;line-height:1.25;font-weight:800;color:#1a1a1a;">${headline}</h1>
@@ -712,8 +716,6 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
     ? `Hi ${customerName.trim().split(" ")[0]},`
     : "Hi,";
 
-  // (Plan-Vorschau wurde entfernt — User soll direkt in den Mitglieder-Bereich)
-
   const monthsLabel =
     planLengthMonths === 1
       ? "1-Monats-Plan"
@@ -721,132 +723,142 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
         ? "3-Monats-Plan"
         : "6-Monats-Plan";
 
-  // PDF-Hinweis-Box
-  const pdfHinweis = `
-    <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:14px;padding:18px 20px;margin:0 0 20px;">
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-        <tr>
-          <td style="vertical-align:middle;width:54px;">
-            <div style="display:inline-block;width:48px;height:48px;background:#C4A576;border-radius:12px;text-align:center;line-height:48px;font-size:22px;color:#FFFFFF;">📄</div>
-          </td>
-          <td style="vertical-align:middle;padding-left:14px;">
-            <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;line-height:1.3;">Dein Trainings-Plan als PDF</p>
-            <p style="margin:0;font-size:12px;color:#6B7280;line-height:1.4;">Im Anhang dieser Mail · druckbar · für unterwegs</p>
-          </td>
-        </tr>
-      </table>
-    </div>`;
+  // Aufbau angelehnt an starke Bestätigungs-Mails (z. B. Create): erst Bestellung,
+  // dann "heute starten", dann Erwartungs-Management Woche für Woche, danach
+  // Hilfe, Danke-Code und Vertrauen. Ein klarer Weg statt fünf gleichrangiger Kästen.
+  const dog = escapeHtml(dogName);
+  const h2 = (t: string) =>
+    `<h2 style="margin:0 0 12px;font-size:19px;line-height:1.3;font-weight:800;color:#1a1a1a;">${t}</h2>`;
+  const eyebrow = (t: string) =>
+    `<p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">${t}</p>`;
+  const trenner = `<div style="border-top:1px solid #F0EBE3;margin:26px 0 20px;"></div>`;
+  const fmtDatum = (d: string) =>
+    new Date(d).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Europe/Berlin" });
 
-  // Mitgliederbereich-Showcase mit 5 Features
-  const mitgliederShowcase = `
-    <div style="border-top:1px solid #F0EBE3;margin:24px 0 16px;"></div>
-    <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">Du bekommst noch mehr</p>
-    <h2 style="margin:0 0 10px;font-size:20px;line-height:1.3;font-weight:800;color:#1a1a1a;">Dein Mitglieder-Bereich</h2>
-    <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#4B5563;">
-      Den Plan kannst du jederzeit auch online durchgehen. Wir tracken automatisch deinen Fortschritt, ${escapeHtml(dogName)}s Stimmung und schicken dir jede Woche neue Aufgaben — damit du nicht alleine durch den Plan musst.
-    </p>
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
+  // 1) Bestellung — Bestellnummer = Belegnummer (dieselbe Nummer wie im Beleg unten)
+  const b = args.beleg;
+  const bestellBox = `
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:14px;margin:0 0 22px;">
+      <tr><td style="padding:16px 18px;">
+        <p style="margin:0 0 10px;font-size:12px;color:#8B7355;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">Deine Bestellung${b ? ` · Nr. ${escapeHtml(b.belegnummer)}` : ""}</p>
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
-            <td style="vertical-align:top;width:34px;font-size:18px;">📅</td>
-            <td style="vertical-align:top;padding-left:6px;">
-              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Plan-Begleitung — Woche für Woche</p>
-              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Welche Woche ist gerade dran, was kommt als Nächstes — auf einen Blick.</p>
-            </td>
-          </tr>
-        </table>
-      </td></tr>
-      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-          <tr>
-            <td style="vertical-align:top;width:34px;font-size:18px;">📊</td>
-            <td style="vertical-align:top;padding-left:6px;">
-              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Stimmungs-Tagebuch mit KI-Analyse</p>
-              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Trag wöchentlich kurz ein wie's lief — die KI fasst eure Woche zusammen und gibt konkrete Tipps für die nächste.</p>
-            </td>
-          </tr>
-        </table>
-      </td></tr>
-      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-          <tr>
-            <td style="vertical-align:top;width:34px;font-size:18px;">🏆</td>
-            <td style="vertical-align:top;padding-left:6px;">
-              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Wochen-Aufgaben &amp; Abzeichen</p>
-              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Jede Woche kleine Trainings-Aufgaben passend zu eurem Plan. Geschafft = Abzeichen für die Sammlung.</p>
-            </td>
-          </tr>
-        </table>
-      </td></tr>
-      <tr><td style="padding:10px 0;border-bottom:1px solid #F5F1E8;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-          <tr>
-            <td style="vertical-align:top;width:34px;font-size:18px;">💬</td>
-            <td style="vertical-align:top;padding-left:6px;">
-              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">KI-Trainer für Rückfragen</p>
-              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Stell jederzeit Fragen — der KI-Trainer antwortet rund um die Uhr mit dem Wissen unseres Hundetrainer-Teams.</p>
-            </td>
-          </tr>
-        </table>
-      </td></tr>
-      <tr><td style="padding:10px 0;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-          <tr>
-            <td style="vertical-align:top;width:34px;font-size:18px;">📚</td>
-            <td style="vertical-align:top;padding-left:6px;">
-              <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#1a1a1a;">Spezial-Module</p>
-              <p style="margin:0;font-size:13px;line-height:1.5;color:#6B7280;">Wenn ${escapeHtml(dogName)} weitere Themen hat — z.B. Trennungsangst, Reise, Erste-Hilfe — gibt's gezielte Module dazu.</p>
+            <td style="vertical-align:top;width:46px;"><div style="width:40px;height:40px;background:#C4A576;border-radius:10px;text-align:center;line-height:40px;font-size:19px;color:#FFFFFF;">📄</div></td>
+            <td style="vertical-align:top;padding-left:12px;">
+              <p style="margin:0 0 2px;font-size:15px;font-weight:700;color:#1a1a1a;line-height:1.35;">${monthsLabel} für ${dog}</p>
+              <p style="margin:0;font-size:12.5px;color:#6B7280;line-height:1.5;">Als PDF im Anhang · druckbar · dazu der Mitglieder-Bereich${b ? `<br>${fmtDatum(b.leistungsdatum)} · ${(b.brutto_cents / 100).toFixed(2).replace(".", ",")} € inkl. USt` : ""}</p>
             </td>
           </tr>
         </table>
       </td></tr>
     </table>`;
 
-  // Lebensretter-Anteaser: kurz, Angst-Framing, KEIN Preis. Führt auf die eigene
-  // Seite (dort Quiz + Kauf). Der Mitglieder-Showcase oben bleibt unangetastet.
-  const lebensretterUrl = `${SITE_URL}/lebensretter.html?utm_medium=email&email=${encodeURIComponent(to)}&dogName=${encodeURIComponent(dogName)}`;
-  const lebensretterTeaser = `
-    <div style="border-top:1px solid #F0EBE3;margin:24px 0 16px;"></div>
-    <div style="background:#FFF9F0;border:1px solid #EADDC5;border-radius:14px;padding:20px;">
-      <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#C0392B;">Was, wenn es mal drauf ankommt?</p>
-      <h2 style="margin:0 0 10px;font-size:18px;line-height:1.3;font-weight:800;color:#1a1a1a;">Die 10 Kommandos, die ${escapeHtml(dogName)} im Ernstfall schützen</h2>
-      <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#4B5563;">
-        Eine offene Autotür, ein Giftköder im Gebüsch, ein Reh, das über den Weg springt. In dem Moment zählt nur eins: Hört ${escapeHtml(dogName)} sofort? Das Lebensretter-Training baut genau diese Kommandos auf, damit sie auch dann sitzen, wenn es drauf ankommt.
-      </p>
-      <a href="${lebensretterUrl}" style="display:inline-block;padding:12px 22px;font-size:14px;font-weight:700;line-height:1;color:#FFFFFF;background:#C0392B;text-decoration:none;border-radius:10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">Lebensretter-Training ansehen →</a>
+  // 2) Heute starten — echte erste Übung aus dem Plan
+  const w1 = plan.weeks[0];
+  const ersteUebung = w1?.uebungen?.[0];
+  const startBox = ersteUebung
+    ? `
+    ${eyebrow("Heute starten")}
+    ${h2(`Eure erste Übung: ${escapeHtml(ersteUebung.name)}`)}
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 6px;">
+      ${ersteUebung.schritte.slice(0, 3).map((s, i) => `<tr><td style="vertical-align:top;width:26px;padding:4px 0;"><div style="width:22px;height:22px;border-radius:11px;background:#C4A576;color:#fff;font-size:12px;font-weight:800;text-align:center;line-height:22px;">${i + 1}</div></td><td style="padding:4px 0 4px 8px;font-size:14.5px;line-height:1.55;color:#374151;">${escapeHtml(s)}</td></tr>`).join("")}
+    </table>
+    <p style="margin:6px 0 0;font-size:13.5px;color:#6B7280;line-height:1.55;">10 bis 15 Minuten reichen. Alle Schritte stehen im PDF auf der ersten Wochenseite.</p>`
+    : "";
+
+  // 3) Erwartungs-Management: was in den nächsten Wochen passiert
+  const wTitel = (i: number) => (plan.weeks[i]?.title ? ` · ${escapeHtml(plan.weeks[i].title)}` : "");
+  const phasen: Array<[string, string, string]> = [
+    ["Woche 1", wTitel(0), `${dog} lernt die Übungen erst kennen. Es kann gut sein, dass du noch keinen Unterschied merkst, oder dass es an Tag 2 oder 3 sogar schlechter wirkt. Das ist völlig normal: ${dog} testet gerade, ob die neuen Regeln wirklich gelten.`],
+    ["Woche 2–3", wTitel(1), `Die ersten Momente, in denen es klappt, meist zuerst zu Hause oder an ruhigen Orten. Manche Hunde machen hier schon einen Sprung, andere brauchen noch etwas. Beides ist in Ordnung.`],
+    [planLengthMonths === 1 ? "Woche 4" : "Ab Woche 4", wTitel(3), `Jetzt wird es sichtbar: ${dog} reagiert schneller, und das Gelernte hält auch draußen mit Ablenkung. Entscheidend ist nicht das perfekte Training, sondern dass ihr dranbleibt, auch an Tagen, an denen es mal nicht klappt.`],
+  ];
+  const zeitleiste = `
+    ${trenner}
+    ${eyebrow("Was in den nächsten Wochen passiert")}
+    ${h2(`So geht es für ${dog} weiter`)}
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+      ${phasen.map(([wann, titel, text], i) => `<tr>
+        <td style="vertical-align:top;width:22px;">
+          <div style="width:14px;height:14px;border-radius:7px;background:#8B7355;margin:4px 0 0 2px;"></div>
+          ${i < phasen.length - 1 ? `<div style="width:2px;height:64px;background:#EADDC5;margin:4px 0 0 8px;"></div>` : ""}
+        </td>
+        <td style="vertical-align:top;padding:0 0 16px 10px;">
+          <p style="margin:0 0 3px;font-size:15px;font-weight:800;color:#1a1a1a;">${wann}<span style="font-weight:600;color:#8B7355;">${titel}</span></p>
+          <p style="margin:0;font-size:14px;line-height:1.6;color:#4B5563;">${text}</p>
+        </td>
+      </tr>`).join("")}
+    </table>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#F7F3EC;border-radius:12px;margin:4px 0 0;">
+      <tr><td style="padding:14px 16px;font-size:13.5px;line-height:1.6;color:#4B5563;">
+        <strong style="color:#1a1a1a;">Warum das funktioniert:</strong> Hunde lernen über Wiederholung in kleinen Schritten und über die Belohnung im richtigen Moment. Kurz und täglich bringt deshalb mehr als einmal pro Woche eine Stunde.
+      </td></tr>
+    </table>`;
+
+  // 4) Hilfe — WhatsApp
+  const waHelpBox = `
+    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:16px 18px;margin:22px 0 0;">
+      <p style="margin:0;font-size:14px;line-height:1.6;color:#166534;"><img src="${SITE_URL}/whatsapp-logo.png" width="18" height="18" alt="WhatsApp" style="width:18px;height:18px;vertical-align:-4px;margin-right:5px;border:0;" /><strong>Du hängst bei einer Übung fest?</strong> Schreib uns direkt auf <a href="https://wa.me/4915129892586?text=Hallo%2C%20ich%20habe%20eine%20Frage%20zu%20meinem%20Trainingsplan" style="color:#166534;font-weight:800;text-decoration:underline;">WhatsApp</a>. Wir antworten persönlich, meist innerhalb weniger Stunden.</p>
     </div>`;
 
-  // Danke-Code als Gutschein-Karte (nur wenn übergeben, Kontrollgruppe bekommt keinen)
+  // 5) Mitglieder-Bereich kompakt
+  const feature = (icon: string, titel: string, text: string) => `<tr><td style="vertical-align:top;width:30px;font-size:17px;padding:7px 0;">${icon}</td><td style="vertical-align:top;padding:7px 0 7px 6px;"><p style="margin:0;font-size:14px;line-height:1.5;color:#4B5563;"><strong style="color:#1a1a1a;">${titel}</strong> · ${text}</p></td></tr>`;
+  const mitgliederShowcase = `
+    ${trenner}
+    ${eyebrow("Im Mitglieder-Bereich")}
+    ${h2("Alles an einem Ort")}
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+      ${feature("📊", "Stimmungs-Tagebuch", "kurz eintragen, die KI fasst eure Woche zusammen")}
+      ${feature("🏆", "Wochen-Aufgaben &amp; Abzeichen", "kleine Ziele passend zu eurem Plan")}
+      ${feature("💬", "KI-Trainer", "Fragen rund um die Uhr, mit dem Wissen unseres Trainer-Teams")}
+    </table>`;
+
+  // 6) Danke-Code — als Antwort auf "und was ist mit dem anderen Thema?"
   const dc = args.dankeCode;
   const dankeBox = dc
     ? `
-    <div style="border-top:1px solid #F0EBE3;margin:24px 0 16px;"></div>
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFF9F0;border:2px dashed #C4A576;border-radius:16px;">
-      <tr><td style="padding:22px 20px;text-align:center;">
-        <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">🎁 Dein Danke-Code für ${escapeHtml(dogName)}</p>
-        <p style="margin:0 0 12px;font-size:15px;line-height:1.55;color:#4B5563;">Danke, dass du mit uns trainierst. Mit diesem Code bekommst du <strong>${dc.prozent}&nbsp;% auf alle Zusatzmodule</strong> im Modul-Shop, auch auf Bundles.</p>
-        <div style="display:inline-block;background:#FFFFFF;border:1px solid #EADDC5;border-radius:10px;padding:12px 20px;margin:0 0 12px;font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:22px;font-weight:800;letter-spacing:2px;color:#2A2118;">${escapeHtml(dc.code)}</div>
-        <p style="margin:0 0 16px;font-size:13px;color:#6B7280;">Gültig bis ${new Date(dc.bis).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Europe/Berlin" })}</p>
-        <a href="${dc.shopUrl}" style="display:inline-block;padding:13px 24px;font-size:15px;font-weight:700;line-height:1;color:#FFFFFF;background:#8B7355;text-decoration:none;border-radius:10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">Code im Modul-Shop einlösen →</a>
+    ${trenner}
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FDF1DB;border:2px dashed #C4A576;border-radius:16px;">
+      <tr><td style="padding:20px 18px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
+          <td style="vertical-align:middle;width:84px;"><img src="${SITE_URL}/mail/danke-geschenk.jpg" width="76" height="76" alt="" style="display:block;width:76px;height:76px;border:0;border-radius:10px;" /></td>
+          <td style="vertical-align:middle;padding-left:12px;">
+            <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8B7355;">Ein Dankeschön für ${dog}</p>
+            <p style="margin:0;font-size:14.5px;line-height:1.5;color:#2A2118;">Viele Hunde haben mehr als eine Baustelle. Falls bei ${dog} noch etwas anderes dazukommt, bekommst du <strong>${dc.prozent}&nbsp;% auf alle Zusatzmodule</strong>.</p>
+          </td>
+        </tr></table>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:14px 0 0;"><tr><td align="center">
+          <div style="display:inline-block;background:#FFFFFF;border:1px solid #EADDC5;border-radius:10px;padding:10px 18px;font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:20px;font-weight:800;letter-spacing:2px;color:#2A2118;">${escapeHtml(dc.code)}</div>
+          <p style="margin:8px 0 12px;font-size:12.5px;color:#6B7280;">Gültig bis ${fmtDatum(dc.bis)} · auch auf Bundles</p>
+          <a href="${dc.shopUrl}" style="display:inline-block;padding:12px 22px;font-size:14.5px;font-weight:700;line-height:1;color:#FFFFFF;background:#8B7355;text-decoration:none;border-radius:10px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">Module mit Code ansehen →</a>
+        </td></tr></table>
       </td></tr>
     </table>`
     : "";
 
-  // WhatsApp-Hilfe: mittig zwischen PDF-Hinweis und Mitglieder-Showcase
-  const waHelpBox = `
-    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:16px 18px;margin:22px 0;">
-      <p style="margin:0;font-size:14px;line-height:1.6;color:#166534;"><img src="${SITE_URL}/whatsapp-logo.png" width="18" height="18" alt="WhatsApp" style="width:18px;height:18px;vertical-align:-4px;margin-right:5px;border:0;" /><strong>Eine Frage zu ${escapeHtml(dogName)}s Plan — oder kommst du bei einer Übung nicht weiter?</strong> Schreib uns direkt auf <a href="https://wa.me/4915129892586?text=Hallo%2C%20ich%20habe%20eine%20Frage%20zu%20meinem%20Trainingsplan" style="color:#166534;font-weight:800;text-decoration:underline;">WhatsApp</a> — wir antworten persönlich, meist innerhalb weniger Stunden.</p>
-    </div>`;
+  // 7) Lebensretter-Anteaser: kurz, ohne Preis, führt auf die eigene Seite
+  const lebensretterUrl = `${SITE_URL}/lebensretter.html?utm_medium=email&email=${encodeURIComponent(to)}&dogName=${encodeURIComponent(dogName)}`;
+  const lebensretterTeaser = `
+    <p style="margin:22px 0 0;font-size:14px;line-height:1.6;color:#4B5563;"><strong style="color:#C0392B;">Für den Ernstfall:</strong> Eine offene Autotür, ein Giftköder, ein Reh. Die 10 Kommandos, die ${dog} dann schützen, findest du im <a href="${lebensretterUrl}" style="color:#C0392B;font-weight:700;text-decoration:underline;">Lebensretter-Training</a>.</p>`;
+
+  // 8) Vertrauen
+  const vertrauen = `
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:26px 0 0;border-top:1px solid #F0EBE3;">
+      <tr><td align="center" style="padding:18px 0 0;font-size:13px;line-height:1.7;color:#6B7280;">
+        🐾 <strong style="color:#1a1a1a;">Über 9.000 Hundehalter</strong> trainieren schon mit Pfoten-Plan<br>
+        Persönlich erstellt · Einmalzahlung, kein Abo · Hilfe per WhatsApp
+      </td></tr>
+    </table>`;
 
   html = wrapTemplate({
-    preheader: `Dein ${monthsLabel} für ${dogName} ist fertig.`,
-    headline: `Dein ${monthsLabel} für ${dogName} ist fertig`,
-    intro: `${greeting} dein persönlicher Trainings-Plan ist soeben für dich erstellt worden — komplett zugeschnitten auf ${dogName} und euer Haupt-Thema. ${weeksTotal} Wochen, mit konkreten Übungen für jeden Tag, Wochenzielen, Fortschritts-Markern und einem klaren roten Faden.`,
-    bodyHtml: `${pdfHinweis}${waHelpBox}${mitgliederShowcase}${dankeBox}${lebensretterTeaser}`,
+    preheader: `${dogName}s Plan ist fertig, und so startet ihr heute.`,
+    heroHtml: `<img src="${SITE_URL}/mail/plan-hero.jpg" width="600" alt="" style="display:block;width:100%;max-width:600px;height:auto;border:0;" />`,
+    headline: `Dein ${monthsLabel} für ${dogName} ist da`,
+    intro: `${greeting} schön, dass ihr dabei seid. Dein Plan ist komplett auf ${dog} und euer Thema zugeschnitten: ${weeksTotal} Wochen mit konkreten Übungen für jeden Tag, Wochenzielen und einem klaren roten Faden.`,
+    bodyHtml: `${bestellBox}${startBox}${zeitleiste}${waHelpBox}${mitgliederShowcase}${dankeBox}${lebensretterTeaser}${vertrauen}`,
     ctaText: "Mitglieder-Bereich öffnen →",
     ctaUrl,
-    footerHint: `Der Button enthält einen Einmal-Login — du landest direkt eingeloggt im Mitglieder-Bereich. Der Link gilt 1 Stunde und ist nur für dich.`,
+    footerHint: `Der Button meldet dich direkt an, ohne Passwort. Er funktioniert auch später noch: Heb dir diese Mail einfach auf und leite sie bitte nicht weiter.`,
     belegHtml,
   });
   subject = `🐾 Dein ${monthsLabel} für ${dogName} ist da`;
