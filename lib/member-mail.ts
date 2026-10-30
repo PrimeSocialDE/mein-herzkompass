@@ -97,6 +97,10 @@ interface SendArgs {
    *  web.de/GMX), Brevo nur als Fallback. Marketing lässt das Flag weg → Brevo.
    *  PL wird ignoriert (Google kann nicht als lapaplan.pl senden). */
   transactional?: boolean;
+  /** Google SMTP überspringen und direkt über Brevo senden. Für Empfänger,
+   *  deren Firmen-Spamfilter (z.B. Hornetsecurity) unsere Google-Mails ohne
+   *  Bounce schluckt, Brevo-Mails aber durchlässt. */
+  forceBrevo?: boolean;
 }
 
 // Absender sprachabhaengig: PL-Mails kommen von pomoc@lapaplan.pl (in Brevo
@@ -114,7 +118,7 @@ export function mailReplyTo(lang: Lang = "de") {
   return { email: "support@pfoten-plan.de", name: "Pfoten-Plan Support" };
 }
 
-export async function sendBrevoMail({ to, subject, html, tags, attachments, cc, lang, transactional, senderName }: SendArgs) {
+export async function sendBrevoMail({ to, subject, html, tags, attachments, cc, lang, transactional, senderName, forceBrevo }: SendArgs) {
   if (!to) {
     return { ok: false, reason: "no_recipient" };
   }
@@ -123,7 +127,7 @@ export async function sendBrevoMail({ to, subject, html, tags, attachments, cc, 
     : mailSender(lang);
   // Bezahlte/transaktionale DE-Mails primär über Google Workspace SMTP —
   // Brevo bleibt automatischer Fallback (siehe lib/google-smtp.ts).
-  if (transactional && lang !== "pl") {
+  if (transactional && !forceBrevo && lang !== "pl") {
     try {
       const { googleSmtpConfigured, sendViaGoogleSmtp } = await import("./google-smtp");
       if (googleSmtpConfigured()) {
@@ -461,6 +465,8 @@ interface PlanReadyArgs {
   customerName?: string | null;
   lang?: Lang;
   beleg?: BelegRow | null;
+  /** Zustellung über Brevo erzwingen (Support-Neuversand, siehe forceBrevo). */
+  viaBrevo?: boolean;
 }
 
 export async function sendPlanReadyEmail(args: PlanReadyArgs) {
@@ -884,6 +890,7 @@ export async function sendPlanReadyEmail(args: PlanReadyArgs) {
     attachments,
     cc: "kontakt@primesocial.de",
     transactional: true,
+    forceBrevo: args.viaBrevo,
   });
 }
 

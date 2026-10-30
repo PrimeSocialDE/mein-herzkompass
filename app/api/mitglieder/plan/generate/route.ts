@@ -17,7 +17,8 @@
 //     "lead_id": "uuid-of-wauwerk-lead",
 //     "force": false,
 //     "plan_length_months": 1 | 3 | 6,    // optional - sonst aus lead.selected_plan
-//     "no_mail": false                    // optional - skip welcome mail
+//     "no_mail": false,                   // optional - skip welcome mail
+//     "via": "brevo"                      // optional - Plan-Mail nur über Brevo
 //   }
 //
 // Stream-Events (alle als NDJSON, eine pro Zeile):
@@ -91,6 +92,8 @@ export async function POST(req: NextRequest) {
   const email = String(body?.email || "").trim().toLowerCase();
   const leadId = String(body?.lead_id || "").trim();
   const force = !!body?.force;
+  // via:"brevo" → Plan-Mail an Google SMTP vorbei (Support-Neuversand).
+  const viaBrevo = body?.via === "brevo";
   const overrideMonths =
     body?.plan_length_months &&
     [1, 3, 6].includes(Number(body.plan_length_months))
@@ -448,6 +451,7 @@ export async function POST(req: NextRequest) {
               customerName: lead.customer_name || null,
               lang: planLang,
               beleg,
+              viaBrevo,
             });
             emit(ctx, {
               event: "stage",

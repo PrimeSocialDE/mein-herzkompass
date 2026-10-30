@@ -81,7 +81,9 @@ function preisInCent(price: string | null | undefined): number | null {
 // WICHTIG: Der reine Status-Flip (status→paid) liefert bei Wiederholungs-Käufern
 // NICHT aus — die Pipeline überspringt Leads, für deren E-Mail schon ein Plan
 // existiert (auch wenn die Mail nie ankam). Zuverlässig ist NUR /plan/generate
-// mit force:true — das generiert neu UND verschickt die Mail.
+// mit force:true — das generiert neu UND verschickt die Mail. via:"brevo", weil
+// "kam nicht an" oft heißt: Firmen-Spamfilter schluckt den Google-Weg still
+// (z.B. 29.10.: 7 Google-Mails weg, die Brevo-Mail kam an).
 async function resendPlan(leadId: string, email: string): Promise<boolean> {
   const workerToken = process.env.WORKER_TOKEN;
   if (!workerToken) return false;
@@ -94,7 +96,7 @@ async function resendPlan(leadId: string, email: string): Promise<boolean> {
     const res = await fetch(`${baseUrl}/api/mitglieder/plan/generate`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${workerToken}` },
-      body: JSON.stringify({ lead_id: leadId, email, force: true }),
+      body: JSON.stringify({ lead_id: leadId, email, force: true, via: "brevo" }),
     });
     const txt = await res.text().catch(() => "");
     let ok = false;
