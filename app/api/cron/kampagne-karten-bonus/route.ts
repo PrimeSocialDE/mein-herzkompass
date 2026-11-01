@@ -12,6 +12,8 @@
 //   auf Checkout-Abbrecher um (status pending/failed, 3-120 Tage alt), eigener Text
 //   ("Du warst schon fast fertig"), eigener Deckel kampagne_kb_max_checkout (Standard 3000),
 //   Marker answers.kampagne_kb_segment = "checkout". Standard bleibt email_captured.
+//   Käufer-Sperre zusätzlich über member_users (paid), weil der Lead-status nach einem
+//   erneuten Checkout auf pending zurückfallen kann.
 // FREIGABE: system_settings.kampagne_kb_live = "true", Not-Aus kampagne_kb_stop,
 //   Gesamtdeckel kampagne_kb_max_gesamt (Standard 5000). ?dry=1 · ?test=mail@x.de
 
@@ -271,6 +273,11 @@ export async function GET(req: NextRequest) {
       .filter((r) => r.status === "paid" || (r.answers || {}).unsubscribed || (r.answers || {}).kampagne_kb_sent)
       .map((r) => (r.email || "").toLowerCase())
   );
+  // Käufer auch über member_users sperren: Ein neuer Checkout auf einem bezahlten Lead setzt
+  // dessen status wieder auf pending, dann greift der status-Check oben nicht (01.11.2026:
+  // 207 Bestandskäufer bekamen die Checkout-Mail, eine Käuferin kaufte den Plan doppelt).
+  const { data: mitglieder } = await supabase.from("member_users").select("email").eq("purchase_status", "paid").in("email", mails);
+  for (const m of (mitglieder || []) as Array<{ email: string | null }>) gesperrt.add((m.email || "").toLowerCase());
 
   if (dry) {
     const g = new Set<string>();
