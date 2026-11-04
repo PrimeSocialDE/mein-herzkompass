@@ -152,7 +152,7 @@ ${liste}
 </td></tr>
 <tr><td style="padding:4px 36px 6px;text-align:center;">
 <a href="${cta}" style="display:inline-block;background:#8B7355;color:#ffffff;text-decoration:none;font-size:17px;font-weight:700;padding:16px 34px;border-radius:12px;">${dog}s Silvester-Plan ansehen</a>
-<p style="margin:10px 0 0;font-size:13.5px;color:#6B7280;">24,99 €, einmalig, kein Abo. Kommt in wenigen Minuten als PDF per E-Mail.</p>
+<p style="margin:10px 0 0;font-size:13.5px;color:#6B7280;">Persönlich für ${dog} erstellt, kommt in wenigen Minuten als PDF per E-Mail.</p>
 </td></tr>
 <tr><td style="padding:20px 36px 4px;">
 <p style="margin:0 0 6px;font-size:16px;">Viele Grüße an ${dog},</p>
@@ -180,7 +180,7 @@ ${text}${liste}
 ${dog}s Silvester-Plan ansehen:
 ${ctaUrl(id, email, welle)}
 
-24,99 €, einmalig, kein Abo. Kommt in wenigen Minuten als PDF per E-Mail.
+Persönlich für ${dog} erstellt, kommt in wenigen Minuten als PDF per E-Mail.
 
 Viele Grüße an ${dog},
 Laura vom Pfoten-Plan-Team
