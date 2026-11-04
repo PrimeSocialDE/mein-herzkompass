@@ -675,6 +675,73 @@ async function handleUpsellPaid(payment: any) {
     }
   }
 
+  // Silvester-Plan aus dem /zusatz-A/B (ab_zsilv): einzeln (14,99) oder als
+  // Paket mit den Notfall-Karten (19,99). Die Karten-PDF kommt sofort, der
+  // Silvester-Plan braucht Opus (2-3 Min.) und laeuft deshalb in after().
+  if ((module === "silvester-plan" || module === "silvester-paket") && (email || leadData.email)) {
+    const zielMail = email || leadData.email;
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL &&
+      !process.env.NEXT_PUBLIC_BASE_URL.includes("localhost")
+        ? process.env.NEXT_PUBLIC_BASE_URL
+        : "https://www.pfoten-plan.de";
+    const bruttoCents = Math.round(parseFloat(payment.amount?.value || "0") * 100);
+    if ((leadData.answers as any)?.lang !== "pl" && bruttoCents > 0) {
+      try {
+        await supabase.rpc("create_beleg", {
+          p_mollie_payment_id: payment.id,
+          p_lead_id: leadData.id,
+          p_email: zielMail,
+          p_beschreibung:
+            module === "silvester-paket"
+              ? "Zusatzleistung: Notfall-Karten + Silvester-Plan (Knallangst-Training)"
+              : "Zusatzleistung: Silvester-Plan (Knallangst-Training)",
+          p_brutto_cents: bruttoCents,
+          p_leistungsdatum: new Date().toISOString(),
+        });
+      } catch (e: any) {
+        console.error("[mollie-webhook] Beleg (silvester) fehlgeschlagen (Auslieferung läuft weiter):", e?.message);
+      }
+    }
+    if (module === "silvester-paket") {
+      try {
+        await fetch(`${baseUrl}/api/notfall-karten/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: zielMail,
+            dogName: meta.dog_name || leadData.dog_name || "deinen Hund",
+            leadId: leadData.id,
+            lang: "de",
+          }),
+        });
+      } catch (e) {
+        console.error("[mollie-webhook] Notfall-Karten (Paket) Delivery Error:", e);
+      }
+    }
+    after(async () => {
+      try {
+        const r = await fetch(`${baseUrl}/api/silvester/generate`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.WORKER_TOKEN || ""}`,
+          },
+          body: JSON.stringify({
+            leadId: leadData.id,
+            email: zielMail,
+            dogName: meta.dog_name && meta.dog_name !== "deinen Hund" ? meta.dog_name : undefined,
+            angst: meta.silv_angst || undefined,
+          }),
+        });
+        const j: any = await r.json().catch(() => ({}));
+        console.log(`[mollie-webhook] silvester/generate (${module}) ${zielMail}: HTTP ${r.status} ok=${j.ok} skipped=${j.skipped || ""}`);
+      } catch (e: any) {
+        console.error("[mollie-webhook] silvester/generate (Modul) fehlgeschlagen:", e?.message);
+      }
+    });
+  }
+
   // Anti-Giftköder als eigenständiges Modul (z.B. Tag-30-Umfrage-Reward).
   // Bisher wurde Anti-Giftköder nur über den Order-Bump-Zweig ausgeliefert;
   // hier zusätzlich für einen direkten Modul-Kauf (module="anti-giftkoeder").

@@ -109,6 +109,18 @@
         }
 
         /* Hero Card: Notfall-Karten */
+        /* A/B ab_zsilv: Silvester-Plan + Paket (Variante B) */
+        .silv-wahl { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+        .silv-wahl button { border: 1px solid #E8E4DF; background: #fff; border-radius: 999px; padding: 8px 13px; font-size: 14px; font-family: inherit; cursor: pointer; color: #2C2C2E; }
+        .silv-wahl button.an { border-color: #C4A576; background: #FFF6E9; color: #8B7355; font-weight: 700; }
+        .silv-frage { font-size: 14.5px; font-weight: 700; margin-top: 4px; }
+        .silv-liste { list-style: none; margin: 4px 0 14px; padding: 0; }
+        .silv-liste li { font-size: 14.5px; color: #4B5563; padding: 4px 0 4px 24px; position: relative; }
+        .silv-liste li::before { content: "✓"; position: absolute; left: 2px; color: #4F8A55; font-weight: 800; }
+        .preis-alt { font-size: 16px; color: #9CA3AF; text-decoration: line-through; margin-left: 8px; font-weight: 600; }
+        .upsell-card.paket { border: 2px solid #4F8A55; background: #F7FBF5; }
+        .upsell-card.paket .cta-btn { background: linear-gradient(180deg, #5E9C64, #4F8A55); }
+        .paket-badge { display: inline-block; background: #4F8A55; color: #fff; font-size: 12px; font-weight: 800; border-radius: 999px; padding: 4px 11px; margin-bottom: 8px; }
         .upsell-card {
             background: white; border-radius: 20px;
             padding: 28px 22px;
@@ -294,6 +306,50 @@
             </div>
         </div>
 
+        <!-- A/B ab_zsilv, Variante B: Silvester-Plan einzeln + Paket mit den Karten -->
+        <div class="upsell-card" id="cardSilv" style="display:none">
+            <p class="eyebrow" id="silvEyebrow">Neu · rechtzeitig vor Silvester</p>
+            <h2>Silvester-Plan für <span class="dog-name">deinen Hund</span></h2>
+            <p class="upsell-desc">
+                Knallangst lässt sich trainieren, aber nicht in einer Nacht. Du bekommst einen
+                <strong>persönlichen Wochenplan bis zum 31.12.</strong> mit festen Daten und dazu den genauen
+                Ablauf für die Silvesternacht.
+            </p>
+            <ul class="silv-liste">
+                <li>12 Übungen: sicherer Rückzugsort, Geräusch-Gewöhnung, Gassi-Routine</li>
+                <li>Der Abend vom 30.12. bis Neujahr, Stunde für Stunde</li>
+                <li>Checklisten und wann du zur Tierärztin solltest</li>
+            </ul>
+            <div class="silv-frage">Wie reagiert <span class="dog-name">dein Hund</span> auf Knallen?</div>
+            <div class="silv-wahl" id="silvWahl">
+                <button type="button" data-wert="leicht">Zuckt kurz</button>
+                <button type="button" data-wert="mittel">Zittert, versteckt sich</button>
+                <button type="button" data-wert="stark">Panik</button>
+                <button type="button" data-wert="unbekannt">Weiß nicht</button>
+            </div>
+            <div class="price-section">
+                <div class="price-amount">€14,99<span class="preis-alt">€24,99</span></div>
+                <div class="price-info">Nur für Käufer · Einmalzahlung · Kein Abo</div>
+            </div>
+            <button class="cta-btn" id="ctaSilv" onclick="buySilvester('silvester-plan')">
+                Silvester-Plan dazu nehmen – €14,99
+            </button>
+        </div>
+
+        <div class="upsell-card paket" id="cardPaket" style="display:none">
+            <span class="paket-badge">Beides zusammen · 5 € gespart</span>
+            <h2>Notfall-Karten + Silvester-Plan</h2>
+            <p class="upsell-desc">Vorbereitet für den Alltag und für Silvester. Die Karten kommen sofort, der Silvester-Plan ein paar Minuten später.</p>
+            <div class="price-section">
+                <div class="price-amount">€19,99<span class="preis-alt">€24,98</span></div>
+                <div class="price-info">Einmalzahlung · Kein Abo</div>
+            </div>
+            <button class="cta-btn" id="ctaPaket" onclick="buySilvester('silvester-paket')">
+                Beides nehmen – €19,99
+            </button>
+            <div class="guarantee-text">🛡️ 30 Tage Geld-zurück-Garantie</div>
+        </div>
+
         <!-- Skip → weiter zu /downsell.html (Module als nächste Stufe) -->
         <button class="skip-btn" id="skipBtn" onclick="skipToModules()">
             Nein danke, andere Trainings-Module ansehen →
@@ -354,6 +410,92 @@
             document.querySelectorAll('.karten-preis').forEach(el => { el.textContent = label; });
             console.log('Notfall-Karten Preis-Variante:', variant, label);
         })();
+
+        // ==================== A/B ab_zsilv (seit 11/2026) ====================
+        // A = wie bisher nur Notfall-Karten 9,99. B = zusaetzlich Silvester-Plan
+        // 14,99 und Paket Karten + Silvester 19,99. 50/50, fest je Browser.
+        // Override: ?zsilv=A|B. Ab 21.12. immer A (dann lohnt das Training kaum noch).
+        // Messung: /api/ab-ping (test zsilv: view, click_karten, click_silv,
+        // click_paket) + Mollie-Metadaten ab_zsilv. Auswertung = Umsatz je Besucher.
+        let zsilvVariant = 'A';
+        let silvAngst = '';
+        (function initZsilv() {
+            try {
+                const heute = new Date();
+                const ende = new Date(heute.getFullYear(), 11, 21);
+                let v = (urlParamsInit.get('zsilv') || '').toUpperCase();
+                if (v !== 'A' && v !== 'B') {
+                    v = localStorage.getItem('ab_zsilv');
+                    if (v !== 'A' && v !== 'B') {
+                        v = Math.random() < 0.5 ? 'A' : 'B';
+                        localStorage.setItem('ab_zsilv', v);
+                    }
+                }
+                if (heute.getMonth() < 10 || heute >= ende) v = 'A';
+                zsilvVariant = v;
+                if (v === 'B') {
+                    document.getElementById('cardSilv').style.display = '';
+                    document.getElementById('cardPaket').style.display = '';
+                    const tage = Math.round((new Date(heute.getFullYear(), 11, 31) - new Date(heute.getFullYear(), heute.getMonth(), heute.getDate())) / 86400000);
+                    document.getElementById('silvEyebrow').textContent = 'Neu · noch ' + tage + ' Tage bis Silvester';
+                    document.getElementById('silvWahl').addEventListener('click', function (e) {
+                        const b = e.target.closest('button'); if (!b) return;
+                        this.querySelectorAll('button').forEach(x => x.classList.remove('an'));
+                        b.classList.add('an');
+                        silvAngst = b.getAttribute('data-wert');
+                    });
+                }
+                if (dogName && dogName !== 'deinen Hund') {
+                    document.querySelectorAll('#cardSilv .dog-name').forEach(el => { el.textContent = dogName; });
+                }
+                try { clarity('set', 'ab_zsilv', v); } catch (e) {}
+                zsilvPing('view');
+            } catch (e) { console.warn('zsilv init', e); }
+        })();
+        function zsilvPing(step) {
+            try {
+                fetch('/api/ab-ping', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ test: 'zsilv', variant: zsilvVariant, step: step, sid: localStorage.getItem('ab_sid') || leadId }) }).catch(function () {});
+            } catch (e) {}
+        }
+
+        async function buySilvester(modul) {
+            const paket = modul === 'silvester-paket';
+            const btn = document.getElementById(paket ? 'ctaPaket' : 'ctaSilv');
+            const originalText = btn.textContent;
+            zsilvPing(paket ? 'click_paket' : 'click_silv');
+            if (!userEmail) { alert('Fehler: Keine E-Mail gefunden.'); return; }
+            btn.innerHTML = '<span class="spinner"></span> Lädt...';
+            btn.disabled = true;
+            const payload = {
+                module: modul,
+                leadId: leadId,
+                email: userEmail,
+                dogName: dogName,
+                price: paket ? 1999 : 1499,
+                silvester: { angst: silvAngst || 'unbekannt' },
+                ab: zsilvVariant
+            };
+            const name = paket ? 'Notfall-Karten + Silvester-Plan' : 'Silvester-Plan';
+            if (await tryOneClickUpsell(payload, name)) return;
+            try {
+                const returnUrl = window.location.origin + '/upsell-plan-bundle.html?lead_id=' + encodeURIComponent(leadId || '');
+                const response = await fetch('/api/mollie/upsell-checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(Object.assign({}, payload, { returnUrl: returnUrl }))
+                });
+                const result = await response.json();
+                if (result.error || !result.url) throw new Error(result.error || 'keine URL');
+                window.location.href = result.url;
+            } catch (err) {
+                console.error('Silvester Error:', err);
+                alert('Fehler beim Laden. Bitte versuche es erneut.');
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+        // ==================== END A/B ab_zsilv ====================
 
         // Skip-Button nach 3 Sekunden einblenden
         setTimeout(() => {
@@ -563,6 +705,7 @@
         }
 
         async function buyNotfallKarten() {
+            zsilvPing('click_karten');
             const btn = document.getElementById('ctaBtn');
             const originalText = btn.textContent;
             btn.innerHTML = '<span class="spinner"></span> Lädt...';
@@ -581,7 +724,8 @@
                 leadId: leadId,
                 email: userEmail,
                 dogName: dogName,
-                price: KARTEN_PREIS[kartenVariant].cents
+                price: KARTEN_PREIS[kartenVariant].cents,
+                ab: zsilvVariant
             }, 'Notfall-Karten');
             if (oneClickOk) return;
 
@@ -598,6 +742,7 @@
                         email: userEmail,
                         dogName: dogName,
                         price: KARTEN_PREIS[kartenVariant].cents,
+                        ab: zsilvVariant,
                         returnUrl: returnUrl
                     })
                 });

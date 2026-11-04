@@ -22,6 +22,10 @@ const moduleNames: Record<string, string> = {
   mouthing: "Anti-Aufnehm Training",
   "video-analyse": "Persönliche Video-Analyse",
   "notfall-karten": "10 Notfall-Karten",
+  // A/B /zusatz (ab_zsilv, ab 11/2026): Silvester-Plan fuer Kaeufer 14,99 und
+  // Paket Karten + Silvester-Plan 19,99. Preis kommt als body.price.
+  "silvester-plan": "Silvester-Plan (Knallangst-Training)",
+  "silvester-paket": "Notfall-Karten + Silvester-Plan",
   "anti-giftkoeder": "Anti-Giftköder-Trainingsplan",
   "coach-foto": "KI-Trainer Foto-Analyse (30 Tage)",
   "hund-verstehen": "Dein Hund verstehen — persönliches Profil",
@@ -184,6 +188,11 @@ export async function POST(req: NextRequest) {
         referred_by_code: referredByCode || "",
         lang: isPL ? "pl" : "de",
         datafast_visitor_id: datafastVisitorId,
+        // Silvester-Plan: Angst-Stärke von der /zusatz-Karte + A/B-Variante
+        ...(String(module).startsWith("silvester-") && ["leicht", "mittel", "stark", "unbekannt"].includes(String(body.silvester?.angst))
+          ? { silv_angst: String(body.silvester.angst) }
+          : {}),
+        ...(body.ab === "A" || body.ab === "B" ? { ab_zsilv: String(body.ab) } : {}),
         ...utmMeta,
       },
     });
