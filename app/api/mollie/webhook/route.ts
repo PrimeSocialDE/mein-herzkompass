@@ -1194,6 +1194,57 @@ async function handleUpsellProductPaid(payment: any) {
     }
   }
 
+  // Silvester-Plan (Knallangst-Training + Plan fuer die Nacht) -> eigener
+  // Generator. Beleg vorher, wie beim Lebensretter (nur DE). Die drei Angaben
+  // von der Landingpage kommen ueber die Metadaten (silv_*).
+  if (product === "silvester-plan") {
+    const isPlSale = (leadData?.answers as any)?.lang === "pl";
+    const bruttoCents = Math.round(parseFloat(payment.amount?.value || "0") * 100);
+    if (!isPlSale && bruttoCents > 0) {
+      try {
+        await supabase.rpc("create_beleg", {
+          p_mollie_payment_id: payment.id,
+          p_lead_id: leadData?.id || null,
+          p_email: email,
+          p_beschreibung: "Zusatzleistung: Silvester-Plan (Knallangst-Training)",
+          p_brutto_cents: bruttoCents,
+          p_leistungsdatum: new Date().toISOString(),
+        });
+      } catch (e: any) {
+        console.error("[mollie-webhook] Beleg (silvester-plan) fehlgeschlagen (Auslieferung läuft weiter):", e?.message);
+      }
+    }
+    after(async () => {
+      try {
+        const baseUrl =
+          process.env.NEXT_PUBLIC_SITE_URL ||
+          (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+          "https://www.pfoten-plan.de";
+        const r = await fetch(`${baseUrl}/api/silvester/generate`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.WORKER_TOKEN || ""}`,
+          },
+          body: JSON.stringify({
+            leadId: leadData?.id || leadId || "",
+            email,
+            dogName: dogName === "deinen Hund" ? undefined : dogName,
+            angst: meta.silv_angst || undefined,
+            lage: meta.silv_lage || undefined,
+            zuhause: meta.silv_zuhause || undefined,
+          }),
+        });
+        const j: any = await r.json().catch(() => ({}));
+        console.log(
+          `[mollie-webhook] silvester/generate ${email}: HTTP ${r.status} ok=${j.ok} skipped=${j.skipped || ""}`
+        );
+      } catch (e: any) {
+        console.error("[mollie-webhook] silvester/generate fehlgeschlagen:", e?.message);
+      }
+    });
+  }
+
   // "Nichts vom Boden" (Anti-Giftkoeder, 20 Uebungen) -> eigener Generator.
   // Opus braucht fuer das Handbuch rund vier Minuten, deshalb laeuft der Aufruf
   // in after() und die Route dort hat maxDuration 300.

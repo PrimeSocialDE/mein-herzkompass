@@ -41,6 +41,10 @@ const PRODUCT_PRICES: Record<string, number> = {
   // Themen-Modul "thema-aufnehmen" (14,99), weil es ein vollstaendiger
   // Lehrgang ist und kein Mini-Plan.
   "nichts-vom-boden": 2499,
+  // Silvester-Plan: Knallangst-Training mit Wochenplan bis Silvester + Plan
+  // fuer die Nacht, personalisiert ueber drei Fragen auf /silvester-plan.html
+  // (lib/silvester-content.ts). Saisonprodukt.
+  "silvester-plan": 2499,
   // Koerpersprache-Heft (18 Signale mit Zeichnungen, fester Inhalt +
   // Personalisierung nach dog_problem, lib/koerpersprache-*.ts)
   koerpersprache: 1990,
@@ -84,6 +88,7 @@ const PRODUCT_NAMES: Record<string, string> = {
   paket: "Komplettpaket fuer deinen Hund",
   "notfall-karten": "Notfall-Karten zum Ausdrucken",
   "nichts-vom-boden": "Nichts vom Boden — Anti-Giftkoeder-Training",
+  "silvester-plan": "Silvester-Plan — Knallangst-Training",
   koerpersprache: "Koerpersprache-Heft fuer deinen Hund",
   "verlaengerung-3": "Aufbauplan 3 Monate (Verlaengerung)",
   "verlaengerung-6": "Aufbauplan 6 Monate (Verlaengerung)",
@@ -109,6 +114,9 @@ export async function POST(req: NextRequest) {
     const returnUrl = body.returnUrl as string | undefined;
     // Charakterprofil: Rasse-Angaben von der Landingpage mitschicken
     const profil = (body.profil || {}) as Record<string, any>;
+    // Silvester-Plan: drei Angaben von der Landingpage (nur bekannte Werte)
+    const silv = (body.silvester || {}) as Record<string, any>;
+    const silvWert = (v: any, erlaubt: string[]) => (erlaubt.includes(String(v)) ? String(v) : "");
     // Optional: direkter Karten-Flow ohne Mollie-Hosted-Page
     const method = body.method as string | undefined; // 'creditcard' | undefined
     const cardToken = body.cardToken as string | undefined;
@@ -199,6 +207,13 @@ export async function POST(req: NextRequest) {
           ? { profil_misch: profil.misch_rassen.slice(0, 3).map((r: any) => String(r)).join(" | ").slice(0, 120) }
           : {}),
         ...(profil.rasse_unbekannt ? { profil_rasse_unbekannt: "true" } : {}),
+        ...(type === "silvester-plan"
+          ? {
+              silv_angst: silvWert(silv.angst, ["leicht", "mittel", "stark", "unbekannt"]),
+              silv_lage: silvWert(silv.lage, ["stadt", "vorort", "land"]),
+              silv_zuhause: silvWert(silv.zuhause, ["ja", "nein", "unsicher"]),
+            }
+          : {}),
       },
     };
     if (method === "creditcard" && cardToken) {
